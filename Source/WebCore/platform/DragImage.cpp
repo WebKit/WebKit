@@ -80,7 +80,7 @@ DragImageRef fitDragImageToMaxSize(DragImageRef image, const IntSize& layoutSize
 
 struct ScopedNodeDragEnabler {
     ScopedNodeDragEnabler(Frame& frame, Node& node)
-        : element(dynamicDowncast<Element>(node))
+        : element(is<Element>(node) ? &downcast<Element>(node) : nullptr)
     {
         if (element)
             element->setBeingDragged(true);

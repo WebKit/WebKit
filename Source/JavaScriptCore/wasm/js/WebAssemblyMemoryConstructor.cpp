@@ -42,7 +42,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyMemoryConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyMemory, nullptr, CREATE_METHOD_TABLE(WebAssemblyMemoryConstructor) };
+const ClassInfo WebAssemblyMemoryConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyMemory, nullptr, CREATE_METHOD_TABLE(WebAssemblyMemoryConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyMemory);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyMemory);
@@ -71,15 +71,15 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
 
     Wasm::PageCount initialPageCount;
     {
-        Identifier initial = Identifier::fromString(vm, "initial"_s);
+        Identifier initial = Identifier::fromString(vm, "initial");
         JSValue initSizeValue = memoryDescriptor->get(globalObject, initial);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        Identifier minimum = Identifier::fromString(vm, "minimum"_s);
+        Identifier minimum = Identifier::fromString(vm, "minimum");
         JSValue minSizeValue = memoryDescriptor->get(globalObject, minimum);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!minSizeValue.isUndefined() && !initSizeValue.isUndefined()) {
             // Error because both specified.
-            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Memory 'initial' and 'minimum' options are specified at the same time"_s);
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Memory 'initial' and 'minimum' options are specified at the same time");
         }
         if (!initSizeValue.isUndefined())
             minSizeValue = initSizeValue;
@@ -97,7 +97,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
     {
         // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
         // https://webidl.spec.whatwg.org/#idl-dictionaries
-        Identifier maximum = Identifier::fromString(vm, "maximum"_s);
+        Identifier maximum = Identifier::fromString(vm, "maximum");
         JSValue maxSizeValue = memoryDescriptor->get(globalObject, maximum);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!maxSizeValue.isUndefined()) {
@@ -116,7 +116,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
 
     Wasm::MemorySharingMode sharingMode = Wasm::MemorySharingMode::Default;
     if (Options::useSharedArrayBuffer()) {
-        JSValue sharedValue = memoryDescriptor->get(globalObject, Identifier::fromString(vm, "shared"_s));
+        JSValue sharedValue = memoryDescriptor->get(globalObject, Identifier::fromString(vm, "shared"));
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         bool shared = sharedValue.toBoolean(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());

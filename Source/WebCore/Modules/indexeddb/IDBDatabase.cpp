@@ -28,6 +28,7 @@
 
 #include "DOMStringList.h"
 #include "EventNames.h"
+#include "EventQueue.h"
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
 #include "IDBIndex.h"
@@ -44,13 +45,6 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(IDBDatabase);
-
-static Vector<String> sortAndRemoveDuplicates(Vector<String>&& vector)
-{
-    std::sort(vector.begin(), vector.end(), WTF::codePointCompareLessThan);
-    removeRepeatedElements(vector);
-    return WTFMove(vector);
-}
 
 Ref<IDBDatabase> IDBDatabase::create(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBResultData& resultData)
 {
@@ -109,7 +103,9 @@ Ref<DOMStringList> IDBDatabase::objectStoreNames() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
-    auto objectStoreNames = DOMStringList::create(m_info.objectStoreNames());
+    auto objectStoreNames = DOMStringList::create();
+    for (auto& name : m_info.objectStoreNames())
+        objectStoreNames->append(name);
     objectStoreNames->sort();
     return objectStoreNames;
 }
@@ -180,12 +176,18 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfString
         return Exception { InvalidStateError, "Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing."_s };
 
     Vector<String> objectStores;
-    if (std::holds_alternative<Vector<String>>(storeNames)) {
-        // It is valid for JavaScript to pass in a list of object store names with the same name listed twice,
-        // so we need to drop the duplicates.
-        objectStores = sortAndRemoveDuplicates(std::get<Vector<String>>(WTFMove(storeNames)));
-    } else
-        objectStores = { std::get<String>(WTFMove(storeNames)) };
+    if (std::holds_alternative<Vector<String>>(storeNames))
+        objectStores = WTFMove(std::get<Vector<String>>(storeNames));
+    else
+        objectStores.append(WTFMove(std::get<String>(storeNames)));
+
+    // It is valid for javascript to pass in a list of object store names with the same name listed twice,
+    // so we need to put them all in a set to get a unique list.
+    HashSet<String> objectStoreSet;
+    for (auto& objectStore : objectStores)
+        objectStoreSet.add(objectStore);
+
+    objectStores = copyToVector(objectStoreSet);
 
     for (auto& objectStoreName : objectStores) {
         if (m_info.hasObjectStore(objectStoreName))
@@ -316,8 +318,15 @@ void IDBDatabase::stop()
 
     removeAllEventListeners();
 
-    for (auto& id : copyToVector(m_activeTransactions.keys())) {
-        if (auto* transaction = m_activeTransactions.get(id))
+    Vector<IDBResourceIdentifier> transactionIdentifiers;
+    transactionIdentifiers.reserveInitialCapacity(m_activeTransactions.size());
+
+    for (auto& id : m_activeTransactions.keys())
+        transactionIdentifiers.uncheckedAppend(id);
+
+    for (auto& id : transactionIdentifiers) {
+        IDBTransaction* transaction = m_activeTransactions.get(id);
+        if (transaction)
             transaction->stop();
     }
 

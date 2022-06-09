@@ -44,7 +44,7 @@ private:
     void element() const = delete;
     bool requiresLayer() const override;
     bool isCanvas() const override { return true; }
-    ASCIILiteral renderName() const override { return "RenderHTMLCanvas"_s; }
+    const char* renderName() const override { return "RenderHTMLCanvas"; }
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
     void intrinsicSizeChanged() override { canvasSizeChanged(); }
 };

@@ -1046,9 +1046,9 @@ void RenderMultiColumnSet::updateHitTestResult(HitTestResult& result, const Layo
     }
 }
 
-ASCIILiteral RenderMultiColumnSet::renderName() const
+const char* RenderMultiColumnSet::renderName() const
 {    
-    return "RenderMultiColumnSet"_s;
+    return "RenderMultiColumnSet";
 }
 
 }

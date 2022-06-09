@@ -41,7 +41,7 @@ AggregateErrorPrototype::AggregateErrorPrototype(VM& vm, Structure* structure)
 void AggregateErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm, errorTypeName(ErrorType::AggregateError));
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 } // namespace JSC

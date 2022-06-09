@@ -1,6 +1,0 @@
-Green
-Green
-
-PASS SVG text querying SVG root size container
-PASS div in foreignObject querying SVG root size container
-

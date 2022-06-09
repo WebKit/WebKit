@@ -1,5 +1,0 @@
-PASS result?.contextMenu?.items?.includes('Open Link') is true
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

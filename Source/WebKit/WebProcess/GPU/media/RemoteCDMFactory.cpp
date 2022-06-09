@@ -68,7 +68,7 @@ bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)
     return supported;
 }
 
-std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem, const CDMPrivateClient&)
+std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem)
 {
     RemoteCDMIdentifier identifier;
     RemoteCDMConfiguration configuration;

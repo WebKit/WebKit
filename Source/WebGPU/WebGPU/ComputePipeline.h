@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,49 +25,34 @@
 
 #pragma once
 
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
-struct WGPUComputePipelineImpl {
-};
-
 namespace WebGPU {
 
 class BindGroupLayout;
-class Device;
 
-// https://gpuweb.github.io/gpuweb/#gpucomputepipeline
-class ComputePipeline : public WGPUComputePipelineImpl, public RefCounted<ComputePipeline> {
+class ComputePipeline : public RefCounted<ComputePipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState, Device& device)
+    static Ref<ComputePipeline> create()
     {
-        return adoptRef(*new ComputePipeline(computePipelineState, device));
-    }
-    static Ref<ComputePipeline> createInvalid(Device& device)
-    {
-        return adoptRef(*new ComputePipeline(device));
+        return adoptRef(*new ComputePipeline());
     }
 
     ~ComputePipeline();
 
-    BindGroupLayout* getBindGroupLayout(uint32_t groupIndex);
-    void setLabel(String&&);
-
-    bool isValid() const { return m_computePipelineState; }
-
-    id<MTLComputePipelineState> computePipelineState() const { return m_computePipelineState; }
-
-    Device& device() const { return m_device; }
+    Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
+    void setLabel(const char*);
 
 private:
-    ComputePipeline(id<MTLComputePipelineState>, Device&);
-    ComputePipeline(Device&);
-
-    const id<MTLComputePipelineState> m_computePipelineState { nil };
-
-    const Ref<Device> m_device;
+    ComputePipeline();
 };
 
 } // namespace WebGPU
+
+struct WGPUComputePipelineImpl {
+    Ref<WebGPU::ComputePipeline> computePipeline;
+};

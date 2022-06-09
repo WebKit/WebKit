@@ -29,9 +29,6 @@
 #include "pas_allocator_index.h"
 #include "pas_compact_atomic_thread_local_cache_layout_node.h"
 #include "pas_config.h"
-#include "pas_hashtable.h"
-#include "pas_lock.h"
-#include "pas_thread_local_cache_layout_entry.h"
 #include "pas_thread_local_cache_layout_node.h"
 #include "pas_utils.h"
 
@@ -47,16 +44,6 @@ typedef struct pas_thread_local_cache_layout_segment pas_thread_local_cache_layo
 
 PAS_API extern pas_thread_local_cache_layout_segment* pas_thread_local_cache_layout_first_segment;
 
-PAS_CREATE_HASHTABLE(pas_thread_local_cache_layout_hashtable,
-                     pas_thread_local_cache_layout_entry,
-                     pas_thread_local_cache_layout_key);
-
-/* Lock used internally for accessing the hashtable_instance. You don't have to use this lock unless you
-   access the hashtable_instance directly. */
-PAS_DECLARE_LOCK(pas_thread_local_cache_layout_hashtable);
-
-PAS_API extern pas_thread_local_cache_layout_hashtable pas_thread_local_cache_layout_hashtable_instance;
-
 /* Clients can use this to force the next call to add to go to this index. */
 PAS_API extern pas_allocator_index pas_thread_local_cache_layout_next_allocator_index;
 
@@ -71,10 +58,6 @@ PAS_API pas_allocator_index pas_thread_local_cache_layout_duplicate(
 
 PAS_API pas_allocator_index pas_thread_local_cache_layout_add_view_cache(
     pas_segregated_size_directory* directory);
-
-/* You don't need to hold any locks to use this because this uses its own lock behind the scenes. */
-PAS_API pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_node_for_index(
-    pas_allocator_index index);
 
 PAS_API pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_last_node(void);
 

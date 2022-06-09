@@ -97,16 +97,16 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
     String attributeValue;
 
     if (assignmentPosition != notFound) {
-        attributeName = attribute.left(assignmentPosition).stripWhiteSpace();
+        attributeName = attribute.substring(0, assignmentPosition).stripWhiteSpace();
         attributeValue = attribute.substring(assignmentPosition + 1).stripWhiteSpace();
     } else
         attributeName = attribute.stripWhiteSpace();
 
-    if (equalLettersIgnoringASCIICase(attributeName, "httponly"_s))
+    if (equalIgnoringASCIICase(attributeName, "httponly"))
         result.httpOnly = true;
-    else if (equalLettersIgnoringASCIICase(attributeName, "secure"_s))
+    else if (equalIgnoringASCIICase(attributeName, "secure"))
         result.secure = true;
-    else if (equalLettersIgnoringASCIICase(attributeName, "domain"_s)) {
+    else if (equalIgnoringASCIICase(attributeName, "domain")) {
         if (attributeValue.isEmpty())
             return;
 
@@ -116,7 +116,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
 
         result.domain = attributeValue.convertToASCIILowercase();
 
-    } else if (equalLettersIgnoringASCIICase(attributeName, "max-age"_s)) {
+    } else if (equalIgnoringASCIICase(attributeName, "max-age")) {
         if (auto maxAgeSeconds = parseIntegerAllowingTrailingJunk<int64_t>(attributeValue)) {
             result.expires = (WallTime::now().secondsSinceEpoch().value() + *maxAgeSeconds) * msPerSecond;
             result.session = false;
@@ -128,7 +128,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             result.session = true;
             result.expires = std::nullopt;
         }
-    } else if (equalLettersIgnoringASCIICase(attributeName, "expires"_s) && !hasMaxAge) {
+    } else if (equalIgnoringASCIICase(attributeName, "expires") && !hasMaxAge) {
         if (auto expiryTime = parseExpiresMS(attributeValue.utf8().data())) {
             result.expires = expiryTime.value();
             result.session = false;
@@ -136,7 +136,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             result.session = true;
             result.expires = std::nullopt;
         }
-    } else if (equalLettersIgnoringASCIICase(attributeName, "path"_s)) {
+    } else if (equalIgnoringASCIICase(attributeName, "path")) {
         if (!attributeValue.isEmpty() && attributeValue.startsWith('/'))
             result.path = attributeValue;
         else
@@ -153,7 +153,7 @@ std::optional<Cookie> parseCookieHeader(const String& cookieLine)
 
     size_t separatorPosition = cookieLine.find(';');
 
-    String cookiePair = separatorPosition == notFound ? cookieLine : cookieLine.left(separatorPosition);
+    String cookiePair = separatorPosition == notFound ? cookieLine : cookieLine.substring(0, separatorPosition);
 
     String cookieName;
     String cookieValue;
@@ -164,7 +164,7 @@ std::optional<Cookie> parseCookieHeader(const String& cookieLine)
     if (assignmentPosition == notFound)
         cookieValue = cookiePair;
     else {
-        cookieName = cookiePair.left(assignmentPosition);
+        cookieName = cookiePair.substring(0, assignmentPosition);
         cookieValue = cookiePair.substring(assignmentPosition + 1);
     }
 
@@ -187,13 +187,13 @@ String defaultPathForURL(const URL& url)
 
     String path = url.path().toString();
     if (path.isEmpty() || !path.startsWith('/'))
-        return "/"_s;
+        return "/";
 
     auto lastSlashPosition = path.reverseFind('/');
     if (!lastSlashPosition)
-        return "/"_s;
+        return "/";
 
-    return path.left(lastSlashPosition);
+    return path.substring(0, lastSlashPosition);
 }
 
 } // namespace CookieUtil

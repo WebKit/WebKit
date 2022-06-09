@@ -35,52 +35,82 @@
 
 namespace JSC {
 
-void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, CodeBlock* optimizedCodeBlock, JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode) const
+MethodOfGettingAValueProfile MethodOfGettingAValueProfile::fromLazyOperand(
+    CodeBlock* codeBlock, const LazyOperandValueProfileKey& key)
 {
-    if (m_kind == Kind::None)
-        return;
+    MethodOfGettingAValueProfile result;
+    result.m_kind = LazyOperand;
+    result.u.lazyOperand.codeBlock = codeBlock;
+    result.u.lazyOperand.bytecodeOffset = key.bytecodeIndex();
+    result.u.lazyOperand.operand = key.operand();
+    return result;
+}
 
-    CodeBlock* baselineCodeBlock = optimizedCodeBlock->baselineAlternative();
-    CodeBlock* profiledBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOrigin, baselineCodeBlock);
+void MethodOfGettingAValueProfile::emitReportValue(CCallHelpers& jit, JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode) const
+{
     switch (m_kind) {
-    case Kind::None:
-        RELEASE_ASSERT_NOT_REACHED();
+    case None:
         return;
         
-    case Kind::LazyOperandValueProfile: {
-        LazyOperandValueProfileKey key(m_codeOrigin.bytecodeIndex(), Operand::fromBits(m_rawOperand));
+    case Ready:
+        jit.storeValue(regs, u.profile->specFailBucket(0));
+        return;
         
-        ConcurrentJSLocker locker(profiledBlock->m_lock);
-        LazyOperandValueProfile* profile = profiledBlock->lazyOperandValueProfiles(locker).add(locker, key);
+    case LazyOperand: {
+        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, u.lazyOperand.operand);
+        
+        ConcurrentJSLocker locker(u.lazyOperand.codeBlock->m_lock);
+        LazyOperandValueProfile* profile =
+            u.lazyOperand.codeBlock->lazyOperandValueProfiles(locker).add(locker, key);
         jit.storeValue(regs, profile->specFailBucket(0));
         return;
     }
         
-    case Kind::UnaryArithProfile: {
-        if (UnaryArithProfile* result = profiledBlock->unaryArithProfileForBytecodeIndex(m_codeOrigin.bytecodeIndex()))
-            result->emitObserveResult(jit, regs, tempGPR, mode);
+    case UnaryArithProfileReady: {
+        u.unaryArithProfile->emitObserveResult(jit, regs, tempGPR, mode);
         return;
     }
 
-    case Kind::BinaryArithProfile: {
-        if (BinaryArithProfile* result = profiledBlock->binaryArithProfileForBytecodeIndex(m_codeOrigin.bytecodeIndex()))
-            result->emitObserveResult(jit, regs, tempGPR, mode);
-        return;
-    }
-
-    case Kind::ArgumentValueProfile: {
-        auto& valueProfile = profiledBlock->valueProfileForArgument(Operand::fromBits(m_rawOperand).toArgument());
-        jit.storeValue(regs, valueProfile.specFailBucket(0));
-        return;
-    }
-
-    case Kind::BytecodeValueProfile: {
-        auto& valueProfile = profiledBlock->valueProfileForBytecodeIndex(m_codeOrigin.bytecodeIndex());
-        jit.storeValue(regs, valueProfile.specFailBucket(0));
+    case BinaryArithProfileReady: {
+        u.binaryArithProfile->emitObserveResult(jit, regs, tempGPR, mode);
         return;
     }
     }
     
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void MethodOfGettingAValueProfile::reportValue(JSValue value)
+{
+    switch (m_kind) {
+    case None:
+        return;
+
+    case Ready:
+        *u.profile->specFailBucket(0) = JSValue::encode(value);
+        return;
+
+    case LazyOperand: {
+        LazyOperandValueProfileKey key(u.lazyOperand.bytecodeOffset, u.lazyOperand.operand);
+
+        ConcurrentJSLocker locker(u.lazyOperand.codeBlock->m_lock);
+        LazyOperandValueProfile* profile =
+            u.lazyOperand.codeBlock->lazyOperandValueProfiles(locker).add(locker, key);
+        *profile->specFailBucket(0) = JSValue::encode(value);
+        return;
+    }
+
+    case UnaryArithProfileReady: {
+        u.unaryArithProfile->observeResult(value);
+        return;
+    }
+
+    case BinaryArithProfileReady: {
+        u.binaryArithProfile->observeResult(value);
+        return;
+    }
+    }
+
     RELEASE_ASSERT_NOT_REACHED();
 }
 

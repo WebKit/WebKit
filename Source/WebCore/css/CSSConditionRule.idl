@@ -32,5 +32,5 @@ typedef USVString CSSOMString;
 [
     Exposed=Window
 ] interface CSSConditionRule : CSSGroupingRule {
-    readonly attribute CSSOMString conditionText;
+    attribute CSSOMString conditionText;
 };

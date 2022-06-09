@@ -35,6 +35,7 @@ dictionary ClipboardItemOptions {
 [
     Exposed=Window,
     EnabledBySetting=AsyncClipboardAPIEnabled,
+    ImplementationLacksVTable,
     GenerateIsReachable=ReachableFromNavigator
 ] interface ClipboardItem {
     constructor(record<DOMString, ClipboardItemData> items, optional ClipboardItemOptions options);

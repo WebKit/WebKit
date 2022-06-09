@@ -26,9 +26,10 @@
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
-    TaggedWrapper,
+    ImplementationLacksVTable,
+    TaggedWrapper
 ] interface DOMMatrixReadOnly {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
+    [CallWith=ScriptExecutionContext] constructor(optional (DOMString or sequence<unrestricted double>) init);
 
     [NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other);
     [NewObject] static DOMMatrixReadOnly fromFloat32Array(Float32Array array32);

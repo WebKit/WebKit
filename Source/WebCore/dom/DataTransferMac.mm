@@ -32,7 +32,6 @@
 #import "Document.h"
 #import "DragImage.h"
 #import "Element.h"
-#import "FrameDestructionObserverInlines.h"
 
 namespace WebCore {
 

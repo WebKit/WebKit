@@ -17,12 +17,4 @@ features: [Temporal]
 ---*/
 
 const yearmonth = new Temporal.PlainYearMonth(2000, 5);
-
-const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
-for (const overflow of badOverflows) {
-  assert.throws(
-    RangeError,
-    () => yearmonth.with({ month: 8 }, { overflow }),
-    `invalid overflow ("${overflow}")`
-  );
-}
+assert.throws(RangeError, () => yearmonth.with({ month: 8 }, { overflow: "other string" }));

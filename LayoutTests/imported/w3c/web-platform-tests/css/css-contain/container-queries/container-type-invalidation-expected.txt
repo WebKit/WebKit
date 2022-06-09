@@ -1,4 +1,0 @@
-Test
-
-PASS Changing the container type invalidates relevant descendants
-

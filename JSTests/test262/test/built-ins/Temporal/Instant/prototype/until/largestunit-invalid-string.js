@@ -9,28 +9,4 @@ features: [Temporal]
 
 const earlier = new Temporal.Instant(1_000_000_000_000_000_000n);
 const later = new Temporal.Instant(1_000_090_061_987_654_321n);
-const badValues = [
-  "era",
-  "eraYear",
-  "year",
-  "month",
-  "week",
-  "day",
-  "millisecond\0",
-  "mill\u0131second",
-  "SECOND",
-  "eras",
-  "eraYears",
-  "years",
-  "months",
-  "weeks",
-  "days",
-  "milliseconds\0",
-  "mill\u0131seconds",
-  "SECONDS",
-  "other string"
-];
-for (const largestUnit of badValues) {
-  assert.throws(RangeError, () => earlier.until(later, { largestUnit }),
-    `"${largestUnit}" is not a valid value for largestUnit`);
-}
+assert.throws(RangeError, () => earlier.until(later, { largestUnit: "other string" }));

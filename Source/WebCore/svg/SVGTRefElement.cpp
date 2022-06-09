@@ -24,7 +24,6 @@
 #include "SVGTRefElement.h"
 
 #include "AddEventListenerOptions.h"
-#include "ElementRareData.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "MutationEvent.h"
@@ -146,10 +145,10 @@ void SVGTRefElement::updateReferencedText(Element* target)
     ASSERT(root);
     ScriptDisallowedScope::EventAllowedScope allowedScope(*root);
     if (!root->firstChild())
-        root->appendChild(Text::create(document(), WTFMove(textContent)));
+        root->appendChild(Text::create(document(), textContent));
     else {
         ASSERT(root->firstChild()->isTextNode());
-        root->firstChild()->setTextContent(WTFMove(textContent));
+        root->firstChild()->setTextContent(textContent);
     }
 }
 
@@ -158,10 +157,12 @@ void SVGTRefElement::detachTarget()
     // Remove active listeners and clear the text content.
     m_targetListener->detach();
 
+    String emptyContent;
+
     ASSERT(shadowRoot());
     RefPtr container = shadowRoot()->firstChild();
     if (container)
-        container->setTextContent(String { });
+        container->setTextContent(emptyContent);
 
     if (!isConnected())
         return;
@@ -183,7 +184,7 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGURIReference::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         buildPendingResource();
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

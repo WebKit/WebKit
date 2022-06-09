@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,10 +95,7 @@ public:
 
     RealtimeMediaSource& source() { return m_source.get(); }
     const RealtimeMediaSource& source() const { return m_source.get(); }
-    RealtimeMediaSource::Type type() const { return m_source->type(); }
-    CaptureDevice::DeviceType deviceType() const { return m_source->deviceType(); }
-    bool isVideo() const { return m_source->isVideo(); }
-    bool isAudio() const { return m_source->isAudio(); }
+    WEBCORE_EXPORT RealtimeMediaSource::Type type() const;
 
     void endTrack();
 
@@ -161,7 +158,7 @@ private:
 #endif
 };
 
-typedef Vector<Ref<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;
+typedef Vector<RefPtr<MediaStreamTrackPrivate>> MediaStreamTrackPrivateVector;
 
 } // namespace WebCore
 

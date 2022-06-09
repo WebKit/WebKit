@@ -97,8 +97,6 @@ class TestContributor(unittest.TestCase):
             Contributor('Aakash Jain', ['aakashjain@apple.com']),
         )
 
-        self.assertNotEqual(Contributor('Jonathan Bedard', ['jbedard@apple.com']), None)
-
     def test_string_comparison(self):
         self.assertEqual(
             Contributor('Jonathan Bedard', ['jbedard@apple.com']),

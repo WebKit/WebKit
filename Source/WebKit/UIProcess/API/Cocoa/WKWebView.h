@@ -33,10 +33,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#if TARGET_OS_IOS
-@class UIFindInteraction;
-#endif
-
 @class WKBackForwardList;
 @class WKBackForwardListItem;
 @class WKContentWorld;
@@ -410,7 +406,7 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
 
 /*! @abstract Set microphone capture state of a WKWebView.
  @param state state to apply for capture.
- @param completionHandler A block to invoke after the microphone state has been changed.
+ @param completionHandler A block to invoke after the camera state has been changed.
  @discussion
  If value is WKMediaCaptureStateNone, this will stop any microphone capture.
  If value is WKMediaCaptureStateMuted, any active microphone capture will become muted.
@@ -642,20 +638,6 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 @property (nonatomic, readonly) UIEdgeInsets minimumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, readonly) UIEdgeInsets maximumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)setMinimumViewportInset:(UIEdgeInsets)minimumViewportInset maximumViewportInset:(UIEdgeInsets)maximumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
-#else
-@property (nonatomic, readonly) NSEdgeInsets minimumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
-@property (nonatomic, readonly) NSEdgeInsets maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
-- (void)setMinimumViewportInset:(NSEdgeInsets)minimumViewportInset maximumViewportInset:(NSEdgeInsets)maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
-#endif
-
-#if TARGET_OS_IOS
-
-/*! @abstract Enables the web view's built-in find interaction. */
-@property (nonatomic, readwrite, getter=isFindInteractionEnabled) BOOL findInteractionEnabled WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
-/*! @abstract If  @link findInteractionEnabled @/link is set to true, returns this web view's built-in find interaction. Otherwise, nil. */
-@property (nonatomic, nullable, readonly) UIFindInteraction *findInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
 #endif
 
 @end

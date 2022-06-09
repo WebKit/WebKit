@@ -45,7 +45,7 @@
 
     [CheckSecurityForNode] Document getSVGDocument();
 
-    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
+    [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute DOMString referrerPolicy;
 
-    [CEReactions, EnabledBySetting=LazyIframeLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
+    [CEReactions, EnabledBySetting=LazyIframeLoadingEnabled, ImplementedAs=loadingForBindings] attribute DOMString loading;
 };

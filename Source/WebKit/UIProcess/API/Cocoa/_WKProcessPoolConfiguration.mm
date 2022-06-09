@@ -158,19 +158,19 @@
         return @[ ];
 
     return createNSArray(paths, [] (auto& path) {
-        return [NSURL fileURLWithFileSystemRepresentation:path.utf8().data() isDirectory:NO relativeToURL:nil];
+        return [NSURL fileURLWithFileSystemRepresentation:path.data() isDirectory:NO relativeToURL:nil];
     }).autorelease();
 }
 
 - (void)setAdditionalReadAccessAllowedURLs:(NSArray<NSURL *> *)additionalReadAccessAllowedURLs
 {
-    Vector<String> paths;
+    Vector<CString> paths;
     paths.reserveInitialCapacity(additionalReadAccessAllowedURLs.count);
     for (NSURL *url in additionalReadAccessAllowedURLs) {
         if (!url.isFileURL)
             [NSException raise:NSInvalidArgumentException format:@"%@ is not a file URL", url];
 
-        paths.uncheckedAppend(String::fromUTF8(url.fileSystemRepresentation));
+        paths.uncheckedAppend(url.fileSystemRepresentation);
     }
 
     _processPoolConfiguration->setAdditionalReadAccessAllowedPaths(WTFMove(paths));
@@ -401,16 +401,6 @@
 - (void)setConfigureJSCForTesting:(BOOL)value
 {
     _processPoolConfiguration->setShouldConfigureJSCForTesting(value);
-}
-
-- (NSString *)timeZoneOverride
-{
-    return _processPoolConfiguration->timeZoneOverride();
-}
-
-- (void)setTimeZoneOverride:(NSString *)timeZone
-{
-    _processPoolConfiguration->setTimeZoneOverride(timeZone);
 }
 
 #pragma mark WKObject protocol implementation

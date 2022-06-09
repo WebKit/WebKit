@@ -43,9 +43,12 @@ Buildbot = function(baseURL, queuesInfo, options)
     this._authenticationStatus = Buildbot.AuthenticationStatus.Unauthenticated;
 
     this.baseURLForResults = options ? options.baseURLForResults : null;
+    this.VERSION_LESS_THAN_09 = options && options.USE_BUILDBOT_VERSION_LESS_THAN_09;
 
-    this._builderNameToIDMap = {};
-    this._computeBuilderNameToIDMap();
+    if (!this.VERSION_LESS_THAN_09) {
+        this._builderNameToIDMap = {};
+        this._computeBuilderNameToIDMap();
+    }
 
     for (var id in queuesInfo) {
         if (queuesInfo[id].combinedQueues) {
@@ -165,6 +168,9 @@ Buildbot.prototype = {
 
     buildPageURLForIteration: function(iteration)
     {
+        if (this.VERSION_LESS_THAN_09)
+            return this.baseURL + "builders/" + encodeURIComponent(iteration.queue.id) + "/builds/" + iteration.id;
+
         // FIXME: Remove this._builderNameToIDMap lookup after <https://github.com/buildbot/buildbot/issues/3465> is fixed.
         return this.baseURL + "#/builders/" + encodeURIComponent(this._builderNameToIDMap[iteration.queue.id]) + "/builds/" + iteration.id;
     },
@@ -181,19 +187,19 @@ Buildbot.prototype = {
 
     layoutTestResultsDirectoryURLForIteration: function(iteration)
     {
-        var underscoreSeparatedCommits = "";
+        var underscoreSeparatedRevisions = "r";
         sortDictionariesByOrder(Dashboard.Repository).forEach(function(repository) {
             if (iteration.revision[repository.name]) {
-                if (underscoreSeparatedCommits.length > 1)
-                    underscoreSeparatedCommits += "_";
-                underscoreSeparatedCommits += iteration.revision[repository.name];
+                if (underscoreSeparatedRevisions.length > 1)
+                    underscoreSeparatedRevisions += "_";
+                underscoreSeparatedRevisions += iteration.revision[repository.name];
             }
         });
         var url = this.baseURL + "results/";
         if (this.baseURLForResults) {
             url = this.baseURLForResults;
         }
-        return url + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent(underscoreSeparatedCommits + " (" + iteration.id + ")");
+        return url + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent(underscoreSeparatedRevisions + " (" + iteration.id + ")");
     },
 
     layoutTestResultsURLForIteration: function(iteration)

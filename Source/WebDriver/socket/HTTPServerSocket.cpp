@@ -94,7 +94,7 @@ void HTTPRequestHandler::didReceive(RemoteInspectorSocketEndpoint&, ConnectionID
         HTTPRequestHandler::Response response {
             400,
             "text/html; charset=utf-8",
-            "<h1>Bad client</h1> Invalid HTML format"_s,
+            "<h1>Bad client</h1> Invalid HTML format",
         };
         sendResponse(WTFMove(response));
         return;

@@ -92,10 +92,6 @@
         "Indicates that this CSS property is color-related (populates",
         "CSSProperty::isColorProperty().",
         "",
-        "* fast-path-inherited:",
-        "Indicates that this CSS property can use the fast-path inheritance mechanism.",
-        "This generates code that disables the mechanism if the property is explicitly mutated.",
-        "",
         "* logical-property-group:",
         "Indicates that this CSS property belongs to a logical property group",
         "(https://drafts.csswg.org/css-logical/#logical-property-group)",
@@ -146,13 +142,11 @@
         "in CSS cascading order.",
         "",
         "* related-property:",
-        "Indicates another property which shares a computed style with the current one.",
-        "Typically used for the prefixed or unprefixed version of the same property, e.g.",
-        "-webkit-box-shadow has box-shadow as the related property, and vice versa.",
-        "Properties with this flag can't be high-priority, they are deferred to be applied",
-        "after low-priority ones, and they are specially handled to apply in parse order.",
-        "So if a declaration block contains both properties, they will be applied in the",
-        "specified order, not alphabetically within their priority bucket as usual.",
+        "Indicates the prefixed or unprefixed version of the same property,",
+        "e.g. -webkit-text-orientation has a related property text-orientation",
+        "When parsing high priority CSS properties with both prefixed and unprefixed",
+        "versions, this flig will help the parser to mark all related properties ",
+        "as seen when one is seen. This could enforce the 'last-one-wins' rule.",
         "",
         "* aliases:",
         "An array of the alternative names for this property. Aliases are folded at",
@@ -175,14 +169,6 @@
         "* settings-flag:",
         "The name of the flag on Settings (e.g. \"CSSOMViewSmoothScrolling\")",
         "that conditionally enables the property.",
-        "",
-        "* computable:",
-        "Whether the property should be indexed on computed styles.",
-        "If omitted, the property will be computable by default,",
-        "except if it has \"skip-builder\" and is not logical,",
-        "or if it's a shorthand with multiple indexed longhands.",
-        "Internal properties (\"internal-only\") are never computable,",
-        "and setting this flag to true is an error.",
         "",
         "2. Lesser known capabilities of this file format",
         "",
@@ -262,8 +248,7 @@
             "codegen-properties": {
                 "visited-link-color-support": true,
                 "color-property": true,
-                "high-priority": true,
-                "fast-path-inherited": true
+                "high-priority": true
             },
             "status": {
                 "comment": "All the values from CSS Color Level 3 are supported, as well as the 8- and 4-digit forms of hex color, and the color() function."
@@ -705,6 +690,7 @@
             ],
             "codegen-properties": {
                 "custom": "Value",
+                "related-property": "-webkit-text-orientation",
                 "high-priority": true
             },
             "specification": {
@@ -720,6 +706,10 @@
                     "value": "sideways-right",
                     "status": "deprecated"
                 },
+                {
+                    "value": "vertical-right",
+                    "status": "non-standard"
+                },
                 "mixed",
                 "upright"
             ],
@@ -727,9 +717,9 @@
                 "aliases": [
                     "-epub-text-orientation"
                 ],
-                "longhands": [
-                    "text-orientation"
-                ]
+                "related-property": "text-orientation",
+                "custom": "Value",
+                "high-priority": true
             },
             "specification": {
                 "category": "css-writing-modes",
@@ -894,7 +884,6 @@
         },
         "all": {
             "codegen-properties": {
-                "computable": false,
                 "longhands": [
                     "all"
                 ]
@@ -925,25 +914,6 @@
                 "url": "https://www.w3.org/TR/css3-animations/#animation-shorthand-property",
                 "keywords": ["animation"],
                 "description": "Used to animate elements"
-            }
-        },
-        "animation-composition": {
-            "values": [
-                "add",
-                "accumulate",
-                "replace"
-            ],
-            "animatable": true,
-            "codegen-properties": {
-                "name-for-methods": "CompositeOperation",
-                "settings-flag": "webAnimationsCompositeOperationsEnabled"
-            },
-            "specification": {
-                "category": "css-animations",
-                "url": "https://drafts.csswg.org/css-animations-2/#animation-composition"
-            },
-            "status": {
-                "status": "experimental"
             }
         },
         "animation-delay": {
@@ -1134,14 +1104,12 @@
                 "border-box",
                 "padding-box",
                 "content-box",
-                "text",
                 {
                     "value": "-webkit-text",
                     "status": "non-standard"
                 }
             ],
             "codegen-properties": {
-                "related-property": "-webkit-background-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true
             },
@@ -1172,7 +1140,6 @@
         },
         "background-origin": {
             "codegen-properties": {
-                "related-property": "-webkit-background-origin",
                 "name-for-methods": "Origin",
                 "fill-layer-property": true
             },
@@ -1263,7 +1230,6 @@
         },
         "background-size": {
             "codegen-properties": {
-                "related-property": "-webkit-background-size",
                 "name-for-methods": "Size",
                 "fill-layer-property": true
             },
@@ -1357,7 +1323,11 @@
                     "border-block-end-width",
                     "border-block-end-style",
                     "border-block-end-color"
-                ]
+                ],
+                "logical-property-group": {
+                    "name": "border",
+                    "resolver": "block-end"
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1434,7 +1404,11 @@
                     "border-block-start-width",
                     "border-block-start-style",
                     "border-block-start-color"
-                ]
+                ],
+                "logical-property-group": {
+                    "name": "border",
+                    "resolver": "block-start"
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1532,7 +1506,11 @@
                     "border-bottom-width",
                     "border-bottom-style",
                     "border-bottom-color"
-                ]
+                ],
+                "logical-property-group": {
+                    "name": "border",
+                    "resolver": "bottom"
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1559,7 +1537,8 @@
                 "aliases": [
                     "-webkit-border-bottom-left-radius"
                 ],
-                "custom": "All",
+                "initial": "initialBorderRadius",
+                "custom": "Inherit|Value",
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "bottom-left"
@@ -1575,7 +1554,8 @@
                 "aliases": [
                     "-webkit-border-bottom-right-radius"
                 ],
-                "custom": "All",
+                "initial": "initialBorderRadius",
+                "custom": "Inherit|Value",
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "bottom-right"
@@ -1773,7 +1753,11 @@
                     "border-inline-end-width",
                     "border-inline-end-style",
                     "border-inline-end-color"
-                ]
+                ],
+                "logical-property-group": {
+                    "name": "border",
+                    "resolver": "inline-end"
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1850,7 +1834,11 @@
                     "border-inline-start-width",
                     "border-inline-start-style",
                     "border-inline-start-color"
-                ]
+                ],
+                "logical-property-group": {
+                    "name": "border",
+                    "resolver": "inline-start"
+                }
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1948,7 +1936,11 @@
                     "border-left-width",
                     "border-left-style",
                     "border-left-color"
-                ]
+                ],
+                "logical-property-group": {
+                    "name": "border",
+                    "resolver": "left"
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2029,7 +2021,11 @@
                     "border-right-width",
                     "border-right-style",
                     "border-right-color"
-                ]
+                ],
+                "logical-property-group": {
+                    "name": "border",
+                    "resolver": "right"
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2149,7 +2145,11 @@
                     "border-top-width",
                     "border-top-style",
                     "border-top-color"
-                ]
+                ],
+                "logical-property-group": {
+                    "name": "border",
+                    "resolver": "top"
+                }
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2176,7 +2176,8 @@
                 "aliases": [
                     "-webkit-border-top-left-radius"
                 ],
-                "custom": "All",
+                "initial": "initialBorderRadius",
+                "custom": "Inherit|Value",
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "top-left"
@@ -2192,7 +2193,8 @@
                 "aliases": [
                     "-webkit-border-top-right-radius"
                 ],
-                "custom": "All",
+                "initial": "initialBorderRadius",
+                "custom": "Inherit|Value",
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "top-right"
@@ -2272,7 +2274,6 @@
         },
         "box-shadow": {
             "codegen-properties": {
-                "related-property": "-webkit-box-shadow",
                 "custom": "All"
             },
             "specification": {
@@ -2992,9 +2993,9 @@
             "inherited": true,
             "codegen-properties": {
                 "longhands": [
+                    "list-style-type",
                     "list-style-position",
-                    "list-style-image",
-                    "list-style-type"
+                    "list-style-image"
                 ]
             },
             "specification": {
@@ -3346,7 +3347,6 @@
         },
         "mask-clip": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true
             },
@@ -3357,7 +3357,6 @@
         },
         "mask-composite": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-composite",
                 "name-for-methods": "Composite",
                 "fill-layer-property": true
             },
@@ -3381,7 +3380,6 @@
         },
         "mask-mode": {
             "codegen-properties": {
-                "related-property": "-webkit-mask-source-type",
                 "name-for-methods": "MaskMode",
                 "fill-layer-property": true
             },
@@ -3715,23 +3713,7 @@
             },
             "specification": {
                 "category": "css-motion-path",
-                "url": "https://drafts.fxtf.org/motion-1/#offset-rotate-property"
-            }
-        },
-        "offset": {
-            "codegen-properties": {
-                "longhands": [
-                    "offset-path",
-                    "offset-distance",
-                    "offset-position",
-                    "offset-anchor",
-                    "offset-rotate"
-                ],
-                "settings-flag": "cssMotionPathEnabled"
-            },
-            "specification": {
-                "category": "css-motion-path",
-                "url": "https://drafts.fxtf.org/motion-1/#offset-shorthand"
+                "url": "https://drafts.fxtf.org/motion-1/#offset-anchor-property"
             }
         },
         "opacity": {
@@ -3835,16 +3817,9 @@
             }
         },
         "overflow-wrap": {
-            "codegen-properties": {
-                "aliases": [
-                    "word-wrap"
-                ]
-            },
-            "inherited": true,
             "values": [
                 "normal",
-                "break-word",
-                "anywhere"
+                "break-word"
             ],
             "specification": {
                 "category": "css-text",
@@ -3901,11 +3876,7 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "overscrollBehaviorEnabled",
-                "logical-property-group": {
-                    "name": "overscroll-behavior",
-                    "resolver": "horizontal"
-                }
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
@@ -3921,59 +3892,13 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "overscrollBehaviorEnabled",
-                "logical-property-group": {
-                    "name": "overscroll-behavior",
-                    "resolver": "vertical"
-                }
+                "settings-flag": "overscrollBehaviorEnabled"
             },
             "status": {
                 "status": "in development"
             },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-y"
-            }
-        },
-        "overscroll-behavior-inline": {
-            "values": [
-                "contain",
-                "none",
-                "auto"
-            ],
-            "codegen-properties": {
-                "settings-flag": "overscrollBehaviorEnabled",
-                "skip-builder": true,
-                "logical-property-group": {
-                    "name": "overscroll-behavior",
-                    "resolver": "inline"
-                }
-            },
-            "status": {
-                "status": "in development"
-            },
-            "specification": {
-                "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
-            }
-        },
-        "overscroll-behavior-block": {
-            "values": [
-                "contain",
-                "none",
-                "auto"
-            ],
-            "codegen-properties": {
-                "settings-flag": "overscrollBehaviorEnabled",
-                "skip-builder": true,
-                "logical-property-group": {
-                    "name": "overscroll-behavior",
-                    "resolver": "block"
-                }
-            },
-            "status": {
-                "status": "in development"
-            },
-            "specification": {
-                "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
             }
         },
         "pad": {
@@ -4259,17 +4184,13 @@
             }
         },
         "resize": {
+            "inherited": true,
             "values": [
                 "none",
                 "both",
                 "horizontal",
                 "vertical",
-                "block",
-                "inline",
-                {
-                    "value": "auto",
-                    "status": "non-standard"
-                }
+                "auto"
             ],
             "codegen-properties": {
                 "converter": "Resize"
@@ -4594,28 +4515,6 @@
                 "url": "https://www.w3.org/TR/CSS22/text.html#propdef-text-align"
             }
         },
-        "text-align-last": {
-            "inherited": true,
-            "values": [
-                "left",
-                "right",
-                "center",
-                "justify",
-                "start",
-                "end",
-                "auto",
-                "match-parent"
-            ],
-            "codegen-properties": {
-                "converter": "TextAlignLast",
-                "custom": "Initial|Value",
-                "settings-flag": "cssTextAlignLastEnabled"
-            },
-            "specification": {
-                "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#text-align-last-property"
-            }
-        },
         "text-anchor": {
             "inherited": true,
             "values": [
@@ -4632,10 +4531,17 @@
             }
         },
         "text-decoration": {
+            "values": [
+                "underline",
+                "overline",
+                "line-through",
+                {
+                    "value": "blink",
+                    "status": "not considering"
+                }
+            ],
             "codegen-properties": {
-                "longhands": [
-                    "text-decoration-line"
-                ]
+                "converter": "TextDecoration"
             },
             "specification": {
                 "category": "css-22",
@@ -4650,23 +4556,6 @@
             "specification": {
                 "category": "css-22",
                 "url": "https://www.w3.org/TR/CSS22/text.html#propdef-text-indent"
-            }
-        },
-        "text-justify": {
-            "inherited": true,
-            "values": [
-                "inter-word",
-                "inter-character",
-                "distribute",
-                "auto",
-                "none"
-            ],
-            "codegen-properties": {
-                "settings-flag": "cssTextJustifyEnabled"
-            },
-            "specification": {
-                "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#text-justify"
             }
         },
         "text-line-through": {
@@ -5151,6 +5040,24 @@
                 "url": "https://www.w3.org/TR/CSS22/text.html#propdef-word-spacing"
             }
         },
+        "word-wrap": {
+            "inherited": true,
+            "values": [
+                "normal",
+                "break-word"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "OverflowWrap"
+            },
+            "status": {
+                "status": "obsolete",
+                "comment": "Replaced by overflow-wrap"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-3/#overflow-wrap"
+            }
+        },
         "x": {
             "codegen-properties": {
                 "initial": "initialZeroLength",
@@ -5203,17 +5110,64 @@
                 "push-button",
                 "square-button",
                 "button",
+                "button-bevel",
+                "default-button",
+                "inner-spin-button",
                 "listbox",
+                "listitem",
+                "media-controls-background",
+                "media-controls-dark-bar-background",
+                "media-controls-fullscreen-background",
+                "media-controls-light-bar-background",
+                "media-current-time-display",
+                "media-enter-fullscreen-button",
+                "media-exit-fullscreen-button",
+                "media-fullscreen-volume-slider",
+                "media-fullscreen-volume-slider-thumb",
+                "media-mute-button",
+                "media-overlay-play-button",
+                "media-play-button",
+                "media-return-to-realtime-button",
+                "media-rewind-button",
+                "media-seek-back-button",
+                "media-seek-forward-button",
+                "media-slider",
+                "media-sliderthumb",
+                "media-time-remaining-display",
+                "media-toggle-closed-captions-button",
+                "media-volume-slider",
+                "media-volume-slider-container",
+                "media-volume-slider-mute-button",
+                "media-volume-sliderthumb",
                 "menulist",
                 "menulist-button",
+                "menulist-text",
+                "menulist-textfield",
                 "meter",
                 "progress-bar",
+                "progress-bar-value",
                 "slider-horizontal",
                 "slider-vertical",
+                "sliderthumb-horizontal",
+                "sliderthumb-vertical",
+                "caret",
                 "searchfield",
+                "searchfield-decoration",
+                "searchfield-results-decoration",
+                "searchfield-results-button",
+                "searchfield-cancel-button",
+                "snapshotted-plugin-overlay",
                 "textfield",
+                "relevancy-level-indicator",
+                "continuous-capacity-level-indicator",
+                "discrete-capacity-level-indicator",
+                "rating-level-indicator",
                 "-apple-pay-button",
                 "textarea",
+                "attachment",
+                "caps-lock-indicator",
+                "color-well",
+                "list-button",
                 "auto",
                 "none"
             ],
@@ -5238,90 +5192,6 @@
                 "url": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio"
             }
         },
-        "contain-intrinsic-size": {
-            "codegen-properties": {
-                "longhands": [
-                    "contain-intrinsic-width",
-                    "contain-intrinsic-height"
-                ],
-                "settings-flag": "cssContainIntrinsicSizeEnabled"
-            },
-            "status": {
-                "status": "in development"
-            },
-            "specification": {
-                "category": "css-sizing",
-                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
-            }
-        },
-        "contain-intrinsic-height": {
-            "codegen-properties": {
-                "custom": "All",
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
-                "logical-property-group": {
-                    "name": "contain-intrinsic-size",
-                    "resolver": "vertical"
-                }
-            },
-            "status": {
-                "status": "in development"
-            },
-            "specification": {
-                "category": "css-sizing",
-                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
-            }
-        },
-        "contain-intrinsic-width": {
-            "codegen-properties": {
-                "custom": "All",
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
-                "logical-property-group": {
-                    "name": "contain-intrinsic-size",
-                    "resolver": "horizontal"
-                }
-            },
-            "status": {
-                "status": "in development"
-            },
-            "specification": {
-                "category": "css-sizing",
-                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
-            }
-        },
-        "contain-intrinsic-block-size": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
-                "logical-property-group": {
-                    "name": "contain-intrinsic-size",
-                    "resolver": "block"
-                }
-            },
-            "status": {
-                "status": "in development"
-            },
-            "specification": {
-                "category": "css-sizing",
-                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
-            }
-        },
-        "contain-intrinsic-inline-size": {
-            "codegen-properties": {
-                "skip-builder": true,
-                "settings-flag": "cssContainIntrinsicSizeEnabled",
-                "logical-property-group": {
-                    "name": "contain-intrinsic-size",
-                    "resolver": "inline"
-                }
-            },
-            "status": {
-                "status": "in development"
-            },
-            "specification": {
-                "category": "css-sizing",
-                "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
-            }
-        },
         "contain": {
             "codegen-properties": {
                 "custom": "All",
@@ -5333,52 +5203,6 @@
             "specification": {
                 "category": "css-contain",
                 "url": "https://drafts.csswg.org/css-contain-1/"
-            }
-        },
-        "container": {
-            "codegen-properties": {
-                "longhands": [
-                    "container-name",
-                    "container-type"
-                ]
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-contain",
-                "url": "https://drafts.csswg.org/css-contain-3/#container-queries"
-            }
-        },
-        "container-name": {
-            "codegen-properties": {
-                "settings-flag": "cssContainerQueriesEnabled",
-                "converter": "ContainerName",
-                "name-for-methods": "ContainerNames"
-            },
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-contain",
-                "url": "https://drafts.csswg.org/css-contain-3/#container-queries"
-            }
-        },
-        "container-type": {
-            "codegen-properties": {
-                "settings-flag": "cssContainerQueriesEnabled"
-            },
-            "values": [
-                "none",
-                "size",
-                "inline-size"
-            ],
-            "status": {
-                "status": "experimental"
-            },
-            "specification": {
-                "category": "css-contain",
-                "url": "https://drafts.csswg.org/css-contain-3/#container-queries"
             }
         },
         "backface-visibility": {
@@ -5398,21 +5222,18 @@
         },
         "-webkit-background-clip": {
             "codegen-properties": {
-                "related-property": "background-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true
             }
         },
         "-webkit-background-origin": {
             "codegen-properties": {
-                "related-property": "background-origin",
                 "name-for-methods": "Origin",
                 "fill-layer-property": true
             }
         },
         "-webkit-background-size": {
             "codegen-properties": {
-                "related-property": "background-size",
                 "name-for-methods": "Size",
                 "fill-layer-property": true
             },
@@ -5430,16 +5251,8 @@
         },
         "-webkit-border-image": {
             "codegen-properties": {
-                "longhands": [
-                    "border-image-source",
-                    "border-image-slice",
-                    "border-image-width",
-                    "border-image-outset",
-                    "border-image-repeat"
-                ]
-            },
-            "status": {
-                "comment": "Differs from border-image in that it always includes the 'fill' keyword in 'border-image-slice', and makes length values in 'border-image-width' override the corresponding 'border-*-width'."
+                "initial": "initialNinePieceImage",
+                "converter": "BorderImage<CSSPropertyWebkitBorderImage>"
             }
         },
         "-webkit-border-radius": {
@@ -5557,7 +5370,6 @@
         },
         "-webkit-box-shadow": {
             "codegen-properties": {
-                "related-property": "box-shadow",
                 "custom": "All"
             },
             "status": {
@@ -6299,7 +6111,7 @@
             "inherited": true,
             "codegen-properties": {
                 "name-for-methods": "HyphenationString",
-                "converter": "StringOrAutoAtom"
+                "converter": "StringOrAuto"
             },
             "status": {
                 "status": "experimental"
@@ -6435,7 +6247,7 @@
         "-webkit-line-grid": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "StringOrNoneAtom"
+                "converter": "StringOrNone"
             },
             "status": {
                 "status": "experimental"
@@ -6609,7 +6421,6 @@
         },
         "-webkit-mask-clip": {
             "codegen-properties": {
-                "related-property": "mask-clip",
                 "name-for-methods": "Clip",
                 "fill-layer-property": true
             },
@@ -6623,7 +6434,6 @@
         },
         "-webkit-mask-composite": {
             "codegen-properties": {
-                "related-property": "mask-composite",
                 "name-for-methods": "Composite",
                 "fill-layer-property": true
             },
@@ -6637,7 +6447,6 @@
         },
         "-webkit-mask-source-type": {
             "codegen-properties": {
-                "related-property": "mask-mode",
                 "synonym": "mask-mode",
                 "comment": "Deprecated alias for mask-mode, supports an 'auto' value, does not support 'match-source'"
             },
@@ -6709,25 +6518,14 @@
         },
         "perspective": {
             "codegen-properties": {
+                "aliases": [
+                    "-webkit-perspective"
+                ],
                 "conditional-converter": "Perspective"
             },
             "specification": {
                 "category": "css-transforms",
-                "url": "https://www.w3.org/TR/css-transforms-2/#perspective-property"
-            }
-        },
-        "-webkit-perspective": {
-            "codegen-properties": {
-                "longhands": [
-                    "perspective"
-                ]
-            },
-            "specification": {
-                "category": "css-transforms",
-                "url": "https://www.w3.org/TR/css-transforms-2/#perspective-property"
-            },
-            "status": {
-                "comment": "Differs from unprefixed perspective only through support for unitless values, which are interpreted as 'px'."
+                "url": "https://www.w3.org/TR/css-transforms-1/#transform-style-property"
             }
         },
         "perspective-origin": {
@@ -6750,7 +6548,6 @@
                 "aliases": [
                     "-webkit-perspective-origin-x"
                 ],
-                "computable": false,
                 "converter": "PositionComponentX"
             },
             "specification": {
@@ -6763,7 +6560,6 @@
                 "aliases": [
                     "-webkit-perspective-origin-y"
                 ],
-                "computable": false,
                 "converter": "PositionComponentY"
             },
             "specification": {
@@ -6840,7 +6636,6 @@
                 "horizontal"
             ],
             "codegen-properties": {
-                "related-property": "text-combine-upright",
                 "aliases": [
                     "-epub-text-combine"
                 ]
@@ -6853,7 +6648,6 @@
         "text-combine-upright": {
             "inherited": true,
             "codegen-properties": {
-                "related-property": "-webkit-text-combine",
                 "name-for-methods": "TextCombine"
             },
             "values": [
@@ -6863,6 +6657,47 @@
             "specification": {
                 "category": "css-writing-modes",
                 "url": "https://www.w3.org/TR/css-writing-modes-3/#propdef-direction"
+            }
+        },
+        "-webkit-text-align-last": {
+            "inherited": true,
+            "values": [
+                "left",
+                "right",
+                "center",
+                "justify",
+                "start",
+                "end",
+                "auto"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS3_TEXT"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-3/#text-align-last-property"
+            }
+        },
+        "-webkit-text-justify": {
+            "inherited": true,
+            "values": [
+                "inter-word",
+                "distribute",
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "enable-if": "ENABLE_CSS3_TEXT"
+            },
+            "status": {
+                "status": "experimental"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-3/#text-justify"
             }
         },
         "-webkit-text-decoration": {
@@ -6883,20 +6718,12 @@
         },
         "text-decoration-line": {
             "codegen-properties": {
-                "converter": "TextDecorationLine",
+                "name-for-methods": "TextDecoration",
+                "converter": "TextDecoration",
                 "aliases": [
                     "-webkit-text-decoration-line"
                 ]
             },
-            "values": [
-                "underline",
-                "overline",
-                "line-through",
-                {
-                    "value": "blink",
-                    "status": "not considering"
-                }
-            ],
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-line"
@@ -7183,7 +7010,6 @@
                 "aliases": [
                     "-webkit-transform-origin-x"
                 ],
-                "computable": false,
                 "converter": "PositionComponentX"
             },
             "specification": {
@@ -7196,7 +7022,6 @@
                 "aliases": [
                     "-webkit-transform-origin-y"
                 ],
-                "computable": false,
                 "converter": "PositionComponentY"
             },
             "specification": {
@@ -7209,7 +7034,6 @@
                 "aliases": [
                     "-webkit-transform-origin-z"
                 ],
-                "computable": false,
                 "converter": "ComputedLength<float>"
             },
             "specification": {
@@ -7227,14 +7051,25 @@
                 }
             ],
             "codegen-properties": {
-                "aliases": [
-                    "-webkit-transform-style"
-                ],
                 "name-for-methods": "TransformStyle3D"
             },
             "specification": {
                 "category": "css-transforms",
                 "url": "https://www.w3.org/TR/css-transforms-1/#transform-style-property"
+            }
+        },
+        "-webkit-transform-style": {
+            "values": [
+                "flat",
+                "preserve-3d",
+                {
+                    "value": "optimized-3d",
+                    "status": "internal"
+                }
+            ],
+            "codegen-properties": {
+                "name-for-methods": "TransformStyle3D",
+                "comment": "Keeping -webkit-transform-style around is how we'll detect legacy content. At that point, we'll have to add a custom builder and a new TransformStyle3D type. FIXME: this never happened."
             }
         },
         "translate": {
@@ -7285,23 +7120,14 @@
             ],
             "status": "non-standard"
         },
-        "user-select": {
-            "codegen-properties": {
-                "aliases": [
-                    "-webkit-user-select"
-                ]
-            },
+        "-webkit-user-select": {
             "inherited": true,
             "values": [
-                "none",
-                "auto",
-                "text",
-                "all",
-                {
-                    "value": "contain",
-                    "status": "unimplemented"
-                }
+                "element"
             ],
+            "status": {
+                "status": "experimental"
+        },
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-4/#propdef-user-select"
@@ -7757,10 +7583,19 @@
             "status": "non-standard"
         },
         "-apple-trailing-word": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "-webkit-partially-balanced"
+            ],
             "codegen-properties": {
-                "skip-codegen": true
+                "name-for-methods": "TrailingWord",
+                "enable-if": "ENABLE_CSS_TRAILING_WORD"
             },
-            "status": "removed"
+            "status": {
+                "status": "non-standard",
+                "comment": "Needed for feature-detecting the Safari browser. Implementation has no effect."
+            }
         },
         "-apple-pay-button-style": {
             "codegen-properties": {

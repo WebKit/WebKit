@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "LegacyRenderSVGContainer.h"
+#include "RenderSVGContainer.h"
 
 namespace WebCore {
     
@@ -27,7 +27,7 @@ class SVGElement;
 
 // This class is for containers which are never drawn, but do need to support style
 // <defs>, <linearGradient>, <radialGradient> are all good examples
-class RenderSVGHiddenContainer : public LegacyRenderSVGContainer {
+class RenderSVGHiddenContainer : public RenderSVGContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGHiddenContainer);
 public:
     RenderSVGHiddenContainer(SVGElement&, RenderStyle&&);
@@ -37,7 +37,7 @@ protected:
 
 private:
     bool isSVGHiddenContainer() const final { return true; }
-    ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
+    const char* renderName() const override { return "RenderSVGHiddenContainer"; }
 
     void paint(PaintInfo&, const LayoutPoint&) final;
 

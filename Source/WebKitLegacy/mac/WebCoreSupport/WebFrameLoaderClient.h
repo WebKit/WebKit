@@ -193,8 +193,8 @@ private:
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
     bool canShowMIMEType(const WTF::String& MIMEType) const final;
     bool canShowMIMETypeAsHTML(const WTF::String& MIMEType) const final;
-    bool representationExistsForURLScheme(WTF::StringView URLScheme) const final;
-    WTF::String generatedMIMETypeForURLScheme(WTF::StringView URLScheme) const final;
+    bool representationExistsForURLScheme(const WTF::String& URLScheme) const final;
+    WTF::String generatedMIMETypeForURLScheme(const WTF::String& URLScheme) const final;
 
     void frameLoadCompleted() final;
     void saveViewStateToItem(WebCore::HistoryItem&) final;
@@ -207,9 +207,9 @@ private:
 
     void setTitle(const WebCore::StringWithDirection&, const URL&) final;
 
-    RefPtr<WebCore::Frame> createFrame(const WTF::AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
+    RefPtr<WebCore::Frame> createFrame(const WTF::String& name, WebCore::HTMLFrameOwnerElement&) final;
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&,
-    const Vector<WTF::AtomString>&, const Vector<WTF::AtomString>&, const WTF::String&, bool) final;
+    const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
 
 #if ENABLE(WEBGL)

@@ -64,13 +64,8 @@
 
 - (void)close;
 
-#if TARGET_OS_IPHONE
-- (void)addPluginInstanceView:(WAKView *)view;
-- (void)removePluginInstanceView:(WAKView *)view;
-#else
 - (void)addPluginInstanceView:(NSView *)view;
 - (void)removePluginInstanceView:(NSView *)view;
-#endif
 - (void)removePluginInstanceViewsFor:(WebFrame *)webFrame;
 - (void)destroyAllPluginInstanceViews;
 @end

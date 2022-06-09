@@ -47,9 +47,9 @@ public:
         return create(index, WTFMove(pad));
     }
 
-    static Ref<InbandTextTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GstStream* stream)
+    static Ref<InbandTextTrackPrivateGStreamer> create(unsigned index, GRefPtr<GstStream>&& stream)
     {
-        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, stream));
+        return adoptRef(*new InbandTextTrackPrivateGStreamer(index, WTFMove(stream)));
     }
 
     Kind kind() const final { return m_kind; }
@@ -62,7 +62,7 @@ public:
 
 private:
     InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
-    InbandTextTrackPrivateGStreamer(unsigned index, GstStream*);
+    InbandTextTrackPrivateGStreamer(unsigned index, GRefPtr<GstStream>&&);
 
     void notifyTrackOfSample();
 

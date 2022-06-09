@@ -62,41 +62,41 @@ RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(RenderStyl
 void MathMLMencloseElement::addNotationFlags(StringView notation)
 {
     ASSERT(m_notationFlags);
-    if (notation == "longdiv"_s) {
+    if (notation == "longdiv") {
         addNotation(LongDiv);
-    } else if (notation == "roundedbox"_s) {
+    } else if (notation == "roundedbox") {
         addNotation(RoundedBox);
-    } else if (notation == "circle"_s) {
+    } else if (notation == "circle") {
         addNotation(Circle);
-    } else if (notation == "left"_s) {
+    } else if (notation == "left") {
         addNotation(Left);
-    } else if (notation == "right"_s) {
+    } else if (notation == "right") {
         addNotation(Right);
-    } else if (notation == "top"_s) {
+    } else if (notation == "top") {
         addNotation(Top);
-    } else if (notation == "bottom"_s) {
+    } else if (notation == "bottom") {
         addNotation(Bottom);
-    } else if (notation == "updiagonalstrike"_s) {
+    } else if (notation == "updiagonalstrike") {
         addNotation(UpDiagonalStrike);
-    } else if (notation == "downdiagonalstrike"_s) {
+    } else if (notation == "downdiagonalstrike") {
         addNotation(DownDiagonalStrike);
-    } else if (notation == "verticalstrike"_s) {
+    } else if (notation == "verticalstrike") {
         addNotation(VerticalStrike);
-    } else if (notation == "horizontalstrike"_s) {
+    } else if (notation == "horizontalstrike") {
         addNotation(HorizontalStrike);
-    } else if (notation == "updiagonalarrow"_s) {
+    } else if (notation == "updiagonalarrow") {
         addNotation(UpDiagonalArrow);
-    } else if (notation == "phasorangle"_s) {
+    } else if (notation == "phasorangle") {
         addNotation(PhasorAngle);
-    } else if (notation == "box"_s) {
+    } else if (notation == "box") {
         addNotation(Left);
         addNotation(Right);
         addNotation(Top);
         addNotation(Bottom);
-    } else if (notation == "actuarial"_s) {
+    } else if (notation == "actuarial") {
         addNotation(Right);
         addNotation(Top);
-    } else if (notation == "madruwb"_s) {
+    } else if (notation == "madruwb") {
         addNotation(Right);
         addNotation(Bottom);
     }

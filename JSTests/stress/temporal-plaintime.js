@@ -95,24 +95,17 @@ shouldBe(Temporal.PlainTime.prototype.constructor, Temporal.PlainTime);
 }
 
 shouldBe(String(Temporal.PlainTime.from('03')), `03:00:00`);
-shouldBe(String(Temporal.PlainTime.from('T0314')), `03:14:00`);
-shouldThrow(() => Temporal.PlainTime.from('0314'), RangeError);
+shouldBe(String(Temporal.PlainTime.from('0314')), `03:14:00`);
 shouldBe(String(Temporal.PlainTime.from('031415')), `03:14:15`);
 shouldBe(String(Temporal.PlainTime.from('03:14')), `03:14:00`);
 shouldBe(String(Temporal.PlainTime.from('03:14:15')), `03:14:15`);
 shouldBe(String(Temporal.PlainTime.from('03:24:30')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('T2020-01')), `20:20:00`); // -01 UTC offset
-shouldThrow(() => Temporal.PlainTime.from('2020-01'), RangeError);
-shouldBe(String(Temporal.PlainTime.from('T01-01')), `01:00:00`); // -01 UTC offset
-shouldThrow(() => Temporal.PlainTime.from('01-01'), RangeError);
-shouldBe(String(Temporal.PlainTime.from('03:24:30[u-ca=japanese]')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('03:24:30+01:00[Europe/Brussels][u-ca=japanese]')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('03:24:30+01:00[u-ca=japanese]')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('T03:24:30+01:00[Europe/Brussels][u-ca=japanese]')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('T03:24:30+01:00[u-ca=japanese]')), `03:24:30`);
+shouldBe(String(Temporal.PlainTime.from('2020-01')), `20:20:00`); // -01 UTC offset
+shouldBe(String(Temporal.PlainTime.from('01-01')), `01:00:00`); // -01 UTC offset
 shouldBe(String(Temporal.PlainTime.from('1995-12-07T03:24:30')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('1995-12-07t03:24:30')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('1995-12-07 03:24:30')), `03:24:30`);
+shouldBe(String(Temporal.PlainTime.from('1995-12-07T03:24:30Z')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('1995-12-07T03:24:30+20:20:59')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('1995-12-07T03:24:30-20:20:59')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('1995-12-07T03:24:30\u221220:20:59')), `03:24:30`);
@@ -142,9 +135,6 @@ shouldBe(String(Temporal.PlainTime.from('1995-12-07 03:24:30+01:00[+01:00:00.123
 shouldBe(String(Temporal.PlainTime.from('1995-12-07 03:24:30+01:00[+01:00:00.123456789]')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('1995-12-07 03:24:30+01:00[-01:00]')), `03:24:30`);
 shouldBe(String(Temporal.PlainTime.from('1995-12-07 03:24:30+01:00[\u221201:00]')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('2007-01-09 03:24:30+01:00[u-ca=japanese]')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('2007-01-09 03:24:30+01:00[Europe/Brussels][u-ca=japanese]')), `03:24:30`);
-shouldBe(String(Temporal.PlainTime.from('2007-01-09 03:24:30[u-ca=japanese]')), `03:24:30`);
 {
     let time = Temporal.PlainTime.from('1995-12-07T03:24:30+01:00[Europe/Brussels]')
     shouldBe(time === Temporal.PlainTime.from(time), false);
@@ -159,17 +149,23 @@ shouldBe(String(Temporal.PlainTime.from('2007-01-09 03:24:30[u-ca=japanese]')), 
       nanosecond: 205
     });
     shouldBe(String(time), `19:39:09.068346205`);
+
+    // This is spec bug. Currently this throws an error. But possibly this should not throw an error.
+    // Tracked in https://github.com/tc39/proposal-temporal/issues/1803.
+    shouldThrow(() => {
+        Temporal.PlainTime.from({ hour: 19, minute: 39, second: 9 });
+    }, TypeError);
 }
 {
     // Different overflow modes
-    shouldBe(String(Temporal.PlainTime.from({ hour: 15, minute: 60 }, { overflow: 'constrain' })), `15:59:00`);
-    shouldBe(String(Temporal.PlainTime.from({ hour: 15, minute: -1 }, { overflow: 'constrain' })), `15:00:00`);
+    shouldBe(String(Temporal.PlainTime.from({ hour: 15, minute: 60, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 }, { overflow: 'constrain' })), `15:59:00`);
+    shouldBe(String(Temporal.PlainTime.from({ hour: 15, minute: -1, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 }, { overflow: 'constrain' })), `15:00:00`);
 }
 shouldThrow(() => {
-    Temporal.PlainTime.from({ hour: 15, minute: 60 }, { overflow: 'reject' });
+    Temporal.PlainTime.from({ hour: 15, minute: 60, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 }, { overflow: 'reject' });
 }, RangeError);
 shouldThrow(() => {
-    Temporal.PlainTime.from({ hour: 15, minute: -1 }, { overflow: 'reject' });
+    Temporal.PlainTime.from({ hour: 15, minute: -1, second: 0, millisecond: 0, microsecond: 0, nanosecond: 0 }, { overflow: 'reject' });
 }, RangeError);
 
 shouldThrow(() => { new Temporal.PlainTime(-1); }, RangeError);
@@ -253,9 +249,6 @@ let failures = [
     "1995-12-07 03:24:30+01:00[02:0000.123456789]",
     "1995-12-07 03:24:30+01:00[0200:00.123456789]",
     "1995-12-07 03:24:30+01:00[02:00:60.123456789]",
-    "1995-12-07T03:24:30Z", // UTCDesignator
-    "2007-01-09 03:24:30[u-ca=japanese][Europe/Brussels]",
-    "2007-01-09 03:24:30+01:00[u-ca=japanese][Europe/Brussels]",
 ];
 
 for (let text of failures) {
@@ -281,7 +274,6 @@ shouldBe(Temporal.PlainTime.from("20:34").calendar instanceof Temporal.Calendar,
 
 {
     let time = Temporal.PlainTime.from('19:39:09.068346205');
-    shouldBe(String(time.round('hour')), `20:00:00`);
     shouldBe(String(time.round({ smallestUnit: 'hour' })), `20:00:00`);
     shouldBe(String(time.round({ roundingIncrement: 30, smallestUnit: 'minute' })), `19:30:00`);
     shouldBe(String(time.round({ roundingIncrement: 30, smallestUnit: 'minute', roundingMode: 'ceil' })), `20:00:00`);

@@ -46,7 +46,7 @@ public:
 private:
     void graphicsElement() const = delete;
 
-    ASCIILiteral renderName() const override { return "RenderSVGRect"_s; }
+    const char* renderName() const override { return "RenderSVGRect"; }
 
     void updateShapeFromElement() override;
     bool isEmpty() const override { return m_usePathFallback ? RenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); }

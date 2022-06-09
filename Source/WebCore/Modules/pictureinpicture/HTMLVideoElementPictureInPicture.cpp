@@ -29,12 +29,12 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
+#include "EnterPictureInPictureEvent.h"
 #include "EventNames.h"
 #include "HTMLVideoElement.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPictureInPictureWindow.h"
 #include "Logging.h"
-#include "PictureInPictureEvent.h"
 #include "PictureInPictureSupport.h"
 #include "PictureInPictureWindow.h"
 #include "VideoTrackList.h"
@@ -81,23 +81,23 @@ void HTMLVideoElementPictureInPicture::providePictureInPictureTo(HTMLVideoElemen
 void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement& videoElement, Ref<DeferredPromise>&& promise)
 {
     if (!supportsPictureInPicture()) {
-        promise->reject(NotSupportedError, "The Picture-in-Picture mode is not supported."_s);
+        promise->reject(NotSupportedError, "The Picture-in-Picture mode is not supported.");
         return;
     }
 
     if (videoElement.readyState() == HTMLMediaElementEnums::HAVE_NOTHING) {
-        promise->reject(InvalidStateError, "The video element is not ready to enter the Picture-in-Picture mode."_s);
+        promise->reject(InvalidStateError, "The video element is not ready to enter the Picture-in-Picture mode.");
         return;
     }
 
     if (!videoElement.videoTracks() || !videoElement.videoTracks()->length()) {
-        promise->reject(InvalidStateError, "The video element does not have a video track or it has not detected a video track yet."_s);
+        promise->reject(InvalidStateError, "The video element does not have a video track or it has not detected a video track yet.");
         return;
     }
 
     bool userActivationRequired = !videoElement.document().pictureInPictureElement();
     if (userActivationRequired && !UserGestureIndicator::processingUserGesture()) {
-        promise->reject(NotAllowedError, "The request is not triggered by a user activation."_s);
+        promise->reject(NotAllowedError, "The request is not triggered by a user activation.");
         return;
     }
 
@@ -108,7 +108,7 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
     }
 
     if (videoElementPictureInPicture->m_enterPictureInPicturePromise || videoElementPictureInPicture->m_exitPictureInPicturePromise) {
-        promise->reject(NotAllowedError, "The video element is processing a Picture-in-Picture request."_s);
+        promise->reject(NotAllowedError, "The video element is processing a Picture-in-Picture request.");
         return;
     }
 
@@ -116,7 +116,7 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         videoElementPictureInPicture->m_enterPictureInPicturePromise = WTFMove(promise);
         videoElement.webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
     } else
-        promise->reject(NotSupportedError, "The video element does not support the Picture-in-Picture mode."_s);
+        promise->reject(NotSupportedError, "The video element does not support the Picture-in-Picture mode.");
 }
 
 bool HTMLVideoElementPictureInPicture::autoPictureInPicture(HTMLVideoElement& videoElement)
@@ -158,10 +158,10 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     m_videoElement.document().setPictureInPictureElement(&m_videoElement);
     m_pictureInPictureWindow->setSize(windowSize);
 
-    PictureInPictureEvent::Init initializer;
+    EnterPictureInPictureEvent::Init initializer;
     initializer.bubbles = true;
     initializer.pictureInPictureWindow = m_pictureInPictureWindow;
-    m_videoElement.scheduleEvent(PictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
+    m_videoElement.scheduleEvent(EnterPictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
 
     if (m_enterPictureInPicturePromise) {
         m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(*m_pictureInPictureWindow);
@@ -175,11 +175,7 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
     m_videoElement.invalidateStyle();
     m_pictureInPictureWindow->close();
     m_videoElement.document().setPictureInPictureElement(nullptr);
-
-    PictureInPictureEvent::Init initializer;
-    initializer.bubbles = true;
-    initializer.pictureInPictureWindow = m_pictureInPictureWindow;
-    m_videoElement.scheduleEvent(PictureInPictureEvent::create(eventNames().leavepictureinpictureEvent, WTFMove(initializer)));
+    m_videoElement.scheduleEvent(Event::create(eventNames().leavepictureinpictureEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
     if (m_exitPictureInPicturePromise) {
         m_exitPictureInPicturePromise->resolve();

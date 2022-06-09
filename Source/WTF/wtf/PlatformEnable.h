@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -204,6 +204,10 @@
 #define ENABLE_CONTEXT_MENU_EVENT 1
 #endif
 
+#if !defined(ENABLE_CSS3_TEXT)
+#define ENABLE_CSS3_TEXT 0
+#endif
+
 #if !defined(ENABLE_CSS_BOX_DECORATION_BREAK)
 #define ENABLE_CSS_BOX_DECORATION_BREAK 1
 #endif
@@ -245,7 +249,7 @@
 #endif
 
 #if !defined(ENABLE_DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-#define ENABLE_DESTINATION_COLOR_SPACE_LINEAR_SRGB 0
+#define ENABLE_DESTINATION_COLOR_SPACE_LINEAR_SRGB 1
 #endif
 
 #if !defined(ENABLE_DOWNLOAD_ATTRIBUTE)
@@ -347,10 +351,6 @@
 #define ENABLE_LAYOUT_FORMATTING_CONTEXT 0
 #endif
 
-#if !defined(ENABLE_LLVM_PROFILE_GENERATION)
-#define ENABLE_LLVM_PROFILE_GENERATION 0
-#endif
-
 #if !defined(ENABLE_MATHML)
 #define ENABLE_MATHML 1
 #endif
@@ -361,10 +361,6 @@
 
 #if !defined(ENABLE_MEDIA_CONTROLS_SCRIPT)
 #define ENABLE_MEDIA_CONTROLS_SCRIPT 0
-#endif
-
-#if !defined(ENABLE_MEDIA_RECORDER)
-#define ENABLE_MEDIA_RECORDER 0
 #endif
 
 #if !defined(ENABLE_MEDIA_SOURCE)
@@ -611,10 +607,8 @@
 #endif
 #endif
 
-#if !defined(ENABLE_JUMP_ISLANDS) && ENABLE(JIT)
-#if (CPU(ARM64) && CPU(ADDRESS64)) || CPU(ARM_THUMB2)
+#if !defined(ENABLE_JUMP_ISLANDS) && CPU(ARM64) && CPU(ADDRESS64) && ENABLE(JIT)
 #define ENABLE_JUMP_ISLANDS 1
-#endif
 #endif
 
 /* FIXME: This should be turned into an #error invariant */
@@ -845,8 +839,12 @@
 #define ENABLE_JIT_OPERATION_VALIDATION 1
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && ENABLE(DISASSEMBLER) && CPU(ARM64E) && HAVE(DLADDR)
-#define ENABLE_JIT_OPERATION_DISASSEMBLY 1
+#if CPU(ARM64) || (CPU(X86_64) && !OS(WINDOWS))
+/* The implementation of these thunks can use up to 6 argument registers, and
+   make use of ARM64 like features. For now, we'll only support them on platforms
+   that have 6 or more argument registers to use.
+*/
+#define ENABLE_EXTRA_CTI_THUNKS 1
 #endif
 
 #if !defined(ENABLE_BINDING_INTEGRITY) && !OS(WINDOWS)
@@ -890,10 +888,6 @@
 #endif
 #endif
 
-#if !defined(ENABLE_PDFJS) && (PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE))
-#define ENABLE_PDFJS 1
-#endif
-
 /* This feature works by embedding the OpcodeID in the 32 bit just before the generated LLint code
    that executes each opcode. It cannot be supported by the CLoop since there's no way to embed the
    OpcodeID word in the CLoop's switch statement cases. It is also currently not implemented for MSVC.
@@ -932,10 +926,6 @@
 #error "ENABLE(OFFSCREEN_CANVAS_IN_WORKERS) requires ENABLE(OFFSCREEN_CANVAS)"
 #endif
 
-#if ENABLE(MEDIA_RECORDER) && !ENABLE(MEDIA_STREAM)
-#error "ENABLE(MEDIA_RECORDER) requires ENABLE(MEDIA_STREAM)"
-#endif
-
 #if USE(CG)
 
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3) && !HAVE(CORE_GRAPHICS_DISPLAY_P3_COLOR_SPACE)
@@ -954,16 +944,4 @@
 
 #if ENABLE(WEBXR_HANDS) && !ENABLE(WEBXR)
 #error "ENABLE(WEBXR_HANDS) requires ENABLE(WEBXR)"
-#endif
-
-#if ENABLE(SERVICE_WORKER) && ENABLE(NOTIFICATIONS)
-#if !defined(ENABLE_NOTIFICATION_EVENT)
-#define ENABLE_NOTIFICATION_EVENT 1
-#endif
-#endif
-
-#if !defined(ENABLE_IMAGE_ANALYSIS_ENHANCEMENTS) \
-    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000) \
-    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000))
-#define ENABLE_IMAGE_ANALYSIS_ENHANCEMENTS 1
 #endif

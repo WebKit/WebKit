@@ -102,7 +102,7 @@ private:
 
     bool m_filledPrimaryPage { false };
     GlyphMetricsPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
-    HashMap<int, std::unique_ptr<GlyphMetricsPage>> m_pages;
+    std::unique_ptr<HashMap<int, std::unique_ptr<GlyphMetricsPage>>> m_pages;
 };
 
 template<> inline float GlyphMetricsMap<float>::unknownMetrics()
@@ -129,9 +129,13 @@ template<class T> typename GlyphMetricsMap<T>::GlyphMetricsPage& GlyphMetricsMap
         return m_primaryPage;
     }
 
-    return *m_pages.ensure(pageNumber, [] {
+    if (!m_pages)
+        m_pages = makeUnique<HashMap<int, std::unique_ptr<GlyphMetricsPage>>>();
+
+    auto& page = m_pages->ensure(pageNumber, [] {
         return makeUnique<GlyphMetricsPage>(unknownMetrics());
     }).iterator->value;
+    return *page;
 }
     
 } // namespace WebCore

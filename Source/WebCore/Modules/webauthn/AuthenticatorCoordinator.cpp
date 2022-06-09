@@ -35,7 +35,6 @@
 #include "AuthenticatorResponseData.h"
 #include "Document.h"
 #include "FeaturePolicy.h"
-#include "FrameDestructionObserverInlines.h"
 #include "JSBasicCredential.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
@@ -59,7 +58,7 @@ static bool needsAppIdQuirks(const String& host, const String& appId)
     // existing device registrations that authenticate 'google.com' against 'gstatic.com'. Firefox and other browsers
     // have agreed to grant an exception to the AppId rules for a limited time period (5 years from January, 2018) to
     // allow existing Google users to seamlessly transition to proper WebAuthN behavior.
-    if (equalLettersIgnoringASCIICase(host, "google.com"_s) || host.endsWithIgnoringASCIICase(".google.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "google.com") || host.endsWithIgnoringASCIICase(".google.com"))
         return (appId == "https://www.gstatic.com/securitykey/origins.json"_s) || (appId == "https://www.gstatic.com/securitykey/a/google.com/origins.json"_s);
     return false;
 }
@@ -79,7 +78,7 @@ static String processAppIdExtension(const SecurityOrigin& facetId, const String&
         return facetId.toString();
 
     // Step 3. Relax the comparison to same site.
-    URL appIdURL { appId };
+    URL appIdURL(URL(), appId);
     if (!appIdURL.isValid() || facetId.protocol() != appIdURL.protocol() || (RegistrableDomain(appIdURL) != RegistrableDomain::uncheckedCreateFromHost(facetId.host()) && !needsAppIdQuirks(facetId.host(), appId)))
         return String();
     return appId;
@@ -139,23 +138,22 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         options.rp.id = callerOrigin.domain();
 
     // Step 8-10.
-    // Most of the jobs are done by bindings.
     if (options.pubKeyCredParams.isEmpty()) {
         options.pubKeyCredParams.append({ PublicKeyCredentialType::PublicKey, COSE::ES256 });
         options.pubKeyCredParams.append({ PublicKeyCredentialType::PublicKey, COSE::RS256 });
     } else {
-        if (notFound != options.pubKeyCredParams.findIf([] (auto& pubKeyCredParam) {
+        if (notFound != options.pubKeyCredParams.findMatching([] (auto& pubKeyCredParam) {
             return pubKeyCredParam.type != PublicKeyCredentialType::PublicKey;
         })) {
-            
-            promise.reject(Exception { NotSupportedError, "options.pubKeyCredParams contains unsupported PublicKeyCredentialType value."_s });
+
+            promise.reject(Exception { NotSupportedError, "Unable to create credential because options.pubKeyCredParams is empty."_s });
             return;
         }
     }
 
     // Step 11-12.
     // Only Google Legacy AppID Support Extension is supported.
-    options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, options.rp.id), options.extensions && options.extensions->credProps };
+    options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, options.rp.id) };
 
     // Step 13-15.
     auto clientDataJson = buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin, scope);
@@ -255,7 +253,7 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         promise.reject(exception.toException());
     };
     // Async operations are dispatched and handled in the messenger.
-    m_client->getAssertion(*frame, callerOrigin, clientDataJsonHash, options, requestOptions.mediation, scopeAndCrossOriginParent, WTFMove(callback));
+    m_client->getAssertion(*frame, callerOrigin, clientDataJsonHash, options, scopeAndCrossOriginParent, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&& promise) const
@@ -274,21 +272,6 @@ void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(DOM
     };
     // Async operation are dispatched and handled in the messenger.
     m_client->isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(completionHandler));
-}
-
-
-void AuthenticatorCoordinator::isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&& promise) const
-{
-    if (!m_client)  {
-        promise.reject(Exception { UnknownError, "Unknown internal error."_s });
-        return;
-    }
-
-    auto completionHandler = [promise = WTFMove(promise)] (bool result) mutable {
-        promise.resolve(result);
-    };
-    // Async operations are dispatched and handled in the messenger.
-    m_client->isConditionalMediationAvailable(WTFMove(completionHandler));
 }
 
 void AuthenticatorCoordinator::resetUserGestureRequirement()

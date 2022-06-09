@@ -29,6 +29,7 @@
 // https://dom.spec.whatwg.org/#xsltprocessor
 [
     Conditional=XSLT,
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface XSLTProcessor {
     constructor();

@@ -37,18 +37,18 @@ template<typename> class ExceptionOr;
 class CSSSkewY : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSSkewY);
 public:
-    static ExceptionOr<Ref<CSSSkewY>> create(Ref<CSSNumericValue>);
+    static Ref<CSSSkewY> create(Ref<CSSNumericValue>&&);
     
-    const CSSNumericValue& ay() const { return m_ay.get(); }
-    void setAy(Ref<CSSNumericValue> ay) { m_ay = WTFMove(ay); }
-
-    void serialize(StringBuilder&) const final;
+    CSSNumericValue& ay() { return m_ay.get(); }
+    void setAy(Ref<CSSNumericValue>&& ay) { m_ay = WTFMove(ay); }
+    
+    String toString() const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::SkewY; }
 
 private:
-    CSSSkewY(Ref<CSSNumericValue> ay);
+    CSSSkewY(Ref<CSSNumericValue>&& ay);
     
     Ref<CSSNumericValue> m_ay;
 };

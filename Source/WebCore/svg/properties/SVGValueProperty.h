@@ -57,7 +57,7 @@ protected:
     {
     }
 
-    // Needed when value should not be copied, e.g. SVGTransformValue.
+    // Needed when value should not be copied, e.g. SVGTransfromValue.
     SVGValueProperty(PropertyType&& value)
         : m_value(WTFMove(value))
     {

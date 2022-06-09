@@ -57,22 +57,18 @@ void genericUnwind(VM& vm, CallFrame* callFrame)
     CatchInfo handler = vm.interpreter->unwind(vm, callFrame, exception); // This may update callFrame.
 
     void* catchRoutine;
-    JSOrWasmInstruction catchPCForInterpreter = { static_cast<JSInstruction*>(nullptr) };
+    const Instruction* catchPCForInterpreter = nullptr;
     if (handler.m_valid) {
         catchPCForInterpreter = handler.m_catchPCForInterpreter;
 #if ENABLE(JIT)
         catchRoutine = handler.m_nativeCode.executableAddress();
 #else
-#if ENABLE(WEBASSEMBLY)
-#error WASM requires the JIT, so this section assumes we are in JS
-#endif
-        const auto* pc = std::get<const JSInstruction*>(catchPCForInterpreter);
-        if (pc->isWide32())
-            catchRoutine = LLInt::getWide32CodePtr(pc->opcodeID());
-        else if (pc->isWide16())
-            catchRoutine = LLInt::getWide16CodePtr(pc->opcodeID());
+        if (catchPCForInterpreter->isWide32())
+            catchRoutine = LLInt::getWide32CodePtr(catchPCForInterpreter->opcodeID());
+        else if (catchPCForInterpreter->isWide16())
+            catchRoutine = LLInt::getWide16CodePtr(catchPCForInterpreter->opcodeID());
         else
-            catchRoutine = LLInt::getCodePtr(pc->opcodeID());
+            catchRoutine = LLInt::getCodePtr(catchPCForInterpreter->opcodeID());
 #endif
     } else
         catchRoutine = LLInt::handleUncaughtException(vm).code().executableAddress();

@@ -61,6 +61,6 @@ FAIL Notification interface: notification must inherit property "data" with the 
 FAIL Notification interface: notification must inherit property "actions" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 FAIL Notification interface: notification must inherit property "close()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: notification"
 PASS NotificationEvent interface: existence and properties of interface object
-PASS ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions)
-PASS ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions)
+FAIL ServiceWorkerRegistration interface: operation showNotification(DOMString, optional NotificationOptions) assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
+FAIL ServiceWorkerRegistration interface: operation getNotifications(optional GetNotificationOptions) assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
 

@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2020 Igalia S.L.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,24 +36,23 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
-FontCascadeDescription RenderThemeGtk::systemFont(CSSValueID) const
+void RenderThemeGtk::updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription& fontDescription) const
 {
     GtkSettings* settings = gtk_settings_get_default();
     if (!settings)
-        return FontCascadeDescription();
+        return;
 
     // This will be a font selection string like "Sans 10" so we cannot use it as the family name.
     GUniqueOutPtr<gchar> fontName;
     g_object_get(settings, "gtk-font-name", &fontName.outPtr(), nullptr);
     if (!fontName || !fontName.get()[0])
-        return FontCascadeDescription();
+        return;
 
     PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.get());
     if (!pangoDescription)
-        return FontCascadeDescription();
+        return;
 
-    FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily(AtomString::fromLatin1(pango_font_description_get_family(pangoDescription)));
+    fontDescription.setOneFamily(pango_font_description_get_family(pangoDescription));
 
     int size = pango_font_description_get_size(pangoDescription) / PANGO_SCALE;
     // If the size of the font is in points, we need to convert it to pixels.
@@ -66,7 +64,6 @@ FontCascadeDescription RenderThemeGtk::systemFont(CSSValueID) const
     fontDescription.setWeight(normalWeightValue());
     fontDescription.setItalic(FontSelectionValue());
     pango_font_description_free(pangoDescription);
-    return fontDescription;
 }
 
 Seconds RenderThemeGtk::caretBlinkInterval() const

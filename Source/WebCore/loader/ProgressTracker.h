@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Page.h"
 #include "ResourceLoaderIdentifier.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
@@ -45,7 +44,7 @@ class ProgressTracker {
     WTF_MAKE_NONCOPYABLE(ProgressTracker);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit ProgressTracker(Page&, UniqueRef<ProgressTrackerClient>&&);
+    explicit ProgressTracker(UniqueRef<ProgressTrackerClient>&&);
     ~ProgressTracker();
 
     ProgressTrackerClient& client() { return m_client.get(); }
@@ -67,11 +66,9 @@ public:
 private:
     void reset();
     void finalProgressComplete();
-    void progressEstimateChanged(Frame&);
 
     void progressHeartbeatTimerFired();
 
-    Page& m_page;
     UniqueRef<ProgressTrackerClient> m_client;
     RefPtr<Frame> m_originatingProgressFrame;
     HashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;

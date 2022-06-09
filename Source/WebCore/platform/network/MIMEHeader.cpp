@@ -56,7 +56,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
             break; // Empty line means end of key/value section.
         if (line[0] == '\t') {
             ASSERT(!key.isEmpty());
-            value.append(StringView(line).substring(1));
+            value.append(line.substring(1));
             continue;
         }
         // New key/value, store the previous one if any.
@@ -67,13 +67,13 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
             key = String();
             value.clear();
         }
-        size_t semicolonIndex = line.find(':');
-        if (semicolonIndex == notFound) {
+        size_t semiColonIndex = line.find(':');
+        if (semiColonIndex == notFound) {
             // This is not a key value pair, ignore.
             continue;
         }
-        key = StringView(line).left(semicolonIndex).stripWhiteSpace().convertToASCIILowercase();
-        value.append(StringView(line).substring(semicolonIndex + 1));
+        key = line.substring(0, semiColonIndex).convertToASCIILowercase().stripWhiteSpace();
+        value.append(line.substring(semiColonIndex + 1));
     }
     // Store the last property if there is one.
     if (!key.isEmpty())
@@ -85,14 +85,14 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
 {
     auto mimeHeader = adoptRef(*new MIMEHeader);
     KeyValueMap keyValuePairs = retrieveKeyValuePairs(buffer);
-    KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type"_s);
+    KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type");
     if (mimeParametersIterator != keyValuePairs.end()) {
         String contentType, charset, multipartType, endOfPartBoundary;
         if (auto parsedContentType = ParsedContentType::create(mimeParametersIterator->value)) {
             contentType = parsedContentType->mimeType();
             charset = parsedContentType->charset().stripWhiteSpace();
-            multipartType = parsedContentType->parameterValueForName("type"_s);
-            endOfPartBoundary = parsedContentType->parameterValueForName("boundary"_s);
+            multipartType = parsedContentType->parameterValueForName("type");
+            endOfPartBoundary = parsedContentType->parameterValueForName("boundary");
         }
         mimeHeader->m_contentType = contentType;
         if (!mimeHeader->isMultipart())
@@ -109,29 +109,29 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
         }
     }
 
-    mimeParametersIterator = keyValuePairs.find("content-transfer-encoding"_s);
+    mimeParametersIterator = keyValuePairs.find("content-transfer-encoding");
     if (mimeParametersIterator != keyValuePairs.end())
         mimeHeader->m_contentTransferEncoding = parseContentTransferEncoding(mimeParametersIterator->value);
 
-    mimeParametersIterator = keyValuePairs.find("content-location"_s);
+    mimeParametersIterator = keyValuePairs.find("content-location");
     if (mimeParametersIterator != keyValuePairs.end())
         mimeHeader->m_contentLocation = mimeParametersIterator->value;
 
     return mimeHeader;
 }
 
-MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(StringView text)
+MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(const String& text)
 {
-    auto encoding = text.stripWhiteSpace();
-    if (equalLettersIgnoringASCIICase(encoding, "base64"_s))
+    String encoding = text.stripWhiteSpace();
+    if (equalLettersIgnoringASCIICase(encoding, "base64"))
         return Base64;
-    if (equalLettersIgnoringASCIICase(encoding, "quoted-printable"_s))
+    if (equalLettersIgnoringASCIICase(encoding, "quoted-printable"))
         return QuotedPrintable;
-    if (equalLettersIgnoringASCIICase(encoding, "7bit"_s))
+    if (equalLettersIgnoringASCIICase(encoding, "7bit"))
         return SevenBit;
-    if (equalLettersIgnoringASCIICase(encoding, "binary"_s))
+    if (equalLettersIgnoringASCIICase(encoding, "binary"))
         return Binary;
-    LOG_ERROR("Unknown encoding '%s' found in MIME header.", text.utf8().data());
+    LOG_ERROR("Unknown encoding '%s' found in MIME header.", text.ascii().data());
     return Unknown;
 }
 

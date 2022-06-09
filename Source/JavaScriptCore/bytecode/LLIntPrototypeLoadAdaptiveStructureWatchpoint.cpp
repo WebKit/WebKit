@@ -56,11 +56,11 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::initialize(CodeBlock* codeBl
     m_key = key;
 }
 
-void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM&)
+void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM& vm)
 {
     RELEASE_ASSERT(m_key.isWatchable(PropertyCondition::MakeNoChanges));
 
-    m_key.object()->structure()->addTransitionWatchpoint(this);
+    m_key.object()->structure(vm)->addTransitionWatchpoint(this);
 }
 
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)

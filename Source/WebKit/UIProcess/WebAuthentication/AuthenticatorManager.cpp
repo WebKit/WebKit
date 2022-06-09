@@ -63,8 +63,6 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-        addResult = result.add(AuthenticatorTransport::Ble);
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
 
@@ -77,8 +75,6 @@ static AuthenticatorManager::TransportSet collectTransports(const std::optional<
         auto addResult = result.add(AuthenticatorTransport::Usb);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
-        addResult = result.add(AuthenticatorTransport::Ble);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         return result;
     }
@@ -102,8 +98,6 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
         addResult = result.add(AuthenticatorTransport::Nfc);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
-        addResult = result.add(AuthenticatorTransport::Ble);
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
     for (auto& allowCredential : allowCredentials) {
@@ -111,7 +105,6 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
             result.add(AuthenticatorTransport::Internal);
             result.add(AuthenticatorTransport::Usb);
             result.add(AuthenticatorTransport::Nfc);
-            result.add(AuthenticatorTransport::Ble);
 
             break;
         }
@@ -131,7 +124,6 @@ static AuthenticatorManager::TransportSet collectTransports(const Vector<PublicK
         if (authenticatorAttachment == AuthenticatorAttachment::Platform) {
             result.remove(AuthenticatorTransport::Usb);
             result.remove(AuthenticatorTransport::Nfc);
-            result.remove(AuthenticatorTransport::Ble);
         }
 
         if (authenticatorAttachment == AuthenticatorAttachment::CrossPlatform)
@@ -171,7 +163,7 @@ static String getUserName(const std::variant<PublicKeyCredentialCreationOptions,
 
 } // namespace
 
-const size_t AuthenticatorManager::maxTransportNumber = 4;
+const size_t AuthenticatorManager::maxTransportNumber = 3;
 
 AuthenticatorManager::AuthenticatorManager()
     : m_requestTimeOutTimer(RunLoop::main(), this, &AuthenticatorManager::timeOutTimerFired)
@@ -206,7 +198,7 @@ void AuthenticatorManager::cancelRequest(const PageIdentifier& pageID, const std
 {
     if (!m_pendingCompletionHandler)
         return;
-    if (auto pendingFrameID = m_pendingRequestData.globalFrameID) {
+    if (auto pendingFrameID = m_pendingRequestData.frameID) {
         if (pendingFrameID->pageID != pageID)
             return;
         if (frameID && frameID != pendingFrameID->frameID)
@@ -232,6 +224,11 @@ void AuthenticatorManager::cancel()
     if (!m_pendingCompletionHandler)
         return;
     cancelRequest();
+}
+
+void AuthenticatorManager::enableModernWebAuthentication()
+{
+    m_mode = Mode::Modern;
 }
 
 void AuthenticatorManager::enableNativeSupport()
@@ -263,6 +260,7 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
     ASSERT(RunLoop::isMain());
     authenticator->setObserver(*this);
     authenticator->handleRequest(m_pendingRequestData);
+    authenticator->setWebAuthenticationModernEnabled(m_mode != Mode::Compatible);
     auto addResult = m_authenticators.add(WTFMove(authenticator));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -283,7 +281,7 @@ void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
 void AuthenticatorManager::respondReceived(Respond&& respond)
 {
     ASSERT(RunLoop::isMain());
-    if (!m_requestTimeOutTimer.isActive() && (m_pendingRequestData.mediation != WebCore::CredentialRequestOptions::MediationRequirement::Conditional || !m_pendingCompletionHandler))
+    if (!m_requestTimeOutTimer.isActive())
         return;
     ASSERT(m_pendingCompletionHandler);
 
@@ -408,7 +406,6 @@ void AuthenticatorManager::filterTransports(TransportSet& transports) const
         transports.remove(AuthenticatorTransport::Nfc);
     if (!LocalService::isAvailable())
         transports.remove(AuthenticatorTransport::Internal);
-    transports.remove(AuthenticatorTransport::Ble);
 
     // For the modern UI, we should only consider invoking it when the operation is triggered by users.
     if (!m_pendingRequestData.processingUserGesture)
@@ -419,17 +416,15 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_services.isEmpty() && transports.size() <= maxTransportNumber);
-    m_services = WTF::map(transports, [this](auto& transport) {
+    for (auto& transport : transports) {
         auto service = createService(transport, *this);
         service->startDiscovery();
-        return service;
-    });
+        m_services.append(WTFMove(service));
+    }
 }
 
 void AuthenticatorManager::initTimeOutTimer()
 {
-    if (m_pendingRequestData.mediation == WebCore::CredentialRequestOptions::MediationRequirement::Conditional)
-        return;
     std::optional<unsigned> timeOutInMs;
     WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
         timeOutInMs = options.timeout;
@@ -452,8 +447,8 @@ void AuthenticatorManager::runPanel()
     auto* page = m_pendingRequestData.page.get();
     if (!page)
         return;
-    ASSERT(m_pendingRequestData.globalFrameID && page->webPageID() == m_pendingRequestData.globalFrameID->pageID);
-    auto* frame = page->process().webFrame(m_pendingRequestData.globalFrameID->frameID);
+    ASSERT(m_pendingRequestData.frameID && page->webPageID() == m_pendingRequestData.frameID->pageID);
+    auto* frame = page->process().webFrame(m_pendingRequestData.frameID->frameID);
     if (!frame)
         return;
 

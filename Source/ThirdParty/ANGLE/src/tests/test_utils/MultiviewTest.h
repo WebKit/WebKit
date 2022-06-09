@@ -64,11 +64,14 @@ struct MultiviewImplementationParams : public PlatformParameters
 {
     MultiviewImplementationParams(GLint majorVersion,
                                   GLint minorVersion,
+                                  bool forceUseGeometryShaderOnD3D,
                                   const EGLPlatformParameters &eglPlatformParameters,
                                   ExtensionName multiviewExtension)
         : PlatformParameters(majorVersion, minorVersion, eglPlatformParameters),
+          mForceUseGeometryShaderOnD3D(forceUseGeometryShaderOnD3D),
           mMultiviewExtension(multiviewExtension)
     {}
+    bool mForceUseGeometryShaderOnD3D;
     ExtensionName mMultiviewExtension;
 };
 std::ostream &operator<<(std::ostream &os, const MultiviewImplementationParams &params);
@@ -108,6 +111,8 @@ class MultiviewTest : public MultiviewTestBase,
 {
   protected:
     MultiviewTest() : MultiviewTestBase(GetParam()) {}
+
+    void overrideWorkaroundsD3D(FeaturesD3D *features) final;
 
     virtual void testSetUp() {}
     virtual void testTearDown() {}

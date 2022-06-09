@@ -41,14 +41,14 @@ public:
     {
         return clip == other.clip
             && hasClip == other.hasClip
-            && textDecorationLine == other.textDecorationLine
+            && textDecoration == other.textDecoration
             && zoom == other.zoom;
     }
     bool operator!=(const StyleVisualData& other) const { return !(*this == other); }
 
     LengthBox clip;
     bool hasClip : 1;
-    unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element.
+    unsigned textDecoration : TextDecorationBits; // Text decorations defined *only* by this element.
     float zoom;
 
 private:

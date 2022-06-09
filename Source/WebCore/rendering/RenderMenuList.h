@@ -83,7 +83,7 @@ private:
     bool hasControlClip() const override { return true; }
     bool canHaveGeneratedChildren() const override { return false; }
 
-    ASCIILiteral renderName() const override { return "RenderMenuList"_s; }
+    const char* renderName() const override { return "RenderMenuList"; }
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;

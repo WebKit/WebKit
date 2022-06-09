@@ -10,6 +10,9 @@
 
         editable.focus();
 
+        if (window.internals)
+            internals.settings.setInputEventsEnabled(true);
+
         if (window.testRunner) {
             select(0, 0);
             testRunner.execCommand("deleteForward");

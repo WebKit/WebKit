@@ -40,10 +40,10 @@
 using namespace WebKit;
 
 /**
- * WebKitWebsiteDataManager:
+ * SECTION: WebKitWebsiteDataManager
+ * @Short_description: Website data manager
+ * @Title: WebKitWebsiteDataManager
  * @See_also: #WebKitWebContext, #WebKitWebsiteData
- *
- * Manages data stored locally by web sites.
  *
  * WebKitWebsiteDataManager allows you to manage the data that websites
  * can store in the client file system like databases or caches.
@@ -1179,13 +1179,6 @@ gboolean webkit_website_data_manager_clear_finish(WebKitWebsiteDataManager* mana
     return g_task_propagate_boolean(G_TASK(result), error);
 }
 
-/**
- * WebKitITPFirstParty: (ref-func webkit_itp_first_party_ref) (unref-func webkit_itp_first_party_unref)
- *
- * Describes a first party origin.
- *
- * Since: 2.30
- */
 struct _WebKitITPFirstParty {
     explicit _WebKitITPFirstParty(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty&& data)
         : domain(data.firstPartyDomain.string().utf8())
@@ -1328,14 +1321,6 @@ GDateTime* webkit_itp_first_party_get_last_update_time(WebKitITPFirstParty* firs
 
     return firstParty->lastUpdated.get();
 }
-
-/**
- * WebKitITPThirdParty: (ref-func webkit_itp_first_party_ref) (unref-func webkit_itp_first_party_unref)
- *
- * Describes a third party origin.
- *
- * Since: 2.30
- */
 
 struct _WebKitITPThirdParty {
     explicit _WebKitITPThirdParty(WebResourceLoadStatisticsStore::ThirdPartyData&& data)

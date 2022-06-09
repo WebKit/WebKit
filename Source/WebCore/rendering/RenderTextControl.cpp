@@ -71,7 +71,7 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         auto oldInnerTextStyle = textFormControlElement().createInnerTextStyle(*oldStyle);
         if (newInnerTextStyle != oldInnerTextStyle)
             innerTextRenderer->setStyle(WTFMove(newInnerTextStyle));
-        else if (diff == StyleDifference::RepaintIfText || diff == StyleDifference::Repaint) {
+        else if (diff == StyleDifference::RepaintIfTextOrBorderOrOutline || diff == StyleDifference::Repaint) {
             // Repaint is expected to be propagated down to the shadow tree when non-inherited style property changes
             // (e.g. text-decoration-color) since that's where the value actually takes effect.
             innerTextRenderer->repaint();
@@ -148,7 +148,7 @@ float RenderTextControl::getAverageCharWidth()
     const UChar ch = '0';
     const String str = String(&ch, 1);
     const FontCascade& font = style().fontCascade();
-    TextRun textRun = constructTextRun(str, style(), ExpansionBehavior::allowRightOnly());
+    TextRun textRun = constructTextRun(str, style(), AllowRightExpansion);
     return font.width(textRun);
 }
 
@@ -161,7 +161,7 @@ float RenderTextControl::scaleEmToUnits(int x) const
 
 void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (shouldApplySizeContainment())
+    if (shouldApplySizeContainment(*this))
         return;
     // Use average character width. Matches IE.
     maxLogicalWidth = preferredContentLogicalWidth(const_cast<RenderTextControl*>(this)->getAverageCharWidth());

@@ -1,4 +1,0 @@
-
-PASS Test the XRHand API - webgl
-PASS Test the XRHand API - webgl2
-

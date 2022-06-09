@@ -26,7 +26,7 @@
 
 [
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=*,
+    Exposed=(Window,Worker),
     InterfaceName=URL,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
@@ -51,6 +51,6 @@
     USVString toJSON();
 
     // https://w3c.github.io/FileAPI/#creating-revoking.
-    [CallWith=CurrentScriptExecutionContext, Exposed=(Window,DedicatedWorker,SharedWorker)] static DOMString createObjectURL(Blob blob);
-    [CallWith=CurrentScriptExecutionContext, Exposed=(Window,DedicatedWorker,SharedWorker)] static undefined revokeObjectURL(DOMString url);
+    [CallWith=ScriptExecutionContext] static DOMString createObjectURL(Blob blob);
+    [CallWith=ScriptExecutionContext] static undefined revokeObjectURL(DOMString url);
 };

@@ -1,3 +1,0 @@
-
-PASS script-src-wasm-unsafe-eval-allows-wasm
-

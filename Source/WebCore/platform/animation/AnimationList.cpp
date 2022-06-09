@@ -36,13 +36,14 @@ if (i) { \
 AnimationList::AnimationList() = default;
 
 AnimationList::AnimationList(const AnimationList& other, CopyBehavior copyBehavior)
+    : RefCounted()
 {
-    if (copyBehavior == CopyBehavior::Reference)
-        m_animations = other.m_animations;
-    else {
-        m_animations = other.m_animations.map([](auto& animation) {
-            return Animation::create(animation.get());
-        });
+    m_animations.reserveInitialCapacity(other.size());
+    for (auto& animation : other.m_animations) {
+        if (copyBehavior == CopyBehavior::Reference)
+            m_animations.uncheckedAppend(animation.get());
+        else
+            m_animations.uncheckedAppend(Animation::create(animation.get()));
     }
 }
 
@@ -57,7 +58,6 @@ void AnimationList::fillUnsetProperties()
     FILL_UNSET_PROPERTY(isPlayStateSet, playState, fillPlayState);
     FILL_UNSET_PROPERTY(isTimingFunctionSet, timingFunction, fillTimingFunction);
     FILL_UNSET_PROPERTY(isPropertySet, property, fillProperty);
-    FILL_UNSET_PROPERTY(isCompositeOperationSet, compositeOperation, fillCompositeOperation);
 }
 
 bool AnimationList::operator==(const AnimationList& other) const

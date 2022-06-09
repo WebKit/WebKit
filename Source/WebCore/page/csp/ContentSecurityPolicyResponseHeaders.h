@@ -43,8 +43,7 @@ public:
     ContentSecurityPolicyResponseHeaders() = default;
     WEBCORE_EXPORT explicit ContentSecurityPolicyResponseHeaders(const ResourceResponse&);
 
-    ContentSecurityPolicyResponseHeaders isolatedCopy() const &;
-    ContentSecurityPolicyResponseHeaders isolatedCopy() &&;
+    ContentSecurityPolicyResponseHeaders isolatedCopy() const;
 
     template <class Encoder> void encode(Encoder&) const;
     template <class Decoder> static std::optional<ContentSecurityPolicyResponseHeaders> decode(Decoder&);

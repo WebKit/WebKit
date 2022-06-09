@@ -75,7 +75,7 @@
 }
 
 .formatted-node > .tree-outline.dom li {
-    user-select: none !important;
+    -webkit-user-select: none !important;
 }
 
 .formatted-node > .tree-outline.dom li.selected .selection-area {

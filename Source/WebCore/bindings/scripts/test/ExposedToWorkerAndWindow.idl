@@ -30,7 +30,8 @@
 };
 
 [
-    Exposed=(Window,Worker)
+    Exposed=(Window,Worker),
+    ImplementationLacksVTable
 ] interface ExposedToWorkerAndWindow {
     constructor();
 

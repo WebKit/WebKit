@@ -47,7 +47,7 @@ public:
 TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times");
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -94,7 +94,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times");
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -138,7 +138,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
 TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
 {
     FontCascadeDescription description;
-    description.setOneFamily("LucidaGrande"_s);
+    description.setOneFamily("LucidaGrande");
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -181,7 +181,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
 {
     FontCascadeDescription description;
-    description.setOneFamily("LucidaGrande"_s);
+    description.setOneFamily("LucidaGrande");
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -218,7 +218,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
 TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times");
     description.setComputedSize(48);
     FontCascade font(WTFMove(description));
     font.update();
@@ -264,14 +264,14 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
 TEST_F(ComplexTextControllerTest, LeftExpansion)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times");
     description.setComputedSize(48);
     FontCascade font(WTFMove(description));
     font.update();
 
     UChar characters[] = { 'a' };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
-    TextRun textRun(StringView(characters, charactersLength), 0, 100, ExpansionBehavior::forceLeftOnly());
+    TextRun textRun(StringView(characters, charactersLength), 0, 100, ForceLeftExpansion);
     auto run = ComplexTextController::ComplexTextRun::create({ FloatSize(24, 0) }, { }, { 16 }, { 0 }, FloatSize(), font.primaryFont(), characters, 0, charactersLength, 0, 1, true);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run));
@@ -294,7 +294,7 @@ TEST_F(ComplexTextControllerTest, LeftExpansion)
 TEST_F(ComplexTextControllerTest, VerticalAdvances)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times");
     description.setComputedSize(48);
     FontCascade font(WTFMove(description));
     font.update();
@@ -338,7 +338,7 @@ TEST_F(ComplexTextControllerTest, VerticalAdvances)
 TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
 {
     FontCascadeDescription description;
-    description.setOneFamily("Times"_s);
+    description.setOneFamily("Times");
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
@@ -350,7 +350,7 @@ TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
 
     UChar characters[] = { 0x644, ' ', 0x644, ' ', 0x644 };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
-    TextRun textRun(StringView(characters, charactersLength), 0, 14, ExpansionBehavior::defaultBehavior(), TextDirection::RTL);
+    TextRun textRun(StringView(characters, charactersLength), 0, 14, DefaultExpansion, TextDirection::RTL);
     auto run = ComplexTextController::ComplexTextRun::create(advances, origins, { 5, 6, 7, 8, 9 }, { 4, 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), characters, 0, charactersLength, 0, 5, false);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run));

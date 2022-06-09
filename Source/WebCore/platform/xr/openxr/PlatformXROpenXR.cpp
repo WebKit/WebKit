@@ -22,7 +22,6 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
-#include "GraphicsContextGL.h"
 #include "OpenXRExtensions.h"
 #include "OpenXRInput.h"
 #include "OpenXRInputSource.h"
@@ -52,8 +51,6 @@ OpenXRDevice::OpenXRDevice(XrInstance instance, XrSystemId system, Ref<WorkQueue
     , m_extensions(extensions)
 {
 }
-
-OpenXRDevice::~OpenXRDevice() = default;
 
 void OpenXRDevice::initialize(CompletionHandler<void()>&& callback)
 {
@@ -85,7 +82,7 @@ WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
     return Device::recommendedResolution(mode);
 }
 
-void OpenXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOriginData&, SessionMode mode, const Device::FeatureList&)
+void OpenXRDevice::initializeTrackingAndRendering(SessionMode mode)
 {
     m_queue.dispatch([this, protectedThis = Ref { *this }, mode]() {
         ASSERT(m_instance != XR_NULL_HANDLE);
@@ -344,19 +341,19 @@ Device::FeatureList OpenXRDevice::collectSupportedFeatures() const
 
     // https://www.khronos.org/registry/OpenXR/specs/1.0/man/html/XrReferenceSpaceType.html
     // OpenXR runtimes must support Viewer and Local spaces.
-    features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeViewer);
-    features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeLocal);
+    features.append(ReferenceSpaceType::Viewer);
+    features.append(ReferenceSpaceType::Local);
 
     // Mark LocalFloor as supported regardless if XR_REFERENCE_SPACE_TYPE_STAGE is available.
     // The spec uses a estimated height if we don't provide a floor transform in frameData.
-    features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor);
+    features.append(ReferenceSpaceType::LocalFloor);
 
     // Mark BoundedFloor as supported regardless if XR_REFERENCE_SPACE_TYPE_STAGE is available.
     // The spec allows reporting an empty array if xrGetReferenceSpaceBoundsRect fails.
-    features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeBoundedFloor);
+    features.append(ReferenceSpaceType::BoundedFloor);
 
     if (m_extensions.isExtensionSupported(XR_MSFT_UNBOUNDED_REFERENCE_SPACE_EXTENSION_NAME))
-        features.append(PlatformXR::SessionFeature::ReferenceSpaceTypeUnbounded);
+        features.append(ReferenceSpaceType::Unbounded);
 
     return features;
 }

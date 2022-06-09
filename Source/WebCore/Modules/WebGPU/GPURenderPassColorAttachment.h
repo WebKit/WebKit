@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,8 +43,13 @@ struct GPURenderPassColorAttachment {
         return {
             view->backing(),
             resolveTarget ? &resolveTarget->backing() : nullptr,
-            clearValue ? std::optional { WebCore::convertToBacking(*clearValue) } : std::nullopt,
-            WebCore::convertToBacking(loadOp),
+            WTF::switchOn(loadValue, [&] (GPULoadOp loadOp) -> std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict> {
+                return WebCore::convertToBacking(loadOp);
+            }, [&] (const Vector<double>& vector) -> std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict> {
+                return vector;
+            }, [&] (const GPUColorDict& color) -> std::variant<PAL::WebGPU::LoadOp, Vector<double>, PAL::WebGPU::ColorDict> {
+                return color.convertToBacking();
+            }),
             WebCore::convertToBacking(storeOp),
         };
     }
@@ -52,8 +57,7 @@ struct GPURenderPassColorAttachment {
     GPUTextureView* view { nullptr };
     GPUTextureView* resolveTarget { nullptr };
 
-    std::optional<GPUColor> clearValue;
-    GPULoadOp loadOp { GPULoadOp::Load };
+    std::variant<GPULoadOp, Vector<double>, GPUColorDict> loadValue;
     GPUStoreOp storeOp { GPUStoreOp::Store };
 };
 

@@ -33,21 +33,21 @@ namespace WebCore {
 namespace DisplayList {
 
 template<typename BackendType>
-class ImageBuffer final : public ConcreteImageBuffer<BackendType> {
+class ImageBuffer : public ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::truncatedLogicalSize;
     using BaseConcreteImageBuffer::logicalSize;
     using BaseConcreteImageBuffer::baseTransform;
 
 public:
-    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const WebCore::ImageBuffer::CreationContext& creationContext)
+    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, const HostWindow* hostWindow)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
     }
 
-    static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
+    static auto create(const FloatSize& size, const GraphicsContext& context)
     {
-        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, context, purpose);
+        return BaseConcreteImageBuffer::template create<ImageBuffer>(size, context);
     }
 
     ImageBuffer(const ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend)
@@ -60,9 +60,9 @@ public:
         m_drawingContext.displayList().setItemBufferReadingClient(m_readingClient.get());
     }
 
-    ImageBuffer(const ImageBufferBackend::Parameters& parameters)
+    ImageBuffer(const ImageBufferBackend::Parameters& parameters, RecorderImpl::Delegate* delegate = nullptr)
         : BaseConcreteImageBuffer(parameters)
-        , m_drawingContext(logicalSize(), baseTransform())
+        , m_drawingContext(logicalSize(), baseTransform(), delegate)
         , m_writingClient(makeUnique<InMemoryDisplayList::WritingClient>())
         , m_readingClient(makeUnique<InMemoryDisplayList::ReadingClient>())
     {
@@ -75,20 +75,20 @@ public:
         flushDrawingContext();
     }
 
-    GraphicsContext& context() const final
+    GraphicsContext& context() const override
     {
         return m_drawingContext.context();
     }
 
     GraphicsContext* drawingContext() override { return &m_drawingContext.context(); }
 
-    void flushDrawingContext() final
+    void flushDrawingContext() override
     {
         if (!m_drawingContext.displayList().isEmpty())
             m_drawingContext.replayDisplayList(BaseConcreteImageBuffer::context());
     }
 
-    void clearBackend() final
+    void clearBackend() override
     {
         m_drawingContext.displayList().clear();
         BaseConcreteImageBuffer::clearBackend();

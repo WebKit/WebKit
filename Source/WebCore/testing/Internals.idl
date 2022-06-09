@@ -115,13 +115,6 @@ enum AudioSessionCategory {
     "AudioProcessing"
 };
 
-enum RouteSharingPolicy {
-    "Default",
-    "LongFormAudio",
-    "Independent",
-    "LongFormVideo"
-};
-
 enum AutoplayPolicy {
     "Default",
     "Allow",
@@ -291,14 +284,6 @@ enum HEVCParameterCodec {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
-] dictionary TextIteratorState {
-    DOMString text;
-    Range range;
-};
-
-[
-    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    JSGenerateToJSObject,
 ] dictionary ImageOverlayText {
     required DOMString text;
     required DOMPointReadOnly topLeft;
@@ -317,7 +302,6 @@ enum HEVCParameterCodec {
     required DOMPointReadOnly bottomRight;
     required DOMPointReadOnly bottomLeft;
     sequence<ImageOverlayText> children;
-    boolean hasTrailingNewline = true;
 };
 
 [
@@ -325,16 +309,6 @@ enum HEVCParameterCodec {
     JSGenerateToJSObject,
 ] dictionary ImageOverlayBlock {
     required DOMString text;
-    required DOMPointReadOnly topLeft;
-    required DOMPointReadOnly topRight;
-    required DOMPointReadOnly bottomRight;
-    required DOMPointReadOnly bottomLeft;
-};
-
-[
-    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    JSGenerateToJSObject,
-] dictionary ImageOverlayDataDetector {
     required DOMPointReadOnly topLeft;
     required DOMPointReadOnly topRight;
     required DOMPointReadOnly bottomRight;
@@ -386,9 +360,14 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     Node ensureUserAgentShadowRoot(Element host);
     Node shadowRoot(Element host);
 
+    // CSS Deferred Parsing Testing.
+    long deferredStyleRulesCount(StyleSheet sheet);
+    long deferredGroupRulesCount(StyleSheet sheet);
+    long deferredKeyframesRulesCount(StyleSheet sheet);
+
     DOMString shadowRootType(Node root);
     DOMString shadowPseudoId(Element element);
-    undefined setShadowPseudoId(Element element, [AtomString] DOMString id);
+    undefined setShadowPseudoId(Element element, DOMString id);
     Node treeScopeRootNode(Node node);
     Node parentTreeScope(Node node);
 
@@ -415,8 +394,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     DOMString visiblePlaceholder(Element element);
     undefined selectColorInColorChooser(HTMLInputElement element, DOMString colorValue);
-    sequence<[AtomString] DOMString> formControlStateOfPreviousHistoryItem();
-    undefined setFormControlStateOfPreviousHistoryItem(sequence<[AtomString] DOMString> values);
+    sequence<DOMString> formControlStateOfPreviousHistoryItem();
+    undefined setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 
     DOMRect absoluteLineRectFromPoint(long x, long y);
 
@@ -426,7 +405,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     DOMRect boundingBox(Element element);
 
     unsigned long inspectorGridOverlayCount();
-    unsigned long inspectorFlexOverlayCount();
     DOMRectList inspectorHighlightRects();
     unsigned long inspectorPaintRectCount();
 
@@ -457,7 +435,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);
     undefined setPaginationLineGridEnabled(boolean enabled);
-    unsigned long long lineIndexAfterPageBreak(Element element);
 
     DOMString configurationForViewport(unrestricted float devicePixelRatio, long deviceWidth, long deviceHeight, long availableWidth, long availableHeight);
 
@@ -487,14 +464,13 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined scrollElementToRect(Element element, long x, long y, long w, long h);
 
     Range? rangeFromLocationAndLength(Element scope, unsigned long rangeLocation, unsigned long rangeLength);
-    unsigned long locationFromRange(Element scope, Range range, optional sequence<DOMString> behaviors = []);
-    unsigned long lengthFromRange(Element scope, Range range, optional sequence<DOMString> behaviors = []);
+    unsigned long locationFromRange(Element scope, Range range);
+    unsigned long lengthFromRange(Element scope, Range range);
     DOMString rangeAsText(Range range);
     DOMString rangeAsTextUsingBackwardsTextIterator(Range range);
     Range subrange(Range range, unsigned long rangeLocation, unsigned long rangeLength);
     Range? rangeForDictionaryLookupAtLocation(long x, long y);
     Range? rangeOfStringNearLocation(Range range, DOMString text, long targetOffset);
-    sequence<TextIteratorState> statesOfTextIterator(Range range, optional sequence<DOMString> behaviors = []);
 
     undefined setDelegatesScrolling(boolean enabled);
 
@@ -609,15 +585,11 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setElementTracksDisplayListReplay(Element element, boolean trackReplay);
 
     // Flags for displayListForElement.
-    const unsigned short DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS = 1;
-    const unsigned short DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS = 2;
+    const unsigned short DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS = 1;
     // Returns the recorded display list.
     DOMString displayListForElement(Element element, optional unsigned short flags = 0);
     // Returns the display list that was actually painted.
     DOMString replayDisplayListForElement(Element element, optional unsigned short flags = 0);
-
-    undefined setForceUseGlyphDisplayListForTesting(boolean enabled);
-    DOMString cachedGlyphDisplayListsForTextNode(Node node, optional unsigned short flags = 0);
 
     undefined garbageCollectDocumentResources();
 
@@ -799,16 +771,17 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean isPluginUnavailabilityIndicatorObscured(Element element);
     DOMString unavailablePluginReplacementText(Element element);
     boolean isPluginSnapshotted(Element element);
+    boolean pluginIsBelowSizeThreshold(Element element);
 
     DOMRect selectionBounds();
     undefined setSelectionWithoutValidation(Node baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);
 
     [Conditional=MEDIA_SOURCE] undefined initializeMockMediaSource();
-    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> bufferedSamplesForTrackId(SourceBuffer buffer, [AtomString] DOMString trackId);
-    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> enqueuedSamplesForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID);
+    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> bufferedSamplesForTrackId(SourceBuffer buffer, DOMString trackId);
+    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> enqueuedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] undefined setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
-    [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID);
-    [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, [AtomString] DOMString trackID, unsigned long maxQueueDepth);
+    [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, DOMString trackID);
+    [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, DOMString trackID, unsigned long maxQueueDepth);
 
     [Conditional=VIDEO] undefined beginMediaSessionInterruption(DOMString interruptionType);
     [Conditional=VIDEO] undefined endMediaSessionInterruption(DOMString flags);
@@ -822,12 +795,11 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=WEB_AUDIO] undefined setAudioContextRestrictions(AudioContext context, DOMString restrictions);
     [Conditional=VIDEO] undefined postRemoteControlCommand(DOMString command, optional unrestricted float argument = 0);
     [Conditional=VIDEO] undefined activeAudioRouteDidChange(boolean shouldPause);
-    [Conditional=VIDEO] undefined beginAudioSessionInterruption();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined mockMediaPlaybackTargetPickerDismissPopup();
-    [Conditional=MEDIA_RECORDER] undefined setCustomPrivateRecorderCreator();
+    [Conditional=MEDIA_STREAM] undefined setCustomPrivateRecorderCreator();
 
     [Conditional=WEB_AUDIO] undefined useMockAudioDestinationCocoa();
 
@@ -856,8 +828,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean pageDefersLoading();
 
     File? createFile(DOMString url);
-    DOMString createTemporaryFile(DOMString name, DOMString contents);
-
     undefined queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();
 
@@ -878,8 +848,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setShowAllPlugins(boolean showAll);
 
-    [CallWith=CurrentGlobalObject] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
-    [CallWith=CurrentGlobalObject] boolean isReadableStreamDisturbed(any stream);
+    [CallWith=GlobalObject] any cloneArrayBuffer(any buffer, any srcByteOffset, any byteLength);
+    [CallWith=GlobalObject] boolean isReadableStreamDisturbed(any stream);
 
     DOMString resourceLoadStatisticsForURL(DOMURL url);
     undefined setResourceLoadStatisticsEnabled(boolean enable);
@@ -895,8 +865,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined withoutUserGesture(VoidCallback callback);
 
     boolean userIsInteracting();
-
-    boolean hasTransientActivation();
 
     GCObservation? observeGC(any observed);
 
@@ -915,7 +883,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined setQuickLookPassword(DOMString password);
 
-    [CallWith=CurrentDocument] undefined setAsRunningUserScripts();
+    [CallWith=Document] undefined setAsRunningUserScripts();
+    [CallWith=Document, Conditional=APPLE_PAY] undefined setApplePayIsActive();
 
     undefined disableTileSizeUpdateDelay();
     undefined setSpeculativeTilingDelayDisabledForTesting(boolean disabled);
@@ -948,7 +917,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_STREAM] undefined setCameraMediaStreamTrackOrientation(MediaStreamTrack track, short orientation);
     [Conditional=MEDIA_STREAM] undefined observeMediaStreamTrack(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] Promise<ImageData> grabNextMediaStreamTrackFrame();
-    [Conditional=MEDIA_STREAM] Promise<short> mediaStreamTrackVideoFrameRotation();
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackAudioSampleCount;
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackVideoSampleCount;
     [Conditional=MEDIA_STREAM] undefined delayMediaStreamTrackSamples(MediaStreamTrack track, float delay);
@@ -962,20 +930,20 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_STREAM] boolean isMockRealtimeMediaSourceCenterEnabled();
     [Conditional=MEDIA_STREAM] boolean shouldAudioTrackPlay(AudioTrack track);
 
-    DOMString documentIdentifier(Document document);
-    boolean isDocumentAlive(DOMString documentIdentifier);
+    unsigned long long documentIdentifier(Document document);
+    boolean isDocumentAlive(unsigned long long documentIdentifier);
 
     readonly attribute unsigned long long storageAreaMapCount;
 
     unsigned long long elementIdentifier(Element element);
-    boolean isElementAlive(unsigned long long elementIdentifier);
+    [CallWith=Document] boolean isElementAlive(unsigned long long documentIdentifier);
     unsigned long long frameIdentifier(Document document);
     unsigned long long pageIdentifier(Document document);
 
     boolean isAnyWorkletGlobalScopeAlive();
 
     readonly attribute long processIdentifier;
-    DOMString serviceWorkerClientInternalIdentifier(Document document);
+    DOMString serviceWorkerClientIdentifier(Document document);
     Promise<undefined> storeRegistrationsOnDisk();
     Promise<double> sendH2Ping(DOMString url);
 
@@ -983,7 +951,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     Promise<DOMString> cacheStorageEngineRepresentation();
     undefined setResponseSizeWithPadding(FetchResponse response, unsigned long long size);
     unsigned long long responseSizeWithPadding(FetchResponse response);
-    DOMString responseNetworkLoadMetricsProtocol(FetchResponse response);
 
     DOMString blobInternalURL(Blob blob);
     Promise<boolean> isBlobInternalURLRegistered(DOMString url);
@@ -995,7 +962,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     readonly attribute boolean supportsAudioSession;
     AudioSessionCategory audioSessionCategory();
     [Conditional=VIDEO] AudioSessionCategory categoryAtMostRecentPlayback(HTMLMediaElement element);
-    RouteSharingPolicy routeSharingPolicy();
 
     double preferredAudioBufferSize();
     double currentAudioBufferSize();
@@ -1005,22 +971,21 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=SERVICE_WORKER] Promise<undefined> terminateServiceWorker(ServiceWorker worker);
     [Conditional=SERVICE_WORKER] Promise<undefined> whenServiceWorkerIsTerminated(ServiceWorker worker);
 
-    [CallWith=CurrentDocument, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
+    [CallWith=Document, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
 
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
 
     [Conditional=IMAGE_ANALYSIS] readonly attribute Element? textRecognitionCandidate;
     [Conditional=IMAGE_ANALYSIS] undefined requestTextRecognition(Element element, VoidCallback callback);
-    undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines, optional sequence<ImageOverlayBlock> blocks = [], optional sequence<ImageOverlayDataDetector> dataDetectors = []);
-    readonly attribute boolean hasActiveDataDetectorHighlight;
+    undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines, optional sequence<ImageOverlayBlock> blocks = []);
 
     boolean usingAppleInternalSDK();
     boolean usingGStreamer();
 
     undefined postTask(VoidCallback callback);
-    [CallWith=CurrentScriptExecutionContext] undefined queueTask(DOMString source, VoidCallback callback);
-    [CallWith=CurrentDocument] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
+    [CallWith=ScriptExecutionContext] undefined queueTask(DOMString source, VoidCallback callback);
+    [CallWith=Document] undefined queueTaskToQueueMicrotask(DOMString source, VoidCallback callback);
     boolean hasSameEventLoopAs(WindowProxy windowProxy);
 
     DOMString windowLocationHost(DOMWindow window);
@@ -1084,7 +1049,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     InternalsMapLike createInternalsMapLike();
     InternalsSetLike createInternalsSetLike();
 
-    DOMString highlightPseudoElementColor([AtomString] DOMString highlightName, Element element);
+    DOMString highlightPseudoElementColor(DOMString highlightName, Element element);
 
     boolean hasSandboxMachLookupAccessToGlobalName(DOMString process, DOMString service);
     boolean hasSandboxMachLookupAccessToXPCServiceName(DOMString process, DOMString service);
@@ -1131,7 +1096,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_SESSION] Promise<ImageData> loadArtworkImage(DOMString url);
     [Conditional=MEDIA_SESSION] sequence<DOMString> platformSupportedCommands();
 
-    [Conditional=MEDIA_SESSION_COORDINATOR, CallWith=CurrentScriptExecutionContext] undefined registerMockMediaSessionCoordinator(StringCallback callback);
+    [Conditional=MEDIA_SESSION_COORDINATOR, CallWith=ScriptExecutionContext] undefined registerMockMediaSessionCoordinator(StringCallback callback);
     [Conditional=MEDIA_SESSION_COORDINATOR] undefined setMockMediaSessionCoordinatorCommandsShouldFail(boolean shouldFail);
 
     DOMString treeOrder(Node a, Node b, optional TreeType tree = "Tree");
@@ -1152,8 +1117,5 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     [Conditional=SERVICE_WORKER] PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
 
-    undefined overrideModalContainerSearchTermForTesting([AtomString] DOMString term);
-
-    [Conditional=ARKIT_INLINE_PREVIEW_MAC] Promise<sequence<DOMString>> modelInlinePreviewUUIDs();
-    [Conditional=ARKIT_INLINE_PREVIEW_MAC] DOMString modelInlinePreviewUUIDForModelElement(HTMLModelElement modelElement);
+    undefined overrideModalContainerSearchTermForTesting(DOMString term);
 };

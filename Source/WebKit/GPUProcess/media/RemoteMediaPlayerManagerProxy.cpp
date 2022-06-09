@@ -34,7 +34,6 @@
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteMediaPlayerProxyConfiguration.h"
-#include "ScopedRenderingResourcesRequest.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
@@ -68,7 +67,7 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
     ASSERT(m_gpuConnectionToWebProcess);
     ASSERT(!m_proxies.contains(identifier));
 
-    auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, identifier, m_gpuConnectionToWebProcess->connection(), engineIdentifier, WTFMove(proxyConfiguration), m_gpuConnectionToWebProcess->videoFrameObjectHeap(), m_gpuConnectionToWebProcess->webProcessIdentity());
+    auto proxy = makeUnique<RemoteMediaPlayerProxy>(*this, identifier, m_gpuConnectionToWebProcess->connection(), engineIdentifier, WTFMove(proxyConfiguration));
     m_proxies.add(identifier, WTFMove(proxy));
 }
 
@@ -79,7 +78,7 @@ void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier iden
     if (auto proxy = m_proxies.take(identifier))
         proxy->invalidate();
 
-    if (m_gpuConnectionToWebProcess && !hasOutstandingRenderingResourceUsage())
+    if (m_gpuConnectionToWebProcess && allowsExitUnderMemoryPressure())
         m_gpuConnectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
@@ -184,6 +183,11 @@ RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(const MediaPlayer
     return nullptr;
 }
 
+bool RemoteMediaPlayerManagerProxy::allowsExitUnderMemoryPressure() const
+{
+    return m_proxies.isEmpty();
+}
+
 #if !RELEASE_LOG_DISABLED
 Logger& RemoteMediaPlayerManagerProxy::logger()
 {
@@ -195,32 +199,6 @@ Logger& RemoteMediaPlayerManagerProxy::logger()
     return *m_logger;
 }
 #endif
-
-ShareableBitmap::Handle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier identifier)
-{
-    auto player = mediaPlayer(identifier);
-    if (!player)
-        return { };
-
-    auto image = player->nativeImageForCurrentTime();
-    if (!image)
-        return { };
-
-    auto imageSize = image->size();
-    auto bitmap = ShareableBitmap::create(imageSize, { player->colorSpace() });
-    if (!bitmap)
-        return { };
-
-    auto context = bitmap->createGraphicsContext();
-    if (!context)
-        return { };
-
-    context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
-
-    ShareableBitmap::Handle bitmapHandle;
-    bitmap->createHandle(bitmapHandle);
-    return bitmapHandle;
-}
 
 } // namespace WebKit
 

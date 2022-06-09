@@ -29,7 +29,6 @@
 #include "ElementIdentifier.h"
 #include "EventOptions.h"
 #include "FocusOptions.h"
-#include "HitTestRequest.h"
 #include "QualifiedName.h"
 #include "RenderPtr.h"
 #include "ScrollTypes.h"
@@ -73,7 +72,6 @@ class RenderStyle;
 class RenderTreePosition;
 class SpaceSplitString;
 class StylePropertyMap;
-class StylePropertyMapReadOnly;
 class Text;
 class UniqueElementData;
 class WebAnimation;
@@ -92,8 +90,6 @@ struct ScrollIntoViewOptions;
 struct ScrollToOptions;
 struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
-
-using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element>>>;
 
 namespace Style {
 class Resolver;
@@ -123,10 +119,6 @@ public:
     WEBCORE_EXPORT void setIntegralAttribute(const QualifiedName& attributeName, int value);
     WEBCORE_EXPORT unsigned getUnsignedIntegralAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
-    WEBCORE_EXPORT Element* getElementAttribute(const QualifiedName& attributeName) const;
-    WEBCORE_EXPORT void setElementAttribute(const QualifiedName& attributeName, Element* value);
-    WEBCORE_EXPORT std::optional<Vector<RefPtr<Element>>> getElementsArrayAttribute(const QualifiedName& attributeName) const;
-    WEBCORE_EXPORT void setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<RefPtr<Element>>>&& value);
 
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.
@@ -221,7 +213,7 @@ public:
     // This does not update layout, and uses absoluteBoundingBoxRect().
     WEBCORE_EXPORT IntRect boundingBoxInRootViewCoordinates() const;
 
-    WEBCORE_EXPORT std::optional<std::pair<RenderObject*, FloatRect>> boundingAbsoluteRectWithoutLayout() const;
+    std::optional<std::pair<RenderObject*, FloatRect>> boundingAbsoluteRectWithoutLayout() const;
 
     WEBCORE_EXPORT FloatRect boundingClientRect();
 
@@ -321,7 +313,7 @@ public:
     virtual bool rendererIsNeeded(const RenderStyle&);
     virtual bool rendererIsEverNeeded() { return true; }
 
-    inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
+    WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
     ShadowRoot* shadowRootForBindings(JSC::JSGlobalObject&) const;
 
     WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
@@ -350,7 +342,7 @@ public:
     bool hasFocusWithin() const { return isUserActionElement() && isUserActionElementHasFocusWithin(); };
 
     virtual void setActive(bool = true, bool pause = false, Style::InvalidationScope = Style::InvalidationScope::All);
-    virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All, HitTestRequest = {});
+    virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All);
     virtual void setFocus(bool, FocusVisibility = FocusVisibility::Invisible);
     void setBeingDragged(bool);
     void setHasFocusVisible(bool);
@@ -378,7 +370,7 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<Element*> insertAdjacentElement(const String& where, Element& newChild);
     WEBCORE_EXPORT ExceptionOr<void> insertAdjacentHTML(const String& where, const String& html);
-    WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, String&& text);
+    WEBCORE_EXPORT ExceptionOr<void> insertAdjacentText(const String& where, const String& text);
 
     const RenderStyle* computedStyle(PseudoId = PseudoId::None) override;
 
@@ -430,7 +422,7 @@ public:
     URL getNonEmptyURLAttribute(const QualifiedName&) const;
 
     virtual const AtomString& imageSourceURL() const;
-    virtual AtomString target() const { return nullAtom(); }
+    virtual String target() const { return String(); }
 
     static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
     virtual void focus(const FocusOptions& = { });
@@ -452,6 +444,9 @@ public:
 
     const AtomString& pseudo() const;
     WEBCORE_EXPORT void setPseudo(const AtomString&);
+
+    LayoutSize minimumSizeForResizing() const;
+    void setMinimumSizeForResizing(const LayoutSize&);
 
     // Use Document::registerForDocumentActivationCallbacks() to subscribe to these
     virtual void prepareForDocumentSuspension() { }
@@ -639,7 +634,6 @@ public:
 
     void invalidateStyleInternal();
     void invalidateStyleForSubtreeInternal();
-    void invalidateForQueryContainerChange();
 
     void invalidateEventListenerRegions();
 
@@ -660,8 +654,7 @@ public:
     ExceptionOr<Ref<WebAnimation>> animate(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations(std::optional<GetAnimationsOptions>);
 
-    WEBCORE_EXPORT ElementIdentifier identifier() const;
-    WEBCORE_EXPORT static Element* fromIdentifier(ElementIdentifier);
+    ElementIdentifier createElementIdentifier();
 
     String description() const override;
     String debugDescription() const override;
@@ -670,13 +663,6 @@ public:
     void setHasDuplicateAttribute(bool hasDuplicateAttribute) { m_hasDuplicateAttribute = hasDuplicateAttribute; };
 
     virtual void updateUserAgentShadowTree() { }
-
-#if ENABLE(CSS_TYPED_OM)
-    StylePropertyMapReadOnly* computedStyleMap();
-#endif
-
-    ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
-    ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
@@ -700,8 +686,6 @@ protected:
     StylePropertyMap* attributeStyleMap();
     void setAttributeStyleMap(Ref<StylePropertyMap>&&);
 #endif
-
-    void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
 private:
     Frame* documentFrameWithNonNullView() const;
@@ -738,6 +722,7 @@ private:
 
     enum HTMLDocumentNamedItemMapsUpdatingCondition { AlwaysUpdateHTMLDocumentNamedItemMaps, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute };
     void updateIdForDocument(HTMLDocument&, const AtomString& oldId, const AtomString& newId, HTMLDocumentNamedItemMapsUpdatingCondition);
+    void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
 
     ExceptionOr<Node*> insertAdjacent(const String& where, Ref<Node>&& newChild);
 
@@ -776,7 +761,7 @@ private:
 
     void createUniqueElementData();
 
-    inline ElementRareData* elementRareData() const;
+    ElementRareData* elementRareData() const;
     ElementRareData& ensureElementRareData();
 
     ElementAnimationRareData* animationRareData(PseudoId) const;

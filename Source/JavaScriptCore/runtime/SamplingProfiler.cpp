@@ -468,7 +468,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
     // This function needs to be called from the JSC execution thread.
     RELEASE_ASSERT(m_lock.isLocked());
 
-    TinyBloomFilter<uintptr_t> filter = m_vm.heap.objectSpace().blocks().filter();
+    TinyBloomFilter filter = m_vm.heap.objectSpace().blocks().filter();
 
     for (UnprocessedStackTrace& unprocessedStackTrace : m_unprocessedStackTraces) {
         m_stackTraces.append(StackTrace());
@@ -543,7 +543,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             auto setFallbackFrameType = [&] {
                 ASSERT(!alreadyHasExecutable);
                 FrameType result = FrameType::Unknown;
-                auto callData = JSC::getCallData(calleeCell);
+                auto callData = getCallData(m_vm, calleeCell);
                 if (callData.type == CallData::Type::Native)
                     result = FrameType::Host;
 
@@ -557,7 +557,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
             };
 
             if (calleeCell->type() != JSFunctionType) {
-                if (JSObject* object = jsDynamicCast<JSObject*>(calleeCell))
+                if (JSObject* object = jsDynamicCast<JSObject*>(calleeCell->vm(), calleeCell))
                     addCallee(object);
 
                 if (!alreadyHasExecutable)
@@ -779,7 +779,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
 
     DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSGlobalObject* globalObject = callee->globalObject();
+    JSGlobalObject* globalObject = callee->globalObject(vm);
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
         PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry, &vm);
         PropertyName propertyName(ident);
@@ -816,7 +816,7 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
         if (frameType == FrameType::C) {
             auto demangled = WTF::StackTrace::demangle(const_cast<void*>(cCodePC));
             if (demangled)
-                return String::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
+                return String(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName());
             WTF::dataLog("couldn't get a name");
         }
 #endif
@@ -1259,7 +1259,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
                 }
 
                 if (frame.executable) {
-                    if (auto* executable = jsDynamicCast<FunctionExecutable*>(frame.executable)) {
+                    if (auto* executable = jsDynamicCast<FunctionExecutable*>(m_vm, frame.executable)) {
                         if (executable->isBuiltinFunction())
                             tierCounts.add(builtin, 0).iterator->value++;
                     }

@@ -40,12 +40,7 @@ module URI
     class SSH < Generic
         DEFAULT_PORT = 22
     end
-    unless defined?(self.register_scheme)
-      def self.register_scheme(scheme, klass)
-        @@schemes[scheme] = klass
-      end
-    end
-    register_scheme 'SSH', SSH
+    @@schemes['SSH'] = SSH
 end
 
 class String
@@ -84,16 +79,9 @@ PARALLEL_REMOTE_WRAPPER_MARK_BEGIN = "5d65329bd1a3"
 PARALLEL_REMOTE_WRAPPER_MARK_END = "a9aea5c3b843"
 PARALLEL_REMOTE_STATE_LOST_MARKER = "709fb7a77c45231918eb118a"
 ITERATION_LIMITS = OpenStruct.new(:infraIterationsFloor => 3,
-                                  :iterationsCeiling => 50)
+                                  :iterationsCeiling => 10)
 
 REMOTE_TIMEOUT = 120
-SSH_OPTIONS_DEFAULT = [
-    "-o",
-    "NoHostAuthenticationForLocalhost=yes",
-    "-o",
-    "ServerAliveInterval=30",
-]
-
 begin
     require 'shellwords'
 rescue Exception => e
@@ -171,7 +159,6 @@ $ldd = nil
 $artifact_exec_wrapper = nil
 $numChildProcessesSetByUser = false
 $runUniqueId = Random.new.bytes(16).unpack("H*")[0]
-$gnuParallelChunkSize = 1
 $testsDebugStream = nil # set to $stderr for debugging
 
 def putd(s)
@@ -246,7 +233,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--make-runner', GetoptLong::NO_ARGUMENT],
                ['--ruby-runner', GetoptLong::NO_ARGUMENT],
                ['--gnu-parallel-runner', GetoptLong::NO_ARGUMENT],
-               ['--gnu-parallel-chunk-size', GetoptLong::REQUIRED_ARGUMENT],
                ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
                ['--treat-failing-as-flaky', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
@@ -295,8 +281,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $testRunnerType = :ruby
     when '--gnu-parallel-runner'
         $testRunnerType = :gnuparallel
-    when '--gnu-parallel-chunk-size'
-        $gnuParallelChunkSize = arg.to_i
     when '--test-writer'
         $testWriter = arg
     when '--treat-failing-as-flaky'
@@ -623,7 +607,7 @@ BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--valida
 EAGER_OPTIONS = ["--thresholdForJITAfterWarmUp=10", "--thresholdForJITSoon=10", "--thresholdForOptimizeAfterWarmUp=20", "--thresholdForOptimizeAfterLongWarmUp=20", "--thresholdForOptimizeSoon=20", "--thresholdForFTLOptimizeAfterWarmUp=20", "--thresholdForFTLOptimizeSoon=20", "--thresholdForOMGOptimizeAfterWarmUp=20", "--thresholdForOMGOptimizeSoon=20", "--maximumEvalCacheableSourceLength=150000", "--useEagerCodeBlockJettisonTiming=true", "--repatchBufferingCountdown=0"]
 # NOTE: Tests rely on this using scribbleFreeCells.
 NO_CJIT_OPTIONS = ["--useConcurrentJIT=false", "--thresholdForJITAfterWarmUp=100", "--scribbleFreeCells=true"]
-B3O1_OPTIONS = ["--defaultB3OptLevel=1", "--useDataICInFTL=1", "--forceUnlinkedDFG=1"]
+B3O1_OPTIONS = ["--defaultB3OptLevel=1", "--useDataICInOptimizingJIT=1"]
 B3O0_OPTIONS = ["--maxDFGNodesInBasicBlockForPreciseAnalysis=100", "--defaultB3OptLevel=0"]
 FTL_OPTIONS = ["--useFTLJIT=true"]
 FORCE_LLINT_EXIT_OPTIONS = ["--forceOSRExitToLLInt=true"]
@@ -1004,7 +988,8 @@ end
 def bytecodeCacheTemplate
     if ($hostOS == "darwin")
         return "bytecode-cache"
-    elsif ($hostOS == "linux")
+    elsif ($hostOS == "linux" && $architecture != "mips")
+        # FIXME: need to fix https://bugs.webkit.org/show_bug.cgi?id=218703 to enable this on Linux/MIPS.
         return "bytecode-cacheXXXXXX"
     end
     nil
@@ -1090,7 +1075,7 @@ BASE_MODES = [
         "FTLNoCJIT",
         "misc-ftl-no-cjit",
         [
-            "--useDataICInFTL=true",
+            "--useDataIC=true",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1116,8 +1101,7 @@ BASE_MODES = [
             "--validateBCE=true",
             "--useSamplingProfiler=true",
             "--airForceIRCAllocator=true",
-            "--useDataICInFTL=true",
-            "--forceUnlinkedDFG=true",
+            "--useDataIC=true",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1178,7 +1162,7 @@ BASE_MODES = [
             "--airForceBriggsAllocator=true",
             "--useRandomizingExecutableIslandAllocation=true",
             "--forcePolyProto=true",
-            "--useDataICInFTL=true",
+            "--useDataIC=true",
         ] +
         FTL_OPTIONS +
         EAGER_OPTIONS +
@@ -1318,7 +1302,6 @@ BASE_MODES = [
             "--validateGraphAtEachPhase=true",
             "--useSourceProviderCache=false",
             "--useRandomizingExecutableIslandAllocation=true",
-            "--useLLIntICs=false",
         ] +
         NO_CJIT_OPTIONS
     ],
@@ -1477,67 +1460,86 @@ BASE_MODES.each { |mode|
 }
 
 # Default set of tests to run; propagates the cfg to every callee.
-def defaultRunCfg(cfg, subsetOptions, *optionalTestSpecificOptions)
+def defaultRunCfg(cfg)
     cfg.freeze
-    if not subsetOptions.has_key?(:ignoreQuickMode) and $mode == "quick"
-        defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
+    if $mode == "quick"
+        defaultQuickRunCfg(cfg)
     else
-        runDefaultCfg(cfg, *optionalTestSpecificOptions)
-        runBytecodeCacheCfg(cfg, *optionalTestSpecificOptions)
-        runMiniModeCfg(cfg, *optionalTestSpecificOptions)
+        runDefaultCfg(cfg)
+        runBytecodeCacheCfg(cfg)
+        runMiniModeCfg(cfg)
         if $jitTests
-            if not subsetOptions.has_key?(:skipNoLLInt)
-                runNoLLIntCfg(cfg, *optionalTestSpecificOptions)
-            end
-            runNoCJITValidatePhasesCfg(cfg, *optionalTestSpecificOptions)
-            runNoCJITCollectContinuouslyCfg(cfg, *optionalTestSpecificOptions) if shouldCollectContinuously?
-            if not subsetOptions.has_key?(:skipEager)
-                runDFGEagerCfg(cfg)
-                if $mode != "basic"
-                    runDFGEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
-                    runEagerJettisonNoCJITCfg(cfg, *optionalTestSpecificOptions)
-                end
+            runNoLLIntCfg(cfg)
+            runNoCJITValidatePhasesCfg(cfg)
+            runNoCJITCollectContinuouslyCfg(cfg) if shouldCollectContinuously?
+            runDFGEagerCfg(cfg)
+            if $mode != "basic"
+                runDFGEagerNoCJITValidateCfg(cfg)
+                runEagerJettisonNoCJITCfg(cfg)
             end
 
             return if !$isFTLPlatform
 
-            runNoFTLCfg(cfg, *optionalTestSpecificOptions)
-            if not subsetOptions.has_key?(:skipEager)
-                runFTLEagerCfg(cfg, *optionalTestSpecificOptions)
-                runFTLEagerNoCJITValidateCfg(cfg, *optionalTestSpecificOptions) if $buildType == "release"
-            end
-            runFTLNoCJITSmallPoolCfg(cfg, *optionalTestSpecificOptions)
+            runNoFTLCfg(cfg)
+            runFTLEagerCfg(cfg)
+            runFTLEagerNoCJITValidateCfg(cfg) if $buildType == "release"
+            runFTLNoCJITSmallPoolCfg(cfg)
 
             return if $mode == "basic"
 
-            runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
-            runFTLNoCJITB3O0Cfg(cfg, *optionalTestSpecificOptions)
-            runFTLNoCJITNoPutStackValidateCfg(cfg, *optionalTestSpecificOptions)
-            runFTLNoCJITNoInlineValidateCfg(cfg, *optionalTestSpecificOptions)
-            if not subsetOptions.has_key?(:skipEager)
-                runFTLEagerNoCJITB3O1Cfg(cfg, *optionalTestSpecificOptions)
-            end
+            runFTLNoCJITValidateCfg(cfg)
+            runFTLNoCJITB3O0Cfg(cfg)
+            runFTLNoCJITNoPutStackValidateCfg(cfg)
+            runFTLNoCJITNoInlineValidateCfg(cfg)
+            runFTLEagerNoCJITB3O1Cfg(cfg)
         end
     end
 end
 
 def defaultRun
-    defaultRunCfg({}, {})
+    defaultRunCfg({})
 end
 
 def defaultNoNoLLIntRun
-    defaultRunCfg({}, {:skipNoLLInt => true})
+    if $mode == "quick"
+        defaultQuickRun
+    else
+        runDefault
+        if $jitTests
+            runNoCJITValidatePhases
+            runNoCJITCollectContinuously if shouldCollectContinuously?
+            runDFGEager
+            if $mode != "basic"
+                runDFGEagerNoCJITValidate
+                runEagerJettisonNoCJIT
+            end
+
+            return if !$isFTLPlatform
+
+            runNoFTL
+            runFTLNoCJITValidate
+            runFTLNoCJITSmallPool
+
+            return if $mode == "basic"
+
+            runFTLNoCJITB3O0
+            runFTLNoCJITNoPutStackValidate
+            runFTLNoCJITNoInlineValidate
+            runFTLEager
+            runFTLEagerNoCJITValidate if $buildType == "release"
+        end
+    end
 end
 
-def defaultQuickRunCfg(cfg, *optionalTestSpecificOptions)
-    runDefaultCfg(cfg, *optionalTestSpecificOptions)
+def defaultQuickRunCfg(cfg)
+    runDefaultCfg(cfg)
     if $jitTests
-        runNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
+        runNoCJITValidateCfg(cfg)
 
         return if !$isFTLPlatform
 
-        runNoFTLCfg(cfg, *optionalTestSpecificOptions)
-        runFTLNoCJITValidateCfg(cfg, *optionalTestSpecificOptions)
+        runNoFTLCfg(cfg)
+        runFTLNoCJITValidateCfg(cfg)
     end
 end
 
@@ -1565,11 +1567,43 @@ end
 # for reasons that don't arise in the real world. It's used for tests that assert convergence
 # by counting recompilations.
 def defaultNoEagerRun(*optionalTestSpecificOptions)
-    defaultRunCfg({}, { :skipEager => true }, *optionalTestSpecificOptions)
+    runDefault(*optionalTestSpecificOptions)
+    if $jitTests
+        runNoLLInt(*optionalTestSpecificOptions)
+        runNoCJITValidatePhases(*optionalTestSpecificOptions)
+        runNoCJITCollectContinuously(*optionalTestSpecificOptions) if shouldCollectContinuously?
+
+        return if !$isFTLPlatform
+
+        runNoFTL(*optionalTestSpecificOptions)
+        runFTLNoCJITValidate(*optionalTestSpecificOptions)
+
+        return if $mode == "basic"
+
+        runFTLNoCJITNoInlineValidate(*optionalTestSpecificOptions)
+        runFTLNoCJITB3O0(*optionalTestSpecificOptions)
+    end
 end
 
 def defaultNoSamplingProfilerRun
-    defaultRunCfg({}, { :ignoreQuickMode => true })
+    runDefault
+    if $jitTests
+        runNoLLInt
+        runNoCJITValidatePhases
+        runNoCJITCollectContinuously if shouldCollectContinuously?
+        runDFGEager
+        runDFGEagerNoCJITValidate
+        runEagerJettisonNoCJIT
+
+        return if !$isFTLPlatform
+
+        runNoFTL
+        runFTLNoCJITNoPutStackValidate
+        runFTLNoCJITNoInlineValidate
+        runFTLEager
+        runFTLEagerNoCJITValidate if $buildType == "release"
+        runFTLNoCJITSmallPool
+    end
 end
 
 def runProfiler
@@ -2175,7 +2209,7 @@ def defaultRunNoisyTest
         :outputHandler => noisyOutputHandler,
         :errorHandler => noisyErrorHandler,
     }
-    defaultRunCfg(cfg, {})
+    defaultRunCfg(cfg)
 end
 
 def skip
@@ -2462,11 +2496,6 @@ def prepareBundle
         handleCollection(collection)
     }
 
-    if $runlist.size == 0
-        $stderr.puts("No tests selected for execution (overzealous --filter?)")
-        exit(2)
-    end
-
     puts
 end
 
@@ -2567,13 +2596,12 @@ def sshRead(cmd, remoteHost, options={})
     raise unless $remote
 
     result = ""
-    ssh_cmd = ["ssh"] +
-              SSH_OPTIONS_DEFAULT +
-              ["-p", remoteHost.port.to_s] +
-              (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) +
-             ["#{remoteHost.user}@#{remoteHost.host}", cmd]
-    IO.popen(ssh_cmd, "r") { |inp|
-        result = inp.read
+    IO.popen("ssh -o NoHostAuthenticationForLocalhost=yes -p #{remoteHost.port}" + (remoteHost.identity_file_path ? " -i #{remoteHost.identity_file_path}" : "") + " #{remoteHost.user}@#{remoteHost.host} '#{cmd}'", "r") {
+      | inp |
+      inp.each_line {
+        | line |
+        result += line
+      }
     }
     raise "#{$?}" unless $?.success? or options[:ignoreFailure]
     result
@@ -2581,37 +2609,32 @@ end
 
 def runCommandOnTester(cmd)
     if $remote
-        $remoteHosts.each { |remoteHost|
-            begin
-                # Return first successful value. Obviously, this
-                # assumes the remotes are homogeneous.
-                return sshRead(cmd, remoteHost)
-            rescue Exception => e
-                $stderr.puts("Error running `#{cmd}` on #{remoteHost.host}: #{e}")
-            end
-        }
-        return "0"
-    end
-    `#{cmd}`
-end
-
-def commandToGetNumberOfProcessors
-    if $hostOS == "windows"
-        "cmd /c echo %NUMBER_OF_PROCESSORS%"
+        result = sshRead(cmd, $remoteHosts[0])
     else
-        "sysctl -n hw.activecpu 2>/dev/null || nproc --all 2>/dev/null || getconf _NPROCESSORS_ONLN"
+        result = `#{cmd}`
     end
 end
 
 def numberOfProcessors
-    begin
-        numProcessors = runCommandOnTester(commandToGetNumberOfProcessors).to_i
-    rescue
-        numProcessors = 0
+    if $hostOS == "windows"
+        numProcessors = runCommandOnTester("cmd /c echo %NUMBER_OF_PROCESSORS%").to_i
+    else
+        begin
+            numProcessors = runCommandOnTester("sysctl -n hw.activecpu 2>/dev/null").to_i
+        rescue
+            numProcessors = 0
+        end
+
+        if numProcessors == 0
+            begin
+                numProcessors = runCommandOnTester("nproc --all 2>/dev/null").to_i
+            rescue
+                numProcessors == 0
+            end
+        end
     end
 
     if numProcessors == 0
-        $stderr.puts("Warning: could not determine the number of remote CPUs, defaulting to 1")
         numProcessors = 1
     end
     return numProcessors
@@ -2711,8 +2734,8 @@ def getRemoteDirectoryIfNeeded(remoteHost)
 end
 
 def copyBundleToRemote(remoteHost)
-    mysys(["ssh"] + SSH_OPTIONS_DEFAULT + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}"])
-    mysys(["scp"] + SSH_OPTIONS_DEFAULT + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
+    mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}"])
+    mysys(["scp", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
 end
 
 def exportBaseEnvironmentVariables(escape)
@@ -2737,12 +2760,16 @@ def runTestRunner(testRunner, remoteHosts, remoteIndex=0)
     if not remoteHosts.nil?
         remoteHost = remoteHosts[remoteIndex]
         getRemoteDirectoryIfNeeded(remoteHost)
+        copyBundleToRemote(remoteHost)
         remoteScript = "\""
-        remoteScript += "cd #{remoteHost.remoteDirectory}/#{$outputDir.basename}/.runner && "
+        remoteScript += "cd #{remoteHost.remoteDirectory} && "
+        remoteScript += "rm -rf #{$outputDir.basename} && "
+        remoteScript += "tar xzf #{$tarFileName} && "
+        remoteScript += "cd #{$outputDir.basename}/.runner && "
         remoteScript += exportBaseEnvironmentVariables(true)
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunner.command(remoteIndex)}\""
-        runAndMonitorTestRunnerCommand(["ssh"] + SSH_OPTIONS_DEFAULT + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
+        runAndMonitorTestRunnerCommand(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + ["-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
     else
         Dir.chdir($runnerDir) {
             runAndMonitorTestRunnerCommand(Shellwords.shellsplit(testRunner.command))
@@ -2755,11 +2782,8 @@ STATUS_RE = /^[.]\/#{STATUS_FILE_PREFIX}(?<index>\d+)\s(?<runId>\h+)\s(?<exitCod
 def processStatusLine(map, line)
     md = STATUS_RE.match(line)
     if md.nil?
-        # Malfromed lines can legitimately occur when the remote fails at an
-        # inopportune moment. Ignore those lines but print them out, so that we
-        # can easily diagnose actual issues with the remote output.
-        $stderr.puts("Ignoring malformed status line `#{line}`")
-        return
+        $stderr.puts("Could not parse line `#{line}`")
+        exit(1)
     end
     index = md[:index].to_i
     runId = md[:runId]
@@ -2791,7 +2815,8 @@ def getStatusMap(map={})
         # well be test results on a remoteHost that got rebooted
         # (note, the test results are tagged with a run ID, so we'll
         # ignore any stale results from a previous run).
-        forEachRemote($remoteHosts, :dropOnFailure => true, :timeout => 8 * REMOTE_TIMEOUT) { |_, host|
+        $remoteHosts.each_with_index {
+            | host, remoteIndex |
             runnerDir = "#{host.remoteDirectory}/#{$outputDir.basename}/.runner"
             output = sshRead("if test -d #{runnerDir}; then cd #{runnerDir}; else false; fi && " + find_cmd, host, :ignoreFailure => true)
             output.split(/\n/).each {
@@ -2821,8 +2846,7 @@ def detectFailures(statusMap={})
     end
 
     evaluator = TestResultEvaluatorFinal.new($runlist, statusMap)
-    evaluator.visit!({:treatIncompleteAsFailed => true})
-    evaluator.validate
+    evaluator.visit!
 
     if evaluator.noresult > 0
         $stderr.puts("Could not get the exit status for #{evaluator.noresult} tests")
@@ -2996,20 +3020,6 @@ def forEachRemote(remoteHosts, options={}, &blk)
     liveRemotes
 end
 
-def each_chunk(e, chunkSize)
-    accumulator = []
-    e.each { |element|
-        accumulator << element
-        if accumulator.size == chunkSize
-            yield accumulator
-            accumulator = []
-        end
-    }
-    if accumulator.size > 0
-        yield accumulator
-    end
-end
-
 class TestRunnerGnuParallel < TestRunner
     def prepareGnuParallelRunnerJobs(name, runlist, completedPlans)
         path = @runnerDir + name
@@ -3017,14 +3027,12 @@ class TestRunnerGnuParallel < TestRunner
 
         File.open(path, "w") {
             | outp |
-            runlist = runlist.select { |plan|
-                not completedPlans.include?(plan)
-            }
-            each_chunk(runlist, $gnuParallelChunkSize) { |plans|
-                job = plans.collect { |plan|
-                    "sh ./test_script_#{plan.index}"
-                }.join("; ")
-                outp.puts(job)
+            runlist.each {
+                | plan |
+                if completedPlans.include?(plan)
+                    next
+                end
+                outp.puts("./test_script_#{plan.index}")
             }
         }
     end
@@ -3060,22 +3068,8 @@ if test "x$1" != "x--"; then
 fi
 shift
 EOF
-        extraOptions = [
-            # Many of our jobs are short, ensure GNU parallel won't need to set
-            # up an ssh connection from scratch.
-            "ControlPath=./%C",
-            "ControlMaster=auto",
-            "ControlPersist=10m",
-            # Treat remote boards as volatile. Don't check the host keys, don't
-            # save them locally.
-            "StrictHostKeyChecking=no",
-            "UserKnownHostsFile=/dev/null"
-        ].collect { |opt|
-            ["-o", opt]
-        }.flatten
-        sshOptions = (SSH_OPTIONS_DEFAULT + extraOptions).join(" ")
         wrapper.puts(head +
-                     "echo \"$@\" | ssh #{sshOptions} -p \"$remoteport\" -l \"$remoteuser\" -o RemoteCommand=\"if test -d '$remotedir'; then cd '$remotedir'; else echo '#{PARALLEL_REMOTE_WRAPPER_MARK_BEGIN}${remotehost}#{PARALLEL_REMOTE_WRAPPER_MARK_END}'; false; fi && sh -s\" \"$remotehost\""
+                     "echo \"$@\" | ssh -o ControlPath=./%C -o ControlMaster=auto -o ControlPersist=10m -o NoHostAuthenticationForLocalhost=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p \"$remoteport\" -l \"$remoteuser\" -o RemoteCommand=\"if test -d '$remotedir'; then cd '$remotedir'; else echo '#{PARALLEL_REMOTE_WRAPPER_MARK_BEGIN}${remotehost}#{PARALLEL_REMOTE_WRAPPER_MARK_END}'; false; fi && sh -s\" \"$remotehost\""
         )
         FileUtils.chmod("ugo=rx", wrapper.path)
         wrapper.close # Avoid ETXTBUSY
@@ -3098,28 +3092,15 @@ def withGnuParallelSshLoginFile(remoteHosts, &blk)
     }
 end
 
-def unpackBundleOnRemoteHosts(remoteHosts)
+def unpackBundleGnuParallel(remoteHosts)
     forEachRemote(remoteHosts, :dropOnFailure => true, :timeout => REMOTE_TIMEOUT) {
         | _, remoteHost |
-        mysys(["ssh"] + SSH_OPTIONS_DEFAULT +
-               (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) +
+        mysys(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes"] + 
+               (remoteHost.identity_file_path ? ["-i", remoteHost.identity_file_path] : []) + 
                ["-p", remoteHost.port.to_s,
                "#{remoteHost.user}@#{remoteHost.host}",
                "cd #{Shellwords.shellescape(remoteHost.remoteDirectory)} && rm -rf #{$outputDir.basename} && tar xzf #{$tarFileName}"])
     }
-end
-
-def prepareRemotes(remoteHosts)
-    # If the preparatory steps fail, drop the remote host from our
-    # list. Otherwise, if it comes back online in the middle of an
-    # iteration, we'll try to run test jobs on it, possibly using
-    # an unrelated bundle from a previous run.
-    remoteHosts = forEachRemote(remoteHosts, {:dropOnFailure => true, :timeout => REMOTE_TIMEOUT}) {
-        | _, remoteHost |
-        getRemoteDirectoryIfNeeded(remoteHost)
-        copyBundleToRemote(remoteHost)
-    }
-    return unpackBundleOnRemoteHosts(remoteHosts)
 end
 
 def runGnuParallelRunner(remoteHosts, inputs, options={})
@@ -3155,7 +3136,7 @@ def runGnuParallelRunner(remoteHosts, inputs, options={})
             "if test -e #{$outputDir.basename}/.runner; then cd #{$outputDir.basename}/.runner; else echo #{PARALLEL_REMOTE_STATE_LOST_MARKER}; false; fi && " +
             exportBaseEnvironmentVariables(false) +
             $envVars.collect { |var | "export #{var} &&"}.join("") +
-            "sh -c "
+            "sh "
         ]
         runAndMonitorCommandOutput(cmd) {
             | pid, line |
@@ -3195,11 +3176,11 @@ class NonRemoteTestsExecutor < BaseTestsExecutor
     def prepareExecution(remoteHosts)
         remoteHosts
     end
-    def refreshExecution(runlist, serialPlans, completedTests, remoteHosts)
+    def refreshExecution(runlist, serialPlans, completedTests)
         if not @remoteHosts.nil?
             raise "remoteHosts #{@remoteHosts}, expected nil"
         end
-        @testRunner.prepare(runlist, serialPlans, completedTests, remoteHosts)
+        @testRunner.prepare(runlist, serialPlans, completedTests, @remoteHosts)
     end
 end
 
@@ -3242,13 +3223,13 @@ class BaseRemoteTestsExecutor < BaseTestsExecutor
     def updateStatusMap(iteration, statusMap)
         return getStatusMap(statusMap)
     end
-    def refreshExecution(runlist, serialPlans, completedTests, remoteHosts)
+    def refreshExecution(runlist, serialPlans, completedTests)
         # Note, when running tests remotely, we always prepare tests
         # for all the hosts when refreshing execution, as even hosts
         # that went away during testing may have come back online in
         # the meantime -- so we don't expect a list of live remote
         # hosts to be passed in.
-        @testRunner.prepare(runlist, serialPlans, completedTests, remoteHosts)
+        @testRunner.prepare(runlist, serialPlans, completedTests, @remoteHosts)
     end
 end
 
@@ -3256,42 +3237,16 @@ class RemoteTestsExecutor < BaseRemoteTestsExecutor
     def prepareArtifacts(remoteHosts)
         raise "remoteHosts nil" if remoteHosts.nil?
         prepareBundle
-
-        # The make runner statically shards the tests, so do a
-        # liveness check before @testRunner.prepare. Otherwise, we'd
-        # always end up scheduling tests on dead remotes and hamper
-        # our progress.
-        remoteHosts = getLiveRemoteHosts(remoteHosts)
         @testRunner.prepare(@runlist, @serialPlans, Set.new, remoteHosts)
         compressBundle
-        remoteHosts
     end
     def prepareExecution(remoteHosts)
-        return prepareRemotes(remoteHosts)
-    end
-    def refreshExecution(runlist, serialPlans, completedTests, remoteHosts)
-        # Don't assign tests to remotes that are down.
-        remoteHosts = getLiveRemoteHosts(remoteHosts)
-        super(runlist, serialPlans, completedTests, remoteHosts)
+        remoteHosts
     end
     def executeTests(remoteHosts)
-        forEachRemote(remoteHosts, :dropOnFailure => true) {
+        forEachRemote(remoteHosts) {
             | index |
             runTestRunner(@testRunner, remoteHosts, index)
-        }
-    end
-    private
-    def getLiveRemoteHosts(remoteHosts)
-        # This command is supposed to work on all remote hosts, so
-        # reuse it for the liveness check.
-        cmd = commandToGetNumberOfProcessors
-        forEachRemote(remoteHosts, :dropOnFailure => true, :timeout => REMOTE_TIMEOUT) { |_, remoteHost|
-            begin
-                sshRead(cmd, remoteHost)
-            rescue
-                # It's what forEachRemote considers an expected failure.
-                raise CommandExecutionFailed
-            end
         }
     end
 end
@@ -3303,7 +3258,16 @@ class GnuParallelTestsExecutor < BaseRemoteTestsExecutor
         compressBundle
     end
     def prepareExecution(remoteHosts)
-        return prepareRemotes(remoteHosts)
+        # If the preparatory steps fail, drop the remote host from our
+        # list. Otherwise, if it comes back online in the middle of an
+        # iteration, we'll try to run test jobs on it, possibly using
+        # an unrelated bundle from a previous run.
+        remoteHosts = forEachRemote(remoteHosts, {:dropOnFailure => true, :timeout => REMOTE_TIMEOUT}) {
+            | _, remoteHost |
+            getRemoteDirectoryIfNeeded(remoteHost)
+            copyBundleToRemote(remoteHost)
+        }
+        return unpackBundleGnuParallel(remoteHosts)
     end
     def executeTests(remoteHosts)
         runGnuParallelRunner(remoteHosts, $runnerDir + "serial-tests",

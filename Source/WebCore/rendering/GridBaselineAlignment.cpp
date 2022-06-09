@@ -68,7 +68,6 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
     LayoutUnit baseline(isParallelToBaselineAxisForChild(child, baselineAxis) ? child.firstLineBaseline().value_or(LayoutUnit(-1)) : LayoutUnit(-1));
     // We take border-box's under edge if no valid baseline.
     if (baseline == -1) {
-        ASSERT(!child.needsLayout());
         if (isHorizontalBaselineAxis(baselineAxis))
             return isFlippedWritingMode(m_blockFlow) ? child.size().width().toInt() + margin : margin;
         return child.size().height() + margin;
@@ -78,7 +77,6 @@ LayoutUnit GridBaselineAlignment::ascentForChild(const RenderBox& child, GridAxi
 
 LayoutUnit GridBaselineAlignment::descentForChild(const RenderBox& child, LayoutUnit ascent, GridAxis baselineAxis) const
 {
-    ASSERT(!child.needsLayout());
     if (isParallelToBaselineAxisForChild(child, baselineAxis))
         return child.marginLogicalHeight() + child.logicalHeight() - ascent;
     return child.marginLogicalWidth() + child.logicalWidth() - ascent;
@@ -124,8 +122,9 @@ void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preferen
     // Determine Ascent and Descent values of this child with respect to
     // its grid container.
     LayoutUnit ascent = ascentForChild(child, baselineAxis);
+    LayoutUnit descent = descentForChild(child, ascent, baselineAxis);
     if (isDescentBaselineForChild(child, baselineAxis))
-        ascent = descentForChild(child, ascent, baselineAxis);
+        std::swap(ascent, descent);
 
     // Looking up for a shared alignment context perpendicular to the
     // baseline axis.
@@ -135,10 +134,10 @@ void GridBaselineAlignment::updateBaselineAlignmentContext(ItemPosition preferen
 
     // Looking for a compatible baseline-sharing group.
     if (addResult.isNewEntry)
-        addResult.iterator->value = makeUnique<BaselineContext>(child, preference, ascent);
+        addResult.iterator->value = makeUnique<BaselineContext>(child, preference, ascent, descent);
     else {
         auto* context = addResult.iterator->value.get();
-        context->updateSharedGroup(child, preference, ascent);
+        context->updateSharedGroup(child, preference, ascent, descent);
     }
 }
 
@@ -160,16 +159,17 @@ void GridBaselineAlignment::clear(GridAxis baselineAxis)
 }
 
 BaselineGroup::BaselineGroup(WritingMode blockFlow, ItemPosition childPreference)
-    : m_maxAscent(0), m_items()
+    : m_maxAscent(0), m_maxDescent(0), m_items()
 {
     m_blockFlow = blockFlow;
     m_preference = childPreference;
 }
 
-void BaselineGroup::update(const RenderBox& child, LayoutUnit ascent)
+void BaselineGroup::update(const RenderBox& child, LayoutUnit ascent, LayoutUnit descent)
 {
     if (m_items.add(&child).isNewEntry) {
         m_maxAscent = std::max(m_maxAscent, ascent);
+        m_maxDescent = std::max(m_maxDescent, descent);
     }
 }
 
@@ -209,10 +209,10 @@ bool BaselineGroup::isCompatible(WritingMode childBlockFlow, ItemPosition childP
     return ((m_blockFlow == childBlockFlow || isOrthogonalBlockFlow(childBlockFlow)) && m_preference == childPreference) || (isOppositeBlockFlow(childBlockFlow) && m_preference != childPreference);
 }
 
-BaselineContext::BaselineContext(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
+BaselineContext::BaselineContext(const RenderBox& child, ItemPosition preference, LayoutUnit ascent, LayoutUnit descent)
 {
     ASSERT(isBaselinePosition(preference));
-    updateSharedGroup(child, preference, ascent);
+    updateSharedGroup(child, preference, ascent, descent);
 }
 
 const BaselineGroup& BaselineContext::sharedGroup(const RenderBox& child, ItemPosition preference) const
@@ -221,11 +221,11 @@ const BaselineGroup& BaselineContext::sharedGroup(const RenderBox& child, ItemPo
     return const_cast<BaselineContext*>(this)->findCompatibleSharedGroup(child, preference);
 }
 
-void BaselineContext::updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent)
+void BaselineContext::updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent, LayoutUnit descent)
 {
     ASSERT(isBaselinePosition(preference));
     BaselineGroup& group = findCompatibleSharedGroup(child, preference);
-    group.update(child, ascent);
+    group.update(child, ascent, descent);
 }
 
 // FIXME: Properly implement baseline-group compatibility.

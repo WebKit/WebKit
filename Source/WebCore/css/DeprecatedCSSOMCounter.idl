@@ -19,6 +19,7 @@
 
 [
     ExportToWrappedFunction,
+    ImplementationLacksVTable,
     InterfaceName=Counter,
     Exposed=Window
 ] interface DeprecatedCSSOMCounter {

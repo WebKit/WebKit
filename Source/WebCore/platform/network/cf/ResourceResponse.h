@@ -102,7 +102,7 @@ private:
 
     void platformLazyInit(InitLevel);
     String platformSuggestedFilename() const;
-    CertificateInfo platformCertificateInfo(Span<const std::byte>) const;
+    CertificateInfo platformCertificateInfo() const;
 
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 

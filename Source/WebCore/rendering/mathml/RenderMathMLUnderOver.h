@@ -42,7 +42,7 @@ public:
 private:
     bool isRenderMathMLScripts() const final { return false; }
     bool isRenderMathMLUnderOver() const final { return true; }
-    ASCIILiteral renderName() const final { return "RenderMathMLUnderOver"_s; }
+    const char* renderName() const final { return "RenderMathMLUnderOver"; }
     MathMLUnderOverElement& element() const;
 
     void computePreferredLogicalWidths() final;

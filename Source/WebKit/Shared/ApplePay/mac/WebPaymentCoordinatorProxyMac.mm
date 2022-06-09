@@ -37,11 +37,7 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(bool)>&& completionHandler)
 {
-#if HAVE(PASSKIT_MODULARIZATION)
-    if (!PAL::isPassKitMacHelperFrameworkAvailable())
-#else
-    if (!PAL::isPassKitCoreFrameworkAvailable())
-#endif
+    if (!PAL::isPassKitFrameworkAvailable())
         return completionHandler(false);
 
     m_canMakePaymentsQueue->dispatch([theClass = retainPtr(PAL::getPKPaymentAuthorizationViewControllerClass()), completionHandler = WTFMove(completionHandler)]() mutable {
@@ -53,11 +49,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePayments(CompletionHandler<void(
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier, const URL& originatingURL, const Vector<URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
-#if HAVE(PASSKIT_MODULARIZATION)
-    if (!PAL::isPassKitMacHelperFrameworkAvailable())
-#else
-    if (!PAL::isPassKitCoreFrameworkAvailable())
-#endif
+    if (!PAL::isPassKitFrameworkAvailable())
         return completionHandler(false);
 
     auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, request);

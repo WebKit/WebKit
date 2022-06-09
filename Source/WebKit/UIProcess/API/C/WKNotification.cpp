@@ -95,8 +95,3 @@ WKDataRef WKNotificationCopyCoreIDForTesting(WKNotificationRef notification)
     auto span = identifier.toSpan();
     return WKDataCreate(span.data(), span.size());
 }
-
-bool WKNotificationGetIsPersistent(WKNotificationRef notification)
-{
-    return toImpl(notification)->isPersistentNotification();
-}

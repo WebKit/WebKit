@@ -112,19 +112,15 @@ inline size_t JSValue::toTypedArrayIndex(JSGlobalObject* globalObject, const cha
     RELEASE_AND_RETURN(scope, outputOffset + static_cast<size_t>(static_cast<uint32_t>(JSC::toInt32(d - inputOffset))));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-tointegerwithoutrounding
-inline double JSValue::toIntegerWithoutRounding(JSGlobalObject* globalObject) const
+// https://tc39.es/ecma262/#sec-tointegerorinfinity
+inline double JSValue::toIntegerOrInfinity(JSGlobalObject* globalObject) const
 {
     if (isInt32())
         return asInt32();
     double d = toNumber(globalObject);
-    return std::isnan(d) ? 0.0 : d + 0.0;
-}
-
-// https://tc39.es/ecma262/#sec-tointegerorinfinity
-inline double JSValue::toIntegerOrInfinity(JSGlobalObject* globalObject) const
-{
-    return trunc(toIntegerWithoutRounding(globalObject));
+    if (std::isnan(d) || !d)
+        return 0.0;
+    return trunc(d);
 }
 
 inline bool JSValue::isUInt32() const
@@ -846,11 +842,11 @@ inline PreferredPrimitiveType toPreferredPrimitiveType(JSGlobalObject* globalObj
     String hintString = asString(value)->value(globalObject);
     RETURN_IF_EXCEPTION(scope, NoPreference);
 
-    if (WTF::equal(hintString, "default"_s))
+    if (WTF::equal(hintString, "default"))
         return NoPreference;
-    if (WTF::equal(hintString, "number"_s))
+    if (WTF::equal(hintString, "number"))
         return PreferNumber;
-    if (WTF::equal(hintString, "string"_s))
+    if (WTF::equal(hintString, "string"))
         return PreferString;
 
     throwTypeError(globalObject, scope, "Expected primitive hint to match one of 'default', 'number', 'string'."_s);
@@ -918,95 +914,57 @@ ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) con
     return jsNumber(value);
 }
 
-inline bool JSValue::toBoolean(JSGlobalObject* globalObject) const
-{
-    if (isInt32())
-        return asInt32();
-    if (isDouble())
-        return asDouble() > 0.0 || asDouble() < 0.0; // false for NaN
-    if (isCell())
-        return asCell()->toBoolean(globalObject);
-#if USE(BIGINT32)
-    if (isBigInt32())
-        return !!bigInt32AsInt32();
-#endif
-    return isTrue(); // false, null, and undefined all convert to false.
-}
-
-inline JSString* JSValue::toString(JSGlobalObject* globalObject) const
-{
-    if (isString())
-        return asString(asCell());
-    bool returnEmptyStringOnError = true;
-    return toStringSlowCase(globalObject, returnEmptyStringOnError);
-}
-
-inline JSString* JSValue::toStringOrNull(JSGlobalObject* globalObject) const
-{
-    if (isString())
-        return asString(asCell());
-    bool returnEmptyStringOnError = false;
-    return toStringSlowCase(globalObject, returnEmptyStringOnError);
-}
-
-inline String JSValue::toWTFString(JSGlobalObject* globalObject) const
-{
-    if (isString())
-        return static_cast<JSString*>(asCell())->value(globalObject);
-    return toWTFStringSlowCase(globalObject);
-}
-
 inline JSObject* JSValue::toObject(JSGlobalObject* globalObject) const
 {
     return isCell() ? asCell()->toObject(globalObject) : toObjectSlowCase(globalObject);
 }
 
-inline bool JSValue::isCallable() const
+inline bool JSValue::isCallable(VM& vm) const
 {
-    return isCell() && asCell()->isCallable();
+    return isCell() && asCell()->isCallable(vm);
 }
 
 template<Concurrency concurrency>
-inline TriState JSValue::isCallableWithConcurrency() const
+inline TriState JSValue::isCallableWithConcurrency(VM& vm) const
 {
     if (!isCell())
         return TriState::False;
-    return asCell()->isCallableWithConcurrency<concurrency>();
+    return asCell()->isCallableWithConcurrency<concurrency>(vm);
 }
 
-inline bool JSValue::isConstructor() const
+inline bool JSValue::isConstructor(VM& vm) const
 {
-    return isCell() && asCell()->isConstructor();
+    return isCell() && asCell()->isConstructor(vm);
 }
 
 template<Concurrency concurrency>
-inline TriState JSValue::isConstructorWithConcurrency() const
+inline TriState JSValue::isConstructorWithConcurrency(VM& vm) const
 {
     if (!isCell())
         return TriState::False;
-    return asCell()->isConstructorWithConcurrency<concurrency>();
+    return asCell()->isConstructorWithConcurrency<concurrency>(vm);
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits
-inline bool JSValue::inherits(const ClassInfo* classInfo) const
+inline bool JSValue::inherits(VM& vm, const ClassInfo* classInfo) const
 {
-    return isCell() && asCell()->inherits(classInfo);
+    return isCell() && asCell()->inherits(vm, classInfo);
 }
 
 template<typename Target>
-inline bool JSValue::inherits() const
+inline bool JSValue::inherits(VM& vm) const
 {
-    return isCell() && asCell()->inherits<Target>();
+    return isCell() && asCell()->inherits<Target>(vm);
 }
 
-inline const ClassInfo* JSValue::classInfoOrNull() const
+inline const ClassInfo* JSValue::classInfoOrNull(VM& vm) const
 {
-    return isCell() ? asCell()->classInfo() : nullptr;
+    return isCell() ? asCell()->classInfo(vm) : nullptr;
 }
 
 inline JSValue JSValue::toThis(JSGlobalObject* globalObject, ECMAMode ecmaMode) const
 {
-    return isCell() ? asCell()->methodTable()->toThis(asCell(), globalObject, ecmaMode) : toThisSlowCase(globalObject, ecmaMode);
+    return isCell() ? asCell()->methodTable(getVM(globalObject))->toThis(asCell(), globalObject, ecmaMode) : toThisSlowCase(globalObject, ecmaMode);
 }
 
 ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, PropertyName propertyName) const
@@ -1137,7 +1095,7 @@ inline bool JSValue::put(JSGlobalObject* globalObject, PropertyName propertyName
     if (UNLIKELY(!isCell()))
         return putToPrimitive(globalObject, propertyName, value, slot);
 
-    return asCell()->methodTable()->put(asCell(), globalObject, propertyName, value, slot);
+    return asCell()->methodTable(getVM(globalObject))->put(asCell(), globalObject, propertyName, value, slot);
 }
 
 ALWAYS_INLINE bool JSValue::putInline(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
@@ -1152,7 +1110,7 @@ inline bool JSValue::putByIndex(JSGlobalObject* globalObject, unsigned propertyN
     if (UNLIKELY(!isCell()))
         return putToPrimitiveByIndex(globalObject, propertyName, value, shouldThrow);
 
-    return asCell()->methodTable()->putByIndex(asCell(), globalObject, propertyName, value, shouldThrow);
+    return asCell()->methodTable(getVM(globalObject))->putByIndex(asCell(), globalObject, propertyName, value, shouldThrow);
 }
 
 ALWAYS_INLINE JSValue JSValue::getPrototype(JSGlobalObject* globalObject) const
@@ -1163,10 +1121,10 @@ ALWAYS_INLINE JSValue JSValue::getPrototype(JSGlobalObject* globalObject) const
     return synthesizePrototype(globalObject);
 }
 
-inline Structure* JSValue::structureOrNull() const
+inline Structure* JSValue::structureOrNull(VM& vm) const
 {
     if (isCell())
-        return asCell()->structure();
+        return asCell()->structure(vm);
     return nullptr;
 }
 
@@ -1201,13 +1159,13 @@ ALWAYS_INLINE bool JSValue::equalSlowCaseInline(JSGlobalObject* globalObject, JS
                 return true;
             if (!v2.isCell())
                 return false;
-            return v2.asCell()->structure()->masqueradesAsUndefined(globalObject);
+            return v2.asCell()->structure(vm)->masqueradesAsUndefined(globalObject);
         }
 
         if (v2.isUndefinedOrNull()) {
             if (!v1.isCell())
                 return false;
-            return v1.asCell()->structure()->masqueradesAsUndefined(globalObject);
+            return v1.asCell()->structure(vm)->masqueradesAsUndefined(globalObject);
         }
 
         if (v1.isObject()) {

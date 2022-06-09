@@ -1,3 +1,0 @@
-
-PASS A request to fetch service worker imported script should not have a Service-Worker header
-

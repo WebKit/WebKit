@@ -43,7 +43,6 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
-OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
 OBJC_CLASS UIView;
@@ -163,7 +162,6 @@ public:
     WEBCORE_EXPORT bool pictureInPictureWasStartedWhenEnteringBackground() const;
 
     std::optional<MediaPlayerIdentifier> playerIdentifier() const { return m_playerIdentifier; }
-    WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const;
 
 protected:
     WEBCORE_EXPORT VideoFullscreenInterfaceAVKit(PlaybackSessionInterfaceAVKit&);

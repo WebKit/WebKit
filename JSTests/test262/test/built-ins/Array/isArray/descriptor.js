@@ -3,7 +3,8 @@
 
 /*---
 description: Testing descriptor property of Array.isArray
-includes: [propertyHelper.js]
+includes:
+    - propertyHelper.js
 esid: sec-array.isarray
 ---*/
 

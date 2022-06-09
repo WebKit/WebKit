@@ -38,7 +38,7 @@ template<typename T> inline Weak<T>::Weak(T* cell, WeakHandleOwner* weakOwner, v
 
 template<typename T> inline bool Weak<T>::isHashTableDeletedValue() const
 {
-    return impl() == hashTableDeletedValue();
+    return m_impl == hashTableDeletedValue();
 }
 
 template<typename T> inline Weak<T>::Weak(WTF::HashTableDeletedValueType)
@@ -70,27 +70,24 @@ template<typename T> inline auto Weak<T>::operator=(Weak&& other) -> Weak&
 
 template<typename T> inline T* Weak<T>::operator->() const
 {
-    auto* pointer = impl();
-    ASSERT(pointer && pointer->state() == WeakImpl::Live);
+    ASSERT(m_impl && m_impl->state() == WeakImpl::Live);
     // We can't use jsCast here since we could be called in a finalizer.
-    return static_cast<T*>(pointer->jsValue().asCell());
+    return static_cast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline T& Weak<T>::operator*() const
 {
-    auto* pointer = impl();
-    ASSERT(pointer && pointer->state() == WeakImpl::Live);
+    ASSERT(m_impl && m_impl->state() == WeakImpl::Live);
     // We can't use jsCast here since we could be called in a finalizer.
-    return *static_cast<T*>(pointer->jsValue().asCell());
+    return *static_cast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline T* Weak<T>::get() const
 {
-    auto* pointer = impl();
-    if (!pointer || pointer->state() != WeakImpl::Live)
+    if (!m_impl || m_impl->state() != WeakImpl::Live)
         return nullptr;
     // We can't use jsCast here since we could be called in a finalizer.
-    return static_cast<T*>(pointer->jsValue().asCell());
+    return static_cast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline bool Weak<T>::was(T* other) const
@@ -100,8 +97,7 @@ template<typename T> inline bool Weak<T>::was(T* other) const
 
 template<typename T> inline bool Weak<T>::operator!() const
 {
-    auto* pointer = impl();
-    return !pointer || !pointer->jsValue() || pointer->state() != WeakImpl::Live;
+    return !m_impl || !m_impl->jsValue() || m_impl->state() != WeakImpl::Live;
 }
 
 template<typename T> inline Weak<T>::operator bool() const
@@ -111,9 +107,9 @@ template<typename T> inline Weak<T>::operator bool() const
 
 template<typename T> inline WeakImpl* Weak<T>::leakImpl()
 {
-    auto* pointer = impl();
+    WeakImpl* impl = m_impl;
     m_impl = nullptr;
-    return pointer;
+    return impl;
 }
 
 template<typename T> inline WeakImpl* Weak<T>::hashTableDeletedValue()

@@ -28,9 +28,8 @@
 namespace WebCore {
 
 enum class ModuleFetchFailureKind {
-    WasPropagatedError,
+    WasErrored,
     WasCanceled,
-    WasFetchError,
 };
 
 } // namespace WebCore

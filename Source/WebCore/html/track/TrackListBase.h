@@ -29,7 +29,6 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "WebCoreOpaqueRoot.h"
 #include <wtf/Observer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -57,9 +56,9 @@ public:
     using RefCounted<TrackListBase>::deref;
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    WebCoreOpaqueRoot opaqueRoot();
+    void* opaqueRoot();
 
-    using OpaqueRootObserver = WTF::Observer<WebCoreOpaqueRoot()>;
+    using OpaqueRootObserver = WTF::Observer<void*()>;
     void setOpaqueRootObserver(const OpaqueRootObserver& observer) { m_opaqueRootObserver = observer; };
 
     // Needs to be public so tracks can call it
@@ -88,7 +87,7 @@ private:
     bool m_isChangeEventScheduled { false };
 };
 
-inline WebCoreOpaqueRoot root(TrackListBase* trackList)
+inline void* root(TrackListBase* trackList)
 {
     return trackList->opaqueRoot();
 }

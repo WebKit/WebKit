@@ -49,61 +49,61 @@ TEST(WTF, HexNumber)
     {
         StringBuilder builder;
         builder.append(hex(integer));
-        expectBuilderContent("A"_s, builder);
+        expectBuilderContent("A", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(integer, Lowercase));
-        expectBuilderContent("a"_s, builder);
+        expectBuilderContent("a", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(integer, 1, Lowercase));
-        expectBuilderContent("a"_s, builder);
+        expectBuilderContent("a", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(integer, 2, Lowercase));
-        expectBuilderContent("0a"_s, builder);
+        expectBuilderContent("0a", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(integer, 3, Lowercase));
-        expectBuilderContent("00a"_s, builder);
+        expectBuilderContent("00a", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(integer, 4, Lowercase));
-        expectBuilderContent("000a"_s, builder);
+        expectBuilderContent("000a", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(largeInteger));
-        expectBuilderContent("FACE"_s, builder);
+        expectBuilderContent("FACE", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(largeInteger, 2));
-        expectBuilderContent("FACE"_s, builder);
+        expectBuilderContent("FACE", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(byte));
-        expectBuilderContent("80"_s, builder);
+        expectBuilderContent("80", builder);
     }
 
     {
         StringBuilder builder;
         builder.append(hex(static_cast<unsigned char>(integer), 2));
-        expectBuilderContent("0A"_s, builder);
+        expectBuilderContent("0A", builder);
     }
 }
 

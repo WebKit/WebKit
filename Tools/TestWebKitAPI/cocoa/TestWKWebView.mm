@@ -183,11 +183,6 @@ static NSString *overrideBundleIdentifier(id, SEL)
     return [self objectByEvaluatingJavaScript:@"Array.from(document.body.getElementsByTagName('*')).map(e => e.tagName)"];
 }
 
-- (NSString *)selectedText
-{
-    return [self stringByEvaluatingJavaScript:@"getSelection().toString()"];
-}
-
 - (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames
 {
     auto remainingTags = adoptNS([tagNames mutableCopy]);
@@ -837,7 +832,7 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
 
 - (void)mouseMoveToPoint:(NSPoint)pointInWindow withFlags:(NSEventModifierFlags)flags
 {
-    [self _simulateMouseMove:[self _mouseEventWithType:NSEventTypeMouseMoved atLocation:pointInWindow flags:flags timestamp:self.eventTimestamp clickCount:0]];
+    [self mouseMoved:[self _mouseEventWithType:NSEventTypeMouseMoved atLocation:pointInWindow flags:flags timestamp:self.eventTimestamp clickCount:0]];
 }
 
 - (void)sendClicksAtPoint:(NSPoint)pointInWindow numberOfClicks:(NSUInteger)numberOfClicks

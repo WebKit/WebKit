@@ -29,8 +29,6 @@
 #include "IntRect.h"
 #include <wtf/Forward.h>
 
-#include <wtf/Vector.h>
-
 namespace WebCore {
 
 class FloatQuad;
@@ -44,7 +42,6 @@ float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
 WEBCORE_EXPORT bool findIntersection(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& d1, const FloatPoint& d2, FloatPoint& intersection);
 
 WEBCORE_EXPORT IntRect unionRect(const Vector<IntRect>&);
-WEBCORE_EXPORT IntRect unionRectIgnoringZeroRects(const Vector<IntRect>&);
 WEBCORE_EXPORT FloatRect unionRect(const Vector<FloatRect>&);
 WEBCORE_EXPORT FloatRect unionRectIgnoringZeroRects(const Vector<FloatRect>&);
 
@@ -65,38 +62,6 @@ FloatRect boundsOfRotatingRect(const FloatRect&);
 bool ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint&);
 
 FloatPoint midPoint(const FloatPoint&, const FloatPoint&);
-
-// -------------
-// |   h\  |s  |
-// |     \a|   |
-// |      \|   |
-// |       *   |
-// |     (x,y) |
-// -------------
-// Given a box and a ray (described by an offset from the top left corner of the box and angle from vertical in degrees), compute
-// the length from the starting position to the intersection of the ray with the box. Given the above diagram, we are
-// trying to calculate h, with lengthOfPointToSideOfIntersection computing the length of s, and angleOfPointToSideOfIntersection
-// computing a.
-double lengthOfRayIntersectionWithBoundingBox(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
-
-// Given a box and a ray (described by an offset from the top left corner of the box and angle from vertical in degrees),
-// compute the closest length from the starting position to the side that the ray intersects with.
-double lengthOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
-
-// Given a box and a ray (described by an offset from the top left corner of the box and angle from vertical in degrees)
-// compute the acute angle between the ray and the line segment from the starting point to the closest point on the
-// side that the ray intersects with.
-float angleOfPointToSideOfIntersection(const FloatRect& boundingRect, const std::pair<const FloatPoint&, float> ray);
-
-// Given a box and an offset from the top left corner, calculate the distance of the point from each side
-RectEdges<double> distanceOfPointToSidesOfRect(const FloatRect&, const FloatPoint&);
-
-// Given a box and an offset from the top left corner, construct a coordinate system with this offset as the origin,
-// and return the vertices of the box in this coordinate system
-std::array<FloatPoint, 4> verticesForBox(const FloatRect&, const FloatPoint);
-
-float toPositiveAngle(float angle);
-float toRelatedAcuteAngle(float angle);
 
 struct RotatedRect {
     FloatPoint center;

@@ -87,6 +87,16 @@ ExceptionOr<void> PaymentHandler::validateData(Document& document, JSC::JSValue 
     return { };
 }
 
+bool PaymentHandler::enabledForContext(ScriptExecutionContext& context)
+{
+#if ENABLE(APPLE_PAY)
+    return PaymentSession::enabledForContext(context);
+#else
+    UNUSED_PARAM(context);
+    return false;
+#endif
+}
+
 bool PaymentHandler::hasActiveSession(Document& document)
 {
 #if ENABLE(APPLE_PAY)

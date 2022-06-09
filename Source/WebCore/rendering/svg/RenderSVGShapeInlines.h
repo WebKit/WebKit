@@ -26,7 +26,6 @@
 #pragma once
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGShape.h"
 #include "SVGGraphicsElement.h"
 

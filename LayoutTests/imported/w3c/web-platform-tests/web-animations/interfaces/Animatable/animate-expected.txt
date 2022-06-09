@@ -9,7 +9,7 @@ PASS Element.animate() accepts empty keyframe lists (input: undefined)
 PASS Element.animate() accepts a one property two value property-indexed keyframes specification
 PASS Element.animate() accepts a one shorthand property two value property-indexed keyframes specification
 PASS Element.animate() accepts a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification
-PASS Element.animate() accepts a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification
+FAIL Element.animate() accepts a two property (one shorthand and one of its shorthand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "border,borderColor,composite,computedOffset,easing,offset" but got "border,borderTopColor,composite,computedOffset,easing,offset"
 PASS Element.animate() accepts a two property two value property-indexed keyframes specification
 PASS Element.animate() accepts a two property property-indexed keyframes specification with different numbers of values
 PASS Element.animate() accepts a property-indexed keyframes specification with an invalid value
@@ -133,7 +133,7 @@ PASS Element.animate() correctly sets the Animation's timeline
 PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document
 PASS Element.animate() correctly sets the Animation's timeline with no timeline parameter in KeyframeAnimationOptions.
 PASS Element.animate() correctly sets the Animation's timeline with undefined timeline in KeyframeAnimationOptions.
-PASS Element.animate() correctly sets the Animation's timeline with null timeline in KeyframeAnimationOptions.
+FAIL Element.animate() correctly sets the Animation's timeline with null timeline in KeyframeAnimationOptions. assert_equals: Animation timeline should be null expected null but got object "[object DocumentTimeline]"
 PASS Element.animate() correctly sets the Animation's timeline with DocumentTimeline in KeyframeAnimationOptions.
 PASS Element.animate() calls play on the Animation
 PASS Element.animate() does NOT trigger a style change event
@@ -149,5 +149,7 @@ PASS animate() with a non-null invalid pseudoElement '' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement 'before' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement ':abc' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement '::abc' throws a SyntaxError
-PASS animate() with a non-null invalid pseudoElement '::placeholder' throws a SyntaxError
+FAIL animate() with a non-null invalid pseudoElement '::placeholder' throws a SyntaxError assert_throws_dom: function "() => {
+      div.animate(null, {pseudoElement: pseudo});
+    }" did not throw
 

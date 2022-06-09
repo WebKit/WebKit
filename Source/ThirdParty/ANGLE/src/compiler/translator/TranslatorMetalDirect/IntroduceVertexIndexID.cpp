@@ -23,15 +23,8 @@ constexpr const TVariable kgl_VertexIDMetal(BuiltInId::gl_VertexID,
                                             StaticType::Get<EbtUInt, EbpHigh, EvqVertexID, 1, 1>());
 
 constexpr const TVariable kgl_instanceIdMetal(
-    BuiltInId::gl_InstanceID,
+    BuiltInId::gl_VertexID,
     ImmutableString("instanceIdMod"),
-    SymbolType::AngleInternal,
-    TExtension::UNDEFINED,
-    StaticType::Get<EbtUInt, EbpHigh, EvqInstanceID, 1, 1>());
-
-constexpr const TVariable kgl_baseInstanceMetal(
-    BuiltInId::gl_BaseInstance,
-    ImmutableString("baseInstance"),
     SymbolType::AngleInternal,
     TExtension::UNDEFINED,
     StaticType::Get<EbtUInt, EbpHigh, EvqInstanceID, 1, 1>());
@@ -67,9 +60,7 @@ class Rewriter : public TIntermRebuild
             }
             if (needsInstanceId)
             {
-                // Ensure these variables are present because they are required for XFB emulation.
                 mVariablesToIntroduce.push_back(&kgl_instanceIdMetal);
-                mVariablesToIntroduce.push_back(&kgl_baseInstanceMetal);
             }
             if (needsVertexId)
             {

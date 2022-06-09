@@ -28,7 +28,6 @@
 
 use strict;
 use warnings;
-use File::Path qw(make_path);
 use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
@@ -48,7 +47,6 @@ Usage: $programName [options]
   --debug                            Set the default configuration to debug
   --release                          Set the default configuration to release
   --reset                            Reset configurations
-  -h, --help                         Show this message and exit
 EOF
 
 sub printCurrentSettings();
@@ -75,11 +73,6 @@ if (!checkForArgumentAndRemoveFromARGVGettingValue("--force-optimization-level",
     $forceOptimizationLevel="";
 }
 
-if (checkForArgumentAndRemoveFromARGV("-h") || checkForArgumentAndRemoveFromARGV("--help")) {
-    printUsage();
-    exit 1;
-}
-
 if (!$architecture) {
     # Handle --64-bit explicitly here, as we don't want our other scripts to accept it
     for my $i (0 .. $#ARGV) {
@@ -92,11 +85,7 @@ if (!$architecture) {
 }
 
 my $baseProductDir = baseProductDir();
-if (isAppleCocoaWebKit() && !isCMakeBuild()) {
-    markBaseProductDirectoryAsCreatedByXcodeBuildSystem();
-} else {
-    make_path($baseProductDir);
-}
+system "mkdir", "-p", "$baseProductDir";
 
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
     for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LTO TSan UBSan)) {
@@ -104,6 +93,16 @@ if (checkForArgumentAndRemoveFromARGV("--reset")) {
     }
     printCurrentSettings();
     exit 0;
+}
+
+if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$enableCoverage && !$disableCoverage && !$enableTSAN && !$disableTSAN && !$enableUBSAN && !$disableUBSAN && !$ltoMode && !$forceOptimizationLevel)
+    || ($enableASAN && $disableASAN)
+    || ($enableCoverage && $disableCoverage)
+    || ($enableTSAN && $disableTSAN)
+    || ($enableUBSAN && $disableUBSAN)
+    ) {
+    printUsage();
+    exit 1;
 }
 
 if ($enableASAN && $enableTSAN) {

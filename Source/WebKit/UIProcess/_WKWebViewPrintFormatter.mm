@@ -44,11 +44,6 @@
     BOOL _suppressPageCountRecalc;
 }
 
-- (BOOL)requiresMainThread
-{
-    return self._webView._printProvider._wk_printFormatterRequiresMainThread;
-}
-
 - (_WKFrameHandle *)frameToPrint
 {
     return _frameToPrint.get();
@@ -68,7 +63,7 @@
 
 - (void)_setSnapshotPaperRect:(CGRect)paperRect
 {
-    SetForScope suppressPageCountRecalc(_suppressPageCountRecalc, YES);
+    SetForScope<BOOL> suppressPageCountRecalc(_suppressPageCountRecalc, YES);
     UIPrintPageRenderer *printPageRenderer = self.printPageRenderer;
     printPageRenderer.paperRect = paperRect;
     printPageRenderer.printableRect = paperRect;

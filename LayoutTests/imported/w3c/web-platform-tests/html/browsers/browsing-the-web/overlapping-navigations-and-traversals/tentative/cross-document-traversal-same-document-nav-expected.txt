@@ -1,3 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS same-document traversals are not canceled by fragment navigations
+PASS same-document traversals are not canceled by pushState()
 

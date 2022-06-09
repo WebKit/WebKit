@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2013 University of Washington.
@@ -31,17 +31,14 @@
 #include "config.h"
 #include "FrameSnapshotting.h"
 
-#include "ColorBlending.h"
 #include "Document.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
-#include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Page.h"
-#include "RenderAncestorIterator.h"
 #include "RenderObject.h"
 #include "Settings.h"
 
@@ -81,8 +78,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     if (!frame.page())
         return nullptr;
 
-    Ref document = *frame.document();
-    document->updateLayout();
+    frame.document()->updateLayout();
 
     FrameView::SelectionInSnapshot shouldIncludeSelection = FrameView::IncludeSelection;
     if (options.flags.contains(SnapshotFlags::ExcludeSelectionHighlighting))
@@ -115,14 +111,10 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     if (options.flags.contains(SnapshotFlags::PaintWithIntegralScaleFactor))
         scaleFactor = ceilf(scaleFactor);
 
-    auto purpose = options.flags.contains(SnapshotFlags::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
-    auto hostWindow = (document->view() && document->view()->root()) ? document->view()->root()->hostWindow() : nullptr;
-
-    auto buffer = ImageBuffer::create(imageRect.size(), purpose, scaleFactor, options.colorSpace, options.pixelFormat, { }, { hostWindow });
+    auto buffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, scaleFactor, options.colorSpace, options.pixelFormat);
     if (!buffer)
         return nullptr;
-
-    buffer->context().translate(-imageRect.location());
+    buffer->context().translate(-imageRect.x(), -imageRect.y());
 
     if (!clipRects.isEmpty()) {
         Path clipPath;
@@ -164,52 +156,6 @@ RefPtr<ImageBuffer> snapshotNode(Frame& frame, Node& node, SnapshotOptions&& opt
 
     LayoutRect topLevelRect;
     return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)), WTFMove(options));
-}
-
-static bool styleContainsComplexBackground(const RenderStyle& style)
-{
-    return style.hasBlendMode() || style.hasBackgroundImage() || style.hasBackdropFilter();
-}
-
-Color estimatedBackgroundColorForRange(const SimpleRange& range, const Frame& frame)
-{
-    auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
-
-    RenderElement* renderer = nullptr;
-    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
-    while (commonAncestor) {
-        if (is<RenderElement>(commonAncestor->renderer())) {
-            renderer = downcast<RenderElement>(commonAncestor->renderer());
-            break;
-        }
-        commonAncestor = commonAncestor->parentOrShadowHostElement();
-    }
-    
-    auto boundingRectForRange = enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(range, {
-        RenderObject::BoundingRectBehavior::RespectClipping,
-        RenderObject::BoundingRectBehavior::UseVisibleBounds,
-        RenderObject::BoundingRectBehavior::IgnoreTinyRects,
-    })));
-
-    Vector<Color> parentRendererBackgroundColors;
-    for (auto& ancestor : lineageOfType<RenderElement>(*renderer)) {
-        auto absoluteBoundingBox = ancestor.absoluteBoundingBoxRect();
-        auto& style = ancestor.style();
-        if (!absoluteBoundingBox.contains(boundingRectForRange) || !style.hasBackground())
-            continue;
-
-        if (styleContainsComplexBackground(style))
-            return estimatedBackgroundColor;
-
-        auto visitedDependentBackgroundColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
-        if (visitedDependentBackgroundColor != Color::transparentBlack)
-            parentRendererBackgroundColors.append(visitedDependentBackgroundColor);
-    }
-    parentRendererBackgroundColors.reverse();
-    for (const auto& backgroundColor : parentRendererBackgroundColors)
-        estimatedBackgroundColor = blendSourceOver(estimatedBackgroundColor, backgroundColor);
-
-    return estimatedBackgroundColor;
 }
 
 } // namespace WebCore

@@ -26,24 +26,25 @@
 #include "config.h"
 #include "EnterKeyHint.h"
 
-#include "CommonAtomStrings.h"
-#include <wtf/SortedArrayMap.h>
-
 namespace WebCore {
 
-EnterKeyHint enterKeyHintForAttributeValue(StringView value)
+EnterKeyHint enterKeyHintForAttributeValue(const String& value)
 {
-    static constexpr std::pair<ComparableLettersLiteral, EnterKeyHint> mappings[] = {
-        { "done", EnterKeyHint::Done },
-        { "enter", EnterKeyHint::Enter },
-        { "go", EnterKeyHint::Go },
-        { "next", EnterKeyHint::Next },
-        { "previous", EnterKeyHint::Previous },
-        { "search", EnterKeyHint::Search },
-        { "send", EnterKeyHint::Send }
-    };
-    static constexpr SortedArrayMap enterKeyHints { mappings };
-    return enterKeyHints.get(value, EnterKeyHint::Unspecified);
+    if (equalIgnoringASCIICase(value, "enter"))
+        return EnterKeyHint::Enter;
+    if (equalIgnoringASCIICase(value, "done"))
+        return EnterKeyHint::Done;
+    if (equalIgnoringASCIICase(value, "go"))
+        return EnterKeyHint::Go;
+    if (equalIgnoringASCIICase(value, "next"))
+        return EnterKeyHint::Next;
+    if (equalIgnoringASCIICase(value, "previous"))
+        return EnterKeyHint::Previous;
+    if (equalIgnoringASCIICase(value, "search"))
+        return EnterKeyHint::Search;
+    if (equalIgnoringASCIICase(value, "send"))
+        return EnterKeyHint::Send;
+    return EnterKeyHint::Unspecified;
 }
 
 String attributeValueForEnterKeyHint(EnterKeyHint hint)
@@ -52,19 +53,19 @@ String attributeValueForEnterKeyHint(EnterKeyHint hint)
     case EnterKeyHint::Unspecified:
         return emptyAtom();
     case EnterKeyHint::Enter:
-        return "enter"_s;
+        return "enter";
     case EnterKeyHint::Done:
-        return "done"_s;
+        return "done";
     case EnterKeyHint::Go:
-        return "go"_s;
+        return "go";
     case EnterKeyHint::Next:
-        return "next"_s;
+        return "next";
     case EnterKeyHint::Previous:
-        return "previous"_s;
+        return "previous";
     case EnterKeyHint::Search:
-        return searchAtom();
+        return "search";
     case EnterKeyHint::Send:
-        return "send"_s;
+        return "send";
     }
     ASSERT_NOT_REACHED();
     return nullAtom();

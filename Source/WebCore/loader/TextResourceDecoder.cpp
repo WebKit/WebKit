@@ -285,9 +285,9 @@ breakBreak:
 
 TextResourceDecoder::ContentType TextResourceDecoder::determineContentType(const String& mimeType)
 {
-    if (equalLettersIgnoringASCIICase(mimeType, "text/css"_s))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/css"))
         return CSS;
-    if (equalLettersIgnoringASCIICase(mimeType, "text/html"_s))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/html"))
         return HTML;
     if (MIMETypeRegistry::isXMLMIMEType(mimeType))
         return XML;
@@ -329,7 +329,7 @@ static inline bool shouldPrependBOM(const unsigned char* data, unsigned length)
 // https://encoding.spec.whatwg.org/#utf-8-decode
 String TextResourceDecoder::textFromUTF8(const unsigned char* data, unsigned length)
 {
-    auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8");
+    auto decoder = TextResourceDecoder::create("text/plain", "UTF-8");
     if (shouldPrependBOM(data, length))
         decoder->decode("\xef\xbb\xbf", 3);
     return decoder->decodeAndFlush(data, length);
@@ -343,7 +343,7 @@ void TextResourceDecoder::setEncoding(const PAL::TextEncoding& encoding, Encodin
 
     // When encoding comes from meta tag (i.e. it cannot be XML files sent via XHR),
     // treat x-user-defined as windows-1252 (bug 18270)
-    if (source == EncodingFromMetaTag && equalLettersIgnoringASCIICase(encoding.name(), "x-user-defined"_s))
+    if (source == EncodingFromMetaTag && equalLettersIgnoringASCIICase(encoding.name(), "x-user-defined"))
         m_encoding = "windows-1252";
     else if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)        
         m_encoding = encoding.closestByteBasedEquivalent();

@@ -10,15 +10,15 @@
 <body>
 <script>
     function makeCrashTest(src) {
-        async_test((test) => {
+        async_test(function (test) {
             const video = document.createElement("video");
             video.src = src;
             video.controls = true;
-            video.addEventListener("error", () => {
+            document.body.appendChild(video);
+            test.step_timeout(test.step_func(() => {
                 document.body.removeChild(video);
                 test.done();
-            });
-            document.body.appendChild(video);
+            }), 0);
         }, `src="${src}" does not crash.`);
     }
 

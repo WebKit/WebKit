@@ -46,7 +46,6 @@ typedef struct _WebKitFramePrivate WebKitFramePrivate;
 struct _WebKitFrame {
     GObject parent;
 
-    /*< private >*/
     WebKitFramePrivate *priv;
 };
 

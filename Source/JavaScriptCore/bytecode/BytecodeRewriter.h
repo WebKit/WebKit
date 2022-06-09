@@ -98,7 +98,7 @@ public:
         int32_t bytecodeOffset;
         Position position;
 
-        InsertionPoint(JSInstructionStream::Offset offset, Position pos)
+        InsertionPoint(InstructionStream::Offset offset, Position pos)
             : bytecodeOffset(offset)
             , position(pos)
         {
@@ -132,14 +132,14 @@ private:
         Type type;
         IncludeBranch includeBranch;
         size_t removeLength;
-        JSInstructionStreamWriter instructions;
+        InstructionStreamWriter instructions;
     };
 
 public:
     class Fragment {
     WTF_MAKE_NONCOPYABLE(Fragment);
     public:
-        Fragment(BytecodeGenerator& bytecodeGenerator, JSInstructionStreamWriter& writer, IncludeBranch& includeBranch)
+        Fragment(BytecodeGenerator& bytecodeGenerator, InstructionStreamWriter& writer, IncludeBranch& includeBranch)
             : m_bytecodeGenerator(bytecodeGenerator)
             , m_writer(writer)
             , m_includeBranch(includeBranch)
@@ -157,13 +157,11 @@ public:
             });
         }
 
-        void align(size_t congruent = 0)
+        void align()
         {
-            UNUSED_PARAM(congruent);
 #if CPU(NEEDS_ALIGNED_ACCESS)
-            congruent = congruent % OpcodeSize::Wide32;
             m_bytecodeGenerator.withWriter(m_writer, [&] {
-                while (m_bytecodeGenerator.instructions().size() % OpcodeSize::Wide32 != congruent)
+                while (m_bytecodeGenerator.instructions().size() % OpcodeSize::Wide32)
                     OpNop::emit<OpcodeSize::Narrow>(&m_bytecodeGenerator);
             });
 #endif
@@ -171,11 +169,11 @@ public:
 
     private:
         BytecodeGenerator& m_bytecodeGenerator;
-        JSInstructionStreamWriter& m_writer;
+        InstructionStreamWriter& m_writer;
         IncludeBranch& m_includeBranch;
     };
 
-    BytecodeRewriter(BytecodeGenerator& bytecodeGenerator, BytecodeGraph& graph, UnlinkedCodeBlockGenerator* codeBlock, JSInstructionStreamWriter& writer)
+    BytecodeRewriter(BytecodeGenerator& bytecodeGenerator, BytecodeGraph& graph, UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& writer)
         : m_bytecodeGenerator(bytecodeGenerator)
         , m_graph(graph)
         , m_codeBlock(codeBlock)
@@ -184,10 +182,10 @@ public:
     }
 
     template<class Function>
-    void insertFragmentBefore(const JSInstructionStream::Ref& instruction, Function function)
+    void insertFragmentBefore(const InstructionStream::Ref& instruction, Function function)
     {
         IncludeBranch includeBranch = IncludeBranch::No;
-        JSInstructionStreamWriter writer;
+        InstructionStreamWriter writer;
         Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
         function(fragment);
         fragment.align();
@@ -195,34 +193,31 @@ public:
     }
 
     template<class Function>
-    void insertFragmentAfter(const JSInstructionStream::Ref& instruction, Function function, size_t alignCongruent = 0)
+    void insertFragmentAfter(const InstructionStream::Ref& instruction, Function function)
     {
         IncludeBranch includeBranch = IncludeBranch::No;
-        JSInstructionStreamWriter writer;
+        InstructionStreamWriter writer;
         Fragment fragment(m_bytecodeGenerator, writer, includeBranch);
         function(fragment);
-        fragment.align(alignCongruent);
+        fragment.align();
         insertImpl(InsertionPoint(instruction.offset(), Position::After), includeBranch, WTFMove(writer));
     }
 
-    template<class Function>
-    void replaceBytecodeWithFragment(const JSInstructionStream::Ref& instruction, Function function)
+    void removeBytecode(const InstructionStream::Ref& instruction)
     {
-        // Note: This function preserves the alignment of the subsequent bytecode (on targets where this matters)
         m_insertions.append(Insertion { InsertionPoint(instruction.offset(), Position::OriginalBytecodePoint), Insertion::Type::Remove, IncludeBranch::No, instruction->size(), { } });
-        insertFragmentAfter(instruction, function, instruction->size());
     }
 
     void execute();
 
     BytecodeGraph& graph() { return m_graph; }
 
-    int32_t adjustAbsoluteOffset(JSInstructionStream::Offset absoluteOffset)
+    int32_t adjustAbsoluteOffset(InstructionStream::Offset absoluteOffset)
     {
         return adjustJumpTarget(InsertionPoint(0, Position::EntryPoint), InsertionPoint(absoluteOffset, Position::LabelPoint));
     }
 
-    int32_t adjustJumpTarget(JSInstructionStream::Offset originalBytecodeOffset, int32_t originalJumpTarget)
+    int32_t adjustJumpTarget(InstructionStream::Offset originalBytecodeOffset, int32_t originalJumpTarget)
     {
         return adjustJumpTarget(InsertionPoint(originalBytecodeOffset, Position::LabelPoint), InsertionPoint(originalJumpTarget, Position::LabelPoint));
     }
@@ -230,7 +225,7 @@ public:
     void adjustJumpTargets();
 
 private:
-    void insertImpl(InsertionPoint, IncludeBranch, JSInstructionStreamWriter&& fragment);
+    void insertImpl(InsertionPoint, IncludeBranch, InstructionStreamWriter&& fragment);
 
     friend class UnlinkedCodeBlockGenerator;
     void applyModification();
@@ -242,7 +237,7 @@ private:
     BytecodeGenerator& m_bytecodeGenerator;
     BytecodeGraph& m_graph;
     UnlinkedCodeBlockGenerator* m_codeBlock;
-    JSInstructionStreamWriter& m_writer;
+    InstructionStreamWriter& m_writer;
     Vector<Insertion, 8> m_insertions;
 };
 

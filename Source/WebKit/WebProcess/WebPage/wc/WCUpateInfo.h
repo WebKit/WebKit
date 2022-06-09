@@ -29,44 +29,11 @@
 #include "WCContentBufferIdentifier.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsLayer.h>
-#include <WebCore/TextureMapperSparseBackingStore.h>
 #include <optional>
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 namespace WebKit {
-
-struct WCTileUpdate {
-    WebCore::TextureMapperSparseBackingStore::TileIndex index;
-    bool willRemove { false };
-    WCBackingStore backingStore;
-    WebCore::IntRect dirtyRect;
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << index << willRemove;
-        if (!willRemove)
-            encoder << backingStore << dirtyRect;
-    }
-
-    template <class Decoder>
-    static std::optional<WCTileUpdate> decode(Decoder& decoder)
-    {
-        WCTileUpdate result;
-        if (!decoder.decode(result.index))
-            return std::nullopt;
-        if (!decoder.decode(result.willRemove))
-            return std::nullopt;
-        if (!result.willRemove) {
-            if (!decoder.decode(result.backingStore))
-                return std::nullopt;
-            if (!decoder.decode(result.dirtyRect))
-                return std::nullopt;
-        }
-        return result;
-    }
-};
 
 enum class WCLayerChange : uint32_t {
     Children                = 1 <<  0,
@@ -83,12 +50,13 @@ enum class WCLayerChange : uint32_t {
     ContentsRect            = 1 << 11,
     ContentsClippingRect    = 1 << 12,
     Opacity                 = 1 << 13,
-    Background              = 1 << 14,
+    BackingStore            = 1 << 14,
     Transform               = 1 << 15,
     ChildrenTransform       = 1 << 16,
     Filters                 = 1 << 17,
     BackdropFilters         = 1 << 18,
     PlatformLayer           = 1 << 19,
+    BackgroundColor         = 1 << 20,
 };
 
 struct WCLayerUpateInfo {
@@ -108,7 +76,6 @@ struct WCLayerUpateInfo {
     bool backfaceVisibility;
     bool preserves3D;
     bool hasPlatformLayer;
-    bool hasBackingStore;
     WebCore::Color solidColor;
     WebCore::Color backgroundColor;
     WebCore::Color debugBorderColor;
@@ -116,13 +83,13 @@ struct WCLayerUpateInfo {
     float debugBorderWidth;
     int repaintCount;
     WebCore::FloatRect contentsRect;
+    WCBackingStore backingStore;
     WebCore::TransformationMatrix transform;
     WebCore::TransformationMatrix childrenTransform;
     WebCore::FilterOperations filters;
     WebCore::FilterOperations backdropFilters;
     WebCore::FloatRoundedRect backdropFiltersRect;
     WebCore::FloatRoundedRect contentsClippingRect;
-    Vector<WCTileUpdate> tileUpdate;
     Vector<WCContentBufferIdentifier> contentBufferIdentifiers;
 
     template<class Encoder>
@@ -156,10 +123,12 @@ struct WCLayerUpateInfo {
             encoder << contentsRect;
         if (changes & WCLayerChange::ContentsClippingRect)
             encoder << contentsClippingRect;
+        if (changes & WCLayerChange::BackgroundColor)
+            encoder << backgroundColor;
         if (changes & WCLayerChange::Opacity)
             encoder << opacity;
-        if (changes & WCLayerChange::Background)
-            encoder << backgroundColor << hasBackingStore << tileUpdate;
+        if (changes & WCLayerChange::BackingStore)
+            encoder << backingStore;
         if (changes & WCLayerChange::Transform)
             encoder << transform;
         if (changes & WCLayerChange::ChildrenTransform)
@@ -243,16 +212,16 @@ struct WCLayerUpateInfo {
             if (!decoder.decode(result.contentsClippingRect))
                 return false;
         }
+        if (result.changes & WCLayerChange::BackgroundColor) {
+            if (!decoder.decode(result.backgroundColor))
+                return false;
+        }
         if (result.changes & WCLayerChange::Opacity) {
             if (!decoder.decode(result.opacity))
                 return false;
         }
-        if (result.changes & WCLayerChange::Background) {
-            if (!decoder.decode(result.backgroundColor))
-                return false;
-            if (!decoder.decode(result.hasBackingStore))
-                return false;
-            if (!decoder.decode(result.tileUpdate))
+        if (result.changes & WCLayerChange::BackingStore) {
+            if (!decoder.decode(result.backingStore))
                 return false;
         }
         if (result.changes & WCLayerChange::Transform) {
@@ -334,12 +303,13 @@ template<> struct EnumTraits<WebKit::WCLayerChange> {
         WebKit::WCLayerChange::ContentsRect,
         WebKit::WCLayerChange::ContentsClippingRect,
         WebKit::WCLayerChange::Opacity,
-        WebKit::WCLayerChange::Background,
+        WebKit::WCLayerChange::BackingStore,
         WebKit::WCLayerChange::Transform,
         WebKit::WCLayerChange::ChildrenTransform,
         WebKit::WCLayerChange::Filters,
         WebKit::WCLayerChange::BackdropFilters,
-        WebKit::WCLayerChange::PlatformLayer
+        WebKit::WCLayerChange::PlatformLayer,
+        WebKit::WCLayerChange::BackgroundColor
     >;
 };
 

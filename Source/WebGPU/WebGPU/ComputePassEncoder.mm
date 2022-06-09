@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,24 +26,15 @@
 #import "config.h"
 #import "ComputePassEncoder.h"
 
-#import "APIConversions.h"
 #import "BindGroup.h"
 #import "Buffer.h"
 #import "ComputePipeline.h"
 #import "QuerySet.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, Device& device)
-    : m_computeCommandEncoder(computeCommandEncoder)
-    , m_device(device)
-{
-}
-
-ComputePassEncoder::ComputePassEncoder(Device& device)
-    : m_device(device)
-{
-}
+ComputePassEncoder::ComputePassEncoder() = default;
 
 ComputePassEncoder::~ComputePassEncoder() = default;
 
@@ -74,49 +65,18 @@ void ComputePassEncoder::endPipelineStatisticsQuery()
 {
 }
 
-void ComputePassEncoder::insertDebugMarker(String&& markerLabel)
+void ComputePassEncoder::insertDebugMarker(const char* markerLabel)
 {
-    // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
-
-    if (!prepareTheEncoderState())
-        return;
-
-    [m_computeCommandEncoder insertDebugSignpost:markerLabel];
-}
-
-bool ComputePassEncoder::validatePopDebugGroup() const
-{
-    if (!m_debugGroupStackSize)
-        return false;
-
-    return true;
+    UNUSED_PARAM(markerLabel);
 }
 
 void ComputePassEncoder::popDebugGroup()
 {
-    // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup
-
-    if (!prepareTheEncoderState())
-        return;
-
-    if (!validatePopDebugGroup()) {
-        makeInvalid();
-        return;
-    }
-
-    --m_debugGroupStackSize;
-    [m_computeCommandEncoder popDebugGroup];
 }
 
-void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
+void ComputePassEncoder::pushDebugGroup(const char* groupLabel)
 {
-    // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
-
-    if (!prepareTheEncoderState())
-        return;
-
-    ++m_debugGroupStackSize;
-    [m_computeCommandEncoder pushDebugGroup:groupLabel];
+    UNUSED_PARAM(groupLabel);
 }
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
@@ -132,71 +92,80 @@ void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
     UNUSED_PARAM(pipeline);
 }
 
-void ComputePassEncoder::setLabel(String&& label)
+void ComputePassEncoder::writeTimestamp(const QuerySet& querySet, uint32_t queryIndex)
 {
-    m_computeCommandEncoder.label = label;
+    UNUSED_PARAM(querySet);
+    UNUSED_PARAM(queryIndex);
+}
+
+void ComputePassEncoder::setLabel(const char* label)
+{
+    UNUSED_PARAM(label);
 }
 
 } // namespace WebGPU
 
-#pragma mark WGPU Stubs
-
 void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
 {
-    WebGPU::fromAPI(computePassEncoder).deref();
+    delete computePassEncoder;
 }
 
 void wgpuComputePassEncoderBeginPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
 {
-    WebGPU::fromAPI(computePassEncoder).beginPipelineStatisticsQuery(WebGPU::fromAPI(querySet), queryIndex);
+    computePassEncoder->computePassEncoder->beginPipelineStatisticsQuery(querySet->querySet, queryIndex);
 }
 
 void wgpuComputePassEncoderDispatch(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
 {
-    WebGPU::fromAPI(computePassEncoder).dispatch(x, y, z);
+    computePassEncoder->computePassEncoder->dispatch(x, y, z);
 }
 
 void wgpuComputePassEncoderDispatchIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    WebGPU::fromAPI(computePassEncoder).dispatchIndirect(WebGPU::fromAPI(indirectBuffer), indirectOffset);
+    computePassEncoder->computePassEncoder->dispatchIndirect(indirectBuffer->buffer, indirectOffset);
 }
 
 void wgpuComputePassEncoderEndPass(WGPUComputePassEncoder computePassEncoder)
 {
-    WebGPU::fromAPI(computePassEncoder).endPass();
+    computePassEncoder->computePassEncoder->endPass();
 }
 
 void wgpuComputePassEncoderEndPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder)
 {
-    WebGPU::fromAPI(computePassEncoder).endPipelineStatisticsQuery();
+    computePassEncoder->computePassEncoder->endPipelineStatisticsQuery();
 }
 
 void wgpuComputePassEncoderInsertDebugMarker(WGPUComputePassEncoder computePassEncoder, const char* markerLabel)
 {
-    WebGPU::fromAPI(computePassEncoder).insertDebugMarker(WebGPU::fromAPI(markerLabel));
+    computePassEncoder->computePassEncoder->insertDebugMarker(markerLabel);
 }
 
 void wgpuComputePassEncoderPopDebugGroup(WGPUComputePassEncoder computePassEncoder)
 {
-    WebGPU::fromAPI(computePassEncoder).popDebugGroup();
+    computePassEncoder->computePassEncoder->popDebugGroup();
 }
 
 void wgpuComputePassEncoderPushDebugGroup(WGPUComputePassEncoder computePassEncoder, const char* groupLabel)
 {
-    WebGPU::fromAPI(computePassEncoder).pushDebugGroup(WebGPU::fromAPI(groupLabel));
+    computePassEncoder->computePassEncoder->pushDebugGroup(groupLabel);
 }
 
 void wgpuComputePassEncoderSetBindGroup(WGPUComputePassEncoder computePassEncoder, uint32_t groupIndex, WGPUBindGroup group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    WebGPU::fromAPI(computePassEncoder).setBindGroup(groupIndex, WebGPU::fromAPI(group), dynamicOffsetCount, dynamicOffsets);
+    computePassEncoder->computePassEncoder->setBindGroup(groupIndex, group->bindGroup, dynamicOffsetCount, dynamicOffsets);
 }
 
 void wgpuComputePassEncoderSetPipeline(WGPUComputePassEncoder computePassEncoder, WGPUComputePipeline pipeline)
 {
-    WebGPU::fromAPI(computePassEncoder).setPipeline(WebGPU::fromAPI(pipeline));
+    computePassEncoder->computePassEncoder->setPipeline(pipeline->computePipeline);
+}
+
+void wgpuComputePassEncoderWriteTimestamp(WGPUComputePassEncoder computePassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
+{
+    computePassEncoder->computePassEncoder->writeTimestamp(querySet->querySet, queryIndex);
 }
 
 void wgpuComputePassEncoderSetLabel(WGPUComputePassEncoder computePassEncoder, const char* label)
 {
-    WebGPU::fromAPI(computePassEncoder).setLabel(WebGPU::fromAPI(label));
+    computePassEncoder->computePassEncoder->setLabel(label);
 }

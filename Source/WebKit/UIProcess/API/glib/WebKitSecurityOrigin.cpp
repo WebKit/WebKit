@@ -25,9 +25,9 @@
 #include <wtf/text/CString.h>
 
 /**
- * WebKitSecurityOrigin:
- *
- * A security boundary for websites.
+ * SECTION: WebKitSecurityOrigin
+ * @Short_description: A security boundary for websites
+ * @Title: WebKitSecurityOrigin
  *
  * #WebKitSecurityOrigin is a representation of a security domain
  * defined by websites. A security origin consists of a protocol, a
@@ -88,7 +88,7 @@ WebKitSecurityOrigin* webkit_security_origin_new(const gchar* protocol, const gc
     g_return_val_if_fail(host, nullptr);
 
     std::optional<uint16_t> optionalPort;
-    if (port && !WTF::isDefaultPortForProtocol(port, StringView::fromLatin1(protocol)))
+    if (port && !WTF::isDefaultPortForProtocol(port, protocol))
         optionalPort = port;
 
     return webkitSecurityOriginCreate(WebCore::SecurityOriginData(String::fromUTF8(protocol), String::fromUTF8(host), optionalPort));
@@ -110,7 +110,7 @@ WebKitSecurityOrigin* webkit_security_origin_new_for_uri(const gchar* uri)
 {
     g_return_val_if_fail(uri, nullptr);
 
-    return webkitSecurityOriginCreate(WebCore::SecurityOriginData::fromURL(URL { String::fromUTF8(uri) }));
+    return webkitSecurityOriginCreate(WebCore::SecurityOriginData::fromURL(URL(URL(), String::fromUTF8(uri))));
 }
 
 /**

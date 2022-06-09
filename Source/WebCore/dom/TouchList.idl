@@ -25,6 +25,7 @@
 
 [
     Conditional=TOUCH_EVENTS,
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface TouchList {
     readonly attribute unsigned long length;

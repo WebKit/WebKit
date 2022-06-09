@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo FunctionRareData::s_info = { "FunctionRareData"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionRareData) };
+const ClassInfo FunctionRareData::s_info = { "FunctionRareData", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionRareData) };
 
 FunctionRareData* FunctionRareData::create(VM& vm, ExecutableBase* executable)
 {
@@ -60,7 +60,7 @@ void FunctionRareData::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     rareData->m_objectAllocationProfile.visitAggregate(visitor);
     rareData->m_internalFunctionAllocationProfile.visitAggregate(visitor);
-    visitor.append(rareData->m_boundFunctionStructureID);
+    visitor.append(rareData->m_boundFunctionStructure);
     visitor.append(rareData->m_executable);
 }
 

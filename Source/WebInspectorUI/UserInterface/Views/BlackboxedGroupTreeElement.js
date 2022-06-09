@@ -25,56 +25,35 @@
 
 WI.BlackboxedGroupTreeElement = class BlackboxedGroupTreeElement extends WI.GeneralTreeElement
 {
-    constructor(callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand} = {})
+    constructor(callFrames)
     {
-        console.assert(!rememberBlackboxedCallFrameGroupToAutoExpand || !WI.debuggerManager.shouldAutoExpandBlackboxedCallFrameGroup(callFrames), callFrames);
+        console.assert(!WI.debuggerManager.shouldAutoExpandBlackboxedCallFrameGroup(callFrames), callFrames);
 
         const classNames = ["blackboxed-group"];
-        super(classNames, WI.BlackboxedGroupView.generateTitle(callFrames), WI.BlackboxedGroupView.generateSubtitle(callFrames));
+        const title = WI.UIString("Blackboxed", "Blackboxed @ Debugger Call Stack", "Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed.");
+        let subtitle;
+        if (callFrames.length === 1)
+            subtitle = WI.UIString("%d call frame", "call frame @ Debugger Call Stack", "Part of the 'Blackboxed - %d call frame' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed.").format(callFrames.length);
+        else
+            subtitle = WI.UIString("%d call frames", "call frames @ Debugger Call Stack", "Part of the 'Blackboxed - %d call frames' label shown in the debugger call stack when paused instead of subsequent call frames that have been blackboxed.").format(callFrames.length);
 
+        super(classNames, title, subtitle);
+
+        this.selectable = false;
         this.toggleOnClick = true;
-
         this._callFrames = callFrames;
-        this._rememberBlackboxedCallFrameGroupToAutoExpand = rememberBlackboxedCallFrameGroupToAutoExpand || false;
     }
 
     // Public
 
-    get callFrames() { return this._callFrames; }
-
-    get expandable()
-    {
-        return true;
-    }
-
     expand()
     {
-        if (this._rememberBlackboxedCallFrameGroupToAutoExpand)
-            WI.debuggerManager.rememberBlackboxedCallFrameGroupToAutoExpand(this._callFrames);
+        WI.debuggerManager.rememberBlackboxedCallFrameGroupToAutoExpand(this._callFrames);
 
         let index = this.parent.children.indexOf(this);
         for (let i = this._callFrames.length - 1; i >= 0; --i)
             this.parent.insertChild(new WI.CallFrameTreeElement(this._callFrames[i]), index);
 
         this.parent.removeChild(this);
-    }
-
-    onenter()
-    {
-        this.expand();
-        return true;
-    }
-
-    onspace()
-    {
-        this.expand();
-        return true;
-    }
-
-    // Protected
-
-    customTitleTooltip()
-    {
-        return WI.BlackboxedGroupView.generateTooltip(this._callFrames);
     }
 };

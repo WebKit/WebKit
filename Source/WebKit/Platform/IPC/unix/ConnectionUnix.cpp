@@ -204,12 +204,12 @@ bool Connection::processMessage()
         case Attachment::MappedMemoryType:
             if (!attachmentInfo[i].isNull())
                 fd = m_fileDescriptors[fdIndex++];
-            attachments[attachmentCount - i - 1] = Attachment(UnixFileDescriptor(fd, UnixFileDescriptor::Adopt), attachmentInfo[i].size());
+            attachments[attachmentCount - i - 1] = Attachment(fd, attachmentInfo[i].size());
             break;
         case Attachment::SocketType:
             if (!attachmentInfo[i].isNull())
                 fd = m_fileDescriptors[fdIndex++];
-            attachments[attachmentCount - i - 1] = Attachment(UnixFileDescriptor(fd, UnixFileDescriptor::Adopt));
+            attachments[attachmentCount - i - 1] = Attachment(fd);
             break;
         case Attachment::CustomWriterType:
             attachments[attachmentCount - i - 1] = Attachment(Attachment::CustomWriter(m_socketDescriptor));
@@ -230,7 +230,7 @@ bool Connection::processMessage()
         }
 
         WebKit::SharedMemory::Handle handle;
-        handle.adoptAttachment(Attachment(UnixFileDescriptor(m_fileDescriptors[attachmentFileDescriptorCount - 1], UnixFileDescriptor::Adopt), attachmentInfo[attachmentCount].size()));
+        handle.adoptAttachment(IPC::Attachment(m_fileDescriptors[attachmentFileDescriptorCount - 1], attachmentInfo[attachmentCount].size()));
 
         oolMessageBody = WebKit::SharedMemory::map(handle, WebKit::SharedMemory::Protection::ReadOnly);
         if (!oolMessageBody) {
@@ -245,7 +245,7 @@ bool Connection::processMessage()
     if (messageInfo.isBodyOutOfLine())
         messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
 
-    auto decoder = Decoder::create(messageBody, messageInfo.bodySize(), WTFMove(attachments));
+    auto decoder = Decoder::create(messageBody, messageInfo.bodySize(), nullptr, WTFMove(attachments));
     ASSERT(decoder);
     if (!decoder)
         return false;
@@ -434,7 +434,7 @@ bool Connection::platformCanSendOutgoingMessages() const
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
-    static_assert(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, "Attachments fit to message inline");
+    COMPILE_ASSERT(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, AttachmentsFitToMessageInline);
 
     UnixMessage outputMessage(encoder.get());
     if (outputMessage.attachments().size() > (attachmentMaxAmount - 1)) {
@@ -489,7 +489,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
 
         size_t attachmentFDBufferLength = std::count_if(attachments.begin(), attachments.end(),
             [](const Attachment& attachment) {
-                return !attachment.isNull();
+                return attachment.fileDescriptor() != -1;
             });
 
         if (attachmentFDBufferLength) {
@@ -517,9 +517,9 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
                 attachmentInfo[i].setSize(attachments[i].size());
                 FALLTHROUGH;
             case Attachment::SocketType:
-                if (!attachments[i].isNull()) {
+                if (attachments[i].fileDescriptor() != -1) {
                     ASSERT(fdPtr);
-                    fdPtr[fdIndex++] = attachments[i].fd().value();
+                    fdPtr[fdIndex++] = attachments[i].fileDescriptor();
                 } else
                     attachmentInfo[i].setNull();
                 break;
@@ -635,9 +635,4 @@ void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
 {
 }
 
-std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
-{
-    Connection::SocketPair socketPair = Connection::createPlatformConnection();
-    return ConnectionIdentifierPair { socketPair.server, Attachment { UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } } };
-}
 } // namespace IPC

@@ -159,8 +159,6 @@ public:
     const ResourceRequest& deferredRequest() const { return m_deferredRequest; }
     ResourceRequest takeDeferredRequest() { return std::exchange(m_deferredRequest, { }); }
 
-    bool isPDFJSResourceLoad() const;
-
 protected:
     ResourceLoader(Frame&, ResourceLoaderOptions);
 

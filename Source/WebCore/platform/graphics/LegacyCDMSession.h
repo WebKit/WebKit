@@ -29,11 +29,10 @@
 
 #include <JavaScriptCore/Forward.h>
 #include <wtf/Forward.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class LegacyCDMSessionClient : public CanMakeWeakPtr<LegacyCDMSessionClient> {
+class LegacyCDMSessionClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~LegacyCDMSessionClient() = default;
@@ -51,11 +50,6 @@ public:
     virtual void sendError(MediaKeyErrorCode, uint32_t systemCode) = 0;
 
     virtual String mediaKeysStorageDirectory() const = 0;
-
-#if !RELEASE_LOG_DISABLED
-    virtual const Logger& logger() const = 0;
-    virtual const void* logIdentifier() const = 0;
-#endif
 };
 
 enum LegacyCDMSessionType {
@@ -72,6 +66,7 @@ public:
     virtual ~LegacyCDMSession() = default;
 
     virtual LegacyCDMSessionType type() { return CDMSessionTypeUnknown; }
+    virtual void setClient(LegacyCDMSessionClient*) = 0;
     virtual const String& sessionId() const = 0;
     virtual RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) = 0;
     virtual void releaseKeys() = 0;

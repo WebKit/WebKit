@@ -235,15 +235,21 @@ inline Ref<T, U> Ref<T, U>::replace(Ref<X, Y>&& reference)
 }
 
 template<typename T, typename U = RawPtrTraits<T>, typename X, typename Y>
+inline Ref<T, U> static_reference_cast(Ref<X, Y>& reference)
+{
+    return Ref<T, U>(static_cast<T&>(reference.get()));
+}
+
+template<typename T, typename U = RawPtrTraits<T>, typename X, typename Y>
 inline Ref<T, U> static_reference_cast(Ref<X, Y>&& reference)
 {
     return adoptRef(static_cast<T&>(reference.leakRef()));
 }
 
 template<typename T, typename U = RawPtrTraits<T>, typename X, typename Y>
-ALWAYS_INLINE Ref<T, U> static_reference_cast(const Ref<X, Y>& reference)
+inline Ref<T, U> static_reference_cast(const Ref<X, Y>& reference)
 {
-    return static_reference_cast<T, U>(reference.copyRef());
+    return Ref<T, U>(static_cast<T&>(reference.copyRef().get()));
 }
 
 template <typename T, typename U>
@@ -274,6 +280,42 @@ template<typename ExpectedType, typename ArgType, typename PtrTraits>
 inline bool is(const Ref<ArgType, PtrTraits>& source)
 {
     return is<ExpectedType>(source.get());
+}
+
+template<typename T, typename U, typename V, typename W>
+inline bool operator==(const Ref<T, U>& a, const Ref<V, W>& b)
+{
+    return a.ptr() == b.ptr();
+}
+
+template<typename T, typename U, typename V>
+inline bool operator==(const Ref<T, U>& a, V& b)
+{
+    return a.ptr() == &b;
+}
+
+template<typename T, typename U, typename V>
+inline bool operator==(T& a, const Ref<U, V>& b)
+{
+    return &a == b.ptr();
+}
+
+template<typename T, typename U, typename V, typename W>
+inline bool operator!=(const Ref<T, U>& a, const Ref<V, W>& b)
+{
+    return a.ptr() != b.ptr();
+}
+
+template<typename T, typename U, typename V>
+inline bool operator!=(const Ref<T, U>& a, V& b)
+{
+    return a.ptr() != &b;
+}
+
+template<typename T, typename U, typename V>
+inline bool operator!=(T& a, const Ref<U, V>& b)
+{
+    return &a != b.ptr();
 }
 
 } // namespace WTF

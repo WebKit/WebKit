@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyRuntimeErrorPrototype::s_info = { "WebAssembly.RuntimeError"_s, &Base::s_info, &prototypeTableWebAssemblyRuntimeError, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorPrototype) };
+const ClassInfo WebAssemblyRuntimeErrorPrototype::s_info = { "WebAssembly.RuntimeError", &Base::s_info, &prototypeTableWebAssemblyRuntimeError, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorPrototype) };
 
 /* Source for WebAssemblyRuntimeErrorPrototype.lut.h
  @begin prototypeTableWebAssemblyRuntimeError
@@ -56,7 +56,7 @@ Structure* WebAssemblyRuntimeErrorPrototype::createStructure(VM& vm, JSGlobalObj
 void WebAssemblyRuntimeErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->name, jsNontrivialString(vm, "RuntimeError"_s), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

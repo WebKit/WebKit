@@ -59,42 +59,43 @@ LinkRelAttribute::LinkRelAttribute()
 LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
     : LinkRelAttribute()
 {
-    if (equalLettersIgnoringASCIICase(rel, "stylesheet"_s))
+    if (equalLettersIgnoringASCIICase(rel, "stylesheet"))
         isStyleSheet = true;
-    else if (equalLettersIgnoringASCIICase(rel, "icon"_s) || equalLettersIgnoringASCIICase(rel, "shortcut icon"_s))
+    else if (equalLettersIgnoringASCIICase(rel, "icon") || equalLettersIgnoringASCIICase(rel, "shortcut icon"))
         iconType = LinkIconType::Favicon;
-    else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon"_s))
+    else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon"))
         iconType = LinkIconType::TouchIcon;
-    else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon-precomposed"_s))
+    else if (equalLettersIgnoringASCIICase(rel, "apple-touch-icon-precomposed"))
         iconType = LinkIconType::TouchPrecomposedIcon;
-    else if (equalLettersIgnoringASCIICase(rel, "dns-prefetch"_s))
+    else if (equalLettersIgnoringASCIICase(rel, "dns-prefetch"))
         isDNSPrefetch = true;
-    else if (document.settings().linkPreconnectEnabled() && equalLettersIgnoringASCIICase(rel, "preconnect"_s))
+    else if (document.settings().linkPreconnectEnabled() && equalLettersIgnoringASCIICase(rel, "preconnect"))
         isLinkPreconnect = true;
-    else if (document.settings().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"_s))
+    else if (document.settings().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"))
         isLinkPreload = true;
-    else if (document.settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(rel, "prefetch"_s))
+    else if (document.settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(rel, "prefetch"))
         isLinkPrefetch = true;
-    else if (equalLettersIgnoringASCIICase(rel, "alternate stylesheet"_s) || equalLettersIgnoringASCIICase(rel, "stylesheet alternate"_s)) {
+    else if (equalLettersIgnoringASCIICase(rel, "alternate stylesheet") || equalLettersIgnoringASCIICase(rel, "stylesheet alternate")) {
         isStyleSheet = true;
         isAlternate = true;
 #if ENABLE(APPLICATION_MANIFEST)
-    } else if (equalLettersIgnoringASCIICase(rel, "manifest"_s)) {
+    } else if (equalLettersIgnoringASCIICase(rel, "manifest")) {
         isApplicationManifest = true;
 #endif
     } else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
-        String relCopy = makeStringByReplacingAll(rel, '\n', ' ');
+        String relCopy = rel;
+        relCopy.replace('\n', ' ');
         for (auto word : StringView(relCopy).split(' ')) {
-            if (equalLettersIgnoringASCIICase(word, "stylesheet"_s))
+            if (equalLettersIgnoringASCIICase(word, "stylesheet"))
                 isStyleSheet = true;
-            else if (equalLettersIgnoringASCIICase(word, "alternate"_s))
+            else if (equalLettersIgnoringASCIICase(word, "alternate"))
                 isAlternate = true;
-            else if (equalLettersIgnoringASCIICase(word, "icon"_s))
+            else if (equalLettersIgnoringASCIICase(word, "icon"))
                 iconType = LinkIconType::Favicon;
-            else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon"_s))
+            else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon"))
                 iconType = LinkIconType::TouchIcon;
-            else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon-precomposed"_s))
+            else if (equalLettersIgnoringASCIICase(word, "apple-touch-icon-precomposed"))
                 iconType = LinkIconType::TouchPrecomposedIcon;
         }
     }
@@ -103,25 +104,25 @@ LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
 // https://html.spec.whatwg.org/#linkTypes
 bool LinkRelAttribute::isSupported(Document& document, StringView attribute)
 {
-    static constexpr ASCIILiteral supportedAttributes[] = {
-        "alternate"_s, "dns-prefetch"_s, "icon"_s, "stylesheet"_s, "apple-touch-icon"_s, "apple-touch-icon-precomposed"_s,
+    static const char* const supportedAttributes[] = {
+        "alternate", "dns-prefetch", "icon", "stylesheet", "apple-touch-icon", "apple-touch-icon-precomposed",
 #if ENABLE(APPLICATION_MANIFEST)
-        "manifest"_s,
+        "manifest",
 #endif
     };
 
-    for (auto supportedAttribute : supportedAttributes) {
+    for (auto* supportedAttribute : supportedAttributes) {
         if (equalIgnoringASCIICase(attribute, supportedAttribute))
             return true;
     }
 
-    if (document.settings().linkPreconnectEnabled() && equalLettersIgnoringASCIICase(attribute, "preconnect"_s))
+    if (document.settings().linkPreconnectEnabled() && equalIgnoringASCIICase(attribute, "preconnect"))
         return true;
 
-    if (document.settings().linkPreloadEnabled() && equalLettersIgnoringASCIICase(attribute, "preload"_s))
+    if (document.settings().linkPreloadEnabled() && equalIgnoringASCIICase(attribute, "preload"))
         return true;
 
-    if (document.settings().linkPrefetchEnabled() && equalLettersIgnoringASCIICase(attribute, "prefetch"_s))
+    if (document.settings().linkPrefetchEnabled() && equalIgnoringASCIICase(attribute, "prefetch"))
         return true;
 
     return false;

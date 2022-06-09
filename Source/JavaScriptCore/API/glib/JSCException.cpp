@@ -31,7 +31,7 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * JSCException:
+ * SECTION: JSCException
  * @short_description: JavaScript exception
  * @title: JSCException
  * @see_also: JSCContext

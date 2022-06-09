@@ -39,7 +39,7 @@
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-#import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
+#import <pal/graphics/WebGPU/Impl/WebGPUImpl.h>
 #endif
 
 namespace WebKit {
@@ -47,7 +47,7 @@ namespace WebKit {
 RemoteGPU::RemoteGPU(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), workQueue()))
+    , m_streamConnection(IPC::StreamServerConnection::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), m_workQueue))
     , m_objectHeap(WebGPU::ObjectHeap::create())
     , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
@@ -60,8 +60,7 @@ RemoteGPU::~RemoteGPU() = default;
 void RemoteGPU::initialize()
 {
     assertIsMainRunLoop();
-    m_streamConnection->open();
-    workQueue().dispatch([protectedThis = Ref { *this }]() mutable {
+    m_workQueue->dispatch([protectedThis = Ref { *this }]() mutable {
         protectedThis->workQueueInitialize();
     });
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
@@ -70,46 +69,38 @@ void RemoteGPU::initialize()
 void RemoteGPU::stopListeningForIPC(Ref<RemoteGPU>&& refFromConnection)
 {
     assertIsMainRunLoop();
-    m_streamConnection->invalidate();
     m_streamConnection->stopReceivingMessages(Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
-    workQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
+    m_workQueue->dispatch([protectedThis = WTFMove(refFromConnection)]() {
         protectedThis->workQueueUninitialize();
     });
 }
 
 void RemoteGPU::workQueueInitialize()
 {
-    assertIsCurrent(workQueue());
+    m_streamThread.reset();
+    assertIsCurrent(m_streamThread);
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    // BEWARE: This is a retain cycle.
-    // this owns m_backing, but m_backing contains a callback which has a stong reference to this.
-    // The retain cycle is required because callbacks need to execute even if this is disowned
-    // (because the callbacks handle resource cleanup, etc.).
-    // The retain cycle is broken in workQueueUninitialize().
-    auto backing = PAL::WebGPU::create([protectedThis = Ref { *this }](PAL::WebGPU::WorkItem&& workItem) {
-        protectedThis->workQueue().dispatch(WTFMove(workItem));
-    });
+    auto backing = PAL::WebGPU::GPUImpl::create();
 #else
     RefPtr<PAL::WebGPU::GPU> backing;
 #endif
     if (backing) {
         m_backing = backing.releaseNonNull();
-        send(Messages::RemoteGPUProxy::WasCreated(true, workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()));
+        send(Messages::RemoteGPUProxy::WasCreated(true, m_workQueue->wakeUpSemaphore()));
     } else
-        send(Messages::RemoteGPUProxy::WasCreated(false, { }, { }));
+        send(Messages::RemoteGPUProxy::WasCreated(false, m_workQueue->wakeUpSemaphore()));
 }
 
 void RemoteGPU::workQueueUninitialize()
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     m_streamConnection = nullptr;
     m_objectHeap->clear();
-    m_backing = nullptr;
 }
 
-void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&& callback)
+void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, WTF::CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&& callback)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     ASSERT(m_backing);
 
     auto convertedOptions = m_objectHeap->convertFromBacking(options);

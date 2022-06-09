@@ -54,21 +54,6 @@ static ProtocolVersion convertStringToProtocolVersion(const String& version)
     return ProtocolVersion::kUnknown;
 }
 
-static std::optional<AuthenticatorTransport> convertStringToAuthenticatorTransport(const String& transport)
-{
-    if (transport == authenticatorTransportUsb)
-        return AuthenticatorTransport::Usb;
-    if (transport == authenticatorTransportNfc)
-        return AuthenticatorTransport::Nfc;
-    if (transport == authenticatorTransportBle)
-        return AuthenticatorTransport::Ble;
-    if (transport == authenticatorTransportInternal)
-        return AuthenticatorTransport::Internal;
-    if (transport == authenticatorTransportCable)
-        return AuthenticatorTransport::Cable;
-    return std::nullopt;
-}
-
 std::optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>& inBuffer)
 {
     if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
@@ -110,7 +95,7 @@ static Vector<uint8_t> getCredentialId(const Vector<uint8_t>& authenticatorData)
 
 // Decodes byte array response from authenticator to CBOR value object and
 // checks for correct encoding format.
-RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Vector<uint8_t>& inBuffer, WebCore::AuthenticatorAttachment attachment, Vector<AuthenticatorTransport>&& transports, const AttestationConveyancePreference& attestation)
+RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Vector<uint8_t>& inBuffer, WebCore::AuthenticatorAttachment attachment, const AttestationConveyancePreference& attestation)
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
@@ -141,7 +126,7 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
         // The reason why we can't directly pass authenticatorData/format/attStmt to buildAttestationObject
         // is that they are CBORValue instead of the raw type.
         // Also, format and attStmt are omitted as they are not useful in none attestation.
-        attestationObject = buildAttestationObject(Vector<uint8_t>(authenticatorData.getByteString()), String { emptyString() }, { }, attestation);
+        attestationObject = buildAttestationObject(Vector<uint8_t>(authenticatorData.getByteString()), "", { }, attestation);
     } else {
         CBOR::MapValue attestationObjectMap;
         attestationObjectMap[CBOR("authData")] = WTFMove(authenticatorData);
@@ -150,7 +135,7 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
         attestationObject = cbor::CBORWriter::write(CBOR(WTFMove(attestationObjectMap)));
     }
 
-    return AuthenticatorAttestationResponse::create(credentialId, *attestationObject, attachment, WTFMove(transports));
+    return AuthenticatorAttestationResponse::create(credentialId, *attestationObject, attachment);
 }
 
 RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector<uint8_t>& inBuffer, WebCore::AuthenticatorAttachment attachment)
@@ -279,10 +264,8 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
         if (optionMapIt != optionMap.end()) {
             if (!optionMapIt->second.isBool())
                 return std::nullopt;
-            if (optionMapIt->second.getBool())
-                options.setResidentKeyAvailability(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
-            else
-                options.setResidentKeyAvailability(AuthenticatorSupportedOptions::ResidentKeyAvailability::kNotSupported);
+
+            options.setSupportsResidentKey(optionMapIt->second.getBool());
         }
 
         optionMapIt = optionMap.find(CBOR(kUserPresenceMapKey));
@@ -338,22 +321,6 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
             supportedPinProtocols.append(protocol.getUnsigned());
         }
         response.setPinProtocols(WTFMove(supportedPinProtocols));
-    }
-
-    it = responseMap.find(CBOR(9));
-    if (it != responseMap.end()) {
-        if (!it->second.isArray())
-            return std::nullopt;
-
-        Vector<AuthenticatorTransport> transports;
-        for (const auto& transportString : it->second.getArray()) {
-            if (!transportString.isString())
-                return std::nullopt;
-            auto transport = convertStringToAuthenticatorTransport(transportString.getString());
-            if (transport)
-                transports.append(*transport);
-        }
-        response.setTransports(WTFMove(transports));
     }
 
     return WTFMove(response);

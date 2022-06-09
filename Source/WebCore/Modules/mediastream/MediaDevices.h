@@ -42,7 +42,6 @@
 #include "RealtimeMediaSourceCenter.h"
 #include "Timer.h"
 #include "UserMediaClient.h"
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -79,13 +78,13 @@ public:
         std::variant<bool, MediaTrackConstraints> video;
         std::variant<bool, MediaTrackConstraints> audio;
     };
-    void getUserMedia(StreamConstraints&&, Promise&&);
+    void getUserMedia(const StreamConstraints&, Promise&&);
 
     struct DisplayMediaStreamConstraints {
         std::variant<bool, MediaTrackConstraints> video;
         std::variant<bool, MediaTrackConstraints> audio;
     };
-    void getDisplayMedia(DisplayMediaStreamConstraints&&, Promise&&);
+    void getDisplayMedia(const DisplayMediaStreamConstraints&, Promise&&);
 
     void enumerateDevices(EnumerateDevicesPromise&&);
     MediaTrackSupportedConstraints getSupportedConstraints();
@@ -134,7 +133,7 @@ private:
     OptionSet<GestureAllowedRequest> m_requestTypesForCurrentGesture;
     WeakPtr<UserGestureToken> m_currentGestureToken;
 
-    MemoryCompactRobinHoodHashMap<String, String> m_audioOutputDeviceIdToPersistentId;
+    HashMap<String, String> m_audioOutputDeviceIdToPersistentId;
     String m_audioOutputDeviceId;
 };
 

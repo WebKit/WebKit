@@ -31,7 +31,6 @@
 #include "ApplePayPaymentHandler.h"
 #include "Document.h"
 #include "EventNames.h"
-#include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPaymentDetailsUpdate.h"
@@ -170,14 +169,14 @@ static bool isValidStandardizedPaymentMethodIdentifier(StringView identifier)
 // https://www.w3.org/TR/payment-method-id/#validation
 static bool isValidURLBasedPaymentMethodIdentifier(const URL& url)
 {
-    return url.protocolIs("https"_s) && !url.hasCredentials();
+    return url.protocolIs("https") && !url.hasCredentials();
 }
 
 // Implements "validate a payment method identifier"
 // https://www.w3.org/TR/payment-method-id/#validity
 std::optional<PaymentRequest::MethodIdentifier> convertAndValidatePaymentMethodIdentifier(const String& identifier)
 {
-    URL url { identifier };
+    URL url { URL(), identifier };
     if (!url.isValid()) {
         if (isValidStandardizedPaymentMethodIdentifier(identifier))
             return { identifier };
@@ -217,7 +216,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 
                 auto addResult = seenShippingOptionIDs.add(shippingOption.id);
                 if (!addResult.isNewEntry)
-                    return Exception { TypeError, "Shipping option IDs must be unique."_s };
+                    return Exception { TypeError, "Shipping option IDs must be unique." };
 
 #if ENABLE(PAYMENT_REQUEST_SELECTED_SHIPPING_OPTION)
                 if (shippingOption.selected)
@@ -302,7 +301,7 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
         return canCreateSession.releaseException();
 
     if (details.id.isNull())
-        details.id = createVersion4UUIDString();
+        details.id = createCanonicalUUIDString();
 
     if (methodData.isEmpty())
         return Exception { TypeError, "At least one payment method is required."_s };
@@ -350,6 +349,11 @@ ExceptionOr<Ref<PaymentRequest>> PaymentRequest::create(Document& document, Vect
     return request;
 }
 
+bool PaymentRequest::enabledForContext(ScriptExecutionContext& context)
+{
+    return PaymentHandler::enabledForContext(context);
+}
+
 PaymentRequest::PaymentRequest(Document& document, PaymentOptions&& options, PaymentDetailsInit&& details, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption)
     : ActiveDOMObject { document }
     , m_options { WTFMove(options) }
@@ -376,7 +380,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 
     auto* window = document.frame()->window();
     if (!window || !window->consumeTransientActivation()) {
-        promise.reject(Exception { SecurityError, "show() must be triggered by user activation."_s });
+        promise.reject(Exception { SecurityError, "show() must be triggered by user activation." });
         return;
     }
 
@@ -768,16 +772,13 @@ void PaymentRequest::reject(Exception&& exception)
     abortWithException(WTFMove(exception));
 }
 
-ExceptionOr<void> PaymentRequest::complete(Document& document, std::optional<PaymentComplete>&& result, String&& serializedData)
+ExceptionOr<void> PaymentRequest::complete(std::optional<PaymentComplete>&& result)
 {
     ASSERT(m_state == State::Closed);
     if (!m_activePaymentHandler)
         return Exception { AbortError };
 
-    auto exception = activePaymentHandler()->complete(document, WTFMove(result), WTFMove(serializedData));
-    if (exception.hasException())
-        return exception.releaseException();
-
+    activePaymentHandler()->complete(WTFMove(result));
     m_activePaymentHandler = std::nullopt;
     return { };
 }

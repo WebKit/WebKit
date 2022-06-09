@@ -57,8 +57,6 @@ static const char* policyTypeName(FeaturePolicy::Type type)
         return "SyncXHR";
     case FeaturePolicy::Type::Fullscreen:
         return "Fullscreen";
-    case FeaturePolicy::Type::WebShare:
-        return "WebShare";
 #if ENABLE(DEVICE_ORIENTATION)
     case FeaturePolicy::Type::Gyroscope:
         return "Gyroscope";
@@ -130,19 +128,19 @@ static inline void processOriginItem(Document& document, FeaturePolicy::AllowRul
 
     item = item.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
     // FIXME: Support 'src'.
-    if (item == "'src'"_s)
+    if (item == "'src'")
         return;
 
-    if (item == "*"_s) {
+    if (item == "*") {
         rule.type = FeaturePolicy::AllowRule::Type::All;
         return;
     }
 
-    if (item == "'self'"_s) {
+    if (item == "'self'") {
         rule.allowedList.add(document.securityOrigin().data());
         return;
     }
-    if (item == "'none'"_s) {
+    if (item == "'none'") {
         rule.type = FeaturePolicy::AllowRule::Type::None;
         return;
     }
@@ -166,7 +164,7 @@ static inline void updateList(Document& document, FeaturePolicy::AllowRule& rule
             return;
         }
 
-        processOriginItem(document, rule, value.left(position));
+        processOriginItem(document, rule, value.substring(0, position));
         value = value.substring(position + 1).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
     }
 }
@@ -182,7 +180,6 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isPaymentInitialized = false;
     bool isSyncXHRInitialized = false;
     bool isFullscreenInitialized = false;
-    bool isWebShareInitialized = false;
 #if ENABLE(DEVICE_ORIENTATION)
     bool isGyroscopeInitialized = false;
     bool isAccelerometerInitialized = false;
@@ -196,77 +193,72 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
 #endif
     for (auto allowItem : allowAttributeValue.split(';')) {
         auto item = allowItem.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
-        if (item.startsWith("camera"_s)) {
+        if (item.startsWith("camera")) {
             isCameraInitialized = true;
             updateList(document, policy.m_cameraRule, item.substring(7));
             continue;
         }
-        if (item.startsWith("microphone"_s)) {
+        if (item.startsWith("microphone")) {
             isMicrophoneInitialized = true;
             updateList(document, policy.m_microphoneRule, item.substring(11));
             continue;
         }
-        if (item.startsWith("speaker-selection"_s)) {
+        if (item.startsWith("speaker-selection")) {
             isSpeakerSelectionInitialized = true;
             updateList(document, policy.m_speakerSelectionRule, item.substring(18));
             continue;
         }
-        if (item.startsWith("display-capture"_s)) {
+        if (item.startsWith("display-capture")) {
             isDisplayCaptureInitialized = true;
             updateList(document, policy.m_displayCaptureRule, item.substring(16));
             continue;
         }
-        if (item.startsWith("geolocation"_s)) {
+        if (item.startsWith("geolocation")) {
             isGeolocationInitialized = true;
             updateList(document, policy.m_geolocationRule, item.substring(12));
             continue;
         }
-        if (item.startsWith("payment"_s)) {
+        if (item.startsWith("payment")) {
             isPaymentInitialized = true;
             updateList(document, policy.m_paymentRule, item.substring(8));
             continue;
         }
-        if (item.startsWith("sync-xhr"_s)) {
+        if (item.startsWith("sync-xhr")) {
             isSyncXHRInitialized = true;
             updateList(document, policy.m_syncXHRRule, item.substring(9));
             continue;
         }
-        if (item.startsWith("fullscreen"_s)) {
+        if (item.startsWith("fullscreen")) {
             isFullscreenInitialized = true;
             updateList(document, policy.m_fullscreenRule, item.substring(11));
             continue;
         }
-        if (item.startsWith("web-share"_s)) {
-            isWebShareInitialized = true;
-            updateList(document, policy.m_webShareRule, item.substring(10));
-            continue;
-        }
 #if ENABLE(DEVICE_ORIENTATION)
-        if (item.startsWith("gyroscope"_s)) {
+        if (item.startsWith("gyroscope")) {
             isGyroscopeInitialized = true;
             updateList(document, policy.m_gyroscopeRule, item.substring(10));
             continue;
         }
-        if (item.startsWith("accelerometer"_s)) {
+        if (item.startsWith("accelerometer")) {
             isAccelerometerInitialized = true;
             updateList(document, policy.m_accelerometerRule, item.substring(14));
             continue;
         }
-        if (item.startsWith("magnetometer"_s)) {
+        if (item.startsWith("magnetometer")) {
             isMagnetometerInitialized = true;
             updateList(document, policy.m_magnetometerRule, item.substring(13));
             continue;
         }
 #endif
 #if ENABLE(WEB_AUTHN)
-        if (item.startsWith("publickey-credentials-get"_s)) {
+        if (item.startsWith("publickey-credentials-get")) {
             isPublickeyCredentialsGetInitialized = true;
             updateList(document, policy.m_publickeyCredentialsGetRule, item.substring(26));
             continue;
         }
 #endif
 #if ENABLE(WEBXR)
-        if (item.startsWith("xr-spatial-tracking"_s)) {
+        if (item.startsWith("xr-spatial-tracking")) {
             isXRSpatialTrackingInitialized = true;
             updateList(document, policy.m_xrSpatialTrackingRule, item.substring(19));
             continue;
@@ -287,8 +279,6 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         policy.m_geolocationRule.allowedList.add(document.securityOrigin().data());
     if (!isPaymentInitialized)
         policy.m_paymentRule.allowedList.add(document.securityOrigin().data());
-    if (!isWebShareInitialized)
-        policy.m_webShareRule.allowedList.add(document.securityOrigin().data());
 #if ENABLE(DEVICE_ORIENTATION)
     if (!isGyroscopeInitialized)
         policy.m_gyroscopeRule.allowedList.add(document.securityOrigin().data());
@@ -346,8 +336,6 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_syncXHRRule, origin);
     case Type::Fullscreen:
         return isAllowedByFeaturePolicy(m_fullscreenRule, origin);
-    case Type::WebShare:
-        return isAllowedByFeaturePolicy(m_webShareRule, origin);
 #if ENABLE(DEVICE_ORIENTATION)
     case Type::Gyroscope:
         return isAllowedByFeaturePolicy(m_gyroscopeRule, origin);

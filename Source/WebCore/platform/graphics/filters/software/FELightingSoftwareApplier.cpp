@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
- * Copyright (C) 2018-2022 Apple, Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -399,6 +399,8 @@ bool FELightingSoftwareApplier::apply(const Filter& filter, const FilterImageVec
     if (!destinationPixelBuffer)
         return false;
 
+    auto& destinationPixelArray = destinationPixelBuffer->data();
+
     auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
     input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
 
@@ -426,7 +428,7 @@ bool FELightingSoftwareApplier::apply(const Filter& filter, const FilterImageVec
     data.lightSource = &m_effect.lightSource();
     data.operatingColorSpace = &m_effect.operatingColorSpace();
 
-    data.pixels = destinationPixelBuffer;
+    data.pixels = &destinationPixelArray;
     data.widthMultipliedByPixelSize = size.width() * cPixelSize;
     data.width = size.width();
     data.height = size.height();

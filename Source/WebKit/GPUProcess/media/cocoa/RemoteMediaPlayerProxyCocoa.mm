@@ -34,7 +34,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/FloatSize.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/VideoFrameCV.h>
 #import <wtf/MachSendRight.h>
 
 namespace WebKit {
@@ -80,7 +79,6 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
     m_inlineLayerHostingContext->setRootLayer(m_player->platformLayer());
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
-
 void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& size, const WTF::MachSendRight& machSendRight)
 {
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
@@ -92,8 +90,7 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& 
 
 void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
 {
-    auto properties = m_videoFrameObjectHeap->add(WebCore::VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTFMove(buffer)));
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, properties), m_id);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PushVideoFrameMetadata(metadata, buffer), m_id);
 }
 
 void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&& completionHandler)
@@ -115,7 +112,7 @@ void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(st
         return;
     }
 
-    auto surface = WebCore::IOSurface::createFromImage(nullptr, platformImage.get());
+    auto surface = WebCore::IOSurface::createFromImage(platformImage.get());
     if (!surface) {
         completionHandler(std::nullopt, DestinationColorSpace::SRGB());
         return;

@@ -94,12 +94,12 @@ const AtomString& NumberInputType::formControlType() const
     return InputTypeNames::number();
 }
 
-void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
     ASSERT(element());
     if (!valueChanged && sanitizedValue.isEmpty() && !element()->innerTextValue().isEmpty())
         updateInnerTextValue();
-    TextFieldInputType::setValue(sanitizedValue, valueChanged, eventBehavior, selection);
+    TextFieldInputType::setValue(sanitizedValue, valueChanged, eventBehavior);
 }
 
 double NumberInputType::valueAsDouble() const
@@ -178,7 +178,7 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
 
     ASSERT(element());
     auto& stepString = element()->attributeWithoutSynchronization(stepAttr);
-    if (equalLettersIgnoringASCIICase(stepString, "any"_s))
+    if (equalLettersIgnoringASCIICase(stepString, "any"))
         return false;
 
     const Decimal minimum = parseToDecimalForNumberType(element()->attributeWithoutSynchronization(minAttr));

@@ -31,7 +31,6 @@
 #include "AbstractSlotVisitor.h"
 #include "CodeBlock.h"
 #include "HeapInlines.h"
-#include "JSCellInlines.h"
 #include "VMInlines.h"
 #include <wtf/CompilationThread.h>
 
@@ -78,7 +77,6 @@ auto JITPlan::tier() const -> Tier
     case JITCompilationMode::Baseline:
         return Tier::Baseline;
     case JITCompilationMode::DFG:
-    case JITCompilationMode::UnlinkedDFG:
         return Tier::DFG;
     case JITCompilationMode::FTL:
     case JITCompilationMode::FTLForOSREntry:
@@ -147,7 +145,7 @@ bool JITPlan::reportCompileTimes() const
 {
     return Options::reportCompileTimes()
         || (Options::reportBaselineCompileTimes() && m_mode == JITCompilationMode::Baseline)
-        || (Options::reportDFGCompileTimes() && isDFG())
+        || (Options::reportDFGCompileTimes() && m_mode == JITCompilationMode::DFG)
         || (Options::reportFTLCompileTimes() && isFTL());
 }
 

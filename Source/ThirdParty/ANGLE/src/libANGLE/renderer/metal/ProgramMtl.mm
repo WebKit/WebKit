@@ -41,7 +41,7 @@ namespace
 constexpr char kSpirvCrossSpecConstSuffix[] = "_tmp";
 #endif
 template <typename T>
-class ANGLE_NO_DISCARD ScopedAutoClearVector
+class ScopedAutoClearVector
 {
   public:
     ScopedAutoClearVector(std::vector<T> *array) : mArray(*array) {}
@@ -675,13 +675,14 @@ angle::Result ProgramMtl::getSpecializedShader(ContextMtl *context,
                     [NSString stringWithUTF8String:sh::mtl::kCoverageMaskEnabledConstName];
             }
             
-            NSString *depthWriteEnabledStr =
-                [NSString stringWithUTF8String:sh::mtl::kDepthWriteEnabledConstName];
 
             funcConstants = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
             [funcConstants setConstantValue:&emulateCoverageMask
                                        type:MTLDataTypeBool
                                    withName:coverageMaskEnabledStr];
+            
+            NSString *depthWriteEnabledStr = 
+                [NSString stringWithUTF8String:sh::mtl::kDepthWriteEnabledConstName];
             
             MTLPixelFormat depthPixelFormat =
                 (MTLPixelFormat)renderPipelineDesc.outputDescriptor.depthAttachmentPixelFormat;
@@ -705,6 +706,7 @@ angle::Result ProgramMtl::getSpecializedShader(ContextMtl *context,
         setConstantValue:&(context->getDisplay()->getFeatures().allowSamplerCompareLod.enabled)
                     type:MTLDataTypeBool
                 withName:@"ANGLEUseSampleCompareLod"];
+
     // Create Metal shader object
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -756,16 +758,19 @@ angle::Result ProgramMtl::createMslShaderLib(
         {
             std::ostringstream ss;
             ss << "Internal error compiling shader with Metal backend.\n";
+#if !defined(NDEBUG)
             ss << err.get().localizedDescription.UTF8String << "\n";
             ss << "-----\n";
             ss << translatedMslInfo->metalShaderSource;
             ss << "-----\n";
-
+#else
+            ss << "Please submit this shader, or website as a bug to https://bugs.webkit.org\n";
+#endif
             ERR() << ss.str();
+
             infoLog << ss.str();
 
-            ANGLE_MTL_HANDLE_ERROR(context, ss.str().c_str(), GL_INVALID_OPERATION);
-            return angle::Result::Stop;
+            ANGLE_MTL_CHECK(context, false, GL_INVALID_OPERATION);
         }
 
         return angle::Result::Continue;
@@ -1257,39 +1262,20 @@ angle::Result ProgramMtl::commitUniforms(ContextMtl *context, mtl::RenderCommand
         {
             continue;
         }
-        if (mAuxBufferPool)
-        {
-            mAuxBufferPool->releaseInFlightBuffers(context);
-        }
-        // If we exceed the default inline max size, try to allocate a buffer
+        // If we exceed the default uniform max size, try to allocate a buffer. Worst case
+        // scenario, fall back on a large setBytes.
         bool needsCommitUniform = true;
-        if (needsCommitUniform && uniformBlock.uniformData.size() <= mtl::kInlineConstDataMaxSize)
+        if (needsCommitUniform)
         {
-            ASSERT(uniformBlock.uniformData.size() <= mtl::kInlineConstDataMaxSize);
+            ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
             cmdEncoder->setBytes(shaderType, uniformBlock.uniformData.data(),
                                  uniformBlock.uniformData.size(),
                                  mtl::kDefaultUniformsBindingIndex);
         }
-        else if (needsCommitUniform)
-        {
-            ASSERT(uniformBlock.uniformData.size() <= mtl::kDefaultUniformsMaxSize);
-            mtl::BufferRef mtlBufferOut;
-            size_t offsetOut;
-            uint8_t *ptrOut;
-            // Allocate a new Uniform buffer
-            ANGLE_TRY(getBufferPool(context)->allocate(context, uniformBlock.uniformData.size(),
-                                                       &ptrOut, &mtlBufferOut, &offsetOut));
-            // Copy the uniform result
-            memcpy(ptrOut, uniformBlock.uniformData.data(), uniformBlock.uniformData.size());
-            // Commit
-            ANGLE_TRY(getBufferPool(context)->commit(context));
-            // Set buffer
-            cmdEncoder->setBuffer(shaderType, mtlBufferOut, (uint32_t)offsetOut,
-                                  mtl::kDefaultUniformsBindingIndex);
-        }
 
         mDefaultUniformBlocksDirty.reset(shaderType);
     }
+
     return angle::Result::Continue;
 }
 

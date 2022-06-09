@@ -38,15 +38,16 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * WebKitDownload:
- *
- * Object used to communicate with the application when downloading.
+ * SECTION: WebKitDownload
+ * @Short_description: Object used to communicate with the application when downloading
+ * @Title: WebKitDownload
  *
  * #WebKitDownload carries information about a download request and
  * response, including a #WebKitURIRequest and a #WebKitURIResponse
  * objects. The application may use this object to control the
  * download process, or to simply figure out what is to be downloaded,
  * and handle the download process itself.
+ *
  */
 
 enum {

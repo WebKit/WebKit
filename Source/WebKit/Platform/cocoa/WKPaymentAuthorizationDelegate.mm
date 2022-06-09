@@ -28,15 +28,10 @@
 
 #if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
-#import "PaymentAuthorizationPresenter.h"
 #import <WebCore/ApplePayShippingMethod.h>
 #import <WebCore/Payment.h>
 #import <WebCore/PaymentMethod.h>
 #import <WebCore/PaymentSessionError.h>
-#import <wtf/RunLoop.h>
-#import <wtf/URL.h>
-
-#import <pal/cocoa/PassKitSoftLink.h>
 
 @implementation WKPaymentAuthorizationDelegate {
     RetainPtr<NSArray<PKPaymentSummaryItem *>> _summaryItems;
@@ -163,10 +158,6 @@
     if (_didAuthorizePaymentCompletion)
         [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
 }
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditionsAfter.mm>
-#endif
 
 @end
 
@@ -336,7 +327,7 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
 
 - (void)_willFinishWithError:(NSError *)error
 {
-    if (![error.domain isEqualToString:PKPassKitErrorDomain])
+    if (![error.domain isEqualToString:PAL::get_PassKit_PKPassKitErrorDomain()])
         return;
 
     _sessionError = error;

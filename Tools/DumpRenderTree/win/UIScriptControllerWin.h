@@ -39,7 +39,6 @@ public:
     void doAsyncTask(JSValueRef) override;
     void zoomToScale(double, JSValueRef) override;
     double zoomScale() const override;
-    void setWebViewEditable(bool) override;
 };
 
 }

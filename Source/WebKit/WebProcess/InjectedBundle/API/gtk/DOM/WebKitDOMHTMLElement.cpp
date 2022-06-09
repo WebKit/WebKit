@@ -394,7 +394,8 @@ void webkit_dom_html_element_set_title(WebKitDOMHTMLElement* self, const gchar* 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::titleAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::titleAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_element_get_lang(WebKitDOMHTMLElement* self)
@@ -412,7 +413,8 @@ void webkit_dom_html_element_set_lang(WebKitDOMHTMLElement* self, const gchar* v
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::langAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::langAttr, convertedValue);
 }
 
 gboolean webkit_dom_html_element_get_translate(WebKitDOMHTMLElement* self)
@@ -447,7 +449,8 @@ void webkit_dom_html_element_set_dir(WebKitDOMHTMLElement* self, const gchar* va
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLElement* item = WebKit::core(self);
-    item->setDir(WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setDir(convertedValue);
 }
 
 glong webkit_dom_html_element_get_tab_index(WebKitDOMHTMLElement* self)
@@ -499,7 +502,8 @@ void webkit_dom_html_element_set_webkitdropzone(WebKitDOMHTMLElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::webkitdropzoneAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::webkitdropzoneAttr, convertedValue);
 }
 
 gboolean webkit_dom_html_element_get_hidden(WebKitDOMHTMLElement* self)
@@ -534,7 +538,8 @@ void webkit_dom_html_element_set_access_key(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(WEBKIT_DOM_IS_HTML_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_element_get_inner_text(WebKitDOMHTMLElement* self)
@@ -554,7 +559,7 @@ void webkit_dom_html_element_set_inner_text(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    auto result = item->setInnerText(WTFMove(convertedValue));
+    auto result = item->setInnerText(convertedValue);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -578,7 +583,7 @@ void webkit_dom_html_element_set_outer_text(WebKitDOMHTMLElement* self, const gc
     g_return_if_fail(!error || !*error);
     WebCore::HTMLElement* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    auto result = item->setOuterText(WTFMove(convertedValue));
+    auto result = item->setOuterText(convertedValue);
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);

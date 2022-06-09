@@ -42,13 +42,13 @@ WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender(RefPtr<
 {
     ASSERT(m_client);
     gClassCount++;
-    gClassNameCount().add("WebURLAuthenticationChallengeSender"_s);
+    gClassNameCount().add("WebURLAuthenticationChallengeSender");
 }
 
 WebURLAuthenticationChallengeSender::~WebURLAuthenticationChallengeSender()
 {
     gClassCount--;
-    gClassNameCount().remove("WebURLAuthenticationChallengeSender"_s);
+    gClassNameCount().remove("WebURLAuthenticationChallengeSender");
 }
 
 WebURLAuthenticationChallengeSender* WebURLAuthenticationChallengeSender::createInstance(RefPtr<WebCore::AuthenticationClient>&& client)

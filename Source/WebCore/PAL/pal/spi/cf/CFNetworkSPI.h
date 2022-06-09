@@ -60,12 +60,6 @@
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT) && defined(__OBJC__)
-@interface NSURLSessionEffectiveConfiguration : NSObject <NSCopying>
-- (instancetype)_initWithConfiguration:(NSURLSessionConfiguration *)config;
-@end
-#endif // HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT) && defined(__OBJC__)
-
 #if HAVE(PRECONNECT_PING) && defined(__OBJC__)
 
 @interface _NSHTTPConnectionInfo : NSObject
@@ -168,6 +162,7 @@ typedef enum {
 - (void)removeCookiesSinceDate:(NSDate *)date;
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
+- (void)_saveCookies;
 - (void)_saveCookies:(dispatch_block_t) completionHandler;
 #if HAVE(CFNETWORK_OVERRIDE_SESSION_COOKIE_ACCEPT_POLICY)
 @property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
@@ -207,9 +202,6 @@ typedef enum {
 - (BOOL)_schemeWasUpgradedDueToDynamicHSTS;
 - (BOOL)_preventHSTSStorage;
 - (BOOL)_ignoreHSTS;
-#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
-@property (setter=_setPrivacyProxyFailClosed:) BOOL _privacyProxyFailClosed;
-#endif
 @end
 
 @interface NSURLResponse ()
@@ -285,11 +277,6 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @end
 
 @interface NSURLSessionTask ()
-#if HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT)
-- (void)_adoptEffectiveConfiguration:(NSURLSessionEffectiveConfiguration *) newConfiguration;
-#else
-- (void)_adoptEffectiveConfiguration:(NSURLSessionConfiguration *) newConfiguration;
-#endif
 - (NSDictionary *)_timingData;
 @property (readwrite, copy) NSString *_pathToDownloadTaskFile;
 @property (copy) NSString *_storagePartitionIdentifier;
@@ -483,6 +470,18 @@ WTF_EXTERN_C_END
 - (void)_setCookiesChangedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* addedCookies, NSString* domainForChangedCookie))cookiesChangedHandler onQueue:(dispatch_queue_t __nullable)queue;
 - (void)_setCookiesRemovedHandler:(void(^__nullable)(NSArray<NSHTTPCookie*>* __nullable removedCookies, NSString* __nullable domainForRemovedCookies, bool removeAllCookies))cookiesRemovedHandler onQueue:(dispatch_queue_t __nullable)queue;
 @end
+
+#if HAVE(BROKEN_DOWNLOAD_RESUME_UNLINK)
+@interface __NSCFLocalDownloadFile : NSObject
+@end
+@interface __NSCFLocalDownloadFile ()
+@property (readwrite, assign) BOOL skipUnlink;
+@end
+
+@interface NSURLSessionDownloadTask ()
+- (__NSCFLocalDownloadFile *)downloadFile;
+@end
+#endif
 
 @interface NSURLResponse ()
 - (void)_setMIMEType:(NSString *)type;

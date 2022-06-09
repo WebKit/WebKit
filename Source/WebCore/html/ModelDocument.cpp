@@ -90,8 +90,8 @@ void ModelDocumentParser::createDocumentStructure()
     rootElement->appendChild(headElement);
 
     auto metaElement = HTMLMetaElement::create(document);
-    metaElement->setAttributeWithoutSynchronization(nameAttr, "viewport"_s);
-    metaElement->setAttributeWithoutSynchronization(contentAttr, "width=device-width,initial-scale=1"_s);
+    metaElement->setAttributeWithoutSynchronization(nameAttr, AtomString("viewport", AtomString::ConstructFromLiteral));
+    metaElement->setAttributeWithoutSynchronization(contentAttr, AtomString("width=device-width,initial-scale=1", AtomString::ConstructFromLiteral));
     headElement->appendChild(metaElement);
 
     auto styleElement = HTMLStyleElement::create(document);
@@ -106,12 +106,12 @@ void ModelDocumentParser::createDocumentStructure()
 
     auto modelElement = HTMLModelElement::create(HTMLNames::modelTag, document);
     m_modelElement = modelElement.ptr();
-    modelElement->setAttributeWithoutSynchronization(interactiveAttr, emptyAtom());
+    modelElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom());
 
     auto sourceElement = HTMLSourceElement::create(HTMLNames::sourceTag, document);
-    sourceElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document.url().string() });
+    sourceElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
     if (RefPtr loader = document.loader())
-        sourceElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->responseMIMEType() });
+        sourceElement->setAttributeWithoutSynchronization(typeAttr, loader->responseMIMEType());
 
     modelElement->appendChild(sourceElement);
 
@@ -138,7 +138,7 @@ void ModelDocumentParser::finish()
 }
 
 ModelDocument::ModelDocument(Frame* frame, const Settings& settings, const URL& url)
-    : HTMLDocument(frame, settings, url, { }, { DocumentClass::Model })
+    : HTMLDocument(frame, settings, url, { DocumentClass::Model })
 {
     if (frame)
         m_outgoingReferrer = frame->loader().outgoingReferrer();

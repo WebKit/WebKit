@@ -44,7 +44,7 @@ inline Identifier::Identifier(VM& vm, AtomStringImpl* string)
 }
 
 inline Identifier::Identifier(VM& vm, const AtomString& string)
-    : m_string(string)
+    : m_string(string.string())
 {
 #ifndef NDEBUG
     checkCurrentAtomStringTable(vm);
@@ -80,9 +80,15 @@ inline Identifier Identifier::fromUid(SymbolImpl& symbol)
     return symbol;
 }
 
-ALWAYS_INLINE Identifier Identifier::fromString(VM& vm, ASCIILiteral s)
+template<unsigned charactersCount>
+inline Identifier Identifier::fromString(VM& vm, const char (&characters)[charactersCount])
 {
-    return Identifier(vm, s);
+    return Identifier(&vm, characters);
+}
+
+inline Identifier Identifier::fromString(VM& vm, ASCIILiteral s)
+{
+    return Identifier(vm, String(s));
 }
 
 inline Identifier Identifier::fromString(VM& vm, const LChar* s, int length)
@@ -120,23 +126,23 @@ inline Identifier Identifier::fromString(VM& vm, SymbolImpl* symbolImpl)
     return Identifier(vm, symbolImpl);
 }
 
-inline Identifier Identifier::fromLatin1(VM& vm, const char* s)
+inline Identifier Identifier::fromString(VM& vm, const char* s)
 {
-    return Identifier(vm, AtomString::fromLatin1(s));
+    return Identifier(vm, AtomString(s));
 }
 
 inline JSValue identifierToJSValue(VM& vm, const Identifier& identifier)
 {
     if (identifier.isSymbol())
         return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(vm, identifier.string());
+    return jsString(vm, identifier.impl());
 }
 
 inline JSValue identifierToSafePublicJSValue(VM& vm, const Identifier& identifier) 
 {
     if (identifier.isSymbol() && !identifier.isPrivateName())
         return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(vm, identifier.string());
+    return jsString(vm, identifier.impl());
 }
 
 } // namespace JSC

@@ -6,7 +6,7 @@ ANGLE_DIR="$PWD"
 regenerate_changes_diff() {
     echo "Regenerating changes.diff."
     # Exclude WebKit-added build files from the diff.
-    git diff "$1" --full-index --cached -b --ignore-cr-at-eol -- . \
+    git diff "$1" --cached -b --ignore-cr-at-eol -- . \
         ':(exclude)ChangeLog' \
         ':(exclude)ANGLE.plist' \
         ':(exclude)ANGLE.xcodeproj' \
@@ -23,9 +23,6 @@ regenerate_changes_diff() {
         ':(exclude)**.DS_Store' \
         ':(exclude)update-angle.sh' \
         ':(exclude)WebKitBuild' \
-        ':(exclude)ChangeLog*' \
-        ':(exclude)scripts/copy-frameworks-to-secondary-path.sh' \
-        ':(exclude)third_party/r8/custom_d8.jar' \
         > changes.diff
 }
 
@@ -121,18 +118,9 @@ cleanup_after_successful_rebase_and_exit() {
     echo "Press Enter to continue after fixing build:"
     read -r
     regenerate_changes_diff "origin/main"
-    echo "Generating contents of commit message into commit-message.txt."
-    echo "Be sure to copy out this file's contents and delete it before committing."
-    echo "Update ANGLE to $(git log -1 ${COMMIT_HASH} --format=%cs) (${COMMIT_HASH}))" > commit-message.txt
-    echo "" >> commit-message.txt
-    echo "Contains upstream commits:" >> commit-message.txt
-    echo git log --oneline "$PREVIOUS_ANGLE_COMMIT_HASH".."$COMMIT_HASH" --pretty="%h %s" >> commit-message.txt
-    git log --oneline "$PREVIOUS_ANGLE_COMMIT_HASH".."$COMMIT_HASH" --pretty="%h %s" >> commit-message.txt
     echo "Removing temporary git repository from Source/ThirdParty/ANGLE"
     rm -rf .git
     git add -A .
-    # Undo the addition of commit-message.txt to make it easier for the user to remove.
-    git restore --staged commit-message.txt
     echo
     echo "ANGLE update is now staged. Ready to commit and upload patch."
     exit 0

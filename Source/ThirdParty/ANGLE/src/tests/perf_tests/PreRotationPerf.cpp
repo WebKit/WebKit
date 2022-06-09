@@ -182,13 +182,13 @@ PreRotationParams VulkanParams(PreRotation preRotation)
         case PreRotation::_0:
             break;
         case PreRotation::_90:
-            params.eglParameters.enable(Feature::EmulatedPrerotation90);
+            params.eglParameters.emulatedPrerotation = 90;
             break;
         case PreRotation::_180:
-            params.eglParameters.enable(Feature::EmulatedPrerotation180);
+            params.eglParameters.emulatedPrerotation = 180;
             break;
         case PreRotation::_270:
-            params.eglParameters.enable(Feature::EmulatedPrerotation270);
+            params.eglParameters.emulatedPrerotation = 270;
             break;
     }
 

@@ -32,7 +32,6 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "CSSUnitValue.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -41,36 +40,26 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSSkew);
 
-ExceptionOr<Ref<CSSSkew>> CSSSkew::create(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay)
+Ref<CSSSkew> CSSSkew::create(Ref<CSSNumericValue>&& ax, Ref<CSSNumericValue>&& ay)
 {
-    if (!ax->type().matches<CSSNumericBaseType::Angle>()
-        || !ay->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
     return adoptRef(*new CSSSkew(WTFMove(ax), WTFMove(ay)));
 }
 
-CSSSkew::CSSSkew(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay)
-    : CSSTransformComponent(Is2D::Yes)
-    , m_ax(WTFMove(ax))
+CSSSkew::CSSSkew(Ref<CSSNumericValue>&& ax, Ref<CSSNumericValue>&& ay)
+    : m_ax(WTFMove(ax))
     , m_ay(WTFMove(ay))
 {
 }
 
-void CSSSkew::serialize(StringBuilder& builder) const
+// FIXME: Fix all the following virtual functions
+
+String CSSSkew::toString() const
 {
-    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskew
-    builder.append("skew(");
-    m_ax->serialize(builder);
-    if (!is<CSSUnitValue>(m_ay) || downcast<CSSUnitValue>(m_ay.get()).value()) {
-        builder.append(", ");
-        m_ay->serialize(builder);
-    }
-    builder.append(')');
+    return emptyString();
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSSkew::toMatrix()
 {
-    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

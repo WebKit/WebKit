@@ -1,0 +1,9 @@
+Blocked access to external URL https://www.localhost:9443/html/browsers/origin/origin-keyed-agent-clusters/resources/send-oac-header.py?header=%3F1
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN messageerror event must occur
+NOTRUN setting document.domain must not give sync access
+NOTRUN parent: originAgentCluster must equal true
+NOTRUN child: originAgentCluster must equal true
+

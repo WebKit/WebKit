@@ -18,67 +18,67 @@ PASS -webkit-appearance: textarea
 PASS -webkit-appearance: textfield
 PASS -webkit-appearance: bogus-button (invalid)
 PASS -webkit-appearance: attachment (invalid)
-PASS -webkit-appearance: button-bevel (invalid)
+FAIL -webkit-appearance: button-bevel (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "button-bevel"
 PASS -webkit-appearance: borderless-attachment (invalid)
 PASS -webkit-appearance: button-arrow-down (invalid)
 PASS -webkit-appearance: button-arrow-next (invalid)
 PASS -webkit-appearance: button-arrow-previous (invalid)
 PASS -webkit-appearance: button-arrow-up (invalid)
 PASS -webkit-appearance: button-focus (invalid)
-PASS -webkit-appearance: caps-lock-indicator (invalid)
-PASS -webkit-appearance: caret (invalid)
+FAIL -webkit-appearance: caps-lock-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "caps-lock-indicator"
+FAIL -webkit-appearance: caret (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "caret"
 PASS -webkit-appearance: checkbox-container (invalid)
 PASS -webkit-appearance: checkbox-label (invalid)
 PASS -webkit-appearance: checkmenuitem (invalid)
-PASS -webkit-appearance: color-well (invalid)
-PASS -webkit-appearance: continuous-capacity-level-indicator (invalid)
-PASS -webkit-appearance: default-button (invalid)
-PASS -webkit-appearance: discrete-capacity-level-indicator (invalid)
+FAIL -webkit-appearance: color-well (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "color-well"
+FAIL -webkit-appearance: continuous-capacity-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "continuous-capacity-level-indicator"
+FAIL -webkit-appearance: default-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "default-button"
+FAIL -webkit-appearance: discrete-capacity-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "discrete-capacity-level-indicator"
 PASS -webkit-appearance: dualbutton (invalid)
 PASS -webkit-appearance: groupbox (invalid)
 PASS -webkit-appearance: image-controls-button (invalid)
-PASS -webkit-appearance: inner-spin-button (invalid)
-PASS -webkit-appearance: list-button (invalid)
-PASS -webkit-appearance: listitem (invalid)
-PASS -webkit-appearance: media-controls-background (invalid)
-PASS -webkit-appearance: media-controls-dark-bar-background (invalid)
-PASS -webkit-appearance: media-controls-fullscreen-background (invalid)
-PASS -webkit-appearance: media-controls-light-bar-background (invalid)
-PASS -webkit-appearance: media-current-time-display (invalid)
-PASS -webkit-appearance: media-enter-fullscreen-button (invalid)
-PASS -webkit-appearance: media-exit-fullscreen-button (invalid)
-PASS -webkit-appearance: media-fullscreen-volume-slider (invalid)
-PASS -webkit-appearance: media-fullscreen-volume-slider-thumb (invalid)
-PASS -webkit-appearance: media-mute-button (invalid)
-PASS -webkit-appearance: media-overlay-play-button (invalid)
-PASS -webkit-appearance: media-play-button (invalid)
-PASS -webkit-appearance: media-return-to-realtime-button (invalid)
-PASS -webkit-appearance: media-rewind-button (invalid)
-PASS -webkit-appearance: media-seek-back-button (invalid)
-PASS -webkit-appearance: media-seek-forward-button (invalid)
-PASS -webkit-appearance: media-slider (invalid)
-PASS -webkit-appearance: media-sliderthumb (invalid)
-PASS -webkit-appearance: media-time-remaining-display (invalid)
-PASS -webkit-appearance: media-toggle-closed-captions-button (invalid)
-PASS -webkit-appearance: media-volume-slider (invalid)
-PASS -webkit-appearance: media-volume-slider-container (invalid)
-PASS -webkit-appearance: media-volume-slider-mute-button (invalid)
-PASS -webkit-appearance: media-volume-sliderthumb (invalid)
+FAIL -webkit-appearance: inner-spin-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "inner-spin-button"
+FAIL -webkit-appearance: list-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "list-button"
+FAIL -webkit-appearance: listitem (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "listitem"
+FAIL -webkit-appearance: media-controls-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-background"
+FAIL -webkit-appearance: media-controls-dark-bar-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-dark-bar-background"
+FAIL -webkit-appearance: media-controls-fullscreen-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-fullscreen-background"
+FAIL -webkit-appearance: media-controls-light-bar-background (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-controls-light-bar-background"
+FAIL -webkit-appearance: media-current-time-display (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-current-time-display"
+FAIL -webkit-appearance: media-enter-fullscreen-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-enter-fullscreen-button"
+FAIL -webkit-appearance: media-exit-fullscreen-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-exit-fullscreen-button"
+FAIL -webkit-appearance: media-fullscreen-volume-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-fullscreen-volume-slider"
+FAIL -webkit-appearance: media-fullscreen-volume-slider-thumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-fullscreen-volume-slider-thumb"
+FAIL -webkit-appearance: media-mute-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-mute-button"
+FAIL -webkit-appearance: media-overlay-play-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-overlay-play-button"
+FAIL -webkit-appearance: media-play-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-play-button"
+FAIL -webkit-appearance: media-return-to-realtime-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-return-to-realtime-button"
+FAIL -webkit-appearance: media-rewind-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-rewind-button"
+FAIL -webkit-appearance: media-seek-back-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-seek-back-button"
+FAIL -webkit-appearance: media-seek-forward-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-seek-forward-button"
+FAIL -webkit-appearance: media-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-slider"
+FAIL -webkit-appearance: media-sliderthumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-sliderthumb"
+FAIL -webkit-appearance: media-time-remaining-display (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-time-remaining-display"
+FAIL -webkit-appearance: media-toggle-closed-captions-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-toggle-closed-captions-button"
+FAIL -webkit-appearance: media-volume-slider (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-slider"
+FAIL -webkit-appearance: media-volume-slider-container (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-slider-container"
+FAIL -webkit-appearance: media-volume-slider-mute-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-slider-mute-button"
+FAIL -webkit-appearance: media-volume-sliderthumb (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "media-volume-sliderthumb"
 PASS -webkit-appearance: menuarrow (invalid)
 PASS -webkit-appearance: menubar (invalid)
 PASS -webkit-appearance: menucheckbox (invalid)
 PASS -webkit-appearance: menuimage (invalid)
 PASS -webkit-appearance: menuitem (invalid)
 PASS -webkit-appearance: menuitemtext (invalid)
-PASS -webkit-appearance: menulist-text (invalid)
-PASS -webkit-appearance: menulist-textfield (invalid)
+FAIL -webkit-appearance: menulist-text (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "menulist-text"
+FAIL -webkit-appearance: menulist-textfield (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "menulist-textfield"
 PASS -webkit-appearance: menupopup (invalid)
 PASS -webkit-appearance: menuradio (invalid)
 PASS -webkit-appearance: menuseparator (invalid)
 PASS -webkit-appearance: meterbar (invalid)
 PASS -webkit-appearance: meterchunk (invalid)
 PASS -webkit-appearance: number-input (invalid)
-PASS -webkit-appearance: progress-bar-value (invalid)
+FAIL -webkit-appearance: progress-bar-value (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "progress-bar-value"
 PASS -webkit-appearance: progressbar (invalid)
 PASS -webkit-appearance: progressbar-vertical (invalid)
 PASS -webkit-appearance: progresschunk (invalid)
@@ -88,8 +88,8 @@ PASS -webkit-appearance: radio-label (invalid)
 PASS -webkit-appearance: radiomenuitem (invalid)
 PASS -webkit-appearance: range (invalid)
 PASS -webkit-appearance: range-thumb (invalid)
-PASS -webkit-appearance: rating-level-indicator (invalid)
-PASS -webkit-appearance: relevancy-level-indicator (invalid)
+FAIL -webkit-appearance: rating-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "rating-level-indicator"
+FAIL -webkit-appearance: relevancy-level-indicator (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "relevancy-level-indicator"
 PASS -webkit-appearance: resizer (invalid)
 PASS -webkit-appearance: resizerpanel (invalid)
 PASS -webkit-appearance: scale-horizontal (invalid)
@@ -107,15 +107,15 @@ PASS -webkit-appearance: scrollbarthumb-horizontal (invalid)
 PASS -webkit-appearance: scrollbarthumb-vertical (invalid)
 PASS -webkit-appearance: scrollbartrack-horizontal (invalid)
 PASS -webkit-appearance: scrollbartrack-vertical (invalid)
-PASS -webkit-appearance: searchfield-cancel-button (invalid)
-PASS -webkit-appearance: searchfield-decoration (invalid)
-PASS -webkit-appearance: searchfield-results-button (invalid)
-PASS -webkit-appearance: searchfield-results-decoration (invalid)
+FAIL -webkit-appearance: searchfield-cancel-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-cancel-button"
+FAIL -webkit-appearance: searchfield-decoration (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-decoration"
+FAIL -webkit-appearance: searchfield-results-button (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-results-button"
+FAIL -webkit-appearance: searchfield-results-decoration (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "searchfield-results-decoration"
 PASS -webkit-appearance: separator (invalid)
 PASS -webkit-appearance: sheet (invalid)
 FAIL -webkit-appearance: slider-vertical (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "slider-vertical"
-PASS -webkit-appearance: sliderthumb-horizontal (invalid)
-PASS -webkit-appearance: sliderthumb-vertical (invalid)
+FAIL -webkit-appearance: sliderthumb-horizontal (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "sliderthumb-horizontal"
+FAIL -webkit-appearance: sliderthumb-vertical (invalid) assert_equals: style.WebkitAppearance (uppercase W) expected "" but got "sliderthumb-vertical"
 PASS -webkit-appearance: snapshotted-plugin-overlay (invalid)
 PASS -webkit-appearance: spinner (invalid)
 PASS -webkit-appearance: spinner-downbutton (invalid)
@@ -181,67 +181,67 @@ PASS appearance: textarea
 PASS appearance: textfield
 PASS appearance: bogus-button (invalid)
 PASS appearance: attachment (invalid)
-PASS appearance: button-bevel (invalid)
+FAIL appearance: button-bevel (invalid) assert_equals: style.appearance expected "" but got "button-bevel"
 PASS appearance: borderless-attachment (invalid)
 PASS appearance: button-arrow-down (invalid)
 PASS appearance: button-arrow-next (invalid)
 PASS appearance: button-arrow-previous (invalid)
 PASS appearance: button-arrow-up (invalid)
 PASS appearance: button-focus (invalid)
-PASS appearance: caps-lock-indicator (invalid)
-PASS appearance: caret (invalid)
+FAIL appearance: caps-lock-indicator (invalid) assert_equals: style.appearance expected "" but got "caps-lock-indicator"
+FAIL appearance: caret (invalid) assert_equals: style.appearance expected "" but got "caret"
 PASS appearance: checkbox-container (invalid)
 PASS appearance: checkbox-label (invalid)
 PASS appearance: checkmenuitem (invalid)
-PASS appearance: color-well (invalid)
-PASS appearance: continuous-capacity-level-indicator (invalid)
-PASS appearance: default-button (invalid)
-PASS appearance: discrete-capacity-level-indicator (invalid)
+FAIL appearance: color-well (invalid) assert_equals: style.appearance expected "" but got "color-well"
+FAIL appearance: continuous-capacity-level-indicator (invalid) assert_equals: style.appearance expected "" but got "continuous-capacity-level-indicator"
+FAIL appearance: default-button (invalid) assert_equals: style.appearance expected "" but got "default-button"
+FAIL appearance: discrete-capacity-level-indicator (invalid) assert_equals: style.appearance expected "" but got "discrete-capacity-level-indicator"
 PASS appearance: dualbutton (invalid)
 PASS appearance: groupbox (invalid)
 PASS appearance: image-controls-button (invalid)
-PASS appearance: inner-spin-button (invalid)
-PASS appearance: list-button (invalid)
-PASS appearance: listitem (invalid)
-PASS appearance: media-controls-background (invalid)
-PASS appearance: media-controls-dark-bar-background (invalid)
-PASS appearance: media-controls-fullscreen-background (invalid)
-PASS appearance: media-controls-light-bar-background (invalid)
-PASS appearance: media-current-time-display (invalid)
-PASS appearance: media-enter-fullscreen-button (invalid)
-PASS appearance: media-exit-fullscreen-button (invalid)
-PASS appearance: media-fullscreen-volume-slider (invalid)
-PASS appearance: media-fullscreen-volume-slider-thumb (invalid)
-PASS appearance: media-mute-button (invalid)
-PASS appearance: media-overlay-play-button (invalid)
-PASS appearance: media-play-button (invalid)
-PASS appearance: media-return-to-realtime-button (invalid)
-PASS appearance: media-rewind-button (invalid)
-PASS appearance: media-seek-back-button (invalid)
-PASS appearance: media-seek-forward-button (invalid)
-PASS appearance: media-slider (invalid)
-PASS appearance: media-sliderthumb (invalid)
-PASS appearance: media-time-remaining-display (invalid)
-PASS appearance: media-toggle-closed-captions-button (invalid)
-PASS appearance: media-volume-slider (invalid)
-PASS appearance: media-volume-slider-container (invalid)
-PASS appearance: media-volume-slider-mute-button (invalid)
-PASS appearance: media-volume-sliderthumb (invalid)
+FAIL appearance: inner-spin-button (invalid) assert_equals: style.appearance expected "" but got "inner-spin-button"
+FAIL appearance: list-button (invalid) assert_equals: style.appearance expected "" but got "list-button"
+FAIL appearance: listitem (invalid) assert_equals: style.appearance expected "" but got "listitem"
+FAIL appearance: media-controls-background (invalid) assert_equals: style.appearance expected "" but got "media-controls-background"
+FAIL appearance: media-controls-dark-bar-background (invalid) assert_equals: style.appearance expected "" but got "media-controls-dark-bar-background"
+FAIL appearance: media-controls-fullscreen-background (invalid) assert_equals: style.appearance expected "" but got "media-controls-fullscreen-background"
+FAIL appearance: media-controls-light-bar-background (invalid) assert_equals: style.appearance expected "" but got "media-controls-light-bar-background"
+FAIL appearance: media-current-time-display (invalid) assert_equals: style.appearance expected "" but got "media-current-time-display"
+FAIL appearance: media-enter-fullscreen-button (invalid) assert_equals: style.appearance expected "" but got "media-enter-fullscreen-button"
+FAIL appearance: media-exit-fullscreen-button (invalid) assert_equals: style.appearance expected "" but got "media-exit-fullscreen-button"
+FAIL appearance: media-fullscreen-volume-slider (invalid) assert_equals: style.appearance expected "" but got "media-fullscreen-volume-slider"
+FAIL appearance: media-fullscreen-volume-slider-thumb (invalid) assert_equals: style.appearance expected "" but got "media-fullscreen-volume-slider-thumb"
+FAIL appearance: media-mute-button (invalid) assert_equals: style.appearance expected "" but got "media-mute-button"
+FAIL appearance: media-overlay-play-button (invalid) assert_equals: style.appearance expected "" but got "media-overlay-play-button"
+FAIL appearance: media-play-button (invalid) assert_equals: style.appearance expected "" but got "media-play-button"
+FAIL appearance: media-return-to-realtime-button (invalid) assert_equals: style.appearance expected "" but got "media-return-to-realtime-button"
+FAIL appearance: media-rewind-button (invalid) assert_equals: style.appearance expected "" but got "media-rewind-button"
+FAIL appearance: media-seek-back-button (invalid) assert_equals: style.appearance expected "" but got "media-seek-back-button"
+FAIL appearance: media-seek-forward-button (invalid) assert_equals: style.appearance expected "" but got "media-seek-forward-button"
+FAIL appearance: media-slider (invalid) assert_equals: style.appearance expected "" but got "media-slider"
+FAIL appearance: media-sliderthumb (invalid) assert_equals: style.appearance expected "" but got "media-sliderthumb"
+FAIL appearance: media-time-remaining-display (invalid) assert_equals: style.appearance expected "" but got "media-time-remaining-display"
+FAIL appearance: media-toggle-closed-captions-button (invalid) assert_equals: style.appearance expected "" but got "media-toggle-closed-captions-button"
+FAIL appearance: media-volume-slider (invalid) assert_equals: style.appearance expected "" but got "media-volume-slider"
+FAIL appearance: media-volume-slider-container (invalid) assert_equals: style.appearance expected "" but got "media-volume-slider-container"
+FAIL appearance: media-volume-slider-mute-button (invalid) assert_equals: style.appearance expected "" but got "media-volume-slider-mute-button"
+FAIL appearance: media-volume-sliderthumb (invalid) assert_equals: style.appearance expected "" but got "media-volume-sliderthumb"
 PASS appearance: menuarrow (invalid)
 PASS appearance: menubar (invalid)
 PASS appearance: menucheckbox (invalid)
 PASS appearance: menuimage (invalid)
 PASS appearance: menuitem (invalid)
 PASS appearance: menuitemtext (invalid)
-PASS appearance: menulist-text (invalid)
-PASS appearance: menulist-textfield (invalid)
+FAIL appearance: menulist-text (invalid) assert_equals: style.appearance expected "" but got "menulist-text"
+FAIL appearance: menulist-textfield (invalid) assert_equals: style.appearance expected "" but got "menulist-textfield"
 PASS appearance: menupopup (invalid)
 PASS appearance: menuradio (invalid)
 PASS appearance: menuseparator (invalid)
 PASS appearance: meterbar (invalid)
 PASS appearance: meterchunk (invalid)
 PASS appearance: number-input (invalid)
-PASS appearance: progress-bar-value (invalid)
+FAIL appearance: progress-bar-value (invalid) assert_equals: style.appearance expected "" but got "progress-bar-value"
 PASS appearance: progressbar (invalid)
 PASS appearance: progressbar-vertical (invalid)
 PASS appearance: progresschunk (invalid)
@@ -251,8 +251,8 @@ PASS appearance: radio-label (invalid)
 PASS appearance: radiomenuitem (invalid)
 PASS appearance: range (invalid)
 PASS appearance: range-thumb (invalid)
-PASS appearance: rating-level-indicator (invalid)
-PASS appearance: relevancy-level-indicator (invalid)
+FAIL appearance: rating-level-indicator (invalid) assert_equals: style.appearance expected "" but got "rating-level-indicator"
+FAIL appearance: relevancy-level-indicator (invalid) assert_equals: style.appearance expected "" but got "relevancy-level-indicator"
 PASS appearance: resizer (invalid)
 PASS appearance: resizerpanel (invalid)
 PASS appearance: scale-horizontal (invalid)
@@ -270,15 +270,15 @@ PASS appearance: scrollbarthumb-horizontal (invalid)
 PASS appearance: scrollbarthumb-vertical (invalid)
 PASS appearance: scrollbartrack-horizontal (invalid)
 PASS appearance: scrollbartrack-vertical (invalid)
-PASS appearance: searchfield-cancel-button (invalid)
-PASS appearance: searchfield-decoration (invalid)
-PASS appearance: searchfield-results-button (invalid)
-PASS appearance: searchfield-results-decoration (invalid)
+FAIL appearance: searchfield-cancel-button (invalid) assert_equals: style.appearance expected "" but got "searchfield-cancel-button"
+FAIL appearance: searchfield-decoration (invalid) assert_equals: style.appearance expected "" but got "searchfield-decoration"
+FAIL appearance: searchfield-results-button (invalid) assert_equals: style.appearance expected "" but got "searchfield-results-button"
+FAIL appearance: searchfield-results-decoration (invalid) assert_equals: style.appearance expected "" but got "searchfield-results-decoration"
 PASS appearance: separator (invalid)
 PASS appearance: sheet (invalid)
 FAIL appearance: slider-vertical (invalid) assert_equals: style.appearance expected "" but got "slider-vertical"
-PASS appearance: sliderthumb-horizontal (invalid)
-PASS appearance: sliderthumb-vertical (invalid)
+FAIL appearance: sliderthumb-horizontal (invalid) assert_equals: style.appearance expected "" but got "sliderthumb-horizontal"
+FAIL appearance: sliderthumb-vertical (invalid) assert_equals: style.appearance expected "" but got "sliderthumb-vertical"
 PASS appearance: snapshotted-plugin-overlay (invalid)
 PASS appearance: spinner (invalid)
 PASS appearance: spinner-downbutton (invalid)

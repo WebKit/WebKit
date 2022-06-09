@@ -31,7 +31,7 @@
 #include "RealtimeOutgoingVideoSourceLibWebRTC.h"
 
 #include "GStreamerVideoFrameLibWebRTC.h"
-#include "VideoFrameGStreamer.h"
+#include "MediaSampleGStreamer.h"
 
 namespace WebCore {
 
@@ -50,24 +50,26 @@ RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<M
 {
 }
 
-void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
+void RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
 {
-    switch (videoFrame.rotation()) {
-    case VideoFrame::Rotation::None:
+    switch (sample.videoRotation()) {
+    case MediaSample::VideoRotation::None:
         m_currentRotation = webrtc::kVideoRotation_0;
         break;
-    case VideoFrame::Rotation::UpsideDown:
+    case MediaSample::VideoRotation::UpsideDown:
         m_currentRotation = webrtc::kVideoRotation_180;
         break;
-    case VideoFrame::Rotation::Right:
+    case MediaSample::VideoRotation::Right:
         m_currentRotation = webrtc::kVideoRotation_90;
         break;
-    case VideoFrame::Rotation::Left:
+    case MediaSample::VideoRotation::Left:
         m_currentRotation = webrtc::kVideoRotation_270;
         break;
     }
 
-    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(static_cast<VideoFrameGStreamer&>(videoFrame).sample());
+    ASSERT(sample.platformSample().type == PlatformSample::GStreamerSampleType);
+    auto& mediaSample = static_cast<MediaSampleGStreamer&>(sample);
+    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(mediaSample.platformSample().sample.gstSample);
 
     sendFrame(WTFMove(frameBuffer));
 }

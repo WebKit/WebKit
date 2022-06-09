@@ -28,8 +28,6 @@
 
 #if PLATFORM(X11)
 
-#include <utility>
-
 #if USE(GLX)
 typedef unsigned long GLXPbuffer;
 typedef unsigned long GLXPixmap;

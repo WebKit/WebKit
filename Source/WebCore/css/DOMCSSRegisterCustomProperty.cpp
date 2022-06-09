@@ -44,7 +44,7 @@ namespace WebCore {
 ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& document, const DOMCSSCustomPropertyDescriptor& descriptor)
 {
     if (!isCustomPropertyName(descriptor.name))
-        return Exception { SyntaxError, "The name of this property is not a custom property name."_s };
+        return Exception { SyntaxError, "The name of this property is not a custom property name." };
 
     RefPtr<CSSCustomPropertyValue> initialValue;
     if (!descriptor.initialValue.isEmpty()) {
@@ -59,7 +59,7 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         CSSPropertyParser::collectParsedCustomPropertyValueDependencies(descriptor.syntax, false, dependencies, tokenizer.tokenRange(), strictCSSParserContext());
 
         if (!dependencies.isEmpty())
-            return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
+            return Exception { SyntaxError, "The given initial value must be computationally independent." };
 
 
         Style::MatchResult matchResult;
@@ -70,18 +70,18 @@ ExceptionOr<void> DOMCSSRegisterCustomProperty::registerProperty(Document& docum
         initialValue = CSSPropertyParser::parseTypedCustomPropertyValue(descriptor.name, descriptor.syntax, tokenizer.tokenRange(), dummyBuilder.state(), strictCSSParserContext());
 
         if (!initialValue || !initialValue->isResolved())
-            return Exception { SyntaxError, "The given initial value does not parse for the given syntax."_s };
+            return Exception { SyntaxError, "The given initial value does not parse for the given syntax." };
 
         initialValue->collectDirectComputationalDependencies(dependencies);
         initialValue->collectDirectRootComputationalDependencies(dependencies);
 
         if (!dependencies.isEmpty())
-            return Exception { SyntaxError, "The given initial value must be computationally independent."_s };
+            return Exception { SyntaxError, "The given initial value must be computationally independent." };
     }
 
     CSSRegisteredCustomProperty property { descriptor.name, descriptor.syntax, descriptor.inherits, WTFMove(initialValue) };
     if (!document.registerCSSProperty(WTFMove(property)))
-        return Exception { InvalidModificationError, "This property has already been registered."_s };
+        return Exception { InvalidModificationError, "This property has already been registered." };
 
     document.styleScope().didChangeStyleSheetEnvironment();
 

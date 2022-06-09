@@ -56,6 +56,7 @@ WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manag
     , m_clientDataType(type)
     , m_userName(userName)
 {
+    m_transports = Vector<AuthenticatorTransport>();
     m_transports.reserveInitialCapacity(AuthenticatorManager::maxTransportNumber);
     if (transports.contains(AuthenticatorTransport::Usb))
         m_transports.uncheckedAppend(AuthenticatorTransport::Usb);

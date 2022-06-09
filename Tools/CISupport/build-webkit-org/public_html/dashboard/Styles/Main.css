@@ -221,6 +221,10 @@ table.queue-grid tr.platform.watchos-8 img.logo {
     content: url(../Images/WatchOS8.png);
 }
 
+table.queue-grid tr.platform.macos-catalina img.logo {
+    content: url(../Images/Catalina.png);
+}
+
 table.queue-grid tr.platform.macos-bigsur img.logo {
     content: url(../Images/BigSur.png);
 }
@@ -251,10 +255,6 @@ table.queue-grid tr.platform.linux-wpe img.logo {
 
 table.queue-grid tr.platform.linux-jsconly img.logo {
     content: url(../Images/SquirrelFish.png);
-}
-
-table.queue-grid tr.platform.playstation img.logo {
-    content: url(../Images/PlayStation.png);
 }
 
 .popover-tracking:hover {

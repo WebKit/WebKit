@@ -57,11 +57,10 @@ public:
     ComputedStyleExtractor(Node*, bool allowVisitedStyle = false, PseudoId = PseudoId::None);
     ComputedStyleExtractor(Element*, bool allowVisitedStyle = false, PseudoId = PseudoId::None);
 
-    enum class PropertyValueType : bool { Resolved, Computed };
-    RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout, PropertyValueType = PropertyValueType::Resolved);
+    RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout);
     RefPtr<CSSValue> valueForPropertyInStyle(const RenderStyle&, CSSPropertyID, RenderElement* = nullptr);
-    String customPropertyText(const AtomString& propertyName);
-    RefPtr<CSSValue> customPropertyValue(const AtomString& propertyName);
+    String customPropertyText(const String& propertyName);
+    RefPtr<CSSValue> customPropertyValue(const String& propertyName);
 
     // Helper methods for HTML editing.
     Ref<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length);
@@ -82,7 +81,14 @@ public:
     static void addValueForAnimationPropertyToList(CSSValueList&, CSSPropertyID, const Animation*);
 
 private:
+    // The styled element is either the element passed into
+    // computedPropertyValue, or the PseudoElement for :before and :after if
+    // they exist.
+    Element* styledElement() const;
+
     // The renderer we should use for resolving layout-dependent properties.
+    // Note that it differs from styledElement()->renderer() in the case we have
+    // no pseudo-element.
     RenderElement* styledRenderer() const;
 
     RefPtr<CSSValue> svgPropertyValue(CSSPropertyID);
@@ -95,9 +101,9 @@ private:
     RefPtr<CSSValueList> getCSSPropertyValuesFor4SidesShorthand(const StylePropertyShorthand&);
 
     size_t getLayerCount(CSSPropertyID);
-    Ref<CSSValue> getFillLayerPropertyShorthandValue(CSSPropertyID, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty);
-    Ref<CSSValue> getBackgroundShorthandValue();
-    Ref<CSSValue> getMaskShorthandValue();
+    RefPtr<CSSValue> getFillLayerPropertyShorthandValue(CSSPropertyID, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty);
+    RefPtr<CSSValue> getBackgroundShorthandValue();
+    RefPtr<CSSValue> getMaskShorthandValue();
     Ref<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&);
 
     RefPtr<Element> m_element;

@@ -21,6 +21,7 @@
 [
     ExportToWrappedFunction,
     GenerateIsReachable=ImplElementRoot,
+    ImplementationLacksVTable,
     LegacyUnenumerableNamedProperties,
     Exposed=Window
 ] interface NamedNodeMap {

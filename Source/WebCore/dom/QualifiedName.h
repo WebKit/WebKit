@@ -21,22 +21,16 @@
 #pragma once
 
 #include <wtf/HashTraits.h>
-#include <wtf/Hasher.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 struct QualifiedNameComponents {
-    AtomStringImpl* m_prefix;
-    AtomStringImpl* m_localName;
-    AtomStringImpl* m_namespace;
+    StringImpl* m_prefix;
+    StringImpl* m_localName;
+    StringImpl* m_namespace;
 };
-
-inline void add(Hasher& hasher, const QualifiedNameComponents& components)
-{
-    add(hasher, components.m_prefix, components.m_localName, components.m_namespace);
-}
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedName);
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(QualifiedNameQualifiedNameImpl);
@@ -101,7 +95,6 @@ public:
     const AtomString& localNameUpper() const;
 
     String toString() const;
-    AtomString toAtomString() const;
 
     QualifiedNameImpl* impl() const { return m_impl.get(); }
 #if ENABLE(JIT)
@@ -117,16 +110,6 @@ private:
     RefPtr<QualifiedNameImpl> m_impl;
 };
 
-inline void add(Hasher& hasher, const QualifiedName::QualifiedNameImpl& impl)
-{
-    add(hasher, impl.m_prefix, impl.m_localName, impl.m_namespace);
-}
-
-inline void add(Hasher& hasher, const QualifiedName& name)
-{
-    add(hasher, *name.impl());
-}
-
 extern LazyNeverDestroyed<const QualifiedName> anyName;
 inline const QualifiedName& anyQName() { return anyName; }
 
@@ -136,6 +119,11 @@ inline bool operator==(const AtomString& a, const QualifiedName& q) { return a =
 inline bool operator!=(const AtomString& a, const QualifiedName& q) { return a != q.localName(); }
 inline bool operator==(const QualifiedName& q, const AtomString& a) { return a == q.localName(); }
 inline bool operator!=(const QualifiedName& q, const AtomString& a) { return a != q.localName(); }
+
+inline unsigned hashComponents(const QualifiedNameComponents& buf)
+{
+    return StringHasher::hashMemory<sizeof(QualifiedNameComponents)>(&buf);
+}
 
 struct QualifiedNameHash {
     static unsigned hash(const QualifiedName& name) { return hash(name.impl()); }
@@ -160,14 +148,6 @@ inline String QualifiedName::toString() const
         return localName();
 
     return prefix().string() + ':' + localName().string();
-}
-
-inline AtomString QualifiedName::toAtomString() const
-{
-    if (!hasPrefix())
-        return localName();
-
-    return makeAtomString(prefix(), ':', localName());
 }
 
 } // namespace WebCore

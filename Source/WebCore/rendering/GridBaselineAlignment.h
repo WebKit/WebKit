@@ -49,10 +49,11 @@ namespace WebCore {
 //
 class BaselineGroup {
 public:
-    // It stores an item (if not already present) and update the max_ascent associated to this
+    // It stores an item (if not already present) and update the max_ascent and max_descent associated to this
     // baseline-sharing group.
-    void update(const RenderBox&, LayoutUnit ascent);
+    void update(const RenderBox&, LayoutUnit ascent, LayoutUnit descent);
     LayoutUnit maxAscent() const { return m_maxAscent; }
+    LayoutUnit maxDescent() const { return m_maxDescent; }
     int size() const { return m_items.size(); }
 
 private:
@@ -74,6 +75,7 @@ private:
     WritingMode m_blockFlow;
     ItemPosition m_preference;
     LayoutUnit m_maxAscent;
+    LayoutUnit m_maxDescent;
     HashSet<const RenderBox*> m_items;
 };
 
@@ -97,13 +99,13 @@ private:
 class BaselineContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BaselineContext(const RenderBox& child, ItemPosition preference, LayoutUnit ascent);
+    BaselineContext(const RenderBox& child, ItemPosition preference, LayoutUnit ascent, LayoutUnit descent);
     const BaselineGroup& sharedGroup(const RenderBox& child, ItemPosition preference) const;
 
     // Updates the baseline-sharing group compatible with the item.
     // We pass the item's baseline-preference to avoid dependencies with the LayoutGrid class, which is the one
     // managing the alignment behavior of the Grid Items.
-    void updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent);
+    void updateSharedGroup(const RenderBox& child, ItemPosition preference, LayoutUnit ascent, LayoutUnit descent);
 
 private:
     // Returns the baseline-sharing group compatible with an item.

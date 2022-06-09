@@ -109,8 +109,8 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Docume
     ASSERT(context->isContextThread());
 
     Ref protectedThis { *this };
-    if (auto document = dynamicDowncast<Document>(*context))
-        task(*document);
+    if (is<Document>(*context))
+        task(downcast<Document>(*context));
     else {
         downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([protectedThis = WTFMove(protectedThis), task = WTFMove(task)](auto& context) {
             task(downcast<Document>(context));
@@ -120,9 +120,8 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Docume
 
 void BroadcastChannel::MainThreadBridge::registerChannel()
 {
-    auto securityOrigin = m_broadcastChannel->scriptExecutionContext()->securityOrigin()->isolatedCopy();
-    ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier(), securityOrigin = WTFMove(securityOrigin)](auto& document) {
-        m_origin = PartitionedSecurityOrigin { shouldPartitionOrigin(document) ? Ref { document.topOrigin() } : securityOrigin.copyRef(), securityOrigin.copyRef() };
+    ensureOnMainThread([this, contextIdentifier = m_broadcastChannel->scriptExecutionContext()->identifier()](auto& document) {
+        m_origin = PartitionedSecurityOrigin { shouldPartitionOrigin(document) ? document.topOrigin() : document.securityOrigin(), document.securityOrigin() };
         if (auto* page = document.page())
             page->broadcastChannelRegistry().registerChannel(*m_origin, m_name, m_identifier);
         channelToContextIdentifier().add(m_identifier, contextIdentifier);
@@ -188,7 +187,7 @@ ExceptionOr<void> BroadcastChannel::postMessage(JSC::JSGlobalObject& globalObjec
         return { };
 
     if (m_isClosed)
-        return Exception { InvalidStateError, "This BroadcastChannel is closed"_s };
+        return Exception { InvalidStateError, "This BroadcastChannel is closed" };
 
     Vector<RefPtr<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(globalObject, message, { }, ports);
@@ -241,7 +240,7 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
 
     queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [this, message = WTFMove(message)]() mutable {
         if (!m_isClosed && scriptExecutionContext())
-            dispatchEvent(MessageEvent::create(WTFMove(message), scriptExecutionContext()->securityOrigin()->toString()));
+            dispatchEvent(MessageEvent::create({ }, WTFMove(message), scriptExecutionContext()->securityOrigin()->toString()));
     });
 }
 
@@ -267,8 +266,8 @@ bool BroadcastChannel::isEligibleForMessaging() const
     if (!context)
         return false;
 
-    if (auto document = dynamicDowncast<Document>(*context))
-        return document->isFullyActive();
+    if (is<Document>(*context))
+        return downcast<Document>(*context).isFullyActive();
 
     return !downcast<WorkerGlobalScope>(*context).isClosing();
 }

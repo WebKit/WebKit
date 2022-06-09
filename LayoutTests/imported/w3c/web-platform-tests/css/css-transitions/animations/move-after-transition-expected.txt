@@ -1,3 +1,0 @@
-
-PASS Move after transition.
-

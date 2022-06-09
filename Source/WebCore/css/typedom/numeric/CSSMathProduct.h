@@ -34,29 +34,25 @@ namespace WebCore {
 
 class CSSNumericArray;
 
-class CSSMathProduct final : public CSSMathValue {
+class CSSMathProduct : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathProduct);
 public:
-    static ExceptionOr<Ref<CSSMathProduct>> create(FixedVector<CSSNumberish>);
-    static ExceptionOr<Ref<CSSMathProduct>> create(Vector<Ref<CSSNumericValue>>);
-    const CSSNumericArray& values() const { return m_values.get(); }
+    static Ref<CSSMathProduct> create(FixedVector<CSSNumberish>&&);
+    const CSSNumericArray& values() const;
+    
+    CSSMathOperator getOperator() const final { return CSSMathOperator::Product; }
 
 private:
-    CSSMathOperator getOperator() const final { return CSSMathOperator::Product; }
-    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathProduct; }
-    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const;
-    std::optional<SumValue> toSumValue() const final;
-
-    CSSMathProduct(Vector<Ref<CSSNumericValue>>, CSSNumericType);
+    CSSMathProduct(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericArray> m_values;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMathProduct)
-static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSMathProduct; }
-static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.getType() == WebCore::CSSStyleValueType::CSSMathProduct; }
-static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getType() == WebCore::CSSStyleValueType::CSSMathProduct; }
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return is<WebCore::CSSNumericValue>(styleValue) && isType(downcast<WebCore::CSSNumericValue>(styleValue)); }
+    static bool isType(const WebCore::CSSNumericValue& numericValue) { return is<WebCore::CSSMathValue>(numericValue) && isType(downcast<WebCore::CSSMathValue>(numericValue)); }
+    static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getOperator() == WebCore::CSSMathOperator::Product; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 

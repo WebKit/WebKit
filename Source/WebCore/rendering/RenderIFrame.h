@@ -50,7 +50,7 @@ private:
 
     bool isRenderIFrame() const override { return true; }
 
-    ASCIILiteral renderName() const override { return "RenderIFrame"_s; }
+    const char* renderName() const override { return "RenderIFrame"; }
 
     bool requiresLayer() const override;
 

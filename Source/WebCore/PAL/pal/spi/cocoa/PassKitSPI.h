@@ -24,19 +24,11 @@
  */
 
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
-#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
-#import <PassKitCore/PKRecurringPaymentSummaryItem.h>
-#else
 #import <PassKit/PKRecurringPaymentSummaryItem.h>
-#endif
 #endif
 
 #if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
-#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
-#import <PassKitCore/PKDeferredPaymentSummaryItem.h>
-#else
 #import <PassKit/PKDeferredPaymentSummaryItem.h>
-#endif
 #endif
 
 #if !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
@@ -45,48 +37,38 @@
 // linkage mismatches in the SOFT_LINK_CONSTANT macros used in PassKitSoftLink.mm unless we wrap
 // these includes in an extern "C" block.
 WTF_EXTERN_C_BEGIN
-#if HAVE(PASSKIT_MODULARIZATION)
-#import <PassKitCore/PKConstants.h>
-#import <PassKitCore/PKError.h>
-#else
 #import <PassKit/PKConstants.h>
 #import <PassKit/PKError.h>
-#endif
 WTF_EXTERN_C_END
 
 #endif // !PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(PASSKIT_MODULARIZATION)
-#import <PassKitCore/PKContact.h>
-#import <PassKitCore/PKError_Private.h>
-#import <PassKitCore/PKPassLibrary.h>
-#import <PassKitCore/PKPayment.h>
-#import <PassKitCore/PKPaymentMethod.h>
-#import <PassKitCore/PKPaymentPass.h>
-#import <PassKitCore/PKPaymentSetupConfiguration_WebKit.h>
-#import <PassKitCore/PKPaymentSetupRequest.h>
-#else
 #import <PassKit/PKContact.h>
 #import <PassKit/PKError_Private.h>
 #import <PassKit/PKPassLibrary.h>
 #import <PassKit/PKPayment.h>
+#import <PassKit/PKPaymentAuthorizationViewController_Private.h>
 #import <PassKit/PKPaymentMethod.h>
 #import <PassKit/PKPaymentPass.h>
 #import <PassKit/PKPaymentSetupConfiguration_WebKit.h>
+#import <PassKit/PKPaymentSetupController.h>
 #import <PassKit/PKPaymentSetupRequest.h>
-#endif
-
 #import <PassKitCore/PKPaymentRequestStatus.h>
 #import <PassKitCore/PKPaymentRequest_WebKit.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <PassKit/PKPaymentAuthorizationController_Private.h>
+#import <PassKit/PKPaymentSetupViewController.h>
+#endif
+
 #if !HAVE(PASSKIT_INSTALLMENTS)
-#if HAVE(PASSKIT_MODULARIZATION)
-#import <PassKitCore/PKPaymentRequest_Private.h>
-#else
 #import <PassKit/PKPaymentRequest_Private.h>
 #endif
+
+#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
+#import <PassKitCore/PKRecurringPaymentSummaryItem.h>
 #endif
 
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
@@ -96,30 +78,6 @@ WTF_EXTERN_C_END
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 #import <PassKitCore/PKDateComponentsRange.h>
 #endif
-
-#if HAVE(PASSKIT_MODULARIZATION)
-// FIXME: remove this after <rdar://88985220>
-#if __has_include(<PassKitUI/PKPaymentSetupController.h>)
-#import <PassKitUI/PKPaymentSetupController.h>
-#else
-#import <PassKit/PKPaymentSetupController.h>
-#endif
-#if PLATFORM(MAC)
-#import <PassKitMacHelper/PKPaymentAuthorizationViewController_Private.h>
-#endif
-#if PLATFORM(IOS_FAMILY)
-#import <PassKitUI/PKPaymentAuthorizationController_Private.h>
-#import <PassKitUI/PKPaymentAuthorizationViewController_Private.h>
-#import <PassKitUI/PKPaymentSetupViewController.h>
-#endif
-#else // HAVE(PASSKIT_MODULARIZATION)
-#import <PassKit/PKPaymentSetupController.h>
-#import <PassKit/PKPaymentAuthorizationViewController_Private.h>
-#if PLATFORM(IOS_FAMILY)
-#import <PassKit/PKPaymentAuthorizationController_Private.h>
-#import <PassKit/PKPaymentSetupViewController.h>
-#endif
-#endif // HAVE(PASSKIT_MODULARIZATION)
 
 #import <WebKitAdditions/PassKitSPIAdditions.h>
 
@@ -304,6 +262,12 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @end
 #endif
 
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+@interface PKShippingMethods : NSObject
+- (instancetype)initWithMethods:(NSArray<PKShippingMethod *> *)methods defaultMethod:(nullable PKShippingMethod *)defaultMethod;
+@end
+#endif
+
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 @interface PKDateComponentsRange : NSObject <NSCopying, NSSecureCoding>
 - (nullable instancetype)initWithStartDateComponents:(NSDateComponents *)startDateComponents endDateComponents:(NSDateComponents *)endDateComponents;
@@ -348,6 +312,10 @@ typedef NS_ENUM(NSUInteger, PKShippingContactEditingMode) {
 #if HAVE(PASSKIT_COUPON_CODE)
 @property (nonatomic, assign) BOOL supportsCouponCode;
 @property (nonatomic, copy, nullable) NSString *couponCode;
+#endif
+
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+@property (nonatomic, copy) PKShippingMethods *availableShippingMethods;
 #endif
 
 #if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
@@ -512,6 +480,9 @@ NS_ASSUME_NONNULL_BEGIN
 #if HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
 @property (nonatomic, copy) NSArray<PKShippingMethod *> *shippingMethods;
 #endif
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+@property (nonatomic, copy) PKShippingMethods *availableShippingMethods;
+#endif
 @end
 
 @interface PKPaymentRequestPaymentMethodUpdate : PKPaymentRequestUpdate
@@ -535,24 +506,6 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif
-
-NS_ASSUME_NONNULL_BEGIN
-
-#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD) && !USE(APPLE_INTERNAL_SDK)
-@interface PKShippingMethods : NSObject
-- (instancetype)initWithMethods:(NSArray<PKShippingMethod *> *)methods defaultMethod:(nullable PKShippingMethod *)defaultMethod;
-@end
-
-@interface PKPaymentRequest ()
-@property (nonatomic, copy) PKShippingMethods *availableShippingMethods;
-@end
-
-@interface PKPaymentRequestUpdate ()
-@property (nonatomic, copy) PKShippingMethods *availableShippingMethods;
-@end
-#endif // HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD) && !USE(APPLE_INTERNAL_SDK)
-
-NS_ASSUME_NONNULL_END
 
 extern "C"
 void PKDrawApplePayButtonWithCornerRadius(_Nonnull CGContextRef, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType, PKPaymentButtonStyle, NSString * _Nullable languageCode);

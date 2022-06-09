@@ -39,17 +39,15 @@
 
 namespace IPC {
 class FormDataReference;
-class SharedBufferReference;
+class SharedBufferCopy;
 }
 
 namespace WebCore {
-class ContentFilterUnblockHandler;
 class NetworkLoadMetrics;
 class ResourceError;
 class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
-class SubstituteData;
 enum class MainFrameMainResource : bool;
 }
 
@@ -85,8 +83,8 @@ private:
 
     void willSendRequest(WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&&);
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent);
-    void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<WebCore::NetworkLoadMetrics>&&);
-    void didReceiveData(IPC::SharedBufferReference&& data, int64_t encodedDataLength);
+    void didReceiveResponse(const WebCore::ResourceResponse&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage);
+    void didReceiveData(const IPC::SharedBufferCopy& data, int64_t encodedDataLength);
     void didFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didFailServiceWorkerLoad(const WebCore::ResourceError&);
@@ -101,10 +99,6 @@ private:
     void didReceiveResource(const ShareableResource::Handle&);
 #endif
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    void contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler&, String&& unblockRequestDeniedScript, const WebCore::ResourceError&, const URL& blockedPageURL, WebCore::SubstituteData&&);
-#endif
-    
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     TrackingParameters m_trackingParameters;
     WebResourceInterceptController m_interceptController;

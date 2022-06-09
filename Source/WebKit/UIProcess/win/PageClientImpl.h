@@ -106,7 +106,6 @@ private:
     void didFinishNavigation(API::Navigation*) override;
     void didFailNavigation(API::Navigation*) override { }
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
-    bool usesOffscreenRendering() const override;
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

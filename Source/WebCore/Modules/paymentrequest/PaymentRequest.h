@@ -60,6 +60,7 @@ public:
     using ShowPromise = DOMPromiseDeferred<IDLInterface<PaymentResponse>>;
 
     static ExceptionOr<Ref<PaymentRequest>> create(Document&, Vector<PaymentMethodData>&&, PaymentDetailsInit&&, PaymentOptions&&);
+    static bool enabledForContext(ScriptExecutionContext&);
     ~PaymentRequest();
 
     void show(Document&, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&&);
@@ -98,7 +99,7 @@ public:
     void accept(const String& methodName, PaymentResponse::DetailsFunction&&);
     void accept(const String& methodName, PaymentResponse::DetailsFunction&&, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void reject(Exception&&);
-    ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData);
+    ExceptionOr<void> complete(std::optional<PaymentComplete>&&);
     ExceptionOr<void> retry(PaymentValidationErrors&&);
     void cancel();
 

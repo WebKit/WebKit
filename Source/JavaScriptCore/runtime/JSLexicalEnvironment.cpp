@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
+const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
 
 template<typename Visitor>
 void JSLexicalEnvironment::visitChildrenImpl(JSCell* cell, Visitor& visitor)
@@ -103,8 +103,8 @@ bool JSLexicalEnvironment::getOwnPropertySlot(JSObject* object, JSGlobalObject* 
 
     // We don't call through to JSObject because there's no way to give a 
     // lexical environment object getter properties or a prototype.
-    ASSERT(!thisObject->hasGetterSetterProperties());
-    ASSERT(thisObject->getPrototypeDirect().isNull());
+    ASSERT(!thisObject->hasGetterSetterProperties(vm));
+    ASSERT(thisObject->getPrototypeDirect(vm).isNull());
     return false;
 }
 
@@ -122,7 +122,7 @@ bool JSLexicalEnvironment::put(JSCell* cell, JSGlobalObject* globalObject, Prope
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
     // expose in the lexicalEnvironment object.
-    ASSERT(!thisObject->hasGetterSetterProperties());
+    ASSERT(!thisObject->hasGetterSetterProperties(globalObject->vm()));
     return thisObject->putOwnDataProperty(globalObject->vm(), propertyName, value, slot);
 }
 

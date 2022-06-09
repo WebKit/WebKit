@@ -14,7 +14,7 @@
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/copyvertex.h"
 #include "libANGLE/renderer/renderer_utils.h"
-#include "platform/FeaturesVk_autogen.h"
+#include "platform/FeaturesVk.h"
 
 #include <array>
 
@@ -116,6 +116,10 @@ class Format final : private angle::NonCopyable
                                                  : mTextureLoadFunctions(type);
     }
 
+    LoadTextureBorderFunctionInfo getTextureBorderLoadFunctions() const
+    {
+        return mTextureBorderLoadFunctions();
+    }
     // The actual Buffer format is used to implement the front-end format for Buffers.  This format
     // is used by vertex buffers as well as texture buffers.  Note that all formats required for
     // GL_EXT_texture_buffer have mandatory support for vertex buffers in Vulkan, so they won't be
@@ -187,6 +191,7 @@ class Format final : private angle::NonCopyable
 
     InitializeTextureDataFunction mImageInitializerFunction;
     LoadFunctionMap mTextureLoadFunctions;
+    LoadTextureBorderFunctionMap mTextureBorderLoadFunctions;
     LoadFunctionMap mRenderableTextureLoadFunctions;
     VertexCopyFunction mVertexLoadFunction;
     VertexCopyFunction mCompressedVertexLoadFunction;
@@ -209,7 +214,9 @@ class FormatTable final : angle::NonCopyable
     ~FormatTable();
 
     // Also initializes the TextureCapsMap and the compressedTextureCaps in the Caps instance.
-    void initialize(RendererVk *renderer, gl::TextureCapsMap *outTextureCapsMap);
+    void initialize(RendererVk *renderer,
+                    gl::TextureCapsMap *outTextureCapsMap,
+                    std::vector<GLenum> *outCompressedTextureFormats);
 
     ANGLE_INLINE const Format &operator[](GLenum internalFormat) const
     {
@@ -243,7 +250,9 @@ bool HasFullTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID)
 bool HasNonRenderableTextureFormatSupport(RendererVk *renderer, angle::FormatID formatID);
 
 // Get the swizzle state based on format's requirements and emulations.
-gl::SwizzleState GetFormatSwizzle(const angle::Format &angleFormat, const bool sized);
+gl::SwizzleState GetFormatSwizzle(const ContextVk *contextVk,
+                                  const angle::Format &angleFormat,
+                                  const bool sized);
 
 // Apply application's swizzle to the swizzle implied by format as received from GetFormatSwizzle.
 gl::SwizzleState ApplySwizzle(const gl::SwizzleState &formatSwizzle,

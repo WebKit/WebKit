@@ -34,10 +34,8 @@
 #include "SecurityContext.h"
 #include "ServiceWorkerIdentifier.h"
 #include "Settings.h"
-#include "StorageBlockingPolicy.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/HandleTypes.h>
-#include <pal/SessionID.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -70,21 +68,15 @@ class EventLoopTaskGroup;
 class EventTarget;
 class FontLoadRequest;
 class MessagePort;
-class NotificationClient;
 class PermissionController;
 class PublicURLManager;
 class RejectedPromiseTracker;
 class RTCDataChannelRemoteHandlerConnection;
 class ResourceRequest;
 class SocketProvider;
-class WebCoreOpaqueRoot;
 enum class LoadedFromOpaqueSource : uint8_t;
 enum class ReferrerPolicy : uint8_t;
 enum class TaskSource : uint8_t;
-
-#if ENABLE(NOTIFICATIONS)
-class NotificationClient;
-#endif
 
 #if ENABLE(SERVICE_WORKER)
 class ServiceWorker;
@@ -97,12 +89,11 @@ class IDBConnectionProxy;
 
 class ScriptExecutionContext : public SecurityContext, public CanMakeWeakPtr<ScriptExecutionContext> {
 public:
-    explicit ScriptExecutionContext(ScriptExecutionContextIdentifier = { });
+    ScriptExecutionContext();
     virtual ~ScriptExecutionContext();
 
     virtual bool isDocument() const { return false; }
     virtual bool isWorkerGlobalScope() const { return false; }
-    virtual bool isServiceWorkerGlobalScope() const { return false; }
     virtual bool isWorkletGlobalScope() const { return false; }
 
     virtual bool isContextThread() const { return true; }
@@ -120,9 +111,6 @@ public:
 
     virtual const Settings::Values& settingsValues() const = 0;
 
-    virtual NotificationClient* notificationClient() { return nullptr; }
-    virtual std::optional<PAL::SessionID> sessionID() const { return std::nullopt; }
-
     virtual void disableEval(const String& errorMessage) = 0;
     virtual void disableWebAssembly(const String& errorMessage) = 0;
 
@@ -135,8 +123,8 @@ public:
 
     virtual String resourceRequestIdentifier() const { return String(); };
 
-    bool canIncludeErrorDetails(CachedScript*, const String& sourceURL, bool = false);
-    void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, RefPtr<Inspector::ScriptCallStack>&&, CachedScript* = nullptr, bool = false);
+    bool canIncludeErrorDetails(CachedScript*, const String& sourceURL);
+    void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, RefPtr<Inspector::ScriptCallStack>&&, CachedScript* = nullptr);
     void reportUnhandledPromiseRejection(JSC::JSGlobalObject&, JSC::JSPromise&, RefPtr<Inspector::ScriptCallStack>&&);
 
     virtual void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) = 0;
@@ -289,37 +277,11 @@ public:
 
     ServiceWorkerContainer* serviceWorkerContainer();
     ServiceWorkerContainer* ensureServiceWorkerContainer();
-    virtual void updateServiceWorkerClientData() { ASSERT_NOT_REACHED(); }
 #endif
     WEBCORE_EXPORT static bool postTaskTo(ScriptExecutionContextIdentifier, Task&&);
-    WEBCORE_EXPORT static bool postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier, Task&&, const String&);
     WEBCORE_EXPORT static bool ensureOnContextThread(ScriptExecutionContextIdentifier, Task&&);
 
     ScriptExecutionContextIdentifier identifier() const { return m_identifier; }
-
-    bool hasLoggedAuthenticatedEncryptionWarning() const { return m_hasLoggedAuthenticatedEncryptionWarning; }
-    void setHasLoggedAuthenticatedEncryptionWarning(bool value) { m_hasLoggedAuthenticatedEncryptionWarning = value; }
-
-    void setStorageBlockingPolicy(StorageBlockingPolicy policy) { m_storageBlockingPolicy = policy; }
-    enum class ResourceType : uint8_t {
-        ApplicationCache,
-        Cookies,
-        Geolocation,
-        IndexedDB,
-        LocalStorage,
-        Plugin,
-        SessionStorage,
-        StorageManager,
-        WebSQL
-    };
-    enum class HasResourceAccess : uint8_t { No, Yes, DefaultForThirdParty };
-    WEBCORE_EXPORT HasResourceAccess canAccessResource(ResourceType) const;
-
-    enum NotificationCallbackIdentifierType { };
-    using NotificationCallbackIdentifier = ObjectIdentifier<NotificationCallbackIdentifierType>;
-
-    WEBCORE_EXPORT NotificationCallbackIdentifier addNotificationCallback(CompletionHandler<void()>&&);
-    WEBCORE_EXPORT CompletionHandler<void()> takeNotificationCallback(NotificationCallbackIdentifier);
 
 protected:
     class AddConsoleMessageTask : public Task {
@@ -344,15 +306,13 @@ protected:
     bool hasPendingActivity() const;
     void removeFromContextsMap();
     void removeRejectedPromiseTracker();
-    void regenerateIdentifier();
 
 private:
     // The following addMessage function is deprecated.
     // Callers should try to create the ConsoleMessage themselves.
     virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) = 0;
     virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) = 0;
-
-    bool dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, CachedScript*, bool);
+    bool dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception*, CachedScript*);
 
     virtual void refScriptExecutionContext() = 0;
     virtual void derefScriptExecutionContext() = 0;
@@ -400,13 +360,6 @@ private:
 
     String m_domainForCachePartition;
     mutable ScriptExecutionContextIdentifier m_identifier;
-
-    bool m_hasLoggedAuthenticatedEncryptionWarning { false };
-    StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
-
-    HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
 };
-
-WebCoreOpaqueRoot root(ScriptExecutionContext*);
 
 } // namespace WebCore

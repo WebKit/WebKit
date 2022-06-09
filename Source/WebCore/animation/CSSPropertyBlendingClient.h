@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <optional>
-
 namespace WebCore {
 
 class RenderElement;
@@ -38,7 +36,7 @@ public:
     virtual RenderElement* renderer() const = 0;
     virtual const RenderStyle& currentStyle() const = 0;
     virtual bool filterFunctionListsMatch() const = 0;
-    virtual std::optional<unsigned> transformFunctionListPrefix() const = 0;
+    virtual bool transformFunctionListsMatch() const = 0;
 #if ENABLE(FILTERS_LEVEL_2)
     virtual bool backdropFilterFunctionListsMatch() const = 0;
 #endif

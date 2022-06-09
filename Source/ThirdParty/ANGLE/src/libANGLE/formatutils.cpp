@@ -514,7 +514,9 @@ bool InternalFormat::isRequiredRenderbufferFormat(const Version &version) const
             return true;
         default:
             UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
             return false;
+#endif
     }
 }
 
@@ -536,7 +538,7 @@ Format::Format(GLenum internalFormat, GLenum type)
     : info(&GetInternalFormatInfo(internalFormat, type))
 {}
 
-Format::Format(const Format &other)            = default;
+Format::Format(const Format &other) = default;
 Format &Format::operator=(const Format &other) = default;
 
 bool Format::valid() const
@@ -1274,11 +1276,6 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     //                 | Internal format    |sized| R | G | B | A |S | Format | Type             | Component type        | SRGB | Texture supported                     | Filterable     | Texture attachment                    | Renderbuffer                          | Blend
     AddRGBAFormat(&map, GL_SRG8_EXT,         true,  8,  8,  0,  0, 0, GL_RG,   GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, true,  RequireExt<&Extensions::textureSRGBRG8EXT>,    AlwaysSupported, NeverSupported,                         NeverSupported,                         NeverSupported);
 
-    // From GL_EXT_texture_type_2_10_10_10_REV
-    // GL_RGB10_UNORM_ANGLEX is never used directly but needs to be in the list of all sized internal formats so that the backends can determine support.
-    //                  | Internal format      |sized|    R | G | B | A |S |X   | Format           | Type                          | Component type        | SRGB | Texture supported                                  | Filterable     | Texture attachment                               | Renderbuffer  | Blend
-    AddRGBAXFormat(&map, GL_RGB10_UNORM_ANGLEX, true, FB<10, 10, 10,  0, 0, 2>(), GL_RGB,            GL_UNSIGNED_INT_2_10_10_10_REV, GL_UNSIGNED_NORMALIZED, false, NeverSupported,                                     NeverSupported,  NeverSupported,                                    NeverSupported, NeverSupported);
-
     // Unsized formats
     //                  | Internal format  |sized |    R | G | B | A |S |X   | Format           | Type                          | Component type        | SRGB | Texture supported                                  | Filterable     | Texture attachment                               | Renderbuffer  | Blend
     AddRGBAXFormat(&map, GL_RED,            false, FB< 8,  0,  0,  0, 0, 0>(), GL_RED,            GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::textureRgEXT>,               AlwaysSupported, RequireExt<&Extensions::textureRgEXT>,             NeverSupported, NeverSupported);
@@ -1934,7 +1931,9 @@ AttributeType GetAttributeType(GLenum enumValue)
             return ATTRIBUTE_MAT4x3;
         default:
             UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
             return ATTRIBUTE_FLOAT;
+#endif
     }
 }
 
@@ -1974,7 +1973,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R8G8B8A8_SSCALED;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::UnsignedByte:
             switch (components)
@@ -2005,7 +2006,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R8G8B8A8_USCALED;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::Short:
             switch (components)
@@ -2036,7 +2039,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R16G16B16A16_SSCALED;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::UnsignedShort:
             switch (components)
@@ -2067,7 +2072,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R16G16B16A16_USCALED;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::Int:
             switch (components)
@@ -2098,7 +2105,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R32G32B32A32_SSCALED;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::UnsignedInt:
             switch (components)
@@ -2129,7 +2138,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R32G32B32A32_USCALED;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::Float:
             switch (components)
@@ -2144,7 +2155,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R32G32B32A32_FLOAT;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::HalfFloat:
         case VertexAttribType::HalfFloatOES:
@@ -2160,7 +2173,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R16G16B16A16_FLOAT;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::Fixed:
             switch (components)
@@ -2175,7 +2190,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::R32G32B32A32_FIXED;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::Int2101010:
             if (pureInteger)
@@ -2206,7 +2223,9 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::A2R10G10B10_SSCALED_VERTEX;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         case VertexAttribType::UnsignedInt1010102:
             switch (components)
@@ -2226,11 +2245,15 @@ angle::FormatID GetVertexFormatID(VertexAttribType type,
                     return angle::FormatID::A2R10G10B10_USCALED_VERTEX;
                 default:
                     UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
                     return angle::FormatID::NONE;
+#endif
             }
         default:
             UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
             return angle::FormatID::NONE;
+#endif
     }
 }
 
@@ -2901,7 +2924,9 @@ size_t GetVertexFormatSize(angle::FormatID vertexFormatID)
         case angle::FormatID::NONE:
         default:
             UNREACHABLE();
+#if !UNREACHABLE_IS_NORETURN
             return 0;
+#endif
     }
 }
 
@@ -3075,8 +3100,10 @@ angle::FormatID ConvertFormatSignedness(const angle::Format &format)
             return angle::FormatID::R10G10B10A2_SNORM;
         default:
             UNREACHABLE();
-            return angle::FormatID::NONE;
     }
+#if !UNREACHABLE_IS_NORETURN
+    return angle::FormatID::NONE;
+#endif
 }
 
 bool ValidES3InternalFormat(GLenum internalFormat)

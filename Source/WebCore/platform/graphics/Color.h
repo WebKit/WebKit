@@ -42,6 +42,15 @@
 typedef struct CGColor* CGColorRef;
 #endif
 
+#if PLATFORM(WIN)
+struct _D3DCOLORVALUE;
+typedef _D3DCOLORVALUE D3DCOLORVALUE;
+typedef D3DCOLORVALUE D2D_COLOR_F;
+typedef D2D_COLOR_F D2D1_COLOR_F;
+struct D2D_VECTOR_4F;
+typedef D2D_VECTOR_4F D2D1_VECTOR_4F;
+#endif
+
 #if PLATFORM(GTK)
 typedef struct _GdkRGBA GdkRGBA;
 #endif
@@ -84,6 +93,8 @@ public:
 
     ~Color();
 
+    unsigned hash() const;
+
     bool isValid() const;
     bool isSemantic() const;
     bool usesColorFunctionSerialization() const;
@@ -97,8 +108,6 @@ public:
 
     WEBCORE_EXPORT double luminance() const;
     WEBCORE_EXPORT double lightness() const; // FIXME: Replace remaining uses with luminance.
-
-    bool anyComponentIsNone() const;
 
     template<typename Functor> decltype(auto) callOnUnderlyingType(Functor&&) const;
 
@@ -139,6 +148,12 @@ public:
     WEBCORE_EXPORT static Color createAndPreserveColorSpace(CGColorRef, OptionSet<Flags> = { });
 #endif
 
+#if PLATFORM(WIN)
+    WEBCORE_EXPORT Color(D2D1_COLOR_F);
+    WEBCORE_EXPORT operator D2D1_COLOR_F() const;
+    WEBCORE_EXPORT operator D2D1_VECTOR_4F() const;
+#endif
+
     static constexpr auto transparentBlack = SRGBA<uint8_t> { };
     static constexpr auto black = SRGBA<uint8_t> { 0, 0, 0 };
     static constexpr auto white = SRGBA<uint8_t> { 255, 255, 255 };
@@ -160,26 +175,13 @@ public:
     // Out of line and inline colors will always be non-equal.
     friend bool operator==(const Color& a, const Color& b);
     friend bool equalIgnoringSemanticColor(const Color& a, const Color& b);
-    friend bool outOfLineComponentsEqual(const Color&, const Color&);
-    friend bool outOfLineComponentsEqualIgnoringSemanticColor(const Color&, const Color&);
+    friend bool outOfLineComponentssEqual(const Color&, const Color&);
+    friend bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<Color> decode(Decoder&);
 
-    // Returns the underlying color converted to pre-resolved 8-bit sRGBA, useful for debugging purposes.
-    struct DebugRGBA {
-        unsigned red;
-        unsigned green;
-        unsigned blue;
-        unsigned alpha;
-    };
-    DebugRGBA debugRGBA() const;
-
-    String debugDescription() const;
-
 private:
-    friend void add(Hasher&, const Color&);
-
     class OutOfLineComponents : public ThreadSafeRefCounted<OutOfLineComponents> {
     public:
         static Ref<OutOfLineComponents> create(ColorComponents<float, 4> components)
@@ -257,20 +259,12 @@ private:
     uint64_t m_colorAndFlags { invalidColorAndFlags };
 };
 
-inline void add(Hasher& hasher, const Color& color)
-{
-    if (color.isOutOfLine())
-        add(hasher, color.asOutOfLine().unresolvedComponents(), color.colorSpace(), color.flags());
-    else
-        add(hasher, color.asPackedInline().value, color.flags());
-}
-
 bool operator==(const Color&, const Color&);
 bool operator!=(const Color&, const Color&);
 
 // One or both must be out of line colors.
-bool outOfLineComponentsEqual(const Color&, const Color&);
-bool outOfLineComponentsEqualIgnoringSemanticColor(const Color&, const Color&);
+bool outOfLineComponentssEqual(const Color&, const Color&);
+bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
 
 #if USE(CG)
 WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColor(const Color&);
@@ -283,7 +277,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 inline bool operator==(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() || b.isOutOfLine())
-        return outOfLineComponentsEqual(a, b);
+        return outOfLineComponentssEqual(a, b);
     return a.m_colorAndFlags == b.m_colorAndFlags;
 }
 
@@ -292,7 +286,7 @@ inline bool operator!=(const Color& a, const Color& b)
     return !(a == b);
 }
 
-inline bool outOfLineComponentsEqual(const Color& a, const Color& b)
+inline bool outOfLineComponentssEqual(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() && b.isOutOfLine())
         return a.asOutOfLine().unresolvedComponents() == b.asOutOfLine().unresolvedComponents() && a.colorSpace() == b.colorSpace() && a.flags() == b.flags();
@@ -301,7 +295,7 @@ inline bool outOfLineComponentsEqual(const Color& a, const Color& b)
     return false;
 }
 
-inline bool outOfLineComponentsEqualIgnoringSemanticColor(const Color& a, const Color& b)
+inline bool outOfLineComponentssEqualIgnoringSemanticColor(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() && b.isOutOfLine()) {
         auto aFlags = a.flags() - Color::FlagsIncludingPrivate::Semantic;
@@ -316,7 +310,7 @@ inline bool outOfLineComponentsEqualIgnoringSemanticColor(const Color& a, const 
 inline bool equalIgnoringSemanticColor(const Color& a, const Color& b)
 {
     if (a.isOutOfLine() || b.isOutOfLine())
-        return outOfLineComponentsEqualIgnoringSemanticColor(a, b);
+        return outOfLineComponentssEqualIgnoringSemanticColor(a, b);
 
     auto aFlags = a.flags() - Color::FlagsIncludingPrivate::Semantic;
     auto bFlags = b.flags() - Color::FlagsIncludingPrivate::Semantic;
@@ -371,6 +365,13 @@ inline Color::~Color()
 {
     if (isOutOfLine())
         asOutOfLine().deref();
+}
+
+inline unsigned Color::hash() const
+{
+    if (isOutOfLine())
+        return computeHash(asOutOfLine().unresolvedComponents(), colorSpace(), flags().toRaw());
+    return computeHash(asPackedInline().value, flags().toRaw());
 }
 
 inline bool Color::isValid() const
@@ -626,6 +627,12 @@ template<class Decoder> std::optional<Color> Color::decode(Decoder& decoder)
         return std::nullopt;
 
     return Color { asSRGBA(PackedColor::RGBA { value }), flags };
+}
+
+inline void add(Hasher& hasher, const Color& color)
+{
+    // FIXME: We don't want to hash a hash; do better.
+    add(hasher, color.hash());
 }
 
 } // namespace WebCore

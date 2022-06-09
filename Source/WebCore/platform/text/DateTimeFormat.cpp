@@ -265,7 +265,7 @@ void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder&
         if (literal[i] == '\'')
             buffer.append("''");
         else {
-            buffer.append('\'', makeStringByReplacingAll(literal.substring(i), '\'', "''"_s), '\'');
+            buffer.append('\'', String { literal.substring(i) }.replace('\'', "''"), '\'');
             return;
         }
     }

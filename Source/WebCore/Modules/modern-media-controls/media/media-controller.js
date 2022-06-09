@@ -34,7 +34,7 @@ class MediaController
 
         this.fullscreenChangeEventType = media.webkitSupportsPresentationMode ? "webkitpresentationmodechanged" : "webkitfullscreenchange";
 
-        this.hasPlayed = !media.paused || !!media.played.length;
+        this.hasPlayed = false;
 
         this.container = shadowRoot.appendChild(document.createElement("div"));
 
@@ -110,7 +110,7 @@ class MediaController
 
     togglePlayback()
     {
-        if (this.media.paused || !this.hasPlayed)
+        if (this.media.paused)
             this.media.play().catch(e => {});
         else
             this.media.pause();
@@ -213,10 +213,7 @@ class MediaController
         if (overridenSupportingObjectClasses)
             return overridenSupportingObjectClasses;
 
-        let classes = [AudioSupport, BrightnessSupport, CloseSupport, ControlsVisibilitySupport, FullscreenSupport, OverflowSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport];
-
-        if (this.layoutTraits.supportsAirPlay())
-            classes.push(AirplaySupport);
+        let classes = [AirplaySupport, AudioSupport, BrightnessSupport, CloseSupport, ControlsVisibilitySupport, FullscreenSupport, OverflowSupport, PiPSupport, PlacardSupport, PlaybackSupport, ScrubbingSupport, SeekBackwardSupport, SeekForwardSupport, SkipBackSupport, SkipForwardSupport, StartSupport, StatusSupport, TimeControlSupport, TracksSupport]
 
         if (this.controls.usesSingleMuteAndVolumeButton)
             classes.push(MuteAndVolumeSupport);

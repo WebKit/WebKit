@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,10 +42,8 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            colorAttachments.map([] (auto& colorAttachment) -> std::optional<PAL::WebGPU::RenderPassColorAttachment> {
-                if (colorAttachment)
-                    return colorAttachment->convertToBacking();
-                return std::nullopt;
+            colorAttachments.map([] (auto& colorAttachment) {
+                return colorAttachment.convertToBacking();
             }),
             depthStencilAttachment ? std::optional { depthStencilAttachment->convertToBacking() } : std::nullopt,
             occlusionQuerySet ? &occlusionQuerySet->backing() : nullptr,
@@ -53,7 +51,7 @@ struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
         };
     }
 
-    Vector<std::optional<GPURenderPassColorAttachment>> colorAttachments;
+    Vector<GPURenderPassColorAttachment> colorAttachments;
     std::optional<GPURenderPassDepthStencilAttachment> depthStencilAttachment;
     GPUQuerySet* occlusionQuerySet { nullptr };
     GPURenderPassTimestampWrites timestampWrites;

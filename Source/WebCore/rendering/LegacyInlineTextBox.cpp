@@ -74,7 +74,7 @@ struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
     unsigned short variables2;
 };
 
-static_assert(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), "LegacyInlineTextBox should stay small");
+COMPILE_ASSERT(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), LegacyInlineTextBox_should_stay_small);
 
 typedef HashMap<const LegacyInlineTextBox*, LayoutRect> LegacyInlineTextBoxOverflowMap;
 static LegacyInlineTextBoxOverflowMap* gTextBoxesWithOverflow;
@@ -397,7 +397,7 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
 
-    LegacyTextBoxPainter textBoxPainter(*this, paintInfo, paintOffset);
+    TextBoxPainter textBoxPainter(*this, paintInfo, paintOffset);
     textBoxPainter.paint();
 }
 
@@ -488,23 +488,23 @@ const RenderCombineText* LegacyInlineTextBox::combinedText() const
 
 ExpansionBehavior LegacyInlineTextBox::expansionBehavior() const
 {
-    ExpansionBehavior behavior;
-
+    ExpansionBehavior leftBehavior;
     if (forceLeftExpansion())
-        behavior.left = ExpansionBehavior::Behavior::Force;
+        leftBehavior = ForceLeftExpansion;
     else if (canHaveLeftExpansion())
-        behavior.left = ExpansionBehavior::Behavior::Allow;
+        leftBehavior = AllowLeftExpansion;
     else
-        behavior.left = ExpansionBehavior::Behavior::Forbid;
+        leftBehavior = ForbidLeftExpansion;
 
+    ExpansionBehavior rightBehavior;
     if (forceRightExpansion())
-        behavior.right = ExpansionBehavior::Behavior::Force;
+        rightBehavior = ForceRightExpansion;
     else if (expansion() && nextLeafOnLine() && !nextLeafOnLine()->isLineBreak())
-        behavior.right = ExpansionBehavior::Behavior::Allow;
+        rightBehavior = AllowRightExpansion;
     else
-        behavior.right = ExpansionBehavior::Behavior::Forbid;
+        rightBehavior = ForbidRightExpansion;
 
-    return behavior;
+    return leftBehavior | rightBehavior;
 }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -528,8 +528,8 @@ void LegacyInlineTextBox::outputLineBox(TextStream& stream, bool mark, int depth
 
     String value = renderer().text();
     value = value.substring(start(), len());
-    value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
-    value = makeStringByReplacingAll(value, '\n', "\\n"_s);
+    value.replaceWithLiteral('\\', "\\\\");
+    value.replaceWithLiteral('\n', "\\n");
     stream << boxName() << " " << FloatRect(x(), y(), width(), height()) << " (" << this << ") renderer->(" << &renderer() << ") run(" << start() << ", " << start() + len() << ") \"" << value.utf8().data() << "\"";
     stream.nextLine();
 }

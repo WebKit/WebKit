@@ -34,7 +34,6 @@
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 
 namespace WebCore {

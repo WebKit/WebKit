@@ -29,22 +29,18 @@
 
 #include "AuthenticatorTransportService.h"
 #include "VirtualAuthenticatorConfiguration.h"
-#include "VirtualCredential.h"
-#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class VirtualAuthenticatorManager;
-
 class VirtualService : public AuthenticatorTransportService {
 public:
-    explicit VirtualService(Observer&, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>&);
+    explicit VirtualService(Observer&, const Vector<VirtualAuthenticatorConfiguration>&);
 
-    static UniqueRef<AuthenticatorTransportService> createVirtual(WebCore::AuthenticatorTransport, Observer&, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>&);
+    static UniqueRef<AuthenticatorTransportService> createVirtual(WebCore::AuthenticatorTransport, Observer&, const Vector<VirtualAuthenticatorConfiguration>& configs);
 private:
     void startDiscoveryInternal() final;
 
-    Vector<std::pair<String, VirtualAuthenticatorConfiguration>> m_authenticators;
+    Vector<VirtualAuthenticatorConfiguration> m_configurations;
 };
 
 } // namespace WebKit

@@ -49,13 +49,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDataChannel);
 
 static const AtomString& blobKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> blob("blob"_s);
+    static MainThreadNeverDestroyed<const AtomString> blob("blob", AtomString::ConstructFromLiteral);
     return blob;
 }
 
 static const AtomString& arraybufferKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> arraybuffer("arraybuffer"_s);
+    static MainThreadNeverDestroyed<const AtomString> arraybuffer("arraybuffer", AtomString::ConstructFromLiteral);
     return arraybuffer;
 }
 
@@ -303,7 +303,7 @@ std::unique_ptr<DetachedRTCDataChannel> RTCDataChannel::detach()
     Locker locker { s_rtcDataChannelLocalMapLock };
     rtcDataChannelLocalMap().add(identifier().channelIdentifier, WTFMove(m_handler));
 
-    return makeUnique<DetachedRTCDataChannel>(identifier(), String { label() }, RTCDataChannelInit { options() }, state);
+    return makeUnique<DetachedRTCDataChannel>(identifier(), label().isolatedCopy(), options(), state);
 }
 
 void RTCDataChannel::removeFromDataChannelLocalMapIfNeeded()

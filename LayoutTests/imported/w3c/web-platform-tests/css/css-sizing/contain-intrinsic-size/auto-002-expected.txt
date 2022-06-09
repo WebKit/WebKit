@@ -1,4 +1,0 @@
-50
-
-PASS contain-intrinsic-size: auto
-

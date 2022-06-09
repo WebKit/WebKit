@@ -37,9 +37,9 @@
 using namespace WebKit;
 
 /**
- * WebKitWebExtension:
- *
- * Represents an extension of the WebProcess.
+ * SECTION: WebKitWebExtension
+ * @Short_description: Represents a WebExtension of the WebProcess
+ * @Title: WebKitWebExtension
  *
  * WebKitWebExtension is a loadable module for the WebProcess. It allows you to execute code in the
  * WebProcess and being able to use the DOM API, to change any request or to inject custom
@@ -51,7 +51,7 @@ using namespace WebKit;
  * This function has to be public and it has to use the #G_MODULE_EXPORT macro. It is called when the
  * web process is initialized.
  *
- * ```c
+ * <informalexample><programlisting>
  * static void
  * web_page_created_callback (WebKitWebExtension *extension,
  *                            WebKitWebPage      *web_page,
@@ -69,7 +69,7 @@ using namespace WebKit;
  *                       G_CALLBACK (web_page_created_callback),
  *                       NULL);
  * }
- * ```
+ * </programlisting></informalexample>
  *
  * The previous piece of code shows a trivial example of an extension that notifies when
  * a #WebKitWebPage is created.
@@ -82,14 +82,14 @@ using namespace WebKit;
  * function, you have to call webkit_web_context_set_web_extensions_initialization_user_data() with
  * the desired data as parameter. You can see an example of this in the following piece of code:
  *
- * ```c
- * #define WEB_EXTENSIONS_DIRECTORY // ...
+ * <informalexample><programlisting>
+ * #define WEB_EXTENSIONS_DIRECTORY /<!-- -->* ... *<!-- -->/
  *
  * static void
  * initialize_web_extensions (WebKitWebContext *context,
  *                            gpointer          user_data)
  * {
- *   // Web Extensions get a different ID for each Web Process
+ *   /<!-- -->* Web Extensions get a different ID for each Web Process *<!-- -->/
  *   static guint32 unique_id = 0;
  *
  *   webkit_web_context_set_web_extensions_directory (
@@ -107,9 +107,9 @@ using namespace WebKit;
  *
  *   GtkWidget *view = webkit_web_view_new ();
  *
- *   // ...
+ *   /<!-- -->* ... *<!-- -->/
  * }
- * ```
+ * </programlisting></informalexample>
  */
 
 enum {

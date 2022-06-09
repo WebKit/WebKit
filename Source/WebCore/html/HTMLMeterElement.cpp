@@ -190,15 +190,15 @@ static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion ga
 {
     switch (gaugeRegion) {
     case HTMLMeterElement::GaugeRegionOptimum:
-        element.setAttribute(HTMLNames::classAttr, "optimum"_s);
+        element.setAttribute(HTMLNames::classAttr, "optimum");
         element.setPseudo(ShadowPseudoIds::webkitMeterOptimumValue());
         return;
     case HTMLMeterElement::GaugeRegionSuboptimal:
-        element.setAttribute(HTMLNames::classAttr, "suboptimum"_s);
+        element.setAttribute(HTMLNames::classAttr, "suboptimum");
         element.setPseudo(ShadowPseudoIds::webkitMeterSuboptimumValue());
         return;
     case HTMLMeterElement::GaugeRegionEvenLessGood:
-        element.setAttribute(HTMLNames::classAttr, "even-less-good"_s);
+        element.setAttribute(HTMLNames::classAttr, "even-less-good");
         element.setPseudo(ShadowPseudoIds::webkitMeterEvenLessGoodValue());
         return;
     default:
@@ -229,22 +229,22 @@ void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(meterElementShadowUserAgentStyleSheet, sizeof(meterElementShadowUserAgentStyleSheet)));
 
     auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
-    style->setTextContent(String { shadowStyle });
-    root.appendChild(WTFMove(style));
+    style->setTextContent(shadowStyle);
+    root.appendChild(style);
 
     // Pseudos are set to allow author styling.
     auto inner = HTMLDivElement::create(document());
-    inner->setIdAttribute("inner"_s);
+    inner->setIdAttribute("inner");
     inner->setPseudo(ShadowPseudoIds::webkitMeterInnerElement());
     root.appendChild(inner);
 
     auto bar = HTMLDivElement::create(document());
-    bar->setIdAttribute("bar"_s);
+    bar->setIdAttribute("bar");
     bar->setPseudo(ShadowPseudoIds::webkitMeterBar());
     inner->appendChild(bar);
 
     m_value = HTMLDivElement::create(document());
-    m_value->setIdAttribute("value"_s);
+    m_value->setIdAttribute("value");
     bar->appendChild(*m_value);
 
     didElementStateChange();

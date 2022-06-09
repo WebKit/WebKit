@@ -20,10 +20,10 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
-#include "AccessibilityAtspi.h"
 #include "AccessibilityAtspiEnums.h"
+#include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
 
 namespace WebCore {
@@ -31,6 +31,7 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant*, GDBusMethodInvocation* invocation, gpointer userData) {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -51,6 +52,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -63,9 +65,9 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
         if (!g_strcmp0(propertyName, "RowSpan"))
             return g_variant_new_int32(atspiObject->rowSpan());
         if (!g_strcmp0(propertyName, "Table")) {
-            auto* axObject = atspiObject->m_coreObject;
+            auto* axObject = atspiObject->m_axObject;
             if (!axObject || !axObject->isTableCell())
-                return AccessibilityAtspi::singleton().nullReference();
+                return atspiObject->m_root.atspi().nullReference();
 
             AccessibilityObjectAtspi* wrapper = atspiObject.ptr();
             while (auto parent = wrapper->parent()) {
@@ -74,11 +76,11 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
                     break;
 
                 wrapper->updateBackingStore();
-                axObject = wrapper->m_coreObject;
+                axObject = wrapper->m_axObject;
                 if (axObject && axObject->isTable())
                     break;
             }
-            return wrapper ? wrapper->reference() : AccessibilityAtspi::singleton().nullReference();
+            return wrapper ? wrapper->reference() : atspiObject->m_root.atspi().nullReference();
         }
 
         g_set_error(error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED, "Unknown property '%s'", propertyName);
@@ -87,47 +89,66 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
     // set_property,
     nullptr,
     // padding
-    { nullptr }
+    nullptr
 };
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellRowHeaders() const
 {
-    if (!m_coreObject)
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_axObject)
         return { };
 
-    return wrapperVector(m_coreObject->rowHeaders());
+    // Only return headers for cells that are not headers.
+    if (role() != Atspi::Role::TableCell)
+        return { };
+
+    return wrapperVector(m_axObject->rowHeaders());
 }
 
 Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellColumnHeaders() const
 {
-    if (!m_coreObject)
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_axObject)
         return { };
 
-    return wrapperVector(m_coreObject->columnHeaders());
+    // Only return headers for cells that are not headers.
+    if (role() != Atspi::Role::TableCell)
+        return { };
+
+    return wrapperVector(m_axObject->columnHeaders());
 }
 
 unsigned AccessibilityObjectAtspi::rowSpan() const
 {
-    return m_coreObject ? m_coreObject->rowIndexRange().second : 0;
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_axObject)
+        return 0;
+
+    return m_axObject->rowIndexRange().second;
 }
 
 unsigned AccessibilityObjectAtspi::columnSpan() const
 {
-    return m_coreObject ? m_coreObject->columnIndexRange().second : 0;
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_axObject)
+        return 0;
+
+    return m_axObject->columnIndexRange().second;
 }
 
 std::pair<std::optional<unsigned>, std::optional<unsigned>> AccessibilityObjectAtspi::cellPosition() const
 {
+    RELEASE_ASSERT(!isMainThread());
     std::pair<std::optional<unsigned>, std::optional<unsigned>> position;
-    if (!m_coreObject)
+    if (!m_axObject)
         return position;
 
-    position.first = m_coreObject->rowIndexRange().first;
-    position.second = m_coreObject->columnIndexRange().first;
+    position.first = m_axObject->rowIndexRange().first;
+    position.second = m_axObject->columnIndexRange().first;
 
     return position;
 }
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

@@ -53,7 +53,7 @@ void ResourceLoader::loadGResource()
         GUniqueOutPtr<GError> error;
         GRefPtr<GBytes> bytes = adoptGRef(static_cast<GBytes*>(g_task_propagate_pointer(task, &error.outPtr())));
         if (!bytes) {
-            loader->didFail(ResourceError(String::fromLatin1(g_quark_to_string(error->domain)), error->code, url, String::fromUTF8(error->message)));
+            loader->didFail(ResourceError(g_quark_to_string(error->domain), error->code, url, String::fromUTF8(error->message)));
             return;
         }
 
@@ -64,11 +64,10 @@ void ResourceLoader::loadGResource()
         const auto* data = static_cast<const guchar*>(g_bytes_get_data(bytes.get(), &dataSize));
         GUniquePtr<char> fileName(g_path_get_basename(url.path().utf8().data()));
         GUniquePtr<char> contentType(g_content_type_guess(fileName.get(), data, dataSize, nullptr));
-        auto contentTypeString = String::fromLatin1(contentType.get());
-        ResourceResponse response { url, extractMIMETypeFromMediaType(contentTypeString), static_cast<long long>(dataSize), extractCharsetFromMediaType(contentTypeString).toString() };
+        ResourceResponse response { url, extractMIMETypeFromMediaType(contentType.get()), static_cast<long long>(dataSize), extractCharsetFromMediaType(contentType.get()) };
         response.setHTTPStatusCode(200);
         response.setHTTPStatusText("OK"_s);
-        response.setHTTPHeaderField(HTTPHeaderName::ContentType, contentTypeString);
+        response.setHTTPHeaderField(HTTPHeaderName::ContentType, contentType.get());
         response.setSource(ResourceResponse::Source::Network);
         loader->deliverResponseAndData(response, SharedBuffer::create(bytes.get()));
     }, protectedThis.leakRef()));
@@ -78,8 +77,7 @@ void ResourceLoader::loadGResource()
     g_task_run_in_thread(task.get(), [](GTask* task, gpointer, gpointer taskData, GCancellable*) {
         URL url({ }, String::fromUTF8(static_cast<const char*>(taskData)));
         GError* error = nullptr;
-        GBytes* bytes = g_resources_lookup_data(url.protocolIs("webkit-pdfjs-viewer"_s) ? makeString("/org/webkit/pdfjs"_s, url.path()).utf8().data() : url.path().utf8().data(),
-            G_RESOURCE_LOOKUP_FLAGS_NONE, &error);
+        GBytes* bytes = g_resources_lookup_data(url.path().utf8().data(), G_RESOURCE_LOOKUP_FLAGS_NONE, &error);
         if (!bytes)
             g_task_return_error(task, error);
         else

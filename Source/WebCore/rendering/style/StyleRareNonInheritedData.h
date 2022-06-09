@@ -104,15 +104,10 @@ public:
 
     bool hasOpacity() const { return opacity < 1; }
 
-    OptionSet<Containment> effectiveContainment() const;
-
     float opacity;
 
     double aspectRatioWidth;
     double aspectRatioHeight;
-
-    std::optional<Length> containIntrinsicWidth;
-    std::optional<Length> containIntrinsicHeight;
 
     OptionSet<Containment> contain;
 
@@ -191,7 +186,7 @@ public:
     StyleSelfAlignmentData justifySelf;
 
     DataRef<StyleCustomPropertyData> customProperties;
-    HashSet<AtomString> customPaintWatchedProperties;
+    std::unique_ptr<HashSet<String>> customPaintWatchedProperties;
 
     RefPtr<RotateTransformOperation> rotate;
     RefPtr<ScaleTransformOperation> scale;
@@ -230,20 +225,13 @@ public:
     unsigned breakBefore : 4; // BreakBetween
     unsigned breakAfter : 4;
     unsigned breakInside : 3; // BreakInside
-    unsigned resize : 3; // Resize
+    unsigned resize : 2; // Resize
 
     unsigned inputSecurity : 1; // InputSecurity
 
     unsigned hasAttrContent : 1;
 
     unsigned isNotFinal : 1;
-
-    unsigned containIntrinsicWidthType : 2; // ContainIntrinsicSizeType
-    unsigned containIntrinsicHeightType : 2; // ContainIntrinsicSizeType
-
-    unsigned containerType : 2; // ContainerType
-
-    Vector<AtomString> containerNames;
 
     GapLength columnGap;
     GapLength rowGap;

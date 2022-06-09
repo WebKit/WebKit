@@ -67,11 +67,6 @@ class Issue(object):
         self._comments = None
         self._references = None
 
-        self._labels = None
-        self._project = None
-        self._component = None
-        self._version = None
-
         self.tracker.populate(self, None)
 
     def __str__(self):
@@ -113,25 +108,11 @@ class Issue(object):
             self.tracker.populate(self, 'opened')
         return self._opened
 
-    def open(self, why=None):
-        if self.opened:
-            return False
-        return bool(self.tracker.set(self, opened=True, why=why))
-
-    def close(self, why=None):
-        if not self.opened:
-            return False
-        return bool(self.tracker.set(self, opened=False, why=why))
-
     @property
     def assignee(self):
         if self._assignee is None:
             self.tracker.populate(self, 'assignee')
         return self._assignee
-
-    def assign(self, assignee, why=None):
-        self.tracker.set(self, assignee=assignee, why=why)
-        return self.assignee
 
     @property
     def watchers(self):
@@ -150,39 +131,6 @@ class Issue(object):
         if self._references is None:
             self.tracker.populate(self, 'references')
         return self._references or []
-
-    def add_comment(self, text):
-        return self.tracker.add_comment(self, text)
-
-    @property
-    def labels(self):
-        if self._labels is None:
-            self.tracker.populate(self, 'labels')
-        return self._labels
-
-    def set_labels(self, labels):
-        return self.tracker.set(self, labels=labels)
-
-    @property
-    def project(self):
-        if self._project is None:
-            self.tracker.populate(self, 'project')
-        return self._project
-
-    @property
-    def component(self):
-        if self._component is None:
-            self.tracker.populate(self, 'component')
-        return self._component
-
-    @property
-    def version(self):
-        if self._version is None:
-            self.tracker.populate(self, 'version')
-        return self._version
-
-    def set_component(self, project=None, component=None, version=None):
-        return self.tracker.set(self, project=project, component=component, version=version)
 
     def __hash__(self):
         return hash(self.link)

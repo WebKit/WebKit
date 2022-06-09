@@ -217,30 +217,14 @@ function waitForEventWithTimeout(element, type, time, message) {
     });
 }
 
-function waitFor(element, type, silent, success) {
+function waitFor(element, type, silent) {
     return new Promise(resolve => {
         element.addEventListener(type, event => {
-            if (silent) {
-                resolve(event);
-                return;
-            }
-
-            if (success !== undefined)
-                logResult(success, `EVENT(${event.type})`);
-            else
+            if (!silent)
                 consoleWrite(`EVENT(${event.type})`);
-            
             resolve(event);
         }, { once: true });
     });
-}
-
-function waitForAndSucceed(element, type) {
-    return waitFor(element, type, false, true);
-}
-
-function waitForAndFail(element, type) {
-    return waitFor(element, type, false, false);
 }
 
 function waitForEventOnce(eventName, func, endit)

@@ -34,8 +34,6 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <initializer_list>
 #include <wtf/Forward.h>
-#include <wtf/RobinHoodHashMap.h>
-#include <wtf/RobinHoodHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -143,17 +141,17 @@ private:
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     Page& m_inspectedPage;
 
-    MemoryCompactRobinHoodHashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
+    HashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
 
 #if ENABLE(WEBGL)
-    MemoryCompactRobinHoodHashMap<String, RefPtr<InspectorShaderProgram>> m_identifierToInspectorProgram;
+    HashMap<String, RefPtr<InspectorShaderProgram>> m_identifierToInspectorProgram;
     Vector<String> m_removedProgramIdentifiers;
     Timer m_programDestroyedTimer;
 #endif // ENABLE(WEBGL)
 
-    MemoryCompactRobinHoodHashSet<String> m_recordingCanvasIdentifiers;
+    HashSet<String> m_recordingCanvasIdentifiers;
 
     std::optional<size_t> m_recordingAutoCaptureFrameCount;
 };

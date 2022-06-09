@@ -42,17 +42,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 12 * (kFontGlyphWidth >> fontSize);
             const int32_t height   = (kFontGlyphHeight >> fontSize);
 
-            widget->type          = WidgetType::PerSecond;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 0.4980392156862745f;
-            widget->color[1]      = 0.7490196078431373f;
-            widget->color[2]      = 1.0f;
-            widget->color[3]      = 1.0f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::PerSecond;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 0.4980392156862745f;
+            widget->color[1]  = 0.7490196078431373f;
+            widget->color[2]  = 1.0f;
+            widget->color[3]  = 1.0f;
         }
         mState.mOverlayWidgets[WidgetId::FPS].reset(widget);
     }
@@ -66,17 +65,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 150 * (kFontGlyphWidth >> fontSize);
             const int32_t height   = (kFontGlyphHeight >> fontSize);
 
-            widget->type          = WidgetType::Text;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY - height;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 0.0f;
-            widget->color[2]      = 0.0f;
-            widget->color[3]      = 1.0f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::Text;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY - height;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY;
+            widget->color[0]  = 1.0f;
+            widget->color[1]  = 0.0f;
+            widget->color[2]  = 0.0f;
+            widget->color[3]  = 1.0f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanLastValidationMessage].reset(widget);
     }
@@ -91,17 +89,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 25 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->type          = WidgetType::Count;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY - height;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 0.0f;
-            widget->color[2]      = 0.0f;
-            widget->color[3]      = 1.0f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::Count;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY - height;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY;
+            widget->color[0]  = 1.0f;
+            widget->color[1]  = 0.0f;
+            widget->color[2]  = 0.0f;
+            widget->color[3]  = 1.0f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanValidationMessageCount].reset(widget);
     }
@@ -115,17 +112,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 5 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 0.29411764705882354f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 0.0f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 0.29411764705882354f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.0f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanRenderPassCount].reset(widget);
         {
@@ -137,17 +133,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 40 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = offsetX + width;
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 0.29411764705882354f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.0f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = offsetX + width;
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 0.29411764705882354f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.0f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -160,17 +155,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 6 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningHistogram;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX - width;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 0.29411764705882354f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningHistogram;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX - width;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 1.0f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanRenderPassBufferCount].reset(widget);
         {
@@ -182,17 +176,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 40 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = std::min(offsetX + width, -1);
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 1.0f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = std::min(offsetX + width, -1);
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 1.0f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -205,17 +198,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 6 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningHistogram;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX - width;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 0.29411764705882354f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningHistogram;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX - width;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 1.0f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanSecondaryCommandBufferPoolWaste].reset(widget);
         {
@@ -227,17 +219,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 40 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = std::min(offsetX + width, -1);
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 1.0f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = std::min(offsetX + width, -1);
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 1.0f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -250,17 +241,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 5 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 0.29411764705882354f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 0.0f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 0.29411764705882354f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.0f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanWriteDescriptorSetCount].reset(widget);
         {
@@ -272,17 +262,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 40 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = offsetX + width;
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 0.29411764705882354f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.0f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = offsetX + width;
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 0.29411764705882354f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.0f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -295,17 +284,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 6 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 0.0f;
-            widget->color[2]      = 0.29411764705882354f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 1.0f;
+            widget->color[1]  = 0.0f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanDescriptorSetAllocations].reset(widget);
         {
@@ -317,17 +305,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 40 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = offsetX + width;
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 1.0f;
-            widget->description.color[1]      = 0.0f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = offsetX + width;
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 1.0f;
+            widget->description.color[1]  = 0.0f;
+            widget->description.color[2]  = 0.29411764705882354f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -340,39 +327,37 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 6 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX - width;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 0.0f;
-            widget->color[2]      = 0.29411764705882354f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX - width;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 1.0f;
+            widget->color[1]  = 0.0f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
-        mState.mOverlayWidgets[WidgetId::VulkanShaderResourceDSHitRate].reset(widget);
+        mState.mOverlayWidgets[WidgetId::VulkanShaderBufferDSHitRate].reset(widget);
         {
             const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
             const int32_t offsetX =
-                mState.mOverlayWidgets[WidgetId::VulkanShaderResourceDSHitRate]->coords[0];
+                mState.mOverlayWidgets[WidgetId::VulkanShaderBufferDSHitRate]->coords[0];
             const int32_t offsetY =
-                mState.mOverlayWidgets[WidgetId::VulkanShaderResourceDSHitRate]->coords[1];
+                mState.mOverlayWidgets[WidgetId::VulkanShaderBufferDSHitRate]->coords[1];
             const int32_t width  = 40 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = std::min(offsetX + width, -1);
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 1.0f;
-            widget->description.color[1]      = 0.0f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = std::min(offsetX + width, -1);
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 1.0f;
+            widget->description.color[1]  = 0.0f;
+            widget->description.color[2]  = 0.29411764705882354f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -385,17 +370,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 5 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX - width;
-            widget->coords[1]     = offsetY - height;
-            widget->coords[2]     = offsetX;
-            widget->coords[3]     = offsetY;
-            widget->color[0]      = 0.0f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 0.29411764705882354f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX - width;
+            widget->coords[1] = offsetY - height;
+            widget->coords[2] = offsetX;
+            widget->coords[3] = offsetY;
+            widget->color[0]  = 0.0f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanDynamicBufferAllocations].reset(widget);
         {
@@ -407,17 +391,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 40 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX - width;
-            widget->description.coords[1]     = offsetY - height;
-            widget->description.coords[2]     = offsetX;
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 0.0f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX - width;
+            widget->description.coords[1] = offsetY - height;
+            widget->description.coords[2] = offsetX;
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 0.0f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -430,17 +413,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 5 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 0.0f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 0.7254901960784313f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 0.0f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.7254901960784313f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanDescriptorCacheSize].reset(widget);
         {
@@ -452,17 +434,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 90 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = offsetX + width;
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 0.0f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = offsetX + width;
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 0.0f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -475,17 +456,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 5 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 0.0f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 0.29411764705882354f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 0.0f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 0.29411764705882354f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanTextureDescriptorCacheSize].reset(widget);
         {
@@ -497,17 +477,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 90 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = offsetX + width;
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 0.0f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = offsetX + width;
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 0.0f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -520,17 +499,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 5 * static_cast<uint32_t>(widget->runningValues.size());
             const int32_t height   = 100;
 
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 0.0f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 1.0f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
+            widget->type      = WidgetType::RunningGraph;
+            widget->fontSize  = fontSize;
+            widget->coords[0] = offsetX;
+            widget->coords[1] = offsetY;
+            widget->coords[2] = offsetX + width;
+            widget->coords[3] = offsetY + height;
+            widget->color[0]  = 0.0f;
+            widget->color[1]  = 0.7843137254901961f;
+            widget->color[2]  = 1.1764705882352942f;
+            widget->color[3]  = 0.7843137254901961f;
         }
         mState.mOverlayWidgets[WidgetId::VulkanUniformDescriptorCacheSize].reset(widget);
         {
@@ -542,17 +520,16 @@ void Overlay::initOverlayWidgets()
             const int32_t width  = 90 * (kFontGlyphWidth >> fontSize);
             const int32_t height = (kFontGlyphHeight >> fontSize);
 
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = offsetX + width;
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 0.0f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
+            widget->description.type      = WidgetType::Text;
+            widget->description.fontSize  = fontSize;
+            widget->description.coords[0] = offsetX;
+            widget->description.coords[1] = std::max(offsetY - height, 1);
+            widget->description.coords[2] = offsetX + width;
+            widget->description.coords[3] = offsetY;
+            widget->description.color[0]  = 0.0f;
+            widget->description.color[1]  = 0.7843137254901961f;
+            widget->description.color[2]  = 0.29411764705882354f;
+            widget->description.color[3]  = 1.0f;
         }
     }
 
@@ -565,112 +542,18 @@ void Overlay::initOverlayWidgets()
             const int32_t width    = 30 * (kFontGlyphWidth >> fontSize);
             const int32_t height   = (kFontGlyphHeight >> fontSize);
 
-            widget->type          = WidgetType::Count;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX + width;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 1.0f;
-            widget->color[2]      = 1.0f;
-            widget->color[3]      = 1.0f;
-            widget->matchToWidget = nullptr;
-        }
-        mState.mOverlayWidgets[WidgetId::VulkanDescriptorCacheKeySize].reset(widget);
-    }
-
-    {
-        RunningGraph *widget = new RunningGraph(60);
-        {
-            const int32_t fontSize = GetFontSize(0, kLargeFont);
-            const int32_t offsetX  = -50;
-            const int32_t offsetY  = 50;
-            const int32_t width    = 5 * static_cast<uint32_t>(widget->runningValues.size());
-            const int32_t height   = 100;
-
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX - width;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 0.0f;
-            widget->color[2]      = 0.0f;
-            widget->color[3]      = 0.39215686274509803f;
-            widget->matchToWidget = nullptr;
-        }
-        mState.mOverlayWidgets[WidgetId::VulkanAttemptedSubmissions].reset(widget);
-        {
-            const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
-            const int32_t offsetX =
-                mState.mOverlayWidgets[WidgetId::VulkanAttemptedSubmissions]->coords[0];
-            const int32_t offsetY =
-                mState.mOverlayWidgets[WidgetId::VulkanAttemptedSubmissions]->coords[1];
-            const int32_t width  = 45 * (kFontGlyphWidth >> fontSize);
-            const int32_t height = (kFontGlyphHeight >> fontSize);
-
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = std::min(offsetX + width, -1);
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 0.7843137254901961f;
-            widget->description.color[1]      = 0.0f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
-        }
-    }
-
-    {
-        RunningGraph *widget = new RunningGraph(60);
-        {
-            const int32_t fontSize = GetFontSize(0, kLargeFont);
-            const int32_t offsetX =
-                mState.mOverlayWidgets[WidgetId::VulkanAttemptedSubmissions]->coords[0];
-            const int32_t offsetY =
-                mState.mOverlayWidgets[WidgetId::VulkanAttemptedSubmissions]->coords[1];
-            const int32_t width  = 5 * static_cast<uint32_t>(widget->runningValues.size());
-            const int32_t height = 100;
-
-            widget->type      = WidgetType::RunningGraph;
+            widget->type      = WidgetType::Count;
             widget->fontSize  = fontSize;
             widget->coords[0] = offsetX;
             widget->coords[1] = offsetY;
-            widget->coords[2] = std::min(offsetX + width, -1);
+            widget->coords[2] = offsetX + width;
             widget->coords[3] = offsetY + height;
-            widget->color[0]  = 0.0f;
+            widget->color[0]  = 1.0f;
             widget->color[1]  = 1.0f;
-            widget->color[2]  = 0.0f;
-            widget->color[3]  = 0.7843137254901961f;
-            widget->matchToWidget =
-                mState.mOverlayWidgets[WidgetId::VulkanAttemptedSubmissions].get();
+            widget->color[2]  = 1.0f;
+            widget->color[3]  = 1.0f;
         }
-        mState.mOverlayWidgets[WidgetId::VulkanActualSubmissions].reset(widget);
-        {
-            const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
-            const int32_t offsetX =
-                mState.mOverlayWidgets[WidgetId::VulkanActualSubmissions]->coords[0];
-            const int32_t offsetY =
-                mState.mOverlayWidgets[WidgetId::VulkanActualSubmissions]->coords[3];
-            const int32_t width  = 45 * (kFontGlyphWidth >> fontSize);
-            const int32_t height = (kFontGlyphHeight >> fontSize);
-
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = offsetY;
-            widget->description.coords[2]     = std::min(offsetX + width, -1);
-            widget->description.coords[3]     = offsetY + height;
-            widget->description.color[0]      = 0.0f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
-        }
+        mState.mOverlayWidgets[WidgetId::VulkanDescriptorCacheKeySize].reset(widget);
     }
 }
 

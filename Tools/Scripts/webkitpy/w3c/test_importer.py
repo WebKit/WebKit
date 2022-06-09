@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
 # Copyright (C) 2015 Canon Inc. All rights reserved.
 #
@@ -77,7 +79,7 @@ import mimetypes
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.w3c.common import TEMPLATED_TEST_HEADER, WPT_GH_URL, WPTPaths
+from webkitpy.w3c.common import WPT_GH_URL, WPTPaths
 from webkitpy.w3c.test_parser import TestParser
 from webkitpy.w3c.test_converter import convert_for_webkit
 from webkitpy.w3c.test_downloader import TestDownloader
@@ -188,14 +190,11 @@ class TestImporter(object):
             if self._tests_options:
                 self.remove_slow_from_w3c_tests_options()
 
-        self.globalToSuffixes = {
-            'window': ('html',),
-            'worker': ('worker.html', 'serviceworker.html', 'sharedworker.html'),
-            'dedicatedworker': ('worker.html',),
-            'serviceworker': ('serviceworker.html',),
-            'serviceworker-module': ('serviceworker-module.html',),
-            'sharedworker': ('sharedworker.html',)
-        }
+        self.globalToSuffix = dict(
+            window='html',
+            worker='worker.html',
+            dedicatedworker='worker.html',
+            serviceworker='serviceworker.html')
 
     def do_import(self):
         if not self.source_directory:
@@ -411,37 +410,22 @@ class TestImporter(object):
         source_content = self.filesystem.read_text_file(source_filepath)
         self.filesystem.write_text_file(new_filepath, self._add_webkit_test_runner_options_to_content(source_content, webkit_test_runner_options))
 
-    def _variant_lines(self, variants):
-        if not variants:
-            return ''
-        result = '\n'
-        result += '\n'.join(['<!-- META: variant=' + variant + ' -->' for variant in variants])
-        return result
-
-    def _write_html_template(self, new_filepath, variants=None):
+    def _write_html_template(self, new_filepath):
         webkit_test_runner_options = self._webkit_test_runner_options(new_filepath)
+        content = '<!-- This file is required for WebKit test infrastructure to run the templated test -->'
+        self.filesystem.write_text_file(new_filepath, content + webkit_test_runner_options)
 
-        self.filesystem.write_text_file(new_filepath, TEMPLATED_TEST_HEADER + webkit_test_runner_options + self._variant_lines(variants))
-
-    def _read_environments_and_variants_for_template_test(self, filepath):
+    def readEnvironmentsForTemplateTest(self, filepath):
         environments = []
-        variants = []
         lines = self.filesystem.read_text_file(filepath).split('\n')
         for line in lines:
-            if line.startswith('//') and 'META: variant=' in line:
-                variant = line.split('META: variant=', 1)[1].strip()
-                variants.append(variant)
             if line.startswith('//') and 'META: global=' in line:
                 items = line.split('META: global=', 1)[1].split(',')
-                suffixes = set()
-                for item in items:
-                    suffixes_for_item = self.globalToSuffixes.get(item.strip(), ())
-                    if len(suffixes_for_item) == 0:
-                        suffixes.add('')
-                    else:
-                        suffixes.update(suffixes_for_item)
-                environments = list(filter(None, suffixes))
-        return set(environments) if len(environments) else ['html', 'worker.html'], variants
+                suffixes = [self.globalToSuffix.get(item.strip(), '') for item in items]
+                environments = list(filter(None, set(suffixes)))
+        if 'worker.html' in environments:
+            environments.append('serviceworker.html')
+        return set(environments) if len(environments) else ['html', 'worker.html', 'serviceworker.html']
 
     def write_html_files_for_templated_js_tests(self, orig_filepath, new_filepath):
         if (orig_filepath.endswith('.window.js')):
@@ -451,9 +435,8 @@ class TestImporter(object):
             self._write_html_template(new_filepath.replace('.worker.js', '.worker.html'))
             return
         if (orig_filepath.endswith('.any.js')):
-            environments, variants = self._read_environments_and_variants_for_template_test(orig_filepath)
-            for suffix in environments:
-                self._write_html_template(new_filepath.replace('.any.js', '.any.' + suffix), variants)
+            for suffix in self.readEnvironmentsForTemplateTest(orig_filepath):
+                self._write_html_template(new_filepath.replace('.any.js', '.any.' + suffix))
             return
 
     def import_tests(self):

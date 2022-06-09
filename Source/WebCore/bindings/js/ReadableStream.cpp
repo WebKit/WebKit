@@ -49,7 +49,7 @@ static inline ExceptionOr<JSObject*> invokeConstructor(JSC::JSGlobalObject& lexi
     RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
     auto constructor = JSC::asObject(constructorValue);
 
-    auto constructData = JSC::getConstructData(constructor);
+    auto constructData = getConstructData(vm, constructor);
     ASSERT(constructData.type != CallData::Type::None);
 
     MarkedArgumentBuffer args;
@@ -66,9 +66,9 @@ static inline ExceptionOr<JSObject*> invokeConstructor(JSC::JSGlobalObject& lexi
 
 ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSC::JSGlobalObject& lexicalGlobalObject, RefPtr<ReadableStreamSource>&& source)
 {
-    auto& builtinNames = WebCore::builtinNames(lexicalGlobalObject.vm());
+    auto& clientData = *static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
 
-    auto objectOrException = invokeConstructor(lexicalGlobalObject, builtinNames.ReadableStreamPrivateName(), [&source](auto& args, auto& lexicalGlobalObject, auto& globalObject) {
+    auto objectOrException = invokeConstructor(lexicalGlobalObject, clientData.builtinNames().ReadableStreamPrivateName(), [&source](auto& args, auto& lexicalGlobalObject, auto& globalObject) {
         args.append(source ? toJSNewlyCreated(&lexicalGlobalObject, &globalObject, source.releaseNonNull()) : JSC::jsUndefined());
     });
 
@@ -84,10 +84,10 @@ static inline std::optional<JSC::JSValue> invokeReadableStreamFunction(JSC::JSGl
     JSC::JSLockHolder lock(vm);
 
     auto function = lexicalGlobalObject.get(&lexicalGlobalObject, identifier);
-    ASSERT(function.isCallable());
+    ASSERT(function.isCallable(vm));
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(vm, function);
     auto result = call(&lexicalGlobalObject, function, callData, thisValue, arguments);
     EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
     if (scope.exception())
@@ -130,32 +130,10 @@ std::optional<std::pair<Ref<ReadableStream>, Ref<ReadableStream>>> ReadableStrea
 
 void ReadableStream::lock()
 {
-    auto& builtinNames = WebCore::builtinNames(m_globalObject->vm());
-    invokeConstructor(*m_globalObject, builtinNames.ReadableStreamDefaultReaderPrivateName(), [this](auto& args, auto&, auto&) {
+    auto& clientData = *static_cast<JSVMClientData*>(m_globalObject->vm().clientData);
+    invokeConstructor(*m_globalObject, clientData.builtinNames().ReadableStreamDefaultReaderPrivateName(), [this](auto& args, auto&, auto&) {
         args.append(readableStream());
     });
-}
-
-void ReadableStream::cancel(const Exception& exception)
-{
-    auto& lexicalGlobalObject = *m_globalObject;
-    auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
-    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamCancelPrivateName();
-
-    auto& vm = lexicalGlobalObject.vm();
-    JSC::JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto value = createDOMException(&lexicalGlobalObject, exception.code(), exception.message());
-    if (UNLIKELY(scope.exception())) {
-        ASSERT(vm.hasPendingTerminationException());
-        return;
-    }
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(readableStream());
-    arguments.append(value);
-    ASSERT(!arguments.hasOverflowed());
-    invokeReadableStreamFunction(lexicalGlobalObject, privateName, JSC::jsUndefined(), arguments);
 }
 
 static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadableStream* readableStream, JSC::JSValue function)
@@ -169,7 +147,7 @@ static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadab
 
     auto& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(vm, function);
     ASSERT(callData.type != JSC::CallData::Type::None);
 
     auto result = call(&lexicalGlobalObject, function, callData, JSC::jsUndefined(), arguments);
@@ -190,8 +168,9 @@ bool ReadableStream::isDisturbed() const
 
 bool ReadableStream::isDisturbed(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
-    auto& globalObject = *jsDynamicCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
-    auto* readableStream = jsDynamicCast<JSReadableStream*>(value);
+    auto& vm = lexicalGlobalObject.vm();
+    auto& globalObject = *jsDynamicCast<JSDOMGlobalObject*>(vm, &lexicalGlobalObject);
+    auto* readableStream = jsDynamicCast<JSReadableStream*>(vm, value);
 
     return checkReadableStream(globalObject, readableStream, globalObject.builtinInternalFunctions().readableStreamInternals().m_isReadableStreamDisturbedFunction.get());
 }

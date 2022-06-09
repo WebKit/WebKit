@@ -61,7 +61,8 @@ inline NamedNodeMap* Node::attributes() const
 
 inline Element* Node::parentElement() const
 {
-    return dynamicDowncast<Element>(parentNode());
+    ContainerNode* parent = parentNode();
+    return is<Element>(parent) ? downcast<Element>(parent) : nullptr;
 }
 
 inline const Element* Element::rootElement() const
@@ -184,5 +185,6 @@ inline bool isInTopLayerOrBackdrop(const RenderStyle& style, const Element* elem
 {
     return (element && element->isInTopLayer()) || style.styleType() == PseudoId::Backdrop;
 }
+
 
 }

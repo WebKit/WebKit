@@ -77,7 +77,7 @@ void DOMPatchSupport::patchDocument(const String& markup)
 {
     RefPtr<Document> newDocument;
     if (m_document.isHTMLDocument())
-        newDocument = HTMLDocument::create(nullptr, m_document.settings(), URL(), { });
+        newDocument = HTMLDocument::create(nullptr, m_document.settings(), URL());
     else if (m_document.isXHTMLDocument())
         newDocument = XMLDocument::createXHTML(nullptr, m_document.settings(), URL());
     else if (m_document.isSVGDocument())
@@ -136,9 +136,9 @@ ExceptionOr<Node*> DOMPatchSupport::patchNode(Node& node, const String& markup)
     for (Node* child = parentNode->firstChild(); child != &node; child = child->nextSibling())
         newList.append(createDigest(*child, nullptr));
     for (Node* child = fragment->firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(headTag) && !child->firstChild() && !markup.containsIgnoringASCIICase("</head>"_s))
+        if (child->hasTagName(headTag) && !child->firstChild() && !markup.containsIgnoringASCIICase("</head>"))
             continue; // HTML5 parser inserts empty <head> tag whenever it parses <body>
-        if (child->hasTagName(bodyTag) && !child->firstChild() && !markup.containsIgnoringASCIICase("</body>"_s))
+        if (child->hasTagName(bodyTag) && !child->firstChild() && !markup.containsIgnoringASCIICase("</body>"))
             continue; // HTML5 parser inserts empty <body> tag whenever it parses </head>
         newList.append(createDigest(*child, &m_unusedNodesMap));
     }

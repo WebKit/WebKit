@@ -35,42 +35,42 @@
 
 namespace WebCore {
 
-static constexpr ASCIILiteral compositeOperatorNames[] = {
-    "clear"_s,
-    "copy"_s,
-    "source-over"_s,
-    "source-in"_s,
-    "source-out"_s,
-    "source-atop"_s,
-    "destination-over"_s,
-    "destination-in"_s,
-    "destination-out"_s,
-    "destination-atop"_s,
-    "xor"_s,
-    "darker"_s,
-    "lighter"_s,
-    "difference"_s
+static const char* const compositeOperatorNames[] = {
+    "clear",
+    "copy",
+    "source-over",
+    "source-in",
+    "source-out",
+    "source-atop",
+    "destination-over",
+    "destination-in",
+    "destination-out",
+    "destination-atop",
+    "xor",
+    "darker",
+    "lighter",
+    "difference"
 };
 
-static constexpr ASCIILiteral blendOperatorNames[] = {
-    "normal"_s,
-    "multiply"_s,
-    "screen"_s,
-    "darken"_s,
-    "lighten"_s,
-    "overlay"_s,
-    "color-dodge"_s,
-    "color-burn"_s,
-    "hard-light"_s,
-    "soft-light"_s,
-    "difference"_s,
-    "exclusion"_s,
-    "hue"_s,
-    "saturation"_s,
-    "color"_s,
-    "luminosity"_s,
-    "plus-darker"_s,
-    "plus-lighter"_s
+static const char* const blendOperatorNames[] = {
+    "normal",
+    "multiply",
+    "screen",
+    "darken",
+    "lighten",
+    "overlay",
+    "color-dodge",
+    "color-burn",
+    "hard-light",
+    "soft-light",
+    "difference",
+    "exclusion",
+    "hue",
+    "saturation",
+    "color",
+    "luminosity",
+    "plus-darker",
+    "plus-lighter"
 };
 const uint8_t numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);
 const uint8_t numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);
@@ -136,44 +136,6 @@ TextStream& operator<<(TextStream& ts, BlendMode blendMode)
     return ts << blendModeName(blendMode);
 }
 
-TextStream& operator<<(TextStream& ts, CompositeMode compositeMode)
-{
-    ts.dumpProperty("composite-operation", compositeMode.operation);
-    ts.dumpProperty("blend-mode", compositeMode.blendMode);
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, const DropShadow& dropShadow)
-{
-    ts.dumpProperty("shadow-offset", dropShadow.offset);
-    ts.dumpProperty("shadow-blur", dropShadow.blurRadius);
-    ts.dumpProperty("shadow-color", dropShadow.color);
-    ts.dumpProperty("shadows-use-legacy-radius", dropShadow.radiusMode == ShadowRadiusMode::Legacy);
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, InterpolationQuality interpolationQuality)
-{
-    switch (interpolationQuality) {
-    case InterpolationQuality::Default:
-        ts << "default";
-        break;
-    case InterpolationQuality::DoNotInterpolate:
-        ts << "do-not-interpolate";
-        break;
-    case InterpolationQuality::Low:
-        ts << "low";
-        break;
-    case InterpolationQuality::Medium:
-        ts << "medium";
-        break;
-    case InterpolationQuality::High:
-        ts << "high";
-        break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, WindRule rule)
 {
     switch (rule) {
@@ -215,44 +177,6 @@ TextStream& operator<<(TextStream& ts, LineJoin joinStyle)
         break;
     case LineJoin::Bevel:
         ts << "BEVEL";
-        break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, StrokeStyle strokeStyle)
-{
-    switch (strokeStyle) {
-    case StrokeStyle::NoStroke:
-        ts << "no-stroke";
-        break;
-    case StrokeStyle::SolidStroke:
-        ts << "solid-stroke";
-        break;
-    case StrokeStyle::DottedStroke:
-        ts << "dotted-stroke";
-        break;
-    case StrokeStyle::DashedStroke:
-        ts << "dashed-stroke";
-        break;
-    case StrokeStyle::DoubleStroke:
-        ts << "double-stroke";
-        break;
-    case StrokeStyle::WavyStroke:
-        ts << "wavy-stroke";
-        break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, TextDrawingMode textDrawingMode)
-{
-    switch (textDrawingMode) {
-    case TextDrawingMode::Fill:
-        ts << "fill";
-        break;
-    case TextDrawingMode::Stroke:
-        ts << "stroke";
         break;
     }
     return ts;

@@ -35,46 +35,39 @@ namespace WebCore {
 
 IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient)
     : m_databaseName(databaseName)
-    , m_origin { WTFMove(mainFrameOrigin), WTFMove(openingOrigin) }
+    , m_origin { WTFMove(openingOrigin), WTFMove(mainFrameOrigin) }
     , m_isTransient(isTransient)
 {
     // The empty string is a valid database name, but a null string is not.
     ASSERT(!databaseName.isNull());
 }
 
-IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const &
+IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const
 {
     IDBDatabaseIdentifier identifier;
+
     identifier.m_databaseName = m_databaseName.isolatedCopy();
     identifier.m_origin = m_origin.isolatedCopy();
     identifier.m_isTransient = m_isTransient;
+
     return identifier;
 }
 
-IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() &&
+String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const String& rootDirectory, const String& versionString) const
 {
-    IDBDatabaseIdentifier identifier;
-    identifier.m_databaseName = WTFMove(m_databaseName).isolatedCopy();
-    identifier.m_origin = WTFMove(m_origin).isolatedCopy();
-    identifier.m_isTransient = m_isTransient;
-    return identifier;
+    return databaseDirectoryRelativeToRoot(m_origin.topOrigin, m_origin.clientOrigin, rootDirectory, versionString);
 }
 
-String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const String& rootDirectory, ASCIILiteral versionString) const
+String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const SecurityOriginData& topLevelOrigin, const SecurityOriginData& openingOrigin, const String& rootDirectory, const String& versionString)
 {
-    return databaseDirectoryRelativeToRoot(m_origin, rootDirectory, versionString);
-}
-
-String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const ClientOrigin& origin, const String& rootDirectory, ASCIILiteral versionString)
-{
-    String versionDirectory = FileSystem::pathByAppendingComponent(rootDirectory, StringView { versionString });
-    String mainFrameDirectory = FileSystem::pathByAppendingComponent(versionDirectory, origin.topOrigin.databaseIdentifier());
+    String versionDirectory = FileSystem::pathByAppendingComponent(rootDirectory, versionString);
+    String mainFrameDirectory = FileSystem::pathByAppendingComponent(versionDirectory, topLevelOrigin.databaseIdentifier());
 
     // If the opening origin and main frame origins are the same, there is no partitioning.
-    if (origin.topOrigin == origin.clientOrigin)
+    if (openingOrigin == topLevelOrigin)
         return mainFrameDirectory;
 
-    return FileSystem::pathByAppendingComponent(mainFrameDirectory, origin.clientOrigin.databaseIdentifier());
+    return FileSystem::pathByAppendingComponent(mainFrameDirectory, openingOrigin.databaseIdentifier());
 }
 
 #if !LOG_DISABLED

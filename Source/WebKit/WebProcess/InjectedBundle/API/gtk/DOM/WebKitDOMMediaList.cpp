@@ -214,7 +214,11 @@ void webkit_dom_media_list_set_media_text(WebKitDOMMediaList* self, const gchar*
     g_return_if_fail(!error || !*error);
     WebCore::MediaList* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setMediaText(convertedValue);
+    auto result = item->setMediaText(convertedValue);
+    if (result.hasException()) {
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+    }
 }
 
 gulong webkit_dom_media_list_get_length(WebKitDOMMediaList* self)

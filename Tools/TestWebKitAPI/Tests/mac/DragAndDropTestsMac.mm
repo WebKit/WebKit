@@ -58,18 +58,6 @@ TEST(DragAndDropTests, NumberOfValidItemsForDrop)
     EXPECT_EQ(1U, numberOfValidItemsForDrop);
 }
 
-TEST(DragAndDropTests, DropUserSelectAllUserDragElementDiv)
-{
-    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 320, 500)]);
-
-    TestWKWebView *webView = [simulator webView];
-    [webView synchronouslyLoadTestPageNamed:@"contenteditable-user-select-user-drag"];
-
-    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
-
-    EXPECT_WK_STREQ(@"Text", [webView stringByEvaluatingJavaScript:@"document.getElementById(\"editor\").textContent"]);
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 TEST(DragAndDropTests, DropColor)
 {
@@ -181,7 +169,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     EXPECT_EQ(imageFromUniquePasteboard.TIFFRepresentation.length, imageFromDragPasteboard.TIFFRepresentation.length);
     EXPECT_TRUE(NSEqualSizes(imageFromDragPasteboard.size, imageFromUniquePasteboard.size));
     EXPECT_FALSE(NSEqualSizes(NSZeroSize, imageFromUniquePasteboard.size));
-    EXPECT_GT([dragPasteboard dataForType:@(WebCore::PasteboardCustomData::cocoaType().characters())].length, 0u);
+    EXPECT_GT([dragPasteboard dataForType:@(WebCore::PasteboardCustomData::cocoaType())].length, 0u);
 }
 
 TEST(DragAndDropTests, ProvideImageDataAsTypeIdentifiers)

@@ -1,4 +1,3 @@
-<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
 <style>
 body{
     letter-spacing: -1px;
@@ -7,6 +6,8 @@ body{
 </style>
 <div id=textWithLetterSpacing>Pass if text does not disappear after the range selection.</div>
 <script>
+if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(false);
 document.body.offsetHeight;
 
 var range = document.createRange();

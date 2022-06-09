@@ -27,7 +27,6 @@
 #include "DirectoryFileListCreator.h"
 #include "DragData.h"
 #include "ElementChildIterator.h"
-#include "ElementRareData.h"
 #include "Event.h"
 #include "File.h"
 #include "FileList.h"
@@ -95,7 +94,8 @@ Ref<UploadButtonElement> UploadButtonElement::createForMultiple(Document& docume
 Ref<UploadButtonElement> UploadButtonElement::createInternal(Document& document, const String& value)
 {
     auto button = adoptRef(*new UploadButtonElement(document));
-    button->setType(HTMLNames::buttonTag->localName());
+    static MainThreadNeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
+    button->setType(buttonName);
     button->setPseudo(ShadowPseudoIds::fileSelectorButton());
     button->setValue(value);
     return button;
@@ -144,11 +144,11 @@ FormControlState FileInputType::saveFormControlState() const
 
     auto length = Checked<size_t>(m_fileList->files().size()) * Checked<size_t>(2);
 
-    Vector<AtomString> stateVector;
+    Vector<String> stateVector;
     stateVector.reserveInitialCapacity(length);
     for (auto& file : m_fileList->files()) {
-        stateVector.uncheckedAppend(AtomString { file->path() });
-        stateVector.uncheckedAppend(AtomString { file->name() });
+        stateVector.uncheckedAppend(file->path());
+        stateVector.uncheckedAppend(file->name());
     }
     return FormControlState { WTFMove(stateVector) };
 }
@@ -203,24 +203,12 @@ void FileInputType::handleDOMActivateEvent(Event& event)
     if (!UserGestureIndicator::processingUserGesture())
         return;
 
-    showPicker();
-    event.setDefaultHandled();
-}
-
-void FileInputType::showPicker()
-{
-    ASSERT(element());
-    auto& input = *element();
-
     if (auto* chrome = this->chrome()) {
         applyFileChooserSettings();
         chrome->runOpenPanel(*input.document().frame(), *m_fileChooser);
     }
-}
 
-bool FileInputType::allowsShowPickerAcrossFrames()
-{
-    return true;
+    event.setDefaultHandled();
 }
 
 RenderPtr<RenderElement> FileInputType::createInputRenderer(RenderStyle&& style)
@@ -234,10 +222,26 @@ bool FileInputType::canSetStringValue() const
     return false;
 }
 
-String FileInputType::firstElementPathForInputValue() const
+FileList* FileInputType::files()
 {
-    if (m_fileList->isEmpty())
-        return { };
+    return m_fileList.ptr();
+}
+
+bool FileInputType::canSetValue(const String& value)
+{
+    // For security reasons, we don't allow setting the filename, but we do allow clearing it.
+    // The HTML5 spec (as of the 10/24/08 working draft) says that the value attribute isn't
+    // applicable to the file upload control at all, but for now we are keeping this behavior
+    // to avoid breaking existing websites that may be relying on this.
+    return value.isEmpty();
+}
+
+bool FileInputType::getTypeSpecificValue(String& value)
+{
+    if (m_fileList->isEmpty()) {
+        value = { };
+        return true;
+    }
 
     // HTML5 tells us that we're supposed to use this goofy value for
     // file input controls. Historically, browsers revealed the real
@@ -245,10 +249,11 @@ String FileInputType::firstElementPathForInputValue() const
     // decided to try to parse the value by looking for backslashes
     // (because that's what Windows file paths use). To be compatible
     // with that code, we make up a fake path for the file.
-    return makeString("C:\\fakepath\\", m_fileList->file(0).name());
+    value = makeString("C:\\fakepath\\", m_fileList->file(0).name());
+    return true;
 }
 
-void FileInputType::setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection)
+void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
 {
     // FIXME: Should we clear the file list, or replace it with a new empty one here? This is observable from JavaScript through custom properties.
     m_fileList->clear();
@@ -380,8 +385,13 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     protectedInputElement->setFormControlValueMatchesRenderer(true);
     protectedInputElement->updateValidity();
 
-    if (shouldRequestIcon == RequestIcon::Yes)
-        requestIcon(m_fileList->paths());
+    if (shouldRequestIcon == RequestIcon::Yes) {
+        Vector<String> paths;
+        paths.reserveInitialCapacity(length);
+        for (auto& file : m_fileList->files())
+            paths.uncheckedAppend(file->path());
+        requestIcon(paths);
+    }
 
     if (protectedInputElement->renderer())
         protectedInputElement->renderer()->repaint();
@@ -437,7 +447,7 @@ void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String
     for (size_t i = 0; i < size; ++i)
         files.uncheckedAppend({ paths[i], i < replacementPaths.size() ? replacementPaths[i] : nullString(), { } });
 
-    filesChosen(WTFMove(files));
+    filesChosen(files);
 }
 
 void FileInputType::didCreateFileList(Ref<FileList>&& fileList, RefPtr<Icon>&& icon)
@@ -490,13 +500,13 @@ bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>
         protectedThis->filesChosen(paths, replacementPaths);
     };
 
-    sharedImageTranscodingQueue().dispatch([callFilesChosen = WTFMove(callFilesChosen), transcodingPaths = crossThreadCopy(WTFMove(transcodingPaths)), transcodingUTI = WTFMove(transcodingUTI).isolatedCopy(), transcodingExtension = WTFMove(transcodingExtension).isolatedCopy()]() mutable {
+    sharedImageTranscodingQueue().dispatch([callFilesChosen = WTFMove(callFilesChosen), transcodingPaths = transcodingPaths.isolatedCopy(), transcodingUTI = transcodingUTI.isolatedCopy(), transcodingExtension = transcodingExtension.isolatedCopy()]() mutable {
         ASSERT(!RunLoop::isMain());
 
         auto replacementPaths = transcodeImages(transcodingPaths, transcodingUTI, transcodingExtension);
         ASSERT(transcodingPaths.size() == replacementPaths.size());
 
-        RunLoop::main().dispatch([callFilesChosen = WTFMove(callFilesChosen), replacementPaths = crossThreadCopy(WTFMove(replacementPaths))] {
+        RunLoop::main().dispatch([callFilesChosen = WTFMove(callFilesChosen), replacementPaths = replacementPaths.isolatedCopy()]() {
             callFilesChosen(replacementPaths);
         });
     });

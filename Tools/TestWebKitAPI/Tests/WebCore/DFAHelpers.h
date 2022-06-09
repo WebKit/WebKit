@@ -56,12 +56,12 @@ static Vector<ContentExtensions::NFA> createNFAs(ContentExtensions::CombinedURLF
     return nfas;
 }
 
-static ContentExtensions::DFA buildDFAFromPatterns(const Vector<ASCIILiteral>& patterns)
+static ContentExtensions::DFA buildDFAFromPatterns(Vector<const char*> patterns)
 {
     ContentExtensions::CombinedURLFilters combinedURLFilters;
     ContentExtensions::URLFilterParser parser(combinedURLFilters);
 
-    for (auto pattern : patterns)
+    for (const char* pattern : patterns)
         parser.addPattern(pattern, false, 0);
     Vector<ContentExtensions::NFA> nfas = createNFAs(combinedURLFilters);
     EXPECT_EQ(1ul, nfas.size());

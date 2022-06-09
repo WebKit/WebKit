@@ -36,7 +36,6 @@
 #include "RenderGeometryMap.h"
 #include "RenderLayer.h"
 #include "RenderLayerModelObject.h"
-#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResource.h"
 #include "RenderView.h"
 #include "SVGElementInlines.h"
@@ -60,9 +59,15 @@ RenderSVGModelObject::RenderSVGModelObject(SVGElement& element, RenderStyle&& st
 void RenderSVGModelObject::updateFromStyle()
 {
     RenderLayerModelObject::updateFromStyle();
+    setHasTransformRelatedProperty(style().hasTransformRelatedProperty());
 
-    if (is<SVGGraphicsElement>(element()))
-        updateHasSVGTransformFlags(downcast<SVGGraphicsElement>(element()));
+    AffineTransform transform;
+    if (is<SVGGraphicsElement>(nodeForNonAnonymous()))
+        transform = downcast<SVGGraphicsElement>(nodeForNonAnonymous()).animatedLocalTransform();
+
+    // FIXME: [LBSE] Upstream RenderObject changes
+    // if (!transform.isIdentity())
+    //     setHasSVGTransform();
 }
 
 FloatRect RenderSVGModelObject::borderBoxRectInFragmentEquivalent(RenderFragmentContainer*, RenderBox::RenderBoxFragmentInfoFlags) const
@@ -78,8 +83,8 @@ LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, RenderFrag
 
 LayoutRect RenderSVGModelObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    if (isInsideEntirelyHiddenLayer())
-        return { };
+    if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
+        return LayoutRect();
 
     ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
     return computeRect(visualOverflowRectEquivalent(), repaintContainer, context);
@@ -137,7 +142,7 @@ LayoutRect RenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelO
 
 void RenderSVGModelObject::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    rects.append(snappedIntRect(LayoutRect(accumulatedOffset + m_layoutRect.location(), m_layoutRect.size())));
+    rects.append(snappedIntRect(LayoutRect(accumulatedOffset + layoutLocation(), layoutSize())));
 }
 
 void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
@@ -269,6 +274,16 @@ bool RenderSVGModelObject::checkEnclosure(RenderElement* renderer, const FloatRe
     ASSERT(is<SVGGraphicsElement>(svgElement));
     auto ctm = downcast<SVGGraphicsElement>(*svgElement).getCTM(SVGLocatable::DisallowStyleUpdate);
     return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinates()));
+}
+
+void RenderSVGModelObject::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    UNUSED_PARAM(transform);
+    UNUSED_PARAM(style);
+    UNUSED_PARAM(boundingBox);
+    UNUSED_PARAM(options);
+    // FIXME: [LBSE] Upstream SVGRenderSupport changes
+    // SVGRenderSupport::applyTransform(*this, transform, style, boundingBox, std::nullopt, std::nullopt, options);
 }
 
 } // namespace WebCore

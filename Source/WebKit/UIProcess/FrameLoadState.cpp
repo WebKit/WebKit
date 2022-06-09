@@ -90,8 +90,11 @@ void FrameLoadState::didFinishLoad()
 
     m_state = State::Finished;
 
-    for (auto& observer : copyToVectorOf<std::reference_wrapper<Observer>>(m_observers))
-        observer.get().didFinishLoad();
+    Vector<Observer*> observersCopy;
+    for (auto& observer : m_observers)
+        observersCopy.append(&observer);
+    for (auto* observer : observersCopy)
+        observer->didFinishLoad();
 }
 
 void FrameLoadState::didFailLoad()

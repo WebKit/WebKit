@@ -34,7 +34,6 @@
 #include <wtf/ThreadGroup.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WTFConfig.h>
-#include <wtf/text/AtomString.h>
 #include <wtf/threads/Signals.h>
 
 #if HAVE(QOS_CLASSES)
@@ -166,7 +165,7 @@ const char* Thread::normalizeThreadName(const char* threadName)
     // This name can be com.apple.WebKit.ProcessLauncher or com.apple.CoreIPC.ReceiveQueue.
     // We are using those names for the thread name, but both are longer than the limit of
     // the platform thread name length, 32 for Windows and 16 for Linux.
-    auto result = StringView::fromLatin1(threadName);
+    StringView result(threadName);
     size_t size = result.reverseFind('.');
     if (size != notFound)
         result = result.substring(size + 1);
@@ -373,12 +372,6 @@ bool Thread::mayBeGCThread()
     return Thread::current().gcThreadType() != GCThreadType::None;
 }
 
-void Thread::registerJSThread(Thread& thread)
-{
-    ASSERT(&thread == &Thread::current());
-    thread.m_isJSThread = true;
-}
-
 void Thread::setCurrentThreadIsUserInteractive(int relativePriority)
 {
 #if HAVE(QOS_CLASSES)
@@ -404,38 +397,6 @@ void Thread::setCurrentThreadIsUserInitiated(int relativePriority)
     pthread_set_qos_class_self_np(adjustedQOSClass(QOS_CLASS_USER_INITIATED), relativePriority);
 #else
     UNUSED_PARAM(relativePriority);
-#endif
-}
-
-#if HAVE(QOS_CLASSES)
-static Thread::QOS toQOS(qos_class_t qosClass)
-{
-    switch (qosClass) {
-    case QOS_CLASS_USER_INTERACTIVE:
-        return Thread::QOS::UserInteractive;
-    case QOS_CLASS_USER_INITIATED:
-        return Thread::QOS::UserInitiated;
-    case QOS_CLASS_UTILITY:
-        return Thread::QOS::Utility;
-    case QOS_CLASS_BACKGROUND:
-        return Thread::QOS::Background;
-    case QOS_CLASS_UNSPECIFIED:
-    case QOS_CLASS_DEFAULT:
-    default:
-        return Thread::QOS::Default;
-    }
-}
-#endif
-
-auto Thread::currentThreadQOS() -> QOS
-{
-#if HAVE(QOS_CLASSES)
-    qos_class_t qos = QOS_CLASS_DEFAULT;
-    int relativePriority;
-    pthread_get_qos_class_np(pthread_self(), &qos, &relativePriority);
-    return toQOS(qos);
-#else
-    return QOS::Default;
 #endif
 }
 

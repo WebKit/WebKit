@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -57,12 +57,12 @@ JS_EXPORT_PRIVATE extern PropertyTableStats* propertyTableStats;
 
 #endif
 
-inline constexpr bool isPowerOf2(unsigned v)
+inline bool isPowerOf2(unsigned v)
 {
     return hasOneBitSet(v);
 }
 
-inline constexpr unsigned nextPowerOf2(unsigned v)
+inline unsigned nextPowerOf2(unsigned v)
 {
     // Taken from http://www.cs.utk.edu/~vose/c-stuff/bithacks.html
     // Devised by Sean Anderson, Sepember 14, 2001
@@ -78,37 +78,56 @@ inline constexpr unsigned nextPowerOf2(unsigned v)
     return v;
 }
 
-// compact <-> non-compact PropertyTable
-// We need to maintain two things, one is PropertyOffset and one is unsigned index in index buffer of PropertyTable.
-// But both are typically small. It is possible that we can get optimized table if both are fit in uint8_t, that's
-// compact PropertyTable.
-//
-// PropertyOffset can be offseted with firstOutOfLineOffset since we can get out-of-line property easily, but this
-// offset is small enough (64 currently), so that we can still assume that most of property offsets are < 256.
-//
-// 1. If property offset gets larger than 255, then we get non-compact PropertyTable. It requires at least 191 (255 - 64) properties.
-//    In that case, PropertyTable size should be 256 since it is power-of-two.
-// 2. If index gets larger than 255, then we get non-compact PropertyTable. But we are using 0 and 255 for markers. Thus, if we get 253
-//    used counts, then we need to change the table.
-//
-// So, typical scenario is that, once 128th property is added, then we extend the table via rehashing. At that time, we change the
-// table from compact to non-compact mode.
-//
-//  index-size  table-capacity    compact   v.s. non-compact
-//     16             8              80              192
-//     32            16             160              384
-//     64            32             320              768
-//    128            64             640             1536
-//    256           128            1280             3072
-//    512           256             N/A             6144     // After 512 size, compact PropertyTable does not work. All table gets non-compact.
-
 class PropertyTable final : public JSCell {
+
+    // This is the implementation for 'iterator' and 'const_iterator',
+    // used for iterating over the table in insertion order.
+    template<typename T>
+    class ordered_iterator {
+    public:
+        ordered_iterator<T>& operator++()
+        {
+            m_valuePtr = skipDeletedEntries(m_valuePtr + 1, m_endValuePtr);
+            return *this;
+        }
+
+        bool operator==(const ordered_iterator<T>& other) const
+        {
+            return m_valuePtr == other.m_valuePtr;
+        }
+
+        bool operator!=(const ordered_iterator<T>& other) const
+        {
+            return m_valuePtr != other.m_valuePtr;
+        }
+
+        T& operator*()
+        {
+            return *m_valuePtr;
+        }
+
+        T* operator->()
+        {
+            return m_valuePtr;
+        }
+
+        ordered_iterator(T* valuePtr, T* endValuePtr)
+            : m_valuePtr(valuePtr)
+            , m_endValuePtr(endValuePtr)
+        {
+        }
+
+    private:
+        T* m_valuePtr;
+        T* m_endValuePtr;
+    };
+
 public:
-    using Base = JSCell;
+    typedef JSCell Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.propertyTableSpace();
     }
@@ -124,8 +143,17 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
     }
 
-    using KeyType = UniquedStringImpl*;
-    using ValueType = PropertyTableEntry;
+    typedef UniquedStringImpl* KeyType;
+    typedef PropertyMapEntry ValueType;
+
+    // The in order iterator provides overloaded * and -> to access the Value at the current position.
+    typedef ordered_iterator<ValueType> iterator;
+    typedef ordered_iterator<const ValueType> const_iterator;
+
+    // The find_iterator is a pair of a pointer to a Value* an the entry in the index.
+    // If 'find' does not find an entry then iter.first will be 0, and iter.second will
+    // give the point in m_index where an entry should be inserted.
+    typedef std::pair<ValueType*, unsigned> find_iterator;
 
     // Constructor is passed an initial capacity, a PropertyTable to copy, or both.
     static PropertyTable* create(VM&, unsigned initialCapacity);
@@ -133,21 +161,20 @@ public:
     static PropertyTable* clone(VM&, unsigned initialCapacity, const PropertyTable&);
     ~PropertyTable();
 
+    // Ordered iteration methods.
+    iterator begin();
+    iterator end();
+    const_iterator begin() const;
+    const_iterator end() const;
+
     // Find a value in the table.
-    std::tuple<PropertyOffset, unsigned> get(const KeyType&);
+    find_iterator find(const KeyType&);
+    ValueType* get(const KeyType&);
     // Add a value to the table
-    std::tuple<PropertyOffset, unsigned, bool> WARN_UNUSED_RETURN add(VM&, const ValueType& entry);
+    std::pair<find_iterator, bool> WARN_UNUSED_RETURN add(VM&, const ValueType& entry);
     // Remove a value from the table.
-    std::tuple<PropertyOffset, unsigned> take(VM&, const KeyType&);
-    PropertyOffset updateAttributeIfExists(const KeyType&, unsigned attributes);
-
-    PropertyOffset renumberPropertyOffsets(JSObject*, unsigned inlineCapacity, Vector<JSValue>&);
-
-    void seal();
-    void freeze();
-
-    bool isSealed() const;
-    bool isFrozen() const;
+    void remove(VM&, const find_iterator&);
+    void remove(VM&, const KeyType&);
 
     // Returns the number of values in the hashtable.
     unsigned size() const;
@@ -173,9 +200,10 @@ public:
     size_t sizeInMemory();
     void checkConsistency();
 #endif
-
-    template<typename Functor>
-    void forEachProperty(const Functor&) const;
+    
+    static ptrdiff_t offsetOfIndexSize() { return OBJECT_OFFSETOF(PropertyTable, m_indexSize); }
+    static ptrdiff_t offsetOfIndexMask() { return OBJECT_OFFSETOF(PropertyTable, m_indexMask); }
+    static ptrdiff_t offsetOfIndex() { return OBJECT_OFFSETOF(PropertyTable, m_index); }
 
     static constexpr unsigned EmptyEntryIndex = 0;
 
@@ -189,13 +217,10 @@ private:
     void finishCreation(VM&);
 
     // Used to insert a value known not to be in the table, and where we know capacity to be available.
-    template<typename Index, typename Entry>
-    void reinsert(Index*, Entry*, const ValueType& entry);
-
-    static bool canFitInCompact(const ValueType& entry) { return entry.offset() <= UINT8_MAX; }
+    void reinsert(const ValueType& entry);
 
     // Rehash the table. Used to grow, or to recover deleted slots.
-    void rehash(VM&, unsigned newCapacity, bool canStayCompact);
+    void rehash(VM&, unsigned newCapacity);
 
     // The capacity of the table of values is half of the size of the index.
     unsigned tableCapacity() const;
@@ -213,113 +238,63 @@ private:
     template<typename T>
     static T* skipDeletedEntries(T* valuePtr, T* endValuePtr);
 
+    // The table of values lies after the hash index.
+    ValueType* table();
+    const ValueType* table() const;
+
+    ValueType* tableEnd() { return table() + usedCount(); }
+    const ValueType* tableEnd() const { return table() + usedCount(); }
+
     // total number of  used entries in the values array - by either valid entries, or deleted ones.
     unsigned usedCount() const;
 
     // The size in bytes of data needed for by the table.
-    size_t dataSize(bool isCompact);
-    static size_t dataSize(bool isCompact, unsigned indexSize);
+    size_t dataSize();
 
     // Calculates the appropriate table size (rounds up to a power of two).
     static unsigned sizeForCapacity(unsigned capacity);
 
     // Check if capacity is available.
-    bool canInsert(const ValueType&);
-
-    void remove(VM&, KeyType, unsigned entryIndex, unsigned index);
-
-    struct FindResult {
-        unsigned entryIndex;
-        unsigned index;
-        PropertyOffset offset;
-        unsigned attributes;
-    };
-
-    FindResult find(const KeyType&);
-
-    template<typename Index, typename Entry>
-    ALWAYS_INLINE FindResult findImpl(const Index*, const Entry*, const KeyType&);
-
-    bool isCompact() const { return m_indexVector & isCompactFlag; }
-
-    template<typename Functor>
-    void forEachPropertyMutable(const Functor&);
-
-    // The table of values lies after the hash index.
-    static CompactPropertyTableEntry* tableFromIndexVector(uint8_t* index, unsigned indexSize)
-    {
-        return bitwise_cast<CompactPropertyTableEntry*>(index + indexSize);
-    }
-    static const CompactPropertyTableEntry* tableFromIndexVector(const uint8_t* index, unsigned indexSize)
-    {
-        return bitwise_cast<const CompactPropertyTableEntry*>(index + indexSize);
-    }
-    static PropertyTableEntry* tableFromIndexVector(uint32_t* index, unsigned indexSize)
-    {
-        return bitwise_cast<PropertyTableEntry*>(index + indexSize);
-    }
-    static const PropertyTableEntry* tableFromIndexVector(const uint32_t* index, unsigned indexSize)
-    {
-        return bitwise_cast<const PropertyTableEntry*>(index + indexSize);
-    }
-
-    CompactPropertyTableEntry* tableFromIndexVector(uint8_t* index) { return tableFromIndexVector(index, m_indexSize); }
-    const CompactPropertyTableEntry* tableFromIndexVector(const uint8_t* index) const { return tableFromIndexVector(index, m_indexSize); }
-    PropertyTableEntry* tableFromIndexVector(uint32_t* index) { return tableFromIndexVector(index, m_indexSize); }
-    const PropertyTableEntry* tableFromIndexVector(const uint32_t* index) const { return tableFromIndexVector(index, m_indexSize); }
-
-    CompactPropertyTableEntry* tableEndFromIndexVector(uint8_t* index)
-    {
-        return tableFromIndexVector(index) + usedCount();
-    }
-    const CompactPropertyTableEntry* tableEndFromIndexVector(const uint8_t* index) const
-    {
-        return tableFromIndexVector(index) + usedCount();
-    }
-    PropertyTableEntry* tableEndFromIndexVector(uint32_t* index)
-    {
-        return tableFromIndexVector(index) + usedCount();
-    }
-    const PropertyTableEntry* tableEndFromIndexVector(const uint32_t* index) const
-    {
-        return tableFromIndexVector(index) + usedCount();
-    }
-
-    static uintptr_t allocateIndexVector(bool isCompact, unsigned indexSize);
-    static uintptr_t allocateZeroedIndexVector(bool isCompact, unsigned indexSize);
-    static void destroyIndexVector(uintptr_t indexVector);
-
-    template<typename Func>
-    static ALWAYS_INLINE auto withIndexVector(uintptr_t indexVector, Func&& function) -> decltype(auto)
-    {
-        if (indexVector & isCompactFlag)
-            return function(bitwise_cast<uint8_t*>(indexVector & indexVectorMask));
-        return function(bitwise_cast<uint32_t*>(indexVector & indexVectorMask));
-    }
-
-    template<typename Func>
-    ALWAYS_INLINE auto withIndexVector(Func&& function) const -> decltype(auto)
-    {
-        return withIndexVector(m_indexVector, std::forward<Func>(function));
-    }
-
-    static constexpr uintptr_t isCompactFlag = 0x1;
-    static constexpr uintptr_t indexVectorMask = ~isCompactFlag;
+    bool canInsert();
 
     unsigned m_indexSize;
     unsigned m_indexMask;
-    uintptr_t m_indexVector;
+    unsigned* m_index;
     unsigned m_keyCount;
     unsigned m_deletedCount;
     std::unique_ptr<Vector<PropertyOffset>> m_deletedOffsets;
 
     static constexpr unsigned MinimumTableSize = 16;
-    static_assert(MinimumTableSize >= 16, "compact index is uint8_t and we should keep 16 byte aligned entries after this array");
 };
 
-template<typename Index, typename Entry>
-PropertyTable::FindResult PropertyTable::findImpl(const Index* indexVector, const Entry* table, const KeyType& key)
+inline PropertyTable::iterator PropertyTable::begin()
 {
+    auto* tableEnd = this->tableEnd();
+    return iterator(skipDeletedEntries(table(), tableEnd), tableEnd);
+}
+
+inline PropertyTable::iterator PropertyTable::end()
+{
+    auto* tableEnd = this->tableEnd();
+    return iterator(tableEnd, tableEnd);
+}
+
+inline PropertyTable::const_iterator PropertyTable::begin() const
+{
+    auto* tableEnd = this->tableEnd();
+    return const_iterator(skipDeletedEntries(table(), tableEnd), tableEnd);
+}
+
+inline PropertyTable::const_iterator PropertyTable::end() const
+{
+    auto* tableEnd = this->tableEnd();
+    return const_iterator(tableEnd, tableEnd);
+}
+
+inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
+{
+    ASSERT(key);
+    ASSERT(key->isAtom() || key->isSymbol());
     unsigned hash = IdentifierRepHash::hash(key);
 
 #if DUMP_PROPERTYMAP_STATS
@@ -327,15 +302,11 @@ PropertyTable::FindResult PropertyTable::findImpl(const Index* indexVector, cons
 #endif
 
     while (true) {
-        unsigned index = hash & m_indexMask;
-        unsigned entryIndex = indexVector[index];
+        unsigned entryIndex = m_index[hash & m_indexMask];
         if (entryIndex == EmptyEntryIndex)
-            return FindResult { entryIndex, index, invalidOffset, 0 };
-        const auto& entry = table[entryIndex - 1];
-        if (key == entry.key()) {
-            ASSERT(!m_deletedOffsets || !m_deletedOffsets->contains(entry.offset()));
-            return FindResult { entryIndex, index, entry.offset(), entry.attributes() };
-        }
+            return std::make_pair((ValueType*)nullptr, hash & m_indexMask);
+        if (key == table()[entryIndex - 1].key)
+            return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
 
 #if DUMP_PROPERTYMAP_STATS
         ++propertyTableStats->numCollisions;
@@ -343,113 +314,106 @@ PropertyTable::FindResult PropertyTable::findImpl(const Index* indexVector, cons
 
 #if DUMP_PROPERTYMAP_COLLISIONS
         dataLog("PropertyTable collision for ", key, " (", hash, ")\n");
-        dataLog("Collided with ", entry.key(), "(", IdentifierRepHash::hash(entry.key()), ")\n");
+        dataLog("Collided with ", table()[entryIndex - 1].key, "(", IdentifierRepHash::hash(table()[entryIndex - 1].key), ")\n");
 #endif
 
         hash++;
     }
 }
 
-inline PropertyTable::FindResult PropertyTable::find(const KeyType& key)
-{
-    ASSERT(key);
-    ASSERT(key->isAtom() || key->isSymbol());
-    return withIndexVector([&](auto* vector) {
-        return findImpl(vector, tableFromIndexVector(vector), key);
-    });
-}
-
-inline std::tuple<PropertyOffset, unsigned> PropertyTable::get(const KeyType& key)
+inline PropertyTable::ValueType* PropertyTable::get(const KeyType& key)
 {
     ASSERT(key);
     ASSERT(key->isAtom() || key->isSymbol());
     ASSERT(key != PROPERTY_MAP_DELETED_ENTRY_KEY);
 
     if (!m_keyCount)
-        return std::tuple { invalidOffset, 0 };
+        return nullptr;
 
-    FindResult result = find(key);
-    return std::tuple { result.offset, result.attributes };
+    unsigned hash = IdentifierRepHash::hash(key);
+
+#if DUMP_PROPERTYMAP_STATS
+    ++propertyTableStats->numLookups;
+#endif
+
+    while (true) {
+        unsigned entryIndex = m_index[hash & m_indexMask];
+        if (entryIndex == EmptyEntryIndex)
+            return nullptr;
+        if (key == table()[entryIndex - 1].key) {
+            ASSERT(!m_deletedOffsets || !m_deletedOffsets->contains(table()[entryIndex - 1].offset));
+            return &table()[entryIndex - 1];
+        }
+
+#if DUMP_PROPERTYMAP_STATS
+        ++propertyTableStats->numLookupProbing;
+#endif
+
+        hash++;
+    }
 }
 
-inline std::tuple<PropertyOffset, unsigned, bool> WARN_UNUSED_RETURN PropertyTable::add(VM& vm, const ValueType& entry)
+inline std::pair<PropertyTable::find_iterator, bool> WARN_UNUSED_RETURN PropertyTable::add(VM& vm, const ValueType& entry)
 {
-    ASSERT(!m_deletedOffsets || !m_deletedOffsets->contains(entry.offset()));
+    ASSERT(!m_deletedOffsets || !m_deletedOffsets->contains(entry.offset));
 
     // Look for a value with a matching key already in the array.
-    FindResult result = find(entry.key());
-    if (result.offset != invalidOffset)
-        return std::tuple { result.offset, result.attributes, false };
+    find_iterator iter = find(entry.key);
+    if (iter.first)
+        return std::make_pair(iter, false);
 
 #if DUMP_PROPERTYMAP_STATS
     ++propertyTableStats->numAdds;
 #endif
 
     // Ref the key
-    entry.key()->ref();
+    entry.key->ref();
 
     // ensure capacity is available.
-    if (!canInsert(entry)) {
-        rehash(vm, m_keyCount + 1, canFitInCompact(entry));
-        result = find(entry.key());
-        ASSERT(result.offset == invalidOffset);
-        ASSERT(result.entryIndex == EmptyEntryIndex);
+    if (!canInsert()) {
+        rehash(vm, m_keyCount + 1);
+        iter = find(entry.key);
+        ASSERT(!iter.first);
     }
 
     // Allocate a slot in the hashtable, and set the index to reference this.
-    ASSERT(!isCompact() || usedCount() < UINT8_MAX);
-    unsigned index = result.index;
     unsigned entryIndex = usedCount() + 1;
-    withIndexVector([&](auto* vector) {
-        vector[index] = entryIndex;
-        tableFromIndexVector(vector)[entryIndex - 1] = entry;
-    });
+    m_index[iter.second] = entryIndex;
+    iter.first = &table()[entryIndex - 1];
+    *iter.first = entry;
 
     ++m_keyCount;
     
-    return std::tuple { entry.offset(), entry.attributes(), true };
+    return std::make_pair(iter, true);
 }
 
-inline void PropertyTable::remove(VM& vm, KeyType key, unsigned entryIndex, unsigned index)
+inline void PropertyTable::remove(VM& vm, const find_iterator& iter)
 {
+    // Removing a key that doesn't exist does nothing!
+    if (!iter.first)
+        return;
+
 #if DUMP_PROPERTYMAP_STATS
     ++propertyTableStats->numRemoves;
 #endif
 
     // Replace this one element with the deleted sentinel. Also clear out
     // the entry so we can iterate all the entries as needed.
-    withIndexVector([&](auto* vector) {
-        vector[index] = deletedEntryIndex();
-        tableFromIndexVector(vector)[entryIndex - 1].setKey(PROPERTY_MAP_DELETED_ENTRY_KEY);
-    });
-    key->deref();
+    m_index[iter.second] = deletedEntryIndex();
+    iter.first->key->deref();
+    iter.first->key = PROPERTY_MAP_DELETED_ENTRY_KEY;
 
     ASSERT(m_keyCount >= 1);
     --m_keyCount;
     ++m_deletedCount;
 
     if (m_deletedCount * 4 >= m_indexSize)
-        rehash(vm, m_keyCount, true);
+        rehash(vm, m_keyCount);
 }
 
-inline std::tuple<PropertyOffset, unsigned> PropertyTable::take(VM& vm, const KeyType& key)
+inline void PropertyTable::remove(VM& vm, const KeyType& key)
 {
-    FindResult result = find(key);
-    if (result.offset != invalidOffset)
-        remove(vm, key, result.entryIndex, result.index);
-    return std::tuple { result.offset, result.attributes };
-}
-
-inline PropertyOffset PropertyTable::updateAttributeIfExists(const KeyType& key, unsigned attributes)
-{
-    return withIndexVector([&](auto* vector) -> PropertyOffset {
-        auto* table = tableFromIndexVector(vector);
-        FindResult result = findImpl(vector, table, key);
-        if (result.offset == invalidOffset)
-            return invalidOffset;
-        table[result.entryIndex - 1].setAttributes(attributes);
-        return result.offset;
-    });
+    remove(vm, find(key));
 }
 
 // returns the number of values in the hashtable.
@@ -515,15 +479,14 @@ inline PropertyTable* PropertyTable::copy(VM& vm, unsigned newCapacity)
 #ifndef NDEBUG
 inline size_t PropertyTable::sizeInMemory()
 {
-    size_t result = sizeof(PropertyTable) + dataSize(isCompact());
+    size_t result = sizeof(PropertyTable) + dataSize();
     if (m_deletedOffsets)
         result += (m_deletedOffsets->capacity() * sizeof(PropertyOffset));
     return result;
 }
 #endif
 
-template<typename Index, typename Entry>
-inline void PropertyTable::reinsert(Index* indexVector, Entry* table, const ValueType& entry)
+inline void PropertyTable::reinsert(const ValueType& entry)
 {
 #if DUMP_PROPERTYMAP_STATS
     ++propertyTableStats->numReinserts;
@@ -531,58 +494,44 @@ inline void PropertyTable::reinsert(Index* indexVector, Entry* table, const Valu
 
     // Used to insert a value known not to be in the table, and where
     // we know capacity to be available.
-    ASSERT(canInsert(entry));
-    FindResult result = findImpl(indexVector, table, entry.key());
-    ASSERT(result.offset == invalidOffset);
-    ASSERT(result.entryIndex == EmptyEntryIndex);
+    ASSERT(canInsert());
+    find_iterator iter = find(entry.key);
+    ASSERT(!iter.first);
 
-    ASSERT(!isCompact() || usedCount() < UINT8_MAX);
     unsigned entryIndex = usedCount() + 1;
-    indexVector[result.index] = entryIndex;
-    table[entryIndex - 1] = entry;
+    m_index[iter.second] = entryIndex;
+    table()[entryIndex - 1] = entry;
 
     ++m_keyCount;
 }
 
-inline void PropertyTable::rehash(VM& vm, unsigned newCapacity, bool canStayCompact)
+inline void PropertyTable::rehash(VM& vm, unsigned newCapacity)
 {
 #if DUMP_PROPERTYMAP_STATS
     ++propertyTableStats->numRehashes;
 #endif
 
-    uintptr_t oldIndexVector = m_indexVector;
-    bool oldIsCompact = oldIndexVector & isCompactFlag;
-    unsigned oldIndexSize = m_indexSize;
-    unsigned oldUsedCount = usedCount();
-    size_t oldDataSize = dataSize(oldIsCompact, oldIndexSize);
+    size_t oldDataSize = dataSize();
+    unsigned* oldEntryIndices = m_index;
+    iterator iter = this->begin();
+    iterator end = this->end();
 
     m_indexSize = sizeForCapacity(newCapacity);
     m_indexMask = m_indexSize - 1;
     m_keyCount = 0;
     m_deletedCount = 0;
 
-    // Once table gets non-compact, we do not change it back to compact again.
-    // This is because some of property offset can be larger than UINT8_MAX already.
-    bool isCompact = canStayCompact && oldIsCompact && tableCapacity() < UINT8_MAX;
-    m_indexVector = allocateZeroedIndexVector(isCompact, m_indexSize);
-    withIndexVector([&](auto* vector) {
-        auto* table = tableFromIndexVector(vector);
-        withIndexVector(oldIndexVector, [&](const auto* oldVector) {
-            const auto* oldCursor = tableFromIndexVector(oldVector, oldIndexSize);
-            const auto* oldEnd = oldCursor + oldUsedCount;
-            for (; oldCursor != oldEnd; ++oldCursor) {
-                if (oldCursor->key() == PROPERTY_MAP_DELETED_ENTRY_KEY)
-                    continue;
-                ASSERT(canInsert(*oldCursor));
-                reinsert(vector, table, *oldCursor);
-            }
-        });
-    });
-    destroyIndexVector(oldIndexVector);
+    m_index = static_cast<unsigned*>(PropertyTableMalloc::zeroedMalloc(dataSize()));
 
-    size_t newDataSize = dataSize(this->isCompact());
-    if (oldDataSize < newDataSize)
-        vm.heap.reportExtraMemoryAllocated(newDataSize - oldDataSize);
+    for (; iter != end; ++iter) {
+        ASSERT(canInsert());
+        reinsert(*iter);
+    }
+
+    PropertyTableMalloc::free(oldEntryIndices);
+
+    if (oldDataSize < dataSize())
+        vm.heap.reportExtraMemoryAllocated(dataSize() - oldDataSize);
 }
 
 inline unsigned PropertyTable::tableCapacity() const { return m_indexSize >> 1; }
@@ -592,9 +541,21 @@ inline unsigned PropertyTable::deletedEntryIndex() const { return tableCapacity(
 template<typename T>
 inline T* PropertyTable::skipDeletedEntries(T* valuePtr, T* endValuePtr)
 {
-    while (valuePtr < endValuePtr && valuePtr->key() == PROPERTY_MAP_DELETED_ENTRY_KEY)
+    while (valuePtr < endValuePtr && valuePtr->key == PROPERTY_MAP_DELETED_ENTRY_KEY)
         ++valuePtr;
     return valuePtr;
+}
+
+inline PropertyTable::ValueType* PropertyTable::table()
+{
+    // The table of values lies after the hash index.
+    return reinterpret_cast_ptr<ValueType*>(m_index + m_indexSize);
+}
+
+inline const PropertyTable::ValueType* PropertyTable::table() const
+{
+    // The table of values lies after the hash index.
+    return reinterpret_cast_ptr<const ValueType*>(m_index + m_indexSize);
 }
 
 inline unsigned PropertyTable::usedCount() const
@@ -603,33 +564,12 @@ inline unsigned PropertyTable::usedCount() const
     return m_keyCount + m_deletedCount;
 }
 
-inline size_t PropertyTable::dataSize(bool isCompact, unsigned indexSize)
-{
-    if (isCompact)
-        return indexSize * sizeof(uint8_t) + ((indexSize >> 1) + 1) * sizeof(CompactPropertyTableEntry);
-    return indexSize * sizeof(uint32_t) + ((indexSize >> 1) + 1) * sizeof(PropertyTableEntry);
-}
-
-inline size_t PropertyTable::dataSize(bool isCompact)
+inline size_t PropertyTable::dataSize()
 {
     // The size in bytes of data needed for by the table.
     // Ensure that this function can be called concurrently.
-    return dataSize(isCompact, m_indexSize);
-}
-
-ALWAYS_INLINE uintptr_t PropertyTable::allocateIndexVector(bool isCompact, unsigned indexSize)
-{
-    return bitwise_cast<uintptr_t>(PropertyTableMalloc::malloc(PropertyTable::dataSize(isCompact, indexSize))) | (isCompact ? isCompactFlag : 0);
-}
-
-ALWAYS_INLINE uintptr_t PropertyTable::allocateZeroedIndexVector(bool isCompact, unsigned indexSize)
-{
-    return bitwise_cast<uintptr_t>(PropertyTableMalloc::zeroedMalloc(PropertyTable::dataSize(isCompact, indexSize))) | (isCompact ? isCompactFlag : 0);
-}
-
-ALWAYS_INLINE void PropertyTable::destroyIndexVector(uintptr_t indexVector)
-{
-    PropertyTableMalloc::free(bitwise_cast<void*>(indexVector & indexVectorMask));
+    unsigned indexSize = m_indexSize;
+    return indexSize * sizeof(unsigned) + ((indexSize >> 1) + 1) * sizeof(ValueType);
 }
 
 inline unsigned PropertyTable::sizeForCapacity(unsigned capacity)
@@ -639,28 +579,9 @@ inline unsigned PropertyTable::sizeForCapacity(unsigned capacity)
     return nextPowerOf2(capacity + 1) * 2;
 }
 
-inline bool PropertyTable::canInsert(const ValueType& entry)
+inline bool PropertyTable::canInsert()
 {
-    if (usedCount() >= tableCapacity())
-        return false;
-    if (!isCompact())
-        return true;
-    return canFitInCompact(entry);
-}
-
-template<typename Functor>
-inline void PropertyTable::forEachProperty(const Functor& functor) const
-{
-    withIndexVector([&](const auto* vector) {
-        const auto* cursor = tableFromIndexVector(vector);
-        const auto* end = tableEndFromIndexVector(vector);
-        for (; cursor != end; ++cursor) {
-            if (cursor->key() == PROPERTY_MAP_DELETED_ENTRY_KEY)
-                continue;
-            if (functor(*cursor) == IterationStatus::Done)
-                return;
-        }
-    });
+    return usedCount() < tableCapacity();
 }
 
 } // namespace JSC

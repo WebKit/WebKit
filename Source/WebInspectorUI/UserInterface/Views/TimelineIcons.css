@@ -35,10 +35,6 @@
     content: url(../Images/IdentifierIcons.svg#CPUInstrument-light);
 }
 
-.screenshots-icon .icon {
-    content: url(../Images/IdentifierIcons.svg#ScreenshotsInstrument-light);
-}
-
 .memory-icon .icon {
     content: url(../Images/IdentifierIcons.svg#MemoryInstrument-light);
 }
@@ -156,10 +152,6 @@
 
     .cpu-icon .icon {
         content: url(../Images/IdentifierIcons.svg#CPUInstrument-dark);
-    }
-
-    .screenshots-icon .icon {
-        content: url(../Images/IdentifierIcons.svg#ScreenshotsInstrument-dark);
     }
 
     .memory-icon .icon {

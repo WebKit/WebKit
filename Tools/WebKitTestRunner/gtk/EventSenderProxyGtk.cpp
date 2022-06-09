@@ -77,6 +77,7 @@ static inline WebKitWebViewBase* toWebKitGLibAPI(PlatformWKView view)
 
 EventSenderProxy::~EventSenderProxy()
 {
+    webkitWebViewBaseSetWheelHasPreciseDeltas(toWebKitGLibAPI(m_testController->mainWebView()->platformView()), false);
 }
 
 static unsigned eventSenderButtonToGDKButton(unsigned button)
@@ -297,7 +298,7 @@ void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
         return;
 
     webkitWebViewBaseSynthesizeWheelEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()),
-        horizontal, vertical, m_position.x, m_position.y, WheelEventPhase::NoPhase, WheelEventPhase::NoPhase, m_hasPreciseDeltas);
+        horizontal, vertical, m_position.x, m_position.y, WheelEventPhase::NoPhase, WheelEventPhase::NoPhase);
 }
 
 void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, bool paged)
@@ -309,7 +310,7 @@ void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, boo
     }
 
     webkitWebViewBaseSynthesizeWheelEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()),
-        horizontal / pixelsPerScrollTick, vertical / pixelsPerScrollTick, m_position.x, m_position.y, WheelEventPhase::NoPhase, WheelEventPhase::NoPhase, m_hasPreciseDeltas);
+        horizontal / pixelsPerScrollTick, vertical / pixelsPerScrollTick, m_position.x, m_position.y, WheelEventPhase::NoPhase, WheelEventPhase::NoPhase);
 }
 
 void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int horizontal, int vertical, int phase, int momentum)
@@ -353,12 +354,12 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int horizontal, i
     }
 
     webkitWebViewBaseSynthesizeWheelEvent(toWebKitGLibAPI(m_testController->mainWebView()->platformView()),
-        horizontal, vertical, m_position.x, m_position.y, eventPhase, eventMomentumPhase, m_hasPreciseDeltas);
+        horizontal, vertical, m_position.x, m_position.y, eventPhase, eventMomentumPhase);
 }
 
 void EventSenderProxy::setWheelHasPreciseDeltas(bool hasPreciseDeltas)
 {
-    m_hasPreciseDeltas = hasPreciseDeltas;
+    webkitWebViewBaseSetWheelHasPreciseDeltas(toWebKitGLibAPI(m_testController->mainWebView()->platformView()), hasPreciseDeltas);
 }
 
 void EventSenderProxy::leapForward(int milliseconds)

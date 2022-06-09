@@ -47,7 +47,6 @@
 
 OBJC_CLASS NSString;
 OBJC_CLASS UIKeyboardInputMode;
-OBJC_CLASS UIPasteboardConsistencyEnforcer;
 OBJC_CLASS WKWebViewConfiguration;
 
 namespace WTR {
@@ -127,7 +126,6 @@ public:
     void setBeforeUnloadReturnValue(bool value) { m_beforeUnloadReturnValue = value; }
 
     void simulateWebNotificationClick(WKDataRef notificationID);
-    void simulateWebNotificationClickForServiceWorkerNotifications();
 
     // Geolocation.
     void setGeolocationPermission(bool);
@@ -373,14 +371,6 @@ public:
     void setIsMediaKeySystemPermissionGranted(bool);
     WKRetainPtr<WKStringRef> takeViewPortSnapshot();
 
-    WKPreferencesRef platformPreferences();
-
-    bool grantNotificationPermission(WKStringRef origin);
-    bool denyNotificationPermission(WKStringRef origin);
-    bool denyNotificationPermissionOnPrompt(WKStringRef origin);
-
-    PlatformWebView* createOtherPlatformWebView(PlatformWebView* parentView, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef);
-
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -418,6 +408,7 @@ private:
     void platformRunUntil(bool& done, WTF::Seconds timeout);
     void platformDidCommitLoadForFrame(WKPageRef, WKFrameRef);
     WKContextRef platformContext();
+    WKPreferencesRef platformPreferences();
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
 
@@ -440,10 +431,6 @@ private:
     void decidePolicyForGeolocationPermissionRequestIfPossible();
     void decidePolicyForUserMediaPermissionRequestIfPossible();
 
-#if PLATFORM(IOS_FAMILY)
-    UIPasteboardConsistencyEnforcer *pasteboardConsistencyEnforcer();
-#endif
-
     // WKContextInjectedBundleClient
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
     static void didReceiveSynchronousMessageFromInjectedBundleWithListener(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, WKMessageListenerRef, const void*);
@@ -461,12 +448,12 @@ private:
     void didReceiveRawKeyUpMessageFromInjectedBundle(WKDictionaryRef messageBodyDictionary, bool synchronous);
 
     // WKContextClient
-    static void networkProcessDidCrashWithDetails(WKContextRef, WKProcessID, WKProcessTerminationReason, const void*);
-    void networkProcessDidCrash(WKProcessID, WKProcessTerminationReason);
-    static void serviceWorkerProcessDidCrashWithDetails(WKContextRef, WKProcessID, WKProcessTerminationReason, const void*);
-    void serviceWorkerProcessDidCrash(WKProcessID, WKProcessTerminationReason);
-    static void gpuProcessDidCrashWithDetails(WKContextRef, WKProcessID, WKProcessTerminationReason, const void*);
-    void gpuProcessDidCrash(WKProcessID, WKProcessTerminationReason);
+    static void networkProcessDidCrash(WKContextRef, const void*);
+    void networkProcessDidCrash();
+    static void serviceWorkerProcessDidCrash(WKContextRef, WKProcessID, const void*);
+    void serviceWorkerProcessDidCrash(WKProcessID);
+    static void gpuProcessDidCrash(WKContextRef, WKProcessID, const void*);
+    void gpuProcessDidCrash(WKProcessID);
 
     // WKPageNavigationClient
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef userData, const void*);
@@ -579,7 +566,6 @@ private:
     WKRetainPtr<WKStringRef> m_testPluginDirectory;
 
     WebNotificationProvider m_webNotificationProvider;
-    HashSet<String> m_notificationOriginsToDenyOnPrompt;
 
     std::unique_ptr<PlatformWebView> m_mainWebView;
     Vector<UniqueRef<PlatformWebView>> m_auxiliaryWebViews;
@@ -589,7 +575,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_inputModeSwizzlers;
-    RetainPtr<UIPasteboardConsistencyEnforcer> m_pasteboardConsistencyEnforcer;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
 #endif
@@ -606,7 +591,7 @@ private:
     bool m_forceNoTimeout { false };
 
     bool m_didPrintWebProcessCrashedMessage { false };
-    bool m_shouldExitWhenAuxiliaryProcessCrashes { true };
+    bool m_shouldExitWhenWebProcessCrashes { true };
     
     bool m_beforeUnloadReturnValue { true };
 

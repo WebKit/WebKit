@@ -30,7 +30,6 @@
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 #include "ResponsivenessTimer.h"
-#include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
@@ -145,8 +144,6 @@ public:
     void ref() final { ThreadSafeRefCounted::ref(); }
     void deref() final { ThreadSafeRefCounted::deref(); }
 
-    std::optional<SandboxExtension::Handle> createMobileGestaltSandboxExtensionIfNeeded() const;
-
 protected:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
@@ -190,13 +187,12 @@ private:
     bool m_didBeginResponsivenessChecks { false };
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
-    MonotonicTime m_processStart;
 };
 
 template<typename T>
 bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
 {
-    static_assert(!T::isSync, "Async message expected");
+    COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
     auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
     encoder.get() << message.arguments();
@@ -207,7 +203,7 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
 template<typename U> 
 AuxiliaryProcessProxy::SendSyncResult AuxiliaryProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
 {
-    static_assert(U::isSync, "Sync message expected");
+    COMPILE_ASSERT(U::isSync, SyncMessageExpected);
 
     if (!m_connection)
         return { };
@@ -220,7 +216,7 @@ AuxiliaryProcessProxy::SendSyncResult AuxiliaryProcessProxy::sendSync(U&& messag
 template<typename T, typename C>
 uint64_t AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
-    static_assert(!T::isSync, "Async message expected");
+    COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
     auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
     uint64_t listenerID = IPC::nextAsyncReplyHandlerID();

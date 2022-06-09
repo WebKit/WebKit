@@ -27,11 +27,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FlexFormattingConstraints.h"
 #include "FlexFormattingGeometry.h"
 #include "FlexFormattingState.h"
-#include "FlexLayout.h"
-#include "FlexRect.h"
 #include "FormattingQuirks.h"
 #include <wtf/IsoMalloc.h>
 
@@ -45,23 +42,16 @@ class FlexFormattingContext final : public FormattingContext {
 public:
     FlexFormattingContext(const ContainerBox& formattingContextRoot, FlexFormattingState&);
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     LayoutUnit usedContentHeight() const override;
+
+    IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
     const FlexFormattingGeometry& formattingGeometry() const final { return m_flexFormattingGeometry; }
     const FormattingQuirks& formattingQuirks() const final { return m_flexFormattingQuirks; }
 
-    void layoutInFlowContentForIntegration(const ConstraintsForFlexContent&);
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
-
 private:
-    void sizeAndPlaceFlexItems(const ConstraintsForFlexContent&);
+    void sizeAndPlaceFlexItems(const ConstraintsForInFlowContent&);
     void computeIntrinsicWidthConstraintsForFlexItems();
-
-    FlexLayout::LogicalFlexItems convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent&);
-    void setFlexItemsGeometry(const FlexLayout::LogicalFlexItems&, const ConstraintsForFlexContent&);
-
-    std::optional<LayoutUnit> computedAutoMarginValueForFlexItems(const ConstraintsForFlexContent&);
 
     const FlexFormattingState& formattingState() const { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }
     FlexFormattingState& formattingState() { return downcast<FlexFormattingState>(FormattingContext::formattingState()); }

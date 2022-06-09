@@ -24,7 +24,6 @@
 #include "GraphicsLayerFactory.h"
 #include "ImageBuffer.h"
 #include "NicosiaAnimation.h"
-#include "TransformOperation.h"
 
 #if !USE(COORDINATED_GRAPHICS)
 
@@ -417,10 +416,10 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         return;
 
     if (m_changeMask & ChildrenChange) {
-        Vector<TextureMapperLayer*> rawChildren;
+        Vector<GraphicsLayer*> rawChildren;
         rawChildren.reserveInitialCapacity(children().size());
-        for (auto& child : children())
-            rawChildren.uncheckedAppend(&downcast<GraphicsLayerTextureMapper>(child.get()).layer());
+        for (auto& layer : children())
+            rawChildren.uncheckedAppend(layer.ptr());
         m_layer.setChildren(rawChildren);
     }
 
@@ -518,7 +517,7 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
         m_layer.setAnimations(m_animations);
 
     if (m_changeMask & AnimationStarted)
-        client().notifyAnimationStarted(this, emptyString(), m_animationStartTime);
+        client().notifyAnimationStarted(this, "", m_animationStartTime);
 
     m_changeMask = NoChanges;
 }
@@ -611,8 +610,14 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
             return false;
     }
 
+    bool listsMatch = false;
+    bool hasBigRotation;
+
+    if (valueList.property() == AnimatedPropertyTransform)
+        listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
+
     const MonotonicTime currentTime = MonotonicTime::now();
-    m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, currentTime - Seconds(timeOffset), 0_s, Nicosia::Animation::AnimationState::Playing));
+    m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, listsMatch, currentTime - Seconds(timeOffset), 0_s, Nicosia::Animation::AnimationState::Playing));
     // m_animationStartTime is the time of the first real frame of animation, now or delayed by a negative offset.
     if (Seconds(timeOffset) > 0_s)
         m_animationStartTime = currentTime;

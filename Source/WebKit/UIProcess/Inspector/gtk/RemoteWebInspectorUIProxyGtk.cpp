@@ -56,7 +56,7 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
 {
     ASSERT(!m_webView);
 
-    auto preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
+    auto preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
@@ -109,13 +109,17 @@ void RemoteWebInspectorUIProxy::platformBringToFront()
 static void remoteFileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
 {
     GFile* file = G_FILE(sourceObject);
-    g_file_replace_contents_finish(file, result, nullptr, nullptr);
+    if (!g_file_replace_contents_finish(file, result, nullptr, nullptr))
+        return;
+
+    auto* page = static_cast<WebPageProxy*>(userData);
+    GUniquePtr<char> path(g_file_get_path(file));
+    page->send(Messages::RemoteWebInspectorUI::DidSave(path.get()));
 }
 
-void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
+void RemoteWebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
-    ASSERT(saveDatas.size() == 1);
-    UNUSED_PARAM(forceSaveAs);
+    UNUSED_PARAM(forceSaveDialog);
 
     GRefPtr<GtkFileChooserNative> dialog = adoptGRef(gtk_file_chooser_native_new("Save File",
         GTK_WINDOW(m_window), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
@@ -128,7 +132,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
     // unfortunately.
-    URL url { saveDatas[0].url };
+    URL url(URL(), suggestedURL);
     // Strip leading / character.
     gtk_file_chooser_set_current_name(chooser, url.path().substring(1).utf8().data());
 
@@ -137,14 +141,14 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
 
     Vector<uint8_t> dataVector;
     CString dataString;
-    if (saveDatas[0].base64Encoded) {
-        auto decodedData = base64Decode(saveDatas[0].content, Base64DecodeOptions::ValidatePadding);
+    if (base64Encoded) {
+        auto decodedData = base64Decode(content, Base64DecodeOptions::ValidatePadding);
         if (!decodedData)
             return;
         decodedData->shrinkToFit();
         dataVector = WTFMove(*decodedData);
     } else
-        dataString = saveDatas[0].content.utf8();
+        dataString = content.utf8();
 
     const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<char*>(dataVector.data());
     size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
@@ -154,14 +158,8 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, remoteFileReplaceContentsCallback, m_inspectorPage);
 }
 
-void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+void RemoteWebInspectorUIProxy::platformAppend(const String&, const String&)
 {
-    completionHandler(nullString());
-}
-
-void RemoteWebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
-{
-    completionHandler({ });
 }
 
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect&)
@@ -177,10 +175,6 @@ void RemoteWebInspectorUIProxy::platformStartWindowDrag()
 }
 
 void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String&)
-{
-}
-
-void RemoteWebInspectorUIProxy::platformRevealFileExternally(const String&)
 {
 }
 

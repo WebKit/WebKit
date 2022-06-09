@@ -12,7 +12,7 @@ info: |
 
 esid: sec-error-message
 features: [error-cause]
-includes: [compareArray.js]
+includes: [deepEqual.js]
 ---*/
 
 var message = "my-message";
@@ -34,4 +34,4 @@ new Error(
   },
 );
 
-assert.compareArray(sequence, [ "toString", "cause" ], "accessing own properties on sequence");
+assert.deepEqual(sequence, [ "toString", "cause" ], "accessing own properties on sequence");

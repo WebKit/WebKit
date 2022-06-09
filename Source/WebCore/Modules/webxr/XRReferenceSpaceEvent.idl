@@ -25,11 +25,11 @@
 
 // https://immersive-web.github.io/webxr/#dictdef-xrreferencespaceeventinit
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
 ] dictionary XRReferenceSpaceEventInit : EventInit {
     required WebXRReferenceSpace referenceSpace;
-    WebXRRigidTransform? transform;
+    WebXRRigidTransform transform;
 };
 
 // https://immersive-web.github.io/webxr/#xrreferencespaceevent
@@ -39,7 +39,7 @@
     SecureContext,
     Exposed=Window
 ] interface XRReferenceSpaceEvent : Event {
-    constructor([AtomString] DOMString type, XRReferenceSpaceEventInit eventInitDict);
+    constructor(DOMString type, XRReferenceSpaceEventInit eventInitDict);
     [SameObject] readonly attribute WebXRReferenceSpace referenceSpace;
-    [SameObject] readonly attribute WebXRRigidTransform? transform;
+    [SameObject] readonly attribute WebXRRigidTransform transform;
 };

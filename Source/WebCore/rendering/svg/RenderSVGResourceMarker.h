@@ -62,7 +62,7 @@ public:
 private:
     void element() const = delete;
 
-    ASCIILiteral renderName() const override { return "RenderSVGResourceMarker"_s; }
+    const char* renderName() const override { return "RenderSVGResourceMarker"; }
 
     // Generates a transformation matrix usable to render marker content. Handles scaling the marker content
     // acording to SVGs markerUnits="strokeWidth" concept, when a strokeWidth value != -1 is passed in.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -104,25 +104,25 @@ static const char* imageTypeToMIMEType(ImageType type)
     }
 }
 
-static ASCIILiteral imageTypeToFakeFilename(ImageType type)
+static const char* imageTypeToFakeFilename(ImageType type)
 {
     switch (type) {
     case ImageType::Invalid:
         ASSERT_NOT_REACHED();
-        return { };
+        return nullptr;
     case ImageType::TIFF:
 #if PLATFORM(MAC)
-        return "image.png"_s; // For Web compatibility, we pretend to have PNG instead.
+        return "image.png"; // For Web compatibility, we pretend to have PNG instead.
 #else
         ASSERT_NOT_REACHED();
-        return { };
+        return nullptr;
 #endif
     case ImageType::PNG:
-        return "image.png"_s;
+        return "image.png";
     case ImageType::JPEG:
-        return "image.jpeg"_s;
+        return "image.jpeg";
     case ImageType::GIF:
-        return "image.gif"_s;
+        return "image.gif";
     }
 }
 
@@ -149,7 +149,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
         if (!items)
             return FileContentState::NoFileOrImageData;
 
-        mayContainFilePaths = items->size() != 1 || notFound != items->findIf([] (auto& item) {
+        mayContainFilePaths = items->size() != 1 || notFound != items->findMatching([] (auto& item) {
             return item.canBeTreatedAsAttachmentOrFile() || item.isNonTextType || item.containsFileURLAndFileUploadContent;
         });
     }
@@ -158,10 +158,10 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
     if (!mayContainFilePaths) {
         Vector<String> cocoaTypes;
         platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName, context());
-        if (cocoaTypes.findIf([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
+        if (cocoaTypes.findMatching([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
             return FileContentState::NoFileOrImageData;
 
-        auto indexOfURL = cocoaTypes.findIf([](auto& cocoaType) {
+        auto indexOfURL = cocoaTypes.findMatching([](auto& cocoaType) {
 #if PLATFORM(MAC)
             if (cocoaType == String(legacyURLPasteboardType()))
                 return true;
@@ -234,7 +234,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
         for (auto cocoaType : info.platformTypesByFidelity) {
             auto imageType = cocoaTypeToImageType(cocoaType);
             auto* mimeType = imageTypeToMIMEType(imageType);
-            if (!mimeType || !reader.shouldReadBuffer(String::fromLatin1(mimeType)))
+            if (!mimeType || !reader.shouldReadBuffer(mimeType))
                 continue;
             auto buffer = readBuffer(itemIndex, cocoaType);
 #if PLATFORM(MAC)
@@ -242,7 +242,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
                 buffer = convertTIFFToPNG(buffer.releaseNonNull());
 #endif
             if (buffer) {
-                reader.readBuffer(imageTypeToFakeFilename(imageType), String::fromLatin1(mimeType), buffer.releaseNonNull());
+                reader.readBuffer(imageTypeToFakeFilename(imageType), mimeType, buffer.releaseNonNull());
                 break;
             }
         }

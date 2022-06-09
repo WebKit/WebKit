@@ -24,7 +24,7 @@
 #if USE(EXTERNAL_HOLEPUNCH)
 #include "MediaPlayer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
-#include "TextureMapperPlatformLayerProxyGL.h"
+#include "TextureMapperPlatformLayerProxy.h"
 
 namespace WebCore {
 
@@ -33,11 +33,10 @@ static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
 MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch(MediaPlayer* player)
     : m_player(player)
     , m_readyTimer(RunLoop::main(), this, &MediaPlayerPrivateHolePunch::notifyReadyState)
-    , m_networkState(MediaPlayer::NetworkState::Empty)
 #if USE(NICOSIA)
     , m_nicosiaLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 #else
-    , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxyGL))
+    , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxy()))
 #endif
 {
     pushNextHolePunchBuffer();
@@ -74,7 +73,7 @@ FloatSize MediaPlayerPrivateHolePunch::naturalSize() const
 void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
 {
     auto proxyOperation =
-        [this](TextureMapperPlatformLayerProxyGL& proxy)
+        [this](TextureMapperPlatformLayerProxy& proxy)
         {
             Locker locker { proxy.lock() };
             std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(0, m_size, TextureMapperGL::ShouldNotBlend, GL_DONT_CARE);
@@ -82,9 +81,7 @@ void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
         };
 
 #if USE(NICOSIA)
-    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
-    ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
-    proxyOperation(downcast<TextureMapperPlatformLayerProxyGL>(proxy));
+    proxyOperation(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy());
 #else
     proxyOperation(*m_platformLayerProxy);
 #endif
@@ -171,22 +168,6 @@ void MediaPlayerPrivateHolePunch::notifyReadyState()
 {
     // Notify the ready state so the GraphicsLayer gets created.
     m_player->readyStateChanged();
-}
-
-void MediaPlayerPrivateHolePunch::setNetworkState(MediaPlayer::NetworkState networkState)
-{
-    m_networkState = networkState;
-    m_player->networkStateChanged();
-}
-
-void MediaPlayerPrivateHolePunch::load(const String&)
-{
-    if (!m_player)
-        return;
-
-    auto mimeType = m_player->contentMIMEType();
-    if (mimeType.isEmpty() || !mimeTypeCache().contains(mimeType))
-        setNetworkState(MediaPlayer::NetworkState::FormatError);
 }
 }
 #endif // USE(EXTERNAL_HOLEPUNCH)

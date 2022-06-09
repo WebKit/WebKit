@@ -463,7 +463,6 @@ CXX_INSTRUCTIONS =
      "cloopCallNative",         # operands: callee
      "cloopCallSlowPath",       # operands: callTarget, currentFrame, currentPC
      "cloopCallSlowPathVoid",   # operands: callTarget, currentFrame, currentPC
-     "cloopCallSlowPath3",      # operands: callTarget, a0, a1, a2
      "cloopCallSlowPath4",      # operands: callTarget, a0, a1, a2, a3
 
      # For debugging only:

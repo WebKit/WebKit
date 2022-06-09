@@ -48,7 +48,7 @@ static JSC_DECLARE_HOST_FUNCTION(bigIntProtoFuncValueOf);
 
 namespace JSC {
 
-const ClassInfo BigIntPrototype::s_info = { "BigInt"_s, &Base::s_info, &bigIntPrototypeTable, nullptr, CREATE_METHOD_TABLE(BigIntPrototype) };
+const ClassInfo BigIntPrototype::s_info = { "BigInt", &Base::s_info, &bigIntPrototypeTable, nullptr, CREATE_METHOD_TABLE(BigIntPrototype) };
 
 /* Source for BigIntPrototype.lut.h
 @begin bigIntPrototypeTable
@@ -68,7 +68,7 @@ BigIntPrototype::BigIntPrototype(VM& vm, Structure* structure)
 void BigIntPrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -86,10 +86,10 @@ static ALWAYS_INLINE JSBigInt* toThisBigIntValue(JSGlobalObject* globalObject, J
 #endif
 
     if (thisValue.isCell()) {
-        if (JSBigInt* bigInt = jsDynamicCast<JSBigInt*>(thisValue.asCell()))
+        if (JSBigInt* bigInt = jsDynamicCast<JSBigInt*>(vm, thisValue.asCell()))
             return bigInt;
 
-        if (BigIntObject* bigIntObject = jsDynamicCast<BigIntObject*>(thisValue.asCell())) {
+        if (BigIntObject* bigIntObject = jsDynamicCast<BigIntObject*>(vm, thisValue.asCell())) {
             JSValue bigInt = bigIntObject->internalValue();
 #if USE(BIGINT32)
             if (bigInt.isBigInt32())
@@ -113,7 +113,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncToString, (JSGlobalObject* globalObject,
 
     ASSERT(value);
 
-    Integrity::auditStructureID(value->structureID());
+    Integrity::auditStructureID(vm, value->structureID());
     int32_t radix = extractToStringRadixArgument(globalObject, callFrame->argument(0), scope);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -156,7 +156,7 @@ JSC_DEFINE_HOST_FUNCTION(bigIntProtoFuncValueOf, (JSGlobalObject* globalObject, 
     JSBigInt* value = toThisBigIntValue(globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, { });
 
-    Integrity::auditStructureID(value->structureID());
+    Integrity::auditStructureID(vm, value->structureID());
     return JSValue::encode(value);
 }
 

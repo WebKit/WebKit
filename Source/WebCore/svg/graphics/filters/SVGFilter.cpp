@@ -30,19 +30,42 @@
 
 namespace WebCore {
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox, FilterEffect& previousEffect)
+{
+    return create(filterElement, builder, renderingMode, filterScale, clipOperation, targetBoundingBox, targetBoundingBox, &previousEffect);
+}
+
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox)
+{
+    return create(filterElement, builder, renderingMode, filterScale, ClipOperation::Intersect, filterRegion, targetBoundingBox, nullptr);
+}
+
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, FilterEffect* previousEffect)
 {
     auto filter = adoptRef(*new SVGFilter(renderingMode, filterScale, clipOperation, filterRegion, targetBoundingBox, filterElement.primitiveUnits()));
 
-    auto expression = builder.buildFilterExpression(filterElement, filter, destinationContext);
-    if (!expression)
+    if (!previousEffect)
+        builder.setupBuiltinEffects(SourceGraphic::create());
+    else
+        builder.setupBuiltinEffects({ *previousEffect });
+
+    builder.setTargetBoundingBox(targetBoundingBox);
+    builder.setPrimitiveUnits(filterElement.primitiveUnits());
+
+    if (!builder.buildFilterEffects(filterElement))
         return nullptr;
 
-    ASSERT(!expression->isEmpty());
-    filter->setExpression(WTFMove(*expression));
+    SVGFilterExpression expression;
+    if (!builder.buildExpression(expression))
+        return nullptr;
 
-    if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
+    ASSERT(!expression.isEmpty());
+    filter->setExpression(WTFMove(expression));
+
+#if USE(CORE_IMAGE)
+    if (!filter->supportsCoreImageRendering())
         filter->setRenderingMode(RenderingMode::Unaccelerated);
+#endif
 
     return filter;
 }
@@ -67,28 +90,32 @@ SVGFilter::SVGFilter(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitTy
 {
 }
 
-FloatSize SVGFilter::calculateResolvedSize(const FloatSize& size, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
-{
-    return primitiveUnits == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX ? size * targetBoundingBox.size() : size;
-}
-
 FloatSize SVGFilter::resolvedSize(const FloatSize& size) const
 {
-    return calculateResolvedSize(size, m_targetBoundingBox, m_primitiveUnits);
+    return m_primitiveUnits == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX ? size * m_targetBoundingBox.size() : size;
 }
 
-bool SVGFilter::supportsAcceleratedRendering() const
+#if USE(CORE_IMAGE)
+bool SVGFilter::supportsCoreImageRendering() const
 {
     if (renderingMode() == RenderingMode::Unaccelerated)
         return false;
 
     ASSERT(!m_expression.isEmpty());
     for (auto& term : m_expression) {
-        if (!term.effect->supportsAcceleratedRendering())
+        if (!term.effect->supportsCoreImageRendering())
             return false;
     }
 
     return true;
+}
+#endif
+
+RefPtr<FilterEffect> SVGFilter::lastEffect() const
+{
+    if (m_expression.isEmpty())
+        return nullptr;
+    return m_expression.last().effect.ptr();
 }
 
 FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) const
@@ -144,6 +171,12 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
     
     ASSERT(stack.size() == 1);
     return stack.takeLast();
+}
+
+IntOutsets SVGFilter::outsets() const
+{
+    ASSERT(lastEffect());
+    return lastEffect()->outsets();
 }
 
 TextStream& SVGFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

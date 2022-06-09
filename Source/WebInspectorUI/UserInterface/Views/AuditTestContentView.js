@@ -38,37 +38,18 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         if (this.representedObject.editable)
             this.element.classList.add("editable");
 
-        if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.FileVariants))
-            this._saveMode = WI.FileUtilities.SaveMode.FileVariants;
-        else if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile))
-            this._saveMode = WI.FileUtilities.SaveMode.SingleFile;
-        else
-            this._saveMode = null;
-
-        switch (this._saveMode) {
-        case WI.FileUtilities.SaveMode.SingleFile:
-            if (this.representedObject instanceof WI.AuditTestBase) {
-                this._exportTestButtonNavigationItem = new WI.ButtonNavigationItem("audit-export-test", WI.UIString("Export Audit"), "Images/Export.svg", 15, 15);
-                this._exportTestButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-                this._exportTestButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-                this._exportTestButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportTestButtonNavigationItemClicked, this);
-            }
-
-            this._exportResultButtonNavigationItem = new WI.ButtonNavigationItem("audit-export-result", WI.UIString("Export Result"), "Images/Export.svg", 15, 15);
-            this._exportResultButtonNavigationItem.tooltip = WI.UIString("Export result (%s)", "Export result (%s) @ Audit Tab", "Tooltip for button that exports the most recent result after running an audit.").format(WI.saveKeyboardShortcut.displayName);
-            this._exportResultButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-            this._exportResultButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-            this._exportResultButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportResultButtonNavigationItemClicked, this);
-            break;
-
-        case WI.FileUtilities.SaveMode.FileVariants:
-            this._exportButtonNavigationItem = new WI.ButtonNavigationItem("audit-export", WI.UIString("Export"), "Images/Export.svg", 15, 15);
-            this._exportButtonNavigationItem.tooltip = WI.UIString("Export (%s)").format(WI.saveKeyboardShortcut.displayName);
-            this._exportButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
-            this._exportButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-            this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportButtonNavigationItemClicked, this);
-            break;
+        if (this.representedObject instanceof WI.AuditTestBase) {
+            this._exportTestButtonNavigationItem = new WI.ButtonNavigationItem("audit-export-test", WI.UIString("Export Audit"), "Images/Export.svg", 15, 15);
+            this._exportTestButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+            this._exportTestButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+            this._exportTestButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportTestButtonNavigationItemClicked, this);
         }
+
+        this._exportResultButtonNavigationItem = new WI.ButtonNavigationItem("audit-export-result", WI.UIString("Export Result"), "Images/Export.svg", 15, 15);
+        this._exportResultButtonNavigationItem.tooltip = WI.UIString("Export result (%s)", "Export result (%s) @ Audit Tab", "Tooltip for button that exports the most recent result after running an audit.").format(WI.saveKeyboardShortcut.displayName);
+        this._exportResultButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        this._exportResultButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._exportResultButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportResultButtonNavigationItemClicked, this);
 
         this._updateExportNavigationItems();
 
@@ -94,10 +75,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         let navigationItems = [];
         if (this._exportTestButtonNavigationItem)
             navigationItems.push(this._exportTestButtonNavigationItem);
-        if (this._exportResultButtonNavigationItem)
-            navigationItems.push(this._exportResultButtonNavigationItem);
-        if (this._exportButtonNavigationItem)
-            navigationItems.push(this._exportButtonNavigationItem);
+        navigationItems.push(this._exportResultButtonNavigationItem);
         return navigationItems;
     }
 
@@ -108,17 +86,12 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
     get supportsSave()
     {
-        return !!this._saveMode && !WI.auditManager.editing && !!this.representedObject.result;
-    }
-
-    get saveMode()
-    {
-        return this._saveMode;
+        return !WI.auditManager.editing && !!this.representedObject.result;
     }
 
     get saveData()
     {
-        return {customSaveHandler: () => { this._export(); }};
+        return {customSaveHandler: () => { this._exportResult(); }};
     }
 
     get result()
@@ -366,7 +339,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             let spinner = new WI.IndeterminateProgressSpinner;
             this.placeholderElement.appendChild(spinner.element);
 
-            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.RunningAudits.createLinkElement());
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         this._showPlaceholder();
@@ -387,7 +360,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             let importHelpElement = WI.createNavigationItemHelp(WI.UIString("Press %s to start running the audit."), startNavigationItem);
             this.placeholderElement.appendChild(importHelpElement);
 
-            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.RunningAudits.createLinkElement());
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         this._showPlaceholder();
@@ -421,7 +394,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             this.placeholderElement = WI.createMessageTextView(message.format(this.representedObject.name), result.didError);
             this.placeholderElement.__placeholderNoResultData = true;
 
-            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.AuditResults.createLinkElement());
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         this._showPlaceholder();
@@ -440,7 +413,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
                 this.needsLayout();
             });
 
-            this.placeholderElement.appendChild(WI.ReferencePage.AuditTab.createLinkElement());
+            this.placeholderElement.appendChild(WI.createReferencePageLink("audit-tab"));
         }
 
         this._showPlaceholder();
@@ -494,12 +467,9 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
     // Private
 
-    _export()
+    _exportResult()
     {
-        let object = this.representedObject;
-        if (this._saveMode === WI.FileUtilities.SaveMode.SingleFile)
-            object = object.result;
-        WI.auditManager.export(this._saveMode, object);
+        WI.auditManager.export(this.representedObject.result);
     }
 
     _updateExportNavigationItems()
@@ -507,11 +477,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         if (this._exportTestButtonNavigationItem)
             this._exportTestButtonNavigationItem.enabled = !WI.auditManager.editing;
 
-        if (this._exportResultButtonNavigationItem)
-            this._exportResultButtonNavigationItem.enabled = !WI.auditManager.editing && this.representedObject.result;
-
-        if (this._exportButtonNavigationItem)
-            this._exportButtonNavigationItem.enabled = this._saveMode && !WI.auditManager.editing;
+        this._exportResultButtonNavigationItem.enabled = !WI.auditManager.editing && this.representedObject.result;
     }
 
     _updateSupportsInputState()
@@ -584,17 +550,12 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
     _handleExportTestButtonNavigationItemClicked(event)
     {
-        WI.auditManager.export(WI.FileUtilities.SaveMode.SingleFile, this.representedObject);
+        WI.auditManager.export(this.representedObject);
     }
 
     _handleExportResultButtonNavigationItemClicked(event)
     {
-        WI.auditManager.export(WI.FileUtilities.SaveMode.SingleFile, this.representedObject.result);
-    }
-
-    _handleExportButtonNavigationItemClicked(event)
-    {
-        WI.auditManager.export(WI.FileUtilities.SaveMode.FileVariants, this.representedObject);
+        this._exportResult();
     }
 
     _handleTestChanged(event)

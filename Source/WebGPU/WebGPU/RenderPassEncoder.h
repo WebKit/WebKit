@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,27 @@
 
 #pragma once
 
-#import "CommandsMixin.h"
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
-
-struct WGPURenderPassEncoderImpl {
-};
 
 namespace WebGPU {
 
 class BindGroup;
 class Buffer;
-class Device;
 class QuerySet;
 class RenderBundle;
 class RenderPipeline;
 
-// https://gpuweb.github.io/gpuweb/#gpurenderpassencoder
-class RenderPassEncoder : public WGPURenderPassEncoderImpl, public RefCounted<RenderPassEncoder>, public CommandsMixin {
+class RenderPassEncoder : public RefCounted<RenderPassEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, Device& device)
+    static Ref<RenderPassEncoder> create()
     {
-        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, device));
-    }
-    static Ref<RenderPassEncoder> createInvalid(Device& device)
-    {
-        return adoptRef(*new RenderPassEncoder(device));
+        return adoptRef(*new RenderPassEncoder());
     }
 
     ~RenderPassEncoder();
@@ -68,36 +60,26 @@ public:
     void endPass();
     void endPipelineStatisticsQuery();
     void executeBundles(Vector<std::reference_wrapper<const RenderBundle>>&& bundles);
-    void insertDebugMarker(String&& markerLabel);
+    void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(const char* groupLabel);
     void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
-    void setBlendConstant(const WGPUColor&);
+    void setBlendConstant(const WGPUColor*);
     void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
     void setPipeline(const RenderPipeline&);
     void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
     void setStencilReference(uint32_t);
     void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
-    void setLabel(String&&);
-
-    Device& device() const { return m_device; }
-
-    bool isValid() const { return m_renderCommandEncoder; }
+    void writeTimestamp(const QuerySet&, uint32_t queryIndex);
+    void setLabel(const char*);
 
 private:
-    RenderPassEncoder(id<MTLRenderCommandEncoder>, Device&);
-    RenderPassEncoder(Device&);
-
-    bool validatePopDebugGroup() const;
-
-    void makeInvalid() { m_renderCommandEncoder = nil; }
-
-    id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
-
-    uint64_t m_debugGroupStackSize { 0 };
-
-    const Ref<Device> m_device;
+    RenderPassEncoder();
 };
 
 } // namespace WebGPU
+
+struct WGPURenderPassEncoderImpl {
+    Ref<WebGPU::RenderPassEncoder> renderPassEncoder;
+};

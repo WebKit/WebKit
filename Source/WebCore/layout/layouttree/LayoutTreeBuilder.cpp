@@ -386,7 +386,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
             addSpacing();
             stream << "    ";
-            auto rect = inlineLevelBox.visualRectIgnoringBlockDirection();
+            auto rect = inlineLevelBox.rect();
             auto& layoutBox = inlineLevelBox.layoutBox();
             if (layoutBox.isAtomicInlineLevelBox())
                 stream << "Atomic inline level box";
@@ -498,12 +498,12 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
         auto textContent = downcast<InlineTextBox>(layoutBox).content();
         stream << " length->(" << textContent.length() << ")";
 
-        textContent = makeStringByReplacingAll(textContent, '\\', "\\\\"_s);
-        textContent = makeStringByReplacingAll(textContent, '\n', "\\n"_s);
+        textContent.replaceWithLiteral('\\', "\\\\");
+        textContent.replaceWithLiteral('\n', "\\n");
 
         const size_t maxPrintedLength = 80;
         if (textContent.length() > maxPrintedLength) {
-            auto substring = StringView(textContent).left(maxPrintedLength);
+            auto substring = textContent.substring(0, maxPrintedLength);
             stream << " \"" << substring.utf8().data() << "\"...";
         } else
             stream << " \"" << textContent.utf8().data() << "\"";

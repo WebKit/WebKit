@@ -37,12 +37,10 @@ void LoadParameters::platformEncode(IPC::Encoder& encoder) const
 {
     IPC::encode(encoder, dataDetectionContext.get());
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     encoder << networkExtensionSandboxExtensionHandles;
 #if PLATFORM(IOS)
     encoder << contentFilterExtensionHandle;
     encoder << frontboardServiceExtensionHandle;
-#endif
 #endif
 }
 
@@ -51,12 +49,12 @@ bool LoadParameters::platformDecode(IPC::Decoder& decoder, LoadParameters& param
     if (!IPC::decode(decoder, parameters.dataDetectionContext))
         return false;
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     std::optional<Vector<SandboxExtension::Handle>> networkExtensionSandboxExtensionHandles;
     decoder >> networkExtensionSandboxExtensionHandles;
     if (!networkExtensionSandboxExtensionHandles)
         return false;
     parameters.networkExtensionSandboxExtensionHandles = WTFMove(*networkExtensionSandboxExtensionHandles);
+    
 #if PLATFORM(IOS)
     std::optional<std::optional<SandboxExtension::Handle>> contentFilterExtensionHandle;
     decoder >> contentFilterExtensionHandle;
@@ -69,8 +67,7 @@ bool LoadParameters::platformDecode(IPC::Decoder& decoder, LoadParameters& param
     if (!frontboardServiceExtensionHandle)
         return false;
     parameters.frontboardServiceExtensionHandle = WTFMove(*frontboardServiceExtensionHandle);
-#endif // PLATFORM(IOS)
-#endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#endif
 
     return true;
 }

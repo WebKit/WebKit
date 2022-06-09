@@ -19,10 +19,7 @@ let expectedEntries = [
     "flatMap",
     "includes",
     "keys",
-    "toReversed",
-    "toSorted",
-    "toSpliced",
-    "values",
+    "values"
 ];
 shouldBe("Object.getOwnPropertyNames(Array.prototype[Symbol.unscopables])", "expectedEntries");
 shouldBe("Object.getOwnPropertySymbols(Array.prototype[Symbol.unscopables])", "[]");

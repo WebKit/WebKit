@@ -24,7 +24,7 @@
  */
 
 .waterfall-popover-content .dom-events-breakdown {
-    user-select: text;
+    -webkit-user-select: text;
     max-height: 210px;
     overflow-y: auto;
 }

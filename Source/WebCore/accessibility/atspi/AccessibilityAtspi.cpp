@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,110 +20,94 @@
 #include "config.h"
 #include "AccessibilityAtspi.h"
 
-#if USE(ATSPI)
-#include "AXObjectCache.h"
-#include "AccessibilityAtspiEnums.h"
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "AccessibilityAtspiInterfaces.h"
-#include "AccessibilityObjectAtspi.h"
 #include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
-#include <wtf/NeverDestroyed.h>
+#include <wtf/MainThread.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/UUID.h>
-#include <wtf/glib/RunLoopSourcePriority.h>
 
 namespace WebCore {
 
-AccessibilityAtspi& AccessibilityAtspi::singleton()
+AccessibilityAtspi::AccessibilityAtspi(const String& busAddress)
+    : m_queue(WorkQueue::create("org.webkit.a11y"))
 {
-    static NeverDestroyed<AccessibilityAtspi> atspi;
-    return atspi;
-}
-
-AccessibilityAtspi::AccessibilityAtspi()
-    : m_cacheUpdateTimer(RunLoop::main(), this, &AccessibilityAtspi::cacheUpdateTimerFired)
-    , m_cacheClearTimer(RunLoop::main(), this, &AccessibilityAtspi::cacheClearTimerFired)
-{
-    m_cacheUpdateTimer.setPriority(RunLoopSourcePriority::RunLoopDispatcher);
-    m_cacheClearTimer.setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
-}
-
-void AccessibilityAtspi::connect(const String& busAddress)
-{
+    RELEASE_ASSERT(isMainThread());
     if (busAddress.isEmpty())
         return;
+    m_queue->dispatch([this, busAddress = busAddress.isolatedCopy()] {
+        GUniqueOutPtr<GError> error;
+        m_connection = adoptGRef(g_dbus_connection_new_for_address_sync(busAddress.utf8().data(),
+            static_cast<GDBusConnectionFlags>(G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT | G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION),
+            nullptr, nullptr, &error.outPtr()));
 
-    m_isConnecting = true;
-    g_dbus_connection_new_for_address(busAddress.utf8().data(),
-        static_cast<GDBusConnectionFlags>(G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT | G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION), nullptr, nullptr,
-        [](GObject*, GAsyncResult* result, gpointer userData) {
-            auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
-            GUniqueOutPtr<GError> error;
-            atspi.didConnect(adoptGRef(g_dbus_connection_new_for_address_finish(result, &error.outPtr())));
-            if (error)
-                g_warning("Can't connect to a11y bus: %s", error->message);
-        }, this);
+        if (m_connection)
+            initializeRegistry();
+        else
+            g_warning("Can't connect to a11y bus: %s", error->message);
+    });
 }
 
-void AccessibilityAtspi::didConnect(GRefPtr<GDBusConnection>&& connection)
+AccessibilityAtspi::~AccessibilityAtspi()
 {
-    m_isConnecting = false;
-    m_connection = WTFMove(connection);
-    if (!m_connection)
-        return;
+    if (m_registry)
+        g_signal_handlers_disconnect_by_data(m_registry.get(), this);
+}
 
-    for (auto& pendingRegistration : m_pendingRootRegistrations)
-        registerRoot(pendingRegistration.root, WTFMove(pendingRegistration.interfaces), WTFMove(pendingRegistration.completionHandler));
-    m_pendingRootRegistrations.clear();
-
-    initializeRegistry();
+void AccessibilityAtspi::registerTrees() const
+{
+    RELEASE_ASSERT(!isMainThread());
+    for (auto* rootObject : m_rootObjects.keys()) {
+        if (!rootObject->isTreeRegistered())
+            rootObject->registerTree();
+    }
 }
 
 void AccessibilityAtspi::initializeRegistry()
 {
+    RELEASE_ASSERT(!isMainThread());
     RELEASE_ASSERT(m_connection);
-    g_dbus_proxy_new(m_connection.get(), G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES, nullptr,
-        "org.a11y.atspi.Registry", "/org/a11y/atspi/registry", "org.a11y.atspi.Registry", nullptr, [](GObject*, GAsyncResult* result, gpointer userData) {
-        auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
-        GUniqueOutPtr<GError> error;
-        atspi.m_registry = adoptGRef(g_dbus_proxy_new_finish(result, &error.outPtr()));
-        if (!atspi.m_registry) {
-            g_warning("Failed to connect to atspi registry: %s\n", error->message);
-            return;
+    GUniqueOutPtr<GError> error;
+    m_registry = adoptGRef(g_dbus_proxy_new_sync(m_connection.get(), G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES, nullptr,
+        "org.a11y.atspi.Registry", "/org/a11y/atspi/registry", "org.a11y.atspi.Registry", nullptr, &error.outPtr()));
+    if (!m_registry) {
+        g_warning("Failed to connect to atspi registry: %s\n", error->message);
+        return;
+    }
+
+    g_signal_connect(m_registry.get(), "g-signal", G_CALLBACK(+[](GDBusProxy*, char*, char* signal, GVariant* parameters, AccessibilityAtspi* atspi) {
+        const char* dbusName;
+        const char* eventName;
+        if (!g_strcmp0(signal, "EventListenerRegistered")) {
+            g_variant_get(parameters, "(&s&s@as)", &dbusName, &eventName, nullptr);
+            atspi->addEventListener(dbusName, eventName);
+            atspi->registerTrees();
+        } else if (!g_strcmp0(signal, "EventListenerDeregistered")) {
+            g_variant_get(parameters, "(&s&s)", &dbusName, &eventName);
+            atspi->removeEventListener(dbusName, eventName);
         }
+    }), this);
 
-        g_signal_connect(atspi.m_registry.get(), "g-signal", G_CALLBACK(+[](GDBusProxy*, char*, char* signal, GVariant* parameters, AccessibilityAtspi* atspi) {
-            const char* dbusName;
-            const char* eventName;
-            if (!g_strcmp0(signal, "EventListenerRegistered")) {
-                g_variant_get(parameters, "(&s&s@as)", &dbusName, &eventName, nullptr);
-                atspi->addEventListener(dbusName, eventName);
-            } else if (!g_strcmp0(signal, "EventListenerDeregistered")) {
-                g_variant_get(parameters, "(&s&s)", &dbusName, &eventName);
-                atspi->removeEventListener(dbusName, eventName);
-            }
-        }), &atspi);
+    GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(m_registry.get(), "GetRegisteredEvents", nullptr, G_DBUS_CALL_FLAGS_NONE, -1, nullptr, &error.outPtr()));
+    if (!result) {
+        g_warning("Failed to get atspi registered event listeners: %s\n", error->message);
+        return;
+    }
 
-        g_dbus_proxy_call(atspi.m_registry.get(), "GetRegisteredEvents", nullptr, G_DBUS_CALL_FLAGS_NONE, -1, nullptr, [](GObject* proxy, GAsyncResult* result, gpointer userData) {
-            auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
-            GUniqueOutPtr<GError> error;
-            GRefPtr<GVariant> resultVariant = adoptGRef(g_dbus_proxy_call_finish(G_DBUS_PROXY(proxy), result, &error.outPtr()));
-            if (!resultVariant) {
-                g_warning("Failed to get atspi registered event listeners: %s\n", error->message);
-                return;
-            }
+    GRefPtr<GVariant> events;
+    g_variant_get(result.get(), "(@a(ss))", &events.outPtr());
+    GVariantIter iter;
+    auto eventCount = g_variant_iter_init(&iter, events.get());
+    const char* dbusName;
+    const char* eventName;
+    while (g_variant_iter_loop(&iter, "(&s&s)", &dbusName, &eventName))
+        addEventListener(dbusName, eventName);
 
-            GRefPtr<GVariant> events;
-            g_variant_get(resultVariant.get(), "(@a(ss))", &events.outPtr());
-            GVariantIter iter;
-            g_variant_iter_init(&iter, events.get());
-            const char* dbusName;
-            const char* eventName;
-            while (g_variant_iter_loop(&iter, "(&s&s)", &dbusName, &eventName))
-                atspi.addEventListener(dbusName, eventName);
-        }, &atspi);
-    }, this);
+    if (eventCount)
+        registerTrees();
 }
 
 static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(const char* eventName)
@@ -155,11 +138,11 @@ static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(const char* eventNa
 
 void AccessibilityAtspi::addEventListener(const char* dbusName, const char* eventName)
 {
+    RELEASE_ASSERT(!isMainThread());
     auto& listeners = m_eventListeners.ensure(dbusName, [] {
         return Vector<GUniquePtr<char*>> { };
     }).iterator->value;
     listeners.append(eventConvertingDetailToNonCamelCase(eventName));
-    addClient(dbusName);
 }
 
 static bool eventIsSubtype(char** needle, char** haystack)
@@ -176,6 +159,7 @@ static bool eventIsSubtype(char** needle, char** haystack)
 
 void AccessibilityAtspi::removeEventListener(const char* dbusName, const char* eventName)
 {
+    RELEASE_ASSERT(!isMainThread());
     if (!eventName || !*eventName) {
         m_eventListeners.remove(dbusName);
         return;
@@ -194,47 +178,10 @@ void AccessibilityAtspi::removeEventListener(const char* dbusName, const char* e
         m_eventListeners.remove(it);
 }
 
-void AccessibilityAtspi::addClient(const char* dbusName)
-{
-    if (m_clients.isEmpty())
-        AXObjectCache::enableAccessibility();
-
-    auto addResult = m_clients.add(dbusName, 0);
-    if (!addResult.isNewEntry)
-        return;
-
-    m_cacheClearTimer.stop();
-
-    addResult.iterator->value = g_dbus_connection_signal_subscribe(m_connection.get(), nullptr, "org.freedesktop.DBus", "NameOwnerChanged", nullptr, dbusName,
-        G_DBUS_SIGNAL_FLAGS_MATCH_ARG0_NAMESPACE, [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar*, GVariant* parameters, gpointer userData) {
-            auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
-            const char* interface;
-            const char* oldName;
-            const char* newName;
-            g_variant_get(parameters, "(&s&s&s)", &interface, &oldName, &newName);
-            if (*oldName != '\0' && *newName == '\0')
-                atspi.removeClient(oldName);
-        }, this, nullptr);
-}
-
-void AccessibilityAtspi::removeClient(const char* dbusName)
-{
-    auto id = m_clients.take(dbusName);
-    if (!id)
-        return;
-
-    g_dbus_connection_signal_unsubscribe(m_connection.get(), id);
-
-    if (!m_clients.isEmpty())
-        return;
-
-    m_cacheUpdateList.clear();
-    m_cacheUpdateTimer.stop();
-    m_cacheClearTimer.startOneShot(10_s);
-}
-
 bool AccessibilityAtspi::shouldEmitSignal(const char* interface, const char* name, const char* detail)
 {
+    RELEASE_ASSERT(!isMainThread());
+
     // Always emit signals if we couldn't connect to the registry.
     if (!m_registry)
         return true;
@@ -244,7 +191,7 @@ bool AccessibilityAtspi::shouldEmitSignal(const char* interface, const char* nam
 
     const char* needle[4] = { interface, name, detail, nullptr };
     for (const auto& listeners : m_eventListeners.values()) {
-        auto result = listeners.findIf([&](const GUniquePtr<char*>& event) {
+        auto result = listeners.findMatching([&](const GUniquePtr<char*>& event) {
             return eventIsSubtype(const_cast<char**>(needle), event.get());
         });
         if (result != notFound)
@@ -254,86 +201,74 @@ bool AccessibilityAtspi::shouldEmitSignal(const char* interface, const char* nam
     return false;
 }
 
+RunLoop& AccessibilityAtspi::runLoop() const
+{
+    return m_queue->runLoop();
+}
+
 const char* AccessibilityAtspi::uniqueName() const
 {
+    RELEASE_ASSERT(!isMainThread());
     return m_connection ? g_dbus_connection_get_unique_name(m_connection.get()) : nullptr;
 }
 
 GVariant* AccessibilityAtspi::nullReference() const
 {
+    RELEASE_ASSERT(!isMainThread());
     return g_variant_new("(so)", uniqueName(), "/org/a11y/atspi/null");
-}
-
-GVariant* AccessibilityAtspi::applicationReference() const
-{
-    // The application is the same for all root objects, so just use the first root object that is already embedded.
-    for (auto* rootObject : m_rootObjects.keys()) {
-        if (!rootObject->path().isNull())
-            return rootObject->applicationReference();
-    }
-
-    return nullReference();
 }
 
 void AccessibilityAtspi::registerRoot(AccessibilityRootAtspi& rootObject, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&& interfaces, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    if (m_isConnecting) {
-        m_pendingRootRegistrations.append({ rootObject, WTFMove(interfaces), WTFMove(completionHandler) });
-        return;
-    }
-
-    if (!m_connection) {
-        completionHandler({ });
-        return;
-    }
-
-    ensureCache();
-    String path = makeString("/org/a11y/webkit/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
-    Vector<unsigned, 3> registeredObjects;
-    registeredObjects.reserveInitialCapacity(interfaces.size());
-    for (const auto& interface : interfaces) {
-        auto id = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &rootObject, nullptr, nullptr);
-        registeredObjects.uncheckedAppend(id);
-    }
-    m_rootObjects.add(&rootObject, WTFMove(registeredObjects));
-    String reference = makeString(uniqueName(), ':', path);
-    rootObject.setPath(WTFMove(path));
-    completionHandler(reference);
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, rootObject = Ref { rootObject }, interfaces = WTFMove(interfaces), completionHandler = WTFMove(completionHandler)]() mutable {
+        String reference;
+        if (m_connection) {
+            ensureCache();
+            String path = makeString("/org/a11y/webkit/accessible/", createCanonicalUUIDString().replace('-', '_'));
+            Vector<unsigned, 3> registeredObjects;
+            registeredObjects.reserveInitialCapacity(interfaces.size());
+            for (const auto& interface : interfaces) {
+                auto id = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, rootObject.ptr(), nullptr, nullptr);
+                registeredObjects.uncheckedAppend(id);
+            }
+            m_rootObjects.add(rootObject.ptr(), WTFMove(registeredObjects));
+            reference = makeString(uniqueName(), ':', path);
+            rootObject->setPath(WTFMove(path));
+        }
+        RunLoop::main().dispatch([reference = reference.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler(reference);
+        });
+    });
 }
 
 void AccessibilityAtspi::unregisterRoot(AccessibilityRootAtspi& rootObject)
 {
-    for (unsigned i = 0; i < m_pendingRootRegistrations.size(); ++i) {
-        auto& pendingRootRegistration = m_pendingRootRegistrations[i];
-        if (pendingRootRegistration.root.ptr() == &rootObject) {
-            pendingRootRegistration.completionHandler({ });
-            m_pendingRootRegistrations.remove(i);
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, rootObject = Ref { rootObject }] {
+        if (!m_connection)
             return;
-        }
-    }
 
-    if (!m_connection)
-        return;
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
+            g_variant_new("(siiva{sv})", "defunct", TRUE, 0, g_variant_new_string("0"), nullptr), nullptr);
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
-        g_variant_new("(siiva{sv})", "defunct", TRUE, 0, g_variant_new_string("0"), nullptr), nullptr);
-
-    auto registeredObjects = m_rootObjects.take(&rootObject);
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, "/org/a11y/atspi/cache", "org.a11y.atspi.Cache", "RemoveAccessible",
-        g_variant_new("((so))", uniqueName(), rootObject.path().utf8().data()), nullptr);
-    for (auto id : registeredObjects)
-        g_dbus_connection_unregister_object(m_connection.get(), id);
+        auto registeredObjects = m_rootObjects.take(rootObject.ptr());
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, "/org/a11y/atspi/cache", "org.a11y.atspi.Cache", "RemoveAccessible",
+            g_variant_new("((so))", uniqueName(), rootObject->path().utf8().data()), nullptr);
+        for (auto id : registeredObjects)
+            g_dbus_connection_unregister_object(m_connection.get(), id);
+    });
 }
 
 String AccessibilityAtspi::registerObject(AccessibilityObjectAtspi& atspiObject, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&& interfaces)
 {
-    RELEASE_ASSERT(!m_isConnecting);
+    RELEASE_ASSERT(!isMainThread());
     if (!m_connection)
         return { };
 
     ensureCache();
-    String path = makeString("/org/a11y/atspi/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
-    Vector<unsigned, 7> registeredObjects;
+    String path = makeString("/org/a11y/atspi/accessible/", createCanonicalUUIDString().replace('-', '_'));
+    Vector<unsigned, 20> registeredObjects;
     registeredObjects.reserveInitialCapacity(interfaces.size());
     for (const auto& interface : interfaces) {
         auto id = g_dbus_connection_register_object(m_connection.get(), path.utf8().data(), interface.first, interface.second, &atspiObject, nullptr, nullptr);
@@ -341,48 +276,40 @@ String AccessibilityAtspi::registerObject(AccessibilityObjectAtspi& atspiObject,
     }
     m_atspiObjects.add(&atspiObject, WTFMove(registeredObjects));
 
-    m_cacheUpdateList.add(&atspiObject);
-    if (!m_cacheUpdateTimer.isActive())
-        m_cacheUpdateTimer.startOneShot(0_s);
-
     return path;
 }
 
 void AccessibilityAtspi::unregisterObject(AccessibilityObjectAtspi& atspiObject)
 {
-    RELEASE_ASSERT(!m_isConnecting);
-    if (!m_connection)
-        return;
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
+        if (!m_connection)
+            return;
 
-    if (m_atspiHyperlinks.contains(&atspiObject)) {
-        auto registeredObjects = m_atspiHyperlinks.take(&atspiObject);
+        if (m_atspiHyperlinks.contains(atspiObject.ptr())) {
+            auto registeredObjects = m_atspiHyperlinks.take(atspiObject.ptr());
+            for (auto id : registeredObjects)
+                g_dbus_connection_unregister_object(m_connection.get(), id);
+        }
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
+            g_variant_new("(siiva{sv})", "defunct", TRUE, 0, g_variant_new_string("0"), nullptr), nullptr);
+
+        removeAccessible(atspiObject);
+
+        auto registeredObjects = m_atspiObjects.take(atspiObject.ptr());
         for (auto id : registeredObjects)
             g_dbus_connection_unregister_object(m_connection.get(), id);
-    }
-
-    const auto& path = atspiObject.path();
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, path.utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
-        g_variant_new("(siiva{sv})", "defunct", TRUE, 0, g_variant_new_string("0"), nullptr), nullptr);
-
-    if (!m_cacheUpdateList.remove(&atspiObject) && m_cache.remove(path)) {
-        g_dbus_connection_emit_signal(m_connection.get(), nullptr, "/org/a11y/atspi/cache", "org.a11y.atspi.Cache", "RemoveAccessible",
-            g_variant_new("((so))", uniqueName(), path.utf8().data()), nullptr);
-    }
-
-    if (m_cacheUpdateList.isEmpty())
-        m_cacheUpdateTimer.stop();
-
-    auto registeredObjects = m_atspiObjects.take(&atspiObject);
-    for (auto id : registeredObjects)
-        g_dbus_connection_unregister_object(m_connection.get(), id);
+    });
 }
 
 String AccessibilityAtspi::registerHyperlink(AccessibilityObjectAtspi& atspiObject, Vector<std::pair<GDBusInterfaceInfo*, GDBusInterfaceVTable*>>&& interfaces)
 {
+    RELEASE_ASSERT(!isMainThread());
     if (!m_connection)
         return { };
 
-    String path = makeString("/org/a11y/atspi/accessible/", makeStringByReplacingAll(createVersion4UUIDString(), '-', '_'));
+    String path = makeString("/org/a11y/atspi/accessible/", createCanonicalUUIDString().replace('-', '_'));
     Vector<unsigned, 1> registeredObjects;
     registeredObjects.reserveInitialCapacity(interfaces.size());
     for (const auto& interface : interfaces) {
@@ -396,28 +323,29 @@ String AccessibilityAtspi::registerHyperlink(AccessibilityObjectAtspi& atspiObje
 
 void AccessibilityAtspi::parentChanged(AccessibilityObjectAtspi& atspiObject)
 {
-    if (!m_connection)
-        return;
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
+        if (!m_connection)
+            return;
 
-    // Always emit parentChanged when there are clients because the atspi cache always consumes it.
-    if (!m_clients.isEmpty())
-        return;
+        // Always emit parentChanged when the tree is registered because the atspi cache always consumes it.
+        if (!atspiObject->root().isTreeRegistered())
+            return;
 
-    // Do not emit parent-changed for pending objects, since AddAccessible will update the cache.
-    if (m_cacheUpdateList.contains(&atspiObject))
-        return;
+        // Emit parentChanged only if the object is already registered, otherwise register the object,
+        // without emitting the signal, because org.a11y.atspi.Cache.AddAccessible() will update the cache.
+        if (atspiObject->registerObject())
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
-        g_variant_new("(siiva{sv})", "accessible-parent", 0, 0, atspiObject.parentReference(), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
+            g_variant_new("(siiva{sv})", "accessible-parent", 0, 0, atspiObject->parentReference(), nullptr), nullptr);
+    });
 }
 
 void AccessibilityAtspi::parentChanged(AccessibilityRootAtspi& rootObject)
 {
+    RELEASE_ASSERT(!isMainThread());
     if (!m_connection)
-        return;
-
-    // Always emit parentChanged when there are clients because the atspi cache always consumes it.
-    if (m_clients.isEmpty())
         return;
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
@@ -426,153 +354,188 @@ void AccessibilityAtspi::parentChanged(AccessibilityRootAtspi& rootObject)
 
 void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
 {
-    if (!m_connection)
-        return;
+    RELEASE_ASSERT(isMainThread());
 
-    // Always emit ChildrenChanged when there are clients because the atspi cache always consumes it.
-    if (m_clients.isEmpty())
-        return;
+#if ENABLE(DEVELOPER_MODE)
+    notifyChildrenChanged(atspiObject, child, change);
+#endif
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
-        g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", child.indexInParentForChildrenChanged(change),
-        0, g_variant_new("(so)", uniqueName(), child.path().utf8().data()), uniqueName(), atspiObject.path().utf8().data()), nullptr);
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, child = Ref { child }, change] {
+        if (!m_connection)
+            return;
+
+        // Always emit ChildrenChanged when the tree is registered because the atspi cache always consumes it.
+        if (!atspiObject->root().isTreeRegistered())
+            return;
+
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
+            g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", child->indexInParentForChildrenChanged(change),
+            0, g_variant_new("(so)", uniqueName(), child->path().utf8().data()), uniqueName(), atspiObject->path().utf8().data()), nullptr);
+    });
 }
 
 void AccessibilityAtspi::childrenChanged(AccessibilityRootAtspi& rootObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
 {
-    if (!m_connection)
-        return;
+    RELEASE_ASSERT(isMainThread());
 
-    // Always emit ChildrenChanged when there are clients because the atspi cache always consumes it.
-    if (m_clients.isEmpty())
-        return;
+    m_queue->dispatch([this, rootObject = Ref { rootObject }, child = Ref { child }, change] {
+        if (!m_connection)
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
-        g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", 0,
-        0, g_variant_new("(so)", uniqueName(), child.path().utf8().data()), uniqueName(), rootObject.path().utf8().data()), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
+            g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", 0,
+            0, g_variant_new("(so)", uniqueName(), child->path().utf8().data()), uniqueName(), rootObject->path().utf8().data()), nullptr);
+    });
 }
 
 void AccessibilityAtspi::stateChanged(AccessibilityObjectAtspi& atspiObject, const char* name, bool value)
 {
+    RELEASE_ASSERT(isMainThread());
+
 #if ENABLE(DEVELOPER_MODE)
     notifyStateChanged(atspiObject, name, value);
 #endif
 
-    if (!m_connection)
-        return;
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, name = CString(name), value] {
+        if (!m_connection)
+            return;
 
-    if (!shouldEmitSignal("Object", "StateChanged", name))
-        return;
+        if (!shouldEmitSignal("Object", "StateChanged", name.data()))
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
-        g_variant_new("(siiva{sv})", name, value, 0, g_variant_new_string("0"), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "StateChanged",
+            g_variant_new("(siiva{sv})", name.data(), value, 0, g_variant_new_string("0"), nullptr), nullptr);
+    });
 }
 
 void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, const char* changeType, CString&& text, unsigned offset, unsigned length)
 {
+    RELEASE_ASSERT(isMainThread());
+
 #if ENABLE(DEVELOPER_MODE)
     notifyTextChanged(atspiObject);
 #endif
 
-    if (!m_connection)
-        return;
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, changeType = CString(changeType), text = WTFMove(text), offset, length] {
+        if (!m_connection)
+            return;
 
-    if (!shouldEmitSignal("Object", "TextChanged", changeType))
-        return;
+        if (!shouldEmitSignal("Object", "TextChanged", changeType.data()))
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "TextChanged",
-        g_variant_new("(siiva{sv})", changeType, offset, length, g_variant_new_string(text.data()), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "TextChanged",
+            g_variant_new("(siiva{sv})", changeType.data(), offset, length, g_variant_new_string(text.data()), nullptr), nullptr);
+    });
 }
 
 void AccessibilityAtspi::textAttributesChanged(AccessibilityObjectAtspi& atspiObject)
 {
-    if (!m_connection)
-        return;
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
+        if (!m_connection)
+            return;
 
-    if (!shouldEmitSignal("Object", "TextAttributesChanged"))
-        return;
+        if (!shouldEmitSignal("Object", "TextAttributesChanged"))
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "TextAttributesChanged",
-        g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "TextAttributesChanged",
+            g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
 }
 
 void AccessibilityAtspi::textCaretMoved(AccessibilityObjectAtspi& atspiObject, unsigned caretOffset)
 {
+    RELEASE_ASSERT(isMainThread());
+
 #if ENABLE(DEVELOPER_MODE)
     notifyTextCaretMoved(atspiObject, caretOffset);
 #endif
 
-    if (!m_connection)
-        return;
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, caretOffset] {
+        if (!m_connection)
+            return;
 
-    if (!shouldEmitSignal("Object", "TextCaretMoved"))
-        return;
+        if (!shouldEmitSignal("Object", "TextCaretMoved"))
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "TextCaretMoved",
-        g_variant_new("(siiva{sv})", "", caretOffset, 0, g_variant_new_string(""), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "TextCaretMoved",
+            g_variant_new("(siiva{sv})", "", caretOffset, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
 }
 
 void AccessibilityAtspi::textSelectionChanged(AccessibilityObjectAtspi& atspiObject)
 {
-    if (!m_connection)
-        return;
+    RELEASE_ASSERT(isMainThread());
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
+        if (!m_connection)
+            return;
 
-    if (!shouldEmitSignal("Object", "TextSelectionChanged"))
-        return;
+        if (!shouldEmitSignal("Object", "TextSelectionChanged"))
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "TextSelectionChanged",
-        g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "TextSelectionChanged",
+            g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
 }
 
 void AccessibilityAtspi::valueChanged(AccessibilityObjectAtspi& atspiObject, double value)
 {
+    RELEASE_ASSERT(isMainThread());
+
 #if ENABLE(DEVELOPER_MODE)
     notifyValueChanged(atspiObject);
 #endif
 
-    if (!m_connection)
-        return;
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, value] {
+        if (!m_connection)
+            return;
 
-    if (!shouldEmitSignal("Object", "PropertyChange", "accessible-value"))
-        return;
+        if (!shouldEmitSignal("Object", "PropertyChange", "accessible-value"))
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
-        g_variant_new("(siiva{sv})", "accessible-value", 0, 0, g_variant_new_double(value), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "PropertyChange",
+            g_variant_new("(siiva{sv})", "accessible-value", 0, 0, g_variant_new_double(value), nullptr), nullptr);
+    });
 }
 
 void AccessibilityAtspi::selectionChanged(AccessibilityObjectAtspi& atspiObject)
 {
+    RELEASE_ASSERT(isMainThread());
+
 #if ENABLE(DEVELOPER_MODE)
-    if (atspiObject.role() == Atspi::Role::Menu)
-        notifyMenuSelectionChanged(atspiObject);
-    else
-        notifySelectionChanged(atspiObject);
+    notifySelectionChanged(atspiObject);
 #endif
 
-    if (!m_connection)
-        return;
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }] {
+        if (!m_connection)
+            return;
 
-    if (!shouldEmitSignal("Object", "SelectionChanged"))
-        return;
+        if (!shouldEmitSignal("Object", "SelectionChanged"))
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "SelectionChanged",
-        g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Object", "SelectionChanged",
+            g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
 }
 
 void AccessibilityAtspi::loadEvent(AccessibilityObjectAtspi& atspiObject, CString&& event)
 {
+    RELEASE_ASSERT(isMainThread());
+
 #if ENABLE(DEVELOPER_MODE)
     notifyLoadEvent(atspiObject, event);
 #endif
 
-    if (!m_connection)
-        return;
+    m_queue->dispatch([this, atspiObject = Ref { atspiObject }, event = WTFMove(event)] {
+        if (!m_connection)
+            return;
 
-    if (!shouldEmitSignal("Document", event.data()))
-        return;
+        if (!shouldEmitSignal("Document", event.data()))
+            return;
 
-    g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Document", event.data(),
-        g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+        g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject->path().utf8().data(), "org.a11y.atspi.Event.Document", event.data(),
+            g_variant_new("(siiva{sv})", "", 0, 0, g_variant_new_string(""), nullptr), nullptr);
+    });
 }
 
 struct RoleNameEntry {
@@ -605,8 +568,8 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::Definition, { "definition", N_("definition") } },
     { AccessibilityRole::Deletion, { "content deletion", N_("content deletion") } },
     { AccessibilityRole::DescriptionList, { "description list", N_("description list") } },
-    { AccessibilityRole::DescriptionListDetail, { "description value", N_("description value") } },
     { AccessibilityRole::DescriptionListTerm, { "description term", N_("description term") } },
+    { AccessibilityRole::DescriptionListDetail, { "description value", N_("description value") } },
     { AccessibilityRole::Directory, { "directory pane", N_("directory pane") } },
     { AccessibilityRole::Div, { "section", N_("section") } },
     { AccessibilityRole::Document, { "document frame", N_("document frame") } },
@@ -719,14 +682,16 @@ const char* AccessibilityAtspi::localizedRoleName(AccessibilityRole role)
 
 GDBusInterfaceVTable AccessibilityAtspi::s_cacheFunctions = {
     // method_call
-    [](GDBusConnection*, const gchar* sender, const gchar*, const gchar*, const gchar* methodName, GVariant*, GDBusMethodInvocation* invocation, gpointer userData) {
+    [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant*, GDBusMethodInvocation* invocation, gpointer userData) {
+        RELEASE_ASSERT(!isMainThread());
         if (!g_strcmp0(methodName, "GetItems")) {
             auto& atspi = *static_cast<AccessibilityAtspi*>(userData);
-            atspi.addClient(sender);
+            SetForScope<bool> inGetItems(atspi.m_inGetItems, true);
             GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(" GET_ITEMS_SIGNATURE ")"));
             g_variant_builder_open(&builder, G_VARIANT_TYPE(GET_ITEMS_SIGNATURE));
             for (auto* rootObject : atspi.m_rootObjects.keys()) {
                 g_variant_builder_open(&builder, G_VARIANT_TYPE("(" ITEM_SIGNATURE ")"));
+                rootObject->registerTree();
                 rootObject->serialize(&builder);
                 g_variant_builder_close(&builder);
             }
@@ -743,7 +708,6 @@ GDBusInterfaceVTable AccessibilityAtspi::s_cacheFunctions = {
                 wrapper->serialize(&builder);
                 g_variant_builder_close(&builder);
             }
-
             g_variant_builder_close(&builder);
             g_dbus_method_invocation_return_value(invocation, g_variant_builder_end(&builder));
         }
@@ -756,25 +720,29 @@ GDBusInterfaceVTable AccessibilityAtspi::s_cacheFunctions = {
     // set_property,
     nullptr,
     // padding
-    { nullptr }
+    nullptr
 };
 
 void AccessibilityAtspi::ensureCache()
 {
+    RELEASE_ASSERT(!isMainThread());
     if (m_cacheID || !m_connection)
         return;
 
     m_cacheID = g_dbus_connection_register_object(m_connection.get(), "/org/a11y/atspi/cache", const_cast<GDBusInterfaceInfo*>(&webkit_cache_interface), &s_cacheFunctions, this, nullptr, nullptr);
 }
 
-void AccessibilityAtspi::addToCacheIfNeeded(AccessibilityObjectAtspi& atspiObject)
+void AccessibilityAtspi::addAccessible(AccessibilityObjectAtspi& atspiObject)
 {
-    atspiObject.updateBackingStore();
-    if (atspiObject.isDefunct())
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_connection)
         return;
 
     auto addResult = m_cache.add(atspiObject.path(), &atspiObject);
     if (!addResult.isNewEntry)
+        return;
+
+    if (m_inGetItems)
         return;
 
     GVariantBuilder builder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("(" ITEM_SIGNATURE ")"));
@@ -783,32 +751,13 @@ void AccessibilityAtspi::addToCacheIfNeeded(AccessibilityObjectAtspi& atspiObjec
         g_variant_new("(@(" ITEM_SIGNATURE "))", g_variant_builder_end(&builder)), nullptr);
 }
 
-void AccessibilityAtspi::cacheUpdateTimerFired()
+void AccessibilityAtspi::removeAccessible(AccessibilityObjectAtspi& atspiObject)
 {
-    auto cacheUpdateList = std::exchange(m_cacheUpdateList, { });
-    for (auto& atspiObject : cacheUpdateList)
-        addToCacheIfNeeded(*atspiObject);
-}
-
-void AccessibilityAtspi::cacheClearTimerFired()
-{
-    for (const auto& registeredObjects : m_atspiHyperlinks.values()) {
-        for (auto id : registeredObjects)
-            g_dbus_connection_unregister_object(m_connection.get(), id);
-    }
-    m_atspiHyperlinks.clear();
-    for (const auto& it : m_atspiObjects) {
-        for (auto id : it.value)
-            g_dbus_connection_unregister_object(m_connection.get(), id);
-
-        it.key->didUnregisterObject();
-    }
-    m_atspiObjects.clear();
-    m_cache.clear();
-
-    RELEASE_ASSERT(m_cacheUpdateList.isEmpty());
-    m_cacheUpdateTimer.stop();
-    m_cacheClearTimer.stop();
+    RELEASE_ASSERT(!isMainThread());
+    const auto& path = atspiObject.path();
+    m_cache.remove(path);
+    g_dbus_connection_emit_signal(m_connection.get(), nullptr, "/org/a11y/atspi/cache", "org.a11y.atspi.Cache", "RemoveAccessible",
+        g_variant_new("((so))", uniqueName(), path.utf8().data()), nullptr);
 }
 
 namespace Accessibility {
@@ -826,7 +775,6 @@ PlatformRoleMap createPlatformRoleMap()
 #if ENABLE(DEVELOPER_MODE)
 void AccessibilityAtspi::addNotificationObserver(void* context, NotificationObserver&& observer)
 {
-    AXObjectCache::enableAccessibility();
     m_notificationObservers.add(context, WTFMove(observer));
 }
 
@@ -881,12 +829,6 @@ void AccessibilityAtspi::notifySelectionChanged(AccessibilityObjectAtspi& atspiO
         observer(atspiObject, "AXSelectedChildrenChanged", nullptr);
 }
 
-void AccessibilityAtspi::notifyMenuSelectionChanged(AccessibilityObjectAtspi& atspiObject) const
-{
-    for (const auto& observer : m_notificationObservers.values())
-        observer(atspiObject, "AXMenuItemSelected", nullptr);
-}
-
 void AccessibilityAtspi::notifyTextChanged(AccessibilityObjectAtspi& atspiObject) const
 {
     for (const auto& observer : m_notificationObservers.values())
@@ -897,6 +839,13 @@ void AccessibilityAtspi::notifyTextCaretMoved(AccessibilityObjectAtspi& atspiObj
 {
     for (const auto& observer : m_notificationObservers.values())
         observer(atspiObject, "AXTextCaretMoved", caretOffset);
+}
+
+void AccessibilityAtspi::notifyChildrenChanged(AccessibilityObjectAtspi& atspiObject, AccessibilityObjectAtspi& child, ChildrenChanged change) const
+{
+    const char* notification = change == ChildrenChanged::Added ? "AXChildrenAdded" : "AXChildrenRemoved";
+    for (const auto& observer : m_notificationObservers.values())
+        observer(atspiObject, notification, child);
 }
 
 void AccessibilityAtspi::notifyValueChanged(AccessibilityObjectAtspi& atspiObject) const
@@ -918,4 +867,4 @@ void AccessibilityAtspi::notifyLoadEvent(AccessibilityObjectAtspi& atspiObject, 
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

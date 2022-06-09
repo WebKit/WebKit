@@ -39,7 +39,7 @@ enum class CacheModel : uint8_t {
 };
 
 void calculateMemoryCacheSizes(CacheModel, unsigned& cacheTotalCapacity, unsigned& cacheMinDeadCapacity, unsigned& cacheMaxDeadCapacity, Seconds& deadDecodedDataDeletionInterval, unsigned& backForwardCacheCapacity);
-uint64_t calculateURLCacheDiskCapacity(CacheModel, uint64_t diskFreeSize);
+void calculateURLCacheSizes(CacheModel, uint64_t diskFreeSize, unsigned& urlCacheMemoryCapacity, uint64_t& urlCacheDiskCapacity);
 
 } // namespace WebKit
 

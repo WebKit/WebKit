@@ -56,7 +56,7 @@ public:
 private:
     void element() const = delete;
 
-    ASCIILiteral renderName() const override { return "RenderSVGResourceMasker"_s; }
+    const char* renderName() const override { return "RenderSVGResourceMasker"; }
 
     bool drawContentIntoMaskImage(MaskerData*, const DestinationColorSpace&, RenderObject*);
     void calculateMaskContentRepaintRect();

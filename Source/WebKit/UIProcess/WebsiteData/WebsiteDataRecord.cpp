@@ -48,7 +48,7 @@ String WebsiteDataRecord::displayNameForCookieHostName(const String& hostName)
     if (hostName == String(kCFHTTPCookieLocalFileDomain))
         return displayNameForLocalFiles();
 #else
-    if (hostName == "localhost"_s)
+    if (hostName == "localhost")
         return hostName;
 #endif
     return displayNameForHostName(hostName);
@@ -67,11 +67,11 @@ String WebsiteDataRecord::displayNameForOrigin(const WebCore::SecurityOriginData
 {
     const auto& protocol = securityOrigin.protocol;
 
-    if (protocol == "file"_s)
+    if (protocol == "file")
         return displayNameForLocalFiles();
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    if (protocol == "http"_s || protocol == "https"_s)
+    if (protocol == "http" || protocol == "https")
         return WebCore::topPrivatelyControlledDomain(securityOrigin.host);
 #endif
 
@@ -157,7 +157,7 @@ String WebsiteDataRecord::topPrivatelyControlledDomain()
     return emptyString();
 }
 
-WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const &
+WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const
 {
     return WebsiteDataRecord {
         crossThreadCopy(displayName),
@@ -169,22 +169,6 @@ WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const &
         crossThreadCopy(alternativeServicesHostNames),
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         crossThreadCopy(resourceLoadStatisticsRegistrableDomains),
-#endif
-    };
-}
-
-WebsiteDataRecord WebsiteDataRecord::isolatedCopy() &&
-{
-    return WebsiteDataRecord {
-        crossThreadCopy(WTFMove(displayName)),
-        types,
-        size,
-        crossThreadCopy(WTFMove(origins)),
-        crossThreadCopy(WTFMove(cookieHostNames)),
-        crossThreadCopy(WTFMove(HSTSCacheHostNames)),
-        crossThreadCopy(WTFMove(alternativeServicesHostNames)),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-        crossThreadCopy(WTFMove(resourceLoadStatisticsRegistrableDomains)),
 #endif
     };
 }

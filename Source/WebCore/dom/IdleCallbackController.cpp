@@ -27,7 +27,6 @@
 #include "IdleCallbackController.h"
 
 #include "Document.h"
-#include "FrameDestructionObserverInlines.h"
 #include "IdleDeadline.h"
 #include "WindowEventLoop.h"
 

@@ -52,7 +52,6 @@ class JSFunction;
 class JSGlobalObject;
 class JSLexicalEnvironment;
 class JSObject;
-class JSRemoteFunction;
 class JSScope;
 class JSString;
 class JSValue;
@@ -68,10 +67,7 @@ class WatchpointSet;
 
 struct ECMAMode;
 struct InlineCallFrame;
-
-template<typename> struct BaseInstruction;
-struct JSOpcodeTraits;
-using JSInstruction = BaseInstruction<JSOpcodeTraits>;
+struct Instruction;
 
 typedef char* UnusedPtr;
 
@@ -159,10 +155,6 @@ JSC_DECLARE_JIT_OPERATION(operationLookupExceptionHandlerFromCallerFrame, void, 
 JSC_DECLARE_JIT_OPERATION(operationVMHandleException, void, (VM*));
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowErrorFromThunk, void, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationThrowIteratorResultIsNotObject, void, (JSGlobalObject*));
-JSC_DECLARE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSRemoteFunction*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSRemoteFunction*, EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, SlowPathReturnType, (JSRemoteFunction*));
-JSC_DECLARE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction*));
 
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock*));
 JSC_DECLARE_JIT_OPERATION(operationCallArityCheck, int32_t, (JSGlobalObject*));
@@ -260,7 +252,8 @@ JSC_DECLARE_JIT_OPERATION(operationThrow, void, (JSGlobalObject*, EncodedJSValue
 JSC_DECLARE_JIT_OPERATION(operationDebug, void, (VM*, int32_t));
 #if ENABLE(DFG_JIT)
 JSC_DECLARE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM*, uint32_t));
-JSC_DECLARE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, SlowPathReturnType, (VM*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationTryOSREnterAtCatch, char*, (VM*, uint32_t));
+JSC_DECLARE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, char*, (VM*, uint32_t));
 #endif
 JSC_DECLARE_JIT_OPERATION(operationPutGetterById, void, (JSGlobalObject*, JSCell*, UniquedStringImpl*, int32_t options, JSCell*));
 JSC_DECLARE_JIT_OPERATION(operationPutSetterById, void, (JSGlobalObject*, JSCell*, UniquedStringImpl*, int32_t options, JSCell*));
@@ -297,9 +290,9 @@ JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (J
 JSC_DECLARE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobalObject*, EncodedJSValue key, size_t tableIndex, int32_t min));
 JSC_DECLARE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM*, EncodedJSValue key, size_t tableIndex, int32_t min));
 JSC_DECLARE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlobalObject*, EncodedJSValue key, size_t tableIndex));
-JSC_DECLARE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
-JSC_DECLARE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
-JSC_DECLARE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject*, const JSInstruction* bytecodePC));
+JSC_DECLARE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject*, const Instruction* bytecodePC));
+JSC_DECLARE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*, const Instruction* bytecodePC));
+JSC_DECLARE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject*, const Instruction* bytecodePC));
 
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, char*, (VM*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToGrowPropertyStorage, char*, (VM*, JSObject*, size_t newSize));

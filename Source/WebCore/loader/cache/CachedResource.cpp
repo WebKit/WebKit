@@ -236,7 +236,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     }
 
     if (type() == Type::LinkPrefetch)
-        m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::Purpose, "prefetch"_s);
+        m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::Purpose, "prefetch");
     m_resourceRequest.setPriority(loadPriority());
 
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
@@ -418,14 +418,14 @@ bool CachedResource::isExpired() const
 static inline bool shouldCacheSchemeIndefinitely(StringView scheme)
 {
 #if PLATFORM(COCOA)
-    if (equalLettersIgnoringASCIICase(scheme, "applewebdata"_s))
+    if (equalLettersIgnoringASCIICase(scheme, "applewebdata"))
         return true;
 #endif
 #if USE(SOUP)
-    if (equalLettersIgnoringASCIICase(scheme, "resource"_s))
+    if (equalLettersIgnoringASCIICase(scheme, "resource"))
         return true;
 #endif
-    return equalLettersIgnoringASCIICase(scheme, "data"_s);
+    return equalLettersIgnoringASCIICase(scheme, "data");
 }
 
 Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) const
@@ -436,7 +436,7 @@ Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) cons
             // Don't cache non-HTTP main resources since we can't check for freshness.
             // FIXME: We should not cache subresources either, but when we tried this
             // it caused performance and flakiness issues in our test infrastructure.
-            if (m_type == Type::MainResource || LegacySchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol))
+            if (m_type == Type::MainResource || LegacySchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol.toStringWithoutCopying()))
                 return 0_us;
         }
 
@@ -859,7 +859,7 @@ CachedResource::RevalidationDecision CachedResource::makeRevalidationDecision(Ca
         return RevalidationDecision::YesDueToCachePolicy;
 
     case CachePolicy::Revalidate:
-        if (m_response.cacheControlContainsImmutable() && m_response.url().protocolIs("https"_s)) {
+        if (m_response.cacheControlContainsImmutable() && m_response.url().protocolIs("https")) {
             if (isExpired())
                 return RevalidationDecision::YesDueToExpired;
             return RevalidationDecision::No;

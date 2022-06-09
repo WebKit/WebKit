@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,6 @@ struct CanvasConfiguration {
     WebGPUIdentifier device;
     PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
     PAL::WebGPU::TextureUsageFlags usage { PAL::WebGPU::TextureUsage::RenderAttachment };
-    Vector<PAL::WebGPU::TextureFormat> viewFormats;
     PAL::WebGPU::PredefinedColorSpace colorSpace { PAL::WebGPU::PredefinedColorSpace::SRGB };
     PAL::WebGPU::CanvasCompositingAlphaMode compositingAlphaMode { PAL::WebGPU::CanvasCompositingAlphaMode::Opaque };
     std::optional<Extent3D> size;
@@ -55,7 +54,6 @@ struct CanvasConfiguration {
         encoder << device;
         encoder << format;
         encoder << usage;
-        encoder << viewFormats;
         encoder << colorSpace;
         encoder << compositingAlphaMode;
         encoder << size;
@@ -78,11 +76,6 @@ struct CanvasConfiguration {
         if (!usage)
             return std::nullopt;
 
-        std::optional<Vector<PAL::WebGPU::TextureFormat>> viewFormats;
-        decoder >> viewFormats;
-        if (!viewFormats)
-            return std::nullopt;
-
         std::optional<PAL::WebGPU::PredefinedColorSpace> colorSpace;
         decoder >> colorSpace;
         if (!colorSpace)
@@ -98,7 +91,7 @@ struct CanvasConfiguration {
         if (!size)
             return std::nullopt;
 
-        return { { WTFMove(*device), WTFMove(*format), WTFMove(*usage), WTFMove(*viewFormats), WTFMove(*colorSpace), WTFMove(*compositingAlphaMode), WTFMove(*size) } };
+        return { { WTFMove(*device), WTFMove(*format), WTFMove(*usage), WTFMove(*colorSpace), WTFMove(*compositingAlphaMode), WTFMove(*size) } };
     }
 };
 

@@ -27,7 +27,6 @@
 #include "PseudoClassChangeInvalidation.h"
 
 #include "ElementChildIterator.h"
-#include "ElementRareData.h"
 #include "StyleInvalidationFunctions.h"
 
 namespace WebCore {

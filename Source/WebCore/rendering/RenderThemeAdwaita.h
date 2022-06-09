@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2020 Igalia S.L.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,29 +33,18 @@ class RenderThemeAdwaita : public RenderTheme {
 public:
     virtual ~RenderThemeAdwaita() = default;
 
-    void setAccentColor(const Color&);
-
 private:
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
+    String extraMediaControlsStyleSheet() final;
     Vector<String, 2> mediaControlsScripts() final;
-    String mediaControlsStyleSheet() final;
 #endif
-
-#if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
-    String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
-    String mediaControlsFormattedStringForDuration(double) final;
-
-    String m_mediaControlsStyleSheet;
-#endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
 
     bool supportsHover(const RenderStyle&) const final { return true; }
     bool supportsFocusRing(const RenderStyle&) const final;
-    bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return false; }
-    bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return true; }
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
-    FontCascadeDescription systemFont(CSSValueID) const override { return FontCascadeDescription(); };
+    void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override { };
 
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
@@ -93,6 +81,11 @@ private:
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void adjustSliderThumbSize(RenderStyle&, const Element*) const final;
     bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) final;
+
+#if ENABLE(VIDEO)
+    bool paintMediaSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
+    bool paintMediaVolumeSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) final;
+#endif
 
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 

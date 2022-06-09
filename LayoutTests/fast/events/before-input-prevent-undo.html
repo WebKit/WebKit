@@ -11,6 +11,7 @@
             if (!window.internals || !window.eventSender || !window.testRunner)
                 return;
 
+            internals.settings.setInputEventsEnabled(true);
             document.querySelector("#field").focus();
 
             eventSender.keyDown("a", []);

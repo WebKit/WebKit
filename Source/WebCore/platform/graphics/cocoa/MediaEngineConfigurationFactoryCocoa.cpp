@@ -43,14 +43,14 @@ namespace WebCore {
 
 static CMVideoCodecType videoCodecTypeFromRFC4281Type(StringView type)
 {
-    if (type.startsWith("mp4v"_s))
+    if (type.startsWith("mp4v"))
         return kCMVideoCodecType_MPEG4Video;
-    if (type.startsWith("avc1"_s) || type.startsWith("avc3"_s))
+    if (type.startsWith("avc1") || type.startsWith("avc3"))
         return kCMVideoCodecType_H264;
-    if (type.startsWith("hvc1"_s) || type.startsWith("hev1"_s))
+    if (type.startsWith("hvc1") || type.startsWith("hev1"))
         return kCMVideoCodecType_HEVC;
 #if ENABLE(VP9)
-    if (type.startsWith("vp09"_s))
+    if (type.startsWith("vp09"))
         return kCMVideoCodecType_VP9;
 #endif
     return 0;
@@ -87,7 +87,7 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
         info.supported = true;
         auto& codec = codecs[0];
         auto videoCodecType = videoCodecTypeFromRFC4281Type(codec);
-        if (!videoCodecType && !(codec.startsWith("dvh1"_s) || codec.startsWith("dvhe"_s)))
+        if (!videoCodecType && !(codec.startsWith("dvh1") || codec.startsWith("dvhe")))
             return std::nullopt;
 
         bool hdrSupported = videoConfiguration.colorGamut || videoConfiguration.hdrMetadataType || videoConfiguration.transferFunction;
@@ -101,7 +101,7 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
             if (!parsedInfo)
                 return std::nullopt;
             info = *parsedInfo;
-        } else if (codec.startsWith("dvh1"_s) || codec.startsWith("dvhe"_s)) {
+        } else if (codec.startsWith("dvh1") || codec.startsWith("dvhe")) {
             auto parameters = parseDoViCodecParameters(codec);
             if (!parameters)
                 return std::nullopt;

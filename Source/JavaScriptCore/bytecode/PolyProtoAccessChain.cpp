@@ -39,12 +39,13 @@ RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* glo
 RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* globalObject, JSCell* base, JSObject* target)
 {
     JSCell* current = base;
+    VM& vm = base->vm();
 
     bool found = false;
 
     Vector<StructureID> chain;
     for (unsigned iterationNumber = 0; true; ++iterationNumber) {
-        Structure* structure = current->structure();
+        Structure* structure = current->structure(vm);
 
         if (structure->isDictionary())
             return nullptr;
@@ -79,10 +80,10 @@ RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* glo
     return adoptRef(*new PolyProtoAccessChain(WTFMove(chain)));
 }
 
-bool PolyProtoAccessChain::needImpurePropertyWatchpoint(VM&) const
+bool PolyProtoAccessChain::needImpurePropertyWatchpoint(VM& vm) const
 {
     for (StructureID structureID : m_chain) {
-        if (structureID.decode()->needImpurePropertyWatchpoint())
+        if (vm.getStructure(structureID)->needImpurePropertyWatchpoint())
             return true;
     }
     return false;

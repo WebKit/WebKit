@@ -75,7 +75,7 @@ bool HTMLBaseElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name().localName() == hrefAttr || HTMLElement::isURLAttribute(attribute);
 }
 
-AtomString HTMLBaseElement::target() const
+String HTMLBaseElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }

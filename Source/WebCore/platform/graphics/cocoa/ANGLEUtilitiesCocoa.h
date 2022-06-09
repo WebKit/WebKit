@@ -27,16 +27,16 @@
 
 #if ENABLE(WEBGL)
 
-#include "GraphicsTypesGL.h"
+#include "ANGLEHeaders.h"
 
 typedef struct __IOSurface *IOSurfaceRef;
 
 namespace WebCore {
 
 // Returns a handle which, if non-null, must be released with destroyPbufferAndDetachIOSurface().
-void* createPbufferAndAttachIOSurface(GCGLDisplay, GCGLConfig, GCGLenum target, GCGLint usageHint, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
+void* createPbufferAndAttachIOSurface(EGLDisplay, EGLConfig, GLenum target, EGLint usageHint, GLenum internalFormat, GLsizei width, GLsizei height, GLenum type, IOSurfaceRef, GLuint plane);
 
-void destroyPbufferAndDetachIOSurface(GCGLDisplay, void* handle);
+void destroyPbufferAndDetachIOSurface(EGLDisplay, void* handle);
 
 }
 

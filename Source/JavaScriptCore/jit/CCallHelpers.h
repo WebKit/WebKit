@@ -69,10 +69,6 @@ public:
         GPRReg m_gpr;
     };
 
-    // Base class for constant materializers.
-    // It offers DerivedClass::materialize and poke functions.
-    class ConstantMaterializer { };
-
     // The most general helper for setting arguments that fit in a GPR, if you can compute each
     // argument without using any argument registers. You usually want one of the setupArguments*()
     // methods below instead of this. This thing is most useful if you have *a lot* of arguments.
@@ -369,10 +365,7 @@ private:
     ALWAYS_INLINE void pokeForArgument(ArgType arg, unsigned currentGPRArgument, unsigned currentFPRArgument, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke)
     {
         unsigned pokeOffset = calculatePokeOffset(currentGPRArgument, currentFPRArgument, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-        if constexpr (std::is_base_of_v<ConstantMaterializer, ArgType>)
-            arg.store(*this, addressForPoke(pokeOffset));
-        else
-            poke(arg, pokeOffset);
+        poke(arg, pokeOffset);
     }
 
     ALWAYS_INLINE bool stackAligned(unsigned currentGPRArgument, unsigned currentFPRArgument, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke)
@@ -637,7 +630,8 @@ private:
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename Arg, typename... Args>
     ALWAYS_INLINE std::enable_if_t<
         std::is_pointer<CURRENT_ARGUMENT_TYPE>::value
-        && std::is_same<Arg, std::nullptr_t>::value>
+        && ((std::is_pointer<Arg>::value && std::is_convertible<std::remove_const_t<std::remove_pointer_t<Arg>>*, CURRENT_ARGUMENT_TYPE>::value)
+            || std::is_same<Arg, std::nullptr_t>::value)>
     setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, Arg arg, Args... args)
     {
         setupArgumentsImpl<OperationType>(argSourceRegs, TrustedImmPtr(arg), args...);
@@ -653,89 +647,17 @@ private:
         setupArgumentsImpl<OperationType>(argSourceRegs, TrustedImmPtr(arg.get()), args...);
     }
 
-    template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke, typename Arg, typename... Args>
-    ALWAYS_INLINE std::enable_if_t<std::is_base_of_v<ConstantMaterializer, Arg>>
-    setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs, Arg arg, Args... args)
-    {
-        static_assert(!std::is_floating_point<CURRENT_ARGUMENT_TYPE>::value, "We don't support immediate floats/doubles in setupArguments");
-        auto numArgRegisters = GPRInfo::numberOfArgumentRegisters;
-#if OS(WINDOWS) && CPU(X86_64)
-        auto currentArgCount = numGPRArgs + numFPRArgs + (std::is_same<RESULT_TYPE, SlowPathReturnType>::value ? 1 : 0);
-#else
-        auto currentArgCount = numGPRArgs + extraGPRArgs;
-#endif
-        if (currentArgCount < numArgRegisters) {
-            setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
-            arg.materialize(*this, GPRInfo::toArgumentRegister(currentArgCount));
-            return;
-        }
-
-        pokeForArgument(arg, numGPRArgs, numFPRArgs, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke);
-        setupArgumentsImpl<OperationType>(argSourceRegs.addGPRArg(), args...);
-    }
-
 #undef CURRENT_ARGUMENT_TYPE
 #undef RESULT_TYPE
-
-    template<typename OperationType, unsigned gprIndex>
-    constexpr void finalizeGPRArguments(std::index_sequence<>)
-    {
-    }
-
-    template<typename OperationType, unsigned gprIndex, size_t arityIndex, size_t... remainingArityIndices>
-    constexpr void finalizeGPRArguments(std::index_sequence<arityIndex, remainingArityIndices...>)
-    {
-        using NextIndexSequenceType = std::index_sequence<remainingArityIndices...>;
-        using ArgumentType = typename FunctionTraits<OperationType>::template ArgumentType<arityIndex>;
-
-        // Every non-double-typed argument should be passed in through GPRRegs, and inversely only double-typed
-        // arguments should be passed through FPRRegs. This is asserted in the invocation of the lastly-called
-        // setupArgumentsImpl(ArgCollection<>) overload, by matching the number of handled GPR and FPR arguments
-        // with the corresponding count of properly-typed arguments for this operation.
-        if (!std::is_same_v<ArgumentType, double>) {
-            // RV64 calling convention requires all 32-bit values to be sign-extended into the whole register.
-            // JSC JIT is tailored for other ISAs that pass these values in 32-bit-wide registers, which RISC-V
-            // doesn't support, so any 32-bit value passed in argument registers has to be manually sign-extended.
-            if (isRISCV64() && gprIndex < GPRInfo::numberOfArgumentRegisters
-                && std::is_integral_v<ArgumentType> && sizeof(ArgumentType) == 4) {
-                GPRReg argReg = GPRInfo::toArgumentRegister(gprIndex);
-                signExtend32ToPtr(argReg, argReg);
-            }
-
-            finalizeGPRArguments<OperationType, gprIndex + 1>(NextIndexSequenceType());
-        } else
-            finalizeGPRArguments<OperationType, gprIndex>(NextIndexSequenceType());
-    }
-
-    template<typename ArgType> using GPRArgCountValue = std::conditional_t<std::is_same_v<ArgType, double>,
-        std::integral_constant<unsigned, 0>, std::integral_constant<unsigned, 1>>;
-    template<typename ArgType> using FPRArgCountValue = std::conditional_t<std::is_same_v<ArgType, double>,
-        std::integral_constant<unsigned, 1>, std::integral_constant<unsigned, 0>>;
-
-    template<typename OperationTraitsType, size_t... argIndices>
-    static constexpr unsigned gprArgsCount(std::index_sequence<argIndices...>)
-    {
-        return (0 + ... + (GPRArgCountValue<typename OperationTraitsType::template ArgumentType<argIndices>>::value));
-    }
-
-    template<typename OperationTraitsType, size_t... argIndices>
-    static constexpr unsigned fprArgsCount(std::index_sequence<argIndices...>)
-    {
-        return (0 + ... + (FPRArgCountValue<typename OperationTraitsType::template ArgumentType<argIndices>>::value));
-    }
 
     // Base case; set up the argument registers.
     template<typename OperationType, unsigned numGPRArgs, unsigned numGPRSources, unsigned numFPRArgs, unsigned numFPRSources, unsigned numCrossSources, unsigned extraGPRArgs, unsigned nonArgGPRs, unsigned extraPoke>
     ALWAYS_INLINE void setupArgumentsImpl(ArgCollection<numGPRArgs, numGPRSources, numFPRArgs, numFPRSources, numCrossSources, extraGPRArgs, nonArgGPRs, extraPoke> argSourceRegs)
     {
-        using TraitsType = FunctionTraits<OperationType>;
-        static_assert(TraitsType::arity == numGPRArgs + numFPRArgs, "One last sanity check");
+        static_assert(FunctionTraits<OperationType>::arity == numGPRArgs + numFPRArgs, "One last sanity check");
 #if USE(JSVALUE64)
-        static_assert(TraitsType::cCallArity() == numGPRArgs + numFPRArgs + extraPoke, "Check the CCall arity");
+        static_assert(FunctionTraits<OperationType>::cCallArity() == numGPRArgs + numFPRArgs + extraPoke, "Check the CCall arity");
 #endif
-        static_assert(gprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numGPRArgs);
-        static_assert(fprArgsCount<TraitsType>(std::make_index_sequence<TraitsType::arity>()) == numFPRArgs);
-
         setupStubArgs<numGPRSources, GPRReg>(clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprDestinations), clampArrayToSize<numGPRSources, GPRReg>(argSourceRegs.gprSources));
 #if CPU(MIPS) || (CPU(ARM_THUMB2) && !CPU(ARM_HARDFP))
         setupStubCrossArgs<numCrossSources>(argSourceRegs.crossDestinations, argSourceRegs.crossSources);
@@ -762,8 +684,6 @@ private:
 #endif
             setupArgumentsImpl<OperationType>(argSourceRegs, args...);
         }
-
-        finalizeGPRArguments<OperationType, 0>(std::make_index_sequence<FunctionTraits<OperationType>::arity>());
     }
 
 public:
@@ -824,19 +744,11 @@ public:
         farJump(GPRInfo::regT1, ExceptionHandlerPtrTag);
     }
 
-    void prepareForTailCallSlow(GPRReg preservedGPR1 = InvalidGPRReg, GPRReg preservedGPR2 = InvalidGPRReg)
+    void prepareForTailCallSlow(GPRReg calleeGPR = InvalidGPRReg)
     {
-        RegisterSet preserved;
-        if (preservedGPR1 != InvalidGPRReg)
-            preserved.add(preservedGPR1);
-        if (preservedGPR2 != InvalidGPRReg)
-            preserved.add(preservedGPR2);
-
-        GPRReg temp1 = selectScratchGPR(preserved);
-        preserved.add(temp1);
-        GPRReg temp2 = selectScratchGPR(preserved);
-        preserved.add(temp2);
-        GPRReg temp3 = selectScratchGPR(preserved);
+        GPRReg temp1 = calleeGPR == GPRInfo::regT0 ? GPRInfo::regT3 : GPRInfo::regT0;
+        GPRReg temp2 = calleeGPR == GPRInfo::regT1 ? GPRInfo::regT3 : GPRInfo::regT1;
+        GPRReg temp3 = calleeGPR == GPRInfo::regT2 ? GPRInfo::regT3 : GPRInfo::regT2;
 
         GPRReg newFramePointer = temp1;
         GPRReg newFrameSizeGPR = temp2;
@@ -933,6 +845,7 @@ private:
     template <typename CodeBlockType>
     void logShadowChickenTailPacketImpl(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, CodeBlockType codeBlock, CallSiteIndex callSiteIndex);
 public:
+    void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, TrustedImmPtr codeBlock, CallSiteIndex callSiteIndex);
     void logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, GPRReg codeBlock, CallSiteIndex callSiteIndex);
 
     // Leaves behind a pointer to the Packet we should write to in shadowPacket.
@@ -940,8 +853,145 @@ public:
 
     static void emitJITCodeOver(MacroAssemblerCodePtr<JSInternalPtrTag> where, ScopedLambda<void(CCallHelpers&)>, const char*);
 
-    void emitCTIThunkPrologue(bool returnAddressAlreadyTagged = false);
-    void emitCTIThunkEpilogue();
+private:
+    template <typename OperationType, unsigned ArgNum>
+    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), size_t> sizeOfArg()
+    {
+        return sizeof(typename FunctionTraits<OperationType>::template ArgumentType<ArgNum>);
+    }
+
+#if USE(JSVALUE64)
+    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    static constexpr JSValueRegs pickJSR(GPRReg first, Args... rest)
+    {
+        static_assert(sizeOfArg<OperationType, ArgNum - Index>() <= 8, "Don't know how to handle large arguments");
+        if constexpr (!Index)
+            return JSValueRegs { first };
+        else {
+            UNUSED_PARAM(first); // Otherwise warning due to constexpr
+            return pickJSR<OperationType, ArgNum, Index - 1>(rest...);
+        }
+    }
+#elif USE(JSVALUE32_64)
+    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    static constexpr JSValueRegs pickJSR(GPRReg first, GPRReg second, GPRReg third, Args... rest)
+    {
+        constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
+        static_assert(sizeOfCurrentArg <= 8, "Don't know how to handle large arguments");
+        if constexpr (!Index) {
+            if constexpr (sizeOfCurrentArg <= 4) {
+                // Fits in single GPR
+                UNUSED_PARAM(second); // Otherwise warning due to constexpr
+                UNUSED_PARAM(third); // Otherwise warning due to constexpr
+                return JSValueRegs::payloadOnly(first);
+            } else if (first == GPRInfo::argumentGPR1 && second == GPRInfo::argumentGPR2 && third == GPRInfo::argumentGPR3) {
+                // Wide argument passed in GPRs needs to start with even register number, so skip argumentGPR1
+                return JSValueRegs { third, second };
+            } else {
+                // First is either an even register, or this argument will be pushed to the stack, so it does not matter
+                return JSValueRegs { second, first };
+            }
+        } else {
+            if constexpr(sizeOfCurrentArg <= 4) {
+                // Fits in single GPR
+                UNUSED_PARAM(first); // Otherwise warning due to constexpr
+                return pickJSR<OperationType, ArgNum, Index - 1>(second, third, rest...);
+            } else if (first == GPRInfo::argumentGPR1 && second == GPRInfo::argumentGPR2 && third == GPRInfo::argumentGPR3) {
+                // Wide argument passed in GPRs needs to start with even register number, so skip argumentGPR1, but reuse it later
+                return pickJSR<OperationType, ArgNum, Index - 1>(first, rest...);
+            } else {
+                // First is either an even register, or this argument will be pushed to the stack, so it does not matter
+                return pickJSR<OperationType, ArgNum, Index - 1>(third, rest...);
+            }
+        }
+    }
+
+    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    static constexpr JSValueRegs pickJSR(GPRReg first, GPRReg second)
+    {
+        constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
+        static_assert(sizeOfCurrentArg <= 8, "Don't know how to handle large arguments");
+        // Base case, 'first' and 'second' are never argument register, or will be pushed on the stack anyway
+        if constexpr (!Index) {
+            if constexpr (sizeOfCurrentArg <= 4) {
+                UNUSED_PARAM(second); // Otherwise warning due to constexpr
+                return JSValueRegs::payloadOnly(first);
+            } else
+                return JSValueRegs { second, first };
+        } else {
+            if constexpr(sizeOfCurrentArg <= 4) {
+                UNUSED_PARAM(first); // Otherwise warning due to constexpr
+                return pickJSR<OperationType, ArgNum, Index - 1>(second);
+            } else
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Out of registers");
+        }
+    }
+
+    template <typename OperationType, unsigned ArgNum, unsigned Index = ArgNum, typename... Args>
+    static constexpr JSValueRegs pickJSR(GPRReg first)
+    {
+        constexpr size_t sizeOfCurrentArg = sizeOfArg<OperationType, ArgNum - Index>();
+        static_assert(sizeOfCurrentArg <= 8, "Don't know how to handle large arguments");
+        // Base case, 'first' is never an argument register, or will be pushed on the stack anyway
+        if constexpr (sizeOfCurrentArg <= 4)
+            return JSValueRegs::payloadOnly(first);
+        else
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Out of registers");
+    }
+#endif
+
+public:
+    // See preferredArgumentGPR for the purpose of this function. This version returns a JSValueRegs
+    // instead of a GPR, which on JSVALUE64 are equivalent, but on JSVALUE32_64 a JSValueRegs is
+    // required to hold a 64-bit wide function argument, so use this in particular when passing a
+    // JSValue/EncodedJSValue be compatible with both JSVALUE64 an JSVALUE32_64 platforms, and use
+    // preferredArgumentGPR when passing host pointers.
+    template <typename OperationType, unsigned ArgNum>
+    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), JSValueRegs>
+    preferredArgumentJSR()
+    {
+#if USE(JSVALUE64)
+#if !OS(WINDOWS)
+        return pickJSR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::argumentGPR4, GPRInfo::argumentGPR5);
+#else
+        return pickJSR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::nonArgGPR0,   GPRInfo::nonArgGPR1);
+#endif
+#elif USE(JSVALUE32_64)
+#if CPU(ARM_THUMB2)
+        // The last register is guaranteed to be pushed onto the stack for calls, so we can use
+        // the link register as a temporary.
+        return pickJSR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::regT7,        GPRInfo::regT6,
+            GPRInfo::regT4,        GPRInfo::regT5,        ARMRegisters::lr);
+#elif CPU(MIPS)
+        return pickJSR<OperationType, ArgNum>(
+            GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
+            GPRInfo::argumentGPR3, GPRInfo::regT2,        GPRInfo::regT3,
+            GPRInfo::regT4,        GPRInfo::regT5,        GPRInfo::regT6);
+#endif
+#endif
+    }
+
+    // Computes (statically, at compilation time), the ideal machine register an argument should be
+    // loaded into for a function call. This yields the ABI specific argument registers for the
+    // initial arguments as appropriate, then suitable temporary registers for the remaining
+    // arguments. The idea is that 'setupArguments' will have to do the minimal amount of work when
+    // using these registers to hold the arguments, so if you are loading most arguments from memory
+    // anyway, using these registers yields the smallest code required for a call.
+    template <typename OperationType, unsigned ArgNum>
+    static constexpr std::enable_if_t<(FunctionTraits<OperationType>::arity > ArgNum), GPRReg>
+    preferredArgumentGPR()
+    {
+#if USE(JSVALUE32_64)
+        static_assert(sizeOfArg<OperationType, ArgNum>() <= 4, "Argument does not fit in GPR");
+#endif
+        return preferredArgumentJSR<OperationType, ArgNum>().payloadGPR();
+    }
 };
 
 } // namespace JSC

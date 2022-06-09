@@ -1,4 +1,0 @@
-
-
-PASS Verifies that trailing zeros in the milliseconds portion of the date strings are removed.
-

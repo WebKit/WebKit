@@ -30,12 +30,12 @@ class OverflowButton extends Button
     {
         super({
             cssClassName: "overflow",
-            iconName: layoutDelegate?.layoutTraits?.overflowButtonHasCircle() ? Icons.OverflowCircle : Icons.Overflow,
+            iconName: Icons.Overflow,
             layoutDelegate,
         });
 
+        this.clearContextMenuOptions();
         this._defaultContextMenuOptions = {};
-        this._extraContextMenuOptions = {};
     }
 
     // Public
@@ -47,46 +47,48 @@ class OverflowButton extends Button
 
     set visible(flag)
     {
-        function isEmpty(contextMenuOptions) {
-            for (let key in contextMenuOptions)
-                return false;
-            return true;
+        let hasContextMenuOptions = false;
+        for (let key in this._contextMenuOptions) {
+            hasContextMenuOptions = true;
+            break;
         }
 
-        super.visible = flag && (!isEmpty(this._defaultContextMenuOptions) || !isEmpty(this._extraContextMenuOptions));
+        super.visible = flag && hasContextMenuOptions;
     }
 
     get contextMenuOptions()
     {
-        return {
-            ...this._defaultContextMenuOptions,
-            ...this._extraContextMenuOptions,
-        };
+        return this._contextMenuOptions;
     }
 
-    addExtraContextMenuOptions(contextMenuOptions)
+    addContextMenuOptions(contextMenuOptions)
     {
         if (!this.enabled)
             return;
 
         for (let key in contextMenuOptions)
-            this._extraContextMenuOptions[key] = contextMenuOptions[key];
+            this._contextMenuOptions[key] = contextMenuOptions[key];
 
         this.visible = true;
     }
 
-    clearExtraContextMenuOptions()
+    clearContextMenuOptions()
     {
-        this._extraContextMenuOptions = {};
+        this._contextMenuOptions = {};
 
         this.visible = false;
+
+        this.addContextMenuOptions(this._defaultContextMenuOptions);
     }
 
     set defaultContextMenuOptions(defaultContextMenuOptions)
     {
         this._defaultContextMenuOptions = defaultContextMenuOptions || {};
 
-        this.visible = true;
+        this.clearContextMenuOptions();
+
+        if (this.layoutDelegate)
+            this.layoutDelegate.needsLayout = true;
     }
 
 }

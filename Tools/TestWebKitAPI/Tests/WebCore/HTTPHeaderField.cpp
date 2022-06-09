@@ -33,7 +33,7 @@ static String canonicalizeHTTPHeader(const String& string)
     size_t colonLocation = string.find(':');
     if (colonLocation == notFound)
         return { };
-    auto field = WebCore::HTTPHeaderField::create(string.left(colonLocation), string.substring(colonLocation + 1));
+    auto field = WebCore::HTTPHeaderField::create(string.substring(0, colonLocation), string.substring(colonLocation + 1));
     if (!field)
         return { };
     return makeString(field->name(), ": ", field->value());
@@ -65,47 +65,47 @@ TEST(HTTPHeaderField, Parser)
     static const char delInQuote[7] = {'a', ':', ' ', '"', static_cast<char>(0x7F), '"', '\0'};
 
     shouldRemainUnchanged({
-        "a: b"_s,
-        "a: b c"_s,
-        "!: b"_s,
-        "a: ()"_s,
-        "a: (\\ )"_s,
-        "a: (())"_s,
-        "a: \"\""_s,
-        "a: \"aA?\t \""_s,
-        "a: \"a\" (b) ((c))"_s,
-        String::fromLatin1(nonASCIIComment),
-        String::fromLatin1(nonASCIIQuotedPairInComment),
-        String::fromLatin1(nonASCIIQuotedPairInQuote),
+        "a: b",
+        "a: b c",
+        "!: b",
+        "a: ()",
+        "a: (\\ )",
+        "a: (())",
+        "a: \"\"",
+        "a: \"aA?\t \"",
+        "a: \"a\" (b) ((c))",
+        nonASCIIComment,
+        nonASCIIQuotedPairInComment,
+        nonASCIIQuotedPairInQuote,
     });
     
     shouldBeInvalid({
-        "a:"_s,
-        "a: "_s,
-        "a: \rb"_s,
-        "a: \nb"_s,
-        "a: \vb"_s,
-        "\a: b"_s,
-        "?: b"_s,
-        "a: \ab"_s,
-        "a: (\\\a)"_s,
-        "a: (\\\a)"_s,
-        "a: ("_s,
-        "a: (()"_s,
-        "a: (\a)"_s,
-        "a: \"\a\""_s,
-        "a: \"a\" (b)}((c))"_s,
-        String::fromLatin1(delInQuote),
+        "a:",
+        "a: ",
+        "a: \rb",
+        "a: \nb",
+        "a: \vb",
+        "\a: b",
+        "?: b",
+        "a: \ab",
+        "a: (\\\a)",
+        "a: (\\\a)",
+        "a: (",
+        "a: (()",
+        "a: (\a)",
+        "a: \"\a\"",
+        "a: \"a\" (b)}((c))",
+        delInQuote,
     });
     
     shouldBecome({
-        { "a: b "_s, "a: b"_s },
-        { " a: b"_s, "a: b"_s },
-        { "a: \tb"_s, "a: b"_s },
-        { " a: b c "_s, "a: b c"_s },
-        { "a:  b "_s, "a: b"_s },
-        { "a:\tb"_s, "a: b"_s },
-        { "\ta:\t b\t"_s, "a: b"_s },
-        { "a: \"a\" (b) "_s, "a: \"a\" (b)"_s },
+        { "a: b ", "a: b" },
+        { " a: b", "a: b" },
+        { "a: \tb", "a: b" },
+        { " a: b c ", "a: b c" },
+        { "a:  b ", "a: b" },
+        { "a:\tb", "a: b" },
+        { "\ta:\t b\t", "a: b" },
+        { "a: \"a\" (b) ", "a: \"a\" (b)" },
     });
 }

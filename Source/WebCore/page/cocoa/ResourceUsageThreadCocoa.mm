@@ -117,11 +117,11 @@ static Vector<ThreadInfo> threadInfos()
             usage = threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
 
         // FIXME: dispatch_queue_t can be destroyed concurrently while we are accessing to it here. We should not use it.
-        auto threadName = String::fromLatin1(threadExtendedInfo.pth_name);
+        String threadName = String(threadExtendedInfo.pth_name);
         String dispatchQueueName;
         if (threadIdentifierInfo.dispatch_qaddr) {
             dispatch_queue_t queue = *reinterpret_cast<dispatch_queue_t*>(threadIdentifierInfo.dispatch_qaddr);
-            dispatchQueueName = String::fromLatin1(dispatch_queue_get_label(queue));
+            dispatchQueueName = String(dispatch_queue_get_label(queue));
         }
 
         infos.append(ThreadInfo { WTFMove(sendRight), usage, threadName, dispatchQueueName });
@@ -154,7 +154,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
     }
 
     // Main thread is always first.
-    ASSERT(threads[0].dispatchQueueName == "com.apple.main-thread"_s);
+    ASSERT(threads[0].dispatchQueueName == "com.apple.main-thread");
 
     mach_port_t resourceUsageMachThread = mach_thread_self();
     mach_port_t mainThreadMachThread = threads[0].sendRight.sendRight();
@@ -199,13 +199,13 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
             return true;
 
         // The bmalloc scavenger thread is below WTF. Detect it by its name.
-        if (thread.threadName == "JavaScriptCore bmalloc scavenger"_s)
+        if (thread.threadName == "JavaScriptCore bmalloc scavenger")
             return true;
 
         // WebKit uses many WorkQueues with common prefixes.
-        if (thread.dispatchQueueName.startsWith("com.apple.IPC."_s)
-            || thread.dispatchQueueName.startsWith("com.apple.WebKit."_s)
-            || thread.dispatchQueueName.startsWith("org.webkit."_s))
+        if (thread.dispatchQueueName.startsWith("com.apple.IPC.")
+            || thread.dispatchQueueName.startsWith("com.apple.WebKit.")
+            || thread.dispatchQueueName.startsWith("org.webkit."))
             return true;
 
         return false;

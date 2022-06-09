@@ -34,29 +34,23 @@ namespace WebCore {
 
 class CSSNumericArray;
 
-class CSSMathMin final : public CSSMathValue {
+class CSSMathMin : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathMin);
 public:
-    static ExceptionOr<Ref<CSSMathMin>> create(FixedVector<CSSNumberish>&&);
-    static ExceptionOr<Ref<CSSMathMin>> create(Vector<Ref<CSSNumericValue>>&&);
+    static Ref<CSSMathMin> create(FixedVector<CSSNumberish>&&);
     const CSSNumericArray& values() const;
-
+    
 private:
-    CSSMathOperator getOperator() const final { return CSSMathOperator::Min; }
-    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathMin; }
-    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
-    std::optional<SumValue> toSumValue() const final;
-
-    CSSMathMin(Vector<Ref<CSSNumericValue>>&&, CSSNumericType&&);
+    CSSMathMin(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericArray> m_values;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMathMin)
-static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSMathMin; }
-static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.getType() == WebCore::CSSStyleValueType::CSSMathMin; }
-static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getType() == WebCore::CSSStyleValueType::CSSMathMin; }
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return is<WebCore::CSSNumericValue>(styleValue) && isType(downcast<WebCore::CSSNumericValue>(styleValue)); }
+    static bool isType(const WebCore::CSSNumericValue& numericValue) { return is<WebCore::CSSMathValue>(numericValue) && isType(downcast<WebCore::CSSMathValue>(numericValue)); }
+    static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getOperator() == WebCore::CSSMathOperator::Min; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

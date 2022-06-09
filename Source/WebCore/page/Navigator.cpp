@@ -2,7 +2,7 @@
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (c) 2000 Daniel Molkentin (molkentin@kde.org)
  *  Copyright (c) 2000 Stefan Schimanski (schimmi@kde.org)
- *  Copyright (C) 2003-2022 Apple Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Inc.
  *  Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  *  This library is free software; you can redistribute it and/or
@@ -30,7 +30,6 @@
 #include "DOMPlugin.h"
 #include "DOMPluginArray.h"
 #include "Document.h"
-#include "FeaturePolicy.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -41,7 +40,6 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
-#include "Quirks.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
@@ -127,14 +125,9 @@ static std::optional<URL> shareableURLForShareData(ScriptExecutionContext& conte
     return url;
 }
 
-static bool validateWebSharePolicy(Document& document)
-{
-    return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::WebShare, document, LogFeaturePolicyFailure::Yes) || document.quirks().shouldDisableWebSharePolicy();
-}
-
 bool Navigator::canShare(Document& document, const ShareData& data)
 {
-    if (!document.isFullyActive() || !validateWebSharePolicy(document))
+    if (!document.isFullyActive())
         return false;
 
     bool hasShareableTitleOrText = !data.title.isNull() || !data.text.isNull();
@@ -152,11 +145,6 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
 {
     if (!document.isFullyActive()) {
         promise->reject(InvalidStateError);
-        return;
-    }
-
-    if (!validateWebSharePolicy(document)) {
-        promise->reject(NotAllowedError, "Third-party iframes are not allowed to call share() unless explicitly allowed via Feature-Policy (web-share)"_s);
         return;
     }
 
@@ -186,7 +174,7 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
     if (document.settings().webShareFileAPIEnabled() && !data.files.isEmpty()) {
         if (m_loader)
             m_loader->cancel();
-
+        
         m_loader = ShareDataReader::create([this, promise = WTFMove(promise)] (ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
             showShareData(readData, WTFMove(promise));
         });
@@ -318,6 +306,23 @@ bool Navigator::cookieEnabled() const
         return false;
 
     return page->cookieJar().cookiesEnabled(*document);
+}
+
+bool Navigator::javaEnabled() const
+{
+    auto* frame = this->frame();
+    if (!frame)
+        return false;
+
+    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+        ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::JavaEnabled);
+
+    if (!frame->settings().isJavaEnabled())
+        return false;
+    if (frame->document()->securityOrigin().isLocal() && !frame->settings().isJavaEnabledForLocalFiles())
+        return false;
+
+    return true;
 }
 
 #if PLATFORM(IOS_FAMILY)

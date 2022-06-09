@@ -107,7 +107,7 @@
 }
 
 .spring-editor > .number-input-container > .number-input-row > input::-webkit-inner-spin-button {
-    appearance: none;
+    -webkit-appearance: none;
 }
 
 .spring-editor > .number-input-container > .number-input-row > input[type="range"] {

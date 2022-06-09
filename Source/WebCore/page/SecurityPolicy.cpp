@@ -65,8 +65,8 @@ static Vector<UserContentURLPattern>& originAccessPatterns() WTF_REQUIRES_LOCK(o
 
 bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
 {
-    bool referrerIsSecureURL = protocolIs(referrer, "https"_s);
-    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http"_s);
+    bool referrerIsSecureURL = protocolIs(referrer, "https");
+    bool referrerIsWebURL = referrerIsSecureURL || protocolIs(referrer, "http");
 
     if (!referrerIsWebURL)
         return true;
@@ -74,7 +74,7 @@ bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
     if (!referrerIsSecureURL)
         return false;
 
-    bool URLIsSecureURL = url.protocolIs("https"_s);
+    bool URLIsSecureURL = url.protocolIs("https");
 
     return !URLIsSecureURL;
 }
@@ -82,7 +82,7 @@ bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
 String SecurityPolicy::referrerToOriginString(const String& referrer)
 {
     String originString = SecurityOrigin::createFromString(referrer)->toString();
-    if (originString == "null"_s)
+    if (originString == "null")
         return String();
     // A security origin is not a canonical URL as it lacks a path. Add /
     // to turn it into a canonical URL we can use as referrer.
@@ -91,8 +91,8 @@ String SecurityPolicy::referrerToOriginString(const String& referrer)
 
 String SecurityPolicy::generateReferrerHeader(ReferrerPolicy referrerPolicy, const URL& url, const String& referrer)
 {
-    ASSERT(referrer == URL { referrer }.strippedForUseAsReferrer()
-        || referrer == SecurityOrigin::create(URL { referrer })->toString());
+    ASSERT(referrer == URL(URL(), referrer).strippedForUseAsReferrer()
+        || referrer == SecurityOrigin::create(URL(URL(), referrer))->toString());
 
     if (referrer.isEmpty())
         return String();
@@ -150,7 +150,7 @@ String SecurityPolicy::generateOriginHeader(ReferrerPolicy referrerPolicy, const
     case ReferrerPolicy::NoReferrerWhenDowngrade:
     case ReferrerPolicy::StrictOrigin:
     case ReferrerPolicy::StrictOriginWhenCrossOrigin:
-        if (protocolIs(securityOrigin.protocol(), "https"_s) && !url.protocolIs("https"_s))
+        if (protocolIs(securityOrigin.protocol(), "https") && !url.protocolIs("https"))
             return "null"_s;
         break;
     case ReferrerPolicy::SameOrigin:

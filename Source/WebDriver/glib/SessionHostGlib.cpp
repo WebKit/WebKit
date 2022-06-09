@@ -276,12 +276,12 @@ bool SessionHost::buildSessionCapabilities(GVariantBuilder* builder) const
             switch (m_capabilities.proxy->socksVersion.value()) {
             case 4:
                 if (URL::hostIsIPAddress(socksURL.host()))
-                    socksURL.setProtocol("socks4"_s);
+                    socksURL.setProtocol("socks4");
                 else
-                    socksURL.setProtocol("socks4a"_s);
+                    socksURL.setProtocol("socks4a");
                 break;
             case 5:
-                socksURL.setProtocol("socks5"_s);
+                socksURL.setProtocol("socks5");
                 break;
             default:
                 break;
@@ -306,7 +306,7 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
     ASSERT(m_socketConnection);
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTFMove(completionHandler);
-    m_sessionID = createVersion4UUIDString();
+    m_sessionID = createCanonicalUUIDString();
     GVariantBuilder builder;
     m_socketConnection->sendMessage("StartAutomationSession", g_variant_new("(sa{sv})", m_sessionID.utf8().data(), buildSessionCapabilities(&builder) ? &builder : nullptr));
 }

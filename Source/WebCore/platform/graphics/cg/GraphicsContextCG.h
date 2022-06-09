@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2010, 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,52 @@
 
 #pragma once
 
-#if USE(CG)
-
 #include "ColorSpaceCG.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
+
+CGAffineTransform getUserToBaseCTM(CGContextRef);
+
+class CGContextStateSaver {
+public:
+    CGContextStateSaver(CGContextRef context, bool saveAndRestore = true)
+        : m_context(context)
+        , m_saveAndRestore(saveAndRestore)
+    {
+        if (m_saveAndRestore)
+            CGContextSaveGState(m_context);
+    }
+    
+    ~CGContextStateSaver()
+    {
+        if (m_saveAndRestore)
+            CGContextRestoreGState(m_context);
+    }
+    
+    void save()
+    {
+        ASSERT(!m_saveAndRestore);
+        CGContextSaveGState(m_context);
+        m_saveAndRestore = true;
+    }
+
+    void restore()
+    {
+        ASSERT(m_saveAndRestore);
+        CGContextRestoreGState(m_context);
+        m_saveAndRestore = false;
+    }
+    
+    bool didSave() const
+    {
+        return m_saveAndRestore;
+    }
+    
+private:
+    CGContextRef m_context;
+    bool m_saveAndRestore;
+};
 
 class WEBCORE_EXPORT GraphicsContextCG : public GraphicsContext {
 public:
@@ -95,7 +135,7 @@ public:
     void setMiterLimit(float) final;
 
     void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
-    void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
+    void drawPattern(NativeImage&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
 
     using GraphicsContext::scale;
     void scale(const FloatSize&) final;
@@ -127,9 +167,7 @@ public:
 
     bool supportsInternalLinks() const final;
 
-    void didUpdateState(GraphicsContextState&) final;
-
-    virtual bool canUseShadowBlur() const;
+    void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
 
 #if OS(WINDOWS)
     GraphicsContextPlatformPrivate* deprecatedPrivateContext() const final;
@@ -139,10 +177,5 @@ private:
     GraphicsContextPlatformPrivate* m_data { nullptr };
 };
 
-CGAffineTransform getUserToBaseCTM(CGContextRef);
+}
 
-} // namespace WebCore
-
-#include "CGContextStateSaver.h"
-
-#endif // USE(CG)

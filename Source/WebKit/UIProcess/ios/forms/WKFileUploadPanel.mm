@@ -334,7 +334,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
 #pragma mark - WKFileUploadPanel
 
-@interface WKFileUploadPanel () <UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate
+@interface WKFileUploadPanel () <UIPopoverControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate
 #if USE(UICONTEXTMENU)
 , UIContextMenuInteractionDelegate
 #endif
@@ -353,8 +353,9 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
     RetainPtr<WKFileUploadMediaTranscoder> _mediaTranscoder;
 #endif
     RetainPtr<UIImagePickerController> _imagePicker;
-    RetainPtr<UIViewController> _presentationViewController;
+    RetainPtr<UIViewController> _presentationViewController; // iPhone always. iPad for Fullscreen Camera.
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    RetainPtr<UIPopoverController> _presentationPopover; // iPad for action sheet and Photo Library.
     BOOL _isPresentingSubMenu;
     ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
@@ -376,6 +377,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 - (void)dealloc
 {
     [_imagePicker setDelegate:nil];
+    [_presentationPopover setDelegate:nil];
     [_documentPickerController setDelegate:nil];
 #if USE(UICONTEXTMENU)
     [self removeContextMenuInteraction];
@@ -460,7 +462,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
     Ref<API::Array> acceptFileExtensions = parameters->acceptFileExtensions();
     for (auto extension : acceptFileExtensions->elementsOfType<API::String>()) {
-        String mimeType = WebCore::MIMETypeRegistry::mimeTypeForExtension(extension->stringView().substring(1));
+        String mimeType = WebCore::MIMETypeRegistry::mimeTypeForExtension(extension->stringView().substring(1).toString());
         if (!mimeType.isEmpty())
             [mimeTypes addObject:mimeType];
     }
@@ -504,7 +506,9 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
     if (auto view = _view.get())
         [[UIViewController _viewControllerForFullScreenPresentationFromView:view.get()] dismissViewControllerAnimated:NO completion:nil];
-
+    
+    [_presentationPopover setDelegate:nil];
+    _presentationPopover = nil;
     _presentationViewController = nil;
 
     [self _cancel];
@@ -512,6 +516,12 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
 - (void)_dismissDisplayAnimated:(BOOL)animated
 {
+    if (_presentationPopover) {
+        [_presentationPopover dismissPopoverAnimated:animated];
+        [_presentationPopover setDelegate:nil];
+        _presentationPopover = nil;
+    }
+
     if (_presentationViewController) {
         UIViewController *currentPresentedViewController = [_presentationViewController presentedViewController];
         if (currentPresentedViewController == self || currentPresentedViewController == _imagePicker.get()) {
@@ -630,11 +640,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 #if USE(UICONTEXTMENU)
 
-#if HAVE(UI_CONTEXT_MENU_PREVIEW_ITEM_IDENTIFIER)
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
-#else
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-#endif
 {
     return [_view _createTargetedContextMenuHintPreviewIfPossible];
 }
@@ -803,8 +809,8 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     [_imagePicker setSourceType:sourceType];
     [_imagePicker setMediaTypes:[self _mediaTypesForPickerSourceType:sourceType]];
     [_imagePicker setDelegate:self];
-    [_imagePicker presentationController].delegate = self;
     [_imagePicker setAllowsEditing:NO];
+    [_imagePicker setModalPresentationStyle:UIModalPresentationFullScreen];
     [_imagePicker _setAllowsMultipleSelection:_allowMultipleFiles];
     [_imagePicker _setRequiresPickingConfirmation:YES];
     [_imagePicker _setShowsFileSizePicker:YES];
@@ -812,10 +818,35 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     if (_mediaCaptureType != WebCore::MediaCaptureTypeNone)
         [_imagePicker setCameraDevice:cameraDeviceForMediaCaptureType(_mediaCaptureType)];
 
-    [self _presentFullscreenViewController:_imagePicker.get() animated:YES];
+    // Use a popover on the iPad if the source type is not the camera.
+    // The camera will use a fullscreen, modal view controller.
+    BOOL usePopover = !currentUserInterfaceIdiomIsSmallScreen() && sourceType != UIImagePickerControllerSourceTypeCamera;
+    if (usePopover)
+        [self _presentPopoverWithContentViewController:_imagePicker.get() animated:YES];
+    else
+        [self _presentFullscreenViewController:_imagePicker.get() animated:YES];
 }
 
 #pragma mark - Presenting View Controllers
+
+- (void)_presentMenuOptionForCurrentInterfaceIdiom:(UIViewController *)viewController
+{
+    if (currentUserInterfaceIdiomIsSmallScreen())
+        [self _presentFullscreenViewController:viewController animated:YES];
+    else
+        [self _presentPopoverWithContentViewController:viewController animated:YES];
+}
+
+- (void)_presentPopoverWithContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated
+{
+    [self _dismissDisplayAnimated:animated];
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    _presentationPopover = adoptNS([[UIPopoverController alloc] initWithContentViewController:contentViewController]);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    [_presentationPopover setDelegate:self];
+    [_presentationPopover presentPopoverFromRect:CGRectIntegral(CGRectMake(_interactionPoint.x, _interactionPoint.y, 1, 1)) inView:_view.getAutoreleased() permittedArrowDirections:UIPopoverArrowDirectionAny animated:animated];
+}
 
 - (void)_presentFullscreenViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
@@ -828,6 +859,15 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 #pragma mark - UIAdaptivePresentationControllerDelegate
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+    [self _cancel];
+}
+
+#pragma mark - UIPopoverControllerDelegate
+
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     [self _cancel];
 }

@@ -16,7 +16,6 @@ PASS non-animatable property 'transitionTimingFunction' is not accessed when usi
 PASS non-animatable property 'contain' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'direction' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'display' is not accessed when using a property-indexed keyframe object
-PASS non-animatable property 'textCombineUpright' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'textOrientation' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'unicodeBidi' is not accessed when using a property-indexed keyframe object
 PASS non-animatable property 'willChange' is not accessed when using a property-indexed keyframe object
@@ -41,7 +40,6 @@ PASS non-animatable property 'transitionTimingFunction' is not accessed when usi
 PASS non-animatable property 'contain' is not accessed when using a keyframe sequence
 PASS non-animatable property 'direction' is not accessed when using a keyframe sequence
 PASS non-animatable property 'display' is not accessed when using a keyframe sequence
-PASS non-animatable property 'textCombineUpright' is not accessed when using a keyframe sequence
 PASS non-animatable property 'textOrientation' is not accessed when using a keyframe sequence
 PASS non-animatable property 'unicodeBidi' is not accessed when using a keyframe sequence
 PASS non-animatable property 'willChange' is not accessed when using a keyframe sequence
@@ -63,8 +61,8 @@ PASS Reading from a custom iterator that returns a non-object keyframe should th
 PASS Reading from a custom iterator that returns a non-object keyframe and an invalid easing should throw
 PASS Reading from a custom iterator that returns a keyframe with a non finite floating-point offset value should throw
 PASS Reading from a custom iterator that returns a keyframe with a non finite floating-point offset value and an invalid easing should throw
-PASS An undefined keyframe returned from a custom iterator should be treated as a default keyframe
-PASS A null keyframe returned from a custom iterator should be treated as a default keyframe
+FAIL An undefined keyframe returned from a custom iterator should be treated as a default keyframe Type error
+FAIL A null keyframe returned from a custom iterator should be treated as a default keyframe Type error
 PASS A list of values returned from a custom iterator should be ignored
 PASS If a custom iterator throws from next(), the exception should be rethrown
 PASS Accessing a Symbol.iterator property that throws should rethrow

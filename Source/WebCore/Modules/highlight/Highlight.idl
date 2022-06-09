@@ -25,6 +25,7 @@
 
 [
     EnabledAtRuntime=HighlightAPIEnabled,
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface Highlight {
     constructor(StaticRange range);

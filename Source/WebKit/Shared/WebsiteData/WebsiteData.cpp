@@ -147,7 +147,7 @@ OptionSet<WebsiteDataType> WebsiteData::filter(OptionSet<WebsiteDataType> unfilt
     return filtered;
 }
 
-WebsiteData WebsiteData::isolatedCopy() const &
+WebsiteData WebsiteData::isolatedCopy() const
 {
     return WebsiteData {
         crossThreadCopy(entries),
@@ -159,26 +159,13 @@ WebsiteData WebsiteData::isolatedCopy() const &
     };
 }
 
-WebsiteData WebsiteData::isolatedCopy() &&
+auto WebsiteData::Entry::isolatedCopy() const -> Entry
 {
-    return WebsiteData {
-        crossThreadCopy(WTFMove(entries)),
-        crossThreadCopy(WTFMove(hostNamesWithCookies)),
-        crossThreadCopy(WTFMove(hostNamesWithHSTSCache)),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-        crossThreadCopy(WTFMove(registrableDomainsWithResourceLoadStatistics)),
-#endif
+    return Entry {
+        crossThreadCopy(origin),
+        type,
+        size,
     };
-}
-
-auto WebsiteData::Entry::isolatedCopy() const & -> Entry
-{
-    return { crossThreadCopy(origin), type, size };
-}
-
-auto WebsiteData::Entry::isolatedCopy() && -> Entry
-{
-    return { crossThreadCopy(WTFMove(origin)), type, size };
 }
 
 }

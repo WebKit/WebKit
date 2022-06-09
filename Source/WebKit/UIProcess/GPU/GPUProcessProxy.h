@@ -33,10 +33,8 @@
 #include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxyMessagesReplies.h"
-#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <memory>
 #include <pal/SessionID.h>
@@ -50,7 +48,6 @@
 #endif
 
 namespace WebCore {
-class CaptureDevice;
 struct MockMediaDevice;
 struct ScreenProperties;
 struct SecurityOriginData;
@@ -72,7 +69,7 @@ public:
     static GPUProcessProxy* singletonIfCreated();
     ~GPUProcessProxy();
 
-    void createGPUProcessConnection(WebProcessProxy&, IPC::Attachment&& connectionIdentifier, GPUProcessConnectionParameters&&);
+    void getGPUProcessConnection(WebProcessProxy&, const GPUProcessConnectionParameters&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();
@@ -87,12 +84,6 @@ public:
     void removeMockMediaDevice(const String&);
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
-    void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture);
-#endif
-
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
-    void showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
 
     void removeSession(PAL::SessionID);
@@ -108,8 +99,6 @@ public:
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
-
 private:
     explicit GPUProcessProxy();
 
@@ -122,12 +111,12 @@ private:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
 
-    void gpuProcessExited(ProcessTerminationReason);
+    void gpuProcessExited(GPUProcessTerminationReason);
 
     // ProcessThrottlerClient
     ASCIILiteral clientName() const final { return "GPUProcess"_s; }
-    void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
-    void sendProcessDidResume(ResumeReason) final;
+    void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
+    void sendProcessDidResume() final;
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
@@ -142,6 +131,8 @@ private:
 
     void terminateWebProcess(WebCore::ProcessIdentifier);
     void processIsReadyToExit();
+
+    void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture);
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);
@@ -160,7 +151,7 @@ private:
     bool m_hasSentTCCDSandboxExtension { false };
     bool m_hasSentCameraSandboxExtension { false };
     bool m_hasSentMicrophoneSandboxExtension { false };
-    bool m_hasSentDisplayCaptureSandboxExtension { false };
+    bool m_hasSentNetworkProcessXPCEndpoint { false };
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
@@ -181,14 +172,6 @@ private:
 
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     bool m_hasEnabledMediaSourceInlinePainting { false };
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool m_hasEnabledSampleBufferContentKeySessionSupport { false };
-#endif
-
-#if HAVE(SCREEN_CAPTURE_KIT)
-    bool m_hasEnabledScreenCaptureKit { false };
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;

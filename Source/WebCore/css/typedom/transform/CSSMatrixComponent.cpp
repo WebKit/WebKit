@@ -41,25 +41,26 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMatrixComponent);
 
-Ref<CSSTransformComponent> CSSMatrixComponent::create(Ref<DOMMatrixReadOnly>&& matrix, std::optional<CSSMatrixComponentOptions>&& options)
+Ref<CSSTransformComponent> CSSMatrixComponent::create(Ref<DOMMatrixReadOnly>&& matrix, CSSMatrixComponentOptions&& options)
 {
     return adoptRef(*new CSSMatrixComponent(WTFMove(matrix), WTFMove(options)));
 }
 
-CSSMatrixComponent::CSSMatrixComponent(Ref<DOMMatrixReadOnly>&& matrix, std::optional<CSSMatrixComponentOptions>&& options)
-    : CSSTransformComponent((options ? options->is2D : matrix->is2D()) ? Is2D::Yes : Is2D::No)
-    , m_matrix(matrix->cloneAsDOMMatrix())
+CSSMatrixComponent::CSSMatrixComponent(Ref<DOMMatrixReadOnly>&& matrix, CSSMatrixComponentOptions&& options)
+    : m_matrix(matrix->cloneAsDOMMatrix())
+    , m_options(WTFMove(options))
 {
 }
 
-void CSSMatrixComponent::serialize(StringBuilder&) const
+// FIXME: Fix all the following virtual functions
+
+String CSSMatrixComponent::toString() const
 {
-    // FIXME: Implement.
+    return emptyString();
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSMatrixComponent::toMatrix()
 {
-    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

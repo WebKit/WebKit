@@ -54,9 +54,10 @@ public:
     void layoutExcludedChildren(bool relayoutChildren) override;
     void layout() override;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0_lu) override;
-    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
+
+    RenderBlock* firstLineBlock() const override;
 
     void getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const;
 
@@ -74,7 +75,7 @@ public:
 
 private:
     bool isRubyRun() const override { return true; }
-    ASCIILiteral renderName() const override { return "RenderRubyRun (anonymous)"_s; }
+    const char* renderName() const override { return "RenderRubyRun (anonymous)"; }
     bool createsAnonymousWrapper() const override { return true; }
     bool canDropAnonymousBlockChild() const override { return false; }
 

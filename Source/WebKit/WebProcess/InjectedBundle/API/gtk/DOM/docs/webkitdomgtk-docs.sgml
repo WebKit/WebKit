@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>WebKitDOMGTK+ Reference Manual</title>
+    <releaseinfo>for WebKitDOMGTK+ &version;</releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>Class Overview</title>
+    <xi:include href="xml/WebKitDOMEventTarget.xml"/>
+    <xi:include href="xml/WebKitDOMNodeFilter.xml"/>
+    <xi:include href="xml/WebKitDOMObject.xml"/>
+    <xi:include href="xml/WebKitDOMXPathNSResolver.xml"/>
+    <xi:include href="xml/WebKitDOMCSSRule.xml"/>
+    <xi:include href="xml/WebKitDOMCSSRuleList.xml"/>
+    <xi:include href="xml/WebKitDOMCSSStyleDeclaration.xml"/>
+    <xi:include href="xml/WebKitDOMCSSStyleSheet.xml"/>
+    <xi:include href="xml/WebKitDOMCSSValue.xml"/>
+    <xi:include href="xml/WebKitDOMMediaList.xml"/>
+    <xi:include href="xml/WebKitDOMStyleSheet.xml"/>
+    <xi:include href="xml/WebKitDOMStyleSheetList.xml"/>
+    <xi:include href="xml/WebKitDOMAttr.xml"/>
+    <xi:include href="xml/WebKitDOMCDATASection.xml"/>
+    <xi:include href="xml/WebKitDOMCharacterData.xml"/>
+    <xi:include href="xml/WebKitDOMComment.xml"/>
+    <xi:include href="xml/WebKitDOMDOMImplementation.xml"/>
+    <xi:include href="xml/WebKitDOMDocument.xml"/>
+    <xi:include href="xml/WebKitDOMDocumentFragment.xml"/>
+    <xi:include href="xml/WebKitDOMDocumentType.xml"/>
+    <xi:include href="xml/WebKitDOMElement.xml"/>
+    <xi:include href="xml/WebKitDOMEvent.xml"/>
+    <xi:include href="xml/WebKitDOMKeyboardEvent.xml"/>
+    <xi:include href="xml/WebKitDOMMouseEvent.xml"/>
+    <xi:include href="xml/WebKitDOMNamedNodeMap.xml"/>
+    <xi:include href="xml/WebKitDOMNode.xml"/>
+    <xi:include href="xml/WebKitDOMNodeIterator.xml"/>
+    <xi:include href="xml/WebKitDOMNodeList.xml"/>
+    <xi:include href="xml/WebKitDOMProcessingInstruction.xml"/>
+    <xi:include href="xml/WebKitDOMRange.xml"/>
+    <xi:include href="xml/WebKitDOMText.xml"/>
+    <xi:include href="xml/WebKitDOMTreeWalker.xml"/>
+    <xi:include href="xml/WebKitDOMUIEvent.xml"/>
+    <xi:include href="xml/WebKitDOMWheelEvent.xml"/>
+    <xi:include href="xml/WebKitDOMBlob.xml"/>
+    <xi:include href="xml/WebKitDOMFile.xml"/>
+    <xi:include href="xml/WebKitDOMFileList.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLAnchorElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLAppletElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLAreaElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLBRElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLBaseElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLBodyElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLButtonElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLCanvasElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLCollection.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLDListElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLDirectoryElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLDivElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLDocument.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLEmbedElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLFieldSetElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLFontElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLFormElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLFrameElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLFrameSetElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLHRElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLHeadElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLHeadingElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLHtmlElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLIFrameElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLImageElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLInputElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLLIElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLLabelElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLLegendElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLLinkElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLMapElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLMarqueeElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLMenuElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLMetaElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLModElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLOListElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLObjectElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLOptGroupElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLOptionElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLOptionsCollection.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLParagraphElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLParamElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLPreElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLQuoteElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLScriptElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLSelectElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLStyleElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLTableCaptionElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLTableCellElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLTableColElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLTableElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLTableRowElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLTableSectionElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLTextAreaElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLTitleElement.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLUListElement.xml"/>
+    <xi:include href="xml/WebKitDOMDOMWindow.xml"/>
+    <xi:include href="xml/WebKitDOMDOMSelection.xml"/>
+    <xi:include href="xml/WebKitDOMXPathExpression.xml"/>
+    <xi:include href="xml/WebKitDOMXPathResult.xml"/>
+    <xi:include href="xml/WebKitDOMEntityReference.xml"/>
+    <xi:include href="xml/WebKitDOMHTMLBaseFontElement.xml"/>
+    <xi:include href="xml/WebKitDOMDOMTokenList.xml"/>
+  </chapter>
+
+  <index id="index-all">
+    <title>Index</title>
+    <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-deprecated" role="deprecated">
+    <title>Index of deprecated symbols</title>
+    <xi:include href="xml/api-index-deprecated.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-22" role="2.22">
+    <title>Index of new symbols in 2.22</title>
+    <xi:include href="xml/api-index-2.22.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
+</book>

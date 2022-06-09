@@ -36,6 +36,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmapRenderingContext);
 
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+static RenderingMode bufferRenderingMode = RenderingMode::Accelerated;
+#else
+static RenderingMode bufferRenderingMode = RenderingMode::Unaccelerated;
+#endif
+
 std::unique_ptr<ImageBitmapRenderingContext> ImageBitmapRenderingContext::create(CanvasBase& canvas, ImageBitmapRenderingContextSettings&& settings)
 {
     auto renderingContext = std::unique_ptr<ImageBitmapRenderingContext>(new ImageBitmapRenderingContext(canvas, WTFMove(settings)));
@@ -64,7 +70,7 @@ HTMLCanvasElement* ImageBitmapRenderingContext::canvas() const
 
 bool ImageBitmapRenderingContext::isAccelerated() const
 {
-    return false;
+    return bufferRenderingMode == RenderingMode::Accelerated;
 }
 
 void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitmap)
@@ -89,8 +95,7 @@ void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitma
         // only reason I can think of is toDataURL(), but that doesn't seem like
         // a good enough argument to waste memory.
 
-        auto buffer = ImageBuffer::create(FloatSize(canvas()->width(), canvas()->height()), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(RenderingMode::Unaccelerated));
-        canvas()->setImageBufferAndMarkDirty(WTFMove(buffer));
+        canvas()->setImageBufferAndMarkDirty(ImageBuffer::create(FloatSize(canvas()->width(), canvas()->height()), bufferRenderingMode, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
 
         // 1.4. Set the output bitmap's origin-clean flag to true.
 

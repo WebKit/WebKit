@@ -285,21 +285,21 @@ static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& bor
     borderBottom = false;
     borderLeft = false;
 
-    if (equalLettersIgnoringASCIICase(value, "above"_s))
+    if (equalLettersIgnoringASCIICase(value, "above"))
         borderTop = true;
-    else if (equalLettersIgnoringASCIICase(value, "below"_s))
+    else if (equalLettersIgnoringASCIICase(value, "below"))
         borderBottom = true;
-    else if (equalLettersIgnoringASCIICase(value, "hsides"_s))
+    else if (equalLettersIgnoringASCIICase(value, "hsides"))
         borderTop = borderBottom = true;
-    else if (equalLettersIgnoringASCIICase(value, "vsides"_s))
+    else if (equalLettersIgnoringASCIICase(value, "vsides"))
         borderLeft = borderRight = true;
-    else if (equalLettersIgnoringASCIICase(value, "lhs"_s))
+    else if (equalLettersIgnoringASCIICase(value, "lhs"))
         borderLeft = true;
-    else if (equalLettersIgnoringASCIICase(value, "rhs"_s))
+    else if (equalLettersIgnoringASCIICase(value, "rhs"))
         borderRight = true;
-    else if (equalLettersIgnoringASCIICase(value, "box"_s) || equalLettersIgnoringASCIICase(value, "border"_s))
+    else if (equalLettersIgnoringASCIICase(value, "box") || equalLettersIgnoringASCIICase(value, "border"))
         borderTop = borderBottom = borderLeft = borderRight = true;
-    else if (!equalLettersIgnoringASCIICase(value, "void"_s))
+    else if (!equalLettersIgnoringASCIICase(value, "void"))
         return false;
     return true;
 }
@@ -307,7 +307,7 @@ static bool getBordersFromFrameAttributeValue(const AtomString& value, bool& bor
 void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, value, AllowZeroValue::No);
+        addHTMLLengthToStyle(style, CSSPropertyWidth, value);
     else if (name == heightAttr)
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
     else if (name == borderAttr) 
@@ -335,7 +335,7 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
     } else if (name == alignAttr) {
         if (!value.isEmpty()) {
-            if (equalLettersIgnoringASCIICase(value, "center"_s)) {
+            if (equalLettersIgnoringASCIICase(value, "center")) {
                 addPropertyToPresentationalHintStyle(style, CSSPropertyMarginInlineStart, CSSValueAuto);
                 addPropertyToPresentationalHintStyle(style, CSSPropertyMarginInlineEnd, CSSValueAuto);
             } else
@@ -387,15 +387,15 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomStrin
         m_frameAttr = getBordersFromFrameAttributeValue(value, borderTop, borderRight, borderBottom, borderLeft);
     } else if (name == rulesAttr) {
         m_rulesAttr = UnsetRules;
-        if (equalLettersIgnoringASCIICase(value, "none"_s))
+        if (equalLettersIgnoringASCIICase(value, "none"))
             m_rulesAttr = NoneRules;
-        else if (equalLettersIgnoringASCIICase(value, "groups"_s))
+        else if (equalLettersIgnoringASCIICase(value, "groups"))
             m_rulesAttr = GroupsRules;
-        else if (equalLettersIgnoringASCIICase(value, "rows"_s))
+        else if (equalLettersIgnoringASCIICase(value, "rows"))
             m_rulesAttr = RowsRules;
-        else if (equalLettersIgnoringASCIICase(value, "cols"_s))
+        else if (equalLettersIgnoringASCIICase(value, "cols"))
             m_rulesAttr = ColsRules;
-        else if (equalLettersIgnoringASCIICase(value, "all"_s))
+        else if (equalLettersIgnoringASCIICase(value, "all"))
             m_rulesAttr = AllRules;
     } else if (name == cellpaddingAttr) {
         if (!value.isEmpty())

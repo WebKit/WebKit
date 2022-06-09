@@ -4,21 +4,11 @@
 /*---
 esid: sec-temporal.plaindate.from
 description: A PlainDate object is copied, not returned directly
-includes: [temporalHelpers.js]
+includes: [compareArray.js, temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const orig = new Temporal.PlainDate(2000, 5, 2);
-const result = Temporal.PlainDate.from(orig);
-
-TemporalHelpers.assertPlainDate(
-  result,
-  2000, 5, "M05", 2,
-  "PlainDate is copied"
-);
-
-assert.notSameValue(
-  result,
-  orig,
-  "When a PlainDate is given, the returned value is not the original PlainDate"
-);
+const plainDate = new Temporal.PlainDate(2000, 5, 2);
+const result = Temporal.PlainDate.from(plainDate);
+assert.notSameValue(result, plainDate);
+TemporalHelpers.assertPlainDate(result, 2000, 5, "M05", 2);

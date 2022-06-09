@@ -27,7 +27,6 @@
 #include "config.h"
 #include "XPathValue.h"
 
-#include "CommonAtomStrings.h"
 #include "XPathExpressionNode.h"
 #include "XPathUtil.h"
 #include <limits>
@@ -129,7 +128,7 @@ String Value::toString() const
                 return std::signbit(m_number) ? "-Infinity"_s : "Infinity"_s;
             return String::number(m_number);
         case BooleanValue:
-            return m_bool ? trueAtom() : falseAtom();
+            return m_bool ? "true"_s : "false"_s;
     }
 
     ASSERT_NOT_REACHED();

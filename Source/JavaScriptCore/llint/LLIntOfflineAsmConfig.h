@@ -26,7 +26,6 @@
 #pragma once
 
 #include "LLIntCommon.h"
-#include "StructureID.h"
 #include <wtf/Assertions.h>
 #include <wtf/Gigacage.h>
 
@@ -160,12 +159,6 @@
 #define OFFLINE_ASM_ADDRESS64 1
 #else
 #define OFFLINE_ASM_ADDRESS64 0
-#endif
-
-#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
-#define OFFLINE_ASM_STRUCTURE_ID_WITH_SHIFT 1
-#else
-#define OFFLINE_ASM_STRUCTURE_ID_WITH_SHIFT 0
 #endif
 
 #if ASSERT_ENABLED

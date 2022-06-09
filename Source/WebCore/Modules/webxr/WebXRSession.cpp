@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +31,6 @@
 #include "Document.h"
 #include "EventNames.h"
 #include "JSWebXRReferenceSpace.h"
-#include "WebCoreOpaqueRoot.h"
 #include "WebXRBoundedReferenceSpace.h"
 #include "WebXRFrame.h"
 #include "WebXRSystem.h"
@@ -67,7 +65,7 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_views(device.views(mode))
 {
     m_device->setTrackingAndRenderingClient(*this);
-    m_device->initializeTrackingAndRendering(document.securityOrigin().data(), mode, m_requestedFeatures);
+    m_device->initializeTrackingAndRendering(mode);
 
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
@@ -167,7 +165,7 @@ ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newSt
 bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
 {
     // 1. If type is not contained in session’s XR device's list of enabled features for mode return false.
-    if (!m_requestedFeatures.contains(sessionFeatureFromReferenceSpaceType(type)))
+    if (!m_requestedFeatures.contains(type))
         return false;
 
     // 2. If type is viewer, return true.
@@ -266,7 +264,8 @@ unsigned WebXRSession::requestAnimationFrame(Ref<XRFrameRequestCallback>&& callb
     // Script can add multiple requestAnimationFrame callbacks but we should only request a device frame once.
     // When requestAnimationFrame is called during processing RAF callbacks the next requestFrame is scheduled
     // at the end of WebXRSession::onFrame() to prevent requesting a new frame before the current one has ended.
-    requestFrameIfNeeded();
+    if (m_callbacks.size() == 1)
+        requestFrame();
 
     // 4. Return session's animation frame callback identifier's current value.
     return newId;
@@ -280,7 +279,7 @@ void WebXRSession::cancelAnimationFrame(unsigned callbackId)
     //    currently running animation frame callbacks that is associated with the value handle.
     // 3. If there is such an entry, set its cancelled boolean to true and remove it from
     //    session's list of animation frame callbacks.
-    size_t position = m_callbacks.findIf([callbackId] (auto& item) {
+    size_t position = m_callbacks.findMatching([callbackId] (auto& item) {
         return item->callbackId() == callbackId;
     });
 
@@ -446,22 +445,6 @@ void WebXRSession::sessionDidEnd()
     shutdown(InitiatedBySystem::Yes);
 }
 
-void WebXRSession::updateSessionVisibilityState(PlatformXR::VisibilityState visibilityState)
-{
-    if (m_visibilityState == visibilityState)
-        return;
-
-    m_visibilityState = visibilityState;
-
-    requestFrameIfNeeded();
-
-    // From https://immersive-web.github.io/webxr/#event-types
-    // A user agent MUST dispatch a visibilitychange event on an XRSession each time the
-    // visibility state of the XRSession has changed. The event MUST be of type XRSessionEvent.
-    auto event = XRSessionEvent::create(eventNames().visibilitychangeEvent, { RefPtr { this } });
-    queueTaskToDispatchEvent(*this, TaskSource::WebXR, WTFMove(event));
-}
-
 void WebXRSession::applyPendingRenderState()
 {
     // https: //immersive-web.github.io/webxr/#apply-the-pending-render-state
@@ -520,22 +503,9 @@ bool WebXRSession::frameShouldBeRendered() const
     return true;
 }
 
-void WebXRSession::requestFrameIfNeeded()
+void WebXRSession::requestFrame()
 {
-    ASSERT(isMainThread());
-
-    if (m_ended)
-        return;
-
-    if (m_visibilityState == XRVisibilityState::Hidden)
-        return;
-
-    if (m_callbacks.isEmpty() || m_isDeviceFrameRequestPending)
-        return;
-
-    m_isDeviceFrameRequestPending = true;
     m_device->requestFrame([this, protectedThis = Ref { *this }](auto&& frameData) {
-        m_isDeviceFrameRequestPending = false;
         onFrame(WTFMove(frameData));
     });
 }
@@ -547,16 +517,9 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
     if (m_ended)
         return;
 
-    // From https://immersive-web.github.io/webxr/#xrsession-visibility-state
-    // A state of hidden indicates that imagery rendered by the XRSession cannot be seen by the user.
-    // requestAnimationFrame() callbacks will not be processed until the visibility state changes.
-    // Input is not processed by the XRSession.
-    if (m_visibilityState == XRVisibilityState::Hidden)
-        return;
-
     // Queue a task to perform the following steps.
     queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, frameData = WTFMove(frameData)]() mutable {
-        if (m_ended || m_visibilityState == XRVisibilityState::Hidden)
+        if (m_ended)
             return;
 
         m_frameData = WTFMove(frameData);
@@ -623,7 +586,9 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
             m_device->submitFrame(WTFMove(frameLayers));
         }
 
-        requestFrameIfNeeded();
+        if (!m_callbacks.isEmpty())
+            requestFrame();
+
     });
 }
 
@@ -644,18 +609,6 @@ bool WebXRSession::posesCanBeReported(const Document& document) const
     // prevent fingerprintint in pose data and return false in case we don't.
     // We're going to apply them so let's just return true.
     return true;
-}
-
-#if ENABLE(WEBXR_HANDS)
-bool WebXRSession::isHandTrackingEnabled() const
-{
-    return m_requestedFeatures.contains(PlatformXR::SessionFeature::HandTracking);
-}
-#endif
-
-WebCoreOpaqueRoot root(WebXRSession* session)
-{
-    return WebCoreOpaqueRoot { session };
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  * Copyright (c) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
@@ -51,11 +51,11 @@ public:
     {
     }
 
-    IterationStatus operator()(StackVisitor& visitor) const
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (m_needToSkipAFrame) {
             m_needToSkipAFrame = false;
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
         }
 
         if (m_remainingCapacityForFrameCapture) {
@@ -65,10 +65,10 @@ public:
             m_frames.append(ScriptCallFrame(visitor->functionName(), visitor->sourceURL(), visitor->sourceID(), line, column));
 
             m_remainingCapacityForFrameCapture--;
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
         }
 
-        return IterationStatus::Done;
+        return StackVisitor::Done;
     }
 
 private:
@@ -124,9 +124,9 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
-    JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "line"_s));
-    JSValue columnValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "column"_s));
-    JSValue sourceURLValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "sourceURL"_s));
+    JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "line"));
+    JSValue columnValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "column"));
+    JSValue sourceURLValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "sourceURL"));
     
     bool result = false;
     if (lineValue && lineValue.isNumber()
@@ -135,7 +135,7 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
         *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(globalObject)) : 0;
         *sourceURL = sourceURLValue.toWTFString(globalObject);
         result = true;
-    } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(exceptionObject)) {
+    } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(vm, exceptionObject)) {
         unsigned unsignedLine;
         unsigned unsignedColumn;
         result = getLineColumnAndSource(error->stackTrace(), unsignedLine, unsignedColumn, *sourceURL);

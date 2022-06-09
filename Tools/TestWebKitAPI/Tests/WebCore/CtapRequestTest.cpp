@@ -50,22 +50,22 @@ using namespace fido;
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme"_s;
-    rp.id = "acme.com"_s;
+    rp.name = "Acme";
+    rp.id = "acme.com";
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
+    user.name = "johnpsmith@example.com";
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith"_s;
+    user.displayName = "John P. Smith";
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, true, UserVerificationRequirement::Preferred };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, true, UserVerificationRequirement::Preferred };
 
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
-    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
+    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);
     EXPECT_EQ(serializedData.size(), sizeof(TestData::kCtapMakeCredentialRequest));
     EXPECT_EQ(memcmp(serializedData.data(), TestData::kCtapMakeCredentialRequest, serializedData.size()), 0);
 }
@@ -73,22 +73,22 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamNoUVNoRK)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme"_s;
-    rp.id = "acme.com"_s;
+    rp.name = "Acme";
+    rp.id = "acme.com";
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
+    user.name = "johnpsmith@example.com";
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith"_s;
+    user.displayName = "John P. Smith";
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Discouraged };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, false, UserVerificationRequirement::Discouraged };
 
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
-    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
+    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);
     EXPECT_EQ(serializedData.size(), sizeof(TestData::kCtapMakeCredentialRequestShort));
     EXPECT_EQ(memcmp(serializedData.data(), TestData::kCtapMakeCredentialRequestShort, serializedData.size()), 0);
 }
@@ -96,22 +96,22 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamNoUVNoRK)
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamUVRequiredButNotSupported)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme"_s;
-    rp.id = "acme.com"_s;
+    rp.name = "Acme";
+    rp.id = "acme.com";
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
+    user.name = "johnpsmith@example.com";
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith"_s;
+    user.displayName = "John P. Smith";
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, false, UserVerificationRequirement::Required };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, false, UserVerificationRequirement::Required };
 
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
-    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kNotSupported, AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
+    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kNotSupported);
     EXPECT_EQ(serializedData.size(), sizeof(TestData::kCtapMakeCredentialRequestShort));
     EXPECT_EQ(memcmp(serializedData.data(), TestData::kCtapMakeCredentialRequestShort, serializedData.size()), 0);
 }
@@ -119,17 +119,17 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamUVRequiredButNotSup
 TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamWithPin)
 {
     PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme"_s;
-    rp.id = "acme.com"_s;
+    rp.name = "Acme";
+    rp.id = "acme.com";
 
     PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
+    user.name = "johnpsmith@example.com";
+    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png";
     user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith"_s;
+    user.displayName = "John P. Smith";
 
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, std::nullopt, true, UserVerificationRequirement::Preferred };
+    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, true, UserVerificationRequirement::Preferred };
 
     PinParameters pin;
     pin.protocol = pin::kProtocolVersion;
@@ -138,88 +138,15 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamWithPin)
     PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
-    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, pin);
+    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, pin);
     EXPECT_EQ(serializedData.size(), sizeof(TestData::kCtapMakeCredentialRequestWithPin));
     EXPECT_EQ(memcmp(serializedData.data(), TestData::kCtapMakeCredentialRequestWithPin, serializedData.size()), 0);
-}
-
-TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferred)
-{
-    PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme"_s;
-    rp.id = "acme.com"_s;
-
-    PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith"_s;
-
-    Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Preferred, true, UserVerificationRequirement::Preferred };
-
-    PinParameters pin;
-    pin.protocol = pin::kProtocolVersion;
-    pin.auth.append(TestData::kCtap2PinAuth, sizeof(TestData::kCtap2PinAuth));
-
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
-    Vector<uint8_t> hash;
-    hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
-    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, pin);
-    EXPECT_EQ(serializedData.size(), sizeof(TestData::kCtapMakeCredentialRequestWithPin));
-    EXPECT_EQ(memcmp(serializedData.data(), TestData::kCtapMakeCredentialRequestWithPin, serializedData.size()), 0);
-}
-
-TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKPreferredNotSupported)
-{
-    PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme"_s;
-    rp.id = "acme.com"_s;
-
-    PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith"_s;
-
-    Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Preferred, true, UserVerificationRequirement::Required };
-
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
-    Vector<uint8_t> hash;
-    hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
-    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kNotSupported, AuthenticatorSupportedOptions::ResidentKeyAvailability::kNotSupported);
-    EXPECT_EQ(serializedData.size(), sizeof(TestData::kCtapMakeCredentialRequestShort));
-    EXPECT_EQ(memcmp(serializedData.data(), TestData::kCtapMakeCredentialRequestShort, serializedData.size()), 0);
-}
-
-TEST(CTAPRequestTest, TestConstructMakeCredentialRequestRKDiscouraged)
-{
-    PublicKeyCredentialCreationOptions::RpEntity rp;
-    rp.name = "Acme"_s;
-    rp.id = "acme.com"_s;
-
-    PublicKeyCredentialCreationOptions::UserEntity user;
-    user.name = "johnpsmith@example.com"_s;
-    user.icon = "https://pics.acme.com/00/p/aBjjjpqPb.png"_s;
-    user.id = WebCore::toBufferSource(TestData::kUserId, sizeof(TestData::kUserId));
-    user.displayName = "John P. Smith"_s;
-
-    Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
-    PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, ResidentKeyRequirement::Discouraged, true, UserVerificationRequirement::Required };
-
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
-    Vector<uint8_t> hash;
-    hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
-    auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kNotSupported, AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
-    EXPECT_EQ(serializedData.size(), sizeof(TestData::kCtapMakeCredentialRequestShort));
-    EXPECT_EQ(memcmp(serializedData.data(), TestData::kCtapMakeCredentialRequestShort, serializedData.size()), 0);
 }
 
 TEST(CTAPRequestTest, TestConstructGetAssertionRequest)
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com"_s;
+    options.rpId = "acme.com";
 
     PublicKeyCredentialDescriptor descriptor1;
     descriptor1.type = PublicKeyCredentialType::PublicKey;
@@ -256,7 +183,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequest)
 TEST(CTAPRequestTest, TestConstructGetAssertionRequestNoUV)
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com"_s;
+    options.rpId = "acme.com";
 
     PublicKeyCredentialDescriptor descriptor1;
     descriptor1.type = PublicKeyCredentialType::PublicKey;
@@ -293,7 +220,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestNoUV)
 TEST(CTAPRequestTest, TestConstructGetAssertionRequestUVRequiredButNotSupported)
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com"_s;
+    options.rpId = "acme.com";
 
     PublicKeyCredentialDescriptor descriptor1;
     descriptor1.type = PublicKeyCredentialType::PublicKey;
@@ -330,7 +257,7 @@ TEST(CTAPRequestTest, TestConstructGetAssertionRequestUVRequiredButNotSupported)
 TEST(CTAPRequestTest, TestConstructGetAssertionRequestWithPin)
 {
     PublicKeyCredentialRequestOptions options;
-    options.rpId = "acme.com"_s;
+    options.rpId = "acme.com";
 
     PublicKeyCredentialDescriptor descriptor1;
     descriptor1.type = PublicKeyCredentialType::PublicKey;

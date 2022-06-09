@@ -28,6 +28,7 @@
 
 #if HAVE(QUICKLOOK_PREVIEW_ITEM_DATA_PROVIDER)
 
+#import "QuickLookPreviewActivity.h"
 #import "WebPageProxy.h"
 #import <wtf/RetainPtr.h>
 #import <pal/mac/QuickLookUISoftLink.h>
@@ -53,7 +54,7 @@
         auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
         if (imageURL)
             [previewOptions setObject:imageURL forKey:@"imageURL"];
-        if (NSURL *pageURL = URL { page.currentURL() })
+        if (NSURL *pageURL = URL { URL { }, page.currentURL() })
             [previewOptions setObject:pageURL forKey:@"pageURL"];
         [_item setPreviewOptions:previewOptions.get()];
     }

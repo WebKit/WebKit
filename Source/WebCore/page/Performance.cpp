@@ -158,19 +158,19 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByType(const String& ent
 {
     Vector<RefPtr<PerformanceEntry>> entries;
 
-    if (m_navigationTiming && entryType == "navigation"_s)
+    if (m_navigationTiming && entryType == "navigation")
         entries.append(m_navigationTiming);
     
-    if (entryType == "resource"_s)
+    if (entryType == "resource")
         entries.appendVector(m_resourceTimingBuffer);
 
-    if (m_firstContentfulPaint && entryType == "paint"_s)
+    if (m_firstContentfulPaint && entryType == "paint")
         entries.append(m_firstContentfulPaint);
 
     if (m_userTiming) {
-        if (entryType == "mark"_s)
+        if (entryType == "mark")
             entries.appendVector(m_userTiming->getMarks());
-        else if (entryType == "measure"_s)
+        else if (entryType == "measure")
             entries.appendVector(m_userTiming->getMeasures());
     }
 
@@ -182,23 +182,23 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& nam
 {
     Vector<RefPtr<PerformanceEntry>> entries;
 
-    if (m_navigationTiming && (entryType.isNull() || entryType == "navigation"_s) && name == m_navigationTiming->name())
+    if (m_navigationTiming && (entryType.isNull() || entryType == "navigation") && name == m_navigationTiming->name())
         entries.append(m_navigationTiming);
 
-    if (entryType.isNull() || entryType == "resource"_s) {
+    if (entryType.isNull() || entryType == "resource") {
         for (auto& resource : m_resourceTimingBuffer) {
             if (resource->name() == name)
                 entries.append(resource);
         }
     }
 
-    if (m_firstContentfulPaint && (entryType.isNull() || entryType == "paint"_s) && name == "first-contentful-paint"_s)
+    if (m_firstContentfulPaint && (entryType.isNull() || entryType == "paint") && name == "first-contentful-paint")
         entries.append(m_firstContentfulPaint);
 
     if (m_userTiming) {
-        if (entryType.isNull() || entryType == "mark"_s)
+        if (entryType.isNull() || entryType == "mark")
             entries.appendVector(m_userTiming->getMarks(name));
-        if (entryType.isNull() || entryType == "measure"_s)
+        if (entryType.isNull() || entryType == "measure")
             entries.appendVector(m_userTiming->getMeasures(name));
     }
 
@@ -209,22 +209,19 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& nam
 void Performance::appendBufferedEntriesByType(const String& entryType, Vector<RefPtr<PerformanceEntry>>& entries, PerformanceObserver& observer) const
 {
     if (m_navigationTiming
-        && entryType == "navigation"_s
+        && entryType == "navigation"
         && !observer.hasNavigationTiming()) {
         entries.append(m_navigationTiming);
         observer.addedNavigationTiming();
     }
 
-    if (entryType == "resource"_s)
+    if (entryType == "resource")
         entries.appendVector(m_resourceTimingBuffer);
 
-    if (entryType == "paint"_s && m_firstContentfulPaint)
-        entries.append(m_firstContentfulPaint);
-
     if (m_userTiming) {
-        if (entryType.isNull() || entryType == "mark"_s)
+        if (entryType.isNull() || entryType == "mark")
             entries.appendVector(m_userTiming->getMarks());
-        if (entryType.isNull() || entryType == "measure"_s)
+        if (entryType.isNull() || entryType == "measure")
             entries.appendVector(m_userTiming->getMeasures());
     }
 }

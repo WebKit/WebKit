@@ -37,7 +37,7 @@ public:
     virtual ~LabelsNodeList();
 
     bool elementMatches(Element&) const final;
-    bool isRootedAtTreeScope() const final { return true; }
+    bool isRootedAtDocument() const final { return true; }
 
 private:
     explicit LabelsNodeList(LabelableElement&);

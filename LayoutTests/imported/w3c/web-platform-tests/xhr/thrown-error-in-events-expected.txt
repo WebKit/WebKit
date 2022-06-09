@@ -1,4 +1,0 @@
-
-PASS errors thrown in XMLHttpRequest's load event (using addEventListener) goes to window.onerror
-PASS errors thrown in XMLHttpRequest's load event (using onload) goes to window.onerror
-

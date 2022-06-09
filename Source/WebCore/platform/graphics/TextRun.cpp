@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014, 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,26 +34,9 @@ struct ExpectedTextRunSize {
     float float1;
     float float2;
     float float3;
-    ExpansionBehavior expansionBehavior;
-    unsigned bitfields : 5;
+    unsigned bitfields : 9;
 };
 
-static_assert(sizeof(TextRun) == sizeof(ExpectedTextRunSize), "TextRun should be small");
-
-TextStream& operator<<(TextStream& ts, const TextRun& textRun)
-{
-    ts.dumpProperty("text", textRun.text());
-    ts.dumpProperty("tab-size", textRun.tabSize());
-    ts.dumpProperty("x-pos", textRun.xPos());
-    ts.dumpProperty("horizontal-glyph-streatch", textRun.horizontalGlyphStretch());
-    ts.dumpProperty("expansion", textRun.expansion());
-    ts.dumpProperty("expansion-behavior", textRun.expansionBehavior());
-    ts.dumpProperty("allow-tabs", textRun.allowTabs());
-    ts.dumpProperty("direction", textRun.direction());
-    ts.dumpProperty("directional-override", textRun.directionalOverride());
-    ts.dumpProperty("character-scan-for-code-path", textRun.characterScanForCodePath());
-    ts.dumpProperty("spacing-disabled", textRun.spacingDisabled());
-    return ts;
-}
+COMPILE_ASSERT(sizeof(TextRun) == sizeof(ExpectedTextRunSize), TextRun_is_not_of_expected_size);
 
 }

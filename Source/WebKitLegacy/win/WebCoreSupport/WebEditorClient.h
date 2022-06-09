@@ -88,12 +88,12 @@ private:
     void redo() final;
     
     bool shouldChangeSelectedRange(const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
-    void textFieldDidBeginEditing(WebCore::Element&) final;
-    void textFieldDidEndEditing(WebCore::Element&) final;
-    void textDidChangeInTextField(WebCore::Element&) final;
-    bool doTextFieldCommandFromEvent(WebCore::Element&, WebCore::KeyboardEvent*) final;
-    void textWillBeDeletedInTextField(WebCore::Element& input) final;
-    void textDidChangeInTextArea(WebCore::Element&) final;
+    void textFieldDidBeginEditing(WebCore::Element*) final;
+    void textFieldDidEndEditing(WebCore::Element*) final;
+    void textDidChangeInTextField(WebCore::Element*) final;
+    bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) final;
+    void textWillBeDeletedInTextField(WebCore::Element* input) final;
+    void textDidChangeInTextArea(WebCore::Element*) final;
     void overflowScrollPositionChanged() final { }
     void subFrameScrollPositionChanged() final { }
 
@@ -104,6 +104,7 @@ private:
     void ignoreWordInSpellDocument(const WTF::String&) final;
     void learnWord(const WTF::String&) final;
     void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) final;
+    WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&) final;
     void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) final;
     void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&) final;
     void updateSpellingUIWithMisspelledWord(const WTF::String&) final;

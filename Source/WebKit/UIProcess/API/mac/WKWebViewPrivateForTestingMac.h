@@ -52,11 +52,6 @@
 - (void)_setFooterBannerHeight:(int)height;
 - (NSSet<NSView *> *)_pdfHUDs;
 
-- (void)_simulateMouseMove:(NSEvent *)event;
-- (void)_retrieveAccessibilityTreeData:(void (^)(NSData *, NSError *))completionHandler;
-
-@property (nonatomic, readonly) BOOL _secureEventInputEnabledForTesting;
-
 @end
 
 #endif // !TARGET_OS_IPHONE

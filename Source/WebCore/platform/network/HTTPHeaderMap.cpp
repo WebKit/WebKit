@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,7 +41,7 @@ HTTPHeaderMap::HTTPHeaderMap()
 {
 }
 
-HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const &
+HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const
 {
     HTTPHeaderMap map;
     map.m_commonHeaders = crossThreadCopy(m_commonHeaders);
@@ -50,15 +49,7 @@ HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const &
     return map;
 }
 
-HTTPHeaderMap HTTPHeaderMap::isolatedCopy() &&
-{
-    HTTPHeaderMap map;
-    map.m_commonHeaders = crossThreadCopy(WTFMove(m_commonHeaders));
-    map.m_uncommonHeaders = crossThreadCopy(WTFMove(m_uncommonHeaders));
-    return map;
-}
-
-String HTTPHeaderMap::get(StringView name) const
+String HTTPHeaderMap::get(const String& name) const
 {
     HTTPHeaderName headerName;
     if (findHTTPHeaderName(name, headerName))
@@ -67,9 +58,9 @@ String HTTPHeaderMap::get(StringView name) const
     return getUncommonHeader(name);
 }
 
-String HTTPHeaderMap::getUncommonHeader(StringView name) const
+String HTTPHeaderMap::getUncommonHeader(const String& name) const
 {
-    auto index = m_uncommonHeaders.findIf([&](auto& header) {
+    auto index = m_uncommonHeaders.findMatching([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });
     return index != notFound ? m_uncommonHeaders[index].value : String();
@@ -109,12 +100,7 @@ void HTTPHeaderMap::set(const String& name, const String& value)
 
 void HTTPHeaderMap::setUncommonHeader(const String& name, const String& value)
 {
-#if ASSERT_ENABLED
-    HTTPHeaderName headerName;
-    ASSERT(!findHTTPHeaderName(name, headerName));
-#endif
-
-    auto index = m_uncommonHeaders.findIf([&](auto& header) {
+    auto index = m_uncommonHeaders.findMatching([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });
     if (index == notFound)
@@ -130,17 +116,7 @@ void HTTPHeaderMap::add(const String& name, const String& value)
         add(headerName, value);
         return;
     }
-    addUncommonHeader(name, value);
-}
-
-void HTTPHeaderMap::addUncommonHeader(const String& name, const String& value)
-{
-#if ASSERT_ENABLED
-    HTTPHeaderName headerName;
-    ASSERT(!findHTTPHeaderName(name, headerName));
-#endif
-
-    auto index = m_uncommonHeaders.findIf([&](auto& header) {
+    auto index = m_uncommonHeaders.findMatching([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });
     if (index == notFound)
@@ -175,7 +151,7 @@ bool HTTPHeaderMap::contains(const String& name) const
     if (findHTTPHeaderName(name, headerName))
         return contains(headerName);
 
-    return m_uncommonHeaders.findIf([&](auto& header) {
+    return m_uncommonHeaders.findMatching([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     }) != notFound;
 }
@@ -193,7 +169,7 @@ bool HTTPHeaderMap::remove(const String& name)
 
 String HTTPHeaderMap::get(HTTPHeaderName name) const
 {
-    auto index = m_commonHeaders.findIf([&](auto& header) {
+    auto index = m_commonHeaders.findMatching([&](auto& header) {
         return header.key == name;
     });
     return index != notFound ? m_commonHeaders[index].value : String();
@@ -201,7 +177,7 @@ String HTTPHeaderMap::get(HTTPHeaderName name) const
 
 void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
 {
-    auto index = m_commonHeaders.findIf([&](auto& header) {
+    auto index = m_commonHeaders.findMatching([&](auto& header) {
         return header.key == name;
     });
     if (index == notFound)
@@ -212,7 +188,7 @@ void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
 
 bool HTTPHeaderMap::contains(HTTPHeaderName name) const
 {
-    return m_commonHeaders.findIf([&](auto& header) {
+    return m_commonHeaders.findMatching([&](auto& header) {
         return header.key == name;
     }) != notFound;
 }
@@ -226,7 +202,7 @@ bool HTTPHeaderMap::remove(HTTPHeaderName name)
 
 void HTTPHeaderMap::add(HTTPHeaderName name, const String& value)
 {
-    auto index = m_commonHeaders.findIf([&](auto& header) {
+    auto index = m_commonHeaders.findMatching([&](auto& header) {
         return header.key == name;
     });
     if (index != notFound)

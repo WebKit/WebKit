@@ -37,24 +37,25 @@ class CSSTransformComponent;
 class DOMMatrix;
 template<typename> class ExceptionOr;
 
-class CSSTransformValue final : public CSSStyleValue {
+class CSSTransformValue : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSTransformValue);
 public:
-    static ExceptionOr<Ref<CSSTransformValue>> create(Vector<RefPtr<CSSTransformComponent>>&&);
+    static Ref<CSSTransformValue> create(Vector<RefPtr<CSSTransformComponent>>&& transforms);
 
     size_t length() const { return m_components.size(); }
     ExceptionOr<RefPtr<CSSTransformComponent>> item(size_t);
     ExceptionOr<RefPtr<CSSTransformComponent>> setItem(size_t, Ref<CSSTransformComponent>&&);
     
     bool is2D() const;
+    void setIs2D(bool);
     
     ExceptionOr<Ref<DOMMatrix>> toMatrix();
     
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSTransformValue; }
 private:
     CSSTransformValue(Vector<RefPtr<CSSTransformComponent>>&&);
-    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
+    bool m_is2D { false };
     Vector<RefPtr<CSSTransformComponent>> m_components;
 };
 

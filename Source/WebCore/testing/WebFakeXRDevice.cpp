@@ -91,12 +91,6 @@ void SimulatedXRDevice::setViewerOrigin(const std::optional<FrameData::Pose>& or
     m_frameData.isTrackingValid = false;
 }
 
-void SimulatedXRDevice::setVisibilityState(XRVisibilityState visibilityState)
-{
-    if (m_trackingAndRenderingClient)
-        m_trackingAndRenderingClient->updateSessionVisibilityState(visibilityState);
-}
-
 void SimulatedXRDevice::simulateShutdownCompleted()
 {
     if (m_trackingAndRenderingClient)
@@ -109,7 +103,7 @@ WebCore::IntSize SimulatedXRDevice::recommendedResolution(PlatformXR::SessionMod
     return IntSize(32, 32);
 }
 
-void SimulatedXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&)
+void SimulatedXRDevice::initializeTrackingAndRendering(PlatformXR::SessionMode)
 {
     GraphicsContextGLAttributes attributes;
     attributes.depth = false;
@@ -157,7 +151,7 @@ void SimulatedXRDevice::frameTimerFired()
 
     for (auto& layer : m_layers) {
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-        data.layers.add(layer.key, FrameData::LayerData { .surface = IOSurface::create(nullptr, recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB()) });
+        data.layers.add(layer.key, FrameData::LayerData { .surface = IOSurface::create(recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB()) });
 #else
         data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
 #endif
@@ -256,9 +250,8 @@ void WebFakeXRDevice::setViewerOrigin(FakeXRRigidTransformInit origin, bool emul
     m_device.setEmulatedPosition(emulatedPosition);
 }
 
-void WebFakeXRDevice::simulateVisibilityChange(XRVisibilityState visibilityState)
+void WebFakeXRDevice::simulateVisibilityChange(XRVisibilityState)
 {
-    m_device.setVisibilityState(visibilityState);
 }
 
 void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit origin)

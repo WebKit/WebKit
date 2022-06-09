@@ -44,7 +44,8 @@ public:
     static Ref<CSSUnparsedValue> create(Vector<CSSUnparsedSegment>&&);
     static Ref<CSSUnparsedValue> create(CSSParserTokenRange);
 
-    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
+    String toString() const final;
+    void serialize(StringBuilder&) const;
     size_t length() const { return m_segments.size(); }
     
     ExceptionOr<CSSUnparsedSegment> item(size_t);

@@ -59,13 +59,13 @@ public:
 #if ENABLE(CONDITION)
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute3;
 #endif
-    template<typename, JSC::SubspaceAccess mode> static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
+    template<typename, JSC::SubspaceAccess mode> static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         if constexpr (mode == JSC::SubspaceAccess::Concurrently)
             return nullptr;
         return subspaceForImpl(vm);
     }
-    static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
+    static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     DECLARE_VISIT_CHILDREN;
 
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
@@ -120,12 +120,6 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::
 
 template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::EnumType>();
-
-String convertEnumerationToString(TestObj::EnumTrailingComma);
-template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::EnumTrailingComma);
-
-template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSC::JSGlobalObject&, JSC::JSValue);
-template<> const char* expectedEnumerationValues<TestObj::EnumTrailingComma>();
 
 String convertEnumerationToString(TestObj::Optional);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::Optional);

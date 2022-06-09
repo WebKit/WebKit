@@ -354,7 +354,7 @@ void ProgramPipeline::updateExecutableTessellationProperties()
     }
 }
 
-void ProgramPipeline::updateFragmentInoutRangeAndEnablesPerSampleShading()
+void ProgramPipeline::updateFragmentInoutRange()
 {
     Program *fragmentProgram = getShaderProgram(gl::ShaderType::Fragment);
 
@@ -363,9 +363,22 @@ void ProgramPipeline::updateFragmentInoutRangeAndEnablesPerSampleShading()
         return;
     }
 
-    const ProgramExecutable &fragmentExecutable  = fragmentProgram->getExecutable();
-    mState.mExecutable->mFragmentInoutRange      = fragmentExecutable.mFragmentInoutRange;
-    mState.mExecutable->mEnablesPerSampleShading = fragmentExecutable.mEnablesPerSampleShading;
+    const ProgramExecutable &fragmentExecutable = fragmentProgram->getExecutable();
+    mState.mExecutable->mFragmentInoutRange     = fragmentExecutable.mFragmentInoutRange;
+}
+
+void ProgramPipeline::updateUsesEarlyFragmentTestsOptimization()
+{
+    Program *fragmentProgram = getShaderProgram(gl::ShaderType::Fragment);
+
+    if (!fragmentProgram)
+    {
+        return;
+    }
+
+    const ProgramExecutable &fragmentExecutable = fragmentProgram->getExecutable();
+    mState.mExecutable->mUsesEarlyFragmentTestsOptimization =
+        fragmentExecutable.mUsesEarlyFragmentTestsOptimization;
 }
 
 void ProgramPipeline::updateLinkedVaryings()
@@ -410,7 +423,8 @@ void ProgramPipeline::updateExecutable()
     updateExecutableTessellationProperties();
 
     // Fragment Shader ProgramExecutable properties
-    updateFragmentInoutRangeAndEnablesPerSampleShading();
+    updateFragmentInoutRange();
+    updateUsesEarlyFragmentTestsOptimization();
 
     // All Shader ProgramExecutable properties
     mState.updateExecutableTextures();
@@ -431,7 +445,7 @@ angle::Result ProgramPipeline::link(const Context *context)
     ProgramVaryingPacking varyingPacking;
     LinkingVariables linkingVariables(mState);
 
-    mState.mExecutable->reset(true);
+    mState.mExecutable->reset();
 
     InfoLog &infoLog = mState.mExecutable->getInfoLog();
     infoLog.reset();
@@ -510,26 +524,14 @@ angle::Result ProgramPipeline::link(const Context *context)
     // Merge uniforms.
     mState.mExecutable->copyUniformsFromProgramMap(mState.mPrograms);
 
-    if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex))
-    {
-        const ProgramState &programState = mState.mPrograms[gl::ShaderType::Vertex]->getState();
-        mState.mExecutable->copyInputsFromProgram(programState);
-    }
-
     // Merge shader buffers (UBOs, SSBOs, and atomic counter buffers) into the executable.
     // Also copy over image and sampler bindings.
     for (ShaderType shaderType : mState.mExecutable->getLinkedShaderStages())
     {
         const ProgramState &programState = mState.mPrograms[shaderType]->getState();
-        mState.mExecutable->copyShaderBuffersFromProgram(programState, shaderType);
+        mState.mExecutable->copyShaderBuffersFromProgram(programState);
         mState.mExecutable->copySamplerBindingsFromProgram(programState);
         mState.mExecutable->copyImageBindingsFromProgram(programState);
-    }
-
-    if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::Fragment))
-    {
-        const ProgramState &programState = mState.mPrograms[gl::ShaderType::Fragment]->getState();
-        mState.mExecutable->copyOutputsFromProgram(programState);
     }
 
     if (mState.mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex) ||

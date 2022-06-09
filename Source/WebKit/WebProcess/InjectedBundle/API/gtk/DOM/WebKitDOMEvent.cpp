@@ -300,7 +300,8 @@ void webkit_dom_event_init_event(WebKitDOMEvent* self, const gchar* eventTypeArg
     g_return_if_fail(WEBKIT_DOM_IS_EVENT(self));
     g_return_if_fail(eventTypeArg);
     WebCore::Event* item = WebKit::core(self);
-    item->initEvent(WTF::AtomString::fromUTF8(eventTypeArg), canBubbleArg, cancelableArg);
+    WTF::String convertedEventTypeArg = WTF::String::fromUTF8(eventTypeArg);
+    item->initEvent(convertedEventTypeArg, canBubbleArg, cancelableArg);
 }
 
 gchar* webkit_dom_event_get_event_type(WebKitDOMEvent* self)

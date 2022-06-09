@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY)
 
 #include "AccessibilityController.h"
 
@@ -183,4 +183,4 @@ void AccessibilityController::resetToConsistentState()
     setLogAccessibilityEvents(false);
     platformResetToConsistentState();
 }
-#endif // ENABLE(ACCESSIBILITY)
+#endif // HAVE(ACCESSIBILITY)

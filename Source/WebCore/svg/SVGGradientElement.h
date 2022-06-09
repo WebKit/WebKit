@@ -59,11 +59,11 @@ struct SVGPropertyTraits<SVGSpreadMethodType> {
 
     static SVGSpreadMethodType fromString(const String& value)
     {
-        if (value == "pad"_s)
+        if (value == "pad")
             return SVGSpreadMethodPad;
-        if (value == "reflect"_s)
+        if (value == "reflect")
             return SVGSpreadMethodReflect;
-        if (value == "repeat"_s)
+        if (value == "repeat")
             return SVGSpreadMethodRepeat;
         return SVGSpreadMethodUnknown;
     }

@@ -32,9 +32,9 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * WebKitFindController:
- *
- * Controls text search in a #WebKitWebView.
+ * SECTION: WebKitFindController
+ * @Short_description: Controls text search in a #WebKitWebView
+ * @Title: WebKitFindController
  *
  * A #WebKitFindController is used to search text in a #WebKitWebView. You
  * can get a #WebKitWebView<!-- -->'s #WebKitFindController with

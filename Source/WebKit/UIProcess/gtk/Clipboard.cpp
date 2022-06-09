@@ -57,10 +57,10 @@ static Clipboard& primary()
 
 Clipboard& Clipboard::get(const String& name)
 {
-    if (name == "CLIPBOARD"_s)
+    if (name == "CLIPBOARD")
         return clipboard();
 
-    if (name == "PRIMARY"_s)
+    if (name == "PRIMARY")
         return primary();
 
     RELEASE_ASSERT_NOT_REACHED();

@@ -261,7 +261,8 @@ void webkit_dom_html_table_section_element_set_align(WebKitDOMHTMLTableSectionEl
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_SECTION_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableSectionElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_section_element_get_ch(WebKitDOMHTMLTableSectionElement* self)
@@ -279,7 +280,8 @@ void webkit_dom_html_table_section_element_set_ch(WebKitDOMHTMLTableSectionEleme
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_SECTION_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableSectionElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_section_element_get_ch_off(WebKitDOMHTMLTableSectionElement* self)
@@ -297,7 +299,8 @@ void webkit_dom_html_table_section_element_set_ch_off(WebKitDOMHTMLTableSectionE
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_SECTION_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableSectionElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charoffAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charoffAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_section_element_get_v_align(WebKitDOMHTMLTableSectionElement* self)
@@ -315,7 +318,8 @@ void webkit_dom_html_table_section_element_set_v_align(WebKitDOMHTMLTableSection
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_SECTION_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableSectionElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valignAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valignAttr, convertedValue);
 }
 
 WebKitDOMHTMLCollection* webkit_dom_html_table_section_element_get_rows(WebKitDOMHTMLTableSectionElement* self)

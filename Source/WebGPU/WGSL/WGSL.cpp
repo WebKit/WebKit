@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,47 +26,18 @@
 #include "config.h"
 #include "WGSL.h"
 
-#include "Parser.h"
+#include "AST.h"
 
 namespace WGSL {
 
-std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&)
+std::variant<SuccessfulCheck, FailedCheck> check(const String&, const std::optional<SourceMap>&)
 {
-    Expected<AST::ShaderModule, Error> parserResult = wgsl.is8Bit() ? parseLChar(wgsl) : parseUChar(wgsl);
-    if (!parserResult.has_value()) {
-        // FIXME: Add support for returning multiple errors from the parser.
-        return FailedCheck { { parserResult.error() }, { /* warnings */ } };
-    }
-    UniqueRef<AST::ShaderModule> shader = makeUniqueRef<AST::ShaderModule>(WTFMove(parserResult.value()));
-
-    Vector<Warning> warnings { };
-    // FIXME: add validation
-    return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shader));
+    ASSERT_NOT_REACHED();
+    return FailedCheck { { }, { } };
 }
 
-SuccessfulCheck::SuccessfulCheck(SuccessfulCheck&&) = default;
-
-SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<AST::ShaderModule>&& shader)
-    : warnings(WTFMove(messages))
-    , ast(WTFMove(shader))
+SuccessfulCheck::~SuccessfulCheck()
 {
-}
-
-SuccessfulCheck::~SuccessfulCheck() = default;
-
-PrepareResult prepare(const AST::ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
-{
-    UNUSED_PARAM(ast);
-    UNUSED_PARAM(pipelineLayouts);
-    return { String(), { } };
-}
-
-PrepareResult prepare(const AST::ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayouts)
-{
-    UNUSED_PARAM(ast);
-    UNUSED_PARAM(entryPointName);
-    UNUSED_PARAM(pipelineLayouts);
-    return { String(), { } };
 }
 
 }

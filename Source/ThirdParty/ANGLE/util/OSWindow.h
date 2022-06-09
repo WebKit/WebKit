@@ -51,7 +51,6 @@ class ANGLE_UTIL_EXPORT OSWindow
     // Returns a native pointer that can be used for eglCreatePlatformWindowSurfaceEXT().
     virtual void *getPlatformExtension();
 
-    virtual void setNativeDisplay(EGLNativeDisplayType display) {}
     virtual EGLNativeDisplayType getNativeDisplay() const = 0;
 
     virtual void messageLoop() = 0;

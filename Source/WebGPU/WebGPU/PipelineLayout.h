@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,54 +25,31 @@
 
 #pragma once
 
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
-#import <wtf/Vector.h>
-
-struct WGPUPipelineLayoutImpl {
-};
 
 namespace WebGPU {
 
-class BindGroupLayout;
-class Device;
-
-// https://gpuweb.github.io/gpuweb/#gpupipelinelayout
-class PipelineLayout : public WGPUPipelineLayoutImpl, public RefCounted<PipelineLayout> {
+class PipelineLayout : public RefCounted<PipelineLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PipelineLayout> create(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts, Device& device)
+    static Ref<PipelineLayout> create()
     {
-        return adoptRef(*new PipelineLayout(WTFMove(bindGroupLayouts), device));
-    }
-    static Ref<PipelineLayout> createInvalid(Device& device)
-    {
-        return adoptRef(*new PipelineLayout(device));
+        return adoptRef(*new PipelineLayout());
     }
 
     ~PipelineLayout();
 
-    void setLabel(String&&);
-
-    // FIXME: Is it impossible to legitimately have no bind group layouts in a valid object?
-    bool isValid() const { return !m_bindGroupLayouts.isEmpty(); }
-
-    bool operator==(const PipelineLayout&) const;
-    bool operator!=(const PipelineLayout&) const;
-
-    size_t numberOfBindGroupLayouts() const { return m_bindGroupLayouts.size(); }
-    const BindGroupLayout& bindGroupLayout(size_t i) const { return m_bindGroupLayouts[i]; }
-
-    Device& device() const { return m_device; }
+    void setLabel(const char*);
 
 private:
-    PipelineLayout(Vector<Ref<BindGroupLayout>>&&, Device&);
-    PipelineLayout(Device&);
-
-    const Vector<Ref<BindGroupLayout>> m_bindGroupLayouts;
-
-    const Ref<Device> m_device;
+    PipelineLayout();
 };
 
 } // namespace WebGPU
+
+struct WGPUPipelineLayoutImpl {
+    Ref<WebGPU::PipelineLayout> pipelineLayout;
+};

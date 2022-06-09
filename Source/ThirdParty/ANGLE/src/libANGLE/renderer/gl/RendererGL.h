@@ -17,7 +17,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/Version.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
-#include "platform/FeaturesGL_autogen.h"
+#include "platform/FeaturesGL.h"
 
 namespace angle
 {
@@ -62,7 +62,7 @@ class WorkerContext : angle::NonCopyable
     virtual void unmakeCurrent() = 0;
 };
 
-class ANGLE_NO_DISCARD ScopedWorkerContextGL
+class ScopedWorkerContextGL
 {
   public:
     ScopedWorkerContextGL(RendererGL *renderer, std::string *infoLog);

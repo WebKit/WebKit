@@ -50,17 +50,17 @@ PredefinedColorSpace ImageData::computeColorSpace(std::optional<ImageDataSetting
     return defaultColorSpace;
 }
 
-Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer)
+Ref<ImageData> ImageData::create(PixelBuffer&& pixelBuffer)
 {
-    auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
-    return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace));
+    auto colorSpace = toPredefinedColorSpace(pixelBuffer.format().colorSpace);
+    return adoptRef(*new ImageData(pixelBuffer.size(), pixelBuffer.takeData(), *colorSpace));
 }
 
-RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer)
+RefPtr<ImageData> ImageData::create(std::optional<PixelBuffer>&& pixelBuffer)
 {
     if (!pixelBuffer)
         return nullptr;
-    return create(pixelBuffer.releaseNonNull());
+    return create(WTFMove(*pixelBuffer));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size)
@@ -153,10 +153,10 @@ ImageData::ImageData(const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data, Pr
 
 ImageData::~ImageData() = default;
 
-Ref<ByteArrayPixelBuffer> ImageData::pixelBuffer() const
+PixelBuffer ImageData::pixelBuffer() const
 {
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
-    return ByteArrayPixelBuffer::create(format, m_size, m_data.get());
+    return { format, m_size, m_data.get() };
 }
 
 TextStream& operator<<(TextStream& ts, const ImageData& imageData)

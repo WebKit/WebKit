@@ -28,7 +28,7 @@ namespace WebCore {
 
 StyleVisualData::StyleVisualData()
     : hasClip(false)
-    , textDecorationLine(RenderStyle::initialTextDecorationLine().toRaw())
+    , textDecoration(RenderStyle::initialTextDecoration().toRaw())
     , zoom(RenderStyle::initialZoom())
 {
 }
@@ -39,7 +39,7 @@ inline StyleVisualData::StyleVisualData(const StyleVisualData& other)
     : RefCounted<StyleVisualData>()
     , clip(other.clip)
     , hasClip(other.hasClip)
-    , textDecorationLine(other.textDecorationLine)
+    , textDecoration(other.textDecoration)
     , zoom(RenderStyle::initialZoom())
 {
 }

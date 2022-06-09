@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Renata Hodovan <reni@inf.u-szeged.hu>
- * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,7 +28,6 @@
 #include "FilterEffectApplier.h"
 #include "FloatPoint.h"
 #include "IntRect.h"
-#include "PixelBuffer.h"
 #include <JavaScriptCore/Forward.h>
 
 namespace WebCore {
@@ -36,16 +35,16 @@ namespace WebCore {
 class FETurbulence;
 enum class TurbulenceType;
 
-class FETurbulenceSoftwareApplier final : public FilterEffectConcreteApplier<FETurbulence> {
+class FETurbulenceSoftwareApplier : public FilterEffectConcreteApplier<FETurbulence> {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<FETurbulence>;
 
 public:
     using Base::Base;
 
-private:
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 
+private:
     // Produces results in the range [1, 2**31 - 2]. Algorithm is:
     // r = (a * r) mod m where a = s_randAmplitude = 16807 and
     // m = s_randMaximum = 2**31 - 1 = 2147483647, r = seed.
@@ -94,7 +93,7 @@ private:
     struct ApplyParameters {
         IntRect filterRegion;
         FloatSize filterScale;
-        PixelBuffer* pixelBuffer;
+        Uint8ClampedArray* pixelArray;
         PaintingData* paintingData;
         StitchData stitchData;
         int startY;
@@ -111,9 +110,9 @@ private:
     static ColorComponents<uint8_t, 4> toIntBasedColorComponents(const ColorComponents<float, 4>& floatComponents);
     static ColorComponents<uint8_t, 4> calculateTurbulenceValueForPoint(const PaintingData&, StitchData, const FloatPoint&);
 
-    static void applyPlatformGeneric(const IntRect& filterRegion, const FloatSize& filterScale, PixelBuffer&, const PaintingData&, StitchData, int startY, int endY);
+    static void applyPlatformGeneric(const IntRect& filterRegion, const FloatSize& filterScale, Uint8ClampedArray& pixelArray, const PaintingData&, StitchData, int startY, int endY);
     static void applyPlatformWorker(ApplyParameters*);
-    static void applyPlatform(const IntRect& filterRegion, const FloatSize& filterScale, PixelBuffer&, PaintingData&, StitchData&);
+    static void applyPlatform(const IntRect& filterRegion, const FloatSize& filterScale, Uint8ClampedArray& pixelArray, PaintingData&, StitchData&);
 };
 
 } // namespace WebCore

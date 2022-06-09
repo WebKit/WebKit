@@ -31,23 +31,18 @@
 #include "ContextMenu.h"
 #include "ContextMenuProvider.h"
 #include "ExceptionOr.h"
-#include "InspectorFrontendClient.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class CanvasPath;
-class CanvasRenderingContext2D;
 class DOMWrapperWorld;
-class DeferredPromise;
 class Event;
-class File;
 class FrontendMenuProvider;
 class HTMLIFrameElement;
+class InspectorFrontendClient;
 class Page;
-class Path2D;
 
 class InspectorFrontendHost : public RefCounted<InspectorFrontendHost> {
 public:
@@ -97,6 +92,7 @@ public:
 
     String platform() const;
     String platformVersionName() const;
+    String port() const;
 
     struct DebuggableInfo {
         String debuggableType;
@@ -109,20 +105,11 @@ public:
 
     void copyText(const String& text);
     void killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence);
-
     void openURLExternally(const String& url);
-    void revealFileExternally(const String& path);
-
-    using SaveMode = InspectorFrontendClient::SaveMode;
-    using SaveData = InspectorFrontendClient::SaveData;
-    bool canSave(SaveMode);
-    void save(Vector<SaveData>&&, bool forceSaveAs);
-
-    bool canLoad();
-    void load(const String& path, Ref<DeferredPromise>&&);
-
-    bool canPickColorFromScreen();
-    void pickColorFromScreen(Ref<DeferredPromise>&&);
+    bool canSave();
+    void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs);
+    void append(const String& url, const String& content);
+    void close(const String& url);
 
     struct ContextMenuItem {
         String type;
@@ -138,6 +125,7 @@ public:
     void dispatchEventAsContextMenuEvent(Event&);
 
     bool isUnderTest();
+    bool isExperimentalBuild();
     void unbufferedLog(const String& message);
 
     void beep();
@@ -153,21 +141,12 @@ public:
 
     bool supportsWebExtensions();
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    void didShowExtensionTab(const String& extensionID, const String& extensionTabID, HTMLIFrameElement& extensionFrame);
+    void didShowExtensionTab(const String& extensionID, const String& extensionTabID);
     void didHideExtensionTab(const String& extensionID, const String& extensionTabID);
     void didNavigateExtensionTab(const String& extensionID, const String& extensionTabID, const String& url);
     void inspectedPageDidNavigate(const String& url);
     ExceptionOr<JSC::JSValue> evaluateScriptInExtensionTab(HTMLIFrameElement& extensionFrame, const String& scriptSource);
 #endif
-
-    // IDL extensions.
-
-    String getPath(const File&) const;
-
-    float getCurrentX(const CanvasRenderingContext2D&) const;
-    float getCurrentY(const CanvasRenderingContext2D&) const;
-    Ref<Path2D> getPath(const CanvasRenderingContext2D&) const;
-    void setPath(CanvasRenderingContext2D&, Path2D&) const;
 
 private:
 #if ENABLE(CONTEXT_MENUS)

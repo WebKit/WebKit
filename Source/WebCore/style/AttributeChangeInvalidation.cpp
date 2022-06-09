@@ -27,7 +27,6 @@
 #include "AttributeChangeInvalidation.h"
 
 #include "ElementIterator.h"
-#include "ElementRareData.h"
 #include "StyleInvalidationFunctions.h"
 
 namespace WebCore {

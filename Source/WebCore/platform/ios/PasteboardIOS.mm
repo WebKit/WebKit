@@ -68,7 +68,7 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 
 String Pasteboard::nameOfDragPasteboard()
 {
-    return "drag and drop pasteboard"_s;
+    return "drag and drop pasteboard";
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
@@ -351,7 +351,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
             auto typeForFileUpload = info->contentTypeForHighestFidelityItem();
             if (auto buffer = strategy.readBufferFromPasteboard(i, typeForFileUpload, m_pasteboardName, context())) {
                 readURLAlongsideAttachmentIfNecessary(reader, strategy, typeForFileUpload, m_pasteboardName, i, context());
-                reader.readDataBuffer(*buffer, typeForFileUpload, AtomString { info->suggestedFileName }, info->preferredPresentationSize);
+                reader.readDataBuffer(*buffer, typeForFileUpload, info->suggestedFileName, info->preferredPresentationSize);
                 continue;
             }
         }

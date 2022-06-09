@@ -66,6 +66,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         preferences->setForceCompositingMode(true);
         preferences->setThreadedScrollingEnabled(true);
         preferences->setWebGLEnabled(true);
+        preferences->setDeveloperExtrasEnabled(true);
     }
 
     auto* pool = configuration->processPool();
@@ -121,23 +122,13 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
             auto& view = *reinterpret_cast<View*>(data);
             view.page().setIntrinsicDeviceScaleFactor(scale);
         },
-#if WPE_CHECK_VERSION(1, 13, 2)
-        // target_refresh_rate_changed
-        [](void* data, uint32_t rate)
-        {
-            auto& view = *reinterpret_cast<View*>(data);
-            if (view.page().drawingArea())
-                view.page().drawingArea()->targetRefreshRateDidChange(rate);
-        },
 #else
         // padding
         nullptr,
-#endif // WPE_CHECK_VERSION(1, 13, 0)
-#else
-        // padding
         nullptr,
-        nullptr
 #endif // WPE_CHECK_VERSION(1, 3, 0)
+        // padding
+        nullptr
     };
     wpe_view_backend_set_backend_client(m_backend, &s_backendClient, this);
 

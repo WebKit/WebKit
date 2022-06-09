@@ -31,7 +31,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMProxy.h"
+#include "CDMProxyClearKey.h"
 
 #if ENABLE(THUNDER)
 #include "CDMThunder.h"
@@ -41,10 +41,9 @@ namespace WebCore {
 
 void CDMFactory::platformRegisterFactories(Vector<CDMFactory*>& factories)
 {
+    factories.append(&CDMFactoryClearKey::singleton());
 #if ENABLE(THUNDER)
     factories.append(&CDMFactoryThunder::singleton());
-#else
-    UNUSED_PARAM(factories);
 #endif
 }
 
@@ -52,9 +51,12 @@ Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
 {
     Vector<CDMProxyFactory*> factories;
 #if ENABLE(THUNDER)
-    factories.reserveInitialCapacity(1);
+    factories.reserveInitialCapacity(2);
     factories.uncheckedAppend(&CDMFactoryThunder::singleton());
+#else
+    factories.reserveInitialCapacity(1);
 #endif
+    factories.uncheckedAppend(&CDMProxyFactoryClearKey::singleton());
     return factories;
 }
 

@@ -42,13 +42,13 @@ WebResource::WebResource(IStream* data, const WTF::URL& url, const WTF::String& 
     , m_frameName(frameName)
 {
     gClassCount++;
-    gClassNameCount().add("WebResource"_s);
+    gClassNameCount().add("WebResource");
 }
 
 WebResource::~WebResource()
 {
     gClassCount--;
-    gClassNameCount().remove("WebResource"_s);
+    gClassNameCount().remove("WebResource");
 }
 
 WebResource* WebResource::createInstance(RefPtr<WebCore::SharedBuffer>&& data, const WebCore::ResourceResponse& response)

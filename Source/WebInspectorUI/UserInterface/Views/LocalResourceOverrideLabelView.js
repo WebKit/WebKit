@@ -42,7 +42,10 @@ WI.LocalResourceOverrideLabelView = class LocalResourceOverrideLabelView extends
     {
         let labelElement = document.createElement("span");
         labelElement.className = "label";
-        labelElement.textContent = WI.LocalResourceOverride.displayNameForNetworkStageOfType(this._localResourceOverride.type);
+        if (this._localResourceOverride.type === WI.LocalResourceOverride.InterceptType.Request)
+            labelElement.textContent = WI.UIString("Request Override", "Request Override @ Local Override Content View", "Label indicating that the shown content is from a request local override.");
+        else
+            labelElement.textContent = WI.UIString("Response Override", "Response Override @ Local Override Content View", "Label indicating that the shown content is from a response local override.");
 
         let urlElement = document.createElement("span");
         urlElement.textContent = this._localResourceOverride.displayURL({full: true});

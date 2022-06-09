@@ -33,17 +33,14 @@
 #include "PushSubscription.h"
 #include "PushSubscriptionData.h"
 #include "SWContextManager.h"
-#include "ServiceWorkerClient.h"
-#include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/ProcessID.h>
 
 namespace WebCore {
 
-ServiceWorkerInternals::ServiceWorkerInternals(ServiceWorkerGlobalScope& globalScope, ServiceWorkerIdentifier identifier)
+ServiceWorkerInternals::ServiceWorkerInternals(ServiceWorkerIdentifier identifier)
     : m_identifier(identifier)
 {
-    globalScope.setIsProcessingUserGestureForTesting(true);
 }
 
 ServiceWorkerInternals::~ServiceWorkerInternals() = default;
@@ -51,7 +48,7 @@ ServiceWorkerInternals::~ServiceWorkerInternals() = default;
 void ServiceWorkerInternals::setOnline(bool isOnline)
 {
     callOnMainThread([identifier = m_identifier, isOnline] () {
-        if (auto* proxy = SWContextManager::singleton().serviceWorkerThreadProxy(identifier))
+        if (auto* proxy = SWContextManager::singleton().workerByID(identifier))
             proxy->notifyNetworkStateChange(isOnline);
     });
 }
@@ -75,7 +72,7 @@ void ServiceWorkerInternals::schedulePushEvent(const String& message, RefPtr<Def
     }
     callOnMainThread([identifier = m_identifier, data = WTFMove(data), weakThis = WeakPtr { *this }, counter]() mutable {
         SWContextManager::singleton().firePushEvent(identifier, WTFMove(data), [identifier, weakThis = WTFMove(weakThis), counter](bool result) mutable {
-            if (auto* proxy = SWContextManager::singleton().serviceWorkerThreadProxy(identifier)) {
+            if (auto* proxy = SWContextManager::singleton().workerByID(identifier)) {
                 proxy->thread().runLoop().postTaskForMode([weakThis = WTFMove(weakThis), counter, result](auto&) {
                     if (!weakThis)
                         return;
@@ -169,7 +166,7 @@ void ServiceWorkerInternals::lastNavigationWasAppInitiated(Ref<DeferredPromise>&
     ASSERT(!m_lastNavigationWasAppInitiatedPromise);
     m_lastNavigationWasAppInitiatedPromise = WTFMove(promise);
     callOnMainThread([identifier = m_identifier, weakThis = WeakPtr { *this }]() mutable {
-        if (auto* proxy = SWContextManager::singleton().serviceWorkerThreadProxy(identifier)) {
+        if (auto* proxy = SWContextManager::singleton().workerByID(identifier)) {
             proxy->thread().runLoop().postTaskForMode([weakThis = WTFMove(weakThis), appInitiated = proxy->lastNavigationWasAppInitiated()](auto&) {
                 if (!weakThis || !weakThis->m_lastNavigationWasAppInitiatedPromise)
                     return;
@@ -188,22 +185,12 @@ RefPtr<PushSubscription> ServiceWorkerInternals::createPushSubscription(const St
     Vector<uint8_t> myClientECDHPublicKey { static_cast<const uint8_t*>(clientECDHPublicKey.data()), clientECDHPublicKey.byteLength() };
     Vector<uint8_t> myAuth { static_cast<const uint8_t*>(auth.data()), auth.byteLength() };
 
-    return PushSubscription::create(PushSubscriptionData { { }, WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
+    return PushSubscription::create(PushSubscriptionData { WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
 }
 
 bool ServiceWorkerInternals::fetchEventIsSameSite(FetchEvent& event)
 {
     return event.request().internalRequest().isSameSite();
-}
-
-String ServiceWorkerInternals::serviceWorkerClientInternalIdentifier(const ServiceWorkerClient& client)
-{
-    return client.identifier().toString();
-}
-
-void ServiceWorkerInternals::setAsInspected(bool isInspected)
-{
-    SWContextManager::singleton().setAsInspected(m_identifier, isInspected);
 }
 
 } // namespace WebCore

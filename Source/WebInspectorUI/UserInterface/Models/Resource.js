@@ -79,7 +79,6 @@ WI.Resource = class Resource extends WI.SourceCode
         this._priority = WI.Resource.NetworkPriority.Unknown;
         this._remoteAddress = null;
         this._connectionIdentifier = null;
-        this._isProxyConnection = false;
         this._target = targetId ? WI.targetManager.targetForIdentifier(targetId) : WI.mainTarget;
         this._redirects = [];
 
@@ -172,10 +171,6 @@ WI.Resource = class Resource extends WI.SourceCode
             if (plural)
                 return WI.UIString("Sockets");
             return WI.UIString("Socket");
-        case WI.Resource.Type.EventSource:
-            if (plural)
-                return WI.UIString("EventSources", "Display name for the type of network requests sent via EventSource(s) API (https://developer.mozilla.org/en-US/docs/Web/API/EventSource)");
-            return WI.UIString("EventSource", "Display name for the type of network requests sent via EventSource API (https://developer.mozilla.org/en-US/docs/Web/API/EventSource)");
         case WI.Resource.Type.Other:
             return WI.UIString("Other");
         default:
@@ -188,17 +183,11 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         let classes = [];
 
-        let localResourceOverride = resource.localResourceOverride || WI.networkManager.localResourceOverridesForURL(resource.url).filter((localResourceOverride) => !localResourceOverride.disabled)[0];
         let isOverride = !!resource.localResourceOverride;
         let wasOverridden = resource.responseSource === WI.Resource.ResponseSource.InspectorOverride;
-        let shouldBeOverridden = resource.isLoading() && localResourceOverride;
-        let shouldBeBlocked = (resource.failed || isOverride) && localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.Block;
-        if (isOverride || wasOverridden || shouldBeOverridden || shouldBeBlocked) {
+        let shouldBeOverridden = resource.isLoading() && WI.networkManager.localResourceOverridesForURL(resource.url).some((localResourceOverride) => !localResourceOverride.disabled);
+        if (isOverride || wasOverridden || shouldBeOverridden)
             classes.push("override");
-
-            if (shouldBeBlocked || localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork)
-                classes.push("skip-network");
-        }
 
         if (resource.type === WI.Resource.Type.Other) {
             if (resource.requestedByteRange)
@@ -391,14 +380,6 @@ WI.Resource = class Resource extends WI.SourceCode
         const isMultiLine = true;
         const dataURIMaxSize = 64;
         return WI.truncateURL(this._url, isMultiLine, dataURIMaxSize);
-    }
-
-    get displayRemoteAddress()
-    {
-        if (this._isProxyConnection)
-            return WI.UIString("%s (Proxy)", "%s (Proxy) @ Resource Remote Address", "Label for the IP address of a proxy server used to retrieve a network resource.").format(this._remoteAddress);
-
-        return this._remoteAddress;
     }
 
     get mimeTypeComponents()
@@ -841,8 +822,6 @@ WI.Resource = class Resource extends WI.SourceCode
             this._security.connection = metrics.securityConnection;
         }
 
-        this._isProxyConnection = !!metrics.isProxyConnection;
-
         this.dispatchEventToListeners(WI.Resource.Event.MetricsDidChange);
     }
 
@@ -1123,7 +1102,7 @@ WI.Resource = class Resource extends WI.SourceCode
             break;
         }
 
-        return WI.LocalResourceOverride.create(this.url, type, resourceData);
+        return WI.LocalResourceOverride.create(WI.urlWithoutFragment(this.url), type, resourceData);
     }
 
     updateLocalResourceOverrideRequestData(data)
@@ -1136,73 +1115,6 @@ WI.Resource = class Resource extends WI.SourceCode
         this._requestData = data;
 
         this.dispatchEventToListeners(WI.Resource.Event.RequestDataDidChange);
-    }
-
-    generateFetchCode()
-    {
-        let options = {};
-
-        if (this.requestData)
-            options.body = this.requestData;
-
-        options.cache = "default";
-        options.credentials = (this.requestCookies.length || this._requestHeaders.valueForCaseInsensitiveKey("Authorization")) ? "include" : "omit";
-
-        // https://fetch.spec.whatwg.org/#forbidden-header-name
-        const forbiddenHeaders = new Set([
-            "accept-charset",
-            "accept-encoding",
-            "access-control-request-headers",
-            "access-control-request-method",
-            "connection",
-            "content-length",
-            "cookie",
-            "cookie2",
-            "date",
-            "dnt",
-            "expect",
-            "host",
-            "keep-alive",
-            "origin",
-            "referer",
-            "te",
-            "trailer",
-            "transfer-encoding",
-            "upgrade",
-            "via",
-        ]);
-        let headers = Object.entries(this.requestHeaders)
-            .filter((header) => {
-                let key = header[0].toLowerCase();
-                if (forbiddenHeaders.has(key))
-                    return false;
-                if (key.startsWith("proxy-") || key.startsWith("sec-"))
-                    return false;
-                return true;
-            })
-            .sort((a, b) => a[0].extendedLocaleCompare(b[0]))
-            .reduce((accumulator, current) => {
-                accumulator[current[0]] = current[1];
-                return accumulator;
-            }, {});
-        if (!isEmptyObject(headers))
-            options.headers = headers;
-
-        // FIXME: <https://webkit.org/b/241217> Web Inspector: include `integrity` in "Copy as fetch"
-
-        if (this.requestMethod)
-            options.method = this.requestMethod;
-
-        options.mode = "cors";
-        options.redirect = "follow";
-
-        let referrer = this.requestHeaders.valueForCaseInsensitiveKey("Referer");
-        if (referrer)
-            options.referrer = referrer;
-
-        // FIXME: <https://webkit.org/b/241218> Web Inspector: include `referrerPolicy` in "Copy as fetch"
-
-        return `fetch(${JSON.stringify(this.url)}, ${JSON.stringify(options, null, WI.indentString())})`;
     }
 
     generateCURLCommand()
@@ -1356,7 +1268,6 @@ WI.Resource.Type = {
     Ping: "resource-type-ping",
     Beacon: "resource-type-beacon",
     WebSocket: "resource-type-websocket",
-    EventSource: "resource-type-eventsource",
     Other: "resource-type-other",
 };
 

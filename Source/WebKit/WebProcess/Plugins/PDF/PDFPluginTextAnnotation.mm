@@ -54,15 +54,15 @@ static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignmen
 {
     switch (alignment) {
     case NSTextAlignmentLeft:
-        return "left"_s;
+        return "left";
     case NSTextAlignmentRight:
-        return "right"_s;
+        return "right";
     case NSTextAlignmentCenter:
-        return "center"_s;
+        return "center";
     case NSTextAlignmentJustified:
-        return "justify"_s;
+        return "justify";
     case NSTextAlignmentNatural:
-        return "-webkit-start"_s;
+        return "-webkit-start";
     }
     ASSERT_NOT_REACHED();
     return String();
@@ -134,7 +134,7 @@ bool PDFPluginTextAnnotation::handleEvent(Event& event)
     if (event.isKeyboardEvent() && event.type() == eventNames().keydownEvent) {
         auto& keyboardEvent = downcast<KeyboardEvent>(event);
 
-        if (keyboardEvent.keyIdentifier() == "U+0009"_s) {
+        if (keyboardEvent.keyIdentifier() == "U+0009") {
             if (keyboardEvent.ctrlKey() || keyboardEvent.metaKey() || keyboardEvent.altGraphKey())
                 return false;
 

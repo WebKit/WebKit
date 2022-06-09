@@ -2,6 +2,7 @@
 <body>
 <script src="apple-pay.js"></script>
 <script>
+    internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = false;
     internals.mockPaymentCoordinator.setCanMakePayments(window.location.search === "?false" ? false : true);
 
     const paymentRequest = new PaymentRequest([applePayMethod()], applePayDetails);

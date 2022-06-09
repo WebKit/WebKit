@@ -24,7 +24,6 @@
 #include "APIUIClient.h"
 #include "DeviceIdHashSaltStorage.h"
 #include "Logging.h"
-#include "MediaPermissionUtilities.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "UserMediaProcessManager.h"
 #include "WebAutomationSession.h"
@@ -44,10 +43,6 @@
 #if ENABLE(GPU_PROCESS)
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxy.h"
-#endif
-
-#if HAVE(SCREEN_CAPTURE_KIT)
-#include <WebCore/ScreenCaptureKitCaptureSource.h>
 #endif
 
 namespace WebKit {
@@ -100,7 +95,7 @@ UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(W
 
 UserMediaPermissionRequestManagerProxy::~UserMediaPermissionRequestManagerProxy()
 {
-    m_page.sendWithAsyncReply(Messages::WebPage::StopMediaCapture { MediaProducerMediaCaptureKind::EveryKind }, [] { });
+    m_page.sendWithAsyncReply(Messages::WebPage::StopMediaCapture { MediaProducerMediaCaptureKind::AudioVideo }, [] { });
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().revokeSandboxExtensionsIfNeeded(page().process());
     proxies().remove(this);
@@ -134,7 +129,7 @@ void UserMediaPermissionRequestManagerProxy::stopCapture()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     invalidatePendingRequests();
-    m_page.stopMediaCapture(MediaProducerMediaCaptureKind::EveryKind);
+    m_page.stopMediaCapture(MediaProducerMediaCaptureKind::AudioVideo);
 }
 
 void UserMediaPermissionRequestManagerProxy::captureDevicesChanged()
@@ -273,7 +268,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     updateStoredRequests(request);
 
     if (!UserMediaProcessManager::singleton().willCreateMediaStream(*this, request.hasAudioDevice(), request.hasVideoDevice())) {
-        denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "Unable to extend sandbox."_s);
+        denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "Unable to extend sandbox.");
         return;
     }
 
@@ -291,7 +286,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
         SandboxExtension::Handle handle;
 #if PLATFORM(COCOA)
         if (!m_hasCreatedSandboxExtensionForTCCD && doesPageNeedTCCD(m_page)) {
-            if (auto createdHandle = SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_page.process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
+            if (auto createdHandle = SandboxExtension::createHandleForMachLookup("com.apple.tccd"_s, m_page.process().connection()->getAuditToken()))
                 handle = WTFMove(*createdHandle);
             m_hasCreatedSandboxExtensionForTCCD = true;
         }
@@ -340,7 +335,7 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
             continue;
         if (!grantedRequest->topLevelDocumentSecurityOrigin().isSameSchemeHostPort(topLevelDocumentOrigin))
             continue;
-        if (frameID && grantedRequest->frameID() != frameID)
+        if (grantedRequest->frameID() != frameID)
             continue;
 
         if (grantedRequest->requiresVideoCapture())
@@ -426,7 +421,7 @@ void UserMediaPermissionRequestManagerProxy::scheduleNextRejection()
 #if ENABLE(MEDIA_STREAM)
 UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequestManagerProxy::getRequestAction(const UserMediaPermissionRequestProxy& request)
 {
-    bool requestingScreenCapture = request.requestType() == MediaStreamRequest::Type::DisplayMedia || request.requestType() == MediaStreamRequest::Type::DisplayMediaWithAudio;
+    bool requestingScreenCapture = request.requestType() == MediaStreamRequest::Type::DisplayMedia;
     bool requestingCamera = !requestingScreenCapture && request.hasVideoDevice();
     bool requestingMicrophone = request.hasAudioDevice();
 
@@ -436,7 +431,7 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
     if (!request.isUserGesturePriviledged() && wasRequestDenied(request, requestingMicrophone, requestingCamera, requestingScreenCapture))
         return RequestAction::Deny;
 
-    if (requestingScreenCapture)
+    if (request.requestType() == MediaStreamRequest::Type::DisplayMedia)
         return RequestAction::Prompt;
 
     return searchForGrantedRequest(request.frameID(), request.userMediaDocumentSecurityOrigin(), request.topLevelDocumentSecurityOrigin(), requestingMicrophone, requestingCamera) ? RequestAction::Grant : RequestAction::Prompt;
@@ -585,7 +580,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     }
 
     if (action == RequestAction::Grant) {
-        ASSERT(m_currentUserMediaRequest->requestType() != MediaStreamRequest::Type::DisplayMedia && m_currentUserMediaRequest->requestType() != MediaStreamRequest::Type::DisplayMediaWithAudio);
+        ASSERT(m_currentUserMediaRequest->requestType() != MediaStreamRequest::Type::DisplayMedia);
 
         if (m_page.isViewVisible())
             grantRequest(*m_currentUserMediaRequest);
@@ -672,35 +667,6 @@ void UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRe
     m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *frame, WTFMove(apiRequestingOrigin), WTFMove(apiTopOrigin), request.get());
 }
 
-bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForCamera(const ClientOrigin& origin) const
-{
-    if (!SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(origin.topOrigin.securityOrigin().get()))
-        return true;
-
-    return !anyOf(m_deniedRequests, [](auto& request) { return request.isVideoDenied; })
-        && !anyOf(m_pregrantedRequests, [](auto& request) { return request->requiresVideoCapture(); })
-        && !anyOf(m_grantedRequests, [](auto& request) { return request->requiresVideoCapture(); });
-}
-
-bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForMicrophone(const ClientOrigin& origin) const
-{
-    if (!SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(origin.topOrigin.securityOrigin().get()))
-        return true;
-
-    return !anyOf(m_deniedRequests, [](auto& request) { return request.isAudioDenied; })
-        && !anyOf(m_pregrantedRequests, [](auto& request) { return request->requiresAudioCapture(); })
-        && !anyOf(m_grantedRequests, [](auto& request) { return request->requiresAudioCapture(); });
-}
-
-bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForCamera(const ClientOrigin& origin) const
-{
-    return searchForGrantedRequest({ }, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), false, true);
-}
-
-bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForMicrophone(const ClientOrigin& origin) const
-{
-    return searchForGrantedRequest({ }, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), true, false);
-}
 
 #if !PLATFORM(COCOA)
 void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPageProxy&, UserMediaPermissionRequestProxy&, CompletionHandler<void(bool)>&& callback)
@@ -881,21 +847,6 @@ void UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverrid
 {
     m_mockDevicesEnabledOverride = enabled;
     syncWithWebCorePrefs();
-}
-
-bool UserMediaPermissionRequestManagerProxy::mockCaptureDevicesEnabled() const
-{
-    return m_mockDevicesEnabledOverride ? *m_mockDevicesEnabledOverride : m_page.preferences().mockCaptureDevicesEnabled();
-}
-
-bool UserMediaPermissionRequestManagerProxy::canAudioCaptureSucceed() const
-{
-    return mockCaptureDevicesEnabled() || permittedToCaptureAudio();
-}
-
-bool UserMediaPermissionRequestManagerProxy::canVideoCaptureSucceed() const
-{
-    return mockCaptureDevicesEnabled() || permittedToCaptureVideo();
 }
 
 void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const

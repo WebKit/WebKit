@@ -57,9 +57,9 @@ struct SVGPropertyTraits<SVGUnitTypes::SVGUnitType> {
 
     static SVGUnitTypes::SVGUnitType fromString(const String& value)
     {
-        if (value == "userSpaceOnUse"_s)
+        if (value == "userSpaceOnUse")
             return SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE;
-        if (value == "objectBoundingBox"_s)
+        if (value == "objectBoundingBox")
             return SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
         return SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN;
     }

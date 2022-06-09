@@ -76,7 +76,7 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
 
         if (auto* renderer = this->renderer())
             static_cast<LegacyRenderSVGShape*>(renderer)->setNeedsShapeUpdate();
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

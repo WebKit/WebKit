@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,7 @@
 #include <WebCore/LayoutSize.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/MediaSelectionOption.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NotificationDirection.h>
 #include <WebCore/RealtimeMediaSource.h>
@@ -86,15 +87,12 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 #include "ArrayReference.h"
 #include <WebCore/GraphicsContextGL.h>
+#include <WebCore/GraphicsContextGLAttributes.h>
 #include <WebCore/GraphicsTypesGL.h>
 #endif
 
 #if ENABLE(WEBXR)
 #include <WebCore/PlatformXR.h>
-#endif
-
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-#include <WebCore/MockContentFilterSettings.h>
 #endif
 
 #if PLATFORM(COCOA)
@@ -104,12 +102,6 @@ namespace WTF {
 class MachSendRight;
 }
 #endif
-
-#if USE(UNIX_DOMAIN_SOCKETS)
-#include <wtf/unix/UnixFileDescriptor.h>
-#endif
-
-OBJC_CLASS VKCImageAnalysis;
 
 #if USE(AVFOUNDATION)
 typedef struct __CVBuffer* CVPixelBufferRef;
@@ -128,7 +120,6 @@ class CubicBezierTimingFunction;
 class Cursor;
 class DatabaseDetails;
 class DragData;
-class DecomposedGlyphs;
 class File;
 class FilterOperation;
 class FilterOperations;
@@ -152,7 +143,6 @@ class FragmentedSharedBuffer;
 class SpringTimingFunction;
 class StepsTimingFunction;
 class StickyPositionViewportConstraints;
-class SystemImage;
 class TextCheckingRequestData;
 class TransformationMatrix;
 class UserStyleSheet;
@@ -224,6 +214,10 @@ struct MediaConstraints;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 struct SerializedAttachmentData;
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+struct GraphicsContextGLAttributes;
 #endif
 
 namespace DOMCacheEngine {
@@ -398,17 +392,16 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Cursor&);
 };
 
-
-template<> struct ArgumentCoder<WebCore::Font> {
-    static void encode(Encoder&, const WebCore::Font&);
-    static std::optional<Ref<WebCore::Font>> decode(Decoder&);
-    static void encodePlatformData(Encoder&, const WebCore::Font&);
-    static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
+template<> struct ArgumentCoder<RefPtr<WebCore::Font>> {
+    static void encode(Encoder&, const RefPtr<WebCore::Font>&);
+    static std::optional<RefPtr<WebCore::Font>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::DecomposedGlyphs> {
-    static void encode(Encoder&, const WebCore::DecomposedGlyphs&);
-    static std::optional<Ref<WebCore::DecomposedGlyphs>> decode(Decoder&);
+template<> struct ArgumentCoder<Ref<WebCore::Font>> {
+    static void encode(Encoder&, const Ref<WebCore::Font>&);
+    static std::optional<Ref<WebCore::Font>> decode(Decoder&);
+    static void encodePlatformData(Encoder&, const Ref<WebCore::Font>&);
+    static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {
@@ -652,6 +645,11 @@ template<> struct ArgumentCoder<WebCore::Payment> {
     static std::optional<WebCore::Payment> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<WebCore::PaymentAuthorizationResult> {
+    static void encode(Encoder&, const WebCore::PaymentAuthorizationResult&);
+    static std::optional<WebCore::PaymentAuthorizationResult> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<WebCore::PaymentContact> {
     static void encode(Encoder&, const WebCore::PaymentContact&);
     static std::optional<WebCore::PaymentContact> decode(Decoder&);
@@ -719,6 +717,11 @@ template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
 
 #endif
 
+template<> struct ArgumentCoder<WebCore::MediaSelectionOption> {
+    static void encode(Encoder&, const WebCore::MediaSelectionOption&);
+    static std::optional<WebCore::MediaSelectionOption> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<WebCore::PromisedAttachmentInfo> {
     static void encode(Encoder&, const WebCore::PromisedAttachmentInfo&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PromisedAttachmentInfo&);
@@ -777,12 +780,6 @@ template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
     static std::optional<WebCore::ScriptBuffer> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::SystemImage> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::SystemImage&);
-    static std::optional<Ref<WebCore::SystemImage>> decode(Decoder&);
-};
-
 #if ENABLE(DATA_DETECTION)
 
 template<> struct ArgumentCoder<WebCore::DataDetectorElementInfo> {
@@ -808,6 +805,11 @@ template<> struct ArgumentCoder<WebCore::PaymentInstallmentConfiguration> {
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
+template<> struct ArgumentCoder<WebCore::GraphicsContextGLAttributes> {
+    static void encode(Encoder&, const WebCore::GraphicsContextGLAttributes&);
+    static std::optional<WebCore::GraphicsContextGLAttributes> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::GraphicsContextGL::ActiveInfo&);
@@ -826,30 +828,11 @@ template<> struct ArgumentCoder<WebCore::TextRecognitionDataDetector> {
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-template<> struct ArgumentCoder<RetainPtr<VKCImageAnalysis>> {
-    static void encode(Encoder&, const RetainPtr<VKCImageAnalysis>&);
-    static WARN_UNUSED_RETURN std::optional<RetainPtr<VKCImageAnalysis>> decode(Decoder&);
-};
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
 #if USE(AVFOUNDATION)
 
 template<> struct ArgumentCoder<RetainPtr<CVPixelBufferRef>> {
     static void encode(Encoder&, const RetainPtr<CVPixelBufferRef>&);
     static std::optional<RetainPtr<CVPixelBufferRef>> decode(Decoder&);
-};
-
-#endif
-
-#if USE(UNIX_DOMAIN_SOCKETS)
-
-template<> struct ArgumentCoder<UnixFileDescriptor> {
-    static void encode(Encoder&, const UnixFileDescriptor&);
-    static void encode(Encoder&, UnixFileDescriptor&&);
-    static std::optional<UnixFileDescriptor> decode(Decoder&);
 };
 
 #endif
@@ -865,41 +848,6 @@ template<> struct EnumTraits<WebCore::RenderingMode> {
         WebCore::RenderingMode::Accelerated
     >;
 };
-
-template<> struct EnumTraits<WebCore::RenderingPurpose> {
-    using values = EnumValues<
-        WebCore::RenderingPurpose,
-        WebCore::RenderingPurpose::Unspecified,
-        WebCore::RenderingPurpose::Canvas,
-        WebCore::RenderingPurpose::DOM,
-        WebCore::RenderingPurpose::LayerBacking,
-        WebCore::RenderingPurpose::Snapshot,
-        WebCore::RenderingPurpose::ShareableSnapshot,
-        WebCore::RenderingPurpose::MediaPainting
-    >;
-};
-
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-template<> struct EnumTraits<WebCore::MockContentFilterSettings::DecisionPoint> {
-    using values = EnumValues<
-        WebCore::MockContentFilterSettings::DecisionPoint,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterWillSendRequest,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterRedirect,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterResponse,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterAddData,
-        WebCore::MockContentFilterSettings::DecisionPoint::AfterFinishedAddingData,
-        WebCore::MockContentFilterSettings::DecisionPoint::Never
-    >;
-};
-
-template<> struct EnumTraits<WebCore::MockContentFilterSettings::Decision> {
-    using values = EnumValues<
-        WebCore::MockContentFilterSettings::Decision,
-        WebCore::MockContentFilterSettings::Decision::Allow,
-        WebCore::MockContentFilterSettings::Decision::Block
-    >;
-};
-#endif
 
 template<> struct EnumTraits<WebCore::AutoplayEvent> {
     using values = EnumValues<
@@ -947,11 +895,21 @@ template<> struct EnumTraits<WebCore::IndexedDB::GetAllType> {
 template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {
     using values = EnumValues<
         WebCore::RealtimeMediaSource::Type,
+        WebCore::RealtimeMediaSource::Type::None,
         WebCore::RealtimeMediaSource::Type::Audio,
         WebCore::RealtimeMediaSource::Type::Video
     >;
 };
 #endif
+
+template<> struct EnumTraits<WebCore::MediaSelectionOption::Type> {
+    using values = EnumValues<
+        WebCore::MediaSelectionOption::Type,
+        WebCore::MediaSelectionOption::Type::Regular,
+        WebCore::MediaSelectionOption::Type::LegibleOff,
+        WebCore::MediaSelectionOption::Type::LegibleAuto
+    >;
+};
 
 template <> struct EnumTraits<WebCore::WorkerType> {
     using values = EnumValues<
@@ -1027,6 +985,25 @@ template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
+template <> struct EnumTraits<WebCore::GraphicsContextGLPowerPreference> {
+    using values = EnumValues <
+    WebCore::GraphicsContextGLPowerPreference,
+    WebCore::GraphicsContextGLPowerPreference::Default,
+    WebCore::GraphicsContextGLPowerPreference::LowPower,
+    WebCore::GraphicsContextGLPowerPreference::HighPerformance
+    >;
+};
+
+template <> struct EnumTraits<WebCore::GraphicsContextGLWebGLVersion> {
+    using values = EnumValues <
+    WebCore::GraphicsContextGLWebGLVersion,
+    WebCore::GraphicsContextGLWebGLVersion::WebGL1
+#if ENABLE(WEBGL2)
+    , WebCore::GraphicsContextGLWebGLVersion::WebGL2
+#endif
+    >;
+};
 
 template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesting> {
     using values = EnumValues<

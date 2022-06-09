@@ -31,9 +31,7 @@
 #import <WebKitLegacy/WebDocumentPrivate.h>
 
 @class WebHTMLRepresentationPrivate;
-#if !TARGET_OS_IPHONE
 @class NSView;
-#endif
 
 @class DOMNode;
 @class DOMElement;

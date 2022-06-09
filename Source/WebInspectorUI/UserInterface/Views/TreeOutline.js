@@ -294,7 +294,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             current = current.traverseNextTreeElement(false, child, true);
         }
 
-        if (child.expandable && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
+        if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
             child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
 
         if (this._childrenListNode)
@@ -316,15 +316,13 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         let child = this.children[childIndex];
         let parent = child.parent;
 
-        let childOrDescendantWasSelected = child.deselect(suppressOnDeselect) || child.selfOrDescendant((descendant) => descendant.selected);
-        if (childOrDescendantWasSelected && !suppressSelectSibling) {
-            const omitFocus = true;
+        if (child.deselect(suppressOnDeselect) && !suppressSelectSibling) {
             if (child.previousSibling)
-                child.previousSibling.select(omitFocus);
+                child.previousSibling.select(true, false);
             else if (child.nextSibling)
-                child.nextSibling.select(omitFocus);
+                child.nextSibling.select(true, false);
             else
-                parent.select(omitFocus);
+                parent.select(true, false);
         }
 
         let treeOutline = child.treeOutline;
@@ -589,7 +587,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 if (!this.selectedTreeElement.revealed()) {
                     this.selectedTreeElement.reveal();
                     handled = true;
-                } else if (this.selectedTreeElement.expandable) {
+                } else if (this.selectedTreeElement.hasChildren) {
                     handled = true;
                     if (this.selectedTreeElement.expanded) {
                         nextSelectedElement = this.selectedTreeElement.children[0];

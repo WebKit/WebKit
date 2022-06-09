@@ -693,7 +693,7 @@ Decimal Decimal::fromDouble(double doubleValue)
     return nan();
 }
 
-Decimal Decimal::fromString(StringView str)
+Decimal Decimal::fromString(const String& str)
 {
     int exponent = 0;
     Sign exponentSign = Positive;

@@ -51,6 +51,7 @@
 #include <wtf/text/WTFString.h>
 
 // Supplements
+#include "WebCookieManagerProxy.h"
 #include "WebGeolocationManagerProxy.h"
 #include "WebNotificationManagerProxy.h"
 

@@ -84,7 +84,7 @@
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .filter-bar {
-    width: fill-available;
+    width: -webkit-fill-available;
     background-color: transparent;
 }
 
@@ -98,7 +98,7 @@
     border: none;
     border-radius: 3px;
     white-space: nowrap;
-    appearance: none;
+    -webkit-appearance: none;
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:focus {

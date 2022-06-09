@@ -1,7 +1,0 @@
-
-PASS Wasm function throws argument
-PASS Wasm function throws null
-PASS Wasm function throws integer
-PASS Imported JS function throws
-PASS Imported JS function throws, Wasm catches and rethrows
-

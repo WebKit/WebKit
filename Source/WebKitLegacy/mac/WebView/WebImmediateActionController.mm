@@ -273,12 +273,12 @@
     NSURL *url = _hitTestResult.absoluteLinkURL();
     String absoluteURLString = [url absoluteString];
     if (url && _hitTestResult.URLElement()) {
-        if (WTF::protocolIs(absoluteURLString, "mailto"_s)) {
+        if (WTF::protocolIs(absoluteURLString, "mailto")) {
             _type = WebImmediateActionMailtoLink;
             return [self _animationControllerForDataDetectedLink];
         }
 
-        if (WTF::protocolIs(absoluteURLString, "tel"_s)) {
+        if (WTF::protocolIs(absoluteURLString, "tel")) {
             _type = WebImmediateActionTelLink;
             return [self _animationControllerForDataDetectedLink];
         }
@@ -517,13 +517,13 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
     // so bail out early to avoid that.
     WebCore::DictionaryPopupInfo popupInfo;
-    if (plainText(range).find(isNotSpaceOrNewline) == notFound) {
+    if (plainText(range).stripWhiteSpace().isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return popupInfo;
     }
 
     auto style = range.start.container->renderStyle();
-    float scaledDescent = style ? style->metricsOfPrimaryFont().descent() * frame->page()->pageScaleFactor() : 0;
+    float scaledDescent = style ? style->fontMetrics().descent() * frame->page()->pageScaleFactor() : 0;
 
     auto quads = WebCore::RenderObject::absoluteTextQuads(range);
     if (quads.isEmpty()) {

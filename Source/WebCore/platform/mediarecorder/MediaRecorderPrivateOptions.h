@@ -26,7 +26,7 @@
 
 #include <wtf/Forward.h>
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 namespace WebCore {
 
@@ -76,4 +76,4 @@ inline std::optional<MediaRecorderPrivateOptions> MediaRecorderPrivateOptions::d
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

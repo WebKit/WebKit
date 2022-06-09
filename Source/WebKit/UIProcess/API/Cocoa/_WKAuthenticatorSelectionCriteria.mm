@@ -34,7 +34,6 @@
         return nil;
 
     self.authenticatorAttachment = _WKAuthenticatorAttachmentAll;
-    self.residentKey = _WKResidentKeyRequirementNotPresent;
     self.requireResidentKey = NO;
     self.userVerification = _WKUserVerificationRequirementPreferred;
     return self;

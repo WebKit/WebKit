@@ -227,8 +227,6 @@ protected:
     };
     void addPendingTrackEvent(PendingTrackEvent&&);
 
-    void dispatchTrackEvent(PendingTrackEvent&);
-
 private:
     virtual void doCreateOffer(RTCOfferOptions&&) = 0;
     virtual void doCreateAnswer(RTCAnswerOptions&&) = 0;

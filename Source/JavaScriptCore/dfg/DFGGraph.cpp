@@ -262,7 +262,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
     if (node->hasTransition()) {
         out.print(comma, pointerDumpInContext(node->transition(), context));
 #if USE(JSVALUE64)
-        out.print(", ID:", node->transition()->next->id().bits());
+        out.print(", ID:", node->transition()->next->id());
 #else
         out.print(", ID:", RawPointer(node->transition()->next.get()));
 #endif
@@ -277,7 +277,7 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
                 if (ExecutableBase* executable = variant.executable()) {
                     if (executable->isHostFunction())
                         out.print(comma, "<host function>");
-                    else if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable))
+                    else if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(m_vm, executable))
                         out.print(comma, FunctionExecutableDump(functionExecutable));
                     else
                         out.print(comma, "<non-function executable>");
@@ -1061,9 +1061,6 @@ void Graph::clearFlagsOnAllNodes(NodeFlags flags)
 
 bool Graph::watchCondition(const ObjectPropertyCondition& key)
 {
-    if (m_plan.isUnlinked())
-        return false;
-
     if (!key.isWatchable(PropertyCondition::MakeNoChanges))
         return false;
 
@@ -1084,9 +1081,6 @@ bool Graph::watchCondition(const ObjectPropertyCondition& key)
 
 bool Graph::watchConditions(const ObjectPropertyConditionSet& keys)
 {
-    if (m_plan.isUnlinked())
-        return false;
-
     if (!keys.isValid())
         return false;
 
@@ -1104,9 +1098,6 @@ bool Graph::isSafeToLoad(JSObject* base, PropertyOffset offset)
 
 bool Graph::watchGlobalProperty(JSGlobalObject* globalObject, unsigned identifierNumber)
 {
-    if (m_plan.isUnlinked())
-        return false;
-
     UniquedStringImpl* uid = identifiers()[identifierNumber];
     // If we already have a WatchpointSet, and it is already invalidated, it means that this scope operation must be changed from GlobalProperty to GlobalLexicalVar,
     // but we still have stale metadata here since we have not yet executed this bytecode operation since the invalidation. Just emitting ForceOSRExit to update the
@@ -1276,9 +1267,6 @@ unsigned Graph::requiredRegisterCountForExecutionAndExit()
 JSValue Graph::tryGetConstantProperty(
     JSValue base, const RegisteredStructureSet& structureSet, PropertyOffset offset)
 {
-    if (m_plan.isUnlinked())
-        return JSValue();
-
     if (!base || !base.isObject())
         return JSValue();
     
@@ -1318,7 +1306,7 @@ JSValue Graph::tryGetConstantProperty(
     // incompatible with the getDirect we're trying to do. The easiest way to do that is to
     // determine if the structure belongs to the proven set.
 
-    Structure* structure = object->structure();
+    Structure* structure = object->structure(m_vm);
     if (!structureSet.toStructureSet().contains(structure))
         return JSValue();
 
@@ -1364,14 +1352,11 @@ AbstractValue Graph::inferredValueForProperty(
 JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
 {
     // This has an awesome concurrency story. See comment for GetGlobalVar in ByteCodeParser.
-
-    if (m_plan.isUnlinked())
-        return JSValue();
     
     if (!base)
         return JSValue();
     
-    JSLexicalEnvironment* activation = jsDynamicCast<JSLexicalEnvironment*>(base);
+    JSLexicalEnvironment* activation = jsDynamicCast<JSLexicalEnvironment*>(m_vm, base);
     if (!activation)
         return JSValue();
     
@@ -1417,11 +1402,9 @@ JSValue Graph::tryGetConstantClosureVar(Node* node, ScopeOffset offset)
 
 JSArrayBufferView* Graph::tryGetFoldableView(JSValue value)
 {
-    if (m_plan.isUnlinked())
-        return nullptr;
     if (!value)
         return nullptr;
-    JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(value);
+    JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(m_vm, value);
     if (!view)
         return nullptr;
     if (!view->length())
@@ -1486,7 +1469,7 @@ FrozenValue* Graph::freeze(JSValue value)
     // point to other CodeBlocks. We don't want to have them be
     // part of the weak pointer set. For example, an optimized CodeBlock
     // having a weak pointer to itself will cause it to get collected.
-    RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(value));
+    RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(m_vm, value));
     
     auto result = m_frozenValueMap.add(JSValue::encode(value), nullptr);
     if (LIKELY(!result.isNewEntry))
@@ -1698,8 +1681,10 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                 Node* argumentNode = m_rootToArguments.find(block(0))->value[argument];
                 // FIXME: We should match SetArgumentDefinitely nodes at other entrypoints as well:
                 // https://bugs.webkit.org/show_bug.cgi?id=175841
-                if (argumentNode && node->variableAccessData() == argumentNode->variableAccessData())
-                    return MethodOfGettingAValueProfile::argumentValueProfile(node->origin.semantic, node->operand());
+                if (argumentNode && node->variableAccessData() == argumentNode->variableAccessData()) {
+                    CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
+                    return &profiledBlock->valueProfileForArgument(argument);
+                }
             }
         }
 
@@ -1708,18 +1693,22 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
             CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
 
             if (node->accessesStack(*this)) {
-                if (node->op() == GetLocal)
-                    return MethodOfGettingAValueProfile::lazyOperandValueProfile(node->origin.semantic, node->operand());
+                if (node->op() == GetLocal) {
+                    return MethodOfGettingAValueProfile::fromLazyOperand(
+                        profiledBlock,
+                        LazyOperandValueProfileKey(
+                            node->origin.semantic.bytecodeIndex(), node->operand()));
+                }
             }
 
             if (node->hasHeapPrediction())
-                return MethodOfGettingAValueProfile::bytecodeValueProfile(node->origin.semantic);
+                return &profiledBlock->valueProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex());
 
             if (profiledBlock->hasBaselineJITProfiling()) {
-                if (profiledBlock->binaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
-                    return MethodOfGettingAValueProfile::binaryArithProfile(node->origin.semantic);
-                if (profiledBlock->unaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
-                    return MethodOfGettingAValueProfile::unaryArithProfile(node->origin.semantic);
+                if (BinaryArithProfile* result = profiledBlock->binaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
+                    return result;
+                if (UnaryArithProfile* result = profiledBlock->unaryArithProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex()))
+                    return result;
             }
         }
 
@@ -1736,14 +1725,11 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
         }
     }
     
-    return { };
+    return MethodOfGettingAValueProfile();
 }
 
 bool Graph::getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* regExpPrototypeStructure, UniquedStringImpl* uid, JSValue& returnJSValue)
 {
-    if (m_plan.isUnlinked())
-        return false;
-
     PropertyOffset offset = regExpPrototypeStructure->getConcurrently(uid);
     if (!isValidOffset(offset))
         return false;
@@ -1754,9 +1740,9 @@ bool Graph::getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* reg
 
     // We only care about functions and getters at this point. If you want to access other properties
     // you'll have to add code for those types.
-    JSFunction* function = jsDynamicCast<JSFunction*>(value);
+    JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, value);
     if (!function) {
-        GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(value);
+        GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(m_vm, value);
 
         if (!getterSetter)
             return false;
@@ -1778,7 +1764,7 @@ bool Graph::isStringPrototypeMethodSane(JSGlobalObject* globalObject, UniquedStr
 
     ObjectPropertyCondition equivalenceCondition = conditions.slotBaseCondition();
     RELEASE_ASSERT(equivalenceCondition.hasRequiredValue());
-    JSFunction* function = jsDynamicCast<JSFunction*>(equivalenceCondition.condition().requiredValue());
+    JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, equivalenceCondition.condition().requiredValue());
     if (!function)
         return false;
 
@@ -1791,9 +1777,6 @@ bool Graph::isStringPrototypeMethodSane(JSGlobalObject* globalObject, UniquedStr
 
 bool Graph::canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
 {
-    if (m_plan.isUnlinked())
-        return false;
-
     if (hasExitSite(codeOrigin, BadCache) || hasExitSite(codeOrigin, BadConstantCache))
         return false;
 
@@ -1801,7 +1784,7 @@ bool Graph::canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
     Structure* stringObjectStructure = globalObjectFor(codeOrigin)->stringObjectStructure();
     registerStructure(stringObjectStructure);
     ASSERT(stringObjectStructure->storedPrototype().isObject());
-    ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo() == StringPrototype::info());
+    ASSERT(stringObjectStructure->storedPrototype().asCell()->classInfo(stringObjectStructure->storedPrototype().asCell()->vm()) == StringPrototype::info());
 
     if (!watchConditions(generateConditionsForPropertyMissConcurrently(m_vm, globalObject, stringObjectStructure, m_vm.propertyNames->toPrimitiveSymbol.impl())))
         return false;
@@ -1845,9 +1828,6 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
 {
     // The parameter 'value' is the AbstractValue for child1 (the thing being spread).
     ASSERT(node->op() == Spread);
-
-    if (m_plan.isUnlinked())
-        return false;
 
     if (node->child1().useKind() != ArrayUse) {
         // Note: we only speculate on ArrayUse when we've set up the necessary watchpoints

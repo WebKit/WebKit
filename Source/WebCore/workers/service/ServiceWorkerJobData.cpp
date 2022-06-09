@@ -78,7 +78,6 @@ ServiceWorkerJobData ServiceWorkerJobData::isolatedCopy() const
     result.clientCreationURL = clientCreationURL.isolatedCopy();
     result.topOrigin = topOrigin.isolatedCopy();
     result.scopeURL = scopeURL.isolatedCopy();
-    result.domainForCachePartition = domainForCachePartition.isolatedCopy();
     result.registrationOptions = registrationOptions.isolatedCopy();
 
     return result;

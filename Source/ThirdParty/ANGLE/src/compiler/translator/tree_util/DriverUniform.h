@@ -34,15 +34,6 @@ enum class DriverUniformMode
     Structure
 };
 
-enum class DriverUniformFlip
-{
-    // Flip uniforms for fragment shaders
-    Fragment,
-    // Flip uniforms for pre-rasterization stages.  These differ from the fragment values by whether
-    // the viewport needs to be flipped, and whether negative viewports are supported.
-    PreFragment,
-};
-
 class DriverUniform
 {
   public:
@@ -54,29 +45,29 @@ class DriverUniform
     bool addComputeDriverUniformsToShader(TIntermBlock *root, TSymbolTable *symbolTable);
     bool addGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbolTable *symbolTable);
 
-    TIntermTyped *getAcbBufferOffsets() const;
-    TIntermTyped *getDepthRange() const;
-    TIntermTyped *getViewportZScale() const;
-    TIntermTyped *getHalfRenderArea() const;
-    TIntermTyped *getFlipXY(TSymbolTable *symbolTable, DriverUniformFlip stage) const;
-    // Returns vec2(flip.x, -flip.y)
-    TIntermTyped *getNegFlipXY(TSymbolTable *symbolTable, DriverUniformFlip stage) const;
-    TIntermTyped *getDither() const;
-    TIntermTyped *getSwapXY() const;
-    TIntermTyped *getAdvancedBlendEquation() const;
-    TIntermTyped *getNumSamples() const;
+    TIntermTyped *getViewportRef() const;
+    TIntermTyped *getAbcBufferOffsets() const;
+    TIntermTyped *getXfbVerticesPerInstance() const;
+    TIntermTyped *getXfbBufferOffsets() const;
     TIntermTyped *getClipDistancesEnabled() const;
+    TIntermTyped *getDepthRangeRef() const;
+    TIntermTyped *getDepthRangeReservedFieldRef() const;
+    TIntermTyped *getNumSamplesRef() const;
 
-    virtual TIntermTyped *getViewport() const { return nullptr; }
-    virtual TIntermTyped *getXfbBufferOffsets() const { return nullptr; }
-    virtual TIntermTyped *getXfbVerticesPerInstance() const { return nullptr; }
+    virtual TIntermTyped *getFlipXYRef() const { return nullptr; }
+    virtual TIntermTyped *getNegFlipXYRef() const { return nullptr; }
+    virtual TIntermTyped *getPreRotationMatrixRef() const { return nullptr; }
+    virtual TIntermTyped *getFragRotationMatrixRef() const { return nullptr; }
+    virtual TIntermTyped *getHalfRenderAreaRef() const { return nullptr; }
+    virtual TIntermTyped *getNegFlipYRef() const { return nullptr; }
+    virtual TIntermTyped *getDitherRef() const { return nullptr; }
 
     const TVariable *getDriverUniformsVariable() const { return mDriverUniforms; }
 
   protected:
     TIntermTyped *createDriverUniformRef(const char *fieldName) const;
     virtual TFieldList *createUniformFields(TSymbolTable *symbolTable);
-    const TType *createEmulatedDepthRangeType(TSymbolTable *symbolTable);
+    TType *createEmulatedDepthRangeType(TSymbolTable *symbolTable);
 
     const DriverUniformMode mMode;
     const TVariable *mDriverUniforms;
@@ -87,23 +78,19 @@ class DriverUniformExtended : public DriverUniform
 {
   public:
     DriverUniformExtended(DriverUniformMode mode) : DriverUniform(mode) {}
-    ~DriverUniformExtended() override {}
+    virtual ~DriverUniformExtended() override {}
 
-    TIntermTyped *getViewport() const override;
-    TIntermTyped *getXfbBufferOffsets() const override;
-    TIntermTyped *getXfbVerticesPerInstance() const override;
+    TIntermTyped *getFlipXYRef() const override;
+    TIntermTyped *getNegFlipXYRef() const override;
+    TIntermTyped *getPreRotationMatrixRef() const override;
+    TIntermTyped *getFragRotationMatrixRef() const override;
+    TIntermTyped *getHalfRenderAreaRef() const override;
+    TIntermTyped *getNegFlipYRef() const override;
+    TIntermTyped *getDitherRef() const override;
 
   protected:
-    TFieldList *createUniformFields(TSymbolTable *symbolTable) override;
+    virtual TFieldList *createUniformFields(TSymbolTable *symbolTable) override;
 };
-
-// Returns either (1,0) or (0,1) based on whether X and Y should remain as-is or swapped
-// respectively.  dot((x,y), multiplier) will yield x, and dot((x,y), multiplier.yx) will yield y in
-// the possibly-swapped coordinates.
-//
-// Each component is separately returned by a function
-TIntermTyped *MakeSwapXMultiplier(TIntermTyped *swapped);
-TIntermTyped *MakeSwapYMultiplier(TIntermTyped *swapped);
 
 }  // namespace sh
 

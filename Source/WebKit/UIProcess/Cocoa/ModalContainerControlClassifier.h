@@ -26,7 +26,6 @@
 #pragma once
 
 #import <wtf/Forward.h>
-#include <wtf/WorkQueue.h>
 
 @class MLModel;
 

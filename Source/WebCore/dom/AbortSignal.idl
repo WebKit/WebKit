@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,17 @@
 
 [
     CustomIsReachable,
-    Exposed=*,
+    Exposed=(Window,Worker),
     JSCustomMarkFunction,
     PrivateIdentifier,
     PublicIdentifier
 ] interface AbortSignal : EventTarget {
     [PrivateIdentifier] static boolean whenSignalAborted(AbortSignal object, AbortAlgorithm algorithm);
 
-    [NewObject, CallWith=CurrentScriptExecutionContext&CurrentGlobalObject] static AbortSignal abort(optional any reason);
-    [Exposed=(Window, Worker), NewObject, CallWith=CurrentScriptExecutionContext] static AbortSignal timeout([EnforceRange] unsigned long long milliseconds);
-
+    [NewObject, CallWith=ScriptExecutionContext&GlobalObject] static AbortSignal abort(optional any reason);
     readonly attribute boolean aborted;
     readonly attribute any reason;
-    [CallWith=CurrentGlobalObject] undefined throwIfAborted();
+    [CallWith=GlobalObject] undefined throwIfAborted();
 
     attribute EventHandler onabort;
 };

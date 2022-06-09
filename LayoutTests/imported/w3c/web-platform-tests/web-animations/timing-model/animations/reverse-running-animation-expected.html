@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <title>Reference for reverse running animation</title>
 <style>
-  #box {
-    background: green;
-    height: 40px;
-    width: 40px;
+  #notes {
+    position: absolute;
+    left: 0px;
+    top: 100px;
+  }
+  body {
+    backgrond: white;
   }
 </style>
 <body>
-  <div id="box"></div>
   <p id="notes">
-    This test animates the box color from green to red and reverses the play
-    direction shortly after the midpoint. If the box remains red, the test
-    failed.
+    This test reverses the animation shortly after the box starts moving. If
+    any blue pixels are visible the test has failed.
   </p>
 </body>

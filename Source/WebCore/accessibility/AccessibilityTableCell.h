@@ -65,7 +65,7 @@ protected:
     AccessibilityTableRow* parentRow() const;
     virtual AccessibilityTable* parentTable() const;
     AccessibilityRole determineAccessibilityRole() final;
-    AccessibilityObject* parentObjectUnignored() const override;
+    AXCoreObject* parentObjectUnignored() const override;
 
     int m_rowIndex;
     int m_axColIndexFromRow;

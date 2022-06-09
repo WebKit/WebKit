@@ -33,12 +33,10 @@ namespace WebCore {
 class ContentSecurityPolicy;
 struct SecurityOriginData;
 
-enum class IsSelfSource : bool { No, Yes };
-
 class ContentSecurityPolicySource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, std::optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard, IsSelfSource);
+    ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, std::optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard);
 
     bool matches(const URL&, bool didReceiveRedirectResponse = false) const;
 
@@ -59,7 +57,6 @@ private:
 
     bool m_hostHasWildcard;
     bool m_portHasWildcard;
-    bool m_isSelfSource;
 };
 
 } // namespace WebCore

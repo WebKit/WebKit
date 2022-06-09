@@ -75,7 +75,7 @@ void ResourceResponse::disableLazyInitialization()
     lazyInit(AllFields);
 }
 
-CertificateInfo ResourceResponse::platformCertificateInfo(Span<const std::byte> auditToken) const
+CertificateInfo ResourceResponse::platformCertificateInfo() const
 {
     CFURLResponseRef cfResponse = [m_nsResponse _CFURLResponse];
     if (!cfResponse)
@@ -89,15 +89,6 @@ CertificateInfo ResourceResponse::platformCertificateInfo(Span<const std::byte> 
     if (!trustValue)
         return { };
     auto trust = checked_cf_cast<SecTrustRef>(trustValue);
-
-#if HAVE(SEC_TRUST_SET_CLIENT_AUDIT_TOKEN)
-    if (trust && auditToken.size()) {
-        auto data = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const uint8_t*>(auditToken.data()), auditToken.size()));
-        SecTrustSetClientAuditToken(trust, data.get());
-    }
-#else
-    UNUSED_PARAM(auditToken);
-#endif
 
     SecTrustResultType trustResultType;
     OSStatus result = SecTrustGetTrustResult(trust, &trustResultType);
@@ -133,7 +124,7 @@ static inline AtomString stripLeadingAndTrailingDoubleQuote(const String& value)
 {
     unsigned length = value.length();
     if (length < 2 || value[0u] != '"' || value[length - 1] != '"')
-        return AtomString { value };
+        return value;
 
     return StringView(value).substring(1, length - 2).toAtomString();
 }
@@ -153,7 +144,7 @@ static inline AtomString extractHTTPStatusText(CFHTTPMessageRef messageRef)
     if (auto httpStatusLine = adoptCF(CFHTTPMessageCopyResponseStatusLine(messageRef)))
         return extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
 
-    static MainThreadNeverDestroyed<const AtomString> defaultStatusText("OK"_s);
+    static MainThreadNeverDestroyed<const AtomString> defaultStatusText("OK", AtomString::ConstructFromLiteral);
     return defaultStatusText;
 }
 
@@ -183,7 +174,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         }
         if (messageRef && initLevel == AllFields) {
             m_httpStatusText = extractHTTPStatusText(messageRef);
-            m_httpVersion = AtomString { String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase() };
+            m_httpVersion = String(adoptCF(CFHTTPMessageCopyVersion(messageRef)).get()).convertToASCIIUppercase();
         }
     }
 

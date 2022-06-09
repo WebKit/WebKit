@@ -42,11 +42,11 @@ namespace TestWebKitAPI {
 
 TEST(WTF, StringOperators)
 {
-    String string("String"_s);
-    AtomString atomString("AtomString"_s);
+    String string("String");
+    AtomString atomString("AtomString");
     ASCIILiteral literal { "ASCIILiteral"_s };
 
-    String stringViewBacking { "StringView"_s };
+    String stringViewBacking { "StringView" };
     StringView stringView { stringViewBacking };
 
     EXPECT_EQ(0, wtfStringCopyCount);
@@ -258,12 +258,12 @@ TEST(WTF, ConcatenateCharacterArrayAndEmptyString)
     UChar ucharArray[] = { 't', 'e', 's', 't', '\0' };
     String concatenation16 = ucharArray + emptyString;
     ASSERT_EQ(static_cast<unsigned>(4), concatenation16.length());
-    ASSERT_TRUE(concatenation16 == String(ucharArray, 4));
+    ASSERT_TRUE(concatenation16 == String(ucharArray));
 
-    LChar lcharArray[] = { 't', 'e', 's', 't' };
-    String concatenation8 = String(lcharArray, 4) + emptyString;
+    LChar lcharArray[] = { 't', 'e', 's', 't', '\0' };
+    String concatenation8 = lcharArray + emptyString;
     ASSERT_EQ(static_cast<unsigned>(4), concatenation8.length());
-    ASSERT_TRUE(concatenation8 == String(lcharArray, 4));
+    ASSERT_TRUE(concatenation8 == String(lcharArray));
 }
 
 } // namespace TestWebKitAPI

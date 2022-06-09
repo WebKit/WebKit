@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,24 +48,20 @@
 #include <wtf/StdFilesystem.h>
 #endif
 
-namespace WTF::FileSystemImpl {
+namespace WTF {
+
+namespace FileSystemImpl {
 
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 static std::filesystem::path toStdFileSystemPath(StringView path)
 {
-#if HAVE(MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return std::filesystem::u8path(path.utf8().data());
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#else
-    return { std::u8string(reinterpret_cast<const char8_t*>(path.utf8().data())) };
-#endif
 }
 
 static String fromStdFileSystemPath(const std::filesystem::path& path)
 {
-    return String::fromUTF8(reinterpret_cast<const LChar*>(path.u8string().c_str()));
+    return String::fromUTF8(path.u8string().c_str());
 }
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
@@ -286,13 +282,16 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
 
 bool filesHaveSameVolume(const String& fileA, const String& fileB)
 {
-    if (fileA.isNull() || fileB.isNull())
+    auto fsRepFileA = fileSystemRepresentation(fileA);
+    auto fsRepFileB = fileSystemRepresentation(fileB);
+
+    if (fsRepFileA.isNull() || fsRepFileB.isNull())
         return false;
 
     bool result = false;
 
-    auto fileADev = getFileDeviceId(fileA);
-    auto fileBDev = getFileDeviceId(fileB);
+    auto fileADev = getFileDeviceId(fsRepFileA);
+    auto fileBDev = getFileDeviceId(fsRepFileB);
 
     if (fileADev && fileBDev)
         result = (fileADev == fileBDev);
@@ -411,9 +410,8 @@ bool isSafeToUseMemoryMapForPath(const String&)
     return true;
 }
 
-bool makeSafeToUseMemoryMapForPath(const String&)
+void makeSafeToUseMemoryMapForPath(const String&)
 {
-    return true;
 }
 #endif
 
@@ -440,11 +438,7 @@ MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(con
         return { };
     }
 
-    if (!FileSystem::makeSafeToUseMemoryMapForPath(path)) {
-        FileSystem::closeFile(handle);
-        return { };
-    }
-
+    FileSystem::makeSafeToUseMemoryMapForPath(path);
     bool success;
     FileSystem::MappedFileData mappedFile(handle, FileSystem::FileOpenMode::ReadWrite, FileSystem::MappedFileMode::Shared, success);
     if (!success) {
@@ -818,7 +812,7 @@ bool makeAllDirectories(const String& path)
     return !ec;
 }
 
-String pathByAppendingComponent(StringView path, StringView component)
+String pathByAppendingComponent(const String& path, const String& component)
 {
     return fromStdFileSystemPath(toStdFileSystemPath(path) / toStdFileSystemPath(component));
 }
@@ -835,4 +829,5 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
-} // namespace WTF::FileSystemImpl
+} // namespace FileSystemImpl
+} // namespace WTF

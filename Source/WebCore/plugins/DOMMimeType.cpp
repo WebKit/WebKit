@@ -39,7 +39,7 @@ DOMMimeType::DOMMimeType(Navigator& navigator, const MimeClassInfo& info, DOMPlu
 
 DOMMimeType::~DOMMimeType() = default;
 
-AtomString DOMMimeType::type() const
+String DOMMimeType::type() const
 {
     return m_info.type;
 }

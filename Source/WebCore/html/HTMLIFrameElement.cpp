@@ -26,7 +26,6 @@
 #include "HTMLIFrameElement.h"
 
 #include "CSSPropertyNames.h"
-#include "CommonAtomStrings.h"
 #include "DOMTokenList.h"
 #include "ElementInlines.h"
 #include "Frame.h"
@@ -112,7 +111,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomStri
     } else if (name == loadingAttr) {
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
         // do not allow the reverse situation since the eager load is already started.
-        if (m_lazyLoadFrameObserver && !equalLettersIgnoringASCIICase(value, "lazy"_s)) {
+        if (m_lazyLoadFrameObserver && !equalLettersIgnoringASCIICase(value, "lazy")) {
             m_lazyLoadFrameObserver->unobserve();
             loadDeferredFrame();
         }
@@ -158,7 +157,9 @@ const FeaturePolicy& HTMLIFrameElement::featurePolicy() const
 
 const AtomString& HTMLIFrameElement::loadingForBindings() const
 {
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy"_s) ? lazyAtom() : eagerAtom();
+    static MainThreadNeverDestroyed<const AtomString> eager("eager", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> lazy("lazy", AtomString::ConstructFromLiteral);
+    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::loadingAttr), "lazy") ? lazy : eager;
 }
 
 void HTMLIFrameElement::setLoadingForBindings(const AtomString& value)
@@ -174,7 +175,7 @@ static bool isFrameLazyLoadable(const Document& document, const URL& completeURL
     if (!document.frame() || !document.frame()->script().canExecuteScripts(NotAboutToExecuteScript))
         return false;
 
-    return equalLettersIgnoringASCIICase(loadingAttributeValue, "lazy"_s);
+    return equalLettersIgnoringASCIICase(loadingAttributeValue, "lazy");
 }
 
 bool HTMLIFrameElement::shouldLoadFrameLazily()
@@ -183,7 +184,7 @@ bool HTMLIFrameElement::shouldLoadFrameLazily()
         URL completeURL = document().completeURL(frameURL());
         if (isFrameLazyLoadable(document(), completeURL, attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
             auto currentReferrerPolicy = referrerPolicy();
-            lazyLoadFrameObserver().observe(AtomString { completeURL.string() }, currentReferrerPolicy);
+            lazyLoadFrameObserver().observe(completeURL.string(), currentReferrerPolicy);
             return true;
         }
     }

@@ -77,7 +77,7 @@ bool ResourceHandle::start()
 
     // Only allow the POST and GET methods for non-HTTP requests.
     auto request = firstRequest();
-    if (!request.url().protocolIsInHTTPFamily() && request.httpMethod() != "GET"_s && request.httpMethod() != "POST"_s) {
+    if (!request.url().protocolIsInHTTPFamily() && request.httpMethod() != "GET" && request.httpMethod() != "POST") {
         scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
         return true;
     }
@@ -143,7 +143,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest&& request, Re
     if (status == RequestStatus::NewRequest) {
         addCacheValidationHeaders(request);
 
-        auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+        auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
         String cookieHeaderField = d->m_context->storageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No).first;
         if (!cookieHeaderField.isEmpty())
             request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
@@ -425,7 +425,7 @@ void ResourceHandle::continueAfterDidReceiveResponse()
 
 bool ResourceHandle::shouldRedirectAsGET(const ResourceRequest& request, bool crossOrigin)
 {
-    if (request.httpMethod() == "GET"_s || request.httpMethod() == "HEAD"_s)
+    if (request.httpMethod() == "GET" || request.httpMethod() == "HEAD")
         return false;
 
     if (!request.url().protocolIsInHTTPFamily())
@@ -434,10 +434,10 @@ bool ResourceHandle::shouldRedirectAsGET(const ResourceRequest& request, bool cr
     if (delegate()->response().isSeeOther())
         return true;
 
-    if ((delegate()->response().isMovedPermanently() || delegate()->response().isFound()) && (request.httpMethod() == "POST"_s))
+    if ((delegate()->response().isMovedPermanently() || delegate()->response().isFound()) && (request.httpMethod() == "POST"))
         return true;
 
-    if (crossOrigin && (request.httpMethod() == "DELETE"_s))
+    if (crossOrigin && (request.httpMethod() == "DELETE"))
         return true;
 
     return false;
@@ -462,13 +462,13 @@ void ResourceHandle::willSendRequest()
     newRequest.setURL(newURL);
 
     if (shouldRedirectAsGET(newRequest, crossOrigin)) {
-        newRequest.setHTTPMethod("GET"_s);
+        newRequest.setHTTPMethod("GET");
         newRequest.setHTTPBody(nullptr);
         newRequest.clearHTTPContentType();
     }
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!newURL.protocolIs("https"_s) && protocolIs(newRequest.httpReferrer(), "https"_s) && context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
+    if (!newURL.protocolIs("https") && protocolIs(newRequest.httpReferrer(), "https") && context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
         newRequest.clearHTTPReferrer();
 
     d->m_user = newURL.user();
@@ -530,22 +530,22 @@ void ResourceHandle::handleDataURL()
     String data = url.substring(index + 1);
     auto originalSize = data.length();
 
-    bool base64 = mediaType.endsWithIgnoringASCIICase(";base64"_s);
+    bool base64 = mediaType.endsWithIgnoringASCIICase(";base64");
     if (base64)
         mediaType = mediaType.left(mediaType.length() - 7);
 
     if (mediaType.isEmpty())
         mediaType = "text/plain"_s;
 
-    auto mimeType = extractMIMETypeFromMediaType(mediaType);
-    auto charset = extractCharsetFromMediaType(mediaType);
+    String mimeType = extractMIMETypeFromMediaType(mediaType);
+    String charset = extractCharsetFromMediaType(mediaType);
 
     if (charset.isEmpty())
         charset = "US-ASCII"_s;
 
     ResourceResponse response;
-    response.setMimeType(AtomString { mimeType });
-    response.setTextEncodingName(charset.toAtomString());
+    response.setMimeType(mimeType);
+    response.setTextEncodingName(charset);
     response.setURL(d->m_firstRequest.url());
 
     if (base64) {

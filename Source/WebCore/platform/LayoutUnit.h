@@ -378,11 +378,6 @@ inline bool operator!=(const LayoutUnit& a, const LayoutUnit& b)
     return a.rawValue() != b.rawValue();
 }
 
-inline bool operator!=(const float a, const LayoutUnit& b)
-{
-    return LayoutUnit(a) != b;
-}
-
 inline bool operator!=(const LayoutUnit& a, float b)
 {
     return a != LayoutUnit(b);

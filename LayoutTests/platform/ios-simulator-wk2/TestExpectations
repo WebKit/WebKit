@@ -5,6 +5,8 @@
 
 http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
 
+fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
+
 webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Pass Failure ]
 
 webkit.org/b/173178 [ Release ] svg/animations/svglength-element-removed-crash.svg [ Skip ]
@@ -106,13 +108,6 @@ webkit.org/b/214757 imported/w3c/web-platform-tests/css/css-fonts/crash-font-fac
 
 webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
 
-webkit.org/b/203112 scrollingcoordinator/ios/ui-scroll-fixed.html [ Pass Failure ]
-
-webkit.org/b/237557 [ Debug ] accessibility/visible-character-range-basic.html [ Crash ]
-webkit.org/b/237557 [ Debug ] accessibility/visible-character-range-height-changes.html [ Crash ]
-webkit.org/b/237557 [ Debug ] accessibility/visible-character-range-scrolling.html [ Crash ]
-webkit.org/b/237557 [ Debug ] accessibility/visible-character-range-width-changes.html [ Crash ]
-
 webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
 
 webkit.org/b/215216 imported/w3c/web-platform-tests/svg/import/interact-zoom-01-t-manual.svg [ Pass Failure ]
@@ -166,14 +161,3 @@ webkit.org/b/225830 imported/w3c/web-platform-tests/css/css-will-change/will-cha
 webkit.org/b/227755 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html  [ Pass Failure ]
 
 webkit.org/b/226600 imported/w3c/web-platform-tests/navigation-timing/test_navigate_within_document.html [ Pass Failure ]
-
-# These failures are happening only in iOS simulator on an arm64 host
-webkit.org/b/236928 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
-webkit.org/b/236928 fast/canvas/webgl/premultiplyalpha-test.html [ Failure Pass ]
-webkit.org/b/236928 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure Pass ]
-webkit.org/b/236928 webgl/1.0.3/conformance/textures/gl-teximage.html [ Failure Pass ]
-webkit.org/b/236928 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
-webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
-webkit.org/b/236926 webrtc/vp9-profile2.html [ Timeout Pass ]
-# This passes only on the arm64 host
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]

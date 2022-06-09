@@ -42,6 +42,7 @@ namespace JSC { namespace DFG {
 void CommonData::shrinkToFit()
 {
     codeOrigins->shrinkToFit();
+    m_jumpReplacements.shrinkToFit();
 }
 
 static Lock pcCodeBlockMapLock;
@@ -55,36 +56,28 @@ inline HashMap<void*, CodeBlock*>& pcCodeBlockMap() WTF_REQUIRES_LOCK(pcCodeBloc
     return pcCodeBlockMap;
 }
 
-bool CommonData::invalidateLinkedCode()
+bool CommonData::invalidate()
 {
-    if (m_isUnlinked) {
-        ASSERT(m_jumpReplacements.isEmpty());
-        return true;
-    }
-
-    if (!m_isStillValid)
+    if (!isStillValid)
         return false;
 
-    if (UNLIKELY(m_hasVMTrapsBreakpointsInstalled)) {
+    if (UNLIKELY(hasVMTrapsBreakpointsInstalled)) {
         Locker locker { pcCodeBlockMapLock };
         auto& map = pcCodeBlockMap();
         for (auto& jumpReplacement : m_jumpReplacements)
             map.remove(jumpReplacement.dataLocation());
-        m_hasVMTrapsBreakpointsInstalled = false;
+        hasVMTrapsBreakpointsInstalled = false;
     }
 
     for (unsigned i = m_jumpReplacements.size(); i--;)
         m_jumpReplacements[i].fire();
-
-    m_isStillValid = false;
+    isStillValid = false;
     return true;
 }
 
 CommonData::~CommonData()
 {
-    if (m_isUnlinked)
-        return;
-    if (UNLIKELY(m_hasVMTrapsBreakpointsInstalled)) {
+    if (UNLIKELY(hasVMTrapsBreakpointsInstalled)) {
         Locker locker { pcCodeBlockMapLock };
         auto& map = pcCodeBlockMap();
         for (auto& jumpReplacement : m_jumpReplacements)
@@ -94,11 +87,10 @@ CommonData::~CommonData()
 
 void CommonData::installVMTrapBreakpoints(CodeBlock* owner)
 {
-    ASSERT(!m_isUnlinked);
     Locker locker { pcCodeBlockMapLock };
-    if (!m_isStillValid || m_hasVMTrapsBreakpointsInstalled)
+    if (!isStillValid || hasVMTrapsBreakpointsInstalled)
         return;
-    m_hasVMTrapsBreakpointsInstalled = true;
+    hasVMTrapsBreakpointsInstalled = true;
 
     auto& map = pcCodeBlockMap();
 #if !defined(NDEBUG)
@@ -127,6 +119,17 @@ CodeBlock* codeBlockForVMTrapPC(void* pc)
     if (result == map.end())
         return nullptr;
     return result->value;
+}
+
+bool CommonData::isVMTrapBreakpoint(void* address)
+{
+    if (!isStillValid)
+        return false;
+    for (unsigned i = m_jumpReplacements.size(); i--;) {
+        if (address == m_jumpReplacements[i].dataLocation())
+            return true;
+    }
+    return false;
 }
 
 void CommonData::validateReferences(const TrackedReferences& trackedReferences)

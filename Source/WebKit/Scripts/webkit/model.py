@@ -25,6 +25,7 @@ import itertools
 from collections import Counter, defaultdict
 
 BUILTIN_ATTRIBUTE = "Builtin"
+ASYNC_ATTRIBUTE = "Async"
 MAINTHREADCALLBACK_ATTRIBUTE = "MainThreadCallback"
 SYNCHRONOUS_ATTRIBUTE = 'Synchronous'
 STREAM_ATTRIBUTE = "Stream"
@@ -110,7 +111,7 @@ def generate_global_model(receivers):
     async_reply_messages = []
     for receiver in receivers:
         for message in receiver.messages:
-            if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
+            if message.has_attribute(ASYNC_ATTRIBUTE):
                 async_reply_messages.append(Message(name='%s_%sReply' % (receiver.name, message.name), parameters=message.reply_parameters, reply_parameters=[], attributes=None, condition=message.condition))
     async_reply_receiver = MessageReceiver(name='AsyncReply', superclass='None', attributes=[BUILTIN_ATTRIBUTE], messages=async_reply_messages, condition=None)
     return [ipc_receiver, async_reply_receiver] + receivers

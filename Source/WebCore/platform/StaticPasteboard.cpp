@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StaticPasteboard.h"
 
-#include "CommonAtomStrings.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -111,7 +110,7 @@ void StaticPasteboard::writeMarkup(const String& markup)
 
 void StaticPasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
-    m_customData.writeString(textPlainContentTypeAtom(), text);
+    m_customData.writeString("text/plain"_s, text);
 }
 
 void StaticPasteboard::write(const PasteboardURL& url)

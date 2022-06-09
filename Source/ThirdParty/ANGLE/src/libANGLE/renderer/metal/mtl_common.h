@@ -139,18 +139,13 @@ constexpr size_t kDefaultAttributeSize = 4 * sizeof(float);
 constexpr uint32_t kMaxShaderBuffers     = 31;
 constexpr uint32_t kMaxShaderSamplers    = 16;
 constexpr size_t kInlineConstDataMaxSize = 4 * 1024;
-constexpr size_t kDefaultUniformsMaxSize = 16 * 1024;
+constexpr size_t kDefaultUniformsMaxSize = 4 * 1024;
 constexpr uint32_t kMaxViewports         = 1;
 
 // Restrict in-flight resource usage to 400 MB.
 // A render pass can use more than 400MB, but the command buffer
 // will be flushed next time
 constexpr const size_t kMaximumResidentMemorySizeInBytes = 400 * 1024 * 1024;
-
-// Restrict in-flight render passes per command buffer to 16.
-// The goal is to reduce the number of active render passes on the system at
-// anyone time and this value was determined through experimentation.
-constexpr uint32_t kMaxRenderPassesPerCommandBuffer = 16;
 
 constexpr uint32_t kVertexAttribBufferStrideAlignment = 4;
 // Alignment requirement for offset passed to setVertex|FragmentBuffer
@@ -552,13 +547,11 @@ class ErrorHandler
     virtual ~ErrorHandler() {}
 
     virtual void handleError(GLenum error,
-                             const char *message,
                              const char *file,
                              const char *function,
                              unsigned int line) = 0;
 
     virtual void handleError(NSError *error,
-                             const char *message,
                              const char *file,
                              const char *function,
                              unsigned int line) = 0;
@@ -576,21 +569,14 @@ class Context : public ErrorHandler
     DisplayMtl *mDisplay;
 };
 
-std::string FormatMetalErrorMessage(GLenum errorCode);
-std::string FormatMetalErrorMessage(NSError *error);
-
-#define ANGLE_MTL_HANDLE_ERROR(context, message, error) \
-    context->handleError(error, message, __FILE__, ANGLE_FUNCTION, __LINE__)
-
-#define ANGLE_MTL_CHECK(context, test, error)                                                  \
-    do                                                                                         \
-    {                                                                                          \
-        if (ANGLE_UNLIKELY(!(test)))                                                           \
-        {                                                                                      \
-            context->handleError(error, mtl::FormatMetalErrorMessage(error).c_str(), __FILE__, \
-                                 ANGLE_FUNCTION, __LINE__);                                    \
-            return angle::Result::Stop;                                                        \
-        }                                                                                      \
+#define ANGLE_MTL_CHECK(context, test, error)                                \
+    do                                                                       \
+    {                                                                        \
+        if (ANGLE_UNLIKELY(!(test)))                                         \
+        {                                                                    \
+            context->handleError(error, __FILE__, ANGLE_FUNCTION, __LINE__); \
+            return angle::Result::Stop;                                      \
+        }                                                                    \
     } while (0)
 
 #define ANGLE_MTL_TRY(context, test) ANGLE_MTL_CHECK(context, test, GL_INVALID_OPERATION)

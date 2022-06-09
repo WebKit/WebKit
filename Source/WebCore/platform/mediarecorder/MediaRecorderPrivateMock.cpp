@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderPrivateMock.h"
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamTrackPrivate.h"
 #include "SharedBuffer.h"
@@ -67,7 +67,7 @@ void MediaRecorderPrivateMock::resumeRecording(CompletionHandler<void()>&& compl
     completionHandler();
 }
 
-void MediaRecorderPrivateMock::videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata)
+void MediaRecorderPrivateMock::videoSampleAvailable(MediaSample&, VideoSampleMetadata)
 {
     Locker locker { m_bufferLock };
     m_buffer.append("Video Track ID: ");
@@ -115,4 +115,4 @@ const String& MediaRecorderPrivateMock::mimeType() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

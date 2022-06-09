@@ -25,11 +25,12 @@
 
 // https://immersive-web.github.io/webxr/#xrrigidtransform
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
     JSCustomMarkFunction,
+    ImplementationLacksVTable,
     InterfaceName=XRRigidTransform
 ] interface WebXRRigidTransform {
     constructor(optional DOMPointInit position, optional DOMPointInit orientation);

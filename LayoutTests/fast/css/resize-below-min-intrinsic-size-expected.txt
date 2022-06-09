@@ -1,3 +1,0 @@
-
-PASS Test for resizing the box below its min intrinsic size.
-

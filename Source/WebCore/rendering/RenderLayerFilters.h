@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ public:
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
 
     CSSFilter* filter() const { return m_filter.get(); }
-    void clearFilter() { m_filter = nullptr; }
+    void setFilter(RefPtr<CSSFilter>&&);
     
     bool hasFilterThatMovesPixels() const;
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin() const;
@@ -58,26 +58,21 @@ public:
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();
 
-    void setRenderingMode(RenderingMode renderingMode) { m_renderingMode = renderingMode; }
-    void setFilterScale(const FloatSize& filterScale) { m_filterScale = filterScale; }
-
-    static IntOutsets calculateOutsets(RenderElement&, const FloatRect& targetBoundingBox);
+    void buildFilter(RenderElement&, float scaleFactor, RenderingMode);
 
     // Per render
     LayoutRect repaintRect() const { return m_repaintRect; }
 
-    GraphicsContext* beginFilterEffect(RenderElement&, GraphicsContext&, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
+    GraphicsContext* beginFilterEffect(RenderElement&, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect);
     void applyFilterEffect(GraphicsContext& destinationContext);
 
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
     GraphicsContext* inputContext();
-    void allocateBackingStoreIfNeeded(GraphicsContext&);
+    void allocateBackingStoreIfNeeded();
 
     RenderLayer& m_layer;
-    RenderingMode m_renderingMode { RenderingMode::Unaccelerated };
-    FloatSize m_filterScale { 1, 1 };
 
     Vector<RefPtr<Element>> m_internalSVGReferences;
     Vector<CachedResourceHandle<CachedSVGDocument>> m_externalSVGReferences;

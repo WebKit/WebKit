@@ -25,9 +25,10 @@
 
 [
     EnabledAtRuntime=HighlightAPIEnabled,
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface HighlightRegister {
     constructor();
 
-    maplike<[AtomString] DOMString, Highlight>;
+    maplike<DOMString, Highlight>;
 };

@@ -21,7 +21,7 @@
 #include "JSCVersion.h"
 
 /**
- * JSCVersion:
+ * SECTION: JSCVersion
  * @Short_description: Provides the JavaScriptCore version
  * @Title: JSCVersion
  *

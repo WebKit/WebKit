@@ -87,8 +87,8 @@ public:
 
     void reset();
 
-    static SMILTime parseClockValue(StringView);
-    static SMILTime parseOffsetValue(StringView);
+    static SMILTime parseClockValue(const String&);
+    static SMILTime parseOffsetValue(const String&);
 
     bool isContributing(SMILTime elapsed) const;
     bool isInactive() const;
@@ -150,18 +150,18 @@ private:
     // for example <animate begin="otherElement.begin + 8s; button.click" ... />
     struct Condition {
         enum Type { EventBase, Syncbase, AccessKey };
-        Condition(Type, BeginOrEnd, const String& baseID, const AtomString& name, SMILTime offset, int repeats = -1);
+        Condition(Type, BeginOrEnd, const String& baseID, const String& name, SMILTime offset, int repeats = -1);
         Type m_type;
         BeginOrEnd m_beginOrEnd;
         String m_baseID;
-        AtomString m_name;
+        String m_name;
         SMILTime m_offset;
         int m_repeats { -1 };
         RefPtr<Element> m_syncbase;
         RefPtr<ConditionEventListener> m_eventListener;
     };
-    bool parseCondition(StringView, BeginOrEnd);
-    void parseBeginOrEnd(StringView, BeginOrEnd);
+    bool parseCondition(const String&, BeginOrEnd beginOrEnd);
+    void parseBeginOrEnd(const String&, BeginOrEnd beginOrEnd);
     Element* eventBaseFor(const Condition&);
 
     void disconnectConditions();

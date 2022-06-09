@@ -395,11 +395,14 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
             this._popoverCallStackTreeOutline.disclosureButtons = false;
             this._popoverCallStackTreeOutline.element.classList.add("timeline-data-grid");
             this._popoverCallStackTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._popoverCallStackTreeSelectionDidChange, this);
-            this._popoverCallStackTreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._popoverCallStackTreeElementRemoved, this);
         } else
             this._popoverCallStackTreeOutline.removeChildren();
 
-        WI.CallFrameTreeController.groupBlackboxedCallFrames(this._popoverCallStackTreeOutline, this.selectedNode.record.callFrames);
+        var callFrames = this.selectedNode.record.callFrames;
+        for (var i = 0; i < callFrames.length; ++i) {
+            var callFrameTreeElement = new WI.CallFrameTreeElement(callFrames[i]);
+            this._popoverCallStackTreeOutline.appendChild(callFrameTreeElement);
+        }
 
         let content = document.createElement("div");
         content.appendChild(this._popoverCallStackTreeOutline.element);
@@ -423,12 +426,6 @@ WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
             ignoreNetworkTab: true,
             ignoreSearchTab: true,
         });
-    }
-
-    _popoverCallStackTreeElementRemoved(event)
-    {
-        if (event.data.element instanceof WI.BlackboxedGroupTreeElement)
-            this._popover?.update();
     }
 };
 

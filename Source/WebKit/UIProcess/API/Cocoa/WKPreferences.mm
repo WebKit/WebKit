@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebPreferences>(self, String(), "WebKit"_s, "WebKitDebug"_s);
+    API::Object::constructInWrapper<WebKit::WebPreferences>(self, String(), "WebKit", "WebKitDebug");
     return self;
 }
 
@@ -76,6 +76,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(MAC)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [coder encodeBool:self.javaEnabled forKey:@"javaEnabled"];
+ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeBool:self.tabFocusesLinks forKey:@"tabFocusesLinks"];
 #endif
     [coder encodeBool:self.textInteractionEnabled forKey:@"textInteractionEnabled"];
@@ -94,6 +97,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(MAC)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    self.javaEnabled = [coder decodeBoolForKey:@"javaEnabled"];
+ALLOW_DEPRECATED_DECLARATIONS_END
     self.tabFocusesLinks = [coder decodeBoolForKey:@"tabFocusesLinks"];
 #endif
     if ([coder containsValueForKey:@"textInteractionEnabled"])
@@ -322,6 +328,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
 - (void)_setVisibleDebugOverlayRegions:(_WKDebugOverlayRegions)regionFlags
 {
     _preferences->setVisibleDebugOverlayRegions(regionFlags);
+}
+
+- (BOOL)_simpleLineLayoutEnabled
+{
+    return _preferences->simpleLineLayoutEnabled();
+}
+
+- (void)_setSimpleLineLayoutEnabled:(BOOL)simpleLineLayoutEnabled
+{
+    _preferences->setSimpleLineLayoutEnabled(simpleLineLayoutEnabled);
 }
 
 - (BOOL)_legacyLineLayoutVisualCoverageEnabled
@@ -634,16 +650,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setMediaDevicesEnabled(enabled);
 }
 
-- (BOOL)_getUserMediaRequiresFocus
-{
-    return _preferences->getUserMediaRequiresFocus();
-}
-
-- (void)_setGetUserMediaRequiresFocus:(BOOL)enabled
-{
-    _preferences->setGetUserMediaRequiresFocus(enabled);
-}
-
 - (BOOL)_screenCaptureEnabled
 {
     return _preferences->screenCaptureEnabled();
@@ -917,6 +923,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->acceleratedCompositingEnabled();
 }
 
+- (void)_setRequestAnimationFrameEnabled:(BOOL)enabled
+{
+    _preferences->setRequestAnimationFrameEnabled(enabled);
+}
+
+- (BOOL)_requestAnimationFrameEnabled
+{
+    return _preferences->requestAnimationFrameEnabled();
+}
+
 - (BOOL)_remotePlaybackEnabled
 {
     return _preferences->remotePlaybackEnabled();
@@ -938,6 +954,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 }
 
 #if PLATFORM(MAC)
+- (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
+{
+    _preferences->setJavaEnabledForLocalFiles(enabled);
+}
+
+- (BOOL)_javaEnabledForLocalFiles
+{
+    return _preferences->javaEnabledForLocalFiles();
+}
+
 - (void)_setCanvasUsesAcceleratedDrawing:(BOOL)enabled
 {
     _preferences->setCanvasUsesAcceleratedDrawing(enabled);
@@ -978,14 +1004,14 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->domTimersThrottlingEnabled();
 }
 
-- (void)_setWebArchiveTestingModeEnabled:(BOOL)enabled
+- (void)_setWebArchiveDebugModeEnabled:(BOOL)enabled
 {
-    _preferences->setWebArchiveTestingModeEnabled(enabled);
+    _preferences->setWebArchiveDebugModeEnabled(enabled);
 }
 
-- (BOOL)_webArchiveTestingModeEnabled
+- (BOOL)_webArchiveDebugModeEnabled
 {
-    return _preferences->webArchiveTestingModeEnabled();
+    return _preferences->webArchiveDebugModeEnabled();
 }
 
 - (void)_setLocalFileContentSniffingEnabled:(BOOL)enabled
@@ -1534,16 +1560,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->notificationsEnabled();
 }
 
-- (BOOL)_pushAPIEnabled
-{
-    return _preferences->pushAPIEnabled();
-}
-
-- (void)_setPushAPIEnabled:(BOOL)pushAPIEnabled
-{
-    _preferences->setPushAPIEnabled(pushAPIEnabled);
-}
-
 - (void)_setModelDocumentEnabled:(BOOL)enabled
 {
     _preferences->setModelDocumentEnabled(enabled);
@@ -1562,11 +1578,12 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (BOOL)javaEnabled
 {
-    return NO;
+    return _preferences->javaEnabled();
 }
 
 - (void)setJavaEnabled:(BOOL)javaEnabled
 {
+    _preferences->setJavaEnabled(javaEnabled);
 }
 
 - (BOOL)plugInsEnabled
@@ -1596,15 +1613,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 @implementation WKPreferences (WKPrivateDeprecated)
 
-- (void)_setRequestAnimationFrameEnabled:(BOOL)enabled
-{
-}
-
-- (BOOL)_requestAnimationFrameEnabled
-{
-    return YES;
-}
-
 #if !TARGET_OS_IPHONE
 
 - (void)_setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
@@ -1616,26 +1624,6 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return NO;
 }
 
-- (void)_setWebArchiveDebugModeEnabled:(BOOL)enabled
-{
-}
-
-- (BOOL)_webArchiveDebugModeEnabled
-{
-    return NO;
-}
-
-#endif
-
-#if PLATFORM(MAC)
-- (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
-{
-}
-
-- (BOOL)_javaEnabledForLocalFiles
-{
-    return NO;
-}
 #endif
 
 @end

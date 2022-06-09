@@ -55,10 +55,6 @@ public:
     virtual bool supportsLookUpInImages() = 0;
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    virtual bool supportsCopySubject() = 0;
-#endif
-
 #if HAVE(TRANSLATION_UI_SERVICES)
     virtual void handleTranslation(const TranslationContextMenuInfo&) = 0;
 #endif

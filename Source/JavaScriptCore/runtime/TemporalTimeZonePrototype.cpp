@@ -43,7 +43,7 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalTimeZonePrototypeGetterId);
 
 namespace JSC {
 
-const ClassInfo TemporalTimeZonePrototype::s_info = { "Temporal.TimeZone"_s, &Base::s_info, &temporalTimeZonePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalTimeZonePrototype) };
+const ClassInfo TemporalTimeZonePrototype::s_info = { "Temporal.TimeZone", &Base::s_info, &temporalTimeZonePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalTimeZonePrototype) };
 
 /* Source for TemporalTimeZonePrototype.lut.h
 @begin temporalTimeZonePrototypeTable
@@ -73,7 +73,7 @@ TemporalTimeZonePrototype::TemporalTimeZonePrototype(VM& vm, Structure* structur
 void TemporalTimeZonePrototype::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -89,7 +89,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalTimeZonePrototypeFuncToString, (JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* timeZone = jsDynamicCast<TemporalTimeZone*>(callFrame->thisValue());
+    auto* timeZone = jsDynamicCast<TemporalTimeZone*>(vm, callFrame->thisValue());
     if (!timeZone)
         return throwVMTypeError(globalObject, scope, "Temporal.TimeZone.prototype.toString called on value that's not a TimeZone"_s);
 

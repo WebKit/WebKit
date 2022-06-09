@@ -26,6 +26,7 @@
 #include "FloatRect.h"
 #include "GLContext.h"
 #include "ImageOrientation.h"
+#include "TextureMapperShaderProgram.h"
 
 namespace WebCore {
 
@@ -160,11 +161,7 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMappe
     using Buffer = TextureMapperPlatformLayerBuffer;
     TextureMapperShaderProgram::Options options;
     WTF::switchOn(inputTexture.textureVariant(),
-        [&](const Buffer::RGBTexture&) {
-            options = TextureMapperShaderProgram::TextureRGB;
-            if (premultiplyAlpha)
-                options.add(TextureMapperShaderProgram::Premultiply);
-        },
+        [&](const Buffer::RGBTexture&) { options = TextureMapperShaderProgram::TextureRGB | (premultiplyAlpha ? TextureMapperShaderProgram::Premultiply : 0); },
         [&](const Buffer::YUVTexture& texture) {
             switch (texture.numberOfPlanes) {
             case 1:
@@ -260,7 +257,7 @@ bool VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture(TextureMappe
                 glUniform1i(m_shaderProgram->samplerALocation(), texture.yuvPlane[3]);
                 break;
             }
-            glUniformMatrix4fv(m_shaderProgram->yuvToRgbLocation(), 1, GL_FALSE, static_cast<const GLfloat *>(&texture.yuvToRgbMatrix[0]));
+            glUniformMatrix3fv(m_shaderProgram->yuvToRgbLocation(), 1, GL_FALSE, static_cast<const GLfloat *>(&texture.yuvToRgbMatrix[0]));
 
             for (int i = texture.numberOfPlanes - 1; i >= 0; --i) {
                 glActiveTexture(GL_TEXTURE0 + i);

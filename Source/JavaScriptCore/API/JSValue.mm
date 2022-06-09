@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,8 +57,6 @@
 #endif
 
 #if JSC_OBJC_API_ENABLED
-
-using JSC::Integrity::audit;
 
 NSString * const JSPropertyDescriptorWritableKey = @"writable";
 NSString * const JSPropertyDescriptorEnumerableKey = @"enumerable";
@@ -676,16 +674,16 @@ inline Expected<Result, JSValueRef> performPropertyOperation(NSStringFunction st
 
 @end
 
-inline bool isDate(JSObjectRef object, JSGlobalContextRef context)
+inline bool isDate(JSC::VM& vm, JSObjectRef object, JSGlobalContextRef context)
 {
     JSC::JSLockHolder locker(toJS(context));
-    return toJS(object)->inherits<JSC::DateInstance>();
+    return toJS(object)->inherits<JSC::DateInstance>(vm);
 }
 
-inline bool isArray(JSObjectRef object, JSGlobalContextRef context)
+inline bool isArray(JSC::VM& vm, JSObjectRef object, JSGlobalContextRef context)
 {
     JSC::JSLockHolder locker(toJS(context));
-    return toJS(object)->inherits<JSC::JSArray>();
+    return toJS(object)->inherits<JSC::JSArray>(vm);
 }
 
 @implementation JSValue(Internal)
@@ -762,6 +760,9 @@ static void reportExceptionToInspector(JSGlobalContextRef context, JSC::JSValue 
 
 static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef context, JSValueRef value)
 {
+    JSC::JSGlobalObject* globalObject = toJS(context);
+    JSC::VM& vm = globalObject->vm();
+
     if (!JSValueIsObject(context, value)) {
         id primitive;
         if (JSValueIsBoolean(context, value))
@@ -789,10 +790,10 @@ static JSContainerConvertor::Task valueToObjectWithoutCopy(JSGlobalContextRef co
     if (id wrapped = tryUnwrapObjcObject(context, object))
         return { object, wrapped, ContainerNone };
 
-    if (isDate(object, context))
+    if (isDate(vm, object, context))
         return { object, [NSDate dateWithTimeIntervalSince1970:JSValueToNumber(context, object, 0) / 1000.0], ContainerNone };
 
-    if (isArray(object, context))
+    if (isArray(vm, object, context))
         return { object, [NSMutableArray array], ContainerArray };
 
     return { object, [NSMutableDictionary dictionary], ContainerDictionary };
@@ -972,11 +973,11 @@ JSValueRef ObjcContainerConvertor::convert(id object)
 
     auto it = m_objectMap.find(object);
     if (it != m_objectMap.end())
-        return audit(it->value);
+        return it->value;
 
     ObjcContainerConvertor::Task task = objectToValueWithoutCopy(m_context, object);
     add(task);
-    return audit(task.js);
+    return task.js;
 }
 
 void ObjcContainerConvertor::add(ObjcContainerConvertor::Task task)
@@ -1006,7 +1007,7 @@ inline bool isNSBoolean(id object)
 
 static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context, id object)
 {
-    JSGlobalContextRef contextRef = audit([context JSGlobalContextRef]);
+    JSGlobalContextRef contextRef = [context JSGlobalContextRef];
 
     if (!object)
         return { object, JSValueMakeUndefined(contextRef), ContainerNone };
@@ -1058,7 +1059,7 @@ JSValueRef objectToValue(JSContext *context, id object)
 
     ObjcContainerConvertor::Task task = objectToValueWithoutCopy(context, object);
     if (task.type == ContainerNone)
-        return audit(task.js);
+        return task.js;
 
     JSC::JSLockHolder locker(toJS(contextRef));
     ObjcContainerConvertor convertor(context);
@@ -1089,7 +1090,7 @@ JSValueRef objectToValue(JSContext *context, id object)
         }
     } while (!convertor.isWorkListEmpty());
 
-    return audit(task.js);
+    return task.js;
 }
 
 JSValueRef valueInternalValue(JSValue * value)
@@ -1161,7 +1162,7 @@ static StructHandlers* createStructHandlerMap()
             return;
         {
             auto type = adoptSystem<char[]>(method_copyArgumentType(method, 2));
-            structHandlers->add(StringImpl::createFromCString(type.get()), (StructTagHandler) { selector, 0 });
+            structHandlers->add(StringImpl::create(type.get()), (StructTagHandler) { selector, 0 });
         }
     });
 
@@ -1178,7 +1179,7 @@ static StructHandlers* createStructHandlerMap()
             return;
         // Try to find a matching valueWith<Foo>:context: method.
         auto type = adoptSystem<char[]>(method_copyReturnType(method));
-        StructHandlers::iterator iter = structHandlers->find(String::fromLatin1(type.get()));
+        StructHandlers::iterator iter = structHandlers->find(type.get());
         if (iter == structHandlers->end())
             return;
         StructTagHandler& handler = iter->value;
@@ -1216,7 +1217,7 @@ static StructTagHandler* handerForStructTag(const char* encodedType)
 
     static StructHandlers* structHandlers = createStructHandlerMap();
 
-    StructHandlers::iterator iter = structHandlers->find(String::fromLatin1(encodedType));
+    StructHandlers::iterator iter = structHandlers->find(encodedType);
     if (iter == structHandlers->end())
         return 0;
     return &iter->value;

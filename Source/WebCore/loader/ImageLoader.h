@@ -70,7 +70,6 @@ public:
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
-    // FIXME: Delete this code. beforeload event no longer exists.
     bool hasPendingBeforeLoadEvent() const { return m_hasPendingBeforeLoadEvent; }
     bool hasPendingActivity() const { return m_hasPendingLoadEvent || m_hasPendingErrorEvent; }
 
@@ -113,7 +112,7 @@ private:
 
     bool hasPendingDecodePromises() const { return !m_decodingPromises.isEmpty(); }
     void resolveDecodePromises();
-    void rejectDecodePromises(ASCIILiteral message);
+    void rejectDecodePromises(const char* message);
     void decode();
     
     void timerFired();

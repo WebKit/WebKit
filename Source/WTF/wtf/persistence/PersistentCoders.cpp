@@ -37,8 +37,6 @@ void Coder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
     encoder << atomString.string();
 }
 
-// FIXME: Constructing a String and then looking it up in the AtomStringTable is inefficient.
-// Ideally, we wouldn't need to allocate a String when it is already in the AtomStringTable.
 std::optional<AtomString> Coder<AtomString>::decode(Decoder& decoder)
 {
     std::optional<String> string;
@@ -46,7 +44,7 @@ std::optional<AtomString> Coder<AtomString>::decode(Decoder& decoder)
     if (!string)
         return std::nullopt;
 
-    return { AtomString { WTFMove(*string) } };
+    return {{ WTFMove(*string) }};
 }
 
 void Coder<CString>::encode(Encoder& encoder, const CString& string)

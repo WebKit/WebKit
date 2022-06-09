@@ -34,7 +34,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "CommonAtomStrings.h"
 #include "VideoTrackClient.h"
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
@@ -47,10 +46,40 @@
 
 namespace WebCore {
 
+const AtomString& VideoTrack::alternativeKeyword()
+{
+    static MainThreadNeverDestroyed<const AtomString> alternative("alternative", AtomString::ConstructFromLiteral);
+    return alternative;
+}
+
+const AtomString& VideoTrack::captionsKeyword()
+{
+    static MainThreadNeverDestroyed<const AtomString> captions("captions", AtomString::ConstructFromLiteral);
+    return captions;
+}
+
+const AtomString& VideoTrack::mainKeyword()
+{
+    static MainThreadNeverDestroyed<const AtomString> captions("main", AtomString::ConstructFromLiteral);
+    return captions;
+}
+
 const AtomString& VideoTrack::signKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> sign("sign"_s);
+    static MainThreadNeverDestroyed<const AtomString> sign("sign", AtomString::ConstructFromLiteral);
     return sign;
+}
+
+const AtomString& VideoTrack::subtitlesKeyword()
+{
+    static MainThreadNeverDestroyed<const AtomString> subtitles("subtitles", AtomString::ConstructFromLiteral);
+    return subtitles;
+}
+
+const AtomString& VideoTrack::commentaryKeyword()
+{
+    static MainThreadNeverDestroyed<const AtomString> commentary("commentary", AtomString::ConstructFromLiteral);
+    return commentary;
 }
 
 VideoTrack::VideoTrack(ScriptExecutionContext* context, VideoTrackPrivate& trackPrivate)
@@ -89,12 +118,12 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
 
 bool VideoTrack::isValidKind(const AtomString& value) const
 {
-    return value == alternativeAtom()
-        || value == commentaryAtom()
-        || value == captionsAtom()
-        || value == mainAtom()
+    return value == alternativeKeyword()
+        || value == commentaryKeyword()
+        || value == captionsKeyword()
+        || value == mainKeyword()
         || value == signKeyword()
-        || value == subtitlesAtom();
+        || value == subtitlesKeyword();
 }
 
 void VideoTrack::setSelected(const bool selected)
@@ -212,25 +241,25 @@ void VideoTrack::updateKindFromPrivate()
 {
     switch (m_private->kind()) {
     case VideoTrackPrivate::Alternative:
-        setKind(alternativeAtom());
+        setKind(VideoTrack::alternativeKeyword());
         return;
     case VideoTrackPrivate::Captions:
-        setKind(captionsAtom());
+        setKind(VideoTrack::captionsKeyword());
         return;
     case VideoTrackPrivate::Main:
-        setKind(mainAtom());
+        setKind(VideoTrack::mainKeyword());
         return;
     case VideoTrackPrivate::Sign:
         setKind(VideoTrack::signKeyword());
         return;
     case VideoTrackPrivate::Subtitles:
-        setKind(subtitlesAtom());
+        setKind(VideoTrack::subtitlesKeyword());
         return;
     case VideoTrackPrivate::Commentary:
-        setKind(commentaryAtom());
+        setKind(VideoTrack::commentaryKeyword());
         return;
     case VideoTrackPrivate::None:
-        setKind(emptyAtom());
+        setKind(emptyString());
         return;
     }
     ASSERT_NOT_REACHED();

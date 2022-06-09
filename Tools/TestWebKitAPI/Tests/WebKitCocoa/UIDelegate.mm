@@ -245,25 +245,25 @@ TEST(WebKit, GeolocationPermission)
 }
 @end
 
-static constexpr auto mainFrameText = R"DOCDOCDOC(
+static const char* mainFrameText = R"DOCDOCDOC(
 <html><body>
 <iframe src='https://127.0.0.1:9091/frame' allow='geolocation:https://127.0.0.1:9091'></iframe>
 </body></html>
-)DOCDOCDOC"_s;
-static constexpr auto frameText = R"DOCDOCDOC(
+)DOCDOCDOC";
+static const char* frameText = R"DOCDOCDOC(
 <html><body><script>
 navigator.geolocation.getCurrentPosition(() => { webkit.messageHandlers.testHandler.postMessage("ok") }, () => { webkit.messageHandlers.testHandler.postMessage("ko") });
 </script></body></html>
-)DOCDOCDOC"_s;
+)DOCDOCDOC";
 
 TEST(WebKit, GeolocationPermissionInIFrame)
 {
     TestWebKitAPI::HTTPServer server1({
-        { "/"_s, { mainFrameText } }
+        { "/", { mainFrameText } }
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9090);
 
     TestWebKitAPI::HTTPServer server2({
-        { "/frame"_s, { frameText } },
+        { "/frame", { frameText } },
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
 
     auto pool = adoptNS([[WKProcessPool alloc] init]);
@@ -313,20 +313,20 @@ TEST(WebKit, GeolocationPermissionInIFrame)
     EXPECT_TRUE(done);
 }
 
-static constexpr auto notAllowingMainFrameText = R"DOCDOCDOC(
+static const char* notAllowingMainFrameText = R"DOCDOCDOC(
 <html><body>
 <iframe src='https://127.0.0.1:9091/frame' allow='geolocation:https://127.0.0.1:9092'></iframe>
 </body></html>
-)DOCDOCDOC"_s;
+)DOCDOCDOC";
 
 TEST(WebKit, GeolocationPermissionInDisallowedIFrame)
 {
     TestWebKitAPI::HTTPServer server1({
-        { "/"_s, { notAllowingMainFrameText } }
+        { "/", { notAllowingMainFrameText } }
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9090);
 
     TestWebKitAPI::HTTPServer server2({
-        { "/frame"_s, { frameText } },
+        { "/frame", { frameText } },
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
 
     auto pool = adoptNS([[WKProcessPool alloc] init]);
@@ -705,18 +705,16 @@ TEST(WebKit, PrintWithCompletionHandler)
 
 TEST(WebKit, NotificationPermission)
 {
-    NSString *html = @"<script>function requestPermission() { Notification.requestPermission(function(p){alert('permission '+p)}); }</script>";
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()]);
+    NSString *html = @"<script>Notification.requestPermission(function(p){alert('permission '+p)})</script>";
+    auto webView = adoptNS([[WKWebView alloc] init]);
     auto uiDelegate = adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:YES]);
     [webView setUIDelegate:uiDelegate.get()];
-    [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org"]];
-    [webView evaluateJavaScript:@"requestPermission()" completionHandler:nil];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org"]];
     TestWebKitAPI::Util::run(&done);
     done = false;
     uiDelegate = adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:NO]);
     [webView setUIDelegate:uiDelegate.get()];
-    [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com"]];
-    [webView evaluateJavaScript:@"requestPermission()" completionHandler:nil];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com"]];
     TestWebKitAPI::Util::run(&done);
 }
 

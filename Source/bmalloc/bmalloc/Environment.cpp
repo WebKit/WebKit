@@ -59,7 +59,7 @@ int malloc_engaged_nano(void);
 
 namespace bmalloc {
 
-static bool isMallocEnvironmentVariableImplyingSystemMallocSet()
+static bool isMallocEnvironmentVariableSet()
 {
     const char* list[] = {
         "Malloc",
@@ -67,7 +67,9 @@ static bool isMallocEnvironmentVariableImplyingSystemMallocSet()
         "MallocGuardEdges",
         "MallocDoNotProtectPrelude",
         "MallocDoNotProtectPostlude",
+        "MallocStackLogging",
         "MallocStackLoggingNoCompact",
+        "MallocStackLoggingDirectory",
         "MallocScribble",
         "MallocCheckHeapStart",
         "MallocCheckHeapEach",
@@ -83,12 +85,6 @@ static bool isMallocEnvironmentVariableImplyingSystemMallocSet()
         if (getenv(list[i]))
             return true;
     }
-
-    // Use system malloc anytime MallocStackLogging is enabled, except when the "vm" or "vmlite" logging modes are enabled.
-    // Those modes only intercept syscalls rather than mallocs, so they don't necessarily imply the use of system malloc.
-    const char* mallocStackLogging = getenv("MallocStackLogging");
-    if (mallocStackLogging && strncmp(mallocStackLogging, "vm", 2))
-        return true;
 
     return false;
 }
@@ -169,7 +165,7 @@ Environment::Environment(const LockHolder&)
 
 bool Environment::computeIsDebugHeapEnabled()
 {
-    if (isMallocEnvironmentVariableImplyingSystemMallocSet())
+    if (isMallocEnvironmentVariableSet())
         return true;
     if (isLibgmallocEnabled())
         return true;

@@ -136,11 +136,10 @@ void GeolocationClientMock::geolocationDestroyed()
     ASSERT(!m_isActive);
 }
 
-void GeolocationClientMock::startUpdating(const String& authorizationToken, bool enableHighAccuracy)
+void GeolocationClientMock::startUpdating(const String& authorizationToken)
 {
     ASSERT(!m_isActive);
     UNUSED_PARAM(authorizationToken);
-    UNUSED_PARAM(enableHighAccuracy);
     m_isActive = true;
     asyncUpdateController();
 }

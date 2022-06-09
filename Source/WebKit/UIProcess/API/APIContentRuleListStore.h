@@ -54,7 +54,7 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     // This should be incremented every time a functional change is made to the bytecode, file format, etc.
     // to prevent crashing while loading old data.
-    static constexpr uint32_t CurrentContentRuleListFileVersion = 15;
+    static constexpr uint32_t CurrentContentRuleListFileVersion = 14;
 
     static ContentRuleListStore& defaultStore();
     static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath);
@@ -63,15 +63,15 @@ public:
     explicit ContentRuleListStore(const WTF::String& storePath);
     virtual ~ContentRuleListStore();
 
-    void compileContentRuleList(WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
-    void lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
-    void removeContentRuleList(WTF::String&& identifier, CompletionHandler<void(std::error_code)>);
+    void compileContentRuleList(const WTF::String& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void lookupContentRuleList(const WTF::String& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void removeContentRuleList(const WTF::String& identifier, CompletionHandler<void(std::error_code)>);
     void getAvailableContentRuleListIdentifiers(CompletionHandler<void(WTF::Vector<WTF::String>)>);
 
     // For testing only.
     void synchronousRemoveAllContentRuleLists();
     void invalidateContentRuleListVersion(const WTF::String& identifier);
-    void getContentRuleListSource(WTF::String&& identifier, CompletionHandler<void(WTF::String)>);
+    void getContentRuleListSource(const WTF::String& identifier, CompletionHandler<void(WTF::String)>);
 
 private:
     WTF::String defaultStorePath();

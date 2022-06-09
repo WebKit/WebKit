@@ -21,7 +21,7 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
-#include "GraphicsTypesGL.h"
+#include "GraphicsContextGL.h"
 #include "OpenXRUtils.h"
 
 #include <wtf/Noncopyable.h>

@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSCallee::s_info = { "Callee"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallee) };
+const ClassInfo JSCallee::s_info = { "Callee", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallee) };
 
 JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, structure)
@@ -47,7 +47,7 @@ JSCallee::JSCallee(VM& vm, JSScope* scope, Structure* structure)
 void JSCallee::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 template<typename Visitor>

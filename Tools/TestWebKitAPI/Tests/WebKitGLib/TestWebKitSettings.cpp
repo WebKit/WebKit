@@ -72,10 +72,20 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_html5_database(settings, FALSE);
     g_assert_false(webkit_settings_get_enable_html5_database(settings));
 
+    // XSS Auditor is enabled by default.
+    g_assert_true(webkit_settings_get_enable_xss_auditor(settings));
+    webkit_settings_set_enable_xss_auditor(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
+
     // Frame flattening is disabled by default.
     g_assert_false(webkit_settings_get_enable_frame_flattening(settings));
     webkit_settings_set_enable_frame_flattening(settings, TRUE);
     g_assert_true(webkit_settings_get_enable_frame_flattening(settings));
+
+    // Java is enabled by default.
+    g_assert_true(webkit_settings_get_enable_java(settings));
+    webkit_settings_set_enable_java(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_java(settings));
 
     // By default, JavaScript can open windows automatically is disabled.
     g_assert_false(webkit_settings_get_javascript_can_open_windows_automatically(settings));
@@ -352,23 +362,10 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_false(webkit_settings_get_enable_javascript_markup(settings));
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // Accelerated 2D canvas is deprecated and always disabled.
+    // Accelerated 2D canvas setting is deprecated and no-op.
     g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
     webkit_settings_set_enable_accelerated_2d_canvas(settings, TRUE);
     g_assert_false(webkit_settings_get_enable_accelerated_2d_canvas(settings));
-
-    // XSS Auditor is deprecated and always disabled.
-    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
-    webkit_settings_set_enable_xss_auditor(settings, TRUE);
-    g_assert_false(webkit_settings_get_enable_xss_auditor(settings));
-
-    // Java is not supported, and always disabled.
-    // Make warnings non-fatal for this test to make it pass.
-    Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
-    g_assert_false(webkit_settings_get_enable_java(settings));
-    webkit_settings_set_enable_java(settings, FALSE);
-    g_assert_false(webkit_settings_get_enable_java(settings));
-    Test::addLogFatalFlag(G_LOG_LEVEL_WARNING);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     g_object_unref(G_OBJECT(settings));

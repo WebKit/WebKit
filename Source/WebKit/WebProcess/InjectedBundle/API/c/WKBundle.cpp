@@ -129,7 +129,7 @@ WKArrayRef WKBundleGetLiveDocumentURLsForTesting(WKBundleRef bundleRef, bool exc
         auto documentIDKey = adoptWK(WKStringCreateWithUTF8CString("id"));
         auto documentURLKey = adoptWK(WKStringCreateWithUTF8CString("url"));
 
-        auto documentIDValue = adoptWK(WebKit::toCopiedAPI(it.key.toString()));
+        auto documentIDValue = adoptWK(WKUInt64Create(it.key));
         auto documentURLValue = adoptWK(WebKit::toCopiedAPI(it.value));
 
         WKDictionarySetItem(urlInfo.get(), documentIDKey.get(), documentIDValue.get());
@@ -146,10 +146,15 @@ void WKBundleReportException(JSContextRef context, JSValueRef exception)
     WebKit::InjectedBundle::reportException(context, exception);
 }
 
+void WKBundleClearAllDatabases(WKBundleRef)
+{
+    WebCore::DatabaseTracker::singleton().deleteAllDatabasesImmediately();
+}
+
 void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
 {
     // Historically, we've used the following (somewhat nonsensical) string for the databaseIdentifier of local files.
-    WebCore::DatabaseTracker::singleton().setQuota(*WebCore::SecurityOriginData::fromDatabaseIdentifier("file__0"_s), quota);
+    WebCore::DatabaseTracker::singleton().setQuota(*WebCore::SecurityOriginData::fromDatabaseIdentifier("file__0"), quota);
 }
 
 void WKBundleReleaseMemory(WKBundleRef)

@@ -45,16 +45,16 @@ InjectedBundlePageFormClient::InjectedBundlePageFormClient(const WKBundlePageFor
     initialize(client);
 }
 
-void InjectedBundlePageFormClient::didFocusTextField(WebPage* page, HTMLInputElement& inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::didFocusTextField(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.didFocusTextField)
         return;
 
-    auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
     m_client.didFocusTextField(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLInputElement& inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.textFieldDidBeginEditing)
         return;
@@ -63,7 +63,7 @@ void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLI
     m_client.textFieldDidBeginEditing(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInputElement& inputElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.textFieldDidEndEditing)
         return;
@@ -72,7 +72,7 @@ void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInp
     m_client.textFieldDidEndEditing(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLInputElement& inputElement, WebFrame* frame, bool initiatedByUserTyping)
+void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame, bool initiatedByUserTyping)
 {
     if (!m_client.textDidChangeInTextField)
         return;
@@ -84,7 +84,7 @@ void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLI
     m_client.textDidChangeInTextField(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTextAreaElement& textAreaElement, WebFrame* frame)
+void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTextAreaElement* textAreaElement, WebFrame* frame)
 {
     if (!m_client.textDidChangeInTextArea)
         return;
@@ -116,7 +116,7 @@ static WKInputFieldActionType toWKInputFieldActionType(API::InjectedBundle::Form
     return WKInputFieldActionTypeCancel;
 }
 
-bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page, HTMLInputElement& inputElement, API::InjectedBundle::FormClient::InputFieldAction actionType, WebFrame* frame)
+bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page, HTMLInputElement* inputElement, API::InjectedBundle::FormClient::InputFieldAction actionType, WebFrame* frame)
 {
     if (!m_client.shouldPerformActionInTextField)
         return false;
@@ -162,9 +162,12 @@ void InjectedBundlePageFormClient::didAssociateFormControls(WebPage* page, const
     if (!m_client.didAssociateFormControls && !m_client.didAssociateFormControlsForFrame)
         return;
 
-    auto elementHandles = elements.map([](auto& element) -> RefPtr<API::Object> {
-        return InjectedBundleNodeHandle::getOrCreate(element.get());
-    });
+    Vector<RefPtr<API::Object>> elementHandles;
+    elementHandles.reserveInitialCapacity(elements.size());
+
+    for (const auto& element : elements)
+        elementHandles.uncheckedAppend(InjectedBundleNodeHandle::getOrCreate(element.get()));
+
     if (!m_client.didAssociateFormControlsForFrame) {
         m_client.didAssociateFormControls(toAPI(page), toAPI(API::Array::create(WTFMove(elementHandles)).ptr()), m_client.base.clientInfo);
         return;

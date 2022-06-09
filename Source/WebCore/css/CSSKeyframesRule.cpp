@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2013, 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSKeyframesRule.h"
 
+#include "CSSDeferredParser.h"
 #include "CSSKeyframeRule.h"
 #include "CSSParser.h"
 #include "CSSRuleList.h"
@@ -41,11 +42,21 @@ StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name)
 {
 }
 
+StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
+    : StyleRuleBase(StyleRuleType::Keyframes)
+    , m_name(name)
+    , m_deferredRules(WTFMove(deferredRules))
+{
+    
+}
+
 StyleRuleKeyframes::StyleRuleKeyframes(const StyleRuleKeyframes& o)
     : StyleRuleBase(o)
-    , m_keyframes(o.keyframes())
     , m_name(o.m_name)
 {
+    m_keyframes.reserveInitialCapacity(o.keyframes().size());
+    for (auto& keyframe : o.keyframes())
+        m_keyframes.uncheckedAppend(keyframe.copyRef());
 }
 
 Ref<StyleRuleKeyframes> StyleRuleKeyframes::create(const AtomString& name)
@@ -53,10 +64,25 @@ Ref<StyleRuleKeyframes> StyleRuleKeyframes::create(const AtomString& name)
     return adoptRef(*new StyleRuleKeyframes(name));
 }
 
+Ref<StyleRuleKeyframes> StyleRuleKeyframes::create(const AtomString& name, std::unique_ptr<DeferredStyleGroupRuleList>&& deferredRules)
+{
+    return adoptRef(*new StyleRuleKeyframes(name, WTFMove(deferredRules)));
+}
+
 StyleRuleKeyframes::~StyleRuleKeyframes() = default;
+
+void StyleRuleKeyframes::parseDeferredRulesIfNeeded() const
+{
+    if (!m_deferredRules)
+        return;
+
+    m_deferredRules->parseDeferredKeyframes(const_cast<StyleRuleKeyframes&>(*this));
+    m_deferredRules = nullptr;
+}
 
 const Vector<Ref<StyleRuleKeyframe>>& StyleRuleKeyframes::keyframes() const
 {
+    parseDeferredRulesIfNeeded();
     return m_keyframes;
 }
 
@@ -69,16 +95,19 @@ void StyleRuleKeyframes::parserAppendKeyframe(RefPtr<StyleRuleKeyframe>&& keyfra
 
 void StyleRuleKeyframes::wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&& keyframe)
 {
+    parseDeferredRulesIfNeeded();
     m_keyframes.append(WTFMove(keyframe));
 }
 
 void StyleRuleKeyframes::wrapperRemoveKeyframe(unsigned index)
 {
+    parseDeferredRulesIfNeeded();
     m_keyframes.remove(index);
 }
 
 std::optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 {
+    parseDeferredRulesIfNeeded();
     auto keys = CSSParser::parseKeyframeKeyList(key);
     if (keys.isEmpty())
         return std::nullopt;
@@ -111,7 +140,7 @@ CSSKeyframesRule::~CSSKeyframesRule()
     }
 }
 
-void CSSKeyframesRule::setName(const AtomString& name)
+void CSSKeyframesRule::setName(const String& name)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 

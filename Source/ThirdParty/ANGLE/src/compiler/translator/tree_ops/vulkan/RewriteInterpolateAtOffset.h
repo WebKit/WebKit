@@ -21,15 +21,18 @@ namespace sh
 {
 
 class TCompiler;
-class TIntermBlock;
+class TIntermNode;
+class TIntermBinary;
+class TIntermTyped;
 class TSymbolTable;
 class SpecConst;
 class DriverUniform;
 
 // If fragRotation = nullptr, no rotation will be applied.
 ANGLE_NO_DISCARD bool RewriteInterpolateAtOffset(TCompiler *compiler,
-                                                 TIntermBlock *root,
-                                                 TSymbolTable *symbolTable,
+                                                 ShCompileOptions compileOptions,
+                                                 TIntermNode *root,
+                                                 const TSymbolTable &symbolTable,
                                                  int shaderVersion,
                                                  SpecConst *specConst,
                                                  const DriverUniform *driverUniforms);

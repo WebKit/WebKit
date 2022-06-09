@@ -41,7 +41,7 @@ public:
     unsigned length() const;
     RefPtr<DOMPlugin> item(unsigned index);
     RefPtr<DOMPlugin> namedItem(const AtomString& propertyName);
-    Vector<AtomString> supportedPropertyNames() const;
+    Vector<AtomString> supportedPropertyNames();
 
     void refresh(bool reloadPages);
 

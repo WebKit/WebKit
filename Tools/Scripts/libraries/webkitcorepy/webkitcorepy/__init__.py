@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,14 +37,14 @@ from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDupl
 from webkitcorepy.task_pool import TaskPool
 from webkitcorepy.terminal import Terminal
 from webkitcorepy.environment import Environment
-from webkitcorepy.credentials import credentials, delete_credentials
+from webkitcorepy.credentials import credentials
 from webkitcorepy.measure_time import MeasureTime
 from webkitcorepy.nested_fuzzy_dict import NestedFuzzyDict
 from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 
-version = Version(0, 13, 8)
+version = Version(0, 12, 5)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -62,12 +62,7 @@ AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dat
 AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('idna', Version(2, 10)))
-
-if sys.version_info > (3, 0):
-    AutoInstall.register(Package('packaging', Version(21, 3)))
-else:
-    AutoInstall.register(Package('packaging', Version(20, 4)))
-
+AutoInstall.register(Package('packaging', Version(20, 4)))
 AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
 AutoInstall.register(Package('requests', Version(2, 24)))
 AutoInstall.register(Package('setuptools_scm', Version(5, 0, 2), pypi_name='setuptools-scm'))

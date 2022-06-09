@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,13 +51,13 @@ struct SVGPropertyTraits<ColorMatrixType> {
 
     static ColorMatrixType fromString(const String& value)
     {
-        if (value == "matrix"_s)
+        if (value == "matrix")
             return FECOLORMATRIX_TYPE_MATRIX;
-        if (value == "saturate"_s)
+        if (value == "saturate")
             return FECOLORMATRIX_TYPE_SATURATE;
-        if (value == "hueRotate"_s)
+        if (value == "hueRotate")
             return FECOLORMATRIX_TYPE_HUEROTATE;
-        if (value == "luminanceToAlpha"_s)
+        if (value == "luminanceToAlpha")
             return FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
         return FECOLORMATRIX_TYPE_UNKNOWN;
     }
@@ -86,8 +86,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
-    RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder&) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

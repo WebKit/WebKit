@@ -1,3 +1,0 @@
-
-PASS Importing a WebAssembly module should execute the start function.
-

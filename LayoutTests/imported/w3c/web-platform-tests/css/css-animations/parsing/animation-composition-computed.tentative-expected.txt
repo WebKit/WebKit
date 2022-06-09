@@ -1,3 +1,0 @@
-
-PASS Property animation-composition value 'replace, add, accumulate'
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,11 @@
 
 #include "AbortAlgorithm.h"
 #include "DOMException.h"
-#include "DOMTimer.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "JSDOMException.h"
 #include "ScriptExecutionContext.h"
-#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/Exception.h>
-#include <JavaScriptCore/JSCast.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -56,26 +53,6 @@ Ref<AbortSignal> AbortSignal::abort(JSDOMGlobalObject& globalObject, ScriptExecu
     return adoptRef(*new AbortSignal(&context, Aborted::Yes, reason));
 }
 
-// https://dom.spec.whatwg.org/#dom-abortsignal-timeout
-Ref<AbortSignal> AbortSignal::timeout(ScriptExecutionContext& context, uint64_t milliseconds)
-{
-    auto signal = adoptRef(*new AbortSignal(&context));
-    signal->setHasActiveTimeoutTimer(true);
-    auto action = [signal](ScriptExecutionContext& context) mutable {
-        signal->setHasActiveTimeoutTimer(false);
-
-        auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
-        if (!globalObject)
-            return;
-
-        auto& vm = globalObject->vm();
-        Locker locker { vm.apiLock() };
-        signal->signalAbort(toJS(globalObject, globalObject, DOMException::create(TimeoutError)));
-    };
-    DOMTimer::install(context, WTFMove(action), Seconds::fromMilliseconds(milliseconds), true);
-    return signal;
-}
-
 AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted, JSC::JSValue reason)
     : ContextDestructionObserver(context)
     , m_aborted(aborted == Aborted::Yes)
@@ -83,8 +60,6 @@ AbortSignal::AbortSignal(ScriptExecutionContext* context, Aborted aborted, JSC::
 {
     ASSERT(reason);
 }
-
-AbortSignal::~AbortSignal() = default;
 
 // https://dom.spec.whatwg.org/#abortsignal-signal-abort
 void AbortSignal::signalAbort(JSC::JSValue reason)
@@ -129,11 +104,6 @@ void AbortSignal::signalFollow(AbortSignal& signal)
     });
 }
 
-void AbortSignal::eventListenersDidChange()
-{
-    m_hasAbortEventListener = hasEventListeners(eventNames().abortEvent);
-}
-
 bool AbortSignal::whenSignalAborted(AbortSignal& signal, Ref<AbortAlgorithm>&& algorithm)
 {
     if (signal.aborted()) {
@@ -154,11 +124,6 @@ void AbortSignal::throwIfAborted(JSC::JSGlobalObject& lexicalGlobalObject)
     auto& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     throwException(&lexicalGlobalObject, scope, m_reason.getValue());
-}
-
-WebCoreOpaqueRoot root(AbortSignal* signal)
-{
-    return WebCoreOpaqueRoot { signal };
 }
 
 } // namespace WebCore

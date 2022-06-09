@@ -25,7 +25,7 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledBySetting=ServiceWorkersEnabled&PushAPIEnabled
+    EnabledAtRuntime=ServiceWorkerEnabled&PushAPIEnabled
 ] partial interface ServiceWorkerGlobalScope {
     attribute EventHandler onpush;
     attribute EventHandler onpushsubscriptionchange;

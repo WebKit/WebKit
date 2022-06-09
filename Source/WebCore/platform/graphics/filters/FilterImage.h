@@ -42,12 +42,11 @@ namespace WebCore {
 class Filter;
 class FloatRect;
 class ImageBuffer;
-class ImageBufferAllocator;
 
 class FilterImage : public RefCounted<FilterImage> {
 public:
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
-    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&);
+    static RefPtr<FilterImage> create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&);
 
     // The return values are in filter coordinates.
     FloatRect primitiveSubregion() const { return m_primitiveSubregion; }
@@ -66,7 +65,7 @@ public:
     WEBCORE_EXPORT ImageBuffer* imageBuffer();
     PixelBuffer* pixelBuffer(AlphaPremultiplication);
 
-    RefPtr<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);
+    std::optional<PixelBuffer> getPixelBuffer(AlphaPremultiplication, const IntRect& sourceRect, std::optional<DestinationColorSpace> = std::nullopt);
     void copyPixelBuffer(PixelBuffer& destinationPixelBuffer, const IntRect& sourceRect);
 
     void correctPremultipliedPixelBuffer();
@@ -78,10 +77,10 @@ public:
 #endif
 
 private:
-    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&, ImageBufferAllocator&);
-    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&, ImageBufferAllocator&);
+    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode, const DestinationColorSpace&);
+    FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, Ref<ImageBuffer>&&);
 
-    RefPtr<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
+    std::optional<PixelBuffer>& pixelBufferSlot(AlphaPremultiplication);
 
     ImageBuffer* imageBufferFromPixelBuffer();
 
@@ -101,14 +100,12 @@ private:
     DestinationColorSpace m_colorSpace;
 
     RefPtr<ImageBuffer> m_imageBuffer;
-    RefPtr<PixelBuffer> m_unpremultipliedPixelBuffer;
-    RefPtr<PixelBuffer> m_premultipliedPixelBuffer;
+    std::optional<PixelBuffer> m_unpremultipliedPixelBuffer;
+    std::optional<PixelBuffer> m_premultipliedPixelBuffer;
 
 #if USE(CORE_IMAGE)
     RetainPtr<CIImage> m_ciImage;
 #endif
-
-    ImageBufferAllocator& m_allocator;
 };
 
 } // namespace WebCore

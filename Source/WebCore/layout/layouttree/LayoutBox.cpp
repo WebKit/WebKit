@@ -48,6 +48,7 @@ Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, std::
     , m_baseTypeFlags(baseTypeFlags.toRaw())
     , m_hasRareData(false)
     , m_isAnonymous(false)
+    , m_isIntegrationBlockContainer(false)
 {
     if (firstLineStyle)
         ensureRareData().firstLineStyle = WTFMove(firstLineStyle);
@@ -388,7 +389,7 @@ bool Box::isLayoutContainmentBox() const
             return isAtomicInlineLevelBox();
         return true;
     };
-    return m_style.effectiveContainment().contains(Containment::Layout) && supportsLayoutContainment();
+    return m_style.contain().contains(Containment::Layout) && supportsLayoutContainment();
 }
 
 bool Box::isSizeContainmentBox() const
@@ -405,7 +406,7 @@ bool Box::isSizeContainmentBox() const
             return isAtomicInlineLevelBox();
         return true;
     };
-    return m_style.effectiveContainment().contains(Containment::Size) && supportsSizeContainment();
+    return m_style.contain().contains(Containment::Size) && supportsSizeContainment();
 }
 
 bool Box::isInternalTableBox() const

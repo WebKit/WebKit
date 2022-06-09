@@ -43,7 +43,7 @@ namespace WebCore {
 
 static String valueWithoutImportant(const String& value)
 {
-    if (!value.endsWithIgnoringASCIICase("important"_s))
+    if (!value.endsWithIgnoringASCIICase("important"))
         return value;
 
     String newValue = value;

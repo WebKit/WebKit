@@ -174,7 +174,7 @@ public:
     bool isUserScrollInProgress() const;
 
 #if PLATFORM(MAC)
-    static FloatSize wheelDeltaBiasingTowardsVertical(const FloatSize&);
+    static FloatSize wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent&);
 
     // Returns true if handled.
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
@@ -237,12 +237,6 @@ private:
     bool processWheelEventForKineticScrolling(const PlatformWheelEvent&);
 
     Deque<PlatformWheelEvent> m_scrollHistory;
-
-    struct {
-        MonotonicTime startTime;
-        FloatPoint initialOffset;
-        FloatSize initialVelocity;
-    } m_previousKineticAnimationInfo;
 #endif
 
     ScrollingEffectsControllerClient& m_client;

@@ -36,14 +36,14 @@
 namespace WebCore {
 
 class CDMInstance;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class CDMClient : public CanMakeWeakPtr<CDMClient> {
 public:
     virtual ~CDMClient() = default;
 
     virtual void cdmClientAttemptToResumePlaybackIfNecessary() = 0;
-    virtual void cdmClientUnrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) = 0;
+    virtual void cdmClientUnrequestedInitializationDataReceived(const String&, Ref<FragmentedSharedBuffer>&&) = 0;
 };
 
 } // namespace WebCore

@@ -531,9 +531,11 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
     if (&startNode->treeScope() == &endNode->treeScope())
         return;
 
-    if (!isInUserAgentShadowRootOrHasEditableShadowAncestor(startNode)
-        && !isInUserAgentShadowRootOrHasEditableShadowAncestor(endNode))
-        return;
+    if (startNode->document().settings().selectionAcrossShadowBoundariesEnabled()) {
+        if (!isInUserAgentShadowRootOrHasEditableShadowAncestor(startNode)
+            && !isInUserAgentShadowRootOrHasEditableShadowAncestor(endNode))
+            return;
+    }
 
     // Correct the focus if necessary.
     if (m_anchorIsFirst) {
@@ -681,13 +683,6 @@ bool VisibleSelection::isInPasswordField() const
 {
     HTMLTextFormControlElement* textControl = enclosingTextFormControl(start());
     return is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField();
-}
-
-bool VisibleSelection::isInAutoFilledAndViewableField() const
-{
-    if (auto* input = dynamicDowncast<HTMLInputElement>(enclosingTextFormControl(start())))
-        return input->isAutoFilledAndViewable();
-    return false;
 }
 
 #if ENABLE(TREE_DEBUGGING)

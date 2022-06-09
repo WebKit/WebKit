@@ -90,15 +90,14 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     // ConsoleObserver
 
-    messageWasAdded(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId, timestamp)
+    messageWasAdded(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
     {
         // FIXME: Get a request from request ID.
 
         if (parameters)
             parameters = parameters.map((x) => WI.RemoteObject.fromPayload(x, target));
 
-        const request = null;
-        let message = new WI.ConsoleMessage(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, request, timestamp);
+        let message = new WI.ConsoleMessage(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
 
         this._incrementMessageLevelCount(message.level, message.repeatCount);
 

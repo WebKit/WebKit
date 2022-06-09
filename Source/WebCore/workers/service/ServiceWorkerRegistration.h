@@ -30,7 +30,6 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
-#include "Notification.h"
 #include "NotificationOptions.h"
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
@@ -38,9 +37,6 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "Supplementable.h"
 #include "Timer.h"
-#include <wtf/ListHashSet.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -49,7 +45,6 @@ class NavigationPreloadManager;
 class ScriptExecutionContext;
 class ServiceWorker;
 class ServiceWorkerContainer;
-class WebCoreOpaqueRoot;
 
 class ServiceWorkerRegistration final : public RefCounted<ServiceWorkerRegistration>, public Supplementable<ServiceWorkerRegistration>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(ServiceWorkerRegistration, WEBCORE_EXPORT);
@@ -80,7 +75,7 @@ public:
     void unregister(Ref<DeferredPromise>&&);
 
     void subscribeToPushService(const Vector<uint8_t>& applicationServerKey, DOMPromiseDeferred<IDLInterface<PushSubscription>>&&);
-    void unsubscribeFromPushService(PushSubscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&&);
+    void unsubscribeFromPushService(DOMPromiseDeferred<IDLBoolean>&&);
     void getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&&);
     void getPushPermissionState(DOMPromiseDeferred<IDLEnumeration<PushPermissionState>>&&);
 
@@ -100,8 +95,8 @@ public:
         String tag;
     };
 
-    void showNotification(ScriptExecutionContext&, String&& title, NotificationOptions&&, Ref<DeferredPromise>&&);
-    void getNotifications(const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>);
+    void showNotification(ScriptExecutionContext&, const String& title, const NotificationOptions&, DOMPromiseDeferred<void>&&);
+    void getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLDOMString>>);
 #endif
 
 private:
@@ -126,8 +121,6 @@ private:
 
     std::unique_ptr<NavigationPreloadManager> m_navigationPreload;
 };
-
-WebCoreOpaqueRoot root(ServiceWorkerRegistration*);
 
 } // namespace WebCore
 

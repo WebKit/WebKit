@@ -67,36 +67,36 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
     }
 
     unsigned inlineCapacity = 0;
-    if (inferredInlineCapacity < JSFinalObject::defaultInlineCapacity) {
+    if (inferredInlineCapacity < JSFinalObject::defaultInlineCapacity()) {
         // Try to shrink the object based on static analysis.
         inferredInlineCapacity += possibleDefaultPropertyCount(vm, prototype);
 
         if (!inferredInlineCapacity) {
             // Empty objects are rare, so most likely the static analyzer just didn't
             // see the real initializer function. This can happen with helper functions.
-            inferredInlineCapacity = JSFinalObject::defaultInlineCapacity;
-        } else if (inferredInlineCapacity > JSFinalObject::defaultInlineCapacity) {
+            inferredInlineCapacity = JSFinalObject::defaultInlineCapacity();
+        } else if (inferredInlineCapacity > JSFinalObject::defaultInlineCapacity()) {
             // Default properties are weak guesses, so don't allow them to turn a small
             // object into a large object.
-            inferredInlineCapacity = JSFinalObject::defaultInlineCapacity;
+            inferredInlineCapacity = JSFinalObject::defaultInlineCapacity();
         }
 
         inlineCapacity = inferredInlineCapacity;
-        ASSERT(inlineCapacity < JSFinalObject::maxInlineCapacity);
+        ASSERT(inlineCapacity < JSFinalObject::maxInlineCapacity());
     } else {
         // Normal or large object.
         inlineCapacity = inferredInlineCapacity;
-        if (inlineCapacity > JSFinalObject::maxInlineCapacity)
-            inlineCapacity = JSFinalObject::maxInlineCapacity;
+        if (inlineCapacity > JSFinalObject::maxInlineCapacity())
+            inlineCapacity = JSFinalObject::maxInlineCapacity();
     }
 
     if (isPolyProto) {
         ++inlineCapacity;
-        inlineCapacity = std::min(inlineCapacity, JSFinalObject::maxInlineCapacity);
+        inlineCapacity = std::min(inlineCapacity, JSFinalObject::maxInlineCapacity());
     }
 
     ASSERT(inlineCapacity > 0);
-    ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity);
+    ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
 
     size_t allocationSize = JSFinalObject::allocationSize(inlineCapacity);
     Allocator allocator = subspaceFor<JSFinalObject>(vm)->allocatorFor(allocationSize, AllocatorForMode::EnsureAllocator);
@@ -105,11 +105,11 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
     if (allocator) {
         size_t slop = (allocator.cellSize() - allocationSize) / sizeof(WriteBarrier<Unknown>);
         inlineCapacity += slop;
-        if (inlineCapacity > JSFinalObject::maxInlineCapacity)
-            inlineCapacity = JSFinalObject::maxInlineCapacity;
+        if (inlineCapacity > JSFinalObject::maxInlineCapacity())
+            inlineCapacity = JSFinalObject::maxInlineCapacity();
     }
 
-    Structure* structure = globalObject->structureCache().emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity, isPolyProto, executable);
+    Structure* structure = vm.structureCache.emptyObjectStructureForPrototype(globalObject, prototype, inlineCapacity, isPolyProto, executable);
 
     if (isPolyProto) {
         ASSERT(structure->hasPolyProto());
@@ -142,18 +142,18 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
 template<typename Derived>
 ALWAYS_INLINE unsigned ObjectAllocationProfileBase<Derived>::possibleDefaultPropertyCount(VM& vm, JSObject* prototype)
 {
-    if (prototype == prototype->globalObject()->objectPrototype())
+    if (prototype == prototype->globalObject(vm)->objectPrototype())
         return 0;
 
     size_t count = 0;
     PropertyNameArray propertyNameArray(vm, PropertyNameMode::StringsAndSymbols, PrivateSymbolMode::Include);
-    prototype->structure()->getPropertyNamesFromStructure(vm, propertyNameArray, DontEnumPropertiesMode::Include);
+    prototype->structure(vm)->getPropertyNamesFromStructure(vm, propertyNameArray, DontEnumPropertiesMode::Include);
     PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArray.data()->propertyNameVector();
     for (size_t i = 0; i < propertyNameVector.size(); ++i) {
         JSValue value = prototype->getDirect(vm, propertyNameVector[i]);
 
         // Functions are common, and are usually class-level objects that are not overridden.
-        if (jsDynamicCast<JSFunction*>(value))
+        if (jsDynamicCast<JSFunction*>(vm, value))
             continue;
 
         ++count;

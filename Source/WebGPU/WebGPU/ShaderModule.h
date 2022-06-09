@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,65 +25,31 @@
 
 #pragma once
 
-#import "WGSL.h"
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
-#import <wtf/text/StringHash.h>
-#import <wtf/text/WTFString.h>
-
-struct WGPUShaderModuleImpl {
-};
 
 namespace WebGPU {
 
-class Device;
-class PipelineLayout;
-
-// https://gpuweb.github.io/gpuweb/#gpushadermodule
-class ShaderModule : public WGPUShaderModuleImpl, public RefCounted<ShaderModule> {
+class ShaderModule : public RefCounted<ShaderModule> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ShaderModule> create(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library, Device& device)
+    static Ref<ShaderModule> create()
     {
-        return adoptRef(*new ShaderModule(WTFMove(checkResult), WTFMove(pipelineLayoutHints), WTFMove(entryPointInformation), library, device));
-    }
-    static Ref<ShaderModule> createInvalid(Device& device)
-    {
-        return adoptRef(*new ShaderModule(device));
+        return adoptRef(*new ShaderModule());
     }
 
     ~ShaderModule();
 
-    void getCompilationInfo(CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback);
-    void setLabel(String&&);
-
-    bool isValid() const { return !std::holds_alternative<std::monostate>(m_checkResult); }
-
-    static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
-    static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label);
-
-    const WGSL::AST::ShaderModule* ast() const;
-
-    const PipelineLayout* pipelineLayoutHint(const String&) const;
-    const WGSL::Reflection::EntryPointInformation* entryPointInformation(const String&) const;
-    id<MTLLibrary> library() const { return m_library; }
-
-    Device& device() const { return m_device; }
+    void setLabel(const char*);
 
 private:
-    ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
-    ShaderModule(Device&);
-
-    using CheckResult = std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck, std::monostate>;
-    CheckResult convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&);
-
-    const CheckResult m_checkResult;
-    const HashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
-    const HashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
-    const id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
-
-    const Ref<Device> m_device;
+    ShaderModule();
 };
 
 } // namespace WebGPU
+
+struct WGPUShaderModuleImpl {
+    Ref<WebGPU::ShaderModule> shaderModule;
+};

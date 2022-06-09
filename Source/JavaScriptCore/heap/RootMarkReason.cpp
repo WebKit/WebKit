@@ -27,15 +27,14 @@
 #include "RootMarkReason.h"
 
 #include <wtf/PrintStream.h>
-#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
-ASCIILiteral rootMarkReasonDescription(RootMarkReason reason)
+const char* rootMarkReasonDescription(RootMarkReason reason)
 {
 #define CASE_ROOT_MARK_REASON(reason) \
     case JSC::RootMarkReason::reason: \
-        return #reason""_s; \
+        return #reason; \
 
     switch (reason) {
         FOR_EACH_ROOT_MARK_REASON(CASE_ROOT_MARK_REASON)
@@ -43,7 +42,7 @@ ASCIILiteral rootMarkReasonDescription(RootMarkReason reason)
 #undef CASE_ROOT_MARK_REASON
 
     ASSERT_NOT_REACHED();
-    return "None"_s;
+    return "None";
 }
 
 } // namespace JSC

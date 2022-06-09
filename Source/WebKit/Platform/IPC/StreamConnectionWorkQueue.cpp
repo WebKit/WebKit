@@ -26,10 +26,6 @@
 #include "config.h"
 #include "StreamConnectionWorkQueue.h"
 
-#if USE(FOUNDATION)
-#include <wtf/AutodrainedPool.h>
-#endif
-
 namespace IPC {
 
 StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
@@ -57,7 +53,7 @@ void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
     wakeUp();
 }
 
-void StreamConnectionWorkQueue::addStreamConnection(StreamServerConnection& connection)
+void StreamConnectionWorkQueue::addStreamConnection(StreamServerConnectionBase& connection)
 {
     {
         Locker locker { m_lock };
@@ -70,7 +66,7 @@ void StreamConnectionWorkQueue::addStreamConnection(StreamServerConnection& conn
     wakeUp();
 }
 
-void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnection& connection)
+void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnectionBase& connection)
 {
     {
         Locker locker { m_lock };
@@ -124,11 +120,8 @@ void StreamConnectionWorkQueue::processStreams()
     constexpr size_t defaultMessageLimit = 1000;
     bool hasMoreToProcess = false;
     do {
-#if USE(FOUNDATION)
-        AutodrainedPool perProcessingIterationPool;
-#endif
         Deque<WTF::Function<void()>> functions;
-        Vector<Ref<StreamServerConnection>> connections;
+        Vector<Ref<StreamServerConnectionBase>> connections;
         {
             Locker locker { m_lock };
             functions.swap(m_functions);
@@ -139,16 +132,8 @@ void StreamConnectionWorkQueue::processStreams()
 
         hasMoreToProcess = false;
         for (auto& connection : connections)
-            hasMoreToProcess |= connection->dispatchStreamMessages(defaultMessageLimit) == StreamServerConnection::HasMoreMessages;
+            hasMoreToProcess |= connection->dispatchStreamMessages(defaultMessageLimit) == StreamServerConnectionBase::HasMoreMessages;
     } while (hasMoreToProcess);
 }
 
-#if ASSERT_ENABLED
-void StreamConnectionWorkQueue::assertIsCurrent() const
-{
-    Locker locker { m_lock };
-    ASSERT(m_processingThread);
-    WTF::assertIsCurrent(*m_processingThread);
-}
-#endif
 }

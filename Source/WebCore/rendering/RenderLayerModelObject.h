@@ -28,7 +28,6 @@ namespace WebCore {
 
 class KeyframeList;
 class RenderLayer;
-class SVGGraphicsElement;
 
 struct LayerRepaintRects {
     LayoutRect clippedOverflowRect;
@@ -76,18 +75,7 @@ public:
     // Provides the SVG implementation for mapLocalToContainer().
     // This lives in RenderLayerModelObject, which is the common base-class for all SVG renderers.
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
-
-    void applySVGTransform(TransformationMatrix&, SVGGraphicsElement&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const;
-    void updateHasSVGTransformFlags(const SVGGraphicsElement&);
-
-    LayoutPoint nominalSVGLayoutLocation() const { return flooredLayoutPoint(objectBoundingBoxWithoutTransformations().minXMinYCorner()); }
-    virtual LayoutPoint currentSVGLayoutLocation() const { ASSERT_NOT_REACHED(); return { }; }
-    virtual void setCurrentSVGLayoutLocation(const LayoutPoint&) { ASSERT_NOT_REACHED(); }
 #endif
-
-    void updateLayerTransform();
-
-    virtual void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const = 0;
 
 protected:
     RenderLayerModelObject(Element&, RenderStyle&&, BaseTypeFlags);
@@ -105,11 +93,6 @@ private:
     static bool s_hadTransform;
     static bool s_layerWasSelfPainting;
 };
-
-// Pixel-snapping (== 'device pixel alignment') helpers.
-bool rendererNeedsPixelSnapping(const RenderLayerModelObject&);
-FloatRect snapRectToDevicePixelsIfNeeded(const LayoutRect&, const RenderLayerModelObject&);
-FloatRect snapRectToDevicePixelsIfNeeded(const FloatRect&, const RenderLayerModelObject&);
 
 } // namespace WebCore
 

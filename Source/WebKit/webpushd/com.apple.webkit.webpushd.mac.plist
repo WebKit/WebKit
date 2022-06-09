@@ -19,7 +19,7 @@
 	<string>Adaptive</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/System/Library/Frameworks/WebKit.framework/Versions/A/Daemons/webpushd</string>
+		<string>/System/Library/Frameworks/WebKit.framework/Daemons/webpushd</string>
 		<string>--machServiceName</string>
 		<string>com.apple.webkit.webpushd.service</string>
 	</array>

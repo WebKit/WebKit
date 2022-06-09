@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -19,12 +19,12 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-import copy
 
 from webkitbugspy import User
+from webkitcorepy import mocks
 
 
-class Base(object):
+class Base(mocks.Requests):
     @classmethod
     def transform_user(cls, user):
         return User(
@@ -33,12 +33,16 @@ class Base(object):
             emails=user.emails,
         )
 
-    def __init__(self, users=None, issues=None, projects=None):
+    def __init__(self, *hosts, **kwargs):
+        super(Base, self).__init__(*hosts)
+
+        users = kwargs.get('users', None)
+        issues = kwargs.get('issues', None)
+
         self.users = User.Mapping()
         for user in users or []:
             self.users.add(type(self).transform_user(user))
 
-        self.projects = projects or dict()
         self.issues = {}
         for issue in issues or []:
             self.add(issue)
@@ -58,4 +62,4 @@ class Base(object):
             if user:
                 self.users.add(type(self).transform_user(user))
 
-        self.issues[id] = copy.deepcopy(bug_data)
+        self.issues[id] = {key: value for key, value in bug_data.items()}

@@ -513,8 +513,3 @@ void WPEQtView::touchEvent(QTouchEvent* event)
     if (m_backend)
         m_backend->dispatchTouchEvent(event);
 }
-
-WebKitWebView* WPEQtView::webView() const
-{
-    return m_webView;
-}

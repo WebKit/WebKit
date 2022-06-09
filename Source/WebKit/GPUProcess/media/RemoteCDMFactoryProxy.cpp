@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ RemoteCDMFactoryProxy::~RemoteCDMFactoryProxy() = default;
 static CDMFactory* factoryForKeySystem(const String& keySystem)
 {
     auto& factories = CDMFactory::registeredFactories();
-    auto foundIndex = factories.findIf([&] (auto& factory) { return factory->supportsKeySystem(keySystem); });
+    auto foundIndex = factories.findMatching([&] (auto& factory) { return factory->supportsKeySystem(keySystem); });
     if (foundIndex == notFound)
         return nullptr;
     return factories[foundIndex];
@@ -64,7 +64,7 @@ void RemoteCDMFactoryProxy::createCDM(const String& keySystem, CompletionHandler
         return;
     }
 
-    auto privateCDM = factory->createCDM(keySystem, *this);
+    auto privateCDM = factory->createCDM(keySystem);
     if (!privateCDM) {
         completion({ }, { });
         return;
@@ -168,18 +168,6 @@ bool RemoteCDMFactoryProxy::allowsExitUnderMemoryPressure() const
 {
     return m_instances.isEmpty();
 }
-
-#if !RELEASE_LOG_DISABLED
-const Logger& RemoteCDMFactoryProxy::logger() const
-{
-    if (!m_logger) {
-        m_logger = Logger::create(this);
-        m_logger->setEnabled(this, m_gpuConnectionToWebProcess ? m_gpuConnectionToWebProcess->sessionID().isAlwaysOnLoggingAllowed() : false);
-    }
-
-    return *m_logger;
-}
-#endif
 
 }
 

@@ -42,22 +42,22 @@ public:
     enum class ArrowDirection { Up, Down };
     static void paintArrow(GraphicsContext&, ArrowDirection, bool);
 
+    virtual Color activeSelectionForegroundColor() const;
+    virtual Color activeSelectionBackgroundColor() const;
+    virtual Color inactiveSelectionForegroundColor() const;
+    virtual Color inactiveSelectionBackgroundColor() const;
     virtual void platformColorsDidChange() { };
 
-    void setAccentColor(const Color&);
-    Color accentColor();
 private:
     LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float) const final;
     LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize&, float) const final;
     LengthBox controlBorder(ControlPart, const FontCascade&, const LengthBox&, float) const final;
     void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool, const Color&) final;
 
-    void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);
-    void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);
+    void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, bool);
+    void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, bool);
     void paintButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
     void paintSpinButton(ControlStates&, GraphicsContext&, const FloatRect&, bool);
-
-    Color m_accentColor;
 };
 
 } // namespace WebCore

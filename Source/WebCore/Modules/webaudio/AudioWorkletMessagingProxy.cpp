@@ -49,14 +49,12 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
 {
     auto* document = worklet.document();
     auto jsRuntimeFlags = document->settings().javaScriptRuntimeFlags();
-    RELEASE_ASSERT(document->sessionID());
 
     return {
         document->url(),
         jsRuntimeFlags,
         worklet.audioContext() ? worklet.audioContext()->sampleRate() : 0.0f,
         worklet.identifier(),
-        *document->sessionID(),
         document->settingsValues(),
         worklet.audioContext() ? !worklet.audioContext()->isOfflineContext() : false
     };
@@ -100,6 +98,11 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> AudioWorkletMessagingProxy::create
 void AudioWorkletMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
     m_document->postTask(WTFMove(task));
+}
+
+bool AudioWorkletMessagingProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
+{
+    return postTaskForModeToWorkletGlobalScope(WTFMove(task), mode);
 }
 
 void AudioWorkletMessagingProxy::postTaskToAudioWorklet(Function<void(AudioWorklet&)>&& task)

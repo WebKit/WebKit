@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2021 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1353,39 +1353,35 @@ class _EnumState(object):
         # FIXME: The regular expressions for expr_all_uppercase and expr_enum_end only accept integers
         # and identifiers for the value of the enumerator, but do not accept any other constant
         # expressions. However, this is sufficient for now (11/27/2012).
-        expr_all_uppercase = r'\s*(?P<value>[A-Z0-9_]+)\s*(?:=\s*[a-zA-Z0-9]+\s*)?,?\s*$'
+        expr_all_uppercase = r'\s*[A-Z0-9_]+\s*(?:=\s*[a-zA-Z0-9]+\s*)?,?\s*$'
         expr_starts_lowercase = r'\s*[a-jl-z]'
         expr_enum_end = r'}\s*(?:[a-zA-Z0-9]+\s*(?:=\s*[a-zA-Z0-9]+)?)?\s*;\s*'
-        expr_enum_start = r'\s*(?:enum(?:\s+class)?(?:\s+(?P<identifier>[a-zA-Z0-9]+))?)(?:\s*:\s*[a-zA-Z0-9_]+?)?\s*\{?\s*'
-
-        def is_case_error(enum_name, value_declaration):
-            all_uppercase = match(expr_all_uppercase, value_declaration)
-            if all_uppercase:
-                if self.is_webidl_enum:
-                    return False
-                if enum_name in _ALLOW_ALL_UPPERCASE_ENUM:
-                    return False
-                return not all_uppercase.group('value') in _ALLOW_ABBREVIATION_ENUM_VALUES
-            return match(expr_starts_lowercase, value_declaration)
-
+        expr_enum_start = r'\s*(?:enum(?:\s+class)?(?:\s+(?P<identifier>[a-zA-Z0-9]+))?)\s*\{?\s*'
         if self.in_enum_decl:
             if match(r'\s*' + expr_enum_end + r'$', line):
                 self.in_enum_decl = False
                 self.is_webidl_enum = False
                 return True
-            elif is_case_error(self.enum_decl_name, line):
+            elif match(expr_all_uppercase, line):
+                return self.is_webidl_enum or self.enum_decl_name in _ALLOW_ALL_UPPERCASE_ENUM
+            elif match(expr_starts_lowercase, line):
                 return False
         matched = match(expr_enum_start + r'$', line)
         if matched:
             self.in_enum_decl = True
             self.enum_decl_name = matched.group('identifier')
         else:
-            matched = match(expr_enum_start + r'(?P<members>[^{]*)' + expr_enum_end + r'$', line)
+            matched = match(expr_enum_start + r'(?P<members>.*)' + expr_enum_end + r'$', line)
             if matched:
                 members = matched.group('members').split(',')
-                enum_name = matched.group('identifier')
+                allow_all_uppercase = matched.group('identifier') in _ALLOW_ALL_UPPERCASE_ENUM
+                found_invalid_member = False
                 for member in members:
-                    if is_case_error(enum_name, member):
+                    if match(expr_all_uppercase, member):
+                        found_invalid_member = not self.is_webidl_enum and not allow_all_uppercase
+                    if match(expr_starts_lowercase, member):
+                        found_invalid_member = True
+                    if found_invalid_member:
                         self.is_webidl_enum = False
                         return False
                 return True
@@ -2550,10 +2546,8 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
 
 
 # Enum declaration allowlist
-_ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType']
+_ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType', 'Meridiem', 'NSType']
 
-# Enum value allowlist
-_ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'PM', 'URL', 'XHR']
 
 def check_enum_casing(clean_lines, line_number, enum_state, error):
     """Looks for incorrectly named enum values.
@@ -3405,31 +3399,6 @@ def check_arguments_for_wk_api_available(clean_lines, line_number, error):
         check_version_string(wk_api_available.group(1), "ios")
 
 
-def check_objc_protocol(clean_lines, line_number, file_extension, error):
-    """Looks for spaces between type names and protocol names.
-
-    Because the style checker uses regexes, we don't know what's a type and what's a protocol.
-    So, this check is a simplification and just checks for "id <"
-
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      file_extension: The extension (without the dot) of the filename.
-      error: The function to call with any errors found.
-    """
-
-    if file_extension != "m" and file_extension != "mm":
-        return
-
-    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-
-    using_space_with_protocol = search(r'\bid <', line)
-    if not using_space_with_protocol:
-        return
-
-    error(line_number, 'spacing/objc-protocol', 2, "Protocol names shouldn't have a space before them.")
-
-
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
 
@@ -3511,7 +3480,6 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_enum_casing(clean_lines, line_number, enum_state, error)
     check_once_flag(clean_lines, line_number, file_state, error)
     check_arguments_for_wk_api_available(clean_lines, line_number, error)
-    check_objc_protocol(clean_lines, line_number, file_extension, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#(?:include|import) +"[^/]+\.h"')
@@ -4195,7 +4163,6 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                 and not modified_identifier == "DFG_OPERATION"
                 and not modified_identifier == "LOG_CHANNEL"
                 and not modified_identifier == "WTF_GUARDED_BY_LOCK"
-                and not modified_identifier == "WTF_GUARDED_BY_CAPABILITY"
                 and not modified_identifier.find('chrono_literals') >= 0):
                 error(line_number, 'readability/naming/underscores', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")
 

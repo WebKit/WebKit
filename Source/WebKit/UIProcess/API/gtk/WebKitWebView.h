@@ -231,7 +231,6 @@ struct _WebKitWebView {
 struct _WebKitWebViewClass {
     WebKitWebViewBaseClass parent;
 
-    /*< public >*/
     void       (* load_changed)                (WebKitWebView               *web_view,
                                                 WebKitLoadEvent              load_event);
     gboolean   (* load_failed)                 (WebKitWebView               *web_view,
@@ -294,7 +293,6 @@ struct _WebKitWebViewClass {
     gboolean   (* user_message_received)       (WebKitWebView               *web_view,
                                                 WebKitUserMessage           *message);
 
-    /*< private >*/
     void (*_webkit_reserved0) (void);
 };
 

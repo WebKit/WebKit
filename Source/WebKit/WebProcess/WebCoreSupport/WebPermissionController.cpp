@@ -43,10 +43,18 @@ WebPermissionController::WebPermissionController(WebPage& page)
 {
 }
 
-void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+WebCore::PermissionState WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor)
 {
     if (!m_page)
-        return completionHandler({ });
+        return WebCore::PermissionState::Denied;
+
+    return queryCache(WTFMove(origin), WTFMove(descriptor));
+}
+
+void WebPermissionController::request(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
+{
+    if (!m_page)
+        return completionHandler(WebCore::PermissionState::Denied);
 
     auto cachedResult = queryCache(origin, descriptor);
     if (cachedResult != WebCore::PermissionState::Prompt)
@@ -88,7 +96,7 @@ void WebPermissionController::updateCache(const WebCore::ClientOrigin& origin, c
 
 void WebPermissionController::tryProcessingRequests()
 {
-    if (m_requests.isEmpty() || !m_page)
+    if (m_requests.isEmpty())
         return;
 
     while (!m_requests.isEmpty()) {
@@ -104,14 +112,13 @@ void WebPermissionController::tryProcessingRequests()
         }
 
         currentRequest.isWaitingForReply = true;
-        m_page->sendWithAsyncReply(Messages::WebPageProxy::QueryPermission(currentRequest.origin, currentRequest.descriptor), [this, weakThis = WeakPtr { *this }](auto state, bool shouldCache) {
+        m_page->sendWithAsyncReply(Messages::WebPageProxy::requestPermission(currentRequest.origin, currentRequest.descriptor), [this, weakThis = WeakPtr { *this }](auto state) {
             if (!weakThis)
                 return;
 
             auto takenRequest = m_requests.takeFirst();
             takenRequest.completionHandler(state);
-            if (shouldCache && state)
-                updateCache(takenRequest.origin, takenRequest.descriptor, *state);
+            updateCache(takenRequest.origin, takenRequest.descriptor, state);
 
             tryProcessingRequests();
         });

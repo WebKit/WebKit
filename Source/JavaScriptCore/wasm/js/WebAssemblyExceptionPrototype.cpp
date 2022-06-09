@@ -42,12 +42,12 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyExceptionProtoFuncIs);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyExceptionPrototype::s_info = { "WebAssembly.Exception"_s, &Base::s_info, &prototypeTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionPrototype) };
+const ClassInfo WebAssemblyExceptionPrototype::s_info = { "WebAssembly.Exception", &Base::s_info, &prototypeTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionPrototype) };
 
 /* Source for WebAssemblyExceptionPrototype.lut.h
  @begin prototypeTableWebAssemblyException
  getArg   webAssemblyExceptionProtoFuncGetArg   Function 2
- is       webAssemblyExceptionProtoFuncIs       Function 1
+ is   webAssemblyExceptionProtoFuncIs   Function 1
  @end
  */
 
@@ -66,8 +66,7 @@ Structure* WebAssemblyExceptionPrototype::createStructure(VM& vm, JSGlobalObject
 void WebAssemblyExceptionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
-    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
+    ASSERT(inherits(vm, info()));
 }
 
 WebAssemblyExceptionPrototype::WebAssemblyExceptionPrototype(VM& vm, Structure* structure)
@@ -84,18 +83,18 @@ ALWAYS_INLINE static JSWebAssemblyException* getException(JSGlobalObject* global
         throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
         return nullptr;
     }
-    auto* tag = jsDynamicCast<JSWebAssemblyException*>(thisValue.asCell());
+    auto* tag = jsDynamicCast<JSWebAssemblyException*>(vm, thisValue.asCell());
     if (LIKELY(tag))
         return tag;
     throwTypeError(globalObject, scope, "WebAssembly.Exception operation called on non-Exception object"_s);
     return nullptr;
 }
 
-ALWAYS_INLINE static JSWebAssemblyTag* getTag(JSValue tagValue)
+ALWAYS_INLINE static JSWebAssemblyTag* getTag(VM& vm, JSValue tagValue)
 {
     if (!tagValue.isCell())
         return nullptr;
-    return jsDynamicCast<JSWebAssemblyTag*>(tagValue.asCell());
+    return jsDynamicCast<JSWebAssemblyTag*>(vm, tagValue.asCell());
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -107,16 +106,14 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* g
         return makeString("WebAssembly.Exception.getArg(): ", message);
     };
     const auto& typeError = [&](const auto& message) {
-        return throwVMTypeError(globalObject, throwScope, formatMessage(message));
+        throwTypeError(globalObject, throwScope, formatMessage(message));
+        return encodedJSValue();
     };
 
     JSWebAssemblyException* jsException = getException(globalObject, callFrame->thisValue());
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    if (UNLIKELY(callFrame->argumentCount() < 2))
-        return JSValue::encode(throwException(globalObject, throwScope, createNotEnoughArgumentsError(globalObject)));
-
-    JSWebAssemblyTag* tag = getTag(callFrame->argument(0));
+    JSWebAssemblyTag* tag = getTag(vm, callFrame->argument(0));
     if (!tag)
         return typeError("First argument must be a WebAssembly.Tag");
 
@@ -124,8 +121,10 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncGetArg, (JSGlobalObject* g
         return typeError("First argument does not match the exception tag");
 
     uint32_t index = callFrame->argument(1).toUInt32(globalObject);
-    if (index >= tag->tag().parameterCount())
-        return typeError("Index out of range");
+    if (index >= tag->tag().parameterCount()) {
+        throwRangeError(globalObject, throwScope, formatMessage("Index out of range"));
+        return encodedJSValue();
+    }
 
     RELEASE_AND_RETURN(throwScope, JSValue::encode(jsException->getArg(globalObject, index)));
 }
@@ -136,14 +135,13 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncIs, (JSGlobalObject* globa
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     JSWebAssemblyException* jsException = getException(globalObject, callFrame->thisValue());
-    RETURN_IF_EXCEPTION(throwScope, { });
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    if (UNLIKELY(callFrame->argumentCount() < 1))
-        return JSValue::encode(throwException(globalObject, throwScope, createNotEnoughArgumentsError(globalObject)));
-
-    JSWebAssemblyTag* tag = getTag(callFrame->argument(0));
-    if (!tag)
-        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Exception.is(): First argument must be a WebAssembly.Tag"_s);
+    JSWebAssemblyTag* tag = getTag(vm, callFrame->argument(0));
+    if (!tag) {
+        throwTypeError(globalObject, throwScope, "WebAssembly.Exception.is(): First argument must be a WebAssembly.Tag");
+        return encodedJSValue();
+    }
 
     RELEASE_AND_RETURN(throwScope, JSValue::encode(jsBoolean(jsException->tag() == tag->tag())));
 }

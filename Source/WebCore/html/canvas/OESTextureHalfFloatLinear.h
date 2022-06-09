@@ -32,12 +32,10 @@ namespace WebCore {
 class OESTextureHalfFloatLinear final : public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(OESTextureHalfFloatLinear);
 public:
-    explicit OESTextureHalfFloatLinear(WebGLRenderingContextBase&);
+    OESTextureHalfFloatLinear(WebGLRenderingContextBase&);
     virtual ~OESTextureHalfFloatLinear();
 
     ExtensionName getName() const override;
-
-    static bool supported(GraphicsContextGL&);
 };
 
 } // namespace WebCore

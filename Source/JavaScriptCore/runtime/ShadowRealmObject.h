@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2021 Igalia S.L.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +36,7 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.shadowRealmSpace<mode>();
     }
@@ -49,7 +48,7 @@ public:
 
     DECLARE_INFO;
 
-    static ShadowRealmObject* create(VM&, Structure*, JSGlobalObject*);
+    static ShadowRealmObject* create(VM&, Structure*, const GlobalObjectMethodTable*);
 
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
 

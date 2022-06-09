@@ -304,11 +304,9 @@ struct TIntermRebuild::NodeStackGuard
 {
     ConsList<TIntermNode *> oldNodeStack;
     ConsList<TIntermNode *> &nodeStack;
-    NodeStackGuard(ConsList<TIntermNode *> &nodeStack, TIntermNode *node)
+    NodeStackGuard(ConsList<TIntermNode *> &nodeStack)
         : oldNodeStack(nodeStack), nodeStack(nodeStack)
-    {
-        nodeStack = {node, &oldNodeStack};
-    }
+    {}
     ~NodeStackGuard() { nodeStack = oldNodeStack; }
 };
 
@@ -341,7 +339,8 @@ PreResult TIntermRebuild::traversePre(TIntermNode &originalNode)
         return {originalNode, VisitBits::Both};
     }
 
-    NodeStackGuard guard(mNodeStack, &originalNode);
+    NodeStackGuard guard(mNodeStack);
+    mNodeStack = {&originalNode, &guard.oldNodeStack};
 
     const NodeType originalNodeType = getNodeType(originalNode);
 
@@ -408,7 +407,8 @@ TIntermNode *TIntermRebuild::traverseChildren(NodeType currNodeType,
         return &currNode;
     }
 
-    NodeStackGuard guard(mNodeStack, &currNode);
+    NodeStackGuard guard(mNodeStack);
+    mNodeStack = {&currNode, &guard.oldNodeStack};
 
     switch (currNodeType)
     {
@@ -478,7 +478,8 @@ PostResult TIntermRebuild::traversePost(NodeType currNodeType,
         return currNode;
     }
 
-    NodeStackGuard guard(mNodeStack, &currNode);
+    NodeStackGuard guard(mNodeStack);
+    mNodeStack = {&currNode, &guard.oldNodeStack};
 
     switch (currNodeType)
     {

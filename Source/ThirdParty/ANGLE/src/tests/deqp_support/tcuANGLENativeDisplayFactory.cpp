@@ -32,7 +32,6 @@
 #include "tcuTexture.hpp"
 #include "util/OSPixmap.h"
 #include "util/OSWindow.h"
-#include "util/angle_features_autogen.h"
 
 // clang-format off
 #if (DE_OS == DE_OS_WIN32)
@@ -48,11 +47,6 @@
 
 #if defined(ANGLE_USE_X11)
 #    include <X11/Xlib.h>
-#endif
-
-#if defined(ANGLE_USE_WAYLAND)
-#    include <wayland-client.h>
-#    include <wayland-egl-backend.h>
 #endif
 
 namespace tcu
@@ -310,7 +304,6 @@ NativeWindow::NativeWindow(ANGLENativeDisplay *nativeDisplay,
         std::swap(osWindowWidth, osWindowHeight);
     }
 
-    mWindow->setNativeDisplay(nativeDisplay->getDeviceContext());
     bool initialized = mWindow->initialize("dEQP ANGLE Tests", osWindowWidth, osWindowHeight);
     TCU_CHECK(initialized);
 
@@ -425,20 +418,11 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
       mNativeDisplay(bitCast<eglw::EGLNativeDisplayType>(EGL_DEFAULT_DISPLAY)),
       mPlatformAttributes(std::move(platformAttributes))
 {
-#if (DE_OS == DE_OS_UNIX)
-#    if defined(ANGLE_USE_X11)
+#if (DE_OS == DE_OS_UNIX) && defined(ANGLE_USE_X11)
     // Make sure to only open the X display once so that it can be used by the EGL display as well
     // as pixmaps
     mNativeDisplay = bitCast<eglw::EGLNativeDisplayType>(XOpenDisplay(nullptr));
-#    endif  // ANGLE_USE_X11
-
-#    if defined(ANGLE_USE_WAYLAND)
-    if (mNativeDisplay == 0)
-    {
-        mNativeDisplay = bitCast<eglw::EGLNativeDisplayType>(wl_display_connect(nullptr));
-    }
-#    endif  // ANGLE_USE_WAYLAND
-#endif      // (DE_OS == DE_OS_UNIX)
+#endif  // (DE_OS == DE_OS_UNIX)
 
     // If pre-rotating, let NativeWindowFactory know.
     uint32_t preRotation = 0;
@@ -457,18 +441,15 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
 
         for (; *enabledFeatures; ++enabledFeatures)
         {
-            if (strcmp(enabledFeatures[0],
-                       angle::GetFeatureName(angle::Feature::EmulatedPrerotation90)) == 0)
+            if (strcmp(enabledFeatures[0], "emulatedPrerotation90") == 0)
             {
                 preRotation = 90;
             }
-            else if (strcmp(enabledFeatures[0],
-                            angle::GetFeatureName(angle::Feature::EmulatedPrerotation180)) == 0)
+            else if (strcmp(enabledFeatures[0], "emulatedPrerotation180") == 0)
             {
                 preRotation = 180;
             }
-            else if (strcmp(enabledFeatures[0],
-                            angle::GetFeatureName(angle::Feature::EmulatedPrerotation270)) == 0)
+            else if (strcmp(enabledFeatures[0], "emulatedPrerotation270") == 0)
             {
                 preRotation = 270;
             }

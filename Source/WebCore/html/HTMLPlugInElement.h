@@ -36,8 +36,8 @@ class Instance;
 namespace WebCore {
 
 class PluginReplacement;
-class PluginViewBase;
 class RenderWidget;
+class Widget;
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLPlugInElement);
@@ -49,7 +49,7 @@ public:
     JSC::Bindings::Instance* bindingsInstance();
 
     enum class PluginLoadingPolicy { DoNotLoad, Load };
-    WEBCORE_EXPORT PluginViewBase* pluginWidget(PluginLoadingPolicy = PluginLoadingPolicy::Load) const;
+    WEBCORE_EXPORT Widget* pluginWidget(PluginLoadingPolicy = PluginLoadingPolicy::Load) const;
 
     enum DisplayState {
         Playing,
@@ -59,15 +59,24 @@ public:
     DisplayState displayState() const { return m_displayState; }
     void setDisplayState(DisplayState);
 
+    JSC::JSObject* scriptObjectForPluginReplacement();
+#if PLATFORM(COCOA)
+    JSValueInWrappedObject& pluginReplacementScriptObject() { return m_pluginReplacementScriptObject; }
+#endif
+
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
 
 #if PLATFORM(IOS_FAMILY)
-    bool willRespondToMouseMoveEvents() const final { return false; }
+    bool willRespondToMouseMoveEvents() final { return false; }
 #endif
-    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool willRespondToMouseClickEvents() final;
 
     virtual bool isPlugInImageElement() const = 0;
+
+    bool isUserObservable() const;
+
+    WEBCORE_EXPORT bool isBelowSizeThreshold() const;
 
     // Return whether or not the replacement content for blocked plugins is accessible to the user.
     WEBCORE_EXPORT bool setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason, const String& unavailabilityDescription);
@@ -86,9 +95,12 @@ protected:
 
     void defaultEventHandler(Event&) final;
 
-    virtual bool requestObject(const String& url, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);
+    virtual bool requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues);
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
+
+    // Subclasses should use guardedDispatchBeforeLoadEvent instead of calling dispatchBeforeLoadEvent directly.
+    bool guardedDispatchBeforeLoadEvent(const String& sourceURL);
 
     // This will load the plugin if necessary.
     virtual RenderWidget* renderWidgetLoadingPlugin() const;
@@ -96,6 +108,8 @@ protected:
 private:
     void swapRendererTimerFired();
     bool shouldOverridePlugin(const String& url, const String& mimeType);
+
+    bool dispatchBeforeLoadEvent(const String& sourceURL) = delete; // Generate a compile error if someone calls this by mistake.
 
     bool supportsFocus() const final;
 
@@ -106,7 +120,11 @@ private:
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer m_swapRendererTimer;
     RefPtr<PluginReplacement> m_pluginReplacement;
+#if PLATFORM(COCOA)
+    JSValueInWrappedObject m_pluginReplacementScriptObject;
+#endif
     bool m_isCapturingMouseEvents { false };
+    bool m_inBeforeLoadEventHandler { false };
     DisplayState m_displayState { Playing };
 };
 

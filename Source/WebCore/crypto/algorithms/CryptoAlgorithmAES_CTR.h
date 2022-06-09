@@ -64,7 +64,7 @@ public:
         const size_t m_counterLength;
     };
 
-    static constexpr ASCIILiteral s_name = "AES-CTR"_s;
+    static constexpr const char* s_name = "AES-CTR";
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CTR;
     static Ref<CryptoAlgorithm> create();
 

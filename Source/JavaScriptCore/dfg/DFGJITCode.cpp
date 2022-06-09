@@ -29,38 +29,17 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "DFGThunks.h"
 #include "FTLForOSREntryJITCode.h"
 #include "JumpTable.h"
 
 namespace JSC { namespace DFG {
 
-JITData::JITData(const JITCode& jitCode, ExitVector&& exits)
-    : Base(jitCode.m_linkerIR.size())
-    , m_stubInfos(jitCode.m_unlinkedStubInfos.size())
-    , m_exits(WTFMove(exits))
-{
-    for (unsigned i = 0; i < jitCode.m_linkerIR.size(); ++i) {
-        auto entry = jitCode.m_linkerIR.at(i);
-        switch (entry.type()) {
-        case LinkerIR::Type::StructureStubInfo: {
-            unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
-            const UnlinkedStructureStubInfo& unlinkedStubInfo = jitCode.m_unlinkedStubInfos[index];
-            StructureStubInfo& stubInfo = m_stubInfos[index];
-            stubInfo.initializeFromDFGUnlinkedStructureStubInfo(unlinkedStubInfo);
-            at(i) = &stubInfo;
-            break;
-        }
-        default:
-            at(i) = entry.pointer();
-            break;
-        }
-    }
-}
-
-JITCode::JITCode(bool isUnlinked)
+JITCode::JITCode()
     : DirectJITCode(JITType::DFGJIT)
-    , common(isUnlinked)
+#if ENABLE(FTL_JIT)
+    , osrEntryRetry(0)
+    , abandonOSREntry(false)
+#endif // ENABLE(FTL_JIT)
 {
 }
 
@@ -82,13 +61,15 @@ void JITCode::shrinkToFit(const ConcurrentJSLocker&)
 {
     common.shrinkToFit();
     minifiedDFG.prepareAndShrink();
+    variableEventStream.shrinkToFit();
 }
 
 void JITCode::reconstruct(
     CodeBlock* codeBlock, CodeOrigin codeOrigin, unsigned streamIndex,
     Operands<ValueRecovery>& result)
 {
-    variableEventStream.reconstruct(codeBlock, codeOrigin, minifiedDFG, streamIndex, result);
+    variableEventStream.reconstruct(
+        codeBlock, codeOrigin, minifiedDFG, streamIndex, result);
 }
 
 void JITCode::reconstruct(CallFrame* callFrame, CodeBlock* codeBlock, CodeOrigin codeOrigin, unsigned streamIndex, Operands<std::optional<JSValue>>& result)
@@ -244,19 +225,12 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
     minifiedDFG.validateReferences(trackedReferences);
 }
 
-std::optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
+std::optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
 {
-    const auto* jitData = codeBlock->dfgJITData();
-    auto osrExitThunk = codeBlock->vm().getCTIStub(osrExitGenerationThunkGenerator).retagged<OSRExitPtrTag>();
-    for (unsigned exitIndex = 0; exitIndex < m_osrExit.size(); ++exitIndex) {
-        const auto& codeRef = jitData->exitCode(exitIndex);
-        if (ExecutableMemoryHandle* handle = codeRef.executableMemory()) {
-            if (handle != osrExitThunk.executableMemory()) {
-                if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr()) {
-                    OSRExit& exit = m_osrExit[exitIndex];
-                    return std::optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
-                }
-            }
+    for (OSRExit& exit : m_osrExit) {
+        if (ExecutableMemoryHandle* handle = exit.m_code.executableMemory()) {
+            if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr())
+                return std::optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
         }
     }
 

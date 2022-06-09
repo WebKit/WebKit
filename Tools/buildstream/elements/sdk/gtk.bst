@@ -1,10 +1,11 @@
 kind: meson
+
 sources:
 - kind: git_tag
   url: gitlab_gnome_org:GNOME/gtk.git
-  # No gtk-4-6 branch, so track most recent release...
-  track: 4.6.1
-  ref: 4.6.1-0-g5088103d31942e2af87ed64a61967cdc6af48f78
+  track: master
+  track-tags: true
+  ref: 4.2.0-0-gccbbc2f2babcfaee88d8d8040938ca6bf39d05b6
 build-depends:
 - sdk-build-depends/sassc.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
@@ -29,9 +30,11 @@ depends:
 
 variables:
   meson-local: >-
+    -Denable-broadway-backend=true
+    -Dprint-cloudprint=disabled
     -Dmedia-ffmpeg=disabled
     -Dvulkan=disabled
-    -Dbuild-tests=false
+
 public:
   bst:
     overlap-whitelist:

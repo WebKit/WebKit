@@ -52,8 +52,8 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/cf/TypeCastsCF.h>
 
-static constexpr auto inspectorStartsAttachedSetting = "inspectorStartsAttached"_s;
-static constexpr auto inspectorAttachDisabledSetting = "inspectorAttachDisabled"_s;
+static constexpr const char* inspectorStartsAttachedSetting = "inspectorStartsAttached";
+static constexpr const char* inspectorAttachDisabledSetting = "inspectorAttachDisabled";
 
 static RetainPtr<CFStringRef> createKeyForPreferences(const String& key)
 {
@@ -89,12 +89,12 @@ void WebInspectorClient::sendMessageToFrontend(const String& message)
 
 bool WebInspectorClient::inspectorAttachDisabled()
 {
-    return loadSetting(inspectorAttachDisabledSetting) == "true"_s;
+    return loadSetting(inspectorAttachDisabledSetting) == "true";
 }
 
 void WebInspectorClient::setInspectorAttachDisabled(bool disabled)
 {
-    storeSetting(inspectorAttachDisabledSetting, disabled ? "true"_s : "false"_s);
+    storeSetting(inspectorAttachDisabledSetting, disabled ? "true" : "false");
 }
 
 void WebInspectorClient::deleteInspectorStartsAttached()
@@ -104,12 +104,12 @@ void WebInspectorClient::deleteInspectorStartsAttached()
 
 bool WebInspectorClient::inspectorStartsAttached()
 {
-    return loadSetting(inspectorStartsAttachedSetting) == "true"_s;
+    return loadSetting(inspectorStartsAttachedSetting) == "true";
 }
 
 void WebInspectorClient::setInspectorStartsAttached(bool attached)
 {
-    storeSetting(inspectorStartsAttachedSetting, attached ? "true"_s : "false"_s);
+    storeSetting(inspectorStartsAttachedSetting, attached ? "true" : "false");
 }
 
 void WebInspectorClient::deleteInspectorAttachDisabled()

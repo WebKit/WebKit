@@ -47,35 +47,32 @@ static const uint8_t* copyBuffer(const uint8_t* buffer, size_t bufferSize)
     return bufferCopy;
 }
 
-std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, Vector<Attachment>&& attachments)
+std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
 {
     ASSERT(buffer);
     if (UNLIKELY(!buffer)) {
         RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (bufferSize: %lu)", bufferSize);
         return nullptr;
     }
-    return Decoder::create(copyBuffer(buffer, bufferSize), bufferSize, [](const uint8_t* ptr, size_t) { fastFree(const_cast<uint8_t*>(ptr)); }, WTFMove(attachments)); // NOLINT
+
+    const uint8_t* bufferCopy;
+    if (!bufferDeallocator) {
+        bufferCopy = copyBuffer(buffer, bufferSize);
+        ASSERT(bufferCopy);
+        if (UNLIKELY(!bufferCopy))
+            return nullptr;
+    } else
+        bufferCopy = buffer;
+
+    auto decoder = std::unique_ptr<Decoder>(new Decoder(bufferCopy, bufferSize, bufferDeallocator, WTFMove(attachments)));
+    return decoder->isValid() ? WTFMove(decoder) : nullptr;
 }
 
-std::unique_ptr<Decoder> Decoder::create(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
-{
-    ASSERT(bufferDeallocator);
-    ASSERT(buffer);
-    if (UNLIKELY(!buffer)) {
-        RELEASE_LOG_FAULT(IPC, "Decoder::create() called with a null buffer (bufferSize: %lu)", bufferSize);
-        return nullptr;
-    }
-    auto decoder = std::unique_ptr<Decoder>(new Decoder(buffer, bufferSize, WTFMove(bufferDeallocator), WTFMove(attachments)));
-    if (!decoder->isValid())
-        return nullptr;
-    return decoder;
-}
-
-Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
+Decoder::Decoder(const uint8_t* buffer, size_t bufferSize, void (*bufferDeallocator)(const uint8_t*, size_t), Vector<Attachment>&& attachments)
     : m_buffer { buffer }
     , m_bufferPos { m_buffer }
     , m_bufferEnd { m_buffer + bufferSize }
-    , m_bufferDeallocator { WTFMove(bufferDeallocator) }
+    , m_bufferDeallocator { bufferDeallocator }
     , m_attachments { WTFMove(attachments) }
 {
     if (UNLIKELY(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t))) {
@@ -97,7 +94,7 @@ Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationI
     : m_buffer { stream }
     , m_bufferPos { m_buffer }
     , m_bufferEnd { m_buffer + streamSize }
-    , m_bufferDeallocator { nullptr }
+    , m_bufferDeallocator([] (const uint8_t*, size_t) { })
     , m_destinationID(destinationID)
 {
     if (UNLIKELY(!decode(m_messageName)))
@@ -107,8 +104,12 @@ Decoder::Decoder(const uint8_t* stream, size_t streamSize, uint64_t destinationI
 Decoder::~Decoder()
 {
     ASSERT(m_buffer);
+
     if (m_bufferDeallocator)
         m_bufferDeallocator(m_buffer, m_bufferEnd - m_buffer);
+    else
+        fastFree(const_cast<uint8_t*>(m_buffer));
+
     // FIXME: We need to dispose of the mach ports in cases of failure.
 }
 
@@ -148,7 +149,54 @@ std::unique_ptr<Decoder> Decoder::unwrapForTesting(Decoder& decoder)
     if (!decoder.decode(wrappedMessage))
         return nullptr;
 
-    return Decoder::create(wrappedMessage.data(), wrappedMessage.size(), WTFMove(attachments));
+    return Decoder::create(wrappedMessage.data(), wrappedMessage.size(), nullptr, WTFMove(attachments));
+}
+
+static inline const uint8_t* roundUpToAlignment(const uint8_t* ptr, size_t alignment)
+{
+    // Assert that the alignment is a power of 2.
+    ASSERT(alignment && !(alignment & (alignment - 1)));
+
+    uintptr_t alignmentMask = alignment - 1;
+    return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
+}
+
+static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferStart, const uint8_t* bufferEnd, size_t size)
+{
+    // When size == 0 for the last argument and it's a variable length byte array,
+    // bufferStart == alignedPosition == bufferEnd, so checking (bufferEnd >= alignedPosition)
+    // is not an off-by-one error since (static_cast<size_t>(bufferEnd - alignedPosition) >= size)
+    // will catch issues when size != 0.
+    return bufferEnd >= alignedPosition && bufferStart <= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
+}
+
+bool Decoder::alignBufferPosition(size_t alignment, size_t size)
+{
+    const uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
+    if (UNLIKELY(!alignedBufferIsLargeEnoughToContain(alignedPosition, m_buffer, m_bufferEnd, size))) {
+        // We've walked off the end of this buffer.
+        markInvalid();
+        return false;
+    }
+
+    m_bufferPos = alignedPosition;
+    return true;
+}
+
+bool Decoder::bufferIsLargeEnoughToContain(size_t alignment, size_t size) const
+{
+    return alignedBufferIsLargeEnoughToContain(roundUpToAlignment(m_bufferPos, alignment), m_buffer, m_bufferEnd, size);
+}
+
+bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t alignment)
+{
+    if (!alignBufferPosition(alignment, size))
+        return false;
+
+    memcpy(data, m_bufferPos, size);
+    m_bufferPos += size;
+
+    return true;
 }
 
 const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t alignment)

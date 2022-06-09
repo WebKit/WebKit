@@ -1,23 +1,30 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test.js"></script>
+<script src="../../resources/js-test-pre.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
 <button id="button" aria-expanded="false">
 
-<script>
-    let output = "This tests that aria-expanded changes will send notifications.\n";
+<p id="description"></p>
+<div id="console"></div>
 
-    let notificationCount = 0;
+<script>
+    description("This tests that aria-expanded changes will send notifications.");
+
+    var notificationCount = 0;
     function notificationCallback(element, notification) {
         if (notification == "AXExpandedChanged") {
-            notificationCount++;
+           notificationCount++;
 
-            output += `Received notification: ${notification}\n`;
-            output += `Expanded status: ${element.isExpanded}\n`;
+           debug("Received notification: " + notification);
+           debug("Expanded status: " + element.isExpanded);
+           if (notificationCount == 2) {
+               accessibilityController.removeNotificationListener();
+               finishJSTest();
+           }
         }
     }
 
@@ -25,8 +32,8 @@
         window.jsTestIsAsync = true;
 
         accessibilityController.addNotificationListener(notificationCallback);
-        let button = accessibilityController.accessibleElementById("button");
-        output += `Initial expanded status: ${button.isExpanded}\n`;
+        var button = accessibilityController.accessibleElementById("button");
+        debug("Initial expanded status: " + button.isExpanded);
 
         document.getElementById("button").setAttribute("aria-expanded", "true");
         setTimeout(async () => {
@@ -38,16 +45,9 @@
             await waitFor(() => {
                 return !button.isExpanded;
             });
-
-            await waitFor(() => {
-                return notificationCount == 2;
-            });
-
-            debug(output);
-            accessibilityController.removeNotificationListener();
-            finishJSTest();
         }, 0);
     }
 </script>
+<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

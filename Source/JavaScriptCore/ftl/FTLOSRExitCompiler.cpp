@@ -28,7 +28,6 @@
 
 #if ENABLE(FTL_JIT)
 
-#include "AssemblyHelpersSpoolers.h"
 #include "BytecodeStructs.h"
 #include "CheckpointOSRExitSideState.h"
 #include "DFGOSRExitCompilerCommon.h"
@@ -182,7 +181,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         sizeof(EncodedJSValue) * (
             exit.m_descriptor->m_values.size() + numMaterializations + maxMaterializationNumArguments) +
         requiredScratchMemorySizeInBytes() +
-        codeBlock->jitCode()->calleeSaveRegisters()->sizeOfAreaInBytes());
+        codeBlock->jitCode()->calleeSaveRegisters()->size() * sizeof(uint64_t));
     EncodedJSValue* scratch = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : nullptr;
     EncodedJSValue* materializationPointers = scratch + exit.m_descriptor->m_values.size();
     EncodedJSValue* materializationArguments = materializationPointers + numMaterializations;
@@ -242,7 +241,8 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     
     // Get the call frame and tag thingies.
     // Restore the exiting function's callFrame value into a regT4
-    jit.emitMaterializeTagCheckRegisters();
+    jit.move(MacroAssembler::TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
+    jit.move(MacroAssembler::TrustedImm64(JSValue::NotCellMask), GPRInfo::notCellMaskRegister);
     
     // Do some value profiling.
     if (exit.m_descriptor->m_profileDataFormat != DataFormatNone) {
@@ -254,7 +254,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
             CodeBlock* codeBlock = jit.baselineCodeBlockFor(codeOrigin);
             if (ArrayProfile* arrayProfile = codeBlock->getArrayProfile(codeOrigin.bytecodeIndex())) {
-                const auto* instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr();
+                const Instruction* instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr();
                 CCallHelpers::Jump skipProfile;
                 if (instruction->is<OpGetById>()) {
                     auto& metadata = instruction->as<OpGetById>().metadata(codeBlock);
@@ -285,7 +285,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         }
 
         if (exit.m_descriptor->m_valueProfile)
-            exit.m_descriptor->m_valueProfile.emitReportValue(jit, jit.codeBlock(), JSValueRegs(GPRInfo::regT0), GPRInfo::regT1);
+            exit.m_descriptor->m_valueProfile.emitReportValue(jit, JSValueRegs(GPRInfo::regT0), GPRInfo::regT1);
     }
 
     // Materialize all objects. Don't materialize an object until all
@@ -377,65 +377,9 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     // Save all state from wherever the exit data tells us it was, into the appropriate place in
     // the scratch buffer. This also does the reboxing.
     
-    {
-        std::optional<GPRReg> undefinedGPR;
-        jit.move(CCallHelpers::TrustedImmPtr(scratch), GPRInfo::regT3);
-        CCallHelpers::CopySpooler spooler(jit, CCallHelpers::framePointerRegister, GPRInfo::regT3, GPRInfo::regT0, GPRInfo::regT1);
-        for (unsigned index = exit.m_descriptor->m_values.size(); index--;) {
-            auto& value = exit.m_descriptor->m_values[index];
-            if (value.dataFormat() == DataFormatJS) {
-                switch (value.kind()) {
-                case ExitValueDead:
-                    if (UNLIKELY(!undefinedGPR)) {
-                        jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::regT4);
-                        undefinedGPR = GPRInfo::regT4;
-                    }
-                    spooler.copyGPR(undefinedGPR.value());
-                    spooler.storeGPR(index * sizeof(EncodedJSValue));
-                    break;
-
-                case ExitValueConstant: {
-                    EncodedJSValue currentConstant = JSValue::encode(value.constant());
-                    if (currentConstant == encodedJSUndefined()) {
-                        if (UNLIKELY(!undefinedGPR)) {
-                            jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::regT4);
-                            undefinedGPR = GPRInfo::regT4;
-                        }
-                        spooler.copyGPR(undefinedGPR.value());
-                    } else
-                        spooler.moveConstant(currentConstant);
-                    spooler.storeGPR(index * sizeof(EncodedJSValue));
-                    break;
-                }
-
-                case ExitValueArgument:
-                    Location::forValueRep(exit.m_valueReps[value.exitArgument().argument()]).restoreInto(jit, registerScratch, GPRInfo::regT0);
-                    jit.store64(GPRInfo::regT0, CCallHelpers::Address(GPRInfo::regT3, index * sizeof(EncodedJSValue)));
-                    break;
-
-                case ExitValueInJSStack:
-                case ExitValueInJSStackAsInt32:
-                case ExitValueInJSStackAsInt52:
-                case ExitValueInJSStackAsDouble:
-                    spooler.loadGPR(value.virtualRegister().offset() * sizeof(EncodedJSValue));
-                    spooler.storeGPR(index * sizeof(EncodedJSValue));
-                    break;
-
-                case ExitValueMaterializeNewObject:
-                    jit.loadPtr(materializationToPointer.get(value.objectMaterialization()), GPRInfo::regT0);
-                    jit.store64(GPRInfo::regT0, CCallHelpers::Address(GPRInfo::regT3, index * sizeof(EncodedJSValue)));
-                    break;
-
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                    break;
-                }
-            } else {
-                recoverValue(value);
-                jit.store64(GPRInfo::regT0, CCallHelpers::Address(GPRInfo::regT3, index * sizeof(EncodedJSValue)));
-            }
-        }
-        spooler.finalizeGPR();
+    for (unsigned index = exit.m_descriptor->m_values.size(); index--;) {
+        recoverValue(exit.m_descriptor->m_values[index]);
+        jit.store64(GPRInfo::regT0, scratch + index);
     }
     
     // Henceforth we make it look like the exiting function was called through a register
@@ -446,18 +390,12 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     
     // Before we start messing with the frame, we need to set aside any registers that the
     // FTL code was preserving.
-    {
-        constexpr GPRReg srcBufferGPR = GPRInfo::regT2;
-        constexpr GPRReg destBufferGPR = GPRInfo::regT3;
-        jit.move(CCallHelpers::framePointerRegister, srcBufferGPR);
-        jit.move(CCallHelpers::TrustedImmPtr(unwindScratch), destBufferGPR);
-        CCallHelpers::CopySpooler spooler(CCallHelpers::CopySpooler::BufferRegs::AllowModification, jit, srcBufferGPR, destBufferGPR, GPRInfo::regT0, GPRInfo::regT1);
-        for (unsigned i = codeBlock->jitCode()->calleeSaveRegisters()->registerCount(); i--;) {
-            RegisterAtOffset entry = codeBlock->jitCode()->calleeSaveRegisters()->at(i);
-            spooler.loadGPR(entry.offset());
-            spooler.storeGPR(i * sizeof(uint64_t));
-        }
-        spooler.finalizeGPR();
+    for (unsigned i = codeBlock->jitCode()->calleeSaveRegisters()->size(); i--;) {
+        RegisterAtOffset entry = codeBlock->jitCode()->calleeSaveRegisters()->at(i);
+        jit.load64(
+            MacroAssembler::Address(MacroAssembler::framePointerRegister, entry.offset()),
+            GPRInfo::regT0);
+        jit.store64(GPRInfo::regT0, unwindScratch + i);
     }
     
     CodeBlock* baselineCodeBlock = jit.baselineCodeBlockFor(exit.m_codeOrigin);
@@ -473,112 +411,45 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         MacroAssembler::framePointerRegister, MacroAssembler::stackPointerRegister);
     jit.checkStackPointerAlignment();
 
-    {
-        RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
-        const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
-        auto iterateCalleeSavesImpl = [&](auto check, auto func) {
-            for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-                if (!allFTLCalleeSaves.get(reg))
-                    continue;
-                if (!check(reg))
-                    continue;
-                unsigned unwindIndex = codeBlock->jitCode()->calleeSaveRegisters()->indexOf(reg);
-                const RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
-                func(reg, unwindIndex, baselineRegisterOffset);
-            }
-        };
+    RegisterSet allFTLCalleeSaves = RegisterSet::ftlCalleeSaveRegisters();
+    const RegisterAtOffsetList* baselineCalleeSaves = baselineCodeBlock->jitCode()->calleeSaveRegisters();
 
-        auto iterateGPRCalleeSaves = [&](auto func) {
-            iterateCalleeSavesImpl([](Reg reg) { return reg.isGPR(); }, func);
-        };
-
-        auto iterateFPRCalleeSaves = [&](auto func) {
-            iterateCalleeSavesImpl([](Reg reg) { return reg.isFPR(); }, func);
-        };
-
-        {
-            // unwindIndex == UINT_MAX indicates that the FTL compilation didn't preserve these registers.
-            // This means that it also didn't use them. Their values at the beginning of OSR exit should
-            // be the ones to retain. We saved all registers into the register scratch buffer at the beginning
-            // of the thunk. So we can restore them from there.
-            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT3));
-            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT0));
-            ASSERT(!allFTLCalleeSaves.contains(GPRInfo::regT1));
-            ASSERT(!allFTLCalleeSaves.contains(FPRInfo::fpRegT0));
-            ASSERT(!allFTLCalleeSaves.contains(FPRInfo::fpRegT1));
-            jit.move(CCallHelpers::TrustedImmPtr(registerScratch), GPRInfo::regT3);
-            {
-                // Load from registerScratch buffer to callee-save registers.
-                CCallHelpers::LoadRegSpooler spooler(jit, GPRInfo::regT3);
-                iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
-                    if (unwindIndex == UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), });
-                });
-                spooler.finalizeGPR();
-                iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
-                    if (unwindIndex == UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), });
-                });
-                spooler.finalizeFPR();
-            }
-            {
-                // Copy from registerScratch buffer to call frame.
-                CCallHelpers::CopySpooler spooler(jit, GPRInfo::regT3, CCallHelpers::framePointerRegister, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0, FPRInfo::fpRegT1);
-                iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
-                    if (unwindIndex == UINT_MAX && baselineRegisterOffset) {
-                        spooler.loadGPR(offsetOfReg(reg));
-                        spooler.storeGPR(baselineRegisterOffset->offset());
-                    }
-                });
-                spooler.finalizeGPR();
-                iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
-                    if (unwindIndex == UINT_MAX && baselineRegisterOffset) {
-                        spooler.loadFPR(offsetOfReg(reg));
-                        spooler.storeFPR(baselineRegisterOffset->offset());
-                    }
-                });
-                spooler.finalizeFPR();
-            }
+    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+        if (!allFTLCalleeSaves.get(reg)) {
+            continue;
         }
-        {
-            // The FTL compilation preserved these registers. Their new values are therefore irrelevant,
-            // but we can get their values that were preserved by using the unwind data. We've already
-            // copied all unwind-able preserved registers into the unwind scratch buffer, so we can get
-            // the values to restore from there.
-            ASSERT((bitwise_cast<uintptr_t>(unwindScratch) - bitwise_cast<uintptr_t>(registerScratch)) == requiredScratchMemorySizeInBytes());
-            jit.addPtr(CCallHelpers::TrustedImm32(requiredScratchMemorySizeInBytes()), GPRInfo::regT3); // Change registerScratch to unwindScratch.
-            {
-                // Load from unwindScratch buffer to callee-save registers.
-                CCallHelpers::LoadRegSpooler spooler(jit, GPRInfo::regT3);
-                iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
-                    if (unwindIndex != UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), });
-                });
-                spooler.finalizeGPR();
-                iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
-                    if (unwindIndex != UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), });
-                });
-                spooler.finalizeFPR();
+        unsigned unwindIndex = codeBlock->jitCode()->calleeSaveRegisters()->indexOf(reg);
+        const RegisterAtOffset* baselineRegisterOffset = baselineCalleeSaves->find(reg);
+
+        if (reg.isGPR()) {
+            GPRReg regToLoad = baselineRegisterOffset ? GPRInfo::regT0 : reg.gpr();
+
+            if (unwindIndex == UINT_MAX) {
+                // The FTL compilation didn't preserve this register. This means that it also
+                // didn't use the register. So its value at the beginning of OSR exit should be
+                // preserved by the thunk. Luckily, we saved all registers into the register
+                // scratch buffer, so we can restore them from there.
+                jit.load64(registerScratch + offsetOfReg(reg), regToLoad);
+            } else {
+                // The FTL compilation preserved the register. Its new value is therefore
+                // irrelevant, but we can get the value that was preserved by using the unwind
+                // data. We've already copied all unwind-able preserved registers into the unwind
+                // scratch buffer, so we can get it from there.
+                jit.load64(unwindScratch + unwindIndex, regToLoad);
             }
-            {
-                // Copy from unwindScratch buffer to call frame.
-                CCallHelpers::CopySpooler spooler(jit, GPRInfo::regT3, CCallHelpers::framePointerRegister, GPRInfo::regT0, GPRInfo::regT1, FPRInfo::fpRegT0, FPRInfo::fpRegT1);
-                iterateGPRCalleeSaves([&](Reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
-                    if (unwindIndex != UINT_MAX && baselineRegisterOffset) {
-                        spooler.loadGPR(static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)));
-                        spooler.storeGPR(baselineRegisterOffset->offset());
-                    }
-                });
-                spooler.finalizeGPR();
-                iterateFPRCalleeSaves([&](Reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
-                    if (unwindIndex != UINT_MAX && baselineRegisterOffset) {
-                        spooler.loadFPR(static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)));
-                        spooler.storeFPR(baselineRegisterOffset->offset());
-                    }
-                });
-                spooler.finalizeFPR();
-            }
+
+            if (baselineRegisterOffset)
+                jit.store64(regToLoad, MacroAssembler::Address(MacroAssembler::framePointerRegister, baselineRegisterOffset->offset()));
+        } else {
+            FPRReg fpRegToLoad = baselineRegisterOffset ? FPRInfo::fpRegT0 : reg.fpr();
+
+            if (unwindIndex == UINT_MAX)
+                jit.loadDouble(MacroAssembler::TrustedImmPtr(registerScratch + offsetOfReg(reg)), fpRegToLoad);
+            else
+                jit.loadDouble(MacroAssembler::TrustedImmPtr(unwindScratch + unwindIndex), fpRegToLoad);
+
+            if (baselineRegisterOffset)
+                jit.storeDouble(fpRegToLoad, MacroAssembler::Address(MacroAssembler::framePointerRegister, baselineRegisterOffset->offset()));
         }
     }
 
@@ -586,7 +457,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
     if (exit.m_codeOrigin.inlineStackContainsActiveCheckpoint()) {
         EncodedJSValue* tmpScratch = scratch + exit.m_descriptor->m_values.tmpIndex(0);
-        jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(CCallHelpers::TrustedImmPtr(&vm), CCallHelpers::TrustedImmPtr(&exit), CCallHelpers::TrustedImmPtr(tmpScratch));
+        jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(&vm, &exit, tmpScratch);
         jit.prepareCallOperation(vm);
         jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeOSRExitSideState)), GPRInfo::nonArgGPR0);
         jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
@@ -594,25 +465,17 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
 
     // Now get state out of the scratch buffer and place it back into the stack. The values are
     // already reboxed so we just move them.
-    {
-        constexpr GPRReg srcBufferGPR = GPRInfo::regT2;
-        constexpr GPRReg destBufferGPR = GPRInfo::regT3;
-        jit.move(CCallHelpers::TrustedImmPtr(scratch), srcBufferGPR);
-        jit.move(GPRInfo::callFrameRegister, destBufferGPR);
-        CCallHelpers::CopySpooler spooler(CCallHelpers::CopySpooler::BufferRegs::AllowModification, jit, srcBufferGPR, destBufferGPR, GPRInfo::regT0, GPRInfo::regT1);
-        for (unsigned index = exit.m_descriptor->m_values.size(); index--;) {
-            Operand operand = exit.m_descriptor->m_values.operandForIndex(index);
+    for (unsigned index = exit.m_descriptor->m_values.size(); index--;) {
+        Operand operand = exit.m_descriptor->m_values.operandForIndex(index);
 
-            if (operand.isTmp())
-                continue;
+        if (operand.isTmp())
+            continue;
 
-            if (operand.isLocal() && operand.toLocal() < static_cast<int>(baselineVirtualRegistersForCalleeSaves))
-                continue;
+        if (operand.isLocal() && operand.toLocal() < static_cast<int>(baselineVirtualRegistersForCalleeSaves))
+            continue;
 
-            spooler.loadGPR(index * sizeof(EncodedJSValue));
-            spooler.storeGPR(operand.virtualRegister().offset() * sizeof(EncodedJSValue));
-        }
-        spooler.finalizeGPR();
+        jit.load64(scratch + index, GPRInfo::regT0);
+        jit.store64(GPRInfo::regT0, AssemblyHelpers::addressFor(operand.virtualRegister()));
     }
     
     handleExitCounts(vm, jit, exit);

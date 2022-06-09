@@ -203,8 +203,9 @@ static AppHighlightRangeData::NodePath makeNodePath(RefPtr<Node>&& node)
 
 static AppHighlightRangeData createAppHighlightRangeData(const StaticRange& range)
 {
-    auto text = plainText(range).left(textPreviewLength);
-    auto identifier = createVersion4UUIDString();
+    auto text = plainText(range);
+    text.truncate(textPreviewLength);
+    auto identifier = createCanonicalUUIDString();
 
     return {
         identifier,
@@ -264,7 +265,7 @@ bool AppHighlightStorage::attemptToRestoreHighlightAndScroll(AppHighlightRangeDa
     if (!range)
         return false;
     
-    strongDocument->appHighlightRegister().addAnnotationHighlightWithRange(StaticRange::create(*range));
+    strongDocument->appHighlightRegister().addAppHighlight(StaticRange::create(*range));
     
     if (scroll == ScrollToHighlight::Yes) {
         auto textIndicator = TextIndicator::createWithRange(range.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);

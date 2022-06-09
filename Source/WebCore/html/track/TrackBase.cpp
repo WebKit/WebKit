@@ -86,11 +86,11 @@ TrackListBase* TrackBase::trackList() const
     return m_trackList.get();
 }
 
-WebCoreOpaqueRoot TrackBase::opaqueRoot()
+void* TrackBase::opaqueRoot()
 {
     if (auto trackList = this->trackList())
         return trackList->opaqueRoot();
-    return WebCoreOpaqueRoot { this };
+    return this;
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1

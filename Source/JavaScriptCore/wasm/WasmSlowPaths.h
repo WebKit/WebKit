@@ -34,11 +34,8 @@
 namespace JSC {
 
 class CallFrame;
+struct Instruction;
 struct ProtoCallFrame;
-
-template<typename> struct BaseInstruction;
-struct WasmOpcodeTraits;
-using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
 
 namespace Wasm {
 class Instance;
@@ -47,7 +44,7 @@ class Instance;
 namespace LLInt {
 
 #define WASM_SLOW_PATH_DECL(name) \
-    extern "C" SlowPathReturnType slow_path_wasm_##name(CallFrame* callFrame, const WasmInstruction* pc, Wasm::Instance* instance)
+    extern "C" SlowPathReturnType slow_path_wasm_##name(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance)
 
 #define WASM_SLOW_PATH_HIDDEN_DECL(name) \
     WASM_SLOW_PATH_DECL(name) REFERENCED_FROM_ASM WTF_INTERNAL
@@ -89,11 +86,10 @@ WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_notify);
 WASM_SLOW_PATH_HIDDEN_DECL(throw);
 WASM_SLOW_PATH_HIDDEN_DECL(rethrow);
 WASM_SLOW_PATH_HIDDEN_DECL(retrieve_and_clear_exception);
-WASM_SLOW_PATH_HIDDEN_DECL(rtt_canon);
 
-extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame*, const WasmInstruction*, Wasm::Instance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" SlowPathReturnType slow_path_wasm_popcount(const WasmInstruction* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
-extern "C" SlowPathReturnType slow_path_wasm_popcountll(const WasmInstruction* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame*, const Instruction*, Wasm::Instance* instance, Wasm::ExceptionType) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" SlowPathReturnType slow_path_wasm_popcount(const Instruction* pc, uint32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
+extern "C" SlowPathReturnType slow_path_wasm_popcountll(const Instruction* pc, uint64_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 } } // namespace JSC::LLInt
 

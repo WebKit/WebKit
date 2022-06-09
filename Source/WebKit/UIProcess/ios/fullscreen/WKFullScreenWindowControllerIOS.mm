@@ -461,7 +461,6 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     CGRect _initialFrame;
     CGRect _finalFrame;
-    CGRect _originalWindowFrame;
 
     RetainPtr<NSString> _EVOrganizationName;
     BOOL _EVOrganizationNameIsValid;
@@ -532,7 +531,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_window setWindowLevel:UIWindowLevelNormal - 1];
     [_window setHidden:NO];
 
-    _rootViewController = adoptNS([[UIViewController alloc] init]);
+    _rootViewController = [[UIViewController alloc] init];
     _rootViewController.get().view = adoptNS([[UIView alloc] initWithFrame:_window.get().bounds]).get();
     _rootViewController.get().view.backgroundColor = [UIColor clearColor];
     _rootViewController.get().view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
@@ -635,7 +634,6 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
-    _originalWindowFrame = [[_fullscreenViewController view] frame];
     
     _initialFrame.size = WebKit::sizeExpandedToSize(_initialFrame.size, CGSizeMake(1, 1));
     _finalFrame.size = WebKit::sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
@@ -673,7 +671,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             page->setSuppressVisibilityUpdates(false);
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-            configureViewForEnteringFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _finalFrame.size);
+            configureViewForFullscreen(_fullscreenViewController.get().view);
 #endif
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
@@ -780,22 +778,15 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     if (auto page = [self._webView _page])
         page->setSuppressVisibilityUpdates(true);
 
-    CompletionHandler<void()> completionHandler = [strongSelf = retainPtr(self), self] () mutable {
-        [_fullscreenViewController setPrefersStatusBarHidden:NO];
+    [_fullscreenViewController setPrefersStatusBarHidden:NO];
 
-        if (_interactiveDismissTransitionCoordinator) {
-            [_interactiveDismissTransitionCoordinator finishInteractiveTransition];
-            _interactiveDismissTransitionCoordinator = nil;
-            return;
-        }
+    if (_interactiveDismissTransitionCoordinator) {
+        [_interactiveDismissTransitionCoordinator finishInteractiveTransition];
+        _interactiveDismissTransitionCoordinator = nil;
+        return;
+    }
 
-        [self _dismissFullscreenViewController];
-    };
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
-    configureViewForExitingFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _originalWindowFrame.size, WTFMove(completionHandler));
-#else
-    completionHandler();
-#endif
+    [self _dismissFullscreenViewController];
 }
 
 - (void)_reinsertWebViewUnderPlaceholder

@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RenderFileUploadControl.h"
 
-#include "ElementRareData.h"
 #include "FileList.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
@@ -135,7 +134,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
     if (paintInfo.phase == PaintPhase::Foreground) {
         const String& displayedFilename = fileTextValue();
         const FontCascade& font = style().fontCascade();
-        TextRun textRun = constructTextRun(displayedFilename, style(), ExpansionBehavior::allowRightOnly(), RespectDirection | RespectDirectionOverride);
+        TextRun textRun = constructTextRun(displayedFilename, style(), AllowRightExpansion, RespectDirection | RespectDirectionOverride);
 
 #if PLATFORM(IOS_FAMILY)
         int iconHeight = nodeHeight(uploadButton());
@@ -198,7 +197,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
 
 void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (shouldApplySizeContainment())
+    if (shouldApplySizeContainment(*this))
         return;
     // Figure out how big the filename space needs to be for a given number of characters
     // (using "0" as the nominal character).
@@ -206,10 +205,10 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     const String characterAsString = String(&character, 1);
     const FontCascade& font = style().fontCascade();
     // FIXME: Remove the need for this const_cast by making constructTextRun take a const RenderObject*.
-    float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(characterAsString, style(), ExpansionBehavior::allowRightOnly()));
+    float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(characterAsString, style(), AllowRightExpansion));
 
     const String label = theme().fileListDefaultLabel(inputElement().multiple());
-    float defaultLabelWidth = font.width(constructTextRun(label, style(), ExpansionBehavior::allowRightOnly()));
+    float defaultLabelWidth = font.width(constructTextRun(label, style(), AllowRightExpansion));
     if (HTMLInputElement* button = uploadButton())
         if (RenderObject* buttonRenderer = button->renderer())
             defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;
@@ -244,7 +243,8 @@ VisiblePosition RenderFileUploadControl::positionForPoint(const LayoutPoint&, co
 HTMLInputElement* RenderFileUploadControl::uploadButton() const
 {
     ASSERT(inputElement().shadowRoot());
-    return dynamicDowncast<HTMLInputElement>(inputElement().shadowRoot()->firstChild());
+    Node* buttonNode = inputElement().shadowRoot()->firstChild();
+    return is<HTMLInputElement>(buttonNode) ? downcast<HTMLInputElement>(buttonNode) : nullptr;
 }
 
 String RenderFileUploadControl::buttonValue()
@@ -258,8 +258,7 @@ String RenderFileUploadControl::buttonValue()
 String RenderFileUploadControl::fileTextValue() const
 {
     auto& input = inputElement();
-    if (!input.files())
-        return { };
+    ASSERT(inputElement().files());
     if (input.files()->length() && !input.displayString().isEmpty())
         return StringTruncator::rightTruncate(input.displayString(), maxFilenameWidth(), style().fontCascade());
     return theme().fileListNameForWidth(input.files(), style().fontCascade(), maxFilenameWidth(), input.multiple());

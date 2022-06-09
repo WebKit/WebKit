@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-class WebCoreOpaqueRoot;
-
 class DOMRectReadOnly : public ScriptWrappable, public RefCounted<DOMRectReadOnly> {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(DOMRectReadOnly, WEBCORE_EXPORT);
 public:
@@ -69,8 +67,6 @@ protected:
     double m_y { 0 };
     double m_width { 0 }; // Can be negative.
     double m_height { 0 }; // Can be negative.
-};
+}; 
 
-WebCoreOpaqueRoot root(DOMRectReadOnly*);
-
-} // namespace WebCore
+}

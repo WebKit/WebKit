@@ -45,16 +45,16 @@ TEST(NowPlayingInfoArtwork, DefaultConstruction)
 
 TEST(NowPlayingInfoArtwork, ValueConstruction)
 {
-    WebCore::NowPlayingInfoArtwork test { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
+    WebCore::NowPlayingInfoArtwork test { "http://artwork.com/how_so_pretty.jpeg", "image/jpeg", nullptr };
 
-    EXPECT_EQ("http://artwork.com/how_so_pretty.jpeg"_s, test.src);
-    EXPECT_EQ("image/jpeg"_s, test.mimeType);
+    EXPECT_EQ("http://artwork.com/how_so_pretty.jpeg", test.src);
+    EXPECT_EQ("image/jpeg", test.mimeType);
 }
 
 TEST(NowPlayingInfoArtwork, OperatorEqual)
 {
-    WebCore::NowPlayingInfoArtwork test1 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
-    WebCore::NowPlayingInfoArtwork test2 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
+    WebCore::NowPlayingInfoArtwork test1 { "http://artwork.com/how_so_pretty.jpeg", "image/jpeg", nullptr };
+    WebCore::NowPlayingInfoArtwork test2 { "http://artwork.com/how_so_pretty.jpeg", "image/jpeg", nullptr };
 
     EXPECT_TRUE(test1 == test2);
     EXPECT_FALSE(test1 != test2);
@@ -62,8 +62,8 @@ TEST(NowPlayingInfoArtwork, OperatorEqual)
 
 TEST(NowPlayingInfoArtwork, OperatorDifferent)
 {
-    WebCore::NowPlayingInfoArtwork test1 { "http://artwork.com/how_so_pretty.jpeg"_s, "image/jpeg"_s, nullptr };
-    WebCore::NowPlayingInfoArtwork test2 { "http://artwork.com/how_so_visually_challenging.png"_s, "image/png"_s, nullptr };
+    WebCore::NowPlayingInfoArtwork test1 { "http://artwork.com/how_so_pretty.jpeg", "image/jpeg", nullptr };
+    WebCore::NowPlayingInfoArtwork test2 { "http://artwork.com/how_so_visually_challenging.png", "image/png", nullptr };
 
     EXPECT_FALSE(test1 == test2);
     EXPECT_TRUE(test1 != test2);

@@ -287,7 +287,7 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
             return;
         }
 
-        completionHandler(serializedResultValue->wireBytes(), std::nullopt, std::nullopt);
+        completionHandler(serializedResultValue->data(), std::nullopt, std::nullopt);
     });
 }
 
@@ -438,13 +438,13 @@ void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspe
             return;
         }
 
-        completionHandler(serializedResultValue->wireBytes(), std::nullopt, std::nullopt);
+        completionHandler(serializedResultValue->data(), std::nullopt, std::nullopt);
     });
 }
 
-void WebInspectorUIExtensionController::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, WebCore::FrameIdentifier frameID)
+void WebInspectorUIExtensionController::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::DidShowExtensionTab { extensionID, extensionTabID, frameID }, m_inspectorPageIdentifier);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIExtensionControllerProxy::DidShowExtensionTab { extensionID, extensionTabID }, m_inspectorPageIdentifier);
 }
 
 void WebInspectorUIExtensionController::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)

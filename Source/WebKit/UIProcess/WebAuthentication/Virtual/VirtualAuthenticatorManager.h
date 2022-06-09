@@ -29,11 +29,8 @@
 
 #include "AuthenticatorManager.h"
 #include "VirtualAuthenticatorConfiguration.h"
-#include "VirtualCredential.h"
-#include <wtf/WeakPtr.h>
 
 namespace WebKit {
-struct VirtualCredential;
 
 class VirtualAuthenticatorManager final : public AuthenticatorManager {
 public:
@@ -44,21 +41,10 @@ public:
 
     bool isVirtual() const final { return true; }
 
-    void addCredential(const String&, VirtualCredential&);
-    Vector<VirtualCredential> credentialsMatchingList(const String& authenticatorId, const String& rpId, const Vector<Vector<uint8_t>>& credentialIds);
-
-protected:
-    void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) override;
-    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) override;
-    
-    
 private:
     UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const final;
-    void runPanel() override;
-    void filterTransports(TransportSet&) const override { };
 
     HashMap<String, UniqueRef<VirtualAuthenticatorConfiguration>> m_virtualAuthenticators;
-    HashMap<String, Vector<VirtualCredential>> m_credentialsByAuthenticator;
 };
 
 } // namespace WebKit

@@ -234,8 +234,6 @@ class PlatformInfo(object):
             return 'win'
         if sys_platform.startswith('freebsd'):
             return 'freebsd'
-        if sys_platform.startswith('netbsd'):
-            return 'netbsd'
         if sys_platform.startswith('openbsd'):
             return 'openbsd'
         if sys_platform.startswith('haiku'):

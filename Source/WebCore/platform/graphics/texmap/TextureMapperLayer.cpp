@@ -21,6 +21,7 @@
 #include "TextureMapperLayer.h"
 
 #include "FloatQuad.h"
+#include "GraphicsLayerTextureMapper.h"
 #include "Region.h"
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
@@ -307,7 +308,7 @@ bool TextureMapperLayer::isVisible() const
 void TextureMapperLayer::paintSelfAndChildrenWithReplica(TextureMapperPaintOptions& options)
 {
     if (m_state.replicaLayer) {
-        SetForScope scopedTransform(options.transform, options.transform);
+        SetForScope<TransformationMatrix> scopedTransform(options.transform, options.transform);
         options.transform.multiply(replicaTransform());
         paintSelfAndChildren(options);
     }
@@ -447,8 +448,8 @@ void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
 {
     options.textureMapper.bindSurface(options.surface.get());
     if (m_isBackdrop) {
-        SetForScope scopedTransform(options.transform, TransformationMatrix());
-        SetForScope scopedBackdropLayer(options.backdropLayer, this);
+        SetForScope<TransformationMatrix> scopedTransform(options.transform, TransformationMatrix());
+        SetForScope<TextureMapperLayer*> scopedBackdropLayer(options.backdropLayer, this);
         rootLayer().paintSelfAndChildren(options);
     } else
         paintSelfAndChildren(options);
@@ -470,12 +471,12 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
 {
     auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), BitmapTexture::SupportsAlpha);
     {
-        SetForScope scopedSurface(options.surface, surface);
-        SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
-        SetForScope scopedOpacity(options.opacity, 1);
+        SetForScope<RefPtr<BitmapTexture>> scopedSurface(options.surface, surface);
+        SetForScope<IntSize> scopedOffset(options.offset, -toIntSize(rect.location()));
+        SetForScope<float> scopedOpacity(options.opacity, 1);
         if (m_state.replicaLayer) {
             {
-                SetForScope scopedTransform(options.transform, options.transform);
+                SetForScope<TransformationMatrix> scopedTransform(options.transform, options.transform);
                 options.transform.multiply(replicaTransform());
                 paintIntoSurface(options);
             }
@@ -495,7 +496,7 @@ void TextureMapperLayer::paintRecursive(TextureMapperPaintOptions& options)
     if (!isVisible())
         return;
 
-    SetForScope scopedOpacity(options.opacity, options.opacity * m_currentOpacity);
+    SetForScope<float> scopedOpacity(options.opacity, options.opacity * m_currentOpacity);
 
     if (!shouldBlend()) {
         paintSelfAndChildrenWithReplica(options);
@@ -504,6 +505,15 @@ void TextureMapperLayer::paintRecursive(TextureMapperPaintOptions& options)
 
     paintUsingOverlapRegions(options);
 }
+
+#if !USE(COORDINATED_GRAPHICS)
+void TextureMapperLayer::setChildren(const Vector<GraphicsLayer*>& newChildren)
+{
+    removeAllChildren();
+    for (auto* child : newChildren)
+        addChild(&downcast<GraphicsLayerTextureMapper>(child)->layer());
+}
+#endif
 
 void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)
 {

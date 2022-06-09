@@ -55,7 +55,7 @@ class TokenLexer : public Lexer
 
 }  // anonymous namespace
 
-class ANGLE_NO_DISCARD MacroExpander::ScopedMacroReenabler final : angle::NonCopyable
+class MacroExpander::ScopedMacroReenabler final : angle::NonCopyable
 {
   public:
     ScopedMacroReenabler(MacroExpander *expander);

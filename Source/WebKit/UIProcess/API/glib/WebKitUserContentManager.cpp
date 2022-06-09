@@ -48,9 +48,9 @@ struct _WebKitUserContentManagerPrivate {
 };
 
 /**
- * WebKitUserContentManager:
- *
- * Manages user-defined content which affects web pages.
+ * SECTION:WebKitUserContentManager
+ * @short_description: Manages user-defined content which affects web pages.
+ * @title: WebKitUserContentManager
  *
  * Using a #WebKitUserContentManager user CSS style sheets can be set to
  * be injected in the web pages loaded by a #WebKitWebView, by
@@ -268,13 +268,13 @@ private:
  * receive the signals, it is recommended to connect to the signal
  * *before* registering the handler name:
  *
- * ```c
+ * <informalexample><programlisting>
  * WebKitWebView *view = webkit_web_view_new ();
  * WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager ();
  * g_signal_connect (manager, "script-message-received::foobar",
  *                   G_CALLBACK (handle_script_message), NULL);
  * webkit_user_content_manager_register_script_message_handler (manager, "foobar");
- * ```
+ * </programlisting></informalexample>
  *
  * Registering a script message handler will fail if the requested
  * name has been already registered before.
@@ -289,7 +289,7 @@ gboolean webkit_user_content_manager_register_script_message_handler(WebKitUserC
     g_return_val_if_fail(name, FALSE);
 
     Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name), AtomString::fromUTF8(name), API::ContentWorld::pageContentWorld());
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name), String::fromUTF8(name), API::ContentWorld::pageContentWorld());
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 
@@ -339,7 +339,7 @@ gboolean webkit_user_content_manager_register_script_message_handler_in_world(We
     g_return_val_if_fail(worldName, FALSE);
 
     Ref<WebScriptMessageHandler> handler =
-        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name), AtomString::fromUTF8(name), webkitContentWorld(worldName));
+        WebScriptMessageHandler::create(makeUnique<ScriptMessageClientGtk>(manager, name), String::fromUTF8(name), webkitContentWorld(worldName));
     return manager->priv->userContentController->addUserScriptMessageHandler(handler.get());
 }
 

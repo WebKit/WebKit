@@ -40,13 +40,13 @@ WebTextRenderer* WebTextRenderer::createInstance()
 WebTextRenderer::WebTextRenderer()
 {
     gClassCount++;
-    gClassNameCount().add("WebTextRenderer"_s);
+    gClassNameCount().add("WebTextRenderer");
 }
 
 WebTextRenderer::~WebTextRenderer()
 {
     gClassCount--;
-    gClassNameCount().remove("WebTextRenderer"_s);
+    gClassNameCount().remove("WebTextRenderer");
 }
 
 HRESULT WebTextRenderer::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)

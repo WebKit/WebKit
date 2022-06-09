@@ -27,11 +27,10 @@
 #include "HTMLElement.h"
 #include "HTMLWBRElement.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorLineBox.h"
+#include "InlineIteratorLine.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineElementBox.h"
 #include "LegacyRootInlineBox.h"
-#include "LineSelection.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
 #include "RenderView.h"
@@ -66,7 +65,7 @@ RenderLineBreak::~RenderLineBreak()
 
 LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direction*/, LinePositionMode /*linePositionMode*/) const
 {
-    if (firstLine) {
+    if (firstLine && view().usesFirstLineRules()) {
         const RenderStyle& firstLineStyle = this->firstLineStyle();
         if (&firstLineStyle != &style())
             return firstLineStyle.computedLineHeight();
@@ -81,7 +80,7 @@ LayoutUnit RenderLineBreak::lineHeight(bool firstLine, LineDirectionMode /*direc
 LayoutUnit RenderLineBreak::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
-    const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = style.fontMetrics();
     return LayoutUnit { (fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2).toInt() };
 }
 
@@ -150,7 +149,7 @@ IntRect RenderLineBreak::linesBoundingBox() const
     if (!run)
         return { };
 
-    return enclosingIntRect(run->visualRectIgnoringBlockDirection());
+    return enclosingIntRect(run->rect());
 }
 
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -159,7 +158,7 @@ void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& a
     if (!box)
         return;
 
-    auto rect = box->visualRectIgnoringBlockDirection();
+    auto rect = box->rect();
     rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
 }
 
@@ -169,7 +168,7 @@ void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
     if (!box)
         return;
 
-    auto rect = box->visualRectIgnoringBlockDirection();
+    auto rect = box->rect();
     quads.append(localToAbsoluteQuad(FloatRect(rect.location(), rect.size()), UseTransforms, wasFixed));
 }
 
@@ -186,18 +185,18 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
 
     if (!run)
         return;
-    auto lineBox = run->lineBox();
+    auto line = run->line();
 
-    auto lineSelectionRect = LineSelection::logicalRect(*lineBox);
+    auto lineSelectionRect = line->selectionRect();
     LayoutRect rect = IntRect(run->logicalLeft(), lineSelectionRect.y(), 0, lineSelectionRect.height());
-    if (!lineBox->isHorizontal())
+    if (!line->isHorizontal())
         rect = rect.transposedRect();
 
-    if (lineBox->isFirstAfterPageBreak()) {
+    if (line->legacyRootInlineBox() && line->legacyRootInlineBox()->isFirstAfterPageBreak()) {
         if (run->isHorizontal())
-            rect.shiftYEdgeTo(lineBox->top());
+            rect.shiftYEdgeTo(line->lineBoxTop());
         else
-            rect.shiftXEdgeTo(lineBox->top());
+            rect.shiftXEdgeTo(line->lineBoxTop());
     }
 
     // FIXME: Out-of-flow positioned line breaks do not follow normal containing block chain.

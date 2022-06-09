@@ -52,8 +52,6 @@ function pushNewPromiseReaction(thenable, existingReactions, promiseOrCapability
 @globalPrivate
 function newPromiseCapabilitySlow(constructor)
 {
-    "use strict";
-
     var promiseCapability = {
         @resolve: @undefined,
         @reject: @undefined,
@@ -104,8 +102,6 @@ function newPromiseCapability(constructor)
 @globalPrivate
 function promiseResolve(constructor, value)
 {
-    "use strict";
-
     if (@isPromise(value) && value.constructor === constructor)
         return value;
 
@@ -121,8 +117,6 @@ function promiseResolve(constructor, value)
 @globalPrivate
 function promiseResolveSlow(constructor, value)
 {
-    "use strict";
-
     @assert(constructor !== @Promise);
     var promiseCapability = @newPromiseCapabilitySlow(constructor);
     promiseCapability.@resolve.@call(@undefined, value);
@@ -132,8 +126,6 @@ function promiseResolveSlow(constructor, value)
 @globalPrivate
 function promiseRejectSlow(constructor, reason)
 {
-    "use strict";
-
     @assert(constructor !== @Promise);
     var promiseCapability = @newPromiseCapabilitySlow(constructor);
     promiseCapability.@reject.@call(@undefined, reason);
@@ -240,8 +232,6 @@ function fulfillPromise(promise, value)
 @globalPrivate
 function resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value)
 {
-    "use strict";
-
     @assert(@isPromise(promise));
     var flags = @getPromiseInternalField(promise, @promiseFieldFlags);
     if (flags & @promiseFlagsIsFirstResolvingFunctionCalled)
@@ -253,8 +243,6 @@ function resolvePromiseWithFirstResolvingFunctionCallCheck(promise, value)
 @globalPrivate
 function fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, value)
 {
-    "use strict";
-
     @assert(@isPromise(promise));
     var flags = @getPromiseInternalField(promise, @promiseFieldFlags);
     if (flags & @promiseFlagsIsFirstResolvingFunctionCalled)
@@ -266,8 +254,6 @@ function fulfillPromiseWithFirstResolvingFunctionCallCheck(promise, value)
 @globalPrivate
 function rejectPromiseWithFirstResolvingFunctionCallCheck(promise, reason)
 {
-    "use strict";
-
     @assert(@isPromise(promise));
     var flags = @getPromiseInternalField(promise, @promiseFieldFlags);
     if (flags & @promiseFlagsIsFirstResolvingFunctionCalled)
@@ -364,23 +350,6 @@ function fulfillWithoutPromise(value, onFulfilled, onRejected)
     "use strict";
 
     @enqueueJob(@promiseReactionJobWithoutPromise, onFulfilled, value);
-}
-
-// This function has strong guarantee that each handler function (onFulfilled and onRejected) will be called at most once.
-// This is special version of resolveWithoutPromise which skips resolution's then handling.
-// https://github.com/tc39/ecma262/pull/1250
-@globalPrivate
-function resolveWithoutPromiseForAsyncAwait(resolution, onFulfilled, onRejected)
-{
-    "use strict";
-
-    if (@isPromise(resolution)) {
-        var constructor = resolution.constructor;
-        if (constructor === @Promise || constructor === @InternalPromise)
-            return @performPromiseThen(resolution, onFulfilled, onRejected);
-    }
-
-    return @resolveWithoutPromise(resolution, onFulfilled, onRejected);
 }
 
 @globalPrivate

@@ -55,9 +55,9 @@
   <Target Name="Build" AfterTargets="PreBuild">
     <Message Text="Building $(CONFIGURATION) Solution" />
     <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
-	<Exec Command="$(CMakeCommandCommon) -DWTF_CPU_X86=1 -A Win32 -G &quot;Visual Studio 17 2022&quot;" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build32"/>
+	<Exec Command="$(CMakeCommandCommon) -DWTF_CPU_X86=1 -A Win32 -G &quot;Visual Studio 16 2019&quot;" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build32"/>
 	<Exec Command="msbuild Project.sln /p:Configuration=$(CONFIG)" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build32"/>
-	<Exec Command="$(CMakeCommandCommon) -DWTF_CPU_X86_64=1 -A x64 -G &quot;Visual Studio 17 2022&quot;" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build64"/>
+	<Exec Command="$(CMakeCommandCommon) -DWTF_CPU_X86_64=1 -A x64 -G &quot;Visual Studio 16 2019&quot;" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build64"/>
 	<Exec Command="msbuild Project.sln /p:Configuration=$(CONFIG)" WorkingDirectory="$(OBJROOT)/$(CONFIG)/build64"/>
   </Target>
 
@@ -75,10 +75,10 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\*">
       <Output TaskParameter="Include" ItemName="Bin64Files" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WebKit*$(DebugSuffix).dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WebKit$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin32DLLFiles" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\WebKit*$(DebugSuffix).dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\WebKit$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin64DLLFiles" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build64\bin32\*.resources">

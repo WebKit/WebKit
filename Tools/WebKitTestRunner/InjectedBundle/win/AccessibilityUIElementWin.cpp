@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
-#if ENABLE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY)
 
 #include <WebCore/NotImplemented.h>
 
@@ -185,12 +185,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringAttributeValue(JSStringRef)
-{
-    notImplemented();
-    return nullptr;
-}
-
-JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
 {
     notImplemented();
     return nullptr;
@@ -395,12 +389,6 @@ bool AccessibilityUIElement::isIncrementActionSupported()
 }
 
 bool AccessibilityUIElement::isDecrementActionSupported()
-{
-    notImplemented();
-    return false;
-}
-
-bool AccessibilityUIElement::isBusy() const
 {
     notImplemented();
     return false;
@@ -1015,12 +1003,6 @@ bool AccessibilityUIElement::insertText(JSStringRef)
     return false;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
-{
-    notImplemented();
-    return nullptr;
-}
-
 } // namespace  WTF
 
-#endif // ENABLE(ACCESSIBILITY)
+#endif // HAVE(ACCESSIBILITY)

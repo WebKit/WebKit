@@ -23,7 +23,6 @@
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserver.h>
-#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/Node.h>
 #include <glib-object.h>
 #include <wtf/HashMap.h>

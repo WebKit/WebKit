@@ -39,7 +39,7 @@ namespace WebCore {
 static ExceptionOr<ApplePayAMSUIRequest> convertAndValidateApplePayAMSUIRequest(Document& document, JSC::JSValue data)
 {
     if (data.isEmpty())
-        return Exception { TypeError, "Missing payment method data."_s };
+        return Exception { TypeError, "Missing payment method data." };
 
     auto throwScope = DECLARE_THROW_SCOPE(document.vm());
     auto applePayAMSUIRequest = convertDictionary<ApplePayAMSUIRequest>(*document.globalObject(), data);
@@ -67,7 +67,7 @@ bool ApplePayAMSUIPaymentHandler::handlesIdentifier(const PaymentRequest::Method
         return false;
 
     auto& url = std::get<URL>(identifier);
-    return url.host() == "apple.com"_s && url.path() == "/ams-ui"_s;
+    return url.host() == "apple.com" && url.path() == "/ams-ui";
 }
 
 bool ApplePayAMSUIPaymentHandler::hasActiveSession(Document& document)
@@ -90,7 +90,7 @@ void ApplePayAMSUIPaymentHandler::finishSession(std::optional<bool>&& result)
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
         auto* object = constructEmptyObject(&lexicalGlobalObject);
-        object->putDirect(vm, JSC::Identifier::fromString(vm, "success"_s), JSC::jsBoolean(success));
+        object->putDirect(vm, JSC::Identifier::fromString(vm, "success"), JSC::jsBoolean(success));
 
         RETURN_IF_EXCEPTION(throwScope, { });
 
@@ -161,10 +161,9 @@ ExceptionOr<void> ApplePayAMSUIPaymentHandler::merchantValidationCompleted(JSC::
     return { };
 }
 
-ExceptionOr<void> ApplePayAMSUIPaymentHandler::complete(Document&, std::optional<PaymentComplete>&&, String&&)
+void ApplePayAMSUIPaymentHandler::complete(std::optional<PaymentComplete>&&)
 {
     hide();
-    return { };
 }
 
 ExceptionOr<void> ApplePayAMSUIPaymentHandler::retry(PaymentValidationErrors&&)

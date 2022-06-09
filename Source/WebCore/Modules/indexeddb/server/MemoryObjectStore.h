@@ -34,6 +34,10 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
+namespace PAL {
+class SessionID;
+}
+
 namespace WebCore {
 
 class IDBCursorInfo;
@@ -57,7 +61,7 @@ typedef HashMap<IDBKeyData, ThreadSafeDataBuffer, IDBKeyDataHash, IDBKeyDataHash
 
 class MemoryObjectStore : public RefCounted<MemoryObjectStore> {
 public:
-    static Ref<MemoryObjectStore> create(const IDBObjectStoreInfo&);
+    static Ref<MemoryObjectStore> create(PAL::SessionID, const IDBObjectStoreInfo&);
 
     ~MemoryObjectStore();
 
@@ -104,7 +108,7 @@ public:
     void renameIndex(MemoryIndex&, const String& newName);
 
 private:
-    MemoryObjectStore(const IDBObjectStoreInfo&);
+    MemoryObjectStore(PAL::SessionID, const IDBObjectStoreInfo&);
 
     IDBKeyDataSet::iterator lowestIteratorInRange(const IDBKeyRangeData&, bool reverse) const;
 

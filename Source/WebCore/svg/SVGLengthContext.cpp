@@ -98,7 +98,8 @@ float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengt
     if (length.isAuto() || !length.isSpecified())
         return 0;
 
-    auto viewportSize = this->viewportSize().value_or(FloatSize { });
+    FloatSize viewportSize;
+    determineViewport(viewportSize);
 
     switch (lengthMode) {
     case SVGLengthMode::Width:
@@ -114,7 +115,7 @@ float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengt
 ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLengthType lengthType, SVGLengthMode lengthMode) const
 {
     // If the SVGLengthContext carries a custom viewport, force resolving against it.
-    if (!m_overriddenViewport.isZero()) {
+    if (!m_overriddenViewport.isEmpty()) {
         // 100% = 100.0 instead of 1.0 for historical reasons, this could eventually be changed
         if (lengthType == SVGLengthType::Percentage)
             value /= 100;
@@ -183,17 +184,17 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnits(float value, SVGL
 
 ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToPercentage(float value, SVGLengthMode lengthMode) const
 {
-    auto viewportSize = this->viewportSize();
-    if (!viewportSize)
+    FloatSize viewportSize;
+    if (!determineViewport(viewportSize))
         return Exception { NotSupportedError };
 
     switch (lengthMode) {
     case SVGLengthMode::Width:
-        return value / viewportSize->width() * 100;
+        return value / viewportSize.width() * 100;
     case SVGLengthMode::Height:
-        return value / viewportSize->height() * 100;
+        return value / viewportSize.height() * 100;
     case SVGLengthMode::Other:
-        return value / (viewportSize->diagonalLength() / sqrtOfTwoFloat) * 100;
+        return value / (viewportSize.diagonalLength() / sqrtOfTwoFloat) * 100;
     };
 
     ASSERT_NOT_REACHED();
@@ -202,17 +203,17 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToPercentage(float
 
 ExceptionOr<float> SVGLengthContext::convertValueFromPercentageToUserUnits(float value, SVGLengthMode lengthMode) const
 {
-    auto viewportSize = this->viewportSize();
-    if (!viewportSize)
+    FloatSize viewportSize;
+    if (!determineViewport(viewportSize))
         return Exception { NotSupportedError };
 
     switch (lengthMode) {
     case SVGLengthMode::Width:
-        return value * viewportSize->width();
+        return value * viewportSize.width();
     case SVGLengthMode::Height:
-        return value * viewportSize->height();
+        return value * viewportSize.height();
     case SVGLengthMode::Other:
-        return value * viewportSize->diagonalLength() / sqrtOfTwoFloat;
+        return value * viewportSize.diagonalLength() / sqrtOfTwoFloat;
     };
 
     ASSERT_NOT_REACHED();
@@ -266,7 +267,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value)
 
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
-    float xHeight = std::ceil(style->metricsOfPrimaryFont().xHeight());
+    float xHeight = std::ceil(style->fontMetrics().xHeight());
     if (!xHeight)
         return Exception { NotSupportedError };
 
@@ -281,44 +282,37 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value)
 
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
-    return value * std::ceil(style->metricsOfPrimaryFont().xHeight());
+    return value * std::ceil(style->fontMetrics().xHeight());
 }
 
-std::optional<FloatSize> SVGLengthContext::viewportSize() const
+bool SVGLengthContext::determineViewport(FloatSize& viewportSize) const
 {
     if (!m_context)
-        return std::nullopt;
+        return false;
 
     // If an overridden viewport is given, it has precedence.
-    if (!m_overriddenViewport.isZero())
-        return m_overriddenViewport.size();
-
-    if (!m_viewportSize)
-        m_viewportSize = computeViewportSize();
-    
-    return m_viewportSize;
-}
-
-std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
-{
-    ASSERT(m_overriddenViewport.isZero());
-    ASSERT(m_context);
+    if (!m_overriddenViewport.isEmpty()) {
+        viewportSize = m_overriddenViewport.size();
+        return true;
+    }
 
     // Root <svg> element lengths are resolved against the top level viewport.
-    if (m_context->isOutermostSVGSVGElement())
-        return downcast<SVGSVGElement>(*m_context).currentViewportSize();
+    if (m_context->isOutermostSVGSVGElement()) {
+        viewportSize = downcast<SVGSVGElement>(*m_context).currentViewportSize();
+        return true;
+    }
 
     // Take size from nearest viewport element.
     RefPtr viewportElement = m_context->viewportElement();
     if (!is<SVGSVGElement>(viewportElement))
-        return std::nullopt;
+        return false;
 
     const SVGSVGElement& svg = downcast<SVGSVGElement>(*viewportElement);
-    auto viewportSize = svg.currentViewBoxRect().size();
+    viewportSize = svg.currentViewBoxRect().size();
     if (viewportSize.isEmpty())
         viewportSize = svg.currentViewportSize();
 
-    return viewportSize;
+    return true;
 }
 
 }

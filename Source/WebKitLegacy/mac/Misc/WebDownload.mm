@@ -47,7 +47,7 @@
 static bool shouldCallOnNetworkThread()
 {
 #if PLATFORM(MAC)
-    static bool isOldEpsonSoftwareUpdater = WebCore::MacApplication::isEpsonSoftwareUpdater() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DownloadDelegatesCalledOnTheMainThread);
+    static bool isOldEpsonSoftwareUpdater = WebCore::MacApplication::isEpsonSoftwareUpdater() && !linkedOnOrAfter(SDKVersion::FirstWithDownloadDelegatesCalledOnTheMainThread);
     return isOldEpsonSoftwareUpdater;
 #else
     return false;
@@ -67,7 +67,7 @@ static void callOnDelegateThreadAndWait(Callable&& work)
     if (shouldCallOnNetworkThread() || isMainThread())
         work();
     else {
-        WorkQueue::main().dispatchSync([work = std::forward<Callable>(work)]() mutable {
+        WorkQueue::main().dispatchSync([work = WTFMove(work)]() mutable {
             work();
         });
     }

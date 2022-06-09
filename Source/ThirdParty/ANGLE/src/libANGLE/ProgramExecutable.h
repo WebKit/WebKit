@@ -113,7 +113,7 @@ class ProgramExecutable final : public angle::Subject
     ProgramExecutable(const ProgramExecutable &other);
     ~ProgramExecutable() override;
 
-    void reset(bool clearInfoLog);
+    void reset();
 
     void save(bool isSeparable, gl::BinaryOutputStream *stream) const;
     void load(bool isSeparable, gl::BinaryInputStream *stream);
@@ -137,11 +137,6 @@ class ProgramExecutable final : public angle::Subject
         return mLinkedShaderStages[shaderType];
     }
     size_t getLinkedShaderStageCount() const { return mLinkedShaderStages.count(); }
-    bool hasLinkedGraphicsShader() const
-    {
-        return mLinkedShaderStages.any() &&
-               mLinkedShaderStages != gl::ShaderBitSet{gl::ShaderType::Compute};
-    }
     bool hasLinkedTessellationShader() const
     {
         return mLinkedShaderStages[ShaderType::TessEvaluation];
@@ -182,13 +177,6 @@ class ProgramExecutable final : public angle::Subject
     {
         return mActiveSamplerTypes;
     }
-
-    void setActive(size_t textureUnit,
-                   const SamplerBinding &samplerBinding,
-                   const gl::LinkedUniform &samplerUniform);
-    void setInactive(size_t textureUnit);
-    void hasSamplerTypeConflict(size_t textureUnit);
-    void hasSamplerFormatConflict(size_t textureUnit);
 
     void updateActiveSamplers(const ProgramState &programState);
 
@@ -231,8 +219,7 @@ class ProgramExecutable final : public angle::Subject
     const RangeUI &getImageUniformRange() const { return mImageUniformRange; }
     const RangeUI &getAtomicCounterUniformRange() const { return mAtomicCounterUniformRange; }
     const RangeUI &getFragmentInoutRange() const { return mFragmentInoutRange; }
-    bool enablesPerSampleShading() const { return mEnablesPerSampleShading; }
-    BlendEquationBitSet getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
+    bool usesEarlyFragmentTestsOptimization() const { return mUsesEarlyFragmentTestsOptimization; }
     const std::vector<TransformFeedbackVarying> &getLinkedTransformFeedbackVaryings() const
     {
         return mLinkedTransformFeedbackVaryings;
@@ -354,15 +341,15 @@ class ProgramExecutable final : public angle::Subject
                       std::vector<UnusedUniform> *unusedUniforms,
                       std::vector<VariableLocation> *uniformLocationsOutOrNull);
 
-    void copyInputsFromProgram(const ProgramState &programState);
-    void copyShaderBuffersFromProgram(const ProgramState &programState, ShaderType shaderType);
+    void copyShaderBuffersFromProgram(const ProgramState &programState);
     void clearSamplerBindings();
     void copySamplerBindingsFromProgram(const ProgramState &programState);
     void copyImageBindingsFromProgram(const ProgramState &programState);
-    void copyOutputsFromProgram(const ProgramState &programState);
     void copyUniformsFromProgramMap(const ShaderMap<Program *> &programs);
 
   private:
+    // TODO(timvp): http://anglebug.com/3570: Investigate removing these friend
+    // class declarations and accessing the necessary members with getters/setters.
     friend class Program;
     friend class ProgramPipeline;
     friend class ProgramState;
@@ -406,7 +393,7 @@ class ProgramExecutable final : public angle::Subject
                                      const ProgramAliasedBindings &fragmentOutputIndices);
 
     void linkSamplerAndImageBindings(GLuint *combinedImageUniformsCount);
-    bool linkAtomicCounterBuffers(const Context *context, InfoLog &infoLog);
+    bool linkAtomicCounterBuffers();
 
     InfoLog mInfoLog;
 
@@ -472,10 +459,7 @@ class ProgramExecutable final : public angle::Subject
     std::vector<InterfaceBlock> mShaderStorageBlocks;
 
     RangeUI mFragmentInoutRange;
-    bool mEnablesPerSampleShading;
-
-    // KHR_blend_equation_advanced supported equation list
-    BlendEquationBitSet mAdvancedBlendEquations;
+    bool mUsesEarlyFragmentTestsOptimization;
 
     // An array of the samplers that are used by the program
     std::vector<SamplerBinding> mSamplerBindings;

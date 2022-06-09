@@ -26,12 +26,8 @@
 #include "config.h"
 #include "NetworkDataTaskCurl.h"
 
-#include "APIError.h"
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
-#include "DataReference.h"
-#include "Download.h"
-#include "NetworkProcess.h"
 #include "NetworkSessionCurl.h"
 #include "PrivateRelayed.h"
 #include <WebCore/AuthenticationChallenge.h>
@@ -46,7 +42,6 @@
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/SynchronousLoaderClient.h>
 #include <pal/text/TextEncoding.h>
-#include <wtf/FileSystem.h>
 
 namespace WebKit {
 
@@ -113,9 +108,6 @@ void NetworkDataTaskCurl::cancel()
 
     if (m_curlRequest)
         m_curlRequest->cancel();
-
-    if (isDownload())
-        deleteDownloadFile();
 }
 
 void NetworkDataTaskCurl::invalidateAndCancel()
@@ -188,23 +180,6 @@ void NetworkDataTaskCurl::curlDidReceiveData(CurlRequest&, const SharedBuffer& b
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
-    if (isDownload()) {
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
-        RELEASE_ASSERT(download);
-        uint64_t bytesWritten = 0;
-        for (auto& segment : buffer) {
-            if (-1 == FileSystem::writeToFile(m_downloadDestinationFile, segment.segment->data(), segment.segment->size())) {
-                download->didFail(ResourceError::httpError(CURLE_WRITE_ERROR, m_response.url()), IPC::DataReference());
-                invalidateAndCancel();
-                return;
-            }
-
-            bytesWritten += segment.segment->size();
-        }
-        download->didReceiveData(bytesWritten, 0, 0);
-        return;
-    }
-
     m_client->didReceiveData(buffer);
 }
 
@@ -213,25 +188,7 @@ void NetworkDataTaskCurl::curlDidComplete(CurlRequest&, NetworkLoadMetrics&& net
     if (state() == State::Canceling || state() == State::Completed || (!m_client && !isDownload()))
         return;
 
-    if (isDownload()) {
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
-        RELEASE_ASSERT(download);
-        FileSystem::closeFile(m_downloadDestinationFile);
-        m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
-        download->didFinish();
-        return;
-    }
-
     m_client->didCompleteWithError({ }, WTFMove(networkLoadMetrics));
-}
-
-void NetworkDataTaskCurl::deleteDownloadFile()
-{
-    if (FileSystem::isHandleValid(m_downloadDestinationFile)) {
-        FileSystem::closeFile(m_downloadDestinationFile);
-        FileSystem::deleteFile(m_pendingDownloadLocation);
-        m_downloadDestinationFile = FileSystem::invalidPlatformFileHandle;
-    }
 }
 
 void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceError&& resourceError, CertificateInfo&& certificateInfo)
@@ -244,20 +201,12 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
         return;
     }
 
-    if (isDownload()) {
-        deleteDownloadFile();
-        auto* download = m_session->networkProcess().downloadManager().download(m_pendingDownloadID);
-        RELEASE_ASSERT(download);
-        download->didFail(resourceError, IPC::DataReference());
-        return;
-    }
-
     m_client->didCompleteWithError(resourceError);
 }
 
 bool NetworkDataTaskCurl::shouldRedirectAsGET(const ResourceRequest& request, bool crossOrigin)
 {
-    if (request.httpMethod() == "GET"_s || request.httpMethod() == "HEAD"_s)
+    if (request.httpMethod() == "GET" || request.httpMethod() == "HEAD")
         return false;
 
     if (!request.url().protocolIsInHTTPFamily())
@@ -266,10 +215,10 @@ bool NetworkDataTaskCurl::shouldRedirectAsGET(const ResourceRequest& request, bo
     if (m_response.isSeeOther())
         return true;
 
-    if ((m_response.isMovedPermanently() || m_response.isFound()) && (request.httpMethod() == "POST"_s))
+    if ((m_response.isMovedPermanently() || m_response.isFound()) && (request.httpMethod() == "POST"))
         return true;
 
-    if (crossOrigin && (request.httpMethod() == "DELETE"_s))
+    if (crossOrigin && (request.httpMethod() == "DELETE"))
         return true;
 
     return false;
@@ -289,24 +238,6 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
         case PolicyAction::Ignore:
             invalidateAndCancel();
             break;
-        case PolicyAction::Download: {
-            m_downloadDestinationFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Write);
-            if (!FileSystem::isHandleValid(m_downloadDestinationFile)) {
-                if (m_client)
-                    m_client->didCompleteWithError(ResourceError::httpError(CURLE_WRITE_ERROR, m_response.url()));
-                invalidateAndCancel();
-                return;
-            }
-
-            auto& downloadManager = m_session->networkProcess().downloadManager();
-            auto download = makeUnique<Download>(downloadManager, m_pendingDownloadID, *this, *m_session, suggestedFilename());
-            auto* downloadPtr = download.get();
-            downloadManager.dataTaskBecameDownloadTask(m_pendingDownloadID, WTFMove(download));
-            downloadPtr->didCreateDestination(m_pendingDownloadLocation);
-            if (m_curlRequest)
-                m_curlRequest->completeDidReceiveResponse();
-            break;
-        }
         default:
             notImplemented();
             break;
@@ -330,14 +261,14 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
     request.setURL(redirectedURL);
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s))
+    if (m_shouldClearReferrerOnHTTPSToHTTPRedirect && !request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https"))
         request.clearHTTPReferrer();
 
     bool isCrossOrigin = !protocolHostAndPortAreEqual(m_firstRequest.url(), request.url());
-    if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get"_s)) {
+    if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
         // Change request method to GET if change was made during a previous redirection or if current redirection says so.
         if (!request.url().protocolIsInHTTPFamily() || shouldRedirectAsGET(request, isCrossOrigin)) {
-            request.setHTTPMethod("GET"_s);
+            request.setHTTPMethod("GET");
             request.setHTTPBody(nullptr);
             request.clearHTTPContentType();
         }
@@ -516,7 +447,7 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
 
 void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 {
-    auto includeSecureCookies = request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
     auto cookieHeaderField = m_session->networkStorageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), WebCore::SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ShouldAskITP::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No).first;
     if (!cookieHeaderField.isEmpty())
         request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
@@ -524,11 +455,11 @@ void NetworkDataTaskCurl::appendCookieHeader(WebCore::ResourceRequest& request)
 
 void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& request, const CurlResponse& response)
 {
-    static constexpr auto setCookieHeader = "set-cookie: "_s;
+    static const auto setCookieHeader = "set-cookie: ";
 
     for (auto header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
-            String setCookieString = header.right(header.length() - setCookieHeader.length());
+            String setCookieString = header.right(header.length() - strlen(setCookieHeader));
             m_session->networkStorageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
         }
     }

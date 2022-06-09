@@ -33,7 +33,6 @@
 #include "ChromeClient.h"
 #include "FullscreenManager.h"
 #include "HTMLAnchorElement.h"
-#include "HTMLAttachmentElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDataListElement.h"
@@ -79,9 +78,6 @@ StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
 StyleSheetContents* UserAgentStyle::imageControlsStyleSheet;
 #endif
 StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
-#if ENABLE(ATTACHMENT_ELEMENT)
-StyleSheetContents* UserAgentStyle::attachmentStyleSheet;
-#endif
 #if ENABLE(DATALIST_ELEMENT)
 StyleSheetContents* UserAgentStyle::dataListStyleSheet;
 #endif
@@ -193,12 +189,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             }
         }
 #endif // ENABLE(VIDEO) && !ENABLE(MODERN_MEDIA_CONTROLS)
-#if ENABLE(ATTACHMENT_ELEMENT)
-        else if (!attachmentStyleSheet && is<HTMLAttachmentElement>(element)) {
-            attachmentStyleSheet = parseUASheet(RenderTheme::singleton().attachmentStyleSheet());
-            addToDefaultStyle(*attachmentStyleSheet);
-        }
-#endif // ENABLE(ATTACHMENT_ELEMENT)
 #if ENABLE(DATALIST_ELEMENT)
         else if (!dataListStyleSheet && is<HTMLDataListElement>(element)) {
             dataListStyleSheet = parseUASheet(RenderTheme::singleton().dataListStyleSheet());

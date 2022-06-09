@@ -230,24 +230,19 @@ WI.AuditManager = class AuditManager extends WI.Object
         WI.showRepresentedObject(object);
     }
 
-    export(saveMode, object)
+    export(object)
     {
         console.assert(object instanceof WI.AuditTestCase || object instanceof WI.AuditTestGroup || object instanceof WI.AuditTestCaseResult || object instanceof WI.AuditTestGroupResult, object);
 
-        function dataForObject(object) {
-            return {
-                displayType: object instanceof WI.AuditTestResultBase ? WI.UIString("Result") : WI.UIString("Audit"),
-                content: JSON.stringify(object),
-                suggestedName: object.name + (object instanceof WI.AuditTestResultBase ? ".result" : ".audit"),
-            };
-        }
+        let filename = object.name;
+        if (object instanceof WI.AuditTestResultBase)
+            filename = WI.UIString("%s Result").format(filename);
 
-        let data = [dataForObject(object)];
-
-        if (saveMode === WI.FileUtilities.SaveMode.FileVariants && object instanceof WI.AuditTestBase && object.result)
-            data.push(dataForObject(object.result));
-
-        WI.FileUtilities.save(saveMode, data);
+        WI.FileUtilities.save({
+            content: JSON.stringify(object),
+            suggestedName: filename + ".json",
+            forceSaveAs: true,
+        });
     }
 
     loadStoredTests()

@@ -1,4 +1,0 @@
-
-
-PASS Parent frame ignores paint-timing events fired from child image rendering.
-

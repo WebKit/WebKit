@@ -35,10 +35,10 @@
 #import <WebCore/ApplePayError.h>
 #import <WebCore/ApplePayErrorCode.h>
 #import <WebCore/ApplePayErrorContactField.h>
-#import <WebCore/ApplePayPaymentAuthorizationResult.h>
 #import <WebCore/ApplePayPaymentMethodUpdate.h>
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethodUpdate.h>
+#import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentMerchantSession.h>
 #import <WebCore/PaymentSummaryItems.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -66,27 +66,19 @@ namespace WebKit {
 // FIXME: Rather than having these free functions scattered about, Apple Pay data types should know
 // how to convert themselves to and from their platform representations.
 
-static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::ApplePayPaymentAuthorizationResult::Status status)
+static PKPaymentAuthorizationStatus toPKPaymentAuthorizationStatus(WebCore::PaymentAuthorizationStatus status)
 {
     switch (status) {
-    case WebCore::ApplePayPaymentAuthorizationResult::Success:
+    case WebCore::PaymentAuthorizationStatus::Success:
         return PKPaymentAuthorizationStatusSuccess;
-
-    case WebCore::ApplePayPaymentAuthorizationResult::Failure:
+    case WebCore::PaymentAuthorizationStatus::Failure:
         return PKPaymentAuthorizationStatusFailure;
-
-    case WebCore::ApplePayPaymentAuthorizationResult::PINRequired:
+    case WebCore::PaymentAuthorizationStatus::PINRequired:
         return PKPaymentAuthorizationStatusPINRequired;
-
-    case WebCore::ApplePayPaymentAuthorizationResult::PINIncorrect:
+    case WebCore::PaymentAuthorizationStatus::PINIncorrect:
         return PKPaymentAuthorizationStatusPINIncorrect;
-
-    case WebCore::ApplePayPaymentAuthorizationResult::PINLockout:
+    case WebCore::PaymentAuthorizationStatus::PINLockout:
         return PKPaymentAuthorizationStatusPINLockout;
-
-    default:
-        ASSERT_NOT_REACHED();
-        return PKPaymentAuthorizationStatusFailure;
     }
 }
 
@@ -128,72 +120,72 @@ static NSError *toNSError(const WebCore::ApplePayError& error)
 
         switch (*contactField) {
         case WebCore::ApplePayErrorContactField::PhoneNumber:
-            pkContactField = PKContactFieldPhoneNumber;
+            pkContactField = PAL::get_PassKit_PKContactFieldPhoneNumber();
             break;
             
         case WebCore::ApplePayErrorContactField::EmailAddress:
-            pkContactField = PKContactFieldEmailAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldEmailAddress();
             break;
             
         case WebCore::ApplePayErrorContactField::Name:
-            pkContactField = PKContactFieldName;
+            pkContactField = PAL::get_PassKit_PKContactFieldName();
             break;
             
         case WebCore::ApplePayErrorContactField::PhoneticName:
-            pkContactField = PKContactFieldPhoneticName;
+            pkContactField = PAL::get_PassKit_PKContactFieldPhoneticName();
             break;
             
         case WebCore::ApplePayErrorContactField::PostalAddress:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             break;
             
         case WebCore::ApplePayErrorContactField::AddressLines:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressStreetKey();
             break;
             
         case WebCore::ApplePayErrorContactField::SubLocality:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressSubLocalityKey();
             break;
             
         case WebCore::ApplePayErrorContactField::Locality:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressCityKey();
             break;
             
         case WebCore::ApplePayErrorContactField::PostalCode:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressPostalCodeKey();
             break;
             
         case WebCore::ApplePayErrorContactField::SubAdministrativeArea:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressSubAdministrativeAreaKey();
             break;
             
         case WebCore::ApplePayErrorContactField::AdministrativeArea:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressStateKey();
             break;
             
         case WebCore::ApplePayErrorContactField::Country:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressCountryKey();
             break;
             
         case WebCore::ApplePayErrorContactField::CountryCode:
-            pkContactField = PKContactFieldPostalAddress;
+            pkContactField = PAL::get_PassKit_PKContactFieldPostalAddress();
             postalAddressKey = getCNPostalAddressISOCountryCodeKey();
             break;
         }
 
-        [userInfo setObject:pkContactField forKey:PKPaymentErrorContactFieldUserInfoKey];
+        [userInfo setObject:pkContactField forKey:PAL::get_PassKit_PKPaymentErrorContactFieldUserInfoKey()];
         if (postalAddressKey)
-            [userInfo setObject:postalAddressKey forKey:PKPaymentErrorPostalAddressUserInfoKey];
+            [userInfo setObject:postalAddressKey forKey:PAL::get_PassKit_PKPaymentErrorPostalAddressUserInfoKey()];
     }
 
-    return [NSError errorWithDomain:PKPaymentErrorDomain code:toPKPaymentErrorCode(error.code()) userInfo:userInfo.get()];
+    return [NSError errorWithDomain:PAL::get_PassKit_PKPaymentErrorDomain() code:toPKPaymentErrorCode(error.code()) userInfo:userInfo.get()];
 }
 
 static RetainPtr<NSArray> toNSErrors(const Vector<RefPtr<WebCore::ApplePayError>>& errors)
@@ -239,18 +231,11 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
     [platformDelegate() completePaymentMethodSelection:paymentMethodUpdate.get()];
 }
 
-void PaymentAuthorizationPresenter::completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)
+void PaymentAuthorizationPresenter::completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
 {
     ASSERT(platformDelegate());
-    ASSERT(result.isFinalState());
-
-    auto status = toPKPaymentAuthorizationStatus(result.status);
-    auto errors = toNSErrors(result.errors);
-
-#if defined(PaymentAuthorizationPresenterAdditions_completePaymentSession)
-    PaymentAuthorizationPresenterAdditions_completePaymentSession
-#endif
-
+    auto status = result ? toPKPaymentAuthorizationStatus(result->status) : PKPaymentAuthorizationStatusSuccess;
+    RetainPtr<NSArray> errors = result ? toNSErrors(result->errors) : @[ ];
     [platformDelegate() completePaymentSession:status errors:errors.get()];
 }
 

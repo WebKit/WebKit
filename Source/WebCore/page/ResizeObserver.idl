@@ -30,8 +30,9 @@
     Exposed=Window,
     JSCustomMarkFunction,
     CustomIsReachable,
+    ImplementationLacksVTable
 ] interface ResizeObserver {
-    [CallWith=CurrentDocument] constructor(ResizeObserverCallback callback);
+    [CallWith=Document] constructor(ResizeObserverCallback callback);
 
     undefined observe(Element target, optional ResizeObserverOptions options);
     undefined unobserve(Element target);

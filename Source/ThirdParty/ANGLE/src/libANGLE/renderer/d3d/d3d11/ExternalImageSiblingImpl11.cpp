@@ -109,7 +109,6 @@ angle::Result ExternalImageSiblingImpl11::getAttachmentRenderTarget(
 }
 
 angle::Result ExternalImageSiblingImpl11::initializeContents(const gl::Context *context,
-                                                             GLenum binding,
                                                              const gl::ImageIndex &imageIndex)
 {
     UNREACHABLE();

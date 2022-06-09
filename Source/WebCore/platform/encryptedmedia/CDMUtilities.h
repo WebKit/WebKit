@@ -35,11 +35,11 @@
 
 namespace WebCore {
 
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 namespace CDMUtilities {
 
-RefPtr<JSON::Object> parseJSONObject(const SharedBuffer&);
+RefPtr<JSON::Object> parseJSONObject(const FragmentedSharedBuffer&);
 
 };
 

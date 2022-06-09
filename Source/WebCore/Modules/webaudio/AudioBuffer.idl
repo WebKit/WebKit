@@ -28,8 +28,8 @@
 
 [
     Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudioEnabled,
     GenerateIsReachable=Impl,
+    ImplementationLacksVTable,
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     ReportExtraMemoryCost,
@@ -42,7 +42,7 @@
     readonly attribute unsigned long numberOfChannels;
 
     // Channel access
-    [CallWith=CurrentGlobalObject] any getChannelData(unsigned long channelIndex);
+    [CallWith=GlobalObject] any getChannelData(unsigned long channelIndex);
     undefined copyFromChannel(Float32Array destination, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
     undefined copyToChannel(Float32Array source, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
 };

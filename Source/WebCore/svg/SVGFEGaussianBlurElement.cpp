@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,8 @@
 #include "config.h"
 #include "SVGFEGaussianBlurElement.h"
 
-#include "FEGaussianBlur.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
@@ -53,7 +54,7 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
 {
     m_stdDeviationX->setBaseValInternal(x);
     m_stdDeviationY->setBaseValInternal(y);
-    updateSVGRendererForElementChange();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -87,25 +88,25 @@ void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-IntOutsets SVGFEGaussianBlurElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
+RefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto stdDeviation = SVGFilter::calculateResolvedSize({ stdDeviationX(), stdDeviationY() }, targetBoundingBox, primitiveUnits);
-    return FEGaussianBlur::calculateOutsets(stdDeviation);
-}
+    auto input1 = filterBuilder.getEffectById(in1());
+    if (!input1)
+        return nullptr;
 
-RefPtr<FilterEffect> SVGFEGaussianBlurElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
-{
     if (stdDeviationX() < 0 || stdDeviationY() < 0)
         return nullptr;
 
-    return FEGaussianBlur::create(stdDeviationX(), stdDeviationY(), edgeMode());
+    auto effect = FEGaussianBlur::create(stdDeviationX(), stdDeviationY(), edgeMode());
+    effect->inputEffects() = { input1.releaseNonNull() };
+    return effect;
 }
 
-} // namespace WebCore
+}

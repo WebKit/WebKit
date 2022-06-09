@@ -74,9 +74,7 @@ inline AbstractSlotVisitor::ReferrerContext::ReferrerContext(AbstractSlotVisitor
         // An OpaqueRoot contexts can only be on the leaf.
         RELEASE_ASSERT(!m_previous->m_isOpaqueRootContext);
     }
-IGNORE_GCC_WARNINGS_BEGIN("dangling-pointer")
     m_visitor.m_context = this;
-IGNORE_GCC_WARNINGS_END
 }
 
 inline AbstractSlotVisitor::ReferrerContext::ReferrerContext(AbstractSlotVisitor& visitor, AbstractSlotVisitor::OpaqueRootTag)
@@ -158,16 +156,6 @@ template<typename T, typename Traits>
 ALWAYS_INLINE void AbstractSlotVisitor::appendHidden(const WriteBarrierBase<T, Traits>& slot)
 {
     appendHiddenUnbarriered(slot.get());
-}
-
-ALWAYS_INLINE void AbstractSlotVisitor::append(const WriteBarrierStructureID& slot)
-{
-    appendUnbarriered(reinterpret_cast<JSCell*>(slot.get()));
-}
-
-ALWAYS_INLINE void AbstractSlotVisitor::appendHidden(const WriteBarrierStructureID& slot)
-{
-    appendHiddenUnbarriered(reinterpret_cast<JSCell*>(slot.get()));
 }
 
 ALWAYS_INLINE void AbstractSlotVisitor::appendHiddenUnbarriered(JSValue value)

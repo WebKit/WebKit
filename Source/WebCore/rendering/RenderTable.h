@@ -280,7 +280,7 @@ protected:
 private:
     static RenderPtr<RenderTable> createTableWithStyle(Document&, const RenderStyle&);
 
-    ASCIILiteral renderName() const override { return "RenderTable"_s; }
+    const char* renderName() const override { return "RenderTable"; }
 
     bool isTable() const final { return true; }
 
@@ -307,6 +307,8 @@ private:
     void invalidateCachedColumns();
 
     void invalidateCachedColumnOffsets();
+
+    RenderBlock* firstLineBlock() const final;
     
     void updateLogicalWidth() final;
 

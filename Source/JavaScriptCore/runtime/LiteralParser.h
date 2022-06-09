@@ -68,7 +68,7 @@ struct JSONPData {
 template <typename CharType>
 struct LiteralParserToken {
 private:
-WTF_MAKE_NONCOPYABLE(LiteralParserToken);
+WTF_MAKE_NONCOPYABLE(LiteralParserToken<CharType>);
 
 public:
     LiteralParserToken() = default;

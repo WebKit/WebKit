@@ -23,7 +23,7 @@
     DOMJIT,
     Exposed=Window
 ] interface DocumentFragment : Node {
-    [CallWith=CurrentDocument] constructor();
+    [CallWith=Document] constructor();
 };
 
 DocumentFragment includes ParentNode;

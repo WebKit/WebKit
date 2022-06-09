@@ -74,7 +74,7 @@ class PullRequest(object):
     ESCAPE_TABLE = {
         '"': '&quot;',
         "'": '&apos;',
-        '>': '&gt;',
+        '>': ' &gt;',
         '<': '&lt;',
         '&': '&amp;',
     }
@@ -82,7 +82,7 @@ class PullRequest(object):
     @classmethod
     def escape_html(cls, message):
         message = ''.join(cls.ESCAPE_TABLE.get(c, c) for c in message)
-        return re.sub(r'(https?://[^\s<>,:;]+?)(?=[\s<>,:;]|(&gt))', r'<a href="\1">\1</a>', message)
+        return re.sub(r'(https?://[^\s<>,:;]+)', r'<a href="\1">\1</a>', message)
 
     @classmethod
     def unescape_html(cls, message):
@@ -139,7 +139,6 @@ class PullRequest(object):
         body=None, author=None,
         head=None, base=None,
         opened=None, generator=None, metadata=None,
-        url=None, draft=None
     ):
         self.number = number
         self.title = title
@@ -147,7 +146,6 @@ class PullRequest(object):
         self.author = author
         self.head = head
         self.base = base
-        self.draft = draft
         self._opened = opened
         self._reviewers = None
         self._approvers = None
@@ -155,7 +153,6 @@ class PullRequest(object):
         self._metadata = metadata
         self._comments = None
         self.generator = generator
-        self.url = url
 
     @property
     def reviewers(self):

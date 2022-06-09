@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorder.h"
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 #include "Blob.h"
 #include "BlobEvent.h"
@@ -48,7 +48,7 @@ MediaRecorder::CreatorFunction MediaRecorder::m_customCreator = nullptr;
 
 bool MediaRecorder::isTypeSupported(Document& document, const String& value)
 {
-#if PLATFORM(COCOA) || USE(GSTREAMER_TRANSCODER)
+#if PLATFORM(COCOA)
     auto* page = document.page();
     return page && page->mediaRecorderProvider().isSupported(value);
 #else
@@ -66,7 +66,7 @@ ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<Me
         return Exception { InvalidStateError };
 
     if (!isTypeSupported(document, options.mimeType))
-        return Exception { NotSupportedError, "mimeType is not supported"_s };
+        return Exception { NotSupportedError, "mimeType is not supported" };
 
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();
@@ -87,7 +87,7 @@ ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> MediaRecorder::createMediaRec
     if (m_customCreator)
         return m_customCreator(stream, options);
 
-#if PLATFORM(COCOA) || USE(GSTREAMER_TRANSCODER)
+#if PLATFORM(COCOA)
     auto result = page->mediaRecorderProvider().createMediaRecorderPrivate(stream, options);
 #else
     std::unique_ptr<MediaRecorderPrivate> result;
@@ -105,7 +105,9 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
 {
     computeInitialBitRates();
 
-    m_tracks = m_stream->privateStream().tracks();
+    m_tracks = WTF::map(m_stream->getTracks(), [] (auto&& track) -> Ref<MediaStreamTrackPrivate> {
+        return track->privateTrack();
+    });
     m_stream->privateStream().addObserver(*this);
 }
 
@@ -361,7 +363,7 @@ void MediaRecorder::dispatchError(Exception&& exception)
 
 void MediaRecorder::trackEnded(MediaStreamTrackPrivate&)
 {
-    auto position = m_tracks.findIf([](auto& track) {
+    auto position = m_tracks.findMatching([](auto& track) {
         return !track->ended();
     });
     if (position != notFound)
@@ -408,4 +410,4 @@ void MediaRecorder::computeBitRates(const MediaStreamPrivate* stream)
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

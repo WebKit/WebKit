@@ -29,7 +29,6 @@
 #pragma once
 
 #include <wtf/HashSet.h>
-#include <wtf/Hasher.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -71,16 +70,11 @@ private:
     RetainPtr<CFStringRef> m_mode;
 };
 
-inline void add(Hasher& hasher, const SchedulePair& pair)
-{
-    // FIXME: Hashing a CFHash here is unfortunate.
-    add(hasher, pair.runLoop(), pair.mode() ? CFHash(pair.mode()) : 0);
-}
-
 struct SchedulePairHash {
     static unsigned hash(const RefPtr<SchedulePair>& pair)
     {
-        return computeHash(*pair);
+        uintptr_t hashCodes[2] = { reinterpret_cast<uintptr_t>(pair->runLoop()), pair->mode() ? CFHash(pair->mode()) : 0 };
+        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
 
     static bool equal(const RefPtr<SchedulePair>& a, const RefPtr<SchedulePair>& b) { return a == b; }

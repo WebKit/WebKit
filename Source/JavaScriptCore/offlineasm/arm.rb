@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 # Copyright (C) 2013 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,39 +31,29 @@ require "risc"
 #
 #  x0 => t0, a0, r0
 #  x1 => t1, a1, r1
-#  x2 => t2, a2
-#  x3 => t3, a3
-#  x4 => t4                 (callee-save, PC)
-#  x5 => t5                 (callee-save)
-#  x6 => scratch            (callee-save)
+#  x2 => t2, a2, r2
+#  x3 => t3, a3, r3
+#  x6 =>            (callee-save scratch)
 #  x7 => cfr
-#  x8 => t6                 (callee-save)
-#  x9 => t7, also scratch!  (callee-save)
-# x10 => csr0               (callee-save, metadataTable)
-# x11 => csr1               (callee-save, PB)
-# x12 => scratch            (callee-save)
+#  x8 => t4         (callee-save)
+#  x9 => t5         (callee-save)
+# x10 => csr1       (callee-save, PB)
+# x11 => cfr, csr0  (callee-save, metadataTable)
+# x12 =>            (callee-save scratch)
 #  lr => lr
 #  sp => sp
 #  pc => pc
 #
 # FPR conventions, to match the baseline JIT
 #
-#  d0 => ft0, fa0, fr
-#  d1 => ft1, fa1
-#  d2 => ft2
-#  d3 => ft3
-#  d4 => ft4
-#  d5 => ft5
-#  d6 => ft6
-#  d7 => ft7
-#  d8 => csfr0
-#  d9 => csfr1
-# d10 => csfr2
-# d11 => csfr3
-# d12 => csfr4
-# d13 => csfr5
-# d14 => csfr6
-# d15 => scratch
+# d0 => ft0, fa0, fr
+# d1 => ft1, fa1
+# d2 => ft2
+# d3 => ft3
+# d4 => ft4
+# d5 => ft5
+# d6 =>              (scratch)
+# d7 =>              (scratch)
 
 class Node
     def armSingle
@@ -79,12 +69,9 @@ class SpecialRegister
     end
 end
 
-# These are allocated from the end. Use the low order r6 first, ast it's often
-# cheaper to encode. r12 and r9 are equivalent, but r9 conflicts with t7, so r9
-# only as last resort.
-ARM_EXTRA_GPRS = [SpecialRegister.new("r9"), SpecialRegister.new("r12"), SpecialRegister.new("r6")]
+ARM_EXTRA_GPRS = [SpecialRegister.new("r6"), SpecialRegister.new("r4"), SpecialRegister.new("r12")]
 ARM_EXTRA_FPRS = [SpecialRegister.new("d7")]
-ARM_SCRATCH_FPR = SpecialRegister.new("d15")
+ARM_SCRATCH_FPR = SpecialRegister.new("d6")
 OS_DARWIN = ((RUBY_PLATFORM =~ /darwin/i) != nil)
 
 def armMoveImmediate(value, register)
@@ -112,22 +99,20 @@ class RegisterID
             "r1"
         when "t2", "a2"
             "r2"
-        when "t3", "a3"
+        when "a3"
             "r3"
-        when "t4" # LLInt PC
-            "r4"
+        when "t3"
+            "r3"
+        when "t4"
+            "r8"
         when "t5"
-            "r5"
+            "r9"
         when "cfr"
             "r7"
-        when "t6"
-            "r8"
-        when "t7"
-            "r9" # r9 is also a scratch register, so use carefully!
         when "csr0"
-            "r10"
-        when "csr1"
             "r11"
+        when "csr1"
+            "r10"
         when "lr"
             "lr"
         when "sp"
@@ -155,24 +140,6 @@ class FPRegisterID
             "d4"
         when "ft5"
             "d5"
-        when "ft6"
-            "d6"
-        when "ft7"
-            "d7"
-        when "csfr0"
-            "d8"
-        when "csfr1"
-            "d9"
-        when "csfr2"
-            "d10"
-        when "csfr3"
-            "d11"
-        when "csfr4"
-            "d12"
-        when "csfr5"
-            "d13"
-        when "csfr6"
-            "d14"
         else
             raise "Bad register #{name} for ARM at #{codeOriginString}"
         end
@@ -729,16 +696,16 @@ class Instruction
             uid = $asm.newUID
 
             $asm.putStr("#if OS(DARWIN)")
-            $asm.puts "movw #{operands[1].armOperand}, :lower16:(L#{operands[0].asmLabel}_#{uid}$non_lazy_ptr-(Ljsc_llint_#{uid}+4))"
-            $asm.puts "movt #{operands[1].armOperand}, :upper16:(L#{operands[0].asmLabel}_#{uid}$non_lazy_ptr-(Ljsc_llint_#{uid}+4))"
-            $asm.puts "Ljsc_llint_#{uid}:"
+            $asm.puts "movw #{operands[1].armOperand}, :lower16:(L#{operands[0].asmLabel}_#{uid}$non_lazy_ptr-(L_offlineasm_#{uid}+4))"
+            $asm.puts "movt #{operands[1].armOperand}, :upper16:(L#{operands[0].asmLabel}_#{uid}$non_lazy_ptr-(L_offlineasm_#{uid}+4))"
+            $asm.puts "L_offlineasm_#{uid}:"
             $asm.puts "add #{operands[1].armOperand}, pc"
             $asm.puts "ldr #{operands[1].armOperand}, [#{operands[1].armOperand}]"
 
             # On Linux, use ELF GOT relocation specifiers.
             $asm.putStr("#elif OS(LINUX)")
-            gotLabel = Assembler.localLabelReference("jsc_llint_arm_got_#{uid}")
-            offsetLabel = Assembler.localLabelReference("jsc_llint_arm_got_offset_#{uid}")
+            gotLabel = Assembler.localLabelReference("offlineasm_arm_got_#{uid}")
+            offsetLabel = Assembler.localLabelReference("offlineasm_arm_got_offset_#{uid}")
 
             $asm.puts "ldr #{dest.armOperand}, #{gotLabel}"
             $asm.puts "ldr #{temp.armOperand}, #{gotLabel}+4"

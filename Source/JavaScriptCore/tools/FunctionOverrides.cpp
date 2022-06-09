@@ -130,24 +130,26 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     FunctionOverridesAssertScope assertScope;
     String origProviderStr = origCode.provider()->source().toString();
     unsigned origStart = origCode.startOffset();
-    unsigned origFunctionStart = origProviderStr.reverseFind("function"_s, origStart);
-    unsigned origBraceStart = origProviderStr.find('{', origStart);
+    unsigned origFunctionStart = origProviderStr.reverseFind("function", origStart);
+    unsigned origBraceStart = origProviderStr.find("{", origStart);
     unsigned headerLength = origBraceStart - origFunctionStart;
-    auto origHeaderView = StringView(origProviderStr).substring(origFunctionStart, headerLength);
+    String origHeader = origProviderStr.substring(origFunctionStart, headerLength);
 
-    String newProviderString = makeString(origHeaderView, newBody);
+    String newProviderStr;
+    newProviderStr.append(origHeader);
+    newProviderStr.append(newBody);
 
     auto overridden = "<overridden>"_s;
     URL url({ }, overridden);
-    Ref<SourceProvider> newProvider = StringSourceProvider::create(newProviderString, SourceOrigin { url }, overridden);
+    Ref<SourceProvider> newProvider = StringSourceProvider::create(newProviderStr, SourceOrigin { url }, overridden);
 
     info.firstLine = 1;
     info.lineCount = 1; // Faking it. This doesn't really matter for now.
     info.startColumn = 1;
     info.endColumn = 1; // Faking it. This doesn't really matter for now.
-    info.parametersStartOffset = newProviderString.find('(');
-    info.typeProfilingStartOffset = newProviderString.find('{');
-    info.typeProfilingEndOffset = newProviderString.length() - 1;
+    info.parametersStartOffset = newProviderStr.find("(");
+    info.typeProfilingStartOffset = newProviderStr.find("{");
+    info.typeProfilingEndOffset = newProviderStr.length() - 1;
 
     info.sourceCode =
         SourceCode(WTFMove(newProvider), info.parametersStartOffset, info.typeProfilingEndOffset + 1, 1, 1);
@@ -168,7 +170,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     String newBody;
     {
         Locker locker { overrides.m_lock };
-        auto it = overrides.m_entries.find(WTFMove(sourceBodyString).isolatedCopy());
+        auto it = overrides.m_entries.find(sourceBodyString.isolatedCopy());
         if (it == overrides.m_entries.end())
             return false;
         newBody = it->value.isolatedCopy();
@@ -223,7 +225,11 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
     if (hasDisallowedCharacters(delimiterStart, delimiterLength))
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("Delimiter '", delimiter, "' cannot have '{', '}', or whitespace:\n", line, "\n"));
     
-    CString terminatorCString = makeString('}', delimiter).ascii();
+    String terminatorString;
+    terminatorString.append('}');
+    terminatorString.append(delimiter);
+
+    CString terminatorCString = terminatorString.ascii();
     const char* terminator = terminatorCString.data();
     line = delimiterEnd; // Start from the {.
 

@@ -51,7 +51,7 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
     m_context = workerGlobalScope;
 
     ResourceRequest request { m_url };
-    ASSERT(request.httpMethod() == "GET"_s);
+    ASSERT(request.httpMethod() == "GET");
 
     FetchOptions fetchOptions;
     fetchOptions.mode = FetchOptions::Mode::SameOrigin;
@@ -123,7 +123,7 @@ void WorkerFontLoadRequest::didReceiveData(const SharedBuffer& buffer)
     m_data.append(buffer);
 }
 
-void WorkerFontLoadRequest::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void WorkerFontLoadRequest::didFinishLoading(ResourceLoaderIdentifier)
 {
     m_isLoading = false;
 

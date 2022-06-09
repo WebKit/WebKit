@@ -1,3 +1,0 @@
-
-PASS EventSource constructor with an empty url.
-

@@ -60,8 +60,8 @@ struct WindowFeatures {
 };
 
 WindowFeatures parseWindowFeatures(StringView windowFeaturesString);
-WindowFeatures parseDialogFeatures(StringView dialogFeaturesString, const FloatRect& screenAvailableRect);
-OptionSet<DisabledAdaptations> parseDisabledAdaptations(StringView);
+WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect);
+OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String&);
 
 enum class FeatureMode { Window, Viewport };
 void processFeaturesString(StringView features, FeatureMode, const Function<void(StringView type, StringView value)>& callback);

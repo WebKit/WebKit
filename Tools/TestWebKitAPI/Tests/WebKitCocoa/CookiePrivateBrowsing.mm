@@ -38,7 +38,7 @@
 #import <wtf/text/StringConcatenateNumbers.h>
 #import <wtf/text/WTFString.h>
 
-static bool didRunJavaScriptAlertForCookiePrivateBrowsing;
+static bool receivedAlert;
 
 @interface CookiePrivateBrowsingDelegate : NSObject <WKUIDelegate>
 @end
@@ -48,7 +48,7 @@ static bool didRunJavaScriptAlertForCookiePrivateBrowsing;
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
     EXPECT_STREQ(message.UTF8String, "old cookie: <>");
-    didRunJavaScriptAlertForCookiePrivateBrowsing = true;
+    receivedAlert = true;
     completionHandler();
 }
 
@@ -69,10 +69,10 @@ TEST(WebKit, CookiePrivateBrowsing)
     [view2 setUIDelegate:delegate.get()];
     NSString *alertOldCookie = @"<script>var oldCookie = document.cookie; document.cookie = 'key=value'; alert('old cookie: <' + oldCookie + '>');</script>";
     [view1 loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&didRunJavaScriptAlertForCookiePrivateBrowsing);
-    didRunJavaScriptAlertForCookiePrivateBrowsing = false;
+    TestWebKitAPI::Util::run(&receivedAlert);
+    receivedAlert = false;
     [view2 loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/"]];
-    TestWebKitAPI::Util::run(&didRunJavaScriptAlertForCookiePrivateBrowsing);
+    TestWebKitAPI::Util::run(&receivedAlert);
 }
 
 TEST(WebKit, CookieCacheSyncAcrossProcess)
@@ -134,7 +134,7 @@ TEST(WebKit, CookieCacheSyncAcrossProcess)
         }];
         TestWebKitAPI::Util::run(&doneEvaluatingJavaScript);
         ++timeout;
-    } while (!cookieString.isEmpty() && timeout < 50);
+    } while (cookieString != "" && timeout < 50);
     EXPECT_WK_STREQ("foo=bar", cookieString);
 }
 

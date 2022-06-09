@@ -36,7 +36,7 @@ public:
     virtual ~RenderLineBreak();
 
     // FIXME: The lies here keep render tree dump based test results unchanged.
-    ASCIILiteral renderName() const final { return m_isWBR ? "RenderWordBreak"_s : "RenderBR"_s; }
+    const char* renderName() const final { return m_isWBR ? "RenderWordBreak" : "RenderBR"; }
 
     bool isWBR() const final { return m_isWBR; }
 

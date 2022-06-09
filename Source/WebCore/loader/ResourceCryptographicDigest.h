@@ -60,11 +60,6 @@ struct ResourceCryptographicDigest {
     }
 };
 
-inline void add(Hasher& hasher, const ResourceCryptographicDigest& digest)
-{
-    add(hasher, digest.algorithm, digest.value);
-}
-
 struct EncodedResourceCryptographicDigest {
     using Algorithm = ResourceCryptographicDigest::Algorithm;
     
@@ -90,7 +85,7 @@ namespace WTF {
 template<> struct DefaultHash<WebCore::ResourceCryptographicDigest> {
     static unsigned hash(const WebCore::ResourceCryptographicDigest& digest)
     {
-        return computeHash(digest);
+        return pairIntHash(intHash(static_cast<unsigned>(digest.algorithm)), StringHasher::computeHash(digest.value.data(), digest.value.size()));
     }
     static bool equal(const WebCore::ResourceCryptographicDigest& a, const WebCore::ResourceCryptographicDigest& b)
     {

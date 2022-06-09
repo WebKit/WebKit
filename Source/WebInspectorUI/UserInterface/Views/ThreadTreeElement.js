@@ -45,14 +45,53 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
         this._updateStatus();
 
         let targetData = WI.debuggerManager.dataForTarget(this._target);
+        let callFrames = targetData.callFrames;
 
-        if (targetData.pausing || !targetData.callFrames.length) {
+        if (targetData.pausing || !callFrames.length) {
             this.appendChild(this._idleTreeElement);
             this.expand();
             return;
         }
 
-        let activeCallFrameTreeElement = WI.CallFrameTreeController.groupBlackboxedCallFrames(this, targetData.callFrames, {rememberBlackboxedCallFrameGroupToAutoExpand: true});
+        let activeCallFrame = WI.debuggerManager.activeCallFrame;
+        let activeCallFrameTreeElement = null;
+
+        let renderCallFrames = (callFrames, shouldSelectActiveFrame) => {
+            let blackboxedCallFrameGroupStartIndex = undefined;
+
+            // Add one extra iteration to handle call stacks that start blackboxed.
+            for (let i = 0; i < callFrames.length + 1; ++i) {
+                let callFrame = callFrames[i];
+
+                if (callFrame?.blackboxed && WI.settings.experimentalCollapseBlackboxedCallFrames.value) {
+                    blackboxedCallFrameGroupStartIndex ??= i;
+                    continue;
+                }
+
+                if (blackboxedCallFrameGroupStartIndex !== undefined) {
+                    let blackboxedCallFrameGroup = callFrames.slice(blackboxedCallFrameGroupStartIndex, i);
+                    blackboxedCallFrameGroupStartIndex = undefined;
+
+                    if (!WI.debuggerManager.shouldAutoExpandBlackboxedCallFrameGroup(blackboxedCallFrameGroup)) {
+                        this.appendChild(new WI.BlackboxedGroupTreeElement(blackboxedCallFrameGroup));
+                        continue;
+                    }
+
+                    for (let blackboxedCallFrame of blackboxedCallFrameGroup)
+                        this.appendChild(new WI.CallFrameTreeElement(blackboxedCallFrame));
+                }
+
+                if (!callFrame)
+                    continue;
+
+                let callFrameTreeElement = new WI.CallFrameTreeElement(callFrame);
+                if (shouldSelectActiveFrame && callFrame === activeCallFrame)
+                    activeCallFrameTreeElement = callFrameTreeElement;
+                this.appendChild(callFrameTreeElement);
+            }
+        };
+
+        renderCallFrames(callFrames, true);
 
         if (activeCallFrameTreeElement) {
             activeCallFrameTreeElement.select(true, true);
@@ -77,11 +116,11 @@ WI.ThreadTreeElement = class ThreadTreeElement extends WI.GeneralTreeElement
                 });
             }
 
-            this.appendChild(new WI.CallFrameTreeElement(boundaryCallFrame, {isAsyncBoundaryCallFrame: true}));
+            const isAsyncBoundaryCallFrame = true;
+            this.appendChild(new WI.CallFrameTreeElement(boundaryCallFrame, isAsyncBoundaryCallFrame));
 
             let startIndex = currentStackTrace.topCallFrameIsBoundary ? 1 : 0;
-            let currentCallFrames = startIndex ? currentStackTrace.callFrames.slice(startIndex) : currentStackTrace.callFrames;
-            WI.CallFrameTreeController.groupBlackboxedCallFrames(this, currentCallFrames, {rememberBlackboxedCallFrameGroupToAutoExpand: true});
+            renderCallFrames(startIndex ? currentStackTrace.callFrames.slice(startIndex) : currentStackTrace.callFrames);
 
             if (currentStackTrace.truncated) {
                 let truncatedTreeElement = new WI.GeneralTreeElement("truncated-call-frames", WI.UIString("Call Frames Truncated"));

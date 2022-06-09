@@ -45,7 +45,7 @@
 - (WKPageRef)_pageForTesting;
 @end
 
-static bool didFinishNavigationForSessionState;
+static bool didFinishLoad;
 static bool didChangeBackForwardList;
     
 @interface SessionStateDelegate : NSObject <WKNavigationDelegate>
@@ -55,7 +55,7 @@ static bool didChangeBackForwardList;
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
-    didFinishNavigationForSessionState = true;
+    didFinishLoad = true;
 }
 
 - (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved
@@ -73,8 +73,8 @@ static WKRetainPtr<WKDataRef> createSessionStateData()
     auto view = adoptNS([WKWebView new]);
     [view setNavigationDelegate:delegate.get()];
     [view loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    Util::run(&didFinishNavigationForSessionState);
-    didFinishNavigationForSessionState = false;
+    Util::run(&didFinishLoad);
+    didFinishLoad = false;
 
     NSData *data = [view _sessionStateData];
     return adoptWK(WKDataCreate(static_cast<const unsigned char*>(data.bytes), data.length));

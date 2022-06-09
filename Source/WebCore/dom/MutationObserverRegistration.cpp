@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-MutationObserverRegistration::MutationObserverRegistration(MutationObserver& observer, Node& node, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
+MutationObserverRegistration::MutationObserverRegistration(MutationObserver& observer, Node& node, MutationObserverOptions options, const HashSet<AtomString>& attributeFilter)
     : m_observer(observer)
     , m_node(node)
     , m_options(options)
@@ -53,7 +53,7 @@ MutationObserverRegistration::~MutationObserverRegistration()
     m_observer->observationEnded(*this);
 }
 
-void MutationObserverRegistration::resetObservation(MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
+void MutationObserverRegistration::resetObservation(MutationObserverOptions options, const HashSet<AtomString>& attributeFilter)
 {
     takeTransientRegistrations();
     m_options = options;
@@ -68,24 +68,26 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node& node)
     node.registerTransientMutationObserver(*this);
     m_observer->setHasTransientRegistration(node.document());
 
-    if (m_transientRegistrationNodes.isEmpty()) {
+    if (!m_transientRegistrationNodes) {
+        m_transientRegistrationNodes = makeUnique<HashSet<GCReachableRef<Node>>>();
+
         ASSERT(!m_nodeKeptAlive);
         m_nodeKeptAlive = &m_node; // Balanced in takeTransientRegistrations.
     }
-    m_transientRegistrationNodes.add(node);
+    m_transientRegistrationNodes->add(node);
 }
 
-HashSet<GCReachableRef<Node>> MutationObserverRegistration::takeTransientRegistrations()
+std::unique_ptr<HashSet<GCReachableRef<Node>>> MutationObserverRegistration::takeTransientRegistrations()
 {
-    if (m_transientRegistrationNodes.isEmpty()) {
+    if (!m_transientRegistrationNodes) {
         ASSERT(!m_nodeKeptAlive);
-        return { };
+        return nullptr;
     }
 
-    for (auto& node : m_transientRegistrationNodes)
+    for (auto& node : *m_transientRegistrationNodes)
         node->unregisterTransientMutationObserver(*this);
 
-    auto returnValue = std::exchange(m_transientRegistrationNodes, { });
+    auto returnValue = WTFMove(m_transientRegistrationNodes);
 
     ASSERT(m_nodeKeptAlive);
     m_nodeKeptAlive = nullptr; // Balanced in observeSubtreeNodeWillDetach.
@@ -113,11 +115,14 @@ bool MutationObserverRegistration::shouldReceiveMutationFrom(Node& node, Mutatio
 
 bool MutationObserverRegistration::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
-    if (containsWebCoreOpaqueRoot(visitor, m_node))
+    if (visitor.containsOpaqueRoot(root(m_node)))
         return true;
 
-    for (auto& node : m_transientRegistrationNodes) {
-        if (containsWebCoreOpaqueRoot(visitor, node.get()))
+    if (!m_transientRegistrationNodes)
+        return false;
+
+    for (auto& node : *m_transientRegistrationNodes) {
+        if (visitor.containsOpaqueRoot(root(node)))
             return true;
     }
 

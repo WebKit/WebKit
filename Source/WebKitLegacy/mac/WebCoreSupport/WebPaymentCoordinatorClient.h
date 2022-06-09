@@ -48,10 +48,11 @@ private:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&) override;
 #endif
-    void completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&) override;
+    void completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&) override;
     void abortPaymentSession() override;
     void cancelPaymentSession() override;
     void paymentCoordinatorDestroyed() override;
+    bool supportsUnrestrictedApplePay() const override;
 };
 
 #endif

@@ -113,12 +113,12 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     auto key = keyboardEvent.keyIdentifier();
     auto code = keyboardEvent.code();
 
-    if (key == "Left"_s && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
+    if (key == "Left" && m_fieldOwner && m_fieldOwner->focusOnPreviousField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if ((key == "Right"_s || code == "Comma"_s || code == "Minus"_s || code == "Period"_s || code == "Slash"_s || code == "Semicolon"_s)
+    if ((key == "Right" || code == "Comma" || code == "Minus" || code == "Period" || code == "Slash" || code == "Semicolon")
         && m_fieldOwner && m_fieldOwner->focusOnNextField(*this)) {
         keyboardEvent.setDefaultHandled();
         return;
@@ -127,20 +127,20 @@ void DateTimeFieldElement::defaultKeyboardEventHandler(KeyboardEvent& keyboardEv
     if (isFieldOwnerReadOnly())
         return;
 
-    if (key == "Up"_s) {
+    if (key == "Up") {
         stepUp();
         keyboardEvent.setDefaultHandled();
         return;
     }
 
-    if (key == "Down"_s) {
+    if (key == "Down") {
         stepDown();
         keyboardEvent.setDefaultHandled();
         return;
     }
 
     // Clear value when pressing backspace or delete.
-    if (key == "U+0008"_s || key == "U+007F"_s) {
+    if (key == "U+0008" || key == "U+007F") {
         setEmptyValue(DispatchInputAndChangeEvents);
         keyboardEvent.setDefaultHandled();
         return;
@@ -188,12 +188,12 @@ String DateTimeFieldElement::visibleValue() const
 void DateTimeFieldElement::updateVisibleValue(EventBehavior eventBehavior)
 {
     if (!firstChild())
-        appendChild(Text::create(document(), String { emptyString() }));
+        appendChild(Text::create(document(), emptyString()));
 
-    Ref textNode = downcast<Text>(*firstChild());
+    auto& textNode = downcast<Text>(*firstChild());
     String newVisibleValue = visibleValue();
-    if (textNode->wholeText() != newVisibleValue)
-        textNode->replaceWholeText(newVisibleValue);
+    if (textNode.wholeText() != newVisibleValue)
+        textNode.replaceWholeText(newVisibleValue);
 
     if (eventBehavior == DispatchInputAndChangeEvents && m_fieldOwner)
         m_fieldOwner->fieldValueChanged();

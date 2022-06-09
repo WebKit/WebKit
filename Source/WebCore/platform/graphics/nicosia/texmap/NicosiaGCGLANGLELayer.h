@@ -28,9 +28,12 @@
 
 #pragma once
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
-#include "NicosiaContentLayerTextureMapperImpl.h"
+#include "GLContext.h"
+#include "GraphicsContextGLOpenGL.h"
+#include "NicosiaGCGLLayer.h"
+#include <memory>
 
 typedef void *EGLConfig;
 typedef void *EGLContext;
@@ -39,26 +42,51 @@ typedef void *EGLSurface;
 
 namespace WebCore {
 class IntSize;
-class GraphicsContextGLGBM;
+class GLContext;
 class PlatformDisplay;
 }
 
 namespace Nicosia {
 
-class GCGLANGLELayer final : public ContentLayerTextureMapperImpl::Client {
+class GCGLANGLELayer final : public GCGLLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GCGLANGLELayer(WebCore::GraphicsContextGLGBM&);
+    class ANGLEContext {
+        WTF_MAKE_NONCOPYABLE(ANGLEContext);
+    public:
+        static const char* errorString(int statusCode);
+        static const char* lastErrorString();
+
+        static std::unique_ptr<ANGLEContext> createContext();
+        virtual ~ANGLEContext();
+
+        bool makeContextCurrent();
+#if ENABLE(WEBGL)
+        PlatformGraphicsContextGL platformContext() const;
+        PlatformGraphicsContextGLDisplay platformDisplay() const;
+        PlatformGraphicsContextGLConfig platformConfig() const;
+#endif
+
+    private:
+        ANGLEContext(EGLDisplay, EGLConfig, EGLContext, EGLSurface);
+
+        EGLDisplay m_display { nullptr };
+        EGLConfig m_config { nullptr };
+        EGLContext m_context { nullptr };
+        EGLSurface m_surface { nullptr };
+    };
+
+    GCGLANGLELayer(WebCore::GraphicsContextGLANGLE&);
     virtual ~GCGLANGLELayer();
 
-    ContentLayer& contentLayer() const { return m_contentLayer; }
-    void swapBuffersIfNeeded() final;
-
+    bool makeContextCurrent() override;
+    PlatformGraphicsContextGL platformContext() const override;
+    PlatformGraphicsContextGLDisplay platformDisplay() const;
+    PlatformGraphicsContextGLConfig platformConfig() const;
 private:
-    WebCore::GraphicsContextGLGBM& m_context;
-    Ref<ContentLayer> m_contentLayer;
+    std::unique_ptr<ANGLEContext> m_angleContext;
 };
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
+#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)

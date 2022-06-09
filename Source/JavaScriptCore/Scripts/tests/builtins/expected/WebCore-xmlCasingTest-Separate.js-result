@@ -68,9 +68,9 @@ extern const JSC::ConstructorKind s_xmlCasingTestUrlCasingTestCodeConstructorKin
 #define WEBCORE_BUILTIN_XMLCASINGTEST_URLCASINGTEST 1
 
 #define WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(macro) \
-    macro(xmlCasingTestXMLCasingTestCode, xmlCasingTest, ASCIILiteral(), s_xmlCasingTestXMLCasingTestCodeLength) \
-    macro(xmlCasingTestCssCasingTestCode, cssCasingTest, ASCIILiteral(), s_xmlCasingTestCssCasingTestCodeLength) \
-    macro(xmlCasingTestUrlCasingTestCode, urlCasingTest, ASCIILiteral(), s_xmlCasingTestUrlCasingTestCodeLength) \
+    macro(xmlCasingTestXMLCasingTestCode, xmlCasingTest, static_cast<const char*>(nullptr), s_xmlCasingTestXMLCasingTestCodeLength) \
+    macro(xmlCasingTestCssCasingTestCode, cssCasingTest, static_cast<const char*>(nullptr), s_xmlCasingTestCssCasingTestCodeLength) \
+    macro(xmlCasingTestUrlCasingTestCode, urlCasingTest, static_cast<const char*>(nullptr), s_xmlCasingTestUrlCasingTestCodeLength) \
 
 #define WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_FUNCTION_NAME(macro) \
     macro(cssCasingTest) \
@@ -88,7 +88,7 @@ public:
     explicit xmlCasingTestBuiltinsWrapper(JSC::VM& vm)
         : m_vm(vm)
         WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying(s_##name, length), { }))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createFromLiteral(s_##name, length), { }))
         WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef INITIALIZE_BUILTIN_SOURCE_MEMBERS
     {

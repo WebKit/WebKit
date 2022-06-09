@@ -37,13 +37,11 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
-#include "CommonAtomStrings.h"
 #include "ContainerNode.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "ElementAncestorIterator.h"
 #include "ElementChildIterator.h"
-#include "ElementRareData.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontCascade.h"
@@ -58,7 +56,6 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "PseudoElement.h"
-#include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderStyleConstants.h"
 #include "SVGStyleElement.h"
@@ -443,7 +440,7 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     }
 }
 
-std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudoId(PseudoId pseudoId)
+static std::optional<Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId pseudoId)
 {
     switch (pseudoId) {
     case PseudoId::FirstLine:
@@ -490,9 +487,6 @@ Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Protocol::CSS::RuleMatch
     Element* element = elementForId(errorString, nodeId);
     if (!element)
         return makeUnexpected(errorString);
-
-    if (!element->isConnected())
-        return makeUnexpected("Element for given nodeId was not connected to DOM tree."_s);
 
     Element* originalElement = element;
     PseudoId elementPseudoId = element->pseudoId();
@@ -573,9 +567,6 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSComputedStylePropert
     if (!element)
         return makeUnexpected(errorString);
 
-    if (!element->isConnected())
-        return makeUnexpected("Element for given nodeId was not connected to DOM tree."_s);
-
     auto computedStyleInfo = CSSComputedStyleDeclaration::create(*element, true);
     auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), WTFMove(computedStyleInfo), nullptr);
     return inspectorStyle->buildArrayForComputedStyle();
@@ -613,7 +604,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::Font>> InspectorCSSAgent::getFontData
     
     auto* computedStyle = node->computedStyle();
     if (!computedStyle)
-        return makeUnexpected("No computed style for node."_s);
+        return makeUnexpected("No computed style for node.");
     
     return buildObjectForFont(computedStyle->fontCascade().primaryFont());
 }
@@ -656,8 +647,9 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, Vector<CSS
     result.append(styleSheet);
 
     for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
-        if (auto* rule = dynamicDowncast<CSSImportRule>(styleSheet->item(i))) {
-            if (CSSStyleSheet* importedStyleSheet = rule->styleSheet())
+        CSSRule* rule = styleSheet->item(i);
+        if (is<CSSImportRule>(*rule)) {
+            if (CSSStyleSheet* importedStyleSheet = downcast<CSSImportRule>(*rule).styleSheet())
                 collectStyleSheets(importedStyleSheet, result);
         }
     }
@@ -673,7 +665,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSStyleSheetBody>> InspectorCSSAgent
 
     auto styleSheet = inspectorStyleSheet->buildObjectForStyleSheet();
     if (!styleSheet)
-        return makeUnexpected("Internal error: missing style sheet"_s);
+        return makeUnexpected("Internal error: missing style sheet");
 
     return styleSheet.releaseNonNull();
 }
@@ -755,7 +747,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSRule>> InspectorCSSAgent::setRuleS
 
     auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
     if (!rule)
-        return makeUnexpected("Internal error: missing style sheet"_s);
+        return makeUnexpected("Internal error: missing style sheet");
 
     return rule.releaseNonNull();
 }
@@ -789,7 +781,7 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
         return nullptr;
 
     auto styleElement = HTMLStyleElement::create(document);
-    styleElement->setAttributeWithoutSynchronization(HTMLNames::typeAttr, cssContentTypeAtom());
+    styleElement->setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString("text/css", AtomString::ConstructFromLiteral));
 
     ContainerNode* targetNode;
     // HEAD is absent in ImageDocuments, for example.
@@ -844,7 +836,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSRule>> InspectorCSSAgent::addRule(
 
     auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(rawAction.newRuleId()));
     if (!rule)
-        return makeUnexpected("Internal error: missing style sheet"_s);
+        return makeUnexpected("Internal error: missing style sheet");
 
     return rule.releaseNonNull();
 }
@@ -946,13 +938,6 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
 
 std::optional<Protocol::CSS::LayoutContextType> InspectorCSSAgent::layoutContextTypeForRenderer(RenderObject* renderer)
 {
-    if (auto* renderFlexibleBox = dynamicDowncast<RenderFlexibleBox>(renderer)) {
-        // Subclasses of RenderFlexibleBox (buttons, selection inputs, etc.) should not be considered flex containers,
-        // as it is an internal implementation detail.
-        if (renderFlexibleBox->isFlexibleBoxImpl())
-            return std::nullopt;
-        return Protocol::CSS::LayoutContextType::Flex;
-    }
     if (is<RenderGrid>(renderer))
         return Protocol::CSS::LayoutContextType::Grid;
     return std::nullopt;
@@ -1000,15 +985,15 @@ void InspectorCSSAgent::nodeLayoutContextTypeChanged(Node& node, RenderObject* n
     if (!nodeId)
         return;
 
-    m_nodesWithPendingLayoutContextTypeChanges.set(nodeId, newRenderer);
+    m_nodesWithPendingLayoutContextTypeChanges.set(nodeId, layoutContextTypeForRenderer(newRenderer));
     if (!m_layoutContextTypeChangedTimer.isActive())
         m_layoutContextTypeChangedTimer.startOneShot(0_s);
 }
 
 void InspectorCSSAgent::layoutContextTypeChangedTimerFired()
 {
-    for (auto&& [nodeId, renderer] : std::exchange(m_nodesWithPendingLayoutContextTypeChanges, { }))
-        m_frontendDispatcher->nodeLayoutContextTypeChanged(nodeId, layoutContextTypeForRenderer(renderer.get()));
+    for (auto&& [nodeId, layoutContextType] : std::exchange(m_nodesWithPendingLayoutContextTypeChanges, { }))
+        m_frontendDispatcher->nodeLayoutContextTypeChanged(nodeId, WTFMove(layoutContextType));
 }
 
 InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(StyledElement& element)
@@ -1103,8 +1088,6 @@ Protocol::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSStyleSheet* p
 
 RefPtr<Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(const StyleRule* styleRule, Style::Resolver& styleResolver, Element& element)
 {
-    ASSERT(element.isConnected());
-
     if (!styleRule)
         return nullptr;
 

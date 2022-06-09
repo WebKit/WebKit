@@ -117,12 +117,6 @@ class JSGlobalObject;
     v(createPrivateSymbol, nullptr) \
     v(emptyPropertyNameEnumerator, nullptr) \
     v(sentinelString, nullptr) \
-    v(createRemoteFunction, nullptr) \
-    v(isRemoteFunction, nullptr) \
-    v(arraySort, nullptr) \
-    v(jsonParse, nullptr) \
-    v(jsonStringify, nullptr) \
-    v(String, nullptr) \
 
 
 #define DECLARE_LINK_TIME_CONSTANT(name, code) name,

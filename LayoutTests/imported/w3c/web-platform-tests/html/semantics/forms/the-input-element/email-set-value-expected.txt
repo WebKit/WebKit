@@ -1,4 +1,0 @@
-
-
-PASS setValue(sanitizedValue) is reflected in visible text field content
-

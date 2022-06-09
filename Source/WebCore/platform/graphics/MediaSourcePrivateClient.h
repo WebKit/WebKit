@@ -23,19 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef MediaSourcePrivateClient_h
+#define MediaSourcePrivateClient_h
 
 #if ENABLE(MEDIA_SOURCE)
 
 #include "PlatformTimeRanges.h"
 #include <wtf/Logger.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class MediaSourcePrivate;
 
-class MediaSourcePrivateClient : public CanMakeWeakPtr<MediaSourcePrivateClient> {
+class MediaSourcePrivateClient : public RefCounted<MediaSourcePrivateClient> {
 public:
     virtual ~MediaSourcePrivateClient() = default;
 
@@ -58,3 +59,5 @@ public:
 }
 
 #endif // ENABLE(MEDIA_SOURCE)
+
+#endif

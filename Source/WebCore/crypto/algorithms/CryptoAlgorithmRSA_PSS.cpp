@@ -39,11 +39,11 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmRSA_PSSInternal {
-static constexpr auto ALG1 = "PS1"_s;
-static constexpr auto ALG224 = "PS224"_s;
-static constexpr auto ALG256 = "PS256"_s;
-static constexpr auto ALG384 = "PS384"_s;
-static constexpr auto ALG512 = "PS512"_s;
+static const char* const ALG1 = "PS1";
+static const char* const ALG224 = "PS224";
+static const char* const ALG256 = "PS256";
+static const char* const ALG384 = "PS384";
+static const char* const ALG512 = "PS512";
 }
 
 Ref<CryptoAlgorithm> CryptoAlgorithmRSA_PSS::create()
@@ -117,7 +117,7 @@ void CryptoAlgorithmRSA_PSS::importKey(CryptoKeyFormat format, KeyData&& data, c
             exceptionCallback(SyntaxError);
             return;
         }
-        if (usages && !key.use.isNull() && key.use != "sig"_s) {
+        if (usages && !key.use.isNull() && key.use != "sig") {
             exceptionCallback(DataError);
             return;
         }

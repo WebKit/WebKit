@@ -122,12 +122,6 @@ public:
     // AudioContext
     ExceptionOr<void> setDefaultAudioContextSampleRate(float);
 
-    ExceptionOr<void> setAllowedMediaContainerTypes(const String&);
-    ExceptionOr<void> setAllowedMediaCodecTypes(const String&);
-    ExceptionOr<void> setAllowedMediaVideoCodecIDs(const String&);
-    ExceptionOr<void> setAllowedMediaAudioCodecIDs(const String&);
-    ExceptionOr<void> setAllowedMediaCaptionFormatTypes(const String&);
-
 private:
     explicit InternalSettings(Page*);
 

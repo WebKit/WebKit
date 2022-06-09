@@ -44,7 +44,7 @@
 // FIXME: move these to WKWebView_Private.h
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view;
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale;
-- (void)_didFinishScrolling:(UIScrollView *)scrollView;
+- (void)_didFinishScrolling;
 - (void)_scheduleVisibleContentRectUpdate;
 
 @end
@@ -111,11 +111,9 @@ IGNORE_WARNINGS_END
 #else
         [center addObserver:self selector:@selector(_invokeShowKeyboardCallbackIfNecessary) name:UIKeyboardDidShowNotification object:nil];
         [center addObserver:self selector:@selector(_invokeHideKeyboardCallbackIfNecessary) name:UIKeyboardDidHideNotification object:nil];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [center addObserver:self selector:@selector(_didShowMenu) name:UIMenuControllerDidShowMenuNotification object:nil];
         [center addObserver:self selector:@selector(_willHideMenu) name:UIMenuControllerWillHideMenuNotification object:nil];
         [center addObserver:self selector:@selector(_didHideMenu) name:UIMenuControllerDidHideMenuNotification object:nil];
-        ALLOW_DEPRECATED_DECLARATIONS_END
         [center addObserver:self selector:@selector(_willPresentPopover) name:@"UIPopoverControllerWillPresentPopoverNotification" object:nil];
         [center addObserver:self selector:@selector(_didDismissPopover) name:@"UIPopoverControllerDidDismissPopoverNotification" object:nil];
         self.UIDelegate = self;
@@ -287,10 +285,8 @@ IGNORE_WARNINGS_END
         return;
 
     auto item = adoptNS([[UIMenuItem alloc] initWithTitle:_customMenuActionInfo->name.get() action:@selector(performCustomAction:)]);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [item setDontDismiss:!_customMenuActionInfo->dismissesAutomatically];
     UIMenuController *controller = UIMenuController.sharedMenuController;
-    ALLOW_DEPRECATED_DECLARATIONS_END
     controller.menuItems = @[ item.get() ];
     [controller update];
 }
@@ -309,9 +305,7 @@ IGNORE_WARNINGS_END
 - (void)resetCustomMenuAction
 {
     _customMenuActionInfo.reset();
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UIMenuController.sharedMenuController.menuItems = @[ ];
-    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)performCustomAction:(id)sender
@@ -334,9 +328,7 @@ IGNORE_WARNINGS_END
     if (isCustomAction)
         canPerformActionByDefault = _customMenuActionInfo.has_value();
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (canPerformActionByDefault && _allowedMenuActions && sender == UIMenuController.sharedMenuController) {
-    ALLOW_DEPRECATED_DECLARATIONS_END
         BOOL isAllowed = NO;
         if (isCustomAction) {
             for (NSString *allowedAction in _allowedMenuActions.get()) {
@@ -437,9 +429,9 @@ IGNORE_WARNINGS_END
     }
 }
 
-- (void)_didFinishScrolling:(UIScrollView *)scrollView
+- (void)_didFinishScrolling
 {
-    [super _didFinishScrolling:scrollView];
+    [super _didFinishScrolling];
 
     if (self.didEndScrollingCallback)
         self.didEndScrollingCallback();

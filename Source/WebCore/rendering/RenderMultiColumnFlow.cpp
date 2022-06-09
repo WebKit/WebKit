@@ -49,9 +49,9 @@ RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& s
 
 RenderMultiColumnFlow::~RenderMultiColumnFlow() = default;
 
-ASCIILiteral RenderMultiColumnFlow::renderName() const
+const char* RenderMultiColumnFlow::renderName() const
 {    
-    return "RenderMultiColumnFlowThread"_s;
+    return "RenderMultiColumnFlowThread";
 }
 
 RenderMultiColumnSet* RenderMultiColumnFlow::firstMultiColumnSet() const

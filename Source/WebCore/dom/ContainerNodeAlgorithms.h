@@ -61,8 +61,7 @@ public:
 };
 #endif // not ASSERT_ENABLED
 
-void notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node&, NodeVector& postInsertionNotificationTargets);
-
+NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node&);
 enum class RemovedSubtreeObservability {
     NotObservable,
     MaybeObservableByRefPtr,

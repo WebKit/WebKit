@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -90,7 +90,7 @@ public:
     bool mutedForBindings() const;
 
     enum class State { Live, Ended };
-    State readyState() const { return m_readyState; }
+    State readyState() const;
 
     bool ended() const;
 
@@ -100,8 +100,6 @@ public:
     void stopTrack(StopMode = StopMode::Silently);
 
     bool isCaptureTrack() const { return m_isCaptureTrack; }
-    bool isVideo() const { return m_private->isVideo(); }
-    bool isAudio() const { return m_private->isAudio(); }
 
     struct TrackSettings {
         std::optional<int> width;
@@ -136,12 +134,10 @@ public:
     TrackCapabilities getCapabilities() const;
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
-    void setConstraints(MediaTrackConstraints&& constraints) { m_constraints = WTFMove(constraints); }
     void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromiseDeferred<void>&&);
 
     RealtimeMediaSource& source() const { return m_private->source(); }
     MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
-    const MediaStreamTrackPrivate& privateTrack() const { return m_private.get(); }
 
     RefPtr<WebAudioSourceProvider> createAudioSourceProvider();
 
@@ -206,14 +202,13 @@ private:
     MediaTrackConstraints m_constraints;
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
 
-    State m_readyState { State::Live };
     bool m_muted { false };
     bool m_ended { false };
     const bool m_isCaptureTrack { false };
     bool m_isInterrupted { false };
 };
 
-typedef Vector<Ref<MediaStreamTrack>> MediaStreamTrackVector;
+typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;
 
 } // namespace WebCore
 

@@ -52,6 +52,42 @@ TextStream& operator<<(TextStream& ts, AnimationPlayState playState)
     return ts;
 }
 
+#if ENABLE(APPLE_PAY)
+TextStream& operator<<(TextStream& ts, ApplePayButtonStyle buttonStyle)
+{
+    switch (buttonStyle) {
+    case ApplePayButtonStyle::White: ts << "white"; break;
+    case ApplePayButtonStyle::WhiteOutline: ts << "white-outline"; break;
+    case ApplePayButtonStyle::Black: ts << "black"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ApplePayButtonType playState)
+{
+    switch (playState) {
+    case ApplePayButtonType::Plain: ts << "plain"; break;
+    case ApplePayButtonType::Buy: ts << "buy"; break;
+    case ApplePayButtonType::SetUp: ts << "setup"; break;
+    case ApplePayButtonType::Donate: ts << "donate"; break;
+    case ApplePayButtonType::CheckOut: ts << "checkout"; break;
+    case ApplePayButtonType::Book: ts << "book"; break;
+    case ApplePayButtonType::Subscribe: ts << "subscribe"; break;
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    case ApplePayButtonType::Reload: ts << "reload"; break;
+    case ApplePayButtonType::AddMoney: ts << "add-money"; break;
+    case ApplePayButtonType::TopUp: ts << "top-up"; break;
+    case ApplePayButtonType::Order: ts << "order"; break;
+    case ApplePayButtonType::Rent: ts << "rent"; break;
+    case ApplePayButtonType::Support: ts << "support"; break;
+    case ApplePayButtonType::Contribute: ts << "contribute"; break;
+    case ApplePayButtonType::Tip: ts << "tip"; break;
+#endif
+    }
+    return ts;
+}
+#endif
+
 TextStream& operator<<(TextStream& ts, AspectRatioType aspectRatioType)
 {
     switch (aspectRatioType) {
@@ -441,7 +477,6 @@ TextStream& operator<<(TextStream& ts, EventListenerRegionType listenerType)
     switch (listenerType) {
     case EventListenerRegionType::Wheel: ts << "wheel"; break;
     case EventListenerRegionType::NonPassiveWheel: ts << "active wheel"; break;
-    case EventListenerRegionType::MouseClick: ts << "mouse click"; break;
     }
     return ts;
 }
@@ -672,7 +707,7 @@ TextStream& operator<<(TextStream& ts, ListStylePosition position)
 
 TextStream& operator<<(TextStream& ts, ListStyleType styleType)
 {
-    return ts << getValueName(toCSSValueID(styleType)).characters();
+    return ts << getValueName(toCSSValueID(styleType));
 }
 
 TextStream& operator<<(TextStream& ts, MarqueeBehavior marqueeBehavior)
@@ -883,8 +918,6 @@ TextStream& operator<<(TextStream& ts, Resize resize)
     case Resize::Both: ts << "both"; break;
     case Resize::Horizontal: ts << "horizontal"; break;
     case Resize::Vertical: ts << "vertical"; break;
-    case Resize::Block: ts << "block"; break;
-    case Resize::Inline: ts << "inline"; break;
     }
     return ts;
 }
@@ -959,7 +992,7 @@ TextStream& operator<<(TextStream& ts, StyleDifference diff)
     case StyleDifference::Equal: ts << "equal"; break;
     case StyleDifference::RecompositeLayer: ts << "recomposite layer"; break;
     case StyleDifference::Repaint: ts << "repaint"; break;
-    case StyleDifference::RepaintIfText: ts << "repaint if text"; break;
+    case StyleDifference::RepaintIfTextOrBorderOrOutline: ts << "repaint if text or border or outline"; break;
     case StyleDifference::RepaintLayer: ts << "repaint layer"; break;
     case StyleDifference::LayoutPositionedMovementOnly: ts << "layout positioned movement only"; break;
     case StyleDifference::SimplifiedLayout: ts << "simplified layout"; break;
@@ -995,21 +1028,6 @@ TextStream& operator<<(TextStream& ts, TextAlignMode alignMode)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, TextAlignLast textAlignLast)
-{
-    switch (textAlignLast) {
-    case TextAlignLast::Auto: ts << "auto"; break;
-    case TextAlignLast::Start: ts << "start"; break;
-    case TextAlignLast::End: ts << "end"; break;
-    case TextAlignLast::Left: ts << "left"; break;
-    case TextAlignLast::Right: ts << "right"; break;
-    case TextAlignLast::Center: ts << "center"; break;
-    case TextAlignLast::Justify: ts << "justify"; break;
-    }
-
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 {
     switch (textCombine) {
@@ -1022,6 +1040,7 @@ TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 TextStream& operator<<(TextStream& ts, TextDecorationLine line)
 {
     switch (line) {
+    case TextDecorationLine::None: ts << "none"; break;
     case TextDecorationLine::Underline: ts << "underline"; break;
     case TextDecorationLine::Overline: ts << "overline"; break;
     case TextDecorationLine::LineThrough: ts << "line-through"; break;
@@ -1084,18 +1103,6 @@ TextStream& operator<<(TextStream& ts, TextEmphasisPosition position)
     case TextEmphasisPosition::Left: ts << "Left"; break;
     case TextEmphasisPosition::Right: ts << "Right"; break;
     }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, TextJustify justify)
-{
-    switch (justify) {
-    case TextJustify::Auto: ts << "auto"; break;
-    case TextJustify::InterCharacter: ts << "inter-character"; break;
-    case TextJustify::InterWord: ts << "inter-word"; break;
-    case TextJustify::None: ts << "none"; break;
-    }
-
     return ts;
 }
 
@@ -1270,22 +1277,6 @@ TextStream& operator<<(TextStream& ts, MathStyle mathStyle)
     switch (mathStyle) {
     case MathStyle::Normal: ts << "normal"; break;
     case MathStyle::Compact: ts << "compact"; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, ContainIntrinsicSizeType containIntrinsicSizeType)
-{
-    switch (containIntrinsicSizeType) {
-    case ContainIntrinsicSizeType::None:
-        ts << "none";
-        break;
-    case ContainIntrinsicSizeType::Length:
-        ts << "length";
-        break;
-    case ContainIntrinsicSizeType::AutoAndLength:
-        ts << "autoandlength";
-        break;
     }
     return ts;
 }

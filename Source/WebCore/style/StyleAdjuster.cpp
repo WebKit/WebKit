@@ -9,7 +9,7 @@
  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2012, 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014, 2020, 2022 Igalia S.L.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,7 +54,6 @@
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGElement.h"
-#include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
@@ -212,18 +211,21 @@ static OptionSet<TouchAction> computeEffectiveTouchActions(const RenderStyle& st
 
 void Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle, const Document& document)
 {
-    auto regionTypes = computeEventListenerRegionTypes(document, rootStyle, document, { });
+    auto regionTypes = computeEventListenerRegionTypes(document, { });
     if (auto* window = document.domWindow())
-        regionTypes.add(computeEventListenerRegionTypes(document, rootStyle, *window, { }));
+        regionTypes.add(computeEventListenerRegionTypes(*window, { }));
 
     rootStyle.setEventListenerRegionTypes(regionTypes);
 }
 
-OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const Document& document, const RenderStyle& style, const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)
+OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(const EventTarget& eventTarget, OptionSet<EventListenerRegionType> parentTypes)
 {
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    if (!eventTarget.hasEventListeners())
+        return parentTypes;
+
     auto types = parentTypes;
 
-#if ENABLE(WHEEL_EVENT_REGIONS)
     auto findListeners = [&](auto& eventName, auto type, auto nonPassiveType) {
         auto* eventListenerVector = eventTarget.eventTargetData()->eventListenerMap.find(eventName);
         if (!eventListenerVector)
@@ -243,28 +245,15 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
             types.add(nonPassiveType);
     };
 
-    if (eventTarget.hasEventListeners()) {
-        findListeners(eventNames().wheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
-        findListeners(eventNames().mousewheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
-    }
-#endif
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (document.page() && document.page()->shouldBuildInteractionRegions() && eventTarget.isNode()) {
-        const auto& node = downcast<Node>(eventTarget);
-        if (node.willRespondToMouseClickEventsWithEditability(node.computeEditabilityForMouseClickEvents(&style)))
-            types.add(EventListenerRegionType::MouseClick);
-    }
-#else
-    UNUSED_PARAM(document);
-    UNUSED_PARAM(style);
-#endif
-
-#if !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    UNUSED_PARAM(eventTarget);
-#endif
+    findListeners(eventNames().wheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
+    findListeners(eventNames().mousewheelEvent, EventListenerRegionType::Wheel, EventListenerRegionType::NonPassiveWheel);
 
     return types;
+#else
+    UNUSED_PARAM(eventTarget);
+    UNUSED_PARAM(parentTypes);
+    return { };
+#endif
 }
 
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
@@ -375,29 +364,13 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     else
         style.setUsedZIndex(style.specifiedZIndex());
 
-    // For SVG compatibility purposes we have to consider the 'animatedLocalTransform' besides the RenderStyle to query
-    // if an element has a transform. SVG transforms are not stored on the RenderStyle, and thus we need a special case here.
-    auto hasTransformRelatedProperty = [](const RenderStyle& style, const Element* element) {
-        if (style.hasTransformRelatedProperty())
-            return true;
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (element && element->document().settings().layerBasedSVGEngineEnabled() && is<SVGGraphicsElement>(element))
-            return !downcast<SVGGraphicsElement>(*element).animatedLocalTransform().isIdentity();
-#else
-        UNUSED_PARAM(element);
-#endif
-
-        return false;
-    };
-
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
     // cases where objects that should be blended as a single unit end up with a non-transparent
     // object wedged in between them. Auto z-index also becomes 0 for objects that specify transforms/masks/reflections.
     if (style.hasAutoUsedZIndex()) {
         if ((m_element && m_document.documentElement() == m_element)
             || style.hasOpacity()
-            || hasTransformRelatedProperty(style, m_element)
+            || style.hasTransformRelatedProperty()
             || style.hasMask()
             || style.clipPath()
             || style.boxReflect()
@@ -446,9 +419,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     }
 
     if (shouldInheritTextDecorationsInEffect(style, m_element))
-        style.addToTextDecorationsInEffect(style.textDecorationLine());
+        style.addToTextDecorationsInEffect(style.textDecoration());
     else
-        style.setTextDecorationsInEffect(style.textDecorationLine());
+        style.setTextDecorationsInEffect(style.textDecoration());
 
     auto overflowReplacement = [] (Overflow overflow, Overflow overflowInOtherDimension) -> std::optional<Overflow> {
         if (overflow != Overflow::Visible && overflow != Overflow::Clip) {
@@ -484,6 +457,12 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setOverflowX(Overflow::Visible);
         if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden)
             style.setOverflowY(Overflow::Visible);
+    }
+
+    // Menulists should have visible overflow
+    if (style.effectiveAppearance() == MenulistPart) {
+        style.setOverflowX(Overflow::Visible);
+        style.setOverflowY(Overflow::Visible);
     }
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
@@ -566,7 +545,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (m_element == m_document.activeModalDialog() && !hasInertAttribute(m_element))
             style.setEffectiveInert(false);
 
-        style.setEventListenerRegionTypes(computeEventListenerRegionTypes(m_document, style, *m_element, m_parentStyle.eventListenerRegionTypes()));
+        style.setEventListenerRegionTypes(computeEventListenerRegionTypes(*m_element, m_parentStyle.eventListenerRegionTypes()));
 
 #if ENABLE(TEXT_AUTOSIZING)
         if (m_document.settings().textAutosizingUsesIdempotentMode())
@@ -652,45 +631,7 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
     if (!isPositioningAllowed)
         style.setPosition(RenderStyle::initialPosition());
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // SVG2: A new stacking context must be established at an SVG element for its descendants if:
-    // - it is the root element
-    // - the "z-index" property applies to the element and its computed value is an integer
-    // - the element is an outermost svg element, or a "foreignObject", "image", "marker", "mask", "pattern", "symbol" or "use" element
-    // - the element is an inner "svg" element and the computed value of its "overflow" property is a value other than visible
-    // - the element is subject to explicit clipping:
-    //   - the "clip" property applies to the element and it has a computed value other than auto
-    //   - the "clip-path" property applies to the element and it has a computed value other than none
-    // - the "mask" property applies to the element and it has a computed value other than none
-    // - the "filter" property applies to the element and it has a computed value other than none
-    // - a property defined in another specification is applied and that property is defined to establish a stacking context in SVG
-    //
-    // Some of the rules above were already enforced in StyleResolver::adjustRenderStyle() - for those cases assertions were added.
-    if (svgElement.document().settings().layerBasedSVGEngineEnabled() && style.hasAutoUsedZIndex()) {
-        // adjustRenderStyle() has already assigned a z-index of 0 if clip / filter is present or the element is the root element.
-        ASSERT(!style.hasClip());
-        ASSERT(!style.clipPath());
-        ASSERT(!style.hasFilter());
-        ASSERT(!svgElement.isOutermostSVGSVGElement());
-
-        auto isInnerSVGElement = [] (const SVGElement& svgElement) -> bool {
-            return svgElement.hasTagName(SVGNames::svgTag) && svgElement.parentNode() && is<SVGElement>(svgElement.parentNode());
-        };
-
-        if (svgElement.hasTagName(SVGNames::foreignObjectTag)
-            || svgElement.hasTagName(SVGNames::imageTag)
-            || svgElement.hasTagName(SVGNames::markerTag)
-            || svgElement.hasTagName(SVGNames::maskTag)
-            || svgElement.hasTagName(SVGNames::patternTag)
-            || svgElement.hasTagName(SVGNames::symbolTag)
-            || svgElement.hasTagName(SVGNames::useTag)
-            || (isInnerSVGElement(svgElement) && (style.overflowX() != Overflow::Visible || style.overflowY() != Overflow::Visible))
-            || style.hasPositionedMask())
-        style.setUsedZIndex(0);
-    }
-#endif
-
-    // (Legacy)RenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
+    // LegacyRenderSVGRoot handles zooming for the whole SVG subtree, so foreignObject content should
     // not be scaled again.
     if (svgElement.hasTagName(SVGNames::foreignObjectTag))
         style.setEffectiveZoom(RenderStyle::initialZoom());
@@ -722,19 +663,19 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
 
     if (m_document.quirks().needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
-        static MainThreadNeverDestroyed<const AtomString> roleValue("navigation"_s);
+        static MainThreadNeverDestroyed<const AtomString> roleValue("navigation", AtomString::ConstructFromLiteral);
         if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
     if (m_document.quirks().needsYouTubeOverflowScrollQuirk()) {
         // This turns sidebar scrollable without hover.
-        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);
+        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content", AtomString::ConstructFromLiteral);
         if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
             style.setOverflowY(Overflow::Auto);
     }
     if (m_document.quirks().needsWeChatScrollingQuirk()) {
-        static MainThreadNeverDestroyed<const AtomString> class1("tree-select"_s);
-        static MainThreadNeverDestroyed<const AtomString> class2("v-tree-select"_s);
+        static MainThreadNeverDestroyed<const AtomString> class1("tree-select", AtomString::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const AtomString> class2("v-tree-select", AtomString::ConstructFromLiteral);
         const auto& flexBasis = style.flexBasis();
         if (style.minHeight().isAuto()
             && style.display() == DisplayType::Flex
@@ -749,8 +690,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
 #if ENABLE(VIDEO)
     if (m_document.quirks().needsFullscreenDisplayNoneQuirk()) {
         if (is<HTMLDivElement>(m_element) && style.display() == DisplayType::None) {
-            static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
-            static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
+            static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile", AtomString::ConstructFromLiteral);
+            static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api", AtomString::ConstructFromLiteral);
 
             auto& div = downcast<HTMLDivElement>(*m_element);
             if (div.hasClass() && div.classNames().contains(instreamNativeVideoDivClass)) {

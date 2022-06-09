@@ -33,7 +33,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BigIntObject);
 
-const ClassInfo BigIntObject::s_info = { "BigInt"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BigIntObject) };
+const ClassInfo BigIntObject::s_info = { "BigInt", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BigIntObject) };
 
 
 BigIntObject* BigIntObject::create(VM& vm, JSGlobalObject* globalObject, JSValue bigInt)
@@ -52,7 +52,7 @@ BigIntObject::BigIntObject(VM& vm, Structure* structure)
 void BigIntObject::finishCreation(VM& vm, JSValue bigInt)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     setInternalValue(vm, bigInt);
 }
 

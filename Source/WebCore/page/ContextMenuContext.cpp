@@ -27,21 +27,17 @@
 #include "config.h"
 #include "ContextMenuContext.h"
 
-#include "Event.h"
-
 #if ENABLE(CONTEXT_MENUS)
 
 namespace WebCore {
 
-ContextMenuContext::ContextMenuContext() = default;
-ContextMenuContext::~ContextMenuContext() = default;
+ContextMenuContext::ContextMenuContext()
+{
+}
 
-ContextMenuContext& ContextMenuContext::operator=(const ContextMenuContext&) = default;
-
-ContextMenuContext::ContextMenuContext(Type type, const HitTestResult& hitTestResult, Event* event)
+ContextMenuContext::ContextMenuContext(Type type, const HitTestResult& hitTestResult)
     : m_type(type)
     , m_hitTestResult(hitTestResult)
-    , m_event(event)
 #if ENABLE(SERVICE_CONTROLS)
     , m_controlledImage(nullptr)
 #endif

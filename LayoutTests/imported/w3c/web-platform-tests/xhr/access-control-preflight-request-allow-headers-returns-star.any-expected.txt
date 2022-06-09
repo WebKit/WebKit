@@ -1,3 +1,0 @@
-
-PASS Access-Control-Allow-Headers supports *
-

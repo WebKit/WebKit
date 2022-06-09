@@ -104,7 +104,7 @@ void MediaSourcePrivateGStreamer::durationChanged(const MediaTime&)
 {
     ASSERT(isMainThread());
 
-    MediaTime duration = m_mediaSource ? m_mediaSource->duration() : MediaTime::invalidTime();
+    MediaTime duration = m_mediaSource->duration();
     GST_TRACE("duration: %f", duration.toFloat());
     if (!duration.isValid() || duration.isNegativeInfinite())
         return;
@@ -144,7 +144,7 @@ void MediaSourcePrivateGStreamer::seekCompleted()
 
 MediaTime MediaSourcePrivateGStreamer::duration() const
 {
-    return m_mediaSource ? m_mediaSource->duration() : MediaTime::invalidTime();
+    return m_mediaSource->duration();
 }
 
 MediaTime MediaSourcePrivateGStreamer::currentMediaTime() const
@@ -185,9 +185,7 @@ void MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks()
 
 std::unique_ptr<PlatformTimeRanges> MediaSourcePrivateGStreamer::buffered()
 {
-    if (m_mediaSource)
-        return m_mediaSource->buffered();
-    return nullptr;
+    return m_mediaSource->buffered();
 }
 
 #if !RELEASE_LOG_DISABLED

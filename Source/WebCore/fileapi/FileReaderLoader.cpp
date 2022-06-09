@@ -93,7 +93,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, con
 
     // Construct and load the request.
     ResourceRequest request(m_urlForReading);
-    request.setHTTPMethod("GET"_s);
+    request.setHTTPMethod("GET");
 
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
@@ -230,7 +230,7 @@ void FileReaderLoader::didReceiveData(const SharedBuffer& buffer)
         m_client->didReceiveData();
 }
 
-void FileReaderLoader::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void FileReaderLoader::didFinishLoading(ResourceLoaderIdentifier)
 {
     if (m_variableLength && m_totalBytes > m_bytesLoaded) {
         m_rawData = m_rawData->slice(0, m_bytesLoaded);
@@ -340,7 +340,7 @@ void FileReaderLoader::convertToText()
     // provided encoding.     
     // FIXME: consider supporting incremental decoding to improve the perf.
     if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("text/plain"_s, m_encoding.isValid() ? m_encoding : PAL::UTF8Encoding());
+        m_decoder = TextResourceDecoder::create("text/plain", m_encoding.isValid() ? m_encoding : PAL::UTF8Encoding());
     if (isCompleted())
         m_stringResult = m_decoder->decodeAndFlush(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
     else
@@ -354,7 +354,7 @@ void FileReaderLoader::convertToDataURL()
         return;
     }
 
-    m_stringResult = makeString("data:", m_dataType.isEmpty() ? "application/octet-stream"_s : m_dataType, ";base64,", base64Encoded(m_rawData->data(), m_bytesLoaded));
+    m_stringResult = makeString("data:", m_dataType.isEmpty() ? "application/octet-stream" : m_dataType, ";base64,", base64Encoded(m_rawData->data(), m_bytesLoaded));
 }
 
 bool FileReaderLoader::isCompleted() const
@@ -362,7 +362,7 @@ bool FileReaderLoader::isCompleted() const
     return m_bytesLoaded == m_totalBytes;
 }
 
-void FileReaderLoader::setEncoding(StringView encoding)
+void FileReaderLoader::setEncoding(const String& encoding)
 {
     if (!encoding.isEmpty())
         m_encoding = PAL::TextEncoding(encoding);

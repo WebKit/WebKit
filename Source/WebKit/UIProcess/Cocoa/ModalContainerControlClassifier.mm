@@ -29,10 +29,6 @@
 #import <WebCore/ModalContainerTypes.h>
 #import <unicode/uspoof.h>
 
-#import <wtf/CompletionHandler.h>
-#import <wtf/CrossThreadCopier.h>
-#import <wtf/RunLoop.h>
-
 #import <pal/cocoa/CoreMLSoftLink.h>
 #import <pal/cocoa/NaturalLanguageSoftLink.h>
 
@@ -99,7 +95,7 @@ public:
 private:
     USpoofChecker* checker()
     {
-        if (!m_checker && U_SUCCESS(m_status))
+        if (!m_checker && m_status == U_ZERO_ERROR)
             m_checker = uspoof_open(&m_status);
         return m_checker;
     }
@@ -211,7 +207,7 @@ static Vector<ModalContainerControlType> computePredictions(MLModel *model, Vect
 void ModalContainerControlClassifier::classify(Vector<String>&& texts, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
 {
     ASSERT(RunLoop::isMain());
-    m_queue->dispatch([this, texts = crossThreadCopy(WTFMove(texts)), completion = WTFMove(completion)]() mutable {
+    m_queue->dispatch([this, texts = texts.isolatedCopy(), completion = WTFMove(completion)]() mutable {
         loadModelIfNeeded();
         RunLoop::main().dispatch([completion = WTFMove(completion), predictions = computePredictions(m_model.get(), WTFMove(texts))]() mutable {
             completion(WTFMove(predictions));

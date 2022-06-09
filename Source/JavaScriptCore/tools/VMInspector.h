@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "VM.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Expected.h>
-#include <wtf/IterationStatus.h>
 #include <wtf/Lock.h>
 
 namespace JSC {
@@ -48,24 +47,24 @@ public:
 
     void add(VM*);
     void remove(VM*);
-    ALWAYS_INLINE static bool isValidVM(VM* vm)
-    {
-        return vm == m_recentVM ? true : isValidVMSlow(vm);
-    }
 
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
+
+    enum class FunctorStatus {
+        Continue,
+        Done
+    };
 
     template <typename Functor> void iterate(const Functor& functor) WTF_REQUIRES_LOCK(m_lock)
     {
         for (VM* vm = m_vmList.head(); vm; vm = vm->next()) {
-            IterationStatus status = functor(*vm);
-            if (status == IterationStatus::Done)
+            FunctorStatus status = functor(*vm);
+            if (status == FunctorStatus::Done)
                 return;
         }
     }
 
-    JS_EXPORT_PRIVATE static void forEachVM(Function<IterationStatus(VM&)>&&);
-    JS_EXPORT_PRIVATE static void dumpVMs();
+    JS_EXPORT_PRIVATE static void forEachVM(Function<FunctorStatus(VM&)>&&);
 
     Expected<bool, Error> isValidExecutableMemory(void*) WTF_REQUIRES_LOCK(m_lock);
     Expected<CodeBlock*, Error> codeBlockForMachinePC(void*) WTF_REQUIRES_LOCK(m_lock);
@@ -85,16 +84,20 @@ public:
     JS_EXPORT_PRIVATE static void dumpCellMemoryToStream(JSCell*, PrintStream&);
     JS_EXPORT_PRIVATE static void dumpSubspaceHashes(VM*);
 
-#if USE(JSVALUE64)
+    enum VerifierAction { ReleaseAssert, Custom };
+
+    using VerifyFunctor = bool(bool condition, const char* description, ...);
+    static bool unusedVerifier(bool, const char*, ...) { return false; }
+
+    template<VerifierAction, VerifyFunctor = unusedVerifier>
+    static bool verifyCellSize(VM&, JSCell*, size_t allocatorCellSize);
+
+    template<VerifierAction, VerifyFunctor = unusedVerifier>
     static bool verifyCell(VM&, JSCell*);
-#endif
 
 private:
-    JS_EXPORT_PRIVATE static bool isValidVMSlow(VM*);
-
     Lock m_lock;
     DoublyLinkedList<VM> m_vmList WTF_GUARDED_BY_LOCK(m_lock);
-    JS_EXPORT_PRIVATE static VM* m_recentVM;
 };
 
 } // namespace JSC

@@ -25,8 +25,8 @@
 
 // https://w3c.github.io/user-timing/#performancemark
 [
-    Exposed=*,
+    Exposed=(Window,Worker),
 ] interface PerformanceMark : PerformanceEntry {
-    [CallWith=CurrentGlobalObject&CurrentScriptExecutionContext] constructor(DOMString markName, optional PerformanceMarkOptions markOptions);
-    [CallWith=CurrentGlobalObject, CachedAttribute] readonly attribute any detail;
+    [CallWith=GlobalObject&ScriptExecutionContext] constructor(DOMString markName, optional PerformanceMarkOptions markOptions);
+    [CallWith=GlobalObject, CachedAttribute] readonly attribute any detail;
 };

@@ -782,6 +782,9 @@ class FrameCaptureShared final : angle::NonCopyable
     ShaderSourceMap mCachedShaderSource;
     ProgramSourceMap mCachedProgramSources;
 
+    // Cache a shadow copy of texture level data
+    TextureLevelDataMap mCachedTextureLevelData;
+
     gl::ContextID mWindowSurfaceContextID;
 
     std::vector<CallCapture> mShareGroupSetupCalls;

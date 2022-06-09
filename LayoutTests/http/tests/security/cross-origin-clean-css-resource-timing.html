@@ -13,7 +13,6 @@ if (window.internals) {
     internals.clearMemoryCache();
     internals.invalidateFontCache();
 }
-setup({ single_test: true });
 const waitOnLoad = new Promise((resolve) => {
     window.onload = resolve;
 })

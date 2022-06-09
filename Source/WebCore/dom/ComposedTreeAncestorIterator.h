@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ElementRareData.h"
 #include "HTMLSlotElement.h"
 #include "PseudoElement.h"
 #include "ShadowRoot.h"
@@ -73,8 +72,8 @@ inline ComposedTreeAncestorIterator& ComposedTreeAncestorIterator::traverseParen
         m_current = nullptr;
         return *this;
     }
-    if (auto shadowRoot = dynamicDowncast<ShadowRoot>(*parent)) {
-        m_current = shadowRoot->host();
+    if (is<ShadowRoot>(*parent)) {
+        m_current = downcast<ShadowRoot>(*parent).host();
         return *this;
     }
     if (!is<Element>(*parent)) {
@@ -101,10 +100,10 @@ public:
 
     iterator begin()
     {
-        if (auto shadowRoot = dynamicDowncast<ShadowRoot>(m_node))
-            return iterator(*shadowRoot->host());
-        if (auto pseudoElement = dynamicDowncast<PseudoElement>(m_node))
-            return iterator(*pseudoElement->hostElement());
+        if (is<ShadowRoot>(m_node))
+            return iterator(*downcast<ShadowRoot>(m_node).host());
+        if (is<PseudoElement>(m_node))
+            return iterator(*downcast<PseudoElement>(m_node).hostElement());
         return iterator(m_node).traverseParent();
     }
     iterator end()

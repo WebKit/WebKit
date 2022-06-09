@@ -27,7 +27,7 @@
 #pragma once
 
 #include "ContentSecurityPolicyDirective.h"
-#include <wtf/RobinHoodHashSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -43,7 +43,7 @@ public:
 private:
     void parse(const String&);
 
-    MemoryCompactLookupOnlyRobinHoodHashSet<String> m_pluginTypes;
+    HashSet<String> m_pluginTypes;
 };
 
 } // namespace WebCore

@@ -50,9 +50,9 @@ static bool invokeReadableStreamDefaultControllerFunction(JSC::JSGlobalObject& l
     EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
     RETURN_IF_EXCEPTION(scope, false);
 
-    ASSERT(function.isCallable());
+    ASSERT(function.isCallable(lexicalGlobalObject.vm()));
 
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(vm, function);
     call(&lexicalGlobalObject, function, callData, JSC::jsUndefined(), arguments);
     EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
     return !scope.exception();

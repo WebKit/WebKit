@@ -212,5 +212,3 @@ WI.ScriptProfileTimelineView.ProfileViewType = {
     Hierarchy: "hierarchy",
     TopFunctions: "top-functions",
 };
-
-WI.ScriptProfileTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.JavaScriptAndEventsTimeline;

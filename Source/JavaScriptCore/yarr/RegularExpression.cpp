@@ -38,18 +38,18 @@ namespace JSC { namespace Yarr {
 
 class RegularExpression::Private : public RefCounted<RegularExpression::Private> {
 public:
-    static Ref<Private> create(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    static Ref<Private> create(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     {
         return adoptRef(*new Private(pattern, caseSensitivity, multilineMode, unicodeMode));
     }
 
 private:
-    Private(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    Private(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
         : m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode, unicodeMode))
     {
     }
 
-    std::unique_ptr<JSC::Yarr::BytecodePattern> compile(StringView patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    std::unique_ptr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     {
         OptionSet<JSC::Yarr::Flags> flags;
 
@@ -64,7 +64,7 @@ private:
 
         JSC::Yarr::YarrPattern pattern(patternString, flags, m_constructionErrorCode);
         if (JSC::Yarr::hasError(m_constructionErrorCode)) {
-            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", JSC::Yarr::errorMessage(m_constructionErrorCode).characters());
+            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", JSC::Yarr::errorMessage(m_constructionErrorCode));
             return nullptr;
         }
 
@@ -82,7 +82,7 @@ public:
     std::unique_ptr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
 };
 
-RegularExpression::RegularExpression(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+RegularExpression::RegularExpression(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     : d(Private::create(pattern, caseSensitivity, multilineMode, unicodeMode))
 {
 }
@@ -102,7 +102,7 @@ RegularExpression& RegularExpression::operator=(const RegularExpression& re)
     return *this;
 }
 
-int RegularExpression::match(StringView str, int startFrom, int* matchLength) const
+int RegularExpression::match(const String& str, int startFrom, int* matchLength) const
 {
     if (!d->m_regExpByteCode)
         return -1;
@@ -142,7 +142,7 @@ int RegularExpression::match(StringView str, int startFrom, int* matchLength) co
     return offsetVector[0];
 }
 
-int RegularExpression::searchRev(StringView str) const
+int RegularExpression::searchRev(const String& str) const
 {
     // FIXME: This could be faster if it actually searched backwards.
     // Instead, it just searches forwards, multiple times until it finds the last match.
@@ -172,7 +172,7 @@ int RegularExpression::matchedLength() const
     return d->lastMatchLength;
 }
 
-void replace(String& string, const RegularExpression& target, StringView replacement)
+void replace(String& string, const RegularExpression& target, const String& replacement)
 {
     int index = 0;
     while (index < static_cast<int>(string.length())) {
@@ -180,7 +180,7 @@ void replace(String& string, const RegularExpression& target, StringView replace
         index = target.match(string, index, &matchLength);
         if (index < 0)
             break;
-        string = makeStringByReplacing(string, index, matchLength, replacement);
+        string.replace(index, matchLength, replacement);
         index += replacement.length();
         if (!matchLength)
             break; // Avoid infinite loop on 0-length matches, e.g. [a-z]*

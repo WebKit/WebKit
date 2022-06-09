@@ -36,7 +36,7 @@
 #include "LayoutRect.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
-#include <wtf/RobinHoodHashMap.h>
+#include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
@@ -72,7 +72,6 @@ public:
 #if ENABLE(APPLICATION_MANIFEST)
         ApplicationManifestResource,
 #endif
-        EventSourceResource,
         OtherResource,
     };
 
@@ -168,7 +167,7 @@ private:
 
     // FIXME: Make a WeakHashMap and use it for m_frameToIdentifier and m_loaderToIdentifier.
     HashMap<Frame*, String> m_frameToIdentifier;
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<Frame>> m_identifierToFrame;
+    HashMap<String, WeakPtr<Frame>> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     String m_userAgentOverride;
     String m_emulatedMedia;

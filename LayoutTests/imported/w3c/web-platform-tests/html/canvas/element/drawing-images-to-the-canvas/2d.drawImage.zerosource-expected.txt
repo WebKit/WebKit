@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-PASS drawImage with zero-sized source rectangle draws nothing without exception
+FAIL drawImage with zero-sized source rectangle draws nothing without exception The index is not in the allowed range.
 

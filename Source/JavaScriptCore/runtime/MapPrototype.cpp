@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo MapPrototype::s_info = { "Map"_s, &Base::s_info, &mapPrototypeTable, nullptr, CREATE_METHOD_TABLE(MapPrototype) };
+const ClassInfo MapPrototype::s_info = { "Map", &Base::s_info, &mapPrototypeTable, nullptr, CREATE_METHOD_TABLE(MapPrototype) };
 
 /* Source for MapPrototype.lut.h
 @begin mapPrototypeTable
@@ -57,7 +57,7 @@ static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncSize);
 void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->clear, mapProtoFuncClear, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, mapProtoFuncDelete, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
@@ -72,7 +72,6 @@ void MapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSFunction* entries = JSFunction::create(vm, globalObject, 0, vm.propertyNames->builtinNames().entriesPublicName().string(), mapProtoFuncEntries, JSMapEntriesIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPublicName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectWithoutTransition(vm, vm.propertyNames->builtinNames().entriesPrivateName(), entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, entries, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 
@@ -91,7 +90,7 @@ ALWAYS_INLINE static JSMap* getMap(JSGlobalObject* globalObject, JSValue thisVal
         return nullptr;
     }
 
-    auto* map = jsDynamicCast<JSMap*>(thisValue.asCell());
+    auto* map = jsDynamicCast<JSMap*>(vm, thisValue.asCell());
     if (LIKELY(map))
         return map;
     throwTypeError(globalObject, scope, "Map operation called on non-Map object"_s);

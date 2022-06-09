@@ -142,7 +142,7 @@ static bool receivedMessage;
 }
 @end
 
-static constexpr auto TestBytes = R"SWRESOURCE(
+static const char* TestBytes = R"SWRESOURCE(
 <script>
 
 async function doTest()
@@ -177,9 +177,9 @@ function doTestAgain()
     doTest();
 }
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto TestUrlBytes = R"SWRESOURCE(
+static const char* TestUrlBytes = R"SWRESOURCE(
 <script>
 
 var index = 0;
@@ -206,10 +206,10 @@ function doTest(num)
     test(num);
 }
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 #if PLATFORM(MAC)
-static constexpr auto TestHiddenBytes = R"SWRESOURCE(
+static const char* TestHiddenBytes = R"SWRESOURCE(
 <script>
 
 async function test()
@@ -231,7 +231,7 @@ async function test()
 
 test();
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 #endif
 
 static inline void setVisible(TestWKWebView *webView)
@@ -262,7 +262,7 @@ TEST(WebKit, QuotaDelegateHidden)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { TestHiddenBytes } },
+        { "/", { TestHiddenBytes } },
     });
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
@@ -320,7 +320,7 @@ TEST(WebKit, QuotaDelegate)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { TestBytes } },
+        { "/", { TestBytes } },
     });
 
     auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
@@ -379,7 +379,7 @@ TEST(WebKit, QuotaDelegateReload)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
     
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { TestBytes } },
+        { "/", { TestBytes } },
     });
     
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
@@ -426,7 +426,7 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/main.html"_s, { TestBytes } },
+        { "/main.html", { TestBytes } },
     });
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
@@ -435,7 +435,7 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     setVisible(webView.get());
 
     receivedQuotaDelegateCalled = false;
-    [webView loadRequest:server.request("/main.html"_s)];
+    [webView loadRequest:server.request("/main.html")];
     Util::run(&receivedQuotaDelegateCalled);
 
     [delegate denyQuota];
@@ -445,7 +445,7 @@ TEST(WebKit, QuotaDelegateNavigateFragment)
     Util::run(&receivedMessage);
 
     receivedQuotaDelegateCalled = false;
-    [webView loadRequest:server.request("/main.html#fragment"_s)];
+    [webView loadRequest:server.request("/main.html#fragment")];
     [webView stringByEvaluatingJavaScript:@"doTestAgain()"];
 
     [messageHandler setExpectedMessage: @"start"];
@@ -477,7 +477,7 @@ TEST(WebKit, DefaultQuota)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { TestUrlBytes } },
+        { "/", { TestUrlBytes } },
     });
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);

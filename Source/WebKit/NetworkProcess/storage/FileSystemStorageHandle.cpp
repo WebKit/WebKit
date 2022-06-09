@@ -39,29 +39,6 @@ constexpr char pathSeparator = '\\';
 constexpr char pathSeparator = '/';
 #endif
 
-std::unique_ptr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
-{
-    bool canAccess = false;
-    switch (type) {
-    case FileSystemStorageHandle::Type::Directory:
-        canAccess = FileSystem::makeAllDirectories(path);
-        break;
-    case FileSystemStorageHandle::Type::File:
-        if (auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write); FileSystem::isHandleValid(handle)) {
-            FileSystem::closeFile(handle);
-            canAccess = true;
-        }
-        break;
-    case FileSystemStorageHandle::Type::Any:
-        ASSERT_NOT_REACHED();
-    }
-
-    if (!canAccess)
-        return nullptr;
-
-    return std::unique_ptr<FileSystemStorageHandle>(new FileSystemStorageHandle(manager, type, WTFMove(path), WTFMove(name)));
-}
-
 FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
     : m_identifier(WebCore::FileSystemHandleIdentifier::generateThreadSafe())
     , m_manager(manager)
@@ -70,6 +47,20 @@ FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manag
     , m_name(WTFMove(name))
 {
     ASSERT(!m_path.isEmpty());
+
+    switch (m_type) {
+    case FileSystemStorageHandle::Type::Directory:
+        FileSystem::makeAllDirectories(m_path);
+        return;
+    case FileSystemStorageHandle::Type::File:
+        if (!FileSystem::fileExists(m_path)) {
+            auto handle = FileSystem::openFile(m_path, FileSystem::FileOpenMode::Write);
+            FileSystem::closeFile(handle);
+        }
+        return;
+    case FileSystemStorageHandle::Type::Any:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void FileSystemStorageHandle::close()
@@ -94,7 +85,7 @@ bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier id
 static bool isValidFileName(const String& directory, const String& name)
 {
     // https://wicg.github.io/file-system-access/#valid-file-name
-    if (name.isEmpty() || (name == "."_s) || (name == ".."_s) || name.contains(pathSeparator))
+    if (name.isEmpty() || (name == ".") || (name == "..") || name.contains(pathSeparator))
         return false;
 
     return FileSystem::pathFileName(FileSystem::pathByAppendingComponent(directory, name)) == name;

@@ -34,13 +34,13 @@
 CFDictionaryPropertyBag::CFDictionaryPropertyBag()
 {
     gClassCount++;
-    gClassNameCount().add("CFDictionaryPropertyBag"_s);
+    gClassNameCount().add("CFDictionaryPropertyBag");
 }
 
 CFDictionaryPropertyBag::~CFDictionaryPropertyBag()
 {
     gClassCount--;
-    gClassNameCount().remove("CFDictionaryPropertyBag"_s);
+    gClassNameCount().remove("CFDictionaryPropertyBag");
 }
 
 COMPtr<CFDictionaryPropertyBag> CFDictionaryPropertyBag::createInstance()

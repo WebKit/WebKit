@@ -68,6 +68,11 @@ WI.CSSPropertyNameCompletions = class CSSPropertyNameCompletions extends WI.CSSC
         return super.startsWith(prefix);
     }
 
+    addValues()
+    {
+        console.assert(false, "Adding values will overwrite the list of supported CSS property names.");
+    }
+
     // Private
 
     _updateValuesWithLatestCSSVariablesIfNeeded()

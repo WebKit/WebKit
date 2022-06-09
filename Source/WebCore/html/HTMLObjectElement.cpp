@@ -41,6 +41,7 @@
 #include "MIMETypeRegistry.h"
 #include "NodeList.h"
 #include "Page.h"
+#include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
 #include "RenderWidget.h"
@@ -128,25 +129,25 @@ void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomStri
     invalidateStyleAndRenderersForSubtree();
 }
 
-static void mapDataParamToSrc(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues)
+static void mapDataParamToSrc(Vector<String>& paramNames, Vector<String>& paramValues)
 {
     // Some plugins don't understand the "data" attribute of the OBJECT tag (i.e. Real and WMP require "src" attribute).
     bool foundSrcParam = false;
-    AtomString dataParamValue;
+    String dataParamValue;
     for (unsigned i = 0; i < paramNames.size(); ++i) {
-        if (equalLettersIgnoringASCIICase(paramNames[i], "src"_s))
+        if (equalLettersIgnoringASCIICase(paramNames[i], "src"))
             foundSrcParam = true;
-        else if (equalLettersIgnoringASCIICase(paramNames[i], "data"_s))
+        else if (equalLettersIgnoringASCIICase(paramNames[i], "data"))
             dataParamValue = paramValues[i];
     }
     if (!foundSrcParam && !dataParamValue.isNull()) {
-        paramNames.append(AtomString { "src"_s });
+        paramNames.append("src"_s);
         paramValues.append(WTFMove(dataParamValue));
     }
 }
 
 // FIXME: This function should not deal with url or serviceType!
-void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues, String& url, String& serviceType)
+void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType)
 {
     HashSet<StringImpl*, ASCIICaseInsensitiveHash> uniqueParamNames;
     String urlParameter;
@@ -163,10 +164,10 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
         paramValues.append(param.value());
 
         // FIXME: url adjustment does not belong in this function.
-        if (url.isEmpty() && urlParameter.isEmpty() && (equalLettersIgnoringASCIICase(name, "src"_s) || equalLettersIgnoringASCIICase(name, "movie"_s) || equalLettersIgnoringASCIICase(name, "code"_s) || equalLettersIgnoringASCIICase(name, "url"_s)))
+        if (url.isEmpty() && urlParameter.isEmpty() && (equalLettersIgnoringASCIICase(name, "src") || equalLettersIgnoringASCIICase(name, "movie") || equalLettersIgnoringASCIICase(name, "code") || equalLettersIgnoringASCIICase(name, "url")))
             urlParameter = stripLeadingAndTrailingHTMLSpaces(param.value());
         // FIXME: serviceType calculation does not belong in this function.
-        if (serviceType.isEmpty() && equalLettersIgnoringASCIICase(name, "type"_s)) {
+        if (serviceType.isEmpty() && equalLettersIgnoringASCIICase(name, "type")) {
             serviceType = param.value();
             size_t pos = serviceType.find(';');
             if (pos != notFound)
@@ -181,7 +182,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
     // else our Java plugin will misinterpret it. [4004531]
     String codebase;
     if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType)) {
-        codebase = "codebase"_s;
+        codebase = "codebase";
         uniqueParamNames.add(codebase.impl()); // pretend we found it in a PARAM already
     }
     
@@ -190,8 +191,8 @@ void HTMLObjectElement::parametersForPlugin(Vector<AtomString>& paramNames, Vect
         for (const Attribute& attribute : attributesIterator()) {
             const AtomString& name = attribute.name().localName();
             if (!uniqueParamNames.contains(name.impl())) {
-                paramNames.append(name);
-                paramValues.append(attribute.value());
+                paramNames.append(name.string());
+                paramValues.append(attribute.value().string());
             }
         }
     }
@@ -225,7 +226,7 @@ bool HTMLObjectElement::hasFallbackContent() const
 
 bool HTMLObjectElement::hasValidClassId()
 {
-    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && protocolIs(attributeWithoutSynchronization(classidAttr), "java"_s))
+    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && protocolIs(attributeWithoutSynchronization(classidAttr), "java"))
         return true;
 
     // HTML5 says that fallback content should be rendered if a non-empty
@@ -258,8 +259,8 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     String serviceType = this->serviceType();
 
     // FIXME: These should be joined into a PluginParameters class.
-    Vector<AtomString> paramNames;
-    Vector<AtomString> paramValues;
+    Vector<String> paramNames;
+    Vector<String> paramValues;
     parametersForPlugin(paramNames, paramValues, url, serviceType);
 
     // Note: url is modified above by parametersForPlugin.
@@ -275,11 +276,14 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
 
     setNeedsWidgetUpdate(false);
 
-    Ref protectedThis = *this; // Plugin loading can make arbitrary DOM mutations.
+    Ref<HTMLObjectElement> protectedThis(*this); // beforeload and plugin loading can make arbitrary DOM mutations.
+    bool beforeLoadAllowedLoad = guardedDispatchBeforeLoadEvent(url);
+    if (!renderer()) // Do not load the plugin if beforeload removed this element or its renderer.
+        return;
 
     // Dispatching a beforeLoad event could have executed code that changed the document.
     // Make sure the URL is still safe to load.
-    bool success = hasValidClassId() && canLoadURL(url);
+    bool success = beforeLoadAllowedLoad && hasValidClassId() && canLoadURL(url);
     if (success)
         success = requestObject(url, serviceType, paramNames, paramValues);
     if (!success && hasFallbackContent())
@@ -434,7 +438,7 @@ bool HTMLObjectElement::containsJavaApplet() const
         return true;
 
     for (auto& child : childrenOfType<Element>(*this)) {
-        if (child.hasTagName(paramTag) && equalLettersIgnoringASCIICase(child.getNameAttribute(), "type"_s)
+        if (child.hasTagName(paramTag) && equalLettersIgnoringASCIICase(child.getNameAttribute(), "type")
             && MIMETypeRegistry::isJavaAppletMIMEType(child.attributeWithoutSynchronization(valueAttr).string()))
             return true;
         if (child.hasTagName(objectTag) && downcast<HTMLObjectElement>(child).containsJavaApplet())

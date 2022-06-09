@@ -25,7 +25,10 @@
 
 .sheet-container {
     position: absolute;
-    inset: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     z-index: var(--z-index-uncaught-exception-sheet);
     background-color: hsl(0, 0%, 96%);
     overflow: auto;
@@ -123,6 +126,6 @@ body[dir=rtl] .uncaught-exception-sheet h2 > img {
 .uncaught-exception-sheet li {
     margin-bottom: 20px;
     word-break: break-word;
-    user-select: text;
+    -webkit-user-select: text;
     white-space: pre;
 }

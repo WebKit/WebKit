@@ -41,9 +41,9 @@ typedef unsigned ArrayModes;
 
 // The possible IndexingTypes are limited within (0 - 16, 21, 23, 25).
 // This is because CoW types only appear for JSArrays.
-static_assert(CopyOnWriteArrayWithInt32 == 21);
-static_assert(CopyOnWriteArrayWithDouble == 23);
-static_assert(CopyOnWriteArrayWithContiguous == 25);
+static_assert(CopyOnWriteArrayWithInt32 == 21, "");
+static_assert(CopyOnWriteArrayWithDouble == 23, "");
+static_assert(CopyOnWriteArrayWithContiguous == 25, "");
 const ArrayModes CopyOnWriteArrayWithInt32ArrayMode = 1 << CopyOnWriteArrayWithInt32;
 const ArrayModes CopyOnWriteArrayWithDoubleArrayMode = 1 << CopyOnWriteArrayWithDouble;
 const ArrayModes CopyOnWriteArrayWithContiguousArrayMode = 1 << CopyOnWriteArrayWithContiguous;
@@ -231,7 +231,7 @@ public:
     void computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock*, Structure* lastSeenStructure);
     
     void observeArrayMode(ArrayModes mode) { m_observedArrayModes |= mode; }
-    void observeIndexedRead(JSCell*, unsigned index);
+    void observeIndexedRead(VM&, JSCell*, unsigned index);
 
     ArrayModes observedArrayModes(const ConcurrentJSLocker&) const { return m_observedArrayModes; }
     bool mayInterceptIndexedAccesses(const ConcurrentJSLocker&) const { return m_mayInterceptIndexedAccesses; }
@@ -249,7 +249,7 @@ private:
     
     static Structure* polymorphicStructure() { return static_cast<Structure*>(reinterpret_cast<void*>(1)); }
     
-    StructureID m_lastSeenStructureID;
+    StructureID m_lastSeenStructureID { 0 };
     bool m_mayStoreToHole { false }; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_outOfBounds { false };
 #if USE(LARGE_TYPED_ARRAYS)

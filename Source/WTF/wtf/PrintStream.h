@@ -31,7 +31,6 @@
 #include <tuple>
 #include <wtf/Forward.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/FixedWidthDouble.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RawPointer.h>
 #include <wtf/RefPtr.h>
@@ -98,7 +97,6 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const char*);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, StringView);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const CString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const String&);
-WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const AtomString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringImpl*);
 inline void printInternal(PrintStream& out, const AtomStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }
 inline void printInternal(PrintStream& out, const UniquedStringImpl* value) { printInternal(out, bitwise_cast<const StringImpl*>(value)); }
@@ -124,7 +122,6 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, unsigned long long);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, float);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, double);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, RawPointer);
-WTF_EXPORT_PRIVATE void printInternal(PrintStream&, FixedWidthDouble);
 
 template<typename T>
 void printInternal(PrintStream& out, const T& value)

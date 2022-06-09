@@ -49,7 +49,7 @@ public:
     ExceptionOr<float> convertValueToUserUnits(float, SVGLengthType, SVGLengthMode) const;
     ExceptionOr<float> convertValueFromUserUnits(float, SVGLengthType, SVGLengthMode) const;
 
-    std::optional<FloatSize> viewportSize() const;
+    bool determineViewport(FloatSize&) const;
 
 private:
     SVGLengthContext(const SVGElement*, const FloatRect& viewport);
@@ -63,11 +63,8 @@ private:
     ExceptionOr<float> convertValueFromUserUnitsToEXS(float value) const;
     ExceptionOr<float> convertValueFromEXSToUserUnits(float value) const;
 
-    std::optional<FloatSize> computeViewportSize() const;
-
     const SVGElement* m_context;
-    FloatRect m_overriddenViewport; // Ideally this would be std::optional<FloatRect>, but some tests depend on the behavior of it being a zero rect.
-    mutable std::optional<FloatSize> m_viewportSize;
+    FloatRect m_overriddenViewport;
 };
 
 } // namespace WebCore

@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2010 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,6 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "Document.h"
-#include "FEImage.h"
 #include "Image.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
@@ -111,7 +110,7 @@ void SVGFEImageElement::buildPendingResource()
     } else if (is<SVGElement>(*target.element))
         downcast<SVGElement>(*target.element).addReferencingElement(*this);
 
-    updateSVGRendererForElementChange();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 void SVGFEImageElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -127,10 +126,9 @@ void SVGFEImageElement::parseAttribute(const QualifiedName& name, const AtomStri
 
 void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
-        ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
+    if (attrName == SVGNames::preserveAspectRatioAttr) {
         InstanceInvalidationGuard guard(*this);
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
@@ -178,7 +176,7 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
 
-std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect(const GraphicsContext& destinationContext) const
+std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect() const
 {
     auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
     if (!is<SVGElement>(target.element))
@@ -196,11 +194,11 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     if (!absoluteTransform.isInvertible())
         return { };
 
-    // Ignore 2D rotation, as it doesn't affect the image size.
-    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
+    auto shearFreeAbsoluteTransform = AffineTransform(absoluteTransform.xScale(), 0, 0, absoluteTransform.yScale(), 0, 0);
+
     auto imageRect = renderer->repaintRectInLocalCoordinates();
 
-    auto imageBuffer = destinationContext.createScaledImageBuffer(imageRect, scale);
+    auto imageBuffer = SVGRenderingContext::createImageBuffer(imageRect, shearFreeAbsoluteTransform, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated);
     if (!imageBuffer)
         return { };
 
@@ -210,26 +208,16 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     return { imageBuffer, imageRect };
 }
 
-RefPtr<FilterEffect> SVGFEImageElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const
+RefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder&) const
 {
-    if (m_cachedImage) {
-        auto image = m_cachedImage->imageForRenderer(renderer());
-        if (!image || image->isNull())
-            return nullptr;
+    if (m_cachedImage)
+        return FEImage::create(Ref { *m_cachedImage->imageForRenderer(renderer()) }, preserveAspectRatio());
 
-        auto nativeImage = image->preTransformedNativeImageForCurrentFrame();
-        if (!nativeImage)
-            return nullptr;
-
-        auto imageRect = FloatRect { { }, image->size() };
-        return FEImage::create({ nativeImage.releaseNonNull() }, imageRect, preserveAspectRatio());
-    }
-
-    auto [imageBuffer, imageRect] = imageBufferForEffect(destinationContext);
+    auto [imageBuffer, imageRect] = imageBufferForEffect();
     if (!imageBuffer)
         return nullptr;
 
-    return FEImage::create({ imageBuffer.releaseNonNull() }, imageRect, preserveAspectRatio());
+    return FEImage::create(imageBuffer.releaseNonNull(), imageRect, preserveAspectRatio());
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
@@ -239,4 +227,4 @@ void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) cons
     addSubresourceURL(urls, document().completeURL(href()));
 }
 
-} // namespace WebCore
+}

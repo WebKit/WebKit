@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
 #include "AccessibilityAtspiEnums.h"
 #include "AccessibilityObject.h"
@@ -31,6 +31,7 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_imageFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -51,6 +52,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_imageFunctions = {
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -65,16 +67,17 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_imageFunctions = {
     // set_property,
     nullptr,
     // padding
-    { nullptr }
+    nullptr
 };
 
 String AccessibilityObjectAtspi::imageDescription() const
 {
-    if (!m_coreObject)
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_axObject)
         return { };
 
     Vector<AccessibilityText> textOrder;
-    m_coreObject->accessibilityText(textOrder);
+    m_axObject->accessibilityText(textOrder);
 
     bool visibleTextAvailable = false;
     for (const AccessibilityText& text : textOrder) {
@@ -99,4 +102,4 @@ String AccessibilityObjectAtspi::imageDescription() const
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

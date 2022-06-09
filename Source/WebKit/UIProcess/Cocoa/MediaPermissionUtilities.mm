@@ -109,12 +109,12 @@ bool checkUsageDescriptionStringForSpeechRecognition()
 static NSString* visibleDomain(const String& host)
 {
     auto domain = WTF::URLHelpers::userVisibleURL(host.utf8());
-    return startsWithLettersIgnoringASCIICase(domain, "www."_s) ? StringView(domain).substring(4).createNSString().autorelease() : static_cast<NSString *>(domain);
+    return startsWithLettersIgnoringASCIICase(domain, "www.") ? domain.substring(4) : domain;
 }
 
 NSString *applicationVisibleNameFromOrigin(const WebCore::SecurityOriginData& origin)
 {
-    if (origin.protocol != "http"_s && origin.protocol != "https"_s)
+    if (origin.protocol != "http" && origin.protocol != "https")
         return nil;
 
     return visibleDomain(origin.host);

@@ -19,33 +19,37 @@
 
 #pragma once
 
-#if USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
+#include "AccessibilityAtspi.h"
 #include "IntRect.h"
+#include <wtf/Atomics.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
-typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
 typedef struct _GVariant GVariant;
 
 namespace WebCore {
 class AccessibilityObjectAtspi;
 class Page;
 
-class AccessibilityRootAtspi final : public RefCounted<AccessibilityRootAtspi> {
+class AccessibilityRootAtspi final : public ThreadSafeRefCounted<AccessibilityRootAtspi, WTF::DestructionThread::Main> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<AccessibilityRootAtspi> create(Page&);
+    static Ref<AccessibilityRootAtspi> create(Page&, AccessibilityAtspi&);
     ~AccessibilityRootAtspi() = default;
 
     void registerObject(CompletionHandler<void(const String&)>&&);
     void unregisterObject();
+    void registerTree();
+    bool isTreeRegistered() const { return m_isTreeRegistered.load(); }
     void setPath(String&&);
 
     const String& path() const { return m_path; }
     GVariant* reference() const;
     GVariant* parentReference() const;
     GVariant* applicationReference() const;
+    AccessibilityAtspi& atspi() const { return m_atspi; }
     AccessibilityObjectAtspi* child() const;
     void childAdded(AccessibilityObjectAtspi&);
     void childRemoved(AccessibilityObjectAtspi&);
@@ -53,7 +57,7 @@ public:
     void serialize(GVariantBuilder*) const;
 
 private:
-    explicit AccessibilityRootAtspi(Page&);
+    AccessibilityRootAtspi(Page&, AccessibilityAtspi&);
 
     void embedded(const char* parentUniqueName, const char* parentPath);
     IntRect frameRect(uint32_t) const;
@@ -62,12 +66,14 @@ private:
     static GDBusInterfaceVTable s_socketFunctions;
     static GDBusInterfaceVTable s_componentFunctions;
 
+    AccessibilityAtspi& m_atspi;
     WeakPtr<Page> m_page;
     String m_path;
     String m_parentUniqueName;
     String m_parentPath;
+    Atomic<bool> m_isTreeRegistered { false };
 };
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

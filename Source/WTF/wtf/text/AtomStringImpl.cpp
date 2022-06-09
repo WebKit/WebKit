@@ -88,6 +88,36 @@ static inline Ref<AtomStringImpl> addToStringTable(const T& value)
     return addToStringTable<T, HashTranslator>(locker, stringTable(), value);
 }
 
+struct CStringTranslator {
+    static unsigned hash(const LChar* characters)
+    {
+        return StringHasher::computeHashAndMaskTop8Bits(characters);
+    }
+
+    static inline bool equal(PackedPtr<StringImpl> str, const LChar* characters)
+    {
+        return WTF::equal(str.get(), characters);
+    }
+
+    static void translate(PackedPtr<StringImpl>& location, const LChar* const& characters, unsigned hash)
+    {
+        auto* pointer = &StringImpl::create(characters).leakRef();
+        pointer->setHash(hash);
+        pointer->setIsAtom(true);
+        location = pointer;
+    }
+};
+
+RefPtr<AtomStringImpl> AtomStringImpl::add(const LChar* characters)
+{
+    if (!characters)
+        return nullptr;
+    if (!*characters)
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
+
+    return addToStringTable<const LChar*, CStringTranslator>(characters);
+}
+
 using UCharBuffer = HashTranslatorCharBuffer<UChar>;
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
@@ -167,7 +197,7 @@ struct HashAndUTF8CharactersTranslator {
         bool isAllASCII;
         const char* source = buffer.characters;
         if (!convertUTF8ToUTF16(source, source + buffer.length, &target, target + buffer.utf16Length, &isAllASCII))
-            RELEASE_ASSERT_NOT_REACHED();
+            ASSERT_NOT_REACHED();
 
         if (isAllASCII)
             newString = StringImpl::create(buffer.characters, buffer.length);
@@ -183,6 +213,22 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(const UChar* characters, unsigned len
 {
     if (!characters)
         return nullptr;
+
+    if (!length)
+        return static_cast<AtomStringImpl*>(StringImpl::empty());
+
+    UCharBuffer buffer { characters, length };
+    return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
+}
+
+RefPtr<AtomStringImpl> AtomStringImpl::add(const UChar* characters)
+{
+    if (!characters)
+        return nullptr;
+
+    unsigned length = 0;
+    while (characters[length] != UChar(0))
+        ++length;
 
     if (!length)
         return static_cast<AtomStringImpl*>(StringImpl::empty());
@@ -380,33 +426,6 @@ Ref<AtomStringImpl> AtomStringImpl::addSlowCase(StringImpl& string)
     if (addResult.isNewEntry) {
         ASSERT(addResult.iterator->get() == &string);
         string.setIsAtom(true);
-    }
-
-    return *static_cast<AtomStringImpl*>(addResult.iterator->get());
-}
-
-Ref<AtomStringImpl> AtomStringImpl::addSlowCase(Ref<StringImpl>&& string)
-{
-    // This check is necessary for null symbols.
-    // Their length is zero, but they are not AtomStringImpl.
-    if (!string->length())
-        return *static_cast<AtomStringImpl*>(StringImpl::empty());
-
-    if (string->isStatic())
-        return addStatic(WTFMove(string));
-
-    if (string->isSymbol())
-        return addSymbol(WTFMove(string));
-
-    ASSERT_WITH_MESSAGE(!string->isAtom(), "AtomStringImpl should not hit the slow case if the string is already an atom.");
-
-    AtomStringTableLocker locker;
-    auto addResult = stringTable().add(string.ptr());
-
-    if (addResult.isNewEntry) {
-        ASSERT(addResult.iterator->get() == string.ptr());
-        string->setIsAtom(true);
-        return static_reference_cast<AtomStringImpl>(WTFMove(string));
     }
 
     return *static_cast<AtomStringImpl*>(addResult.iterator->get());

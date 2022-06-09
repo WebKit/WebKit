@@ -150,6 +150,7 @@ public:
 
 private:
     friend class InlineIterator::BoxLegacyPath;
+    friend class TextBoxPainter;
 
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
@@ -168,7 +169,7 @@ private:
     std::optional<unsigned short> m_truncation;
 
     unsigned m_start { 0 };
-    unsigned m_len { 0 };
+    unsigned short m_len { 0 };
 };
 
 LayoutRect snappedSelectionRect(const LayoutRect&, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal);

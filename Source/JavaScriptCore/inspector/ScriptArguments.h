@@ -54,7 +54,6 @@ public:
     JSC::JSGlobalObject* globalObject() const;
 
     bool getFirstArgumentAsString(String& result) const;
-    Vector<String> getArgumentsAsStrings() const;
     bool isEqual(const ScriptArguments&) const;
 
     static String truncateStringForConsoleMessage(const String& message)
@@ -62,12 +61,11 @@ public:
         constexpr size_t maxMessageLength = 10000;
         if (message.length() <= maxMessageLength)
             return message;
-        return makeString(StringView(message).left(maxMessageLength), "..."_s);
+        return makeString(message.substring(0, maxMessageLength), "..."_s);
     }
 
 private:
     ScriptArguments(JSC::JSGlobalObject*, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
-    std::optional<String> getArgumentAtIndexAsString(size_t) const;
 
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
     Vector<JSC::Strong<JSC::Unknown>> m_arguments;

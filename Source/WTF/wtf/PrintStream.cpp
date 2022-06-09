@@ -26,7 +26,6 @@
 #include "config.h"
 #include <wtf/PrintStream.h>
 
-#include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -103,11 +102,6 @@ void printInternal(PrintStream& out, const CString& string)
 void printInternal(PrintStream& out, const String& string)
 {
     printExpectedCStringHelper(out, "String", string.tryGetUtf8());
-}
-
-void printInternal(PrintStream& out, const AtomString& string)
-{
-    printExpectedCStringHelper(out, "String", string.string().tryGetUtf8());
 }
 
 void printInternal(PrintStream& out, const StringImpl* string)
@@ -187,11 +181,6 @@ void printInternal(PrintStream& out, double value)
 void printInternal(PrintStream& out, RawPointer value)
 {
     out.printf("%p", value.value());
-}
-
-void printInternal(PrintStream& out, FixedWidthDouble value)
-{
-    out.printf("%*.*lf", value.width(), value.precision(), value.value());
 }
 
 void dumpCharacter(PrintStream& out, char value)

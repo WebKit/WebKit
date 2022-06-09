@@ -37,22 +37,22 @@ namespace Layout {
 class Box;
 class ContainerBox;
 class LayoutState;
-struct LayoutBoundsMetrics;
 
 class LineBoxBuilder {
 public:
     LineBoxBuilder(const InlineFormattingContext&);
 
-    LineBox build(const LineBuilder::LineContent&, size_t lineIndex);
+    struct LineBoxAndHeight {
+        LineBox lineBox;
+        InlineLayoutUnit lineBoxLogicalHeight;
+    };
+    LineBoxAndHeight build(const LineBuilder::LineContent&, size_t lineIndex);
 
 private:
-    enum class BehavesAsText : uint8_t { No, Yes };
-    void setBaselineAndLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&, BehavesAsText = BehavesAsText::No) const;
-    void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
-    TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const RenderStyle&);
-
-    void constructInlineLevelBoxes(LineBox&, const LineBuilder::LineContent&, size_t lineIndex);
-    void adjustIdeographicBaselineIfApplicable(LineBox&, size_t lineIndex);
+    void setInitialVerticalGeometryForInlineBox(InlineLevelBox&) const;
+    void setVerticalGeometryForLineBreakBox(InlineLevelBox& lineBreakBox, const InlineLevelBox& parentInlineBox) const;
+    void adjustVerticalGeometryForInlineBoxWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList&) const;
+    InlineLayoutUnit constructAndAlignInlineLevelBoxes(LineBox&, const LineBuilder::LineContent&, size_t lineIndex);
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Box& rootBox() const { return formattingContext().root(); }
@@ -60,8 +60,6 @@ private:
 
 private:
     const InlineFormattingContext& m_inlineFormattingContext;
-    bool m_fallbackFontRequiresIdeographicBaseline { false };
-    HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
 };
 
 }

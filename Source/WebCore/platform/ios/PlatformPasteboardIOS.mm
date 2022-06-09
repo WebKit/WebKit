@@ -159,7 +159,7 @@ static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, PlatformP
 {
     ListHashSet<String> domPasteboardTypes;
     for (NSString *type in platformTypes) {
-        if ([type isEqualToString:@(PasteboardCustomData::cocoaType().characters())])
+        if ([type isEqualToString:@(PasteboardCustomData::cocoaType())])
             continue;
 
         if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type)) {
@@ -361,16 +361,16 @@ int64_t PlatformPasteboard::changeCount() const
 String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType, IncludeImageTypes includeImageTypes)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (domType == "text/plain"_s)
+    if (domType == "text/plain")
         return kUTTypePlainText;
 
-    if (domType == "text/html"_s)
+    if (domType == "text/html")
         return kUTTypeHTML;
 
-    if (domType == "text/uri-list"_s)
+    if (domType == "text/uri-list")
         return kUTTypeURL;
 
-    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png"_s)
+    if (includeImageTypes == IncludeImageTypes::Yes && domType == "image/png")
         return kUTTypePNG;
 ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -501,7 +501,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     PasteboardCustomData customData;
     customData.setOrigin(content.contentOrigin);
-    [representationsToRegister addData:customData.createSharedBuffer()->createNSData().get() forType:@(PasteboardCustomData::cocoaType().characters())];
+    [representationsToRegister addData:customData.createSharedBuffer()->createNSData().get() forType:@(PasteboardCustomData::cocoaType())];
 
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
 }
@@ -608,7 +608,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
     }
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
-    if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType().characters())]) {
+    if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType())]) {
         auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
         if (data.origin() == origin) {
             for (auto& type : data.orderedTypes())
@@ -645,7 +645,7 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
             NSDictionary *teamDataDictionary = @{ @(originKeyForTeamData) : data.origin(), @(customTypesKeyForTeamData) : createNSArray(data.orderedTypes()).get() };
             if (NSData *teamData = [NSKeyedArchiver archivedDataWithRootObject:teamDataDictionary requiringSecureCoding:YES error:nullptr]) {
                 [representationsToRegister setTeamData:teamData];
-                [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType().characters())];
+                [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
             }
         }
     }

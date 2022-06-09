@@ -114,14 +114,13 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
                 }
             }
 
-            auto auditToken = process.auditToken();
             if (needsAppleCameraSandboxExtension) {
-                if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraServicePath, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)) {
+                if (auto handle = SandboxExtension::createHandleForMachLookup(appleCameraServicePath, std::nullopt)) {
                     handles[--extensionCount] = WTFMove(*handle);
                     ids.uncheckedAppend(appleCameraServicePath);
                 }
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-                if (auto handle = SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)) {
+                if (auto handle = SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, std::nullopt)) {
                     handles[--extensionCount] = WTFMove(*handle);
                     ids.uncheckedAppend(additionalAppleCameraServicePath);
                 }

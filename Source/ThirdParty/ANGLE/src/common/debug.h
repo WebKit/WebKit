@@ -38,7 +38,7 @@ namespace gl
 class Context;
 
 // Pairs a begin event with an end event.
-class ANGLE_NO_DISCARD ScopedPerfEventHelper : angle::NonCopyable
+class ScopedPerfEventHelper : angle::NonCopyable
 {
   public:
     ScopedPerfEventHelper(Context *context, angle::EntryPoint entryPoint);
@@ -343,6 +343,8 @@ std::ostream &FmtHex(std::ostream &os, T value)
 #else
 #    define ASSERT(condition) ANGLE_EAT_STREAM_PARAMETERS << !(condition)
 #endif  // defined(ANGLE_ENABLE_ASSERTS)
+
+#define UNREACHABLE_IS_NORETURN 0
 
 #define ANGLE_UNUSED_VARIABLE(variable) (static_cast<void>(variable))
 

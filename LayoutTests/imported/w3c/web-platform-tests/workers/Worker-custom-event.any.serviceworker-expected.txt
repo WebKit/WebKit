@@ -1,3 +1,0 @@
-
-PASS Test CustomEvents on workers.
-

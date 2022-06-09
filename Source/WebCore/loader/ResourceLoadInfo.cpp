@@ -94,51 +94,51 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
 
 std::optional<OptionSet<ResourceType>> readResourceType(StringView name)
 {
-    if (name == "document"_s)
+    if (name == "document")
         return { ResourceType::Document };
-    if (name == "image"_s)
+    if (name == "image")
         return { ResourceType::Image };
-    if (name == "style-sheet"_s)
+    if (name == "style-sheet")
         return { ResourceType::StyleSheet };
-    if (name == "script"_s)
+    if (name == "script")
         return { ResourceType::Script };
-    if (name == "font"_s)
+    if (name == "font")
         return { ResourceType::Font };
-    if (name == "raw"_s)
+    if (name == "raw")
         return { { ResourceType::Fetch, ResourceType::WebSocket, ResourceType::Other, ResourceType::Ping } };
-    if (name == "websocket"_s)
+    if (name == "websocket")
         return { ResourceType::WebSocket };
-    if (name == "fetch"_s)
+    if (name == "fetch")
         return { ResourceType::Fetch };
-    if (name == "other"_s)
+    if (name == "other")
         return { { ResourceType::Other, ResourceType::Ping, ResourceType::CSPReport } };
-    if (name == "svg-document"_s)
+    if (name == "svg-document")
         return { ResourceType::SVGDocument };
-    if (name == "media"_s)
+    if (name == "media")
         return { ResourceType::Media };
-    if (name == "popup"_s)
+    if (name == "popup")
         return { ResourceType::Popup };
-    if (name == "ping"_s)
+    if (name == "ping")
         return { ResourceType::Ping };
-    if (name == "csp-report"_s)
+    if (name == "csp-report")
         return { ResourceType::CSPReport };
     return std::nullopt;
 }
 
 std::optional<OptionSet<LoadType>> readLoadType(StringView name)
 {
-    if (name == "first-party"_s)
+    if (name == "first-party")
         return { LoadType::FirstParty };
-    if (name == "third-party"_s)
+    if (name == "third-party")
         return { LoadType::ThirdParty };
     return std::nullopt;
 }
 
 std::optional<OptionSet<LoadContext>> readLoadContext(StringView name)
 {
-    if (name == "top-frame"_s)
+    if (name == "top-frame")
         return { LoadContext::TopFrame };
-    if (name == "child-frame"_s)
+    if (name == "child-frame")
         return { LoadContext::ChildFrame };
     return std::nullopt;
 }

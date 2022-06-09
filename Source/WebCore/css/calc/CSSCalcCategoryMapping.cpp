@@ -35,7 +35,6 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
 {
     switch (type) {
     case CSSUnitType::CSS_NUMBER:
-    case CSSUnitType::CSS_INTEGER:
         return CalculationCategory::Number;
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
@@ -75,12 +74,6 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_DVMAX:
     case CSSUnitType::CSS_DVB:
     case CSSUnitType::CSS_DVI:
-    case CSSUnitType::CSS_CQW:
-    case CSSUnitType::CSS_CQH:
-    case CSSUnitType::CSS_CQI:
-    case CSSUnitType::CSS_CQB:
-    case CSSUnitType::CSS_CQMIN:
-    case CSSUnitType::CSS_CQMAX:
         return CalculationCategory::Length;
     case CSSUnitType::CSS_PERCENTAGE:
         return CalculationCategory::Percent;
@@ -104,7 +97,6 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
 {
     switch (type) {
     case CSSUnitType::CSS_NUMBER:
-    case CSSUnitType::CSS_INTEGER:
         return CalculationCategory::Number;
     case CSSUnitType::CSS_PX:
     case CSSUnitType::CSS_CM:
@@ -158,12 +150,6 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
     case CSSUnitType::CSS_DVMAX:
     case CSSUnitType::CSS_DVB:
     case CSSUnitType::CSS_DVI:
-    case CSSUnitType::CSS_CQW:
-    case CSSUnitType::CSS_CQH:
-    case CSSUnitType::CSS_CQI:
-    case CSSUnitType::CSS_CQB:
-    case CSSUnitType::CSS_CQMIN:
-    case CSSUnitType::CSS_CQMAX:
     default:
         return CalculationCategory::Other;
     }
@@ -176,7 +162,7 @@ CSSUnitType canonicalUnitTypeForCalculationCategory(CalculationCategory category
     case CalculationCategory::Length: return CSSUnitType::CSS_PX;
     case CalculationCategory::Percent: return CSSUnitType::CSS_PERCENTAGE;
     case CalculationCategory::Angle: return CSSUnitType::CSS_DEG;
-    case CalculationCategory::Time: return CSSUnitType::CSS_S;
+    case CalculationCategory::Time: return CSSUnitType::CSS_MS;
     case CalculationCategory::Frequency: return CSSUnitType::CSS_HZ;
     case CalculationCategory::Other:
     case CalculationCategory::PercentNumber:
@@ -191,7 +177,6 @@ bool hasDoubleValue(CSSUnitType type)
 {
     switch (type) {
     case CSSUnitType::CSS_NUMBER:
-    case CSSUnitType::CSS_INTEGER:
     case CSSUnitType::CSS_PERCENTAGE:
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
@@ -245,12 +230,6 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_Q:
     case CSSUnitType::CSS_LHS:
     case CSSUnitType::CSS_RLHS:
-    case CSSUnitType::CSS_CQW:
-    case CSSUnitType::CSS_CQH:
-    case CSSUnitType::CSS_CQI:
-    case CSSUnitType::CSS_CQB:
-    case CSSUnitType::CSS_CQMIN:
-    case CSSUnitType::CSS_CQMAX:
         return true;
     case CSSUnitType::CSS_UNKNOWN:
     case CSSUnitType::CSS_STRING:

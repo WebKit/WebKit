@@ -1,0 +1,7 @@
+2d.drawImage.zerosource.image
+
+drawImage with zero-sized source rectangle from image draws nothing without exception
+
+
+PASS drawImage with zero-sized source rectangle from image draws nothing without exception
+

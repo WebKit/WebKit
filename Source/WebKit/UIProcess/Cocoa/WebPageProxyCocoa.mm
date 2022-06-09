@@ -37,14 +37,12 @@
 #import "LoadParameters.h"
 #import "ModalContainerControlClassifier.h"
 #import "PageClient.h"
-#import "PlaybackSessionManagerProxy.h"
 #import "QuarantineSPI.h"
 #import "QuickLookThumbnailLoader.h"
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
-#import "SharedBufferReference.h"
+#import "SharedBufferCopy.h"
 #import "SynapseSPI.h"
-#import "VideoFullscreenManagerProxy.h"
 #import "WebContextMenuProxy.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
@@ -85,21 +83,11 @@ SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
 #import <UIKit/UIImage.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#import <WebCore/RenderThemeIOS.h>
-#else
-#import <WebCore/RenderThemeMac.h>
-#endif
-
 #if PLATFORM(IOS)
 #import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
-#endif
-
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-#import <WebCore/ScreenCaptureKitSharingSessionManager.h>
 #endif
 
 #if ENABLE(APPLE_PAY_AMS_UI)
@@ -117,8 +105,6 @@ SOFT_LINK_CLASS_OPTIONAL(AppleMediaServicesUI, AMSUIEngagementTask)
 
 namespace WebKit {
 using namespace WebCore;
-
-constexpr IntSize iconSize = IntSize(400, 400);
 
 #if ENABLE(DATA_DETECTION)
 
@@ -200,21 +186,19 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 {
     loadParameters.dataDetectionContext = m_uiClient->dataDetectionContext();
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);
+    
 #if PLATFORM(IOS)
-    auto auditToken = process.auditToken();
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, std::nullopt))
             loadParameters.contentFilterExtensionHandle = WTFMove(*handle);
 
-        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, auditToken, SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
+        if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, std::nullopt))
             loadParameters.frontboardServiceExtensionHandle = WTFMove(*handle);
 
         process.markHasManagedSessionSandboxAccess();
     }
-#endif // PLATFORM(IOS)
-#endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#endif
 }
 
 void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles)
@@ -227,9 +211,9 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
         if ([[NSFileManager defaultManager] fileExistsAtPath:files[0] isDirectory:&isDirectory] && !isDirectory) {
             ASSERT(process().connection() && process().connection()->getAuditToken());
             if (process().connection() && process().connection()->getAuditToken()) {
-                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/"_s, *(process().connection()->getAuditToken())))
+                if (auto handle = SandboxExtension::createHandleForReadByAuditToken("/", *(process().connection()->getAuditToken())))
                     fileReadHandle = WTFMove(*handle);
-            } else if (auto handle = SandboxExtension::createHandle("/"_s, SandboxExtension::Type::ReadOnly))
+            } else if (auto handle = SandboxExtension::createHandle("/", SandboxExtension::Type::ReadOnly))
                 fileReadHandle = WTFMove(*handle);
             willAcquireUniversalFileReadSandboxExtension(m_process);
         }
@@ -279,12 +263,12 @@ void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::SharedBufferReference& bufferCopy)
+void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment, const String& preferredFileName, const IPC::SharedBufferCopy& bufferCopy)
 {
     if (bufferCopy.isEmpty())
         return;
 
-    auto fileWrapper = adoptNS([pageClient().allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.unsafeBuffer()->createNSData().get()]);
+    auto fileWrapper = adoptNS([pageClient().allocFileWrapperInstance() initRegularFileWithContents:bufferCopy.buffer()->createNSData().get()]);
     [fileWrapper setPreferredFilename:preferredFileName];
     attachment->setFileWrapper(fileWrapper.get());
 }
@@ -301,43 +285,6 @@ void WebPageProxy::platformRegisterAttachment(Ref<API::Attachment>&& attachment,
 void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment, Ref<API::Attachment>&& toAttachment)
 {
     toAttachment->setFileWrapper(fromAttachment->fileWrapper());
-}
-
-static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::FloatSize& fittingSize)
-{
-    FloatSize originalThumbnailSize([image size]);
-    auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
-    resultRect.setLocation({ });
-
-    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
-    auto bitmap = WebKit::ShareableBitmap::create(resultRect.size(), bitmapConfiguration);
-    if (!bitmap)
-        return nullptr;
-
-    auto graphicsContext = bitmap->createGraphicsContext();
-    if (!graphicsContext)
-        return nullptr;
-
-    LocalCurrentGraphicsContext savedContext(*graphicsContext);
-#if PLATFORM(IOS_FAMILY)
-    [image drawInRect:resultRect];
-#elif USE(APPKIT)
-    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
-#endif
-
-    return bitmap;
-}
-
-RefPtr<WebKit::ShareableBitmap> WebPageProxy::iconForAttachment(const String& fileName, const String& contentType, const String& title, FloatSize& size)
-{
-#if PLATFORM(IOS_FAMILY)
-    auto imageAndSize = RenderThemeIOS::iconForAttachment(fileName, contentType, title);
-    auto image = imageAndSize.icon;
-    size = imageAndSize.size;
-#else
-    auto image = RenderThemeMac::iconForAttachment(fileName, contentType, title);
-#endif
-    return convertPlatformImageToBitmap(image.get(), size);
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -375,37 +322,6 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     }
 
     send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTFMove(options) });
-}
-
-void WebPageProxy::addDictationAlternative(TextAlternativeWithRange&& alternative)
-{
-    if (!hasRunningProcess())
-        return;
-
-    auto nsAlternatives = alternative.alternatives.get();
-    auto context = pageClient().addDictationAlternatives(nsAlternatives);
-    sendWithAsyncReply(Messages::WebPage::AddDictationAlternative { nsAlternatives.primaryString, context }, [context, weakThis = WeakPtr { *this }](bool success) {
-        if (RefPtr protectedThis = weakThis.get(); protectedThis && !success)
-            protectedThis->removeDictationAlternatives(context);
-    });
-}
-
-void WebPageProxy::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
-{
-    if (!hasRunningProcess()) {
-        completion({ });
-        return;
-    }
-
-    sendWithAsyncReply(Messages::WebPage::DictationAlternativesAtSelection(), WTFMove(completion));
-}
-
-void WebPageProxy::clearDictationAlternatives(Vector<DictationContext>&& alternativesToClear)
-{
-    if (!hasRunningProcess() || alternativesToClear.isEmpty())
-        return;
-
-    send(Messages::WebPage::ClearDictationAlternatives(WTFMove(alternativesToClear)));
 }
 
 #if USE(DICTATION_ALTERNATIVES)
@@ -486,9 +402,9 @@ void WebPageProxy::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtteran
     send(Messages::WebPage::SpeakingErrorOccurred());
 }
 
-void WebPageProxy::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex, unsigned charLength)
+void WebPageProxy::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex)
 {
-    send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex, charLength));
+    send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex));
 }
 
 void WebPageProxy::voicesDidChange()
@@ -512,6 +428,13 @@ void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHos
 }
 #endif // ENABLE(GPU_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
+
+void WebPageProxy::grantAccessToPreferenceService()
+{
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    process().unblockPreferenceServiceIfNeeded();
+#endif
+}
 
 #if ENABLE(MEDIA_USAGE)
 MediaUsageManager& WebPageProxy::mediaUsageManager()
@@ -538,83 +461,50 @@ void WebPageProxy::removeMediaUsageManagerSession(WebCore::MediaSessionIdentifie
 }
 #endif
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-
-void WebPageProxy::didChangePlaybackRate(PlaybackSessionContextIdentifier identifier)
-{
-    if (m_currentFullscreenVideoSessionIdentifier == identifier)
-        updateFullscreenVideoTextRecognition();
-}
-
-void WebPageProxy::didChangeCurrentTime(PlaybackSessionContextIdentifier identifier)
-{
-    if (m_currentFullscreenVideoSessionIdentifier == identifier)
-        updateFullscreenVideoTextRecognition();
-}
-
-void WebPageProxy::updateFullscreenVideoTextRecognition()
-{
-    if (!pageClient().isTextRecognitionInFullscreenVideoEnabled())
-        return;
-
-    if (m_currentFullscreenVideoSessionIdentifier && m_playbackSessionManager && m_playbackSessionManager->isPaused(*m_currentFullscreenVideoSessionIdentifier)) {
-        m_fullscreenVideoTextRecognitionTimer.startOneShot(250_ms);
-        return;
-    }
-
-    m_fullscreenVideoTextRecognitionTimer.stop();
-
-    if (!m_currentFullscreenVideoSessionIdentifier)
-        return;
-
-#if PLATFORM(IOS_FAMILY)
-    if (RetainPtr controller = m_videoFullscreenManager->playerViewController(*m_currentFullscreenVideoSessionIdentifier))
-        pageClient().cancelTextRecognitionForFullscreenVideo(controller.get());
-#endif
-}
-
-void WebPageProxy::fullscreenVideoTextRecognitionTimerFired()
-{
-    if (!m_currentFullscreenVideoSessionIdentifier || !m_videoFullscreenManager)
-        return;
-
-    auto identifier = *m_currentFullscreenVideoSessionIdentifier;
-    m_videoFullscreenManager->requestBitmapImageForCurrentTime(identifier, [identifier, weakThis = WeakPtr { *this }](auto& imageHandle) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || protectedThis->m_currentFullscreenVideoSessionIdentifier != identifier)
-            return;
-
-        auto fullscreenManager = protectedThis->m_videoFullscreenManager;
-        if (!fullscreenManager)
-            return;
-
-#if PLATFORM(IOS_FAMILY)
-        if (RetainPtr controller = fullscreenManager->playerViewController(identifier))
-            protectedThis->pageClient().beginTextRecognitionForFullscreenVideo(imageHandle, controller.get());
-#endif
-    });
-}
-
-#endif // ENABLE(VIDEO_PRESENTATION_MODE)
-
 #if HAVE(QUICKLOOK_THUMBNAILING)
+
+static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *image, const WebCore::IntSize& fittingSize)
+{
+    FloatSize originalThumbnailSize([image size]);
+    auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
+    resultRect.setLocation({ });
+
+    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
+    auto bitmap = WebKit::ShareableBitmap::createShareable(resultRect.size(), bitmapConfiguration);
+    if (!bitmap)
+        return nullptr;
+
+    auto graphicsContext = bitmap->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
+    LocalCurrentGraphicsContext savedContext(*graphicsContext);
+#if PLATFORM(IOS_FAMILY)
+    [image drawInRect:resultRect];
+#elif USE(APPKIT)
+    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
+#endif
+
+    return bitmap;
+}
 
 void WebPageProxy::requestThumbnailWithOperation(WKQLThumbnailLoadOperation *operation)
 {
     [operation setCompletionBlock:^{
         RunLoop::main().dispatch([this, operation = retainPtr(operation)] {
             auto identifier = [operation identifier];
-            auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], iconSize);
+            auto convertedImage = convertPlatformImageToBitmap([operation thumbnail], WebCore::IntSize(400, 400));
             if (!convertedImage)
                 return;
-            this->updateAttachmentThumbnail(identifier, convertedImage);
+            this->updateAttachmentIcon(identifier, convertedImage);
         });
     }];
         
     [[WKQLThumbnailQueueManager sharedInstance].queue addOperation:operation];
 }
 
-void WebPageProxy::requestThumbnailWithFileWrapper(NSFileWrapper *fileWrapper, const String& identifier)
+
+void WebPageProxy::requestThumbnailWithFileWrapper(NSFileWrapper* fileWrapper, const String& identifier)
 {
     auto operation = adoptNS([[WKQLThumbnailLoadOperation alloc] initWithAttachment:fileWrapper identifier:identifier]);
     requestThumbnailWithOperation(operation.get());
@@ -624,33 +514,10 @@ void WebPageProxy::requestThumbnailWithPath(const String& identifier, const Stri
 {
     auto operation = adoptNS([[WKQLThumbnailLoadOperation alloc] initWithURL:filePath identifier:identifier]);
     requestThumbnailWithOperation(operation.get());
+    
 }
 
 #endif // HAVE(QUICKLOOK_THUMBNAILING)
-
-#if PLATFORM(MAC)
-
-void WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const String& identifier)
-{
-    auto image = [fileWrapper icon];
-    if (!image)
-        return;
-
-    auto flippedIcon = [NSImage imageWithSize:iconSize flipped:YES drawingHandler:^BOOL(NSRect destinationRect) {
-        [image drawInRect:destinationRect fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];
-        return YES;
-    }];
-
-    auto convertedImage = convertPlatformImageToBitmap(flippedIcon, iconSize);
-    if (!convertedImage)
-        return;
-
-    ShareableBitmap::Handle handle;
-    convertedImage->createHandle(handle);
-    send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, iconSize));
-}
-
-#endif
 
 void WebPageProxy::scheduleActivityStateUpdate()
 {
@@ -716,12 +583,14 @@ void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedM
     if (!hasRunningProcess())
         return;
 
-    auto memoryHandles = WTF::compactMap(highlights, [](auto& highlight) -> std::optional<SharedMemory::IPCHandle> {
+    Vector<SharedMemory::IPCHandle> memoryHandles;
+
+    for (auto highlight : highlights) {
         SharedMemory::Handle handle;
-        if (!highlight->createHandle(handle, SharedMemory::Protection::ReadOnly))
-            return std::nullopt;
-        return SharedMemory::IPCHandle { WTFMove(handle), highlight->size() };
-    });
+        highlight->createHandle(handle, SharedMemory::Protection::ReadOnly);
+
+        memoryHandles.append(SharedMemory::IPCHandle { WTFMove(handle), highlight->size() });
+    }
     
     setUpHighlightsObserver();
 
@@ -810,7 +679,6 @@ void WebPageProxy::abortApplePayAMSUISession()
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
 #if ENABLE(CONTENT_FILTERING)
@@ -823,7 +691,6 @@ Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExt
 #endif
     return { };
 }
-#endif
 
 #if ENABLE(CONTEXT_MENUS)
 #if HAVE(TRANSLATION_UI_SERVICES)
@@ -866,7 +733,7 @@ void WebPageProxy::lastNavigationWasAppInitiated(CompletionHandler<void(bool)>&&
 void WebPageProxy::grantAccessToAssetServices()
 {
     SandboxExtension::Handle mobileAssetHandleV2;
-    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap))
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, std::nullopt))
         mobileAssetHandleV2 = WTFMove(*handle);
     process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandleV2), 0);
 }
@@ -876,14 +743,17 @@ void WebPageProxy::revokeAccessToAssetServices()
     process().send(Messages::WebProcess::RevokeAccessToAssetServices(), 0);
 }
 
-void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
-{
-    process().send(Messages::WebProcess::DisableURLSchemeCheckInDataDetectors(), 0);
-}
-
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
-    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(process().fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
+    process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(fontdMachExtensionHandle()), 0);
+}
+
+SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle()
+{
+    SandboxExtension::Handle fontMachExtensionHandle;
+    if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, std::nullopt))
+        fontMachExtensionHandle = WTFMove(*handle);
+    return fontMachExtensionHandle;
 }
 
 NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceItem)
@@ -899,7 +769,7 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 #if PLATFORM(MAC)
 bool WebPageProxy::isQuarantinedAndNotUserApproved(const String& fileURLString)
 {
-    if (!fileURLString.endsWithIgnoringASCIICase(".webarchive"_s))
+    if (!fileURLString.endsWithIgnoringASCIICase(".webarchive"))
         return false;
 
     NSURL *fileURL = [NSURL URLWithString:fileURLString];
@@ -931,20 +801,6 @@ void WebPageProxy::classifyModalContainerControls(Vector<String>&& texts, Comple
 {
     ModalContainerControlClassifier::sharedClassifier().classify(WTFMove(texts), WTFMove(completion));
 }
-
-void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
-{
-    send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
-}
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-void WebPageProxy::replaceImageWithMarkupResults(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
-{
-    send(Messages::WebPage::ReplaceImageWithMarkupResults(elementContext, types, data));
-}
-
-#endif
 
 } // namespace WebKit
 

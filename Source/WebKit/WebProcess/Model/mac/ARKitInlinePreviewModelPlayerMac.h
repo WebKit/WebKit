@@ -51,22 +51,15 @@ private:
 
     // WebCore::ModelPlayer overrides.
     void load(WebCore::Model&, WebCore::LayoutSize) override;
-    void sizeDidChange(WebCore::LayoutSize) override;
     PlatformLayer* layer() override;
     bool supportsMouseInteraction() override;
-    bool supportsDragging() override;
     void handleMouseDown(const WebCore::LayoutPoint&, MonotonicTime) override;
     void handleMouseMove(const WebCore::LayoutPoint&, MonotonicTime) override;
     void handleMouseUp(const WebCore::LayoutPoint&, MonotonicTime) override;
-    String inlinePreviewUUIDForTesting() const override;
 
     void createFile(WebCore::Model&);
     void clearFile();
 
-    void createPreviewsForModelWithURL(const URL&);
-    void didCreateRemotePreviewForModelWithURL(const URL&);
-
-    WebCore::LayoutSize m_size;
     String m_filePath;
     RetainPtr<ASVInlinePreview> m_inlinePreview;
 };

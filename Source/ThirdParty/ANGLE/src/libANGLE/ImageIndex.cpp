@@ -203,11 +203,6 @@ ImageIndex ImageIndex::MakeFromType(TextureType type,
     return ImageIndex(type, levelIndex, layerIndex, overrideLayerCount);
 }
 
-ImageIndex ImageIndex::MakeBuffer()
-{
-    return ImageIndex(TextureType::Buffer, 0, kEntireLevel, 1);
-}
-
 ImageIndex ImageIndex::Make2DMultisample()
 {
     return ImageIndex(TextureType::_2DMultisample, 0, kEntireLevel, 1);
@@ -293,13 +288,6 @@ ImageIndexIterator ImageIndexIterator::Make2DArray(GLint minMip,
 ImageIndexIterator ImageIndexIterator::Make2DMultisample()
 {
     return ImageIndexIterator(TextureType::_2DMultisample, Range<GLint>(0, 1),
-                              Range<GLint>(ImageIndex::kEntireLevel, ImageIndex::kEntireLevel),
-                              nullptr);
-}
-
-ImageIndexIterator ImageIndexIterator::MakeBuffer()
-{
-    return ImageIndexIterator(TextureType::Buffer, Range<GLint>(0, 1),
                               Range<GLint>(ImageIndex::kEntireLevel, ImageIndex::kEntireLevel),
                               nullptr);
 }

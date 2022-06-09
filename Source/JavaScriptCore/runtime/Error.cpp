@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -127,7 +127,7 @@ public:
         , m_index(0)
     { }
 
-    IterationStatus operator()(StackVisitor& visitor) const
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!m_foundStartCallFrame && (visitor->callFrame() == m_startCallFrame))
             m_foundStartCallFrame = true;
@@ -135,12 +135,12 @@ public:
         if (m_foundStartCallFrame) {
             if (!visitor->isWasmFrame() && visitor->callFrame()->codeBlock()) {
                 m_foundCallFrame = visitor->callFrame();
-                return IterationStatus::Done;
+                return StackVisitor::Done;
             }
             m_index++;
         }
 
-        return IterationStatus::Continue;
+        return StackVisitor::Continue;
     }
 
     CallFrame* foundCallFrame() const { return m_foundCallFrame; }
@@ -155,7 +155,7 @@ private:
 
 std::unique_ptr<Vector<StackFrame>> getStackTrace(JSGlobalObject*, VM& vm, JSObject* obj, bool useCurrentFrame)
 {
-    JSGlobalObject* globalObject = obj->globalObject();
+    JSGlobalObject* globalObject = obj->globalObject(vm);
     if (!globalObject->stackTraceLimit())
         return nullptr;
 
@@ -210,7 +210,7 @@ bool addErrorInfo(VM& vm, Vector<StackFrame>* stackTrace, JSObject* obj)
         obj->putDirect(vm, vm.propertyNames->line, jsNumber(line));
         obj->putDirect(vm, vm.propertyNames->column, jsNumber(column));
         if (!sourceURL.isEmpty())
-            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(sourceURL)));
+            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, sourceURL));
 
         obj->putDirect(vm, vm.propertyNames->stack, jsString(vm, Interpreter::stackTraceAsString(vm, *stackTrace)), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
@@ -239,7 +239,7 @@ JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& sour
     // ErrorInstance to materialize whatever it needs to. There's a chance that we get passed some
     // other kind of object, which also has materializable properties. But this code is heuristic-ey
     // enough that if we're wrong in such corner cases, it's not the end of the world.
-    if (ErrorInstance* errorInstance = jsDynamicCast<ErrorInstance*>(error))
+    if (ErrorInstance* errorInstance = jsDynamicCast<ErrorInstance*>(vm, error))
         errorInstance->materializeErrorInfoIfNeeded(vm);
     
     // FIXME: This does not modify the column property, which confusingly continues to reflect

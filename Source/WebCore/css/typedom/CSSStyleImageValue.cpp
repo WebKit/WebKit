@@ -46,15 +46,7 @@ CSSStyleImageValue::CSSStyleImageValue(Ref<CSSImageValue>&& cssValue, Document* 
 {
 }
 
-void CSSStyleImageValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
-{
-    builder.append(m_cssValue->cssText());
-}
-
-Document* CSSStyleImageValue::document() const
-{
-    return m_document.get();
-}
+Document* CSSStyleImageValue::document() const { return m_document.get(); }
 
 } // namespace WebCore
 

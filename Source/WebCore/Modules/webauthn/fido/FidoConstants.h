@@ -32,7 +32,6 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "PublicKeyCredentialType.h"
-#include <wtf/text/ASCIILiteral.h>
 
 namespace fido {
 
@@ -148,7 +147,7 @@ const char kClientPinMapKey[] = "clientPin";
 const char kPlatformDeviceMapKey[] = "plat";
 const char kEntityIdMapKey[] = "id";
 const char kEntityNameMapKey[] = "name";
-constexpr auto kDisplayNameMapKey = "displayName"_s;
+const char kDisplayNameMapKey[] = "displayName";
 const char kIconUrlMapKey[] = "icon";
 const char kCredentialTypeMapKey[] = "type";
 const char kCredentialAlgorithmMapKey[] = "alg";
@@ -218,8 +217,8 @@ const char kPublicKey[] = "public-key";
 const char* publicKeyCredentialTypeToString(WebCore::PublicKeyCredentialType);
 
 // FIXME: Add url to the official spec once it's standardized.
-constexpr auto kCtap2Version = "FIDO_2_0"_s;
-constexpr auto kU2fVersion = "U2F_V2"_s;
+const char kCtap2Version[] = "FIDO_2_0";
+const char kU2fVersion[] = "U2F_V2";
 
 // CTAPHID Usage Page and Usage
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#hid-report-descriptor-and-device-discovery
@@ -255,26 +254,6 @@ const uint8_t kCtapNfcAppletSelectionCtap[] = {
 // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-command-framing
 const uint8_t kCtapNfcApduCla = 0x80;
 const uint8_t kCtapNfcApduIns = 0x10;
-
-// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#mandatory-commands
-const size_t kCtapChannelIdSize = 4;
-const uint8_t kCtapKeepAliveStatusProcessing = 1;
-// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#commands
-const int64_t kCtapMakeCredentialClientDataHashKey = 1;
-const int64_t kCtapMakeCredentialRpKey = 2;
-const int64_t kCtapMakeCredentialUserKey = 3;
-const int64_t kCtapMakeCredentialPubKeyCredParamsKey = 4;
-const int64_t kCtapMakeCredentialExcludeListKey = 5;
-const int64_t kCtapMakeCredentialExtensionsKey = 6;
-const int64_t kCtapMakeCredentialRequestOptionsKey = 7;
-
-const int64_t kCtapGetAssertionRpIdKey = 1;
-const int64_t kCtapGetAssertionClientDataHashKey = 2;
-const int64_t kCtapGetAssertionAllowListKey = 3;
-const int64_t kCtapGetAssertionExtensionsKey = 4;
-const int64_t kCtapGetAssertionRequestOptionsKey = 5;
-const int64_t kCtapGetAssertionPinUvAuthParamKey = 6;
-const int64_t kCtapGetAssertionPinUvAuthProtocolKey = 7;
 
 } // namespace fido
 

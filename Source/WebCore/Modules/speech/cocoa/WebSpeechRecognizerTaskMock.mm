@@ -28,11 +28,13 @@
 
 #if HAVE(SPEECHRECOGNIZER)
 
+using namespace WebCore;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation WebSpeechRecognizerTaskMock
 
-- (instancetype)initWithIdentifier:(WebCore::SpeechRecognitionConnectionClientIdentifier)identifier locale:(NSString*)localeIdentifier doMultipleRecognitions:(BOOL)continuous reportInterimResults:(BOOL)interimResults maxAlternatives:(unsigned long)alternatives delegateCallback:(void(^)(const WebCore::SpeechRecognitionUpdate&))callback
+- (instancetype)initWithIdentifier:(SpeechRecognitionConnectionClientIdentifier)identifier locale:(NSString*)localeIdentifier doMultipleRecognitions:(BOOL)continuous reportInterimResults:(BOOL)interimResults maxAlternatives:(unsigned long)alternatives delegateCallback:(void(^)(const SpeechRecognitionUpdate&))callback
 {
     UNUSED_PARAM(localeIdentifier);
     UNUSED_PARAM(interimResults);
@@ -57,12 +59,15 @@ NS_ASSUME_NONNULL_BEGIN
     
     if (!_hasSentSpeechStart) {
         _hasSentSpeechStart = true;
-        _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::SpeechStart));
+        _delegateCallback(SpeechRecognitionUpdate::create(_identifier, SpeechRecognitionUpdateType::SpeechStart));
     }
 
     // Fake some recognition results.
-    WebCore::SpeechRecognitionAlternativeData alternative { "Test"_s, 1.0 };
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::createResult(_identifier, { WebCore::SpeechRecognitionResultData { { WTFMove(alternative) }, true } }));
+    Vector<SpeechRecognitionAlternativeData> alternatives;
+    alternatives.append(SpeechRecognitionAlternativeData { "Test", 1.0 });
+    Vector<SpeechRecognitionResultData> datas;
+    datas.append(SpeechRecognitionResultData { WTFMove(alternatives), true  });
+    _delegateCallback(SpeechRecognitionUpdate::createResult(_identifier, WTFMove(datas)));
 
     if (!_doMultipleRecognitions)
         [self abort];
@@ -76,10 +81,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!_hasSentSpeechEnd && _hasSentSpeechStart) {
         _hasSentSpeechEnd = true;
-        _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::SpeechEnd));
+        _delegateCallback(SpeechRecognitionUpdate::create(_identifier, SpeechRecognitionUpdateType::SpeechEnd));
     }
 
-    _delegateCallback(WebCore::SpeechRecognitionUpdate::create(_identifier, WebCore::SpeechRecognitionUpdateType::End));
+    _delegateCallback(SpeechRecognitionUpdate::create(_identifier, SpeechRecognitionUpdateType::End));
 }
 
 - (void)stop

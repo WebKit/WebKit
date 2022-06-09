@@ -67,36 +67,15 @@ WI.ResourceQueryController = class ResourceQueryController extends WI.QueryContr
 
         let results = [];
         for (let [resource, cachedData] of this._resourceDataMap) {
-            if (isEmptyObject(cachedData)) {
+            if (!cachedData.searchString) {
                 let displayName = resource.displayName;
-                cachedData.displayName = {
-                    searchString: displayName.toLowerCase(),
-                    specialCharacterIndices: this._findSpecialCharacterIndicesInDisplayName(displayName),
-                };
-
-                let url = resource.url;
-                cachedData.url = {
-                    searchString: url.toLowerCase(),
-                    specialCharacterIndices: this._findSpecialCharacterIndicesInURL(url),
-                };
+                cachedData.searchString = displayName.toLowerCase();
+                cachedData.specialCharacterIndices = this._findSpecialCharacterIndices(displayName);
             }
 
-            let resourceResult = null;
-
-            let findQueryMatches = ({searchString, specialCharacterIndices}) => {
-                let matches = this.findQueryMatches(query, searchString, specialCharacterIndices);
-                if (!matches.length)
-                    return;
-
-                let queryResult = new WI.ResourceQueryResult(resource, searchString, matches, cookie);
-                if (!resourceResult || resourceResult.rank < queryResult.rank)
-                    resourceResult = queryResult;
-            };
-            findQueryMatches(cachedData.displayName);
-            findQueryMatches(cachedData.url);
-
-            if (resourceResult)
-                results.push(resourceResult);
+            let matches = this.findQueryMatches(query, cachedData.searchString, cachedData.specialCharacterIndices);
+            if (matches.length)
+                results.push(new WI.ResourceQueryResult(resource, matches, cookie));
         }
 
         // Resources are sorted in descending order by rank. Resources of equal
@@ -110,13 +89,38 @@ WI.ResourceQueryController = class ResourceQueryController extends WI.QueryContr
 
     // Private
 
-    _findSpecialCharacterIndicesInDisplayName(displayName)
+    _findSpecialCharacterIndices(string)
     {
-        return this.findSpecialCharacterIndices(displayName, "_.-");
-    }
+        if (!string.length)
+            return [];
 
-    _findSpecialCharacterIndicesInURL(url)
-    {
-        return this.findSpecialCharacterIndices(url, "_.-/");
+        const filenameSeparators = "_.-";
+
+        // Special characters include the following:
+        // 1. The first character.
+        // 2. Uppercase characters that follow a lowercase letter.
+        // 3. Filename separators and the first character following the separator.
+        let indices = [0];
+
+        for (let i = 1; i < string.length; ++i) {
+            let character = string[i];
+            let isSpecial = false;
+
+            if (filenameSeparators.includes(character))
+                isSpecial = true;
+            else {
+                let previousCharacter = string[i - 1];
+                let previousCharacterIsSeparator = filenameSeparators.includes(previousCharacter);
+                if (previousCharacterIsSeparator)
+                    isSpecial = true;
+                else if (character.isUpperCase() && previousCharacter.isLowerCase())
+                    isSpecial = true;
+            }
+
+            if (isSpecial)
+                indices.push(i);
+        }
+
+        return indices;
     }
 };

@@ -28,14 +28,6 @@
 #import <WebCore/Timer.h>
 #import <wtf/HashSet.h>
 #import <wtf/Noncopyable.h>
-#import <wtf/OptionSet.h>
-#import <wtf/WeakPtr.h>
-
-namespace WebCore {
-class ImageBuffer;
-class ThreadSafeImageBufferFlusher;
-enum class SetNonVolatileResult : uint8_t;
-}
 
 namespace WebKit {
 
@@ -43,14 +35,11 @@ class RemoteLayerBackingStore;
 class RemoteLayerTreeContext;
 class RemoteLayerTreeTransaction;
 
-enum class SwapBuffersDisplayRequirement : uint8_t;
-
-class RemoteLayerBackingStoreCollection : public CanMakeWeakPtr<RemoteLayerBackingStoreCollection> {
+class RemoteLayerBackingStoreCollection {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteLayerBackingStoreCollection(RemoteLayerTreeContext&);
-    virtual ~RemoteLayerBackingStoreCollection();
+    RemoteLayerBackingStoreCollection();
 
     void backingStoreWasCreated(RemoteLayerBackingStore&);
     void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
@@ -59,51 +48,28 @@ public:
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
-    virtual bool backingStoreNeedsDisplay(const RemoteLayerBackingStore&);
-
-    virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
-    void paintReachableBackingStoreContents();
-
     void willFlushLayers();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> didFlushLayers(RemoteLayerTreeTransaction&);
+    void didFlushLayers();
 
-    virtual void tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&&);
+    void volatilityTimerFired();
+    bool markAllBackingStoreVolatileImmediatelyIfPossible();
 
     void scheduleVolatilityTimer();
 
-    virtual RefPtr<WebCore::ImageBuffer> allocateBufferForBackingStore(const RemoteLayerBackingStore&);
-
-protected:
-    RemoteLayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
-
-    enum class VolatilityMarkingBehavior : uint8_t {
-        IgnoreReachability              = 1 << 0,
-        ConsiderTimeSinceLastDisplay    = 1 << 1,
-    };
-
-    virtual void markBackingStoreVolatileAfterReachabilityChange(RemoteLayerBackingStore&);
-    virtual void markAllBackingStoreVolatileFromTimer();
-
 private:
-    bool markBackingStoreVolatile(RemoteLayerBackingStore&, OptionSet<VolatilityMarkingBehavior> = { }, MonotonicTime = { });
-    bool markAllBackingStoreVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior);
-
-    bool updateUnreachableBackingStores();
-    void volatilityTimerFired();
-
-protected:
-    static constexpr auto volatileBackingStoreAgeThreshold = 1_s;
-    static constexpr auto volatileSecondaryBackingStoreAgeThreshold = 200_ms;
-
-    RemoteLayerTreeContext& m_layerTreeContext;
+    enum VolatilityMarkingFlag {
+        MarkBuffersIgnoringReachability = 1 << 0
+    };
+    typedef unsigned VolatilityMarkingFlags;
+    bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&, VolatilityMarkingFlags = 0);
+    bool markBackingStoreVolatile(RemoteLayerBackingStore&, MonotonicTime now);
 
     HashSet<RemoteLayerBackingStore*> m_liveBackingStore;
     HashSet<RemoteLayerBackingStore*> m_unparentedBackingStore;
 
     // Only used during a single flush.
     HashSet<RemoteLayerBackingStore*> m_reachableBackingStoreInLatestFlush;
-    HashSet<RemoteLayerBackingStore*> m_backingStoresNeedingDisplay;
 
     WebCore::Timer m_volatilityTimer;
 

@@ -24,11 +24,10 @@
 
 [
     Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface OfflineAudioCompletionEvent : Event {
-    constructor ([AtomString] DOMString type, OfflineAudioCompletionEventInit eventInitDict);
+    constructor (DOMString type, OfflineAudioCompletionEventInit eventInitDict);
 
     readonly attribute AudioBuffer renderedBuffer;
 };

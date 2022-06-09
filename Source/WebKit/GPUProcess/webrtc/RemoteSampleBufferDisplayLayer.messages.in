@@ -29,15 +29,13 @@ messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
 #endif
     UpdateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
     UpdateAffineTransform(CGAffineTransform transform)
-    UpdateBoundsAndPosition(CGRect bounds, WebCore::VideoFrame::Rotation rotation)
+    UpdateBoundsAndPosition(CGRect bounds, WebCore::MediaSample::VideoRotation rotation)
     Flush()
     FlushAndRemoveImage()
-    EnqueueVideoFrame(struct WebKit::SharedVideoFrame frame)
-    ClearVideoFrames()
+    EnqueueSample(WebCore::RemoteVideoSample sample)
+    ClearEnqueuedSamples()
     Play()
     Pause()
-    SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
-    SetSharedVideoFrameMemory(WebKit::SharedMemory::IPCHandle storageHandle)
 }
 
 #endif

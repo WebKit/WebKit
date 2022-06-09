@@ -246,9 +246,9 @@ public:
 
     static EncodingType parseEncodingType(const String& type)
     {
-        if (equalLettersIgnoringASCIICase(type, "text/plain"_s))
+        if (equalLettersIgnoringASCIICase(type, "text/plain"))
             return TextPlain;
-        if (equalLettersIgnoringASCIICase(type, "multipart/form-data"_s))
+        if (equalLettersIgnoringASCIICase(type, "multipart/form-data"))
             return MultipartFormData;
         return FormURLEncoded;
     }

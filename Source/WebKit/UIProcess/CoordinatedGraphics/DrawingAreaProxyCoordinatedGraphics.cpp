@@ -46,6 +46,11 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
+#if USE(DIRECT2D)
+#include <d2d1.h>
+#include <d3d11_1.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -114,11 +119,17 @@ void DrawingAreaProxyCoordinatedGraphics::paint(BackingStore::PlatformGraphicsCo
 
 void DrawingAreaProxyCoordinatedGraphics::sizeDidChange()
 {
+#if USE(DIRECT2D)
+    m_backingStore = nullptr;
+#endif
     backingStoreStateDidChange(RespondImmediately);
 }
 
 void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange()
 {
+#if USE(DIRECT2D)
+    m_backingStore = nullptr;
+#endif
     backingStoreStateDidChange(RespondImmediately);
 }
 
@@ -237,11 +248,6 @@ void DrawingAreaProxyCoordinatedGraphics::updateAcceleratedCompositingMode(uint6
         return;
 
     updateAcceleratedCompositingMode(layerTreeContext);
-}
-
-void DrawingAreaProxyCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
-{
-    send(Messages::DrawingArea::TargetRefreshRateDidChange(rate));
 }
 
 #if !PLATFORM(WPE)

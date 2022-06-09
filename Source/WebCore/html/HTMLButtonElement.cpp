@@ -26,7 +26,6 @@
 #include "config.h"
 #include "HTMLButtonElement.h"
 
-#include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
@@ -83,12 +82,18 @@ int HTMLButtonElement::defaultTabIndex() const
 const AtomString& HTMLButtonElement::formControlType() const
 {
     switch (m_type) {
-    case SUBMIT:
-        return submitAtom();
-    case BUTTON:
-        return HTMLNames::buttonTag->localName();
-    case RESET:
-        return resetAtom();
+        case SUBMIT: {
+            static MainThreadNeverDestroyed<const AtomString> submit("submit", AtomString::ConstructFromLiteral);
+            return submit;
+        }
+        case BUTTON: {
+            static MainThreadNeverDestroyed<const AtomString> button("button", AtomString::ConstructFromLiteral);
+            return button;
+        }
+        case RESET: {
+            static MainThreadNeverDestroyed<const AtomString> reset("reset", AtomString::ConstructFromLiteral);
+            return reset;
+        }
     }
 
     ASSERT_NOT_REACHED();
@@ -110,9 +115,9 @@ void HTMLButtonElement::parseAttribute(const QualifiedName& name, const AtomStri
 {
     if (name == typeAttr) {
         Type oldType = m_type;
-        if (equalLettersIgnoringASCIICase(value, "reset"_s))
+        if (equalLettersIgnoringASCIICase(value, "reset"))
             m_type = RESET;
-        else if (equalLettersIgnoringASCIICase(value, "button"_s))
+        else if (equalLettersIgnoringASCIICase(value, "button"))
             m_type = BUTTON;
         else
             m_type = SUBMIT;
@@ -131,8 +136,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
     if (ImageControlsMac::handleEvent(*this, event))
         return;
 #endif
-    auto& eventNames = WebCore::eventNames();
-    if (event.type() == eventNames.DOMActivateEvent && !isDisabledFormControl()) {
+    if (event.type() == eventNames().DOMActivateEvent && !isDisabledFormControl()) {
         RefPtr<HTMLFormElement> protectedForm(form());
 
         if (protectedForm) {
@@ -141,8 +145,10 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
             document().updateLayoutIgnorePendingStylesheets();
 
             if (auto currentForm = form()) {
-                if (m_type == SUBMIT)
+                if (m_type == SUBMIT) {
+                    SetForScope<bool> activatedSubmitState(m_isActivatedSubmit, true);
                     currentForm->submitIfPossible(&event, this);
+                }
 
                 if (m_type == RESET)
                     currentForm->reset();
@@ -155,12 +161,12 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
     if (is<KeyboardEvent>(event)) {
         KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
-        if (keyboardEvent.type() == eventNames.keydownEvent && keyboardEvent.keyIdentifier() == "U+0020"_s) {
+        if (keyboardEvent.type() == eventNames().keydownEvent && keyboardEvent.keyIdentifier() == "U+0020") {
             setActive(true, true);
             // No setDefaultHandled() - IE dispatches a keypress in this case.
             return;
         }
-        if (keyboardEvent.type() == eventNames.keypressEvent) {
+        if (keyboardEvent.type() == eventNames().keypressEvent) {
             switch (keyboardEvent.charCode()) {
                 case '\r':
                     dispatchSimulatedClick(&keyboardEvent);
@@ -172,7 +178,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
                     return;
             }
         }
-        if (keyboardEvent.type() == eventNames.keyupEvent && keyboardEvent.keyIdentifier() == "U+0020"_s) {
+        if (keyboardEvent.type() == eventNames().keyupEvent && keyboardEvent.keyIdentifier() == "U+0020") {
             if (active())
                 dispatchSimulatedClick(&keyboardEvent);
             keyboardEvent.setDefaultHandled();
@@ -183,7 +189,7 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
     HTMLFormControlElement::defaultEventHandler(event);
 }
 
-bool HTMLButtonElement::willRespondToMouseClickEventsWithEditability(Editability) const
+bool HTMLButtonElement::willRespondToMouseClickEvents()
 {
     return !isDisabledFormControl();
 }

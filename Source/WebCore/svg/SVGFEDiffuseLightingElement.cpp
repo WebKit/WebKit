@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,8 +22,10 @@
 #include "SVGFEDiffuseLightingElement.h"
 
 #include "FEDiffuseLighting.h"
+#include "FilterEffect.h"
 #include "RenderStyle.h"
 #include "SVGFELightElement.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
@@ -125,14 +127,15 @@ bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect,
 
 void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::surfaceScaleAttr || attrName == SVGNames::diffuseConstantAttr || attrName == SVGNames::kernelUnitLengthAttr || attrName == SVGNames::lighting_colorAttr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::inAttr)
-            updateSVGRendererForElementChange();
-        else {
-            ASSERT(attrName == SVGNames::diffuseConstantAttr || attrName == SVGNames::surfaceScaleAttr || attrName == SVGNames::kernelUnitLengthAttr);
-            primitiveAttributeChanged(attrName);
-        }
+        primitiveAttributeChanged(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
+        InstanceInvalidationGuard guard(*this);
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
@@ -148,13 +151,18 @@ void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightE
     primitiveAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEDiffuseLightingElement::filterEffect(const SVGFilter& filter, const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder& filterBuilder) const
 {
+    auto input1 = filterBuilder.getEffectById(in1());
+
+    if (!input1)
+        return nullptr;
+
     RefPtr lightElement = SVGFELightElement::findLightElement(this);
     if (!lightElement)
         return nullptr;
     
-    auto lightSource = lightElement->lightSource(filter);
+    auto lightSource = lightElement->lightSource(filterBuilder);
 
     RenderObject* renderer = this->renderer();
     if (!renderer)
@@ -162,7 +170,9 @@ RefPtr<FilterEffect> SVGFEDiffuseLightingElement::filterEffect(const SVGFilter& 
 
     Color color = renderer->style().colorByApplyingColorFilter(renderer->style().svgStyle().lightingColor());
 
-    return FEDiffuseLighting::create(color, surfaceScale(), diffuseConstant(), kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
+    auto effect = FEDiffuseLighting::create(color, surfaceScale(), diffuseConstant(), kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
+    effect->inputEffects() = { input1.releaseNonNull() };
+    return effect;
 }
 
-} // namespace WebCore
+}

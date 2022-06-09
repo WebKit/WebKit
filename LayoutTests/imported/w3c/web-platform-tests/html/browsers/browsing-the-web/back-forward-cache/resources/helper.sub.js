@@ -33,7 +33,7 @@ async function assert_bfcached(target) {
 
 async function assert_not_bfcached(target) {
   const status = await getBFCachedStatus(target);
-  assert_implements(status !== 'BFCached',
+  assert_implements_optional(status !== 'BFCached',
       'Should not be BFCached but actually was');
 }
 
@@ -67,8 +67,7 @@ const waitForPageShow = () => window.pageShowPromise;
 
 // Run a test that navigates A->B->A:
 // 1. Page A is opened by `params.openFunc(url)`.
-// 2. `params.funcBeforeNavigation(params.argsBeforeNavigation)` is executed
-//    on page A.
+// 2. `params.funcBeforeNavigation` is executed on page A.
 // 3. The window is navigated to page B on `params.targetOrigin`.
 // 4. The window is back navigated to page A (expecting BFCached).
 //
@@ -79,13 +78,9 @@ const waitForPageShow = () => window.pageShowPromise;
 // Parameters can be omitted. See `defaultParams` below for default.
 function runEventTest(params, description) {
   const defaultParams = {
-    openFunc(url) {
-      window.open(
-        `${url}&events=${this.events.join(',')}`,
-        '_blank',
-        'noopener'
-      )
-    },
+    openFunc: url => window.open(url, '_blank', 'noopener'),
+    funcBeforeNavigation: () => {},
+    targetOrigin: originCrossSite,
     events: ['pagehide', 'pageshow', 'load'],
     expectedEvents: [
       'window.load',
@@ -93,92 +88,43 @@ function runEventTest(params, description) {
       'window.pagehide.persisted',
       'window.pageshow.persisted'
     ],
-    async funcAfterAssertion(pageA) {
-      assert_array_equals(
-        await pageA.execute_script(() => getRecordedEvents()),
-        this.expectedEvents);
-    }
   }
   // Apply defaults.
-  params = { ...defaultParams, ...params };
-
-  runBfcacheTest(params, description);
-}
-
-async function navigateAndThenBack(pageA, pageB, urlB,
-                                   funcBeforeBackNavigation,
-                                   argsBeforeBackNavigation) {
-  await pageA.execute_script(
-    (url) => {
-      prepareNavigation(() => {
-        location.href = url;
-      });
-    },
-    [urlB]
-  );
-
-  await pageB.execute_script(waitForPageShow);
-  if (funcBeforeBackNavigation) {
-    await pageB.execute_script(funcBeforeBackNavigation);
-  }
-  await pageB.execute_script(
-    () => {
-      prepareNavigation(() => { history.back(); });
-    }
-  );
-
-  await pageA.execute_script(waitForPageShow);
-}
-
-function runBfcacheTest(params, description) {
-  const defaultParams = {
-    openFunc: url => window.open(url, '_blank', 'noopener'),
-    scripts: [],
-    funcBeforeNavigation: () => {},
-    argsBeforeNavigation: [],
-    targetOrigin: originCrossSite,
-    funcBeforeBackNavigation: () => {},
-    argsBeforeBackNavigation: [],
-    shouldBeCached: true,
-    funcAfterAssertion: () => {},
-  }
-  // Apply defaults.
-  params = {...defaultParams, ...params };
+  params = {...defaultParams, ...params};
 
   promise_test(async t => {
     const pageA = new RemoteContext(token());
     const pageB = new RemoteContext(token());
 
-    const urlA = executorPath + pageA.context_id;
+    const urlA = executorPath + pageA.context_id +
+                 '&events=' + params.events.join(',');
     const urlB = params.targetOrigin + executorPath + pageB.context_id;
 
     params.openFunc(urlA);
 
     await pageA.execute_script(waitForPageShow);
+    await pageA.execute_script(params.funcBeforeNavigation);
+    await pageA.execute_script(
+      (url) => {
+        prepareNavigation(() => {
+          location.href = url;
+        });
+      },
+      [urlB]
+    );
 
-    for (const src of params.scripts) {
-      await pageA.execute_script((src) => {
-        const script = document.createElement("script");
-        script.src = src;
-        document.head.append(script);
-        return new Promise(resolve => script.onload = resolve);
-      }, [src]);
-    }
+    await pageB.execute_script(waitForPageShow);
+    await pageB.execute_script(
+      () => {
+        prepareNavigation(() => { history.back(); });
+      }
+    );
 
-    await pageA.execute_script(params.funcBeforeNavigation,
-                               params.argsBeforeNavigation);
-    await navigateAndThenBack(pageA, pageB, urlB,
-                              params.funcBeforeBackNavigation,
-                              params.argsBeforeBackNavigation);
+    await pageA.execute_script(waitForPageShow);
+    await assert_bfcached(pageA);
 
-    if (params.shouldBeCached) {
-      await assert_bfcached(pageA);
-    } else {
-      await assert_not_bfcached(pageA);
-    }
-
-    if (params.funcAfterAssertion) {
-      await params.funcAfterAssertion(pageA, pageB, t);
-    }
+    assert_array_equals(
+      await pageA.execute_script(() => getRecordedEvents()),
+      params.expectedEvents);
   }, description);
 }

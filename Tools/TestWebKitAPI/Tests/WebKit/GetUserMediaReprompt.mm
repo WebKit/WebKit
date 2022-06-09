@@ -60,22 +60,14 @@
 
 namespace TestWebKitAPI {
 
-static void initializeMediaCaptureConfiguration(WKWebViewConfiguration* configuration)
-{
-    auto preferences = [configuration preferences];
-
-    configuration._mediaCaptureEnabled = YES;
-    preferences._mediaCaptureRequiresSecureConnection = NO;
-    preferences._mockCaptureDevicesEnabled = YES;
-    preferences._getUserMediaRequiresFocus = NO;
-}
-
 TEST(WebKit2, GetUserMediaReprompt)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     auto preferences = [configuration preferences];
-    initializeMediaCaptureConfiguration(configuration.get());
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
     auto webView = adoptNS([[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
@@ -108,7 +100,10 @@ TEST(WebKit2, GetUserMediaRepromptAfterAudioVideoBeingDenied)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    initializeMediaCaptureConfiguration(configuration.get());
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
     auto webView = adoptNS([[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     [delegate setAudioDecision:WKPermissionDecisionGrant];
@@ -128,7 +123,10 @@ TEST(WebKit2, MultipleGetUserMediaSynchronously)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
-    initializeMediaCaptureConfiguration(configuration.get());
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
     auto webView = adoptNS([[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];

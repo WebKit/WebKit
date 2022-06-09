@@ -77,7 +77,8 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 
     WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
-    setSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
+    setApplicationSDKVersion(parameters.clientSDKVersion);
+    setLinkedOnOrAfterOverride(parameters.clientLinkedOnOrAfterOverride);
 }
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
@@ -87,7 +88,7 @@ void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageNa
     CRASH_WITH_INFO(WTF::enumToUnderlyingType(messageName));
 }
 
-bool AuxiliaryProcess::parentProcessHasEntitlement(ASCIILiteral entitlement)
+bool AuxiliaryProcess::parentProcessHasEntitlement(const char* entitlement)
 {
     return WTF::hasEntitlement(m_connection->xpcConnection(), entitlement);
 }
@@ -170,7 +171,7 @@ void AuxiliaryProcess::setPreferenceValue(const String& domain, const String& ke
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 #if ASSERT_ENABLED
         id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
-        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages"_s);
+        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value] || key == "AppleLanguages");
 #endif
     } else
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);

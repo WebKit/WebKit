@@ -88,25 +88,25 @@ public:
         {
         }
 
-        iterator(typename SentinelLinkedList<Node>::iterator iter)
-            : m_iter(iter)
+        iterator(Node* node)
+            : m_node(node)
         {
         }
 
         const T& operator*()
         {
-            return m_iter->payload;
+            return m_node->payload;
         }
 
         iterator& operator++()
         {
-            ++m_iter;
+            m_node = m_node->next();
             return *this;
         }
 
         bool operator==(const iterator& other) const
         {
-            return m_iter == other.m_iter;
+            return m_node == other.m_node;
         }
 
         bool operator!=(const iterator& other) const
@@ -115,7 +115,7 @@ public:
         }
         
     private:
-        typename SentinelLinkedList<Node>::iterator m_iter;
+        Node* m_node { nullptr };
     };
 
     iterator begin() const { return iterator(const_cast<SentinelLinkedList<Node>&>(m_list).begin()); }

@@ -42,10 +42,4 @@ TextStream& operator<<(TextStream& ts, const FloatBoxExtent& box)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const IntBoxExtent& box)
-{
-    ts << "top: " << box.top() << " right: " << box.right() << " bottom: " << box.bottom() << " left: " << box.left();
-    return ts;
-}
-
 } // namespace WebCore

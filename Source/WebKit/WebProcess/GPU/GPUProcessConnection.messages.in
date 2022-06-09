@@ -23,11 +23,10 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> GPUProcessConnection WantsDispatchMessage {
-    DidInitialize(std::optional<WebKit::GPUProcessConnectionInfo> info)
     DidReceiveRemoteCommand(enum:uint8_t WebCore::PlatformMediaSession::RemoteControlCommandType type, struct WebCore::PlatformMediaSession::RemoteCommandArgument argument)
 
 #if ENABLE(ROUTING_ARBITRATION)
-    BeginRoutingArbitrationWithCategory(enum:uint8_t WebCore::AudioSession::CategoryType category) -> (enum:uint8_t WebKit::AudioSessionRoutingArbitratorProxy::RoutingArbitrationError error, enum:bool WebKit::AudioSessionRoutingArbitratorProxy::DefaultRouteChanged defaultRouteChanged)
+    BeginRoutingArbitrationWithCategory(enum:uint8_t WebCore::AudioSession::CategoryType category) -> (enum:uint8_t WebKit::AudioSessionRoutingArbitratorProxy::RoutingArbitrationError error, enum:bool WebKit::AudioSessionRoutingArbitratorProxy::DefaultRouteChanged defaultRouteChanged) Async
     EndRoutingArbitration();
 #endif
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)

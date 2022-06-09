@@ -27,11 +27,6 @@
     position: relative;
     width: 13px;
     height: 13px;
-    color: var(--glyph-color);
-}
-
-.sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter:active {
-    color: var(--glyph-color-pressed);
 }
 
 body[dir=ltr] .sidebar > .panel.dom-node-details .details-section.dom-node-event-listeners > .header > .filter {

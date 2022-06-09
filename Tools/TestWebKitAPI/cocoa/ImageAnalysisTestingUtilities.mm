@@ -28,8 +28,7 @@
 
 #if HAVE(VK_IMAGE_ANALYSIS)
 
-#import <wtf/BlockPtr.h>
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
+#import <pal/spi/cocoa/VisionKitCoreSPI.h>
 
 @interface TestVKQuad : NSObject
 - (instancetype)initWithTopLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight;
@@ -112,9 +111,6 @@
 
 @interface TestVKImageAnalysis : NSObject
 - (instancetype)initWithLines:(NSArray<VKWKLineInfo *> *)lines;
-#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
-@property (nonatomic, weak) UIViewController *presentingViewControllerForMrcAction;
-#endif
 @end
 
 @implementation TestVKImageAnalysis {
@@ -135,104 +131,7 @@
     return _lines.get();
 }
 
-- (BOOL)hasResultsForAnalysisTypes:(VKAnalysisTypes)analysisTypes
-{
-    // We only simulate text results for the time being.
-    return analysisTypes == VKAnalysisTypeText && [_lines count];
-}
-
 @end
-
-@interface TestVKImageAnalyzerRequest : NSObject
-@property (nonatomic, readonly) CGImageRef image;
-@property (nonatomic, readonly) VKImageOrientation orientation;
-@property (nonatomic, readonly) VKAnalysisTypes requestType;
-@property (nonatomic, copy) NSURL *imageURL;
-@property (nonatomic, copy) NSURL *pageURL;
-@end
-
-@implementation TestVKImageAnalyzerRequest {
-    RetainPtr<CGImageRef> _image;
-    VKImageOrientation _orientation;
-    VKAnalysisTypes _requestType;
-    RetainPtr<NSURL> _imageURL;
-    RetainPtr<NSURL> _pageURL;
-}
-
-- (instancetype)initWithCGImage:(CGImageRef)image orientation:(VKImageOrientation)orientation requestType:(VKAnalysisTypes)requestType
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _image = image;
-    _orientation = orientation;
-    _requestType = requestType;
-    return self;
-}
-
-- (CGImageRef)image
-{
-    return _image.get();
-}
-
-- (NSURL *)imageURL
-{
-    return _imageURL.get();
-}
-
-- (void)setImageURL:(NSURL *)url
-{
-    _imageURL = adoptNS(url.copy);
-}
-
-- (NSURL *)pageURL
-{
-    return _pageURL.get();
-}
-
-- (void)setPageURL:(NSURL *)url
-{
-    _pageURL = adoptNS(url.copy);
-}
-
-@end
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-@interface FakeRemoveBackgroundResult : NSObject
-- (instancetype)initWithImage:(CGImageRef)image cropRect:(CGRect)cropRect;
-- (CGImageRef)createCGImage;
-@property (nonatomic, readonly) CGRect cropRect;
-@end
-
-@implementation FakeRemoveBackgroundResult {
-    RetainPtr<CGImageRef> _image;
-    CGRect _cropRect;
-}
-
-- (instancetype)initWithImage:(CGImageRef)image cropRect:(CGRect)cropRect
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _image = image;
-    _cropRect = cropRect;
-    return self;
-}
-
-- (CGImageRef)createCGImage
-{
-    return _image.get();
-}
-
-- (CGRect)cropRect
-{
-    return _cropRect;
-}
-
-@end
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 namespace TestWebKitAPI {
 
@@ -263,28 +162,6 @@ RetainPtr<VKImageAnalysis> createImageAnalysisWithSimpleFixedResults()
     auto line = createLineInfo(@"Foo bar", quad.get(), @[ text.get() ]);
     return createImageAnalysis(@[ line.get() ]);
 }
-
-RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef image, VKImageOrientation orientation, VKAnalysisTypes types)
-{
-    return adoptNS(static_cast<VKImageAnalyzerRequest *>([[TestVKImageAnalyzerRequest alloc] initWithCGImage:image orientation:orientation requestType:types]));
-}
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-IMP makeRequestHandler(CGImageRef image, CGRect cropRect)
-{
-    return imp_implementationWithBlock([image = RetainPtr { image }, cropRect](VKCRemoveBackgroundRequestHandler *, VKCRemoveBackgroundRequest *, void (^completion)(VKCRemoveBackgroundResult *, NSError *)) {
-        auto result = adoptNS([[FakeRemoveBackgroundResult alloc] initWithImage:image.get() cropRect:cropRect]);
-        completion(static_cast<VKCRemoveBackgroundResult *>(result.get()), nil);
-    });
-}
-
-RemoveBackgroundSwizzler::RemoveBackgroundSwizzler(CGImageRef image, CGRect cropRect)
-    : m_removeBackgroundRequestSwizzler { PAL::getVKCRemoveBackgroundRequestHandlerClass(), @selector(performRequest:completion:), makeRequestHandler(image, cropRect) }
-{
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 } // namespace TestWebKitAPI
 

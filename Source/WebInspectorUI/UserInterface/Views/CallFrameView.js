@@ -69,7 +69,7 @@ WI.CallFrameView = class CallFrameView extends WI.Object
             var imgElement = document.createElement("img");
             imgElement.classList.add("icon");
 
-            titleElement.append(imgElement, callFrame.displayName);
+            titleElement.append(imgElement, callFrame.functionName || WI.UIString("(anonymous function)"));
         }
 
         callFrameElement.append(titleElement, subtitleElement);

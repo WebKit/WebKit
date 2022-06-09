@@ -329,12 +329,12 @@ RenderElement* RenderView::rendererForRootBackground() const
     if (!is<HTMLHtmlElement>(documentRenderer.element()))
         return &documentRenderer;
 
-    if (documentRenderer.shouldApplyAnyContainment())
+    if (shouldApplyAnyContainment(documentRenderer))
         return nullptr;
 
     if (auto* body = document().body()) {
         if (auto* renderer = body->renderer()) {
-            if (!renderer->shouldApplyAnyContainment())
+            if (!shouldApplyAnyContainment(*renderer))
                 return renderer;
         }
     }
@@ -380,7 +380,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
             break;
         }
 
-        if (auto* compositingLayer = layer->enclosingCompositingLayerForRepaint().layer) {
+        if (RenderLayer* compositingLayer = layer->enclosingCompositingLayerForRepaint()) {
             if (!compositingLayer->backing()->paintsIntoWindow()) {
                 frameView().setCannotBlitToWindow();
                 break;
@@ -399,7 +399,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     Element* documentElement = document().documentElement();
     if (RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr) {
         // The document element's renderer is currently forced to be a block, but may not always be.
-        auto* rootBox = dynamicDowncast<RenderBox>(*rootRenderer);
+        RenderBox* rootBox = is<RenderBox>(*rootRenderer) ? downcast<RenderBox>(rootRenderer) : nullptr;
         rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
         rootObscuresBackground = rendererObscuresBackground(*rootRenderer);
     }
@@ -448,7 +448,7 @@ void RenderView::repaintRootContents()
 
     // Always use layoutOverflowRect() to fix rdar://problem/27182267.
     // This should be cleaned up via webkit.org/b/159913 and webkit.org/b/159914.
-    auto* repaintContainer = containerForRepaint().renderer;
+    RenderLayerModelObject* repaintContainer = containerForRepaint();
     repaintUsingContainer(repaintContainer, computeRectForRepaint(layoutOverflowRect(), repaintContainer));
 }
 
@@ -960,16 +960,6 @@ void RenderView::registerBoxWithScrollSnapPositions(const RenderBox& box)
 void RenderView::unregisterBoxWithScrollSnapPositions(const RenderBox& box)
 {
     m_boxesWithScrollSnapPositions.remove(&box);
-}
-
-void RenderView::registerContainerQueryBox(const RenderBox& box)
-{
-    m_containerQueryBoxes.add(box);
-}
-
-void RenderView::unregisterContainerQueryBox(const RenderBox& box)
-{
-    m_containerQueryBoxes.remove(box);
 }
 
 } // namespace WebCore

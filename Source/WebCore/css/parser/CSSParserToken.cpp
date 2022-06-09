@@ -44,6 +44,7 @@ template<typename CharacterType>
 CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned length)
 {
     ASSERT(data);
+    ASSERT(length);
     switch (length) {
     case 1:
         switch (toASCIILower(data[0])) {
@@ -127,20 +128,6 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
         break;
     case 3:
         switch (toASCIILower(data[0])) {
-        case 'c':
-            if (toASCIILower(data[1]) == 'q') {
-                switch (toASCIILower(data[2])) {
-                case 'b':
-                    return CSSUnitType::CSS_CQB;
-                case 'h':
-                    return CSSUnitType::CSS_CQH;
-                case 'i':
-                    return CSSUnitType::CSS_CQI;
-                case 'w':
-                    return CSSUnitType::CSS_CQW;
-                }
-            }
-            break;
         case 'd':
             switch (toASCIILower(data[1])) {
             case 'e':
@@ -265,20 +252,6 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             if (toASCIILower(data[1]) == '_' && toASCIILower(data[2]) == 'q' && toASCIILower(data[3]) == 'e' && toASCIILower(data[4]) == 'm')
                 return CSSUnitType::CSS_QUIRKY_EMS;
             break;
-        case 'c':
-            if (toASCIILower(data[1]) == 'q' && toASCIILower(data[2]) == 'm') {
-                switch (toASCIILower(data[3])) {
-                case 'a':
-                    if (toASCIILower(data[4]) == 'x')
-                        return CSSUnitType::CSS_CQMAX;
-                    break;
-                case 'i':
-                    if (toASCIILower(data[4]) == 'n')
-                        return CSSUnitType::CSS_CQMIN;
-                    break;
-                }
-            }
-            break;
         case 'd':
             if (toASCIILower(data[1]) == 'v' && toASCIILower(data[2]) == 'm') {
                 switch (toASCIILower(data[3])) {
@@ -327,7 +300,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
     return CSSUnitType::CSS_UNKNOWN;
 }
 
-CSSUnitType CSSParserToken::stringToUnitType(StringView stringView)
+static CSSUnitType stringToUnitType(StringView stringView)
 {
     if (stringView.is8Bit())
         return cssPrimitiveValueUnitFromTrie(stringView.characters8(), stringView.length());

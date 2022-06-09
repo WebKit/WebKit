@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,51 +28,37 @@
 #pragma once
 
 #include "GraphicsContextFlushIdentifier.h"
-#include "ImageBufferAllocator.h"
 #include "ImageBufferBackend.h"
 #include "RenderingMode.h"
 #include "RenderingResourceIdentifier.h"
-#include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class Filter;
-class HostWindow;
-#if HAVE(IOSURFACE)
-class IOSurfacePool;
-#endif
+namespace DisplayList {
+class DisplayList;
+class DrawingContext;
+struct ItemBufferHandle;
+}
 
-enum class ImageBufferOptions : uint8_t {
-    Accelerated     = 1 << 0,
-    UseDisplayList  = 1 << 1
-};
+class Filter;
 
 class ImageBuffer : public ThreadSafeRefCounted<ImageBuffer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<ImageBuffer> {
 public:
-    struct CreationContext {
-        // clang 13.1.6 throws errors if we use default initializers here.
-        HostWindow* hostWindow;
-#if HAVE(IOSURFACE)
-        IOSurfacePool* surfacePool;
-#endif
-        CreationContext(HostWindow* window = nullptr
-#if HAVE(IOSURFACE)
-            , IOSurfacePool* pool = nullptr
-#endif
-        )
-            : hostWindow(window)
-#if HAVE(IOSURFACE)
-            , surfacePool(pool)
-#endif
-        { }
-    };
-
     // Will return a null pointer on allocation failure.
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, OptionSet<ImageBufferOptions> = { }, const CreationContext& = { });
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, ShouldUseDisplayList, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, PixelFormat, const HostWindow* = nullptr);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale, const DestinationColorSpace&, PixelFormat, const HostWindow* = nullptr);
 
-    RefPtr<ImageBuffer> clone() const;
+    // Create an image buffer compatible with the context, with suitable resolution for drawing into the buffer and then into this context.
+    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&);
+    struct CompatibleBufferDescription {
+        Ref<ImageBuffer> imageBuffer;
+        FloatRect inflatedRectInUserCoordinates;
+    };
+    static std::optional<CompatibleBufferDescription> createCompatibleBuffer(const FloatRect& rectInUserCoordinates, const GraphicsContext&);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const DestinationColorSpace&, const GraphicsContext&);
+    static RefPtr<ImageBuffer> createCompatibleBuffer(const FloatSize&, float resolutionScale, const DestinationColorSpace&, const GraphicsContext&);
 
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
@@ -81,7 +67,15 @@ public:
     static FloatSize clampedSize(const FloatSize&, FloatSize& scale);
     static FloatRect clampedRect(const FloatRect&);
 
-    virtual ~ImageBuffer() = default;
+    static IntSize compatibleBufferSize(const FloatSize&, const GraphicsContext&);
+    struct CompatibleBufferInfo {
+        IntSize physicalSizeInDeviceCoordinates;
+        FloatRect inflatedRectInUserCoordinates;
+        FloatSize scale;
+    };
+    static CompatibleBufferInfo compatibleBufferInfo(const FloatRect&, const GraphicsContext&);
+    
+    WEBCORE_EXPORT virtual ~ImageBuffer() = default;
 
     virtual void setBackend(std::unique_ptr<ImageBufferBackend>&&) = 0;
     virtual void clearBackend() = 0;
@@ -89,7 +83,6 @@ public:
     virtual ImageBufferBackend* ensureBackendCreated() const = 0;
 
     virtual RenderingMode renderingMode() const = 0;
-    virtual RenderingPurpose renderingPurpose() const = 0;
     virtual bool canMapBackingStore() const = 0;
     virtual RenderingResourceIdentifier renderingResourceIdentifier() const { return { }; }
 
@@ -99,9 +92,11 @@ public:
     virtual GraphicsContext* drawingContext() { return nullptr; }
     virtual bool prefersPreparationForDisplay() { return false; }
     virtual void flushDrawingContext() { }
-    virtual bool flushDrawingContextAsync() { return false; }
+    virtual void flushDrawingContextAsync() { }
     virtual void didFlush(GraphicsContextFlushIdentifier) { }
-    virtual void setNeedsFlush(bool) { }
+
+    virtual void changeDestinationImageBuffer(RenderingResourceIdentifier) { }
+    virtual void prepareToAppendDisplayListItems(DisplayList::ItemBufferHandle&&) { }
 
     virtual FloatSize logicalSize() const = 0;
     virtual IntSize truncatedLogicalSize() const = 0; // This truncates the real size. You probably should be calling logicalSize() instead.
@@ -118,17 +113,17 @@ public:
 
     virtual bool isInUse() const = 0;
     virtual void releaseGraphicsContext() = 0;
-    // Returns true on success.
-    virtual bool setVolatile() = 0;
-    virtual SetNonVolatileResult setNonVolatile() = 0;
-    virtual VolatilityState volatilityState() const = 0;
-    virtual void setVolatilityState(VolatilityState) = 0;
+    virtual VolatilityState setVolatile(bool) = 0;
+    virtual void releaseBufferToPool() = 0;
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() = 0;
 
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const = 0;
-    WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
+    virtual RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const = 0;
     virtual RefPtr<Image> filteredImage(Filter&) = 0;
+
+    // Create an image buffer compatible with the context and copy rect from this buffer into this new one.
+    RefPtr<ImageBuffer> copyRectToBuffer(const FloatRect&, const DestinationColorSpace&, const GraphicsContext&);
 
     virtual void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), const ImagePaintingOptions& = { }) = 0;
     virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) = 0;
@@ -146,7 +141,7 @@ public:
     virtual String toDataURL(const String& mimeType, std::optional<double> quality = std::nullopt, PreserveResolution = PreserveResolution::No) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt) const = 0;
 
-    virtual RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& = ImageBufferAllocator()) const = 0;
+    virtual std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) = 0;
 
     // FIXME: current implementations of this method have the restriction that they only work
@@ -154,22 +149,12 @@ public:
     virtual bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
 
-#if USE(CAIRO)
-    virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }
-#endif
-
 protected:
     ImageBuffer() = default;
 
     virtual RefPtr<NativeImage> sinkIntoNativeImage() = 0;
+    virtual RefPtr<Image> sinkIntoImage(PreserveResolution = PreserveResolution::No) = 0;
     virtual void drawConsuming(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
 };
-
-inline OptionSet<ImageBufferOptions> bufferOptionsForRendingMode(RenderingMode renderingMode)
-{
-    if (renderingMode == RenderingMode::Accelerated)
-        return { ImageBufferOptions::Accelerated };
-    return { };
-}
 
 } // namespace WebCore

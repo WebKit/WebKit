@@ -164,8 +164,6 @@ public:
 
     virtual const AtomString& formControlType() const = 0;
 
-    bool isValidValue(const String&) const;
-
     // Type query functions.
 
     // Any time we are using one of these functions it's best to refactor
@@ -202,8 +200,7 @@ public:
     bool isCheckable() const { return checkableTypes.contains(m_type); }
     bool isSteppable() const { return steppableTypes.contains(m_type); }
     bool supportsValidation() const { return !nonValidatingTypes.contains(m_type); }
-
-    Type type() const { return m_type; }
+    bool canHaveTypeSpecificValue() const { return isFileUpload(); }
 
     bool isInteractiveContent() const;
     bool supportLabels() const;
@@ -221,6 +218,7 @@ public:
 
     // DOM property functions.
 
+    virtual bool getTypeSpecificValue(String&); // Checked first, before internal storage or the value attribute.
     virtual String fallbackValue() const; // Checked last, if both internal storage and value attribute are missing.
     virtual String defaultValue() const; // Checked after even fallbackValue, only when the valueWithDefault function is called.
     virtual WallTime valueAsDate() const;
@@ -275,10 +273,7 @@ public:
     virtual void didDispatchClick(Event&, const InputElementClickState&);
     virtual void handleDOMActivateEvent(Event&);
 
-    virtual bool allowsShowPickerAcrossFrames();
-    virtual void showPicker();
-
-    enum ShouldCallBaseEventHandler : bool { No, Yes };
+    enum ShouldCallBaseEventHandler { No, Yes };
     virtual ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&);
 
     virtual void handleKeypressEvent(KeyboardEvent&);
@@ -340,10 +335,13 @@ public:
     virtual void attach();
     virtual void detach();
     virtual bool shouldRespectAlignAttribute();
+    virtual FileList* files();
+    virtual void setFiles(RefPtr<FileList>&&, WasSetByJavaScript);
     virtual Icon* icon() const;
     virtual bool shouldSendChangeEventAfterCheckedChanged();
+    virtual bool canSetValue(const String&);
     virtual bool storesValueSeparateFromAttribute();
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection);
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior);
     virtual bool shouldResetOnDocumentActivation();
     virtual bool shouldRespectListAttribute();
     virtual bool shouldRespectHeightAndWidthAttributes();
@@ -362,10 +360,12 @@ public:
     virtual bool shouldAppearIndeterminate() const;
     virtual bool isPresentingAttachedView() const;
     virtual bool supportsSelectionAPI() const;
+    virtual Color valueAsColor() const;
+    virtual void selectColor(StringView);
+    virtual Vector<Color> suggestedColors() const;
 #if ENABLE(DATALIST_ELEMENT)
     virtual bool isFocusingWithDataListDropdown() const { return false; };
 #endif
-    virtual void willUpdateCheckedness(bool /*nowChecked*/) { }
 
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing
@@ -403,12 +403,9 @@ public:
     virtual String resultForDialogSubmit() const;
 
 protected:
-    InputType(Type type, HTMLInputElement& element)
+    explicit InputType(Type type, HTMLInputElement& element)
         : m_type(type)
-        , m_element(element)
-    {
-    }
-
+        , m_element(element) { }
     HTMLInputElement* element() const { return m_element.get(); }
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;
@@ -432,7 +429,7 @@ ALWAYS_INLINE bool isInvalidInputType(const InputType& baseInputType, const Stri
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(ToValueTypeName, TypeEnumValue) \
+#define SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-static bool isType(const WebCore::InputType& input) { return input.type() == WebCore::InputType::TypeEnumValue; } \
+static bool isType(const WebCore::InputType& input) { return input.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && HAVE(IOSURFACE)
 
-#include "ImageBufferBackendHandleSharing.h"
+#include "ImageBufferBackendHandle.h"
 #include <WebCore/ImageBufferIOSurfaceBackend.h>
 #include <wtf/IsoMalloc.h>
 
@@ -37,26 +37,20 @@ class ProcessIdentity;
 
 namespace WebKit {
 
-class ImageBufferShareableMappedIOSurfaceBackend final : public WebCore::ImageBufferIOSurfaceBackend, public ImageBufferBackendHandleSharing {
+class ShareableBitmap;
+
+class ImageBufferShareableMappedIOSurfaceBackend final : public WebCore::ImageBufferIOSurfaceBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableMappedIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableMappedIOSurfaceBackend);
 public:
-    static std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> create(const Parameters&, const WebCore::ImageBuffer::CreationContext&);
+    static std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> create(const Parameters&, const WebCore::HostWindow*);
     static std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
 
     using WebCore::ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend;
 
+    ImageBufferBackendHandle createImageBufferBackendHandle() const;
+
     void setOwnershipIdentity(const WebCore::ProcessIdentity&);
-
-    ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
-
-private:
-    // ImageBufferBackendSharing
-    ImageBufferBackendSharing* toBackendSharing() final { return this; }
-
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
-
-    mutable WebCore::IOSurfaceSeed m_lastSeedWhenCopyingImage { 0 };
 };
 
 } // namespace WebKit

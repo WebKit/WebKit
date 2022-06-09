@@ -38,14 +38,10 @@
 #include "JSCallbackData.h"
 #include "JSDOMExceptionHandling.h"
 #include "MessagePort.h"
-#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <wtf/GetPtr.h>
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(AudioWorkletProcessor);
 
 using namespace JSC;
 
@@ -77,7 +73,7 @@ static JSFloat32Array* constructJSFloat32Array(JSGlobalObject& globalObject, uns
     return jsArray;
 }
 
-static JSObject* constructFrozenKeyValueObject(VM& vm, JSGlobalObject& globalObject, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
+static JSObject* constructFrozenKeyValueObject(VM& vm, JSGlobalObject& globalObject, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto* plainObjectStructure = JSFinalObject::createStructure(vm, &globalObject, globalObject.objectPrototype(), 0);
@@ -138,20 +134,20 @@ static void copyDataFromJSArrayToBuses(JSGlobalObject& globalObject, const JSArr
     }
 }
 
-static bool copyDataFromBusesToJSArray(JSGlobalObject& globalObject, const Vector<RefPtr<AudioBus>>& buses, JSArray* jsArray)
+static bool copyDataFromBusesToJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<RefPtr<AudioBus>>& buses, JSArray* jsArray)
 {
     if (!jsArray)
         return false;
 
     for (size_t busIndex = 0; busIndex < buses.size(); ++busIndex) {
         auto& bus = buses[busIndex];
-        auto* jsChannelsArray = jsDynamicCast<JSArray*>(jsArray->getIndex(&globalObject, busIndex));
+        auto* jsChannelsArray = jsDynamicCast<JSArray*>(vm, jsArray->getIndex(&globalObject, busIndex));
         unsigned numberOfChannels = busChannelCount(bus.get());
         if (!jsChannelsArray || jsChannelsArray->length() != numberOfChannels)
             return false;
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
             auto* channel = bus->channel(channelIndex);
-            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(jsChannelsArray->getIndex(&globalObject, channelIndex));
+            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(vm, jsChannelsArray->getIndex(&globalObject, channelIndex));
             if (!jsChannelArray || jsChannelArray->length() != channel->length())
                 return false;
             memcpy(jsChannelArray->typedVector(), channel->mutableData(), sizeof(float) * jsChannelArray->length());
@@ -160,13 +156,13 @@ static bool copyDataFromBusesToJSArray(JSGlobalObject& globalObject, const Vecto
     return true;
 }
 
-static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObject, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, JSObject* jsObject)
+static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObject, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, JSObject* jsObject)
 {
     if (!jsObject)
         return false;
 
     for (auto& pair : paramValuesMap) {
-        auto* jsTypedArray = jsDynamicCast<JSFloat32Array*>(jsObject->get(&globalObject, Identifier::fromString(vm, pair.key)));
+        auto* jsTypedArray = jsDynamicCast<JSFloat32Array*>(vm, jsObject->get(&globalObject, Identifier::fromString(vm, pair.key)));
         if (!jsTypedArray)
             return false;
         unsigned expectedLength = pair.value->containsConstantValue() ? 1 : pair.value->size();
@@ -177,20 +173,20 @@ static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObj
     return true;
 }
 
-static bool zeroJSArray(JSGlobalObject& globalObject, const Vector<Ref<AudioBus>>& outputs, JSArray* jsArray)
+static bool zeroJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<Ref<AudioBus>>& outputs, JSArray* jsArray)
 {
     if (!jsArray)
         return false;
 
     for (size_t busIndex = 0; busIndex < outputs.size(); ++busIndex) {
         auto& bus = outputs[busIndex];
-        auto* jsChannelsArray = jsDynamicCast<JSArray*>(jsArray->getIndex(&globalObject, busIndex));
+        auto* jsChannelsArray = jsDynamicCast<JSArray*>(vm, jsArray->getIndex(&globalObject, busIndex));
         unsigned numberOfChannels = busChannelCount(bus.get());
         if (!jsChannelsArray || jsChannelsArray->length() != numberOfChannels)
             return false;
         for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
             auto* channel = bus->channel(channelIndex);
-            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(jsChannelsArray->getIndex(&globalObject, channelIndex));
+            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(vm, jsChannelsArray->getIndex(&globalObject, channelIndex));
             if (!jsChannelArray || jsChannelArray->length() != channel->length())
                 return false;
             memset(jsChannelArray->typedVector(), 0, sizeof(float) * jsChannelArray->length());
@@ -201,32 +197,30 @@ static bool zeroJSArray(JSGlobalObject& globalObject, const Vector<Ref<AudioBus>
 
 ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExecutionContext& context)
 {
-    auto& globalScope = downcast<AudioWorkletGlobalScope>(context);
-    auto constructionData = globalScope.takePendingProcessorConstructionData();
+    auto constructionData = downcast<AudioWorkletGlobalScope>(context).takePendingProcessorConstructionData();
     if (!constructionData)
         return Exception { TypeError, "No pending construction data for this worklet processor"_s };
 
-    return adoptRef(*new AudioWorkletProcessor(globalScope, *constructionData));
+    return adoptRef(*new AudioWorkletProcessor(*constructionData));
 }
 
 AudioWorkletProcessor::~AudioWorkletProcessor() = default;
 
-AudioWorkletProcessor::AudioWorkletProcessor(AudioWorkletGlobalScope& globalScope, const AudioWorkletProcessorConstructionData& constructionData)
-    : m_globalScope(globalScope)
-    , m_name(constructionData.name())
+AudioWorkletProcessor::AudioWorkletProcessor(const AudioWorkletProcessorConstructionData& constructionData)
+    : m_name(constructionData.name())
     , m_port(constructionData.port())
 {
     ASSERT(!isMainThread());
 }
 
-void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObject, MarkedArgumentBufferBase& args, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
+void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObject, MarkedArgumentBufferBase& args, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
 {
     // For performance reasons, we cache the arrays passed to JS and reconstruct them only when the topology changes.
-    if (!copyDataFromBusesToJSArray(globalObject, inputs, toJSArray(m_jsInputs)))
+    if (!copyDataFromBusesToJSArray(vm, globalObject, inputs, toJSArray(m_jsInputs)))
         m_jsInputs.setWeakly(constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes));
     args.append(m_jsInputs.getValue());
 
-    if (!zeroJSArray(globalObject, outputs, toJSArray(m_jsOutputs)))
+    if (!zeroJSArray(vm, globalObject, outputs, toJSArray(m_jsOutputs)))
         m_jsOutputs.setWeakly(constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No));
     args.append(m_jsOutputs.getValue());
 
@@ -235,14 +229,14 @@ void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObjec
     args.append(m_jsParamValues.getValue());
 }
 
-bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException)
+bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException)
 {
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
-    ASSERT(wrapper());
-    auto& globalObject = *jsCast<JSDOMGlobalObject*>(m_globalScope.globalObject());
+    ASSERT(m_processCallback);
+    auto& globalObject = *m_processCallback->globalObject();
     ASSERT(globalObject.scriptExecutionContext());
     ASSERT(globalObject.scriptExecutionContext()->isContextThread());
 
@@ -253,7 +247,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     buildJSArguments(vm, globalObject, args, inputs, outputs, paramValuesMap);
 
     NakedPtr<JSC::Exception> returnedException;
-    auto result = JSCallbackData::invokeCallback(globalObject, wrapper(), jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"_s), returnedException);
+    auto result = m_processCallback->invokeCallback(jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"), returnedException);
     if (returnedException) {
         reportException(&globalObject, returnedException);
         threwException = true;
@@ -265,9 +259,9 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     return result.toBoolean(&globalObject);
 }
 
-WebCoreOpaqueRoot root(AudioWorkletProcessor* processor)
+void AudioWorkletProcessor::setProcessCallback(std::unique_ptr<JSCallbackDataStrong>&& processCallback)
 {
-    return WebCoreOpaqueRoot { processor };
+    m_processCallback = WTFMove(processCallback);
 }
 
 } // namespace WebCore

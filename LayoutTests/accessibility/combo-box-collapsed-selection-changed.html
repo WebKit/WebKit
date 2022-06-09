@@ -33,9 +33,8 @@ if (window.testRunner && window.accessibilityController) {
     document.getElementById("combo").focus();
 
     axCombo = accessibilityController.focusedElement;
-    var eventTarget = accessibilityController.platformName == "atspi" ? axCombo.childAtIndex(0) : axCombo;
-    eventTarget.addNotificationListener(function (notification) {
-        if (notification == "AXSelectedChildrenChanged" || notification == "AXMenuItemSelected")
+    axCombo.addNotificationListener(function (notification) {
+        if (notification == "AXSelectedChildrenChanged")
             selectionChangedNotifications++;
     });
 
@@ -46,13 +45,9 @@ if (window.testRunner && window.accessibilityController) {
 
     window.setTimeout(function() {
         if (window.accessibilityController)
-            eventTarget.removeNotificationListener();
+            axCombo.removeNotificationListener();
 
-        // ATSPI sends one selection change notification per run loop iteration.
-        if (accessibilityController.platformName == "atspi")
-            shouldBe("selectionChangedNotifications", "1");
-        else
-            shouldBe("selectionChangedNotifications", "4");
+        shouldBe("selectionChangedNotifications", "4");
         finishJSTest();
     }, 0);
 }

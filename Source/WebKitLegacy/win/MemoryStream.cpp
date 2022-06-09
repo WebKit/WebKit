@@ -35,13 +35,13 @@ MemoryStream::MemoryStream(RefPtr<SharedBuffer>&& buffer)
     : m_buffer(WTFMove(buffer))
 {
     gClassCount++;
-    gClassNameCount().add("MemoryStream"_s);
+    gClassNameCount().add("MemoryStream");
 }
 
 MemoryStream::~MemoryStream()
 {
     gClassCount--;
-    gClassNameCount().remove("MemoryStream"_s);
+    gClassNameCount().remove("MemoryStream");
 }
 
 COMPtr<MemoryStream> MemoryStream::createInstance(RefPtr<SharedBuffer>&& buffer)

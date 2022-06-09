@@ -52,7 +52,7 @@
 .content-view.resource.image img {
     max-width: 100%;
     max-height: 100%;
-    user-select: text;
+    -webkit-user-select: text;
     -webkit-user-drag: auto;
 }
 

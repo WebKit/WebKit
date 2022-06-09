@@ -24,6 +24,7 @@
  */
 
 [
+    ImplementationLacksVTable,
     EnabledBySetting=SpeechRecognitionEnabled,
     Exposed=Window
 ] interface SpeechRecognitionAlternative {

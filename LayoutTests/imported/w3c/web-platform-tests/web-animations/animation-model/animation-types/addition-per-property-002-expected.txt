@@ -31,39 +31,12 @@ PASS list-style-position: "inside" onto "outside"
 PASS list-style-type (type: discrete) has testAddition function
 PASS list-style-type: "square" onto "circle"
 PASS list-style-type: "circle" onto "square"
-PASS marker-end (type: discrete) has testAddition function
-FAIL marker-end: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" assert_equals: The value should be url("http://localhost/test-2") at 0ms expected "url(\"http://localhost/test-2\")" but got "none"
-FAIL marker-end: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "none"
-PASS marker-mid (type: discrete) has testAddition function
-FAIL marker-mid: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" assert_equals: The value should be url("http://localhost/test-2") at 0ms expected "url(\"http://localhost/test-2\")" but got "none"
-FAIL marker-mid: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "none"
-PASS marker-start (type: discrete) has testAddition function
-FAIL marker-start: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" assert_equals: The value should be url("http://localhost/test-2") at 0ms expected "url(\"http://localhost/test-2\")" but got "none"
-FAIL marker-start: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "none"
 PASS mask (type: discrete) has testAddition function
 FAIL mask: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" assert_equals: The value should be url("http://localhost/test-2") at 0ms expected "url(\"http://localhost/test-2\")" but got "url(\"http://localhost/test-2\") 0% 0% / auto repeat border-box border-box add match-source"
 FAIL mask: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-1\") 0% 0% / auto repeat border-box border-box add match-source"
-PASS mask-clip (type: discrete) has testAddition function
-PASS mask-clip: "border-box" onto "content-box"
-PASS mask-clip: "content-box" onto "border-box"
-PASS mask-composite (type: discrete) has testAddition function
-PASS mask-composite: "subtract" onto "add"
-PASS mask-composite: "add" onto "subtract"
 PASS mask-image (type: discrete) has testAddition function
 PASS mask-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS mask-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
-PASS mask-mode (type: discrete) has testAddition function
-PASS mask-mode: "luminance" onto "alpha"
-PASS mask-mode: "alpha" onto "luminance"
-PASS mask-origin (type: discrete) has testAddition function
-PASS mask-origin: "border-box" onto "content-box"
-PASS mask-origin: "content-box" onto "border-box"
-PASS mask-repeat (type: discrete) has testAddition function
-PASS mask-repeat: "round" onto "space"
-PASS mask-repeat: "space" onto "round"
-PASS mask-type (type: discrete) has testAddition function
-PASS mask-type: "luminance" onto "alpha"
-PASS mask-type: "alpha" onto "luminance"
 PASS mix-blend-mode (type: discrete) has testAddition function
 PASS mix-blend-mode: "screen" onto "multiply"
 PASS mix-blend-mode: "multiply" onto "screen"
@@ -134,21 +107,12 @@ PASS pointer-events: "fill" onto "none"
 PASS position (type: discrete) has testAddition function
 PASS position: "fixed" onto "absolute"
 PASS position: "absolute" onto "fixed"
-PASS quotes (type: discrete) has testAddition function
-PASS quotes: ""‘" "’" "“" "”"" onto ""“" "”" "‘" "’""
-PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAddition function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
-PASS scroll-behavior (type: discrete) has testAddition function
-PASS scroll-behavior: "smooth" onto "auto"
-PASS scroll-behavior: "auto" onto "smooth"
 PASS shape-outside (type: discrete) has testAddition function
 PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
-PASS shape-rendering (type: discrete) has testAddition function
-PASS shape-rendering: "crispEdges" onto "optimizeSpeed"
-PASS shape-rendering: "optimizeSpeed" onto "crispEdges"
 PASS stop-color (type: color) has testAddition function
 FAIL stop-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
 PASS stop-color supports animating as color of #RGB
@@ -157,36 +121,24 @@ PASS stop-color supports animating as color of #RGBa
 PASS stop-color supports animating as color of rgba()
 PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testAddition function
-PASS stop-opacity: [0, 1] number
-PASS stop-opacity: [0, 1] number (clamped)
+FAIL stop-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.6000000238418579"
+FAIL stop-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.100000023841858"
 PASS stroke-dasharray (type: dasharray) has testAddition function
 PASS stroke-dasharray: dasharray
 PASS stroke-dasharray (type: discrete) has testAddition function
 PASS stroke-dasharray: "10px, 20px" onto "none"
 PASS stroke-dasharray: "none" onto "10px, 20px"
-PASS stroke-linecap (type: discrete) has testAddition function
-PASS stroke-linecap: "square" onto "round"
-PASS stroke-linecap: "round" onto "square"
-PASS stroke-linejoin (type: discrete) has testAddition function
-PASS stroke-linejoin: "miter" onto "round"
-PASS stroke-linejoin: "round" onto "miter"
 PASS stroke-miterlimit (type: positiveNumber) has testAddition function
-PASS stroke-miterlimit: positive number
+FAIL stroke-miterlimit: positive number assert_equals: The value should be 2.2 at 0ms expected "2.2" but got "2.200000047683716"
 PASS stroke-opacity (type: opacity) has testAddition function
-PASS stroke-opacity: [0, 1] number
-PASS stroke-opacity: [0, 1] number (clamped)
+FAIL stroke-opacity: [0, 1] number assert_equals: The value should be 0.6 at 0ms expected "0.6" but got "0.6000000238418579"
+FAIL stroke-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.100000023841858"
 PASS table-layout (type: discrete) has testAddition function
 PASS table-layout: "fixed" onto "auto"
 PASS table-layout: "auto" onto "fixed"
 PASS text-align (type: discrete) has testAddition function
 PASS text-align: "end" onto "start"
 PASS text-align: "start" onto "end"
-PASS text-align-last (type: discrete) has testAddition function
-PASS text-align-last: "end" onto "start"
-PASS text-align-last: "start" onto "end"
-PASS text-anchor (type: discrete) has testAddition function
-PASS text-anchor: "end" onto "middle"
-PASS text-anchor: "middle" onto "end"
 PASS text-decoration-color (type: color) has testAddition function
 FAIL text-decoration-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
 PASS text-decoration-color supports animating as color of #RGB
@@ -201,24 +153,18 @@ PASS text-decoration-style (type: discrete) has testAddition function
 PASS text-decoration-style: "dotted" onto "solid"
 PASS text-decoration-style: "solid" onto "dotted"
 PASS text-emphasis-color (type: color) has testAddition function
-FAIL text-emphasis-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
-PASS text-emphasis-color supports animating as color of #RGB
-PASS text-emphasis-color supports animating as color of hsl()
-PASS text-emphasis-color supports animating as color of #RGBa
-PASS text-emphasis-color supports animating as color of rgba()
-PASS text-emphasis-color supports animating as color of hsla()
+FAIL text-emphasis-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL text-emphasis-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL text-emphasis-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
+FAIL text-emphasis-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL text-emphasis-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL text-emphasis-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
 PASS text-emphasis-position (type: discrete) has testAddition function
-PASS text-emphasis-position: "under left" onto "over"
-PASS text-emphasis-position: "over" onto "under left"
-PASS text-emphasis-style (type: discrete) has testAddition function
-PASS text-emphasis-style: "open dot" onto "circle"
-PASS text-emphasis-style: "circle" onto "open dot"
+PASS text-emphasis-position: "under left" onto "over right"
+PASS text-emphasis-position: "over right" onto "under left"
 PASS text-overflow (type: discrete) has testAddition function
 PASS text-overflow: "ellipsis" onto "clip"
 PASS text-overflow: "clip" onto "ellipsis"
-PASS text-rendering (type: discrete) has testAddition function
-PASS text-rendering: "optimizeLegibility" onto "optimizeSpeed"
-PASS text-rendering: "optimizeSpeed" onto "optimizeLegibility"
 PASS text-shadow (type: textShadowList) has testAddition function
 PASS text-shadow: shadow
 PASS text-transform (type: discrete) has testAddition function
@@ -259,9 +205,6 @@ PASS scale (type: scaleList) has testAddition function
 PASS scale with two unspecified values
 PASS scale with one unspecified value
 PASS scale
-PASS vector-effect (type: discrete) has testAddition function
-PASS vector-effect: "non-scaling-stroke" onto "none"
-PASS vector-effect: "none" onto "non-scaling-stroke"
 PASS visibility (type: visibility) has testAddition function
 PASS visibility: onto "visible"
 PASS visibility: onto "hidden"

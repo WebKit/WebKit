@@ -53,7 +53,9 @@ void FileChooser::invalidate()
 
 void FileChooser::chooseFile(const String& filename)
 {
-    chooseFiles({ filename });
+    Vector<String> filenames;
+    filenames.append(filename);
+    chooseFiles(filenames);
 }
 
 void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<String>& replacementNames)
@@ -66,10 +68,9 @@ void FileChooser::chooseFiles(const Vector<String>& filenames, const Vector<Stri
         return;
 
     Vector<FileChooserFileInfo> files;
-    files.reserveInitialCapacity(filenames.size());
     for (size_t i = 0, size = filenames.size(); i < size; ++i)
-        files.uncheckedAppend({ filenames[i], i < replacementNames.size() ? replacementNames[i] : nullString(), { } });
-    m_client->filesChosen(WTFMove(files));
+        files.append({ filenames[i], i < replacementNames.size() ? replacementNames[i] : nullString(), { } });
+    m_client->filesChosen(files);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -85,19 +86,19 @@ void FileChooser::chooseMediaFiles(const Vector<String>& filenames, const String
     if (!m_client)
         return;
 
-    auto files = filenames.map([](auto& filename) {
-        return FileChooserFileInfo { filename, { }, { } };
-    });
-    m_client->filesChosen(WTFMove(files), displayString, icon);
+    Vector<FileChooserFileInfo> files;
+    for (auto& filename : filenames)
+        files.append({ filename, { }, { } });
+    m_client->filesChosen(files, displayString, icon);
 }
 
 #endif
 
 void FileChooser::chooseFiles(const Vector<FileChooserFileInfo>& files)
 {
-    auto paths = files.map([](auto& file) {
-        return file.path;
-    });
+    Vector<String> paths;
+    for (auto& file : files)
+        paths.append(file.path);
 
     // FIXME: This is inelegant. We should not be looking at settings here.
     if (m_settings.selectedFiles == paths)

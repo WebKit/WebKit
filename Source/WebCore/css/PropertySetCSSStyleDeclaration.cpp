@@ -26,11 +26,8 @@
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "CustomElementReactionQueue.h"
-#include "DOMWindow.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
-#include "JSDOMGlobalObject.h"
-#include "JSDOMWindowBase.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StyleProperties.h"
@@ -245,7 +242,7 @@ ExceptionOr<void> PropertySetCSSStyleDeclaration::setProperty(const String& prop
     if (!willMutate())
         return { };
 
-    bool important = equalLettersIgnoringASCIICase(priority, "important"_s);
+    bool important = equalIgnoringASCIICase(priority, "important");
     if (!important && !priority.isEmpty())
         return { };
 
@@ -302,20 +299,15 @@ RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSS
 
 String PropertySetCSSStyleDeclaration::getPropertyValueInternal(CSSPropertyID propertyID)
 {
-    Document* doc = nullptr;
-    JSDOMObject* wrap = wrapper();
-    if (wrap) {
-        JSDOMGlobalObject* global = wrap->globalObject();
-        if (global) {
-            DOMWindow& window = activeDOMWindow(*global);
-            doc = window.document();
-        }
-    }
-    String value = m_propertySet->getPropertyValue(propertyID, doc);
-
+    String value = m_propertySet->getPropertyValue(propertyID);
+    CSSPropertyID relatedPropertyID = getRelatedPropertyId(propertyID);
+    String relatedValue = m_propertySet->getPropertyValue(relatedPropertyID);
+        
     if (!value.isEmpty())
         return value;
-
+    if (!relatedValue.isEmpty())
+        return relatedValue;
+    
     return { };
 }
 
@@ -341,11 +333,14 @@ RefPtr<DeprecatedCSSOMValue> PropertySetCSSStyleDeclaration::wrapForDeprecatedCS
 
     // The map is here to maintain the object identity of the CSSValues over multiple invocations.
     // FIXME: It is likely that the identity is not important for web compatibility and this code should be removed.
-    auto& clonedValue = m_cssomValueWrappers.add(internalValue, WeakPtr<DeprecatedCSSOMValue>()).iterator->value;
+    if (!m_cssomValueWrappers)
+        m_cssomValueWrappers = makeUnique<HashMap<CSSValue*, WeakPtr<DeprecatedCSSOMValue>>>();
+    
+    auto& clonedValue = m_cssomValueWrappers->add(internalValue, WeakPtr<DeprecatedCSSOMValue>()).iterator->value;
     if (clonedValue)
         return clonedValue.get();
 
-    auto wrapper = internalValue->createDeprecatedCSSOMWrapper(*this);
+    RefPtr<DeprecatedCSSOMValue> wrapper = internalValue->createDeprecatedCSSOMWrapper(*this);
     clonedValue = wrapper;
     return wrapper;
 }
@@ -406,7 +401,7 @@ void StyleRuleCSSStyleDeclaration::didMutate(MutationType type)
     ASSERT(m_parentRule->parentStyleSheet());
 
     if (type == PropertyChanged)
-        m_cssomValueWrappers.clear();
+        m_cssomValueWrappers = nullptr;
 
     // Style sheet mutation needs to be signaled even if the change failed. willMutate*/didMutate* must pair.
     m_parentRule->parentStyleSheet()->didMutateRuleFromCSSStyleDeclaration();
@@ -448,7 +443,7 @@ void InlineCSSStyleDeclaration::didMutate(MutationType type)
     if (type == NoChanges)
         return;
 
-    m_cssomValueWrappers.clear();
+    m_cssomValueWrappers = nullptr;
 
     if (!m_parentElement)
         return;

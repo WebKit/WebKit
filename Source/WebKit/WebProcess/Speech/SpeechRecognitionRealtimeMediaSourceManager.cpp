@@ -208,9 +208,9 @@ void SpeechRecognitionRealtimeMediaSourceManager::revokeSandboxExtensions()
 
 #endif
 
-void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, PageIdentifier pageIdentifier)
+void SpeechRecognitionRealtimeMediaSourceManager::createSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device)
 {
-    auto result = SpeechRecognitionCaptureSource::createRealtimeMediaSource(device, pageIdentifier);
+    auto result = SpeechRecognitionCaptureSource::createRealtimeMediaSource(device);
     if (!result) {
         RELEASE_LOG_ERROR(Media, "Failed to create realtime source");
         send(Messages::SpeechRecognitionRemoteRealtimeMediaSourceManager::RemoteCaptureFailed(identifier), 0);

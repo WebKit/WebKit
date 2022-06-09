@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,14 +26,16 @@ namespace WebCore {
 
 class SourceAlpha : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<SourceAlpha> create(const DestinationColorSpace& = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<SourceAlpha> create();
+    static Ref<SourceAlpha> create(FilterEffect&);
 
     static AtomString effectName() { return FilterEffect::sourceAlphaName(); }
 
 private:
-    explicit SourceAlpha(const DestinationColorSpace&);
+    SourceAlpha();
+    explicit SourceAlpha(FilterEffect&);
 
-    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
+    std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 };

@@ -59,7 +59,7 @@ JSONObject::JSONObject(VM& vm, Structure* structure)
 void JSONObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -139,14 +139,15 @@ private:
 
 static inline JSValue unwrapBoxedPrimitive(JSGlobalObject* globalObject, JSValue value)
 {
+    VM& vm = globalObject->vm();
     if (!value.isObject())
         return value;
     JSObject* object = asObject(value);
-    if (object->inherits<NumberObject>())
+    if (object->inherits<NumberObject>(vm))
         return jsNumber(object->toNumber(globalObject));
-    if (object->inherits<StringObject>())
+    if (object->inherits<StringObject>(vm))
         return object->toString(globalObject);
-    if (object->inherits<BooleanObject>() || object->inherits<BigIntObject>())
+    if (object->inherits<BooleanObject>(vm) || object->inherits<BigIntObject>(vm))
         return jsCast<JSWrapperObject*>(object)->internalValue();
 
     // Do not unwrap SymbolObject to Symbol. It is not performed in the spec.
@@ -228,7 +229,7 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
     if (m_replacer.isObject()) {
         JSObject* replacerObject = asObject(m_replacer);
 
-        m_replacerCallData = JSC::getCallData(replacerObject);
+        m_replacerCallData = getCallData(vm, replacerObject);
         if (m_replacerCallData.type == CallData::Type::None) {
             bool isArrayReplacer = JSC::isArray(globalObject, replacerObject);
             RETURN_IF_EXCEPTION(scope, );
@@ -237,7 +238,7 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
                 forEachInArrayLike(globalObject, replacerObject, [&] (JSValue name) -> bool {
                     if (name.isObject()) {
                         auto* nameObject = jsCast<JSObject*>(name);
-                        if (!nameObject->inherits<NumberObject>() && !nameObject->inherits<StringObject>())
+                        if (!nameObject->inherits<NumberObject>(vm) && !nameObject->inherits<StringObject>(vm))
                             return true;
                     } else if (!name.isNumber() && !name.isString())
                         return true;
@@ -294,7 +295,7 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
 
     JSValue toJSONFunction;
     if (baseValue.isObject())
-        toJSONFunction = asObject(baseValue)->structure()->cachedSpecialProperty(CachedSpecialPropertyKey::ToJSON);
+        toJSONFunction = asObject(baseValue)->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToJSON);
 
     if (!toJSONFunction) {
         PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
@@ -304,10 +305,10 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
         RETURN_IF_EXCEPTION(scope, { });
 
         if (baseValue.isObject())
-            asObject(baseValue)->structure()->cacheSpecialProperty(m_globalObject, vm, toJSONFunction, CachedSpecialPropertyKey::ToJSON, slot);
+            asObject(baseValue)->structure(vm)->cacheSpecialProperty(m_globalObject, vm, toJSONFunction, CachedSpecialPropertyKey::ToJSON, slot);
     }
 
-    auto callData = JSC::getCallData(toJSONFunction);
+    auto callData = getCallData(vm, toJSONFunction);
     if (callData.type == CallData::Type::None)
         return baseValue;
 
@@ -398,7 +399,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifyFailed;
 
     JSObject* object = asObject(value);
-    if (object->isCallable()) {
+    if (object->isCallable(vm)) {
         if (holder.isArray()) {
             builder.append("null");
             return StringifySucceeded;
@@ -423,7 +424,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     }
 
     bool holderStackWasEmpty = m_holderStack.isEmpty();
-    Structure* structure = object->structure();
+    Structure* structure = object->structure(vm);
     m_holderStack.append(Holder(m_globalObject, object, structure));
     m_objectStack.appendWithCrashOnOverflow(object);
     m_objectStack.appendWithCrashOnOverflow(structure);
@@ -511,21 +512,21 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
                 m_size = m_propertyNames->propertyNameVector().size();
             } else if (m_structure && m_object->structureID() == m_structure->id() && canPerformFastPropertyEnumerationForJSONStringify(m_structure)) {
-                m_structure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
-                    if (entry.attributes() & PropertyAttribute::DontEnum)
+                m_structure->forEachProperty(vm, [&](const PropertyMapEntry& entry) -> bool {
+                    if (entry.attributes & PropertyAttribute::DontEnum)
                         return true;
 
-                    PropertyName propertyName(entry.key());
+                    PropertyName propertyName(entry.key);
                     if (propertyName.isSymbol())
                         return true;
-                    m_propertiesAndOffsets.constructAndAppend(Identifier::fromUid(vm, entry.key()), entry.offset());
+                    m_propertiesAndOffsets.constructAndAppend(Identifier::fromUid(vm, entry.key), entry.offset);
                     return true;
                 });
                 m_hasFastObjectProperties = true;
                 m_size = m_propertiesAndOffsets.size();
             } else {
                 PropertyNameArray objectPropertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-                m_object->methodTable()->getOwnPropertyNames(m_object, globalObject, objectPropertyNames, DontEnumPropertiesMode::Exclude);
+                m_object->methodTable(vm)->getOwnPropertyNames(m_object, globalObject, objectPropertyNames, DontEnumPropertiesMode::Exclude);
                 RETURN_IF_EXCEPTION(scope, false);
                 m_propertyNames = objectPropertyNames.releaseData();
                 m_size = m_propertyNames->propertyNameVector().size();
@@ -627,7 +628,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
 
 // ------------------------------ JSONObject --------------------------------
 
-const ClassInfo JSONObject::s_info = { "JSON"_s, &JSNonFinalObject::s_info, &jsonTable, nullptr, CREATE_METHOD_TABLE(JSONObject) };
+const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, &jsonTable, nullptr, CREATE_METHOD_TABLE(JSONObject) };
 
 /* Source for JSONObject.lut.h
 @begin jsonTable
@@ -738,7 +739,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSValue filteredValue = callReviver(array, jsString(vm, String::number(indexStack.last())), outValue);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
-                    array->methodTable()->deletePropertyByIndex(array, m_globalObject, indexStack.last());
+                    array->methodTable(vm)->deletePropertyByIndex(array, m_globalObject, indexStack.last());
                 else
                     array->putDirectIndex(m_globalObject, indexStack.last(), filteredValue, 0, PutDirectIndexShouldNotThrow);
                 RETURN_IF_EXCEPTION(scope, { });
@@ -756,7 +757,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 markedStack.appendWithCrashOnOverflow(object);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
-                object->methodTable()->getOwnPropertyNames(object, m_globalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                object->methodTable(vm)->getOwnPropertyNames(object, m_globalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
                 RETURN_IF_EXCEPTION(scope, { });
             }
             objectStartVisitMember:
@@ -793,10 +794,9 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 else {
                     unsigned attributes;
                     PropertyOffset offset = object->getDirectOffset(vm, prop, attributes);
-                    if (LIKELY(offset != invalidOffset && attributes == static_cast<unsigned>(PropertyAttribute::None))) {
-                        object->putDirectOffset(vm, offset, filteredValue);
-                        object->structure()->didReplaceProperty(offset);
-                    } else {
+                    if (LIKELY(offset != invalidOffset && attributes == static_cast<unsigned>(PropertyAttribute::None)))
+                        object->putDirect(vm, offset, filteredValue);
+                    else {
                         bool shouldThrow = false;
                         object->createDataProperty(m_globalObject, prop, filteredValue, shouldThrow);
                     }
@@ -862,7 +862,7 @@ JSC_DEFINE_HOST_FUNCTION(jsonProtoFuncParse, (JSGlobalObject* globalObject, Call
         return JSValue::encode(unfiltered);
     
     JSValue function = callFrame->uncheckedArgument(1);
-    auto callData = JSC::getCallData(function);
+    auto callData = getCallData(vm, function);
     if (callData.type == CallData::Type::None)
         return JSValue::encode(unfiltered);
     scope.release();

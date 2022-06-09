@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 {
     ASSERT(hasTagName(videoTag));
     setHasCustomStyleResolveCallbacks();
-    m_defaultPosterURL = AtomString { document.settings().defaultVideoPosterURL() };
+    m_defaultPosterURL = document.settings().defaultVideoPosterURL();
 }
 
 Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
@@ -146,13 +146,17 @@ void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomStrin
             }
         }
     }
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    else if (name == webkitwirelessvideoplaybackdisabledAttr)
+        mediaSession().setWirelessVideoPlaybackDisabled(true);
+#endif
     else {
         HTMLMediaElement::parseAttribute(name, value);    
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (name == webkitairplayAttr) {
             bool disabled = false;
-            if (equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"_s))
+            if (equalLettersIgnoringASCIICase(attributeWithoutSynchronization(HTMLNames::webkitairplayAttr), "deny"))
                 disabled = true;
             mediaSession().setWirelessVideoPlaybackDisabled(disabled);
         }
@@ -293,12 +297,8 @@ std::optional<DestinationColorSpace> HTMLVideoElement::colorSpace() const
 RefPtr<ImageBuffer> HTMLVideoElement::createBufferForPainting(const FloatSize& size, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat) const
 {
     auto* hostWindow = document().view() && document().view()->root() ? document().view()->root()->hostWindow() : nullptr;
-
-    auto bufferOptions = bufferOptionsForRendingMode(renderingMode);
-    if (document().settings().displayListDrawingEnabled())
-        bufferOptions.add(ImageBufferOptions::UseDisplayList);
-
-    return ImageBuffer::create(size, RenderingPurpose::MediaPainting, 1, colorSpace, pixelFormat, bufferOptions, { hostWindow });
+    auto shouldUseDisplayList = document().settings().displayListDrawingEnabled() ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
+    return ImageBuffer::create(size, renderingMode, shouldUseDisplayList, RenderingPurpose::MediaPainting, 1, colorSpace, pixelFormat, hostWindow);
 }
 
 void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)
@@ -317,14 +317,6 @@ bool HTMLVideoElement::hasAvailableVideoFrame() const
         return false;
     
     return player()->hasVideo() && player()->hasAvailableVideoFrame();
-}
-
-bool HTMLVideoElement::shouldGetNativeImageForCanvasDrawing() const
-{
-    if (!player())
-        return false;
-
-    return player()->shouldGetNativeImageForCanvasDrawing();
 }
 
 RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime()
@@ -612,13 +604,13 @@ unsigned HTMLVideoElement::requestVideoFrameCallback(Ref<VideoFrameRequestCallba
 void HTMLVideoElement::cancelVideoFrameCallback(unsigned identifier)
 {
     // Search first the requests currently being serviced, and mark them as cancelled if found.
-    auto index = m_servicedVideoFrameRequests.findIf([identifier](auto& request) { return request->identifier == identifier; });
+    auto index = m_servicedVideoFrameRequests.findMatching([identifier](auto& request) { return request->identifier == identifier; });
     if (index != notFound) {
         m_servicedVideoFrameRequests[index]->cancelled = true;
         return;
     }
 
-    index = m_videoFrameRequests.findIf([identifier](auto& request) { return request->identifier == identifier; });
+    index = m_videoFrameRequests.findMatching([identifier](auto& request) { return request->identifier == identifier; });
     if (index == notFound)
         return;
     m_videoFrameRequests.remove(index);

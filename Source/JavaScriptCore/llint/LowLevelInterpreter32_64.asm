@@ -34,20 +34,20 @@ macro getOperandNarrow(opcodeStruct, fieldName, dst)
     loadbsi constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PB, PC, 1], dst
 end
 
-macro getuOperandWide16JS(opcodeStruct, fieldName, dst)
-    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16SizeJS[PB, PC, 1], dst
+macro getuOperandWide16(opcodeStruct, fieldName, dst)
+    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
 end
 
-macro getOperandWide16JS(opcodeStruct, fieldName, dst)
-    loadhsi constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16SizeJS[PB, PC, 1], dst
+macro getOperandWide16(opcodeStruct, fieldName, dst)
+    loadhsi constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
 end
 
-macro getuOperandWide32JS(opcodeStruct, fieldName, dst)
-    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeJS[PB, PC, 1], dst
+macro getuOperandWide32(opcodeStruct, fieldName, dst)
+    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
 end
 
-macro getOperandWide32JS(opcodeStruct, fieldName, dst)
-    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeJS[PB, PC, 1], dst
+macro getOperandWide32(opcodeStruct, fieldName, dst)
+    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
 end
 
 macro makeReturn(get, dispatch, fn)
@@ -94,9 +94,7 @@ macro dispatchAfterCall(size, opcodeStruct, valueProfileName, dstVirtualRegister
 end
 
 macro cCall2(function)
-    if C_LOOP or C_LOOP_WIN
-        cloopCallSlowPath function, a0, a1
-    elsif ARMv7 or MIPS
+    if ARMv7 or MIPS
         call function
     elsif X86 or X86_WIN
         subp 8, sp
@@ -104,6 +102,8 @@ macro cCall2(function)
         push a0
         call function
         addp 16, sp
+    elsif C_LOOP or C_LOOP_WIN
+        cloopCallSlowPath function, a0, a1
     else
         error
     end
@@ -114,23 +114,6 @@ macro cCall2Void(function)
         cloopCallSlowPathVoid function, a0, a1
     else
         cCall2(function)
-    end
-end
-
-macro cCall3(function)
-    if C_LOOP or C_LOOP_WIN
-        cloopCallSlowPath3 function, a0, a1, a2
-    elsif ARMv7 or MIPS
-        call function
-    elsif X86 or X86_WIN
-        subp 4, sp
-        push a2
-        push a1
-        push a0
-        call function
-        addp 16, sp
-    else
-        error
     end
 end
 
@@ -2259,10 +2242,7 @@ macro callHelper(opcodeName, slowPath, opcodeStruct, valueProfileName, dstVirtua
 
 .notPolymorphic:
     bpneq t0, t3, .opCallSlow
-    prepareCall(t2, t3, t4, t1, macro(address)
-        loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
-        storep t2, address
-    end)
+    prepareCall(t2, t3, t4, t1)
 
 .goPolymorphic:
     loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
@@ -2341,10 +2321,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
 
         .notPolymorphic:
             bpneq t0, t3, .opCallSlow
-            prepareCall(t2, t3, t4, t1, macro(address)
-                loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
-                storep t2, address
-            end)
+            prepareCall(t2, t3, t4, t1)
 
         .goPolymorphic:
             loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5

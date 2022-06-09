@@ -68,7 +68,7 @@ MemoryCache::MemoryCache()
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.showMemoryCache"_s, [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.showMemoryCache", [] {
             MemoryCache::singleton().dumpStats();
             MemoryCache::singleton().dumpLRULists(true);
         });
@@ -114,7 +114,7 @@ bool MemoryCache::add(CachedResource& resource)
     if (disabled())
         return false;
 
-    if (resource.resourceRequest().httpMethod() != "GET"_s)
+    if (resource.resourceRequest().httpMethod() != "GET")
         return false;
 
     ASSERT(isMainThread());
@@ -254,7 +254,7 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
 
     LOG(ResourceLoading, "MemoryCache::pruneLiveResourcesToSize(%d, shouldDestroyDecodedDataForAllLiveResources = %d)", targetSize, shouldDestroyDecodedDataForAllLiveResources);
 
-    SetForScope reentrancyProtector(m_inPruneResources, true);
+    SetForScope<bool> reentrancyProtector(m_inPruneResources, true);
 
     MonotonicTime currentTime = FrameView::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
@@ -320,7 +320,7 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
 
     LOG(ResourceLoading, "MemoryCache::pruneDeadResourcesToSize(%d)", targetSize);
 
-    SetForScope reentrancyProtector(m_inPruneResources, true);
+    SetForScope<bool> reentrancyProtector(m_inPruneResources, true);
  
     if (targetSize && m_deadSize <= targetSize)
         return;
@@ -558,7 +558,7 @@ HashSet<RefPtr<SecurityOrigin>> MemoryCache::originsWithCache(PAL::SessionID ses
             auto& resource = *keyValue.value;
             auto& partitionName = keyValue.key.second;
             if (!partitionName.isEmpty())
-                origins.add(SecurityOrigin::create("http"_s, partitionName, 0));
+                origins.add(SecurityOrigin::create("http", partitionName, 0));
             else
                 origins.add(SecurityOrigin::create(resource.url()));
         }

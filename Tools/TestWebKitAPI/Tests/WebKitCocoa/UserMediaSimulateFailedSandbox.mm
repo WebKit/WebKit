@@ -83,7 +83,6 @@ public:
         auto preferences = [m_webView configuration].preferences;
         preferences._mockCaptureDevicesEnabled = YES;
         preferences._mediaCaptureRequiresSecureConnection = NO;
-        preferences._getUserMediaRequiresFocus = NO;
 
         m_uiDelegate = adoptNS([[SimulateFailedSandboxUIDelegate alloc] init]);
         [m_webView setUIDelegate:m_uiDelegate.get()];

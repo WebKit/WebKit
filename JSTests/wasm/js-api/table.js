@@ -400,13 +400,13 @@ assert.throws(() => WebAssembly.Table.prototype.grow(undefined), TypeError, `exp
     const t0 = new WebAssembly.Table({minimum: 5, element: "funcref"}).type();
     assert.eq(Object.keys(t0).length, 2);
     assert.eq(t0.minimum, 5);
-    assert.eq(t0.element, "anyfunc");
+    assert.eq(t0.element, "funcref");
 
     const t1 = new WebAssembly.Table({minimum: 5, maximum: 10, element: "funcref"}).type();
     assert.eq(Object.keys(t1).length, 3);
     assert.eq(t1.minimum, 5);
     assert.eq(t1.maximum, 10)
-    assert.eq(t1.element, "anyfunc");
+    assert.eq(t1.element, "funcref");
 
     const t2 = new WebAssembly.Table({minimum: 5, maximum: 10, element: "externref"}).type();
     assert.eq(Object.keys(t2).length, 3);

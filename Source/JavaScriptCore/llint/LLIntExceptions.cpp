@@ -38,7 +38,7 @@
 
 namespace JSC { namespace LLInt {
 
-JSInstruction* returnToThrow(VM& vm)
+Instruction* returnToThrow(VM& vm)
 {
     UNUSED_PARAM(vm);
 #if LLINT_TRACING
@@ -50,7 +50,7 @@ JSInstruction* returnToThrow(VM& vm)
     return LLInt::exceptionInstructions();
 }
 
-WasmInstruction* wasmReturnToThrow(VM& vm)
+Instruction* wasmReturnToThrow(VM& vm)
 {
     UNUSED_PARAM(vm);
 #if LLINT_TRACING

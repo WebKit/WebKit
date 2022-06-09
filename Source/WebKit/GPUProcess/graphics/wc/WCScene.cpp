@@ -33,11 +33,10 @@
 #include "WCContentBufferManager.h"
 #include "WCSceneContext.h"
 #include "WCUpateInfo.h"
-#include <WebCore/ANGLEHeaders.h>
 #include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
-#include <WebCore/TextureMapperSparseBackingStore.h>
+#include <WebCore/TextureMapperTiledBackingStore.h>
 
 namespace WebKit {
 
@@ -45,23 +44,16 @@ struct WCScene::Layer final : public WCContentBuffer::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Layer() = default;
-    ~Layer()
-    {
-        if (contentBuffer)
-            contentBuffer->setClient(nullptr);
-    }
 
     // WCContentBuffer::Client
     void platformLayerWillBeDestroyed() override
     {
-        contentBuffer = nullptr;
         texmapLayer.setContentsLayer(nullptr);
     }
 
     WebCore::TextureMapperLayer texmapLayer;
-    std::unique_ptr<WebCore::TextureMapperSparseBackingStore> backingStore;
+    RefPtr<WebCore::TextureMapperTiledBackingStore> backingStore;
     std::unique_ptr<WebCore::TextureMapperLayer> backdropLayer;
-    WCContentBuffer* contentBuffer { nullptr };
 };
 
 void WCScene::initialize(WCSceneContext& context)
@@ -72,9 +64,8 @@ void WCScene::initialize(WCSceneContext& context)
     m_textureMapper = m_context->createTextureMapper();
 }
 
-WCScene::WCScene(WebCore::ProcessIdentifier webProcessIdentifier, bool usesOffscreenRendering)
+WCScene::WCScene(WebCore::ProcessIdentifier webProcessIdentifier)
     : m_webProcessIdentifier(webProcessIdentifier)
-    , m_usesOffscreenRendering(usesOffscreenRendering)
 {
 }
 
@@ -84,10 +75,10 @@ WCScene::~WCScene()
     m_textureMapper = nullptr;
 }
 
-std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
+void WCScene::update(WCUpateInfo&& update)
 {
     if (!m_context->makeContextCurrent())
-        return std::nullopt;
+        return;
 
     for (auto id : update.addedLayers) {
         auto layer = makeUnique<Layer>();
@@ -131,29 +122,14 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
             layer->texmapLayer.setBackfaceVisibility(layerUpdate.backfaceVisibility);
         if (layerUpdate.changes & WCLayerChange::MasksToBounds)
             layer->texmapLayer.setMasksToBounds(layerUpdate.masksToBounds);
-        if (layerUpdate.changes & WCLayerChange::Background) {
-            if (layerUpdate.hasBackingStore) {
-                if (!layer->backingStore) {
-                    layer->backingStore = makeUnique<WebCore::TextureMapperSparseBackingStore>();
-                    auto& backingStore = *layer->backingStore;
-                    layer->texmapLayer.setBackgroundColor({ });
-                    layer->texmapLayer.setBackingStore(&backingStore);
-                }
-                auto& backingStore = *layer->backingStore;
-                backingStore.setSize(WebCore::IntSize(layer->texmapLayer.size()));
-                for (auto& tileUpdate : layerUpdate.tileUpdate) {
-                    if (tileUpdate.willRemove)
-                        backingStore.removeTile(tileUpdate.index);
-                    else {
-                        auto bitmap = tileUpdate.backingStore.bitmap();
-                        if (bitmap) {
-                            auto image = bitmap->createImage();
-                            backingStore.updateContents(*m_textureMapper, tileUpdate.index, *image, tileUpdate.dirtyRect);
-                        }
-                    }
-                }
+        if (layerUpdate.changes & WCLayerChange::BackingStore) {
+            auto bitmap = layerUpdate.backingStore.bitmap();
+            if (bitmap) {
+                layer->backingStore = WebCore::TextureMapperTiledBackingStore::create();
+                auto image = bitmap->createImage();
+                layer->backingStore->updateContents(*m_textureMapper, image.get(), bitmap->size(), { { }, bitmap->size() });
+                layer->texmapLayer.setBackingStore(layer->backingStore.get());
             } else {
-                layer->texmapLayer.setBackgroundColor(layerUpdate.backgroundColor);
                 layer->texmapLayer.setBackingStore(nullptr);
                 layer->backingStore = nullptr;
             }
@@ -164,6 +140,8 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
             layer->texmapLayer.setDebugVisuals(layerUpdate.showDebugBorder, layerUpdate.debugBorderColor, layerUpdate.debugBorderWidth);
         if (layerUpdate.changes & WCLayerChange::RepaintCount)
             layer->texmapLayer.setRepaintCounter(layerUpdate.showRepaintCounter, layerUpdate.repaintCount);
+        if (layerUpdate.changes & WCLayerChange::BackgroundColor)
+            layer->texmapLayer.setBackgroundColor(layerUpdate.backgroundColor);
         if (layerUpdate.changes & WCLayerChange::Opacity)
             layer->texmapLayer.setOpacity(layerUpdate.opacity);
         if (layerUpdate.changes & WCLayerChange::Transform)
@@ -190,21 +168,14 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
             layer->texmapLayer.setBackdropFiltersRect(layerUpdate.backdropFiltersRect);
         }
         if (layerUpdate.changes & WCLayerChange::PlatformLayer) {
-            if (!layerUpdate.hasPlatformLayer) {
-                if (layer->contentBuffer) {
-                    layer->contentBuffer->setClient(nullptr);
-                    layer->contentBuffer = nullptr;
-                }
+            if (!layerUpdate.hasPlatformLayer)
                 layer->texmapLayer.setContentsLayer(nullptr);
-            } else {
+            else {
                 WCContentBuffer* contentBuffer = nullptr;
                 for (auto identifier : layerUpdate.contentBufferIdentifiers)
                     contentBuffer = WCContentBufferManager::singleton().releaseContentBufferIdentifier(m_webProcessIdentifier, identifier);
                 if (contentBuffer) {
-                    if (layer->contentBuffer)
-                        layer->contentBuffer->setClient(nullptr);
                     contentBuffer->setClient(layer);
-                    layer->contentBuffer = contentBuffer;
                     layer->texmapLayer.setContentsLayer(contentBuffer->platformLayer());
                 }
             }
@@ -220,29 +191,12 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
     WebCore::IntSize windowSize = expandedIntSize(rootLayer->size());
     glViewport(0, 0, windowSize.width(), windowSize.height());
 
-    m_textureMapper->beginPainting(m_usesOffscreenRendering ? WebCore::TextureMapper::PaintingMirrored : 0);
+    m_textureMapper->beginPainting();
     rootLayer->paint(*m_textureMapper);
     m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
     m_textureMapper->endPainting();
 
-    std::optional<UpdateInfo> result;
-    if (m_usesOffscreenRendering) {
-        auto bitmap = ShareableBitmap::create(windowSize, { });
-        glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA_EXT, GL_UNSIGNED_BYTE, bitmap->data());
-        ShareableBitmap::Handle handle;
-        if (bitmap->createHandle(handle)) {
-            result.emplace();
-            result->viewSize = windowSize;
-            result->deviceScaleFactor = 1;
-            result->updateScaleFactor = 1;
-            WebCore::IntRect viewport = { { }, windowSize };
-            result->updateRectBounds = viewport;
-            result->updateRects.append(viewport);
-            result->bitmapHandle = WTFMove(handle);
-        }
-    } else
-        m_context->swapBuffers();
-    return result;
+    m_context->swapBuffers();
 }
 
 } // namespace WebKit

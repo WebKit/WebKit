@@ -273,8 +273,17 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
         auto convertedPoint = protectedSelf->m_page->screenToRootView(WebCore::IntPoint(point));
 
-        // PDF plug-in handles the scroll view offset natively as part of the layer conversions.
-        if (protectedSelf->m_page->mainFramePlugIn())
+        // Some plugins may be able to figure out the scroll position and inset on their own.
+        bool applyContentOffset = true;
+
+        // Isolated tree frames have the offset encoded into them so we don't need to undo here.
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        applyContentOffset = !WebCore::AXObjectCache::isIsolatedTreeEnabled();
+#endif
+        if (auto pluginView = WebKit::WebPage::pluginViewForFrame(protectedSelf->m_page->mainFrame()))
+            applyContentOffset = !pluginView->plugin()->pluginHandlesContentOffsetForAccessibilityHitTest();
+        
+        if (!applyContentOffset)
             return convertedPoint;
 
         if (auto* frameView = protectedSelf->m_page->mainFrameView())

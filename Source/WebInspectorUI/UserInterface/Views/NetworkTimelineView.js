@@ -274,5 +274,3 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
         this._pendingRecords.push(resourceTimelineRecord);
     }
 };
-
-WI.NetworkTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.NetworkRequestsTimeline;

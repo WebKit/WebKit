@@ -812,7 +812,6 @@ typedef NS_ENUM(NSInteger, TestProtocolDebuggerReason) {
 
 #import "TestProtocol.h"
 #import <WebInspector/RWIProtocolArrayConversions.h>
-#import <wtf/SortedArrayMap.h>
 
 namespace Inspector {
 
@@ -834,14 +833,12 @@ inline String toProtocolString(TestProtocolDebuggerReason value)
 template<>
 inline std::optional<TestProtocolDebuggerReason> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolDebuggerReason> mappings[] = {
-        { "Died", TestProtocolDebuggerReasonDied },
-        { "Fainted", TestProtocolDebuggerReasonFainted },
-        { "Hungry", TestProtocolDebuggerReasonHungry },
-    };
-    static constexpr SortedArrayMap map { mappings };
-    if (auto* result = map.tryGet(value))
-        return *result;
+    if (value == "Died")
+        return TestProtocolDebuggerReasonDied;
+    if (value == "Fainted")
+        return TestProtocolDebuggerReasonFainted;
+    if (value == "Hungry")
+        return TestProtocolDebuggerReasonHungry;
     return std::nullopt;
 }
 

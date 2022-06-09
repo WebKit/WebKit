@@ -48,11 +48,11 @@ AuthenticationChallenge::AuthenticationChallenge(const URL& url, const Certifica
 
 ProtectionSpace::ServerType AuthenticationChallenge::protectionSpaceServerTypeFromURI(const URL& url, bool isForProxy)
 {
-    if (url.protocolIs("https"_s))
+    if (url.protocolIs("https"))
         return isForProxy ? ProtectionSpace::ServerType::ProxyHTTPS : ProtectionSpace::ServerType::HTTPS;
-    if (url.protocolIs("http"_s))
+    if (url.protocolIs("http"))
         return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
-    if (url.protocolIs("ftp"_s))
+    if (url.protocolIs("ftp"))
         return isForProxy ? ProtectionSpace::ServerType::ProxyFTP : ProtectionSpace::ServerType::FTP;
     return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
 }
@@ -111,13 +111,13 @@ ProtectionSpace::AuthenticationScheme AuthenticationChallenge::authenticationSch
 
 String AuthenticationChallenge::parseRealm(const ResourceResponse& response)
 {
-    static constexpr auto wwwAuthenticate = "www-authenticate"_s;
-    static constexpr auto proxyAuthenticate = "proxy-authenticate"_s;
+    static NeverDestroyed<String> wwwAuthenticate(MAKE_STATIC_STRING_IMPL("www-authenticate"));
+    static NeverDestroyed<String> proxyAuthenticate(MAKE_STATIC_STRING_IMPL("proxy-authenticate"));
     static NeverDestroyed<String> realmString(MAKE_STATIC_STRING_IMPL("realm="));
 
     String realm;
-    auto authHeader = response.httpHeaderField(StringView { response.isUnauthorized() ? wwwAuthenticate : proxyAuthenticate });
-    auto realmPos = authHeader.findIgnoringASCIICase(realmString.get());
+    auto authHeader = response.httpHeaderField(response.isUnauthorized() ? wwwAuthenticate : proxyAuthenticate);
+    auto realmPos = authHeader.findIgnoringASCIICase(realmString);
     if (realmPos != notFound) {
         realm = authHeader.substring(realmPos + realmString.get().length());
         realm = realm.left(realm.find(','));

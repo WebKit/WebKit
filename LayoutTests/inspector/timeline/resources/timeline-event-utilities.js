@@ -5,7 +5,7 @@ function savePageData(data) {
 TestPage.registerInitializer(() => {
     InspectorTest.TimelineEvent = {};
 
-    InspectorTest.TimelineEvent.captureTimelineWithScript = function({expression, eventType, timelineType}) {
+    InspectorTest.TimelineEvent.captureTimelineWithScript = function({expression, eventType}) {
         let savePageDataPromise = InspectorTest.awaitEvent("SavePageData").then((event) => {
             return event.data;
         });
@@ -15,14 +15,14 @@ TestPage.registerInitializer(() => {
         let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
             if (WI.timelineManager.capturingState === WI.TimelineManager.CapturingState.Active) {
                 let recording = WI.timelineManager.activeRecording;
-                let timeline = recording.timelines.get(timelineType ?? WI.TimelineRecord.Type.Script);
+                let scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
 
-                let recordAddedListener = timeline.addEventListener(WI.Timeline.Event.RecordAdded, (recordAddedEvent) => {
+                let recordAddedListener = scriptTimeline.addEventListener(WI.Timeline.Event.RecordAdded, (recordAddedEvent) => {
                     let {record} = recordAddedEvent.data;
-                    if (eventType && record.eventType !== eventType)
+                    if (record.eventType !== eventType)
                         return;
 
-                    timeline.removeEventListener(WI.Timeline.Event.RecordAdded, recordAddedListener);
+                    scriptTimeline.removeEventListener(WI.Timeline.Event.RecordAdded, recordAddedListener);
 
                     InspectorTest.log("Stopping Capture...");
                     WI.timelineManager.stopCapturing();

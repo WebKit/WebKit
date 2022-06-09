@@ -140,11 +140,11 @@ bool HTTPParser::readLine(String& line)
 
 size_t HTTPParser::expectedBodyLength() const
 {
-    if (m_message.method == "HEAD"_s)
+    if (m_message.method == "HEAD")
         return 0;
 
-    constexpr auto name = "content-length:"_s;
-    const size_t nameLength = name.length();
+    const char* name = "content-length:";
+    const size_t nameLength = std::strlen(name);
 
     for (const auto& header : m_message.requestHeaders) {
         if (header.startsWithIgnoringASCIICase(name))

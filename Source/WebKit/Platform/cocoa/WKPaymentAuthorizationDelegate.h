@@ -28,7 +28,6 @@
 #import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/WeakPtr.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
@@ -66,10 +65,6 @@ using DidChangeCouponCodeCompletion = BlockPtr<void(PKPaymentRequestCouponCodeUp
 - (void)completeCouponCodeChange:(PKPaymentRequestCouponCodeUpdate *)couponCodeUpdate;
 #endif
 - (void)invalidate;
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditionsAfter.h>
-#endif
 
 @end
 

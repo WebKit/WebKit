@@ -40,6 +40,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
+#include "DocumentTimeline.h"
 #include "DocumentTimelinesController.h"
 #include "DocumentType.h"
 #include "Editing.h"
@@ -67,7 +68,6 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
-#include "JSNode.h"
 #include "JSWindowProxy.h"
 #include "Logging.h"
 #include "NavigationScheduler.h"
@@ -336,7 +336,6 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
     bool needsUpdateForWheelEventHandlers = false;
     bool needsUpdateForTouchActionElements = false;
     bool needsUpdateForEditableElements = false;
-    bool needsUpdateForInteractionRegions = false;
 #if ENABLE(WHEEL_EVENT_REGIONS)
     needsUpdateForWheelEventHandlers = m_doc->hasWheelEventHandlers() || reason == InvalidateContentEventRegionsReason::EventHandlerChange;
 #else
@@ -350,10 +349,7 @@ void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsR
     // Document::mayHaveEditableElements never changes from true to false currently.
     needsUpdateForEditableElements = m_doc->mayHaveEditableElements() && m_page->shouldBuildEditableRegion();
 #endif
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    needsUpdateForInteractionRegions = m_page->shouldBuildInteractionRegions();
-#endif
-    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers && !needsUpdateForInteractionRegions)
+    if (!needsUpdateForTouchActionElements && !needsUpdateForEditableElements && !needsUpdateForWheelEventHandlers)
         return;
 
     if (!m_doc->renderView()->compositor().viewNeedsToInvalidateEventRegionOfEnclosingCompositingLayerForRepaint())
@@ -384,7 +380,7 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
     // REVIEW- version of this call in FrameMac.mm caches based on the NSArray ptrs being
     // the same across calls.  We can't do that.
 
-    static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w"_s);
+    static NeverDestroyed<JSC::Yarr::RegularExpression> wordRegExp("\\w");
     StringBuilder pattern;
     pattern.append('(');
     for (unsigned i = 0, numLabels = labels.size(); i < numLabels; i++) {
@@ -393,9 +389,8 @@ static JSC::Yarr::RegularExpression createRegExpForLabels(const Vector<String>& 
         bool startsWithWordCharacter = false;
         bool endsWithWordCharacter = false;
         if (label.length()) {
-            StringView labelView { label };
-            startsWithWordCharacter = wordRegExp.get().match(labelView.left(1)) >= 0;
-            endsWithWordCharacter = wordRegExp.get().match(labelView.right(1)) >= 0;
+            startsWithWordCharacter = wordRegExp.get().match(label.substring(0, 1)) >= 0;
+            endsWithWordCharacter = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
         }
 
         // Search for word boundaries only if label starts/ends with "word characters".
@@ -507,8 +502,8 @@ static String matchLabelsAgainstString(const Vector<String>& labels, const Strin
     String mutableStringToMatch = stringToMatch;
 
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d"_s), " "_s);
-    mutableStringToMatch = makeStringByReplacingAll(mutableStringToMatch, '_', ' ');
+    replace(mutableStringToMatch, JSC::Yarr::RegularExpression("\\d"), " ");
+    mutableStringToMatch.replace('_', ' ');
     
     JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);
     // Use the largest match we can find in the whole string
@@ -699,6 +694,8 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
     if (script.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly && !isMainFrame())
         return;
     if (!UserContentURLPattern::matchesPatterns(document->url(), script.allowlist(), script.blocklist()))
+        return;
+    if (!m_script->shouldAllowUserAgentScripts(*document))
         return;
 
     document->setAsRunningUserScripts();
@@ -1060,6 +1057,19 @@ void Frame::dropChildren()
         tree().removeChild(*child);
 }
 
+void Frame::didPrewarmLocalStorage()
+{
+    ASSERT(isMainFrame());
+    ASSERT(m_localStoragePrewarmingCount < maxlocalStoragePrewarmingCount);
+    ++m_localStoragePrewarmingCount;
+}
+
+bool Frame::mayPrewarmLocalStorage() const
+{
+    ASSERT(isMainFrame());
+    return m_localStoragePrewarmingCount < maxlocalStoragePrewarmingCount;
+}
+
 FloatSize Frame::screenSize() const
 {
     if (!m_overrideScreenSize.isEmpty())
@@ -1133,31 +1143,13 @@ void Frame::resetScript()
 Frame* Frame::fromJSContext(JSContextRef context)
 {
     JSC::JSGlobalObject* globalObjectObj = toJS(context);
-    if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj))
+    if (auto* window = JSC::jsDynamicCast<JSDOMWindow*>(globalObjectObj->vm(), globalObjectObj))
         return window->wrapped().frame();
 #if ENABLE(SERVICE_WORKER)
-    if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj))
+    if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj->vm(), globalObjectObj))
         return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? &serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame() : nullptr;
 #endif
     return nullptr;
-}
-
-Frame* Frame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValueRef valueRef)
-{
-    ASSERT(context);
-    ASSERT(valueRef);
-
-    JSC::JSGlobalObject* globalObject = toJS(context);
-    JSC::JSValue value = toJS(globalObject, valueRef);
-    JSC::VM& vm = globalObject->vm();
-
-    if (auto* window = JSDOMWindow::toWrapped(vm, value))
-        return window->frame();
-
-    auto* jsNode = JSC::jsDynamicCast<JSNode*>(value);
-    if (!jsNode || !is<HTMLFrameOwnerElement>(jsNode->wrapped()))
-        return nullptr;
-    return downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame();
 }
 
 #if ENABLE(DATA_DETECTION)

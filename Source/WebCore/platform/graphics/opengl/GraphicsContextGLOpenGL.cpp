@@ -34,6 +34,7 @@
 #include "ANGLEWebKitBridge.h"
 #include "GLContext.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextGLOpenGLManager.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -250,6 +251,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
 GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
+    GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
     if (m_texture)
@@ -286,11 +288,6 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
     if (m_vao)
         deleteVertexArray(m_vao);
 #endif
-}
-
-bool GraphicsContextGLOpenGL::initialize()
-{
-    return platformInitialize();
 }
 
 bool GraphicsContextGLOpenGL::makeContextCurrent()
@@ -347,19 +344,18 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
 {
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 {
     return readRenderingResults();
 }
 
-void GraphicsContextGLOpenGL::validateDepthStencil(ASCIILiteral packedDepthStencilExtension)
+void GraphicsContextGLOpenGL::validateDepthStencil(const char* packedDepthStencilExtension)
 {
     auto attrs = contextAttributes();
 
     if (attrs.stencil) {
-        String packedDepthStencilExtensionString { packedDepthStencilExtension };
-        if (supportsExtension(packedDepthStencilExtensionString)) {
-            ensureExtensionEnabled(packedDepthStencilExtensionString);
+        if (supportsExtension(packedDepthStencilExtension)) {
+            ensureExtensionEnabled(packedDepthStencilExtension);
             // Force depth if stencil is true.
             attrs.depth = true;
         } else
@@ -367,11 +363,11 @@ void GraphicsContextGLOpenGL::validateDepthStencil(ASCIILiteral packedDepthStenc
         setContextAttributes(attrs);
     }
     if (attrs.antialias && !m_isForWebGL2) {
-        if (!supportsExtension("GL_ANGLE_framebuffer_multisample"_s)) {
+        if (!supportsExtension("GL_ANGLE_framebuffer_multisample")) {
             attrs.antialias = false;
             setContextAttributes(attrs);
         } else
-            ensureExtensionEnabled("GL_ANGLE_framebuffer_multisample"_s);
+            ensureExtensionEnabled("GL_ANGLE_framebuffer_multisample");
     }
 }
 
@@ -416,7 +412,7 @@ void GraphicsContextGLOpenGL::prepareTexture()
     ::glFlush();
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResults()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResults()
 {
     bool mustRestoreFBO = false;
     if (contextAttributes().antialias) {
@@ -529,11 +525,11 @@ bool GraphicsContextGLOpenGL::checkVaryingsPacking(PlatformGLObject vertexShader
         const String& symbolName = vertexSymbol.key;
         // The varying map includes variables for each index of an array variable.
         // We only want a single variable to represent the array.
-        if (symbolName.endsWith(']'))
+        if (symbolName.endsWith("]"))
             continue;
 
         // Don't count built in varyings.
-        if (symbolName == "gl_FragCoord"_s || symbolName == "gl_FrontFacing"_s || symbolName == "gl_PointCoord"_s)
+        if (symbolName == "gl_FragCoord" || symbolName == "gl_FrontFacing" || symbolName == "gl_PointCoord")
             continue;
 
         const auto& fragmentSymbol = fragmentEntry.varyingMap.find(symbolName);
@@ -1218,7 +1214,7 @@ std::optional<String> GraphicsContextGLOpenGL::originalSymbolInShaderSourceMap(P
 
     const auto& symbolMap = result->value.symbolMap(symbolType);
     for (const auto& symbolEntry : symbolMap) {
-        if (name == StringView::fromLatin1(symbolEntry.value.get().mappedName.c_str()))
+        if (name == symbolEntry.value.get().mappedName.c_str())
             return symbolEntry.key;
     }
     return std::nullopt;
@@ -1270,7 +1266,7 @@ String GraphicsContextGLOpenGL::mappedSymbolName(PlatformGLObject shaders[2], si
             
             const ShaderSymbolMap& symbolMap = result->value.symbolMap(static_cast<enum ANGLEShaderSymbolType>(symbolType));
             for (const auto& symbolEntry : symbolMap) {
-                if (name == StringView::fromLatin1(symbolEntry.value.get().mappedName.c_str()))
+                if (name == symbolEntry.value.get().mappedName.c_str())
                     return symbolEntry.key;
             }
         }
@@ -1346,7 +1342,7 @@ String GraphicsContextGLOpenGL::getString(GCGLenum name)
     if (!makeContextCurrent())
         return String();
 
-    return String::fromLatin1(reinterpret_cast<const char*>(::glGetString(name)));
+    return String(reinterpret_cast<const char*>(::glGetString(name)));
 }
 
 void GraphicsContextGLOpenGL::hint(GCGLenum target, GCGLenum mode)
@@ -1872,18 +1868,6 @@ void GraphicsContextGLOpenGL::getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> valu
     ::glGetFloatv(pname, value.data);
 }
 
-void GraphicsContextGLOpenGL::getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) // NOLINT
-{
-    UNUSED_PARAM(pname);
-    UNUSED_PARAM(index);
-    UNUSED_PARAM(value);
-    if (!makeContextCurrent())
-        return;
-
-    // FIXME 141178: Before enabling this we must first switch over to using gl3.h and creating and initialing the WebGL2 context using OpenGL ES 3.0.
-    // ::glGetIntegeri_v(pname, index, value.data);
-}
-
 GCGLint64 GraphicsContextGLOpenGL::getInteger64(GCGLenum pname)
 {
     UNUSED_PARAM(pname);
@@ -1954,7 +1938,7 @@ void GraphicsContextGLOpenGL::getNonBuiltInActiveSymbolCount(PlatformGLObject pr
     for (GCGLint i = 0; i < attributeCount; ++i) {
         ActiveInfo info;
         getActiveAttribImpl(program, i, info);
-        if (info.name.startsWith("gl_"_s))
+        if (info.name.startsWith("gl_"))
             continue;
 
         symbolCounts.filteredToActualAttributeIndexMap.append(i);
@@ -1966,7 +1950,7 @@ void GraphicsContextGLOpenGL::getNonBuiltInActiveSymbolCount(PlatformGLObject pr
     for (GCGLint i = 0; i < uniformCount; ++i) {
         ActiveInfo info;
         getActiveUniformImpl(program, i, info);
-        if (info.name.startsWith("gl_"_s))
+        if (info.name.startsWith("gl_"))
             continue;
         
         symbolCounts.filteredToActualUniformIndexMap.append(i);
@@ -1979,7 +1963,7 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
 {
     LOG(WebGL, "Original ShaderInfoLog:\n%s", log.utf8().data());
 
-    JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+"_s);
+    JSC::Yarr::RegularExpression regExp("webgl_[0123456789abcdefABCDEF]+");
 
     StringBuilder processedLog;
     
@@ -1987,8 +1971,8 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
     // causes a warning in some compilers. There is no point showing
     // this warning to the user since they didn't write the code that
     // is causing it.
-    static constexpr auto angleWarning = "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n"_s;
-    int startFrom = log.startsWith(angleWarning) ? angleWarning.length() : 0;
+    static const NeverDestroyed<String> angleWarning { "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n"_s };
+    int startFrom = log.startsWith(angleWarning) ? angleWarning.get().length() : 0;
     int matchedLength = 0;
 
     do {
@@ -1996,7 +1980,7 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
         if (start == -1)
             break;
 
-        processedLog.append(StringView(log).substring(startFrom, start - startFrom));
+        processedLog.append(log.substring(startFrom, start - startFrom));
         startFrom = start + matchedLength;
 
         const String& mangledSymbol = log.substring(start, matchedLength);
@@ -2005,7 +1989,7 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
         processedLog.append(mappedSymbol);
     } while (startFrom < static_cast<int>(log.length()));
 
-    processedLog.append(StringView(log).substring(startFrom, log.length() - startFrom));
+    processedLog.append(log.substring(startFrom, log.length() - startFrom));
 
     LOG(WebGL, "Unmangled ShaderInfoLog:\n%s", processedLog.toString().utf8().data());
     return processedLog.toString();
@@ -2350,6 +2334,24 @@ void GraphicsContextGLOpenGL::synthesizeGLError(GCGLenum error)
     m_syntheticErrors.add(error);
 }
 
+void GraphicsContextGLOpenGL::forceContextLost()
+{
+    for (auto* client : copyToVector(m_clients))
+        client->forceContextLost();
+}
+
+void GraphicsContextGLOpenGL::recycleContext()
+{
+    for (auto* client : copyToVector(m_clients))
+        client->recycleContext();
+}
+
+void GraphicsContextGLOpenGL::dispatchContextChangedNotification()
+{
+    for (auto* client : copyToVector(m_clients))
+        client->dispatchContextChangedNotification();
+}
+
 void GraphicsContextGLOpenGL::texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
 {
     if (!makeContextCurrent())
@@ -2374,6 +2376,16 @@ void GraphicsContextGLOpenGL::vertexAttribDivisor(GCGLuint index, GCGLuint divis
 {
     getExtensions().vertexAttribDivisorANGLE(index, divisor);
 }
+
+#if HAVE(OPENGL_4) && ENABLE(WEBGL2)
+void GraphicsContextGLOpenGL::primitiveRestartIndex(GCGLuint index)
+{
+    if (!makeContextCurrent())
+        return;
+
+    ::glPrimitiveRestartIndex(index);
+}
+#endif
 
 void GraphicsContextGLOpenGL::bufferData(GCGLenum target, const void* data, GCGLenum usage, GCGLuint srcOffset, GCGLuint length)
 {
@@ -3048,22 +3060,22 @@ void GraphicsContextGLOpenGL::compressedTexSubImage3D(GCGLenum, GCGLint, GCGLint
 {
 }
 
-void GraphicsContextGLOpenGL::multiDrawArraysANGLE(GCGLenum, GCGLSpanTuple<const GCGLint, const GCGLsizei>)
+void GraphicsContextGLOpenGL::multiDrawArraysANGLE(GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLsizei)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
-void GraphicsContextGLOpenGL::multiDrawArraysInstancedANGLE(GCGLenum, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei>)
+void GraphicsContextGLOpenGL::multiDrawArraysInstancedANGLE(GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLSpan<const GCGLsizei>, GCGLsizei)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
-void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLint>, GCGLenum)
+void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpan<const GCGLsizei>, GCGLenum, GCGLSpan<const GCGLint>, GCGLsizei)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
-void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLint, const GCGLsizei>, GCGLenum)
+void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpan<const GCGLsizei>, GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLsizei)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
@@ -3083,6 +3095,11 @@ bool GraphicsContextGLOpenGL::isExtensionEnabled(const String& name)
     return getExtensions().isEnabled(name);
 }
 
+GLint GraphicsContextGLOpenGL::getGraphicsResetStatusARB()
+{
+    return getExtensions().getGraphicsResetStatusARB();
+}
+
 void GraphicsContextGLOpenGL::drawBuffersEXT(GCGLSpan<const GCGLenum> buffers)
 {
     return getExtensions().drawBuffersEXT(buffers);
@@ -3091,34 +3108,6 @@ void GraphicsContextGLOpenGL::drawBuffersEXT(GCGLSpan<const GCGLenum> buffers)
 String GraphicsContextGLOpenGL::getTranslatedShaderSourceANGLE(PlatformGLObject shader)
 {
     return getExtensions().getTranslatedShaderSourceANGLE(shader);
-}
-
-void GraphicsContextGLOpenGL::enableiOES(GCGLenum, GCGLuint)
-{
-}
-
-void GraphicsContextGLOpenGL::disableiOES(GCGLenum, GCGLuint)
-{
-}
-
-void GraphicsContextGLOpenGL::blendEquationiOES(GCGLuint, GCGLenum)
-{
-}
-
-void GraphicsContextGLOpenGL::blendEquationSeparateiOES(GCGLuint, GCGLenum, GCGLenum)
-{
-}
-
-void GraphicsContextGLOpenGL::blendFunciOES(GCGLuint, GCGLenum, GCGLenum)
-{
-}
-
-void GraphicsContextGLOpenGL::blendFuncSeparateiOES(GCGLuint, GCGLenum, GCGLenum, GCGLenum, GCGLenum)
-{
-}
-
-void GraphicsContextGLOpenGL::colorMaskiOES(GCGLuint, GCGLboolean, GCGLboolean, GCGLboolean, GCGLboolean)
-{
 }
 
 bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)
@@ -3154,7 +3143,7 @@ void GraphicsContextGLOpenGL::paintRenderingResultsToCanvas(ImageBuffer& imageBu
     auto pixelBuffer = readRenderingResults();
     if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), pixelBuffer.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
+    paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
 }
 
 void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageBuffer)
@@ -3166,21 +3155,21 @@ void GraphicsContextGLOpenGL::paintCompositedResultsToCanvas(ImageBuffer& imageB
     auto pixelBuffer = readCompositedResults();
     if (!pixelBuffer)
         return;
-    paintToCanvas(contextAttributes(), pixelBuffer.releaseNonNull(), imageBuffer.backendSize(), imageBuffer.context());
+    paintToCanvas(contextAttributes(), WTFMove(*pixelBuffer), imageBuffer.backendSize(), imageBuffer.context());
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer()
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)
-        return nullptr;
+        return std::nullopt;
     auto results = readRenderingResultsForPainting();
     if (results && !results->size().isEmpty()) {
         ASSERT(results->format().pixelFormat == PixelFormat::RGBA8 || results->format().pixelFormat == PixelFormat::BGRA8);
         // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
         const auto size = results->size();
         const size_t rowStride = size.width() * 4;
-        uint8_t* top = results->bytes();
+        uint8_t* top = results->data().data();
         uint8_t* bottom = top + (size.height() - 1) * rowStride;
         std::unique_ptr<uint8_t[]> temp(new uint8_t[rowStride]);
         for (; top < bottom; top += rowStride, bottom -= rowStride) {
@@ -3192,21 +3181,21 @@ RefPtr<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffer(
     return results;
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
-        return nullptr;
+        return std::nullopt;
     if (getInternalFramebufferSize().isEmpty())
-        return nullptr;
+        return std::nullopt;
     return readRenderingResults();
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
 {
     if (!makeContextCurrent())
-        return nullptr;
+        return std::nullopt;
     if (getInternalFramebufferSize().isEmpty())
-        return nullptr;
+        return std::nullopt;
     return readCompositedResults();
 }
 

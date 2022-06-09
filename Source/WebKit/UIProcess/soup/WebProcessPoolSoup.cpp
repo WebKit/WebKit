@@ -29,6 +29,7 @@
 #include "MemoryPressureMonitor.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
+#include "WebCookieManagerProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessMessages.h"
 #include <wtf/Language.h>

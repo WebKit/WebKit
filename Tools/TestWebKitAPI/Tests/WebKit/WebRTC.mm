@@ -61,7 +61,7 @@ TEST(WebKit2, RTCDataChannelPostMessage)
     }];
     TestWebKitAPI::Util::run(&removedAnyExistingData);
 
-    static constexpr auto main =
+    static const char* main =
     "<script>"
     "let registration;"
     "async function register() {"
@@ -113,21 +113,21 @@ TEST(WebKit2, RTCDataChannelPostMessage)
     "function transferDataChannel() {"
     "   doTransferDataChannelTest();"
     "}"
-    "</script>"_s;
+    "</script>";
 
-    static constexpr auto js = "self.onmessage = (event) => { "
+    static const char* js = "self.onmessage = (event) => { "
     "    const source = event.source;"
     "    const channel = event.data.channel;"
     "    if (channel.readyState === 'closed')"
     "        source.postMessage('closed');"
     "    channel.onclose = (e) => source.postMessage('close event');"
     "    channel.onmessage = (e) => source.postMessage(e.data);"
-    "};"_s;
+    "};";
 
     HTTPServer server({
-        { "/"_s, { main } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, js } },
-        { "/"_s, { main } },
+        { "/", { main } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } },
+        { "/", { main } },
     }, HTTPServer::Protocol::Https);
     auto* request = server.request();
 

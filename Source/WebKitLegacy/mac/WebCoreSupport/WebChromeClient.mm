@@ -96,7 +96,7 @@
 #import <wtf/text/WTFString.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
-#import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
+#import <pal/graphics/WebGPU/Impl/WebGPUImpl.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(GEOLOCATION)
@@ -444,7 +444,6 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
 
 #if PLATFORM(IOS_FAMILY)
     [[[m_webView _UIKitDelegateForwarder] asyncForwarder] webView:m_webView addMessageToConsole:dictionary withSource:messageSource];
-    UNUSED_VARIABLE(respondsToNewSelector);
 #else
     if (respondsToNewSelector)
         CallUIDelegate(m_webView, selector, dictionary, messageSource);
@@ -1164,9 +1163,7 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 {
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    return PAL::WebGPU::create([](PAL::WebGPU::WorkItem&& workItem) {
-        callOnMainRunLoop(WTFMove(workItem));
-    });
+    return PAL::WebGPU::GPUImpl::create();
 #else
     return nullptr;
 #endif

@@ -31,6 +31,7 @@ namespace JSC {
 
 class CallFrame;
 class VM;
+struct Instruction;
 
 class AbstractPC {
 public:

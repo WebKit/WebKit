@@ -46,7 +46,7 @@ RemoteAdapterProxy::~RemoteAdapterProxy()
 {
 }
 
-void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(Ref<PAL::WebGPU::Device>&&)>&& callback)
+void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, WTF::Function<void(Ref<PAL::WebGPU::Device>&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
@@ -54,10 +54,9 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
         return;
 
     auto identifier = WebGPUIdentifier::generate();
-    auto queueIdentifier = WebGPUIdentifier::generate();
     SupportedFeatures supportedFeatures;
     SupportedLimits supportedLimits;
-    auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier, queueIdentifier), { supportedFeatures, supportedLimits });
+    auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier), { supportedFeatures, supportedLimits });
     if (!sendResult)
         return;
 
@@ -90,7 +89,7 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
         supportedLimits.maxComputeWorkgroupSizeZ,
         supportedLimits.maxComputeWorkgroupsPerDimension
     );
-    callback(RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, m_convertToBackingContext, identifier, queueIdentifier));
+    callback(RemoteDeviceProxy::create(WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), *this, m_convertToBackingContext, identifier));
 }
 
 } // namespace WebKit::WebGPU

@@ -42,7 +42,7 @@ void DOMSetAdapter::clear()
 std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& setLike)
 {
     auto& vm = lexicalGlobalObject.vm();
-    auto backingSet = setLike.get(&lexicalGlobalObject, builtinNames(vm).backingSetPrivateName());
+    auto backingSet = setLike.get(&lexicalGlobalObject, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingSetPrivateName());
     if (backingSet.isUndefined()) {
         auto& vm = lexicalGlobalObject.vm();
         JSC::DeferTermination deferScope(vm);
@@ -51,7 +51,7 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlob
         backingSet = JSC::JSSet::create(&lexicalGlobalObject, vm, lexicalGlobalObject.setStructure());
         scope.releaseAssertNoException();
 
-        setLike.putDirect(vm, builtinNames(vm).backingSetPrivateName(), backingSet, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+        setLike.putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingSetPrivateName(), backingSet, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
         return { true, *JSC::asObject(backingSet) };
     }
     return { false, *JSC::asObject(backingSet) };
@@ -63,7 +63,7 @@ void clearBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& ba
     JSC::JSValue function = backingSet.get(&lexicalGlobalObject, vm.propertyNames->clear);
     ASSERT(!function.isUndefined());
 
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(vm, function);
     ASSERT(callData.type != JSC::CallData::Type::None);
     JSC::MarkedArgumentBuffer arguments;
     JSC::call(&lexicalGlobalObject, function, callData, &backingSet, arguments);
@@ -75,7 +75,7 @@ void addToBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& ba
     JSC::JSValue function = backingSet.get(&lexicalGlobalObject, vm.propertyNames->add);
     ASSERT(!function.isUndefined());
 
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(vm, function);
     ASSERT(callData.type != JSC::CallData::Type::None);
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(item);
@@ -92,7 +92,7 @@ JSC::JSValue forwardFunctionCallToBackingSet(JSC::JSGlobalObject& lexicalGlobalO
     JSC::JSValue function = backingSet.get(&lexicalGlobalObject, functionName);
     ASSERT(!function.isUndefined());
 
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(lexicalGlobalObject.vm(), function);
     ASSERT(callData.type != JSC::CallData::Type::None);
     JSC::MarkedArgumentBuffer arguments;
     for (size_t cptr = 0; cptr < callFrame.argumentCount(); ++cptr)
@@ -109,7 +109,7 @@ JSC::JSValue forwardForEachCallToBackingSet(JSDOMGlobalObject& globalObject, JSC
     auto* function = globalObject.builtinInternalFunctions().jsDOMBindingInternals().m_forEachWrapperFunction.get();
     ASSERT(function);
 
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(globalObject.vm(), function);
     ASSERT(callData.type != JSC::CallData::Type::None);
 
     JSC::MarkedArgumentBuffer arguments;

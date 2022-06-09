@@ -1,3 +1,5 @@
+Basic ModelDocument test.
 
-PASS Loading a standalone model resource creates a standalone <model> document.
+PASS: <model> and <source> seen in iframe.
+
 

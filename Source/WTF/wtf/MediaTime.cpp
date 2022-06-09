@@ -615,9 +615,13 @@ String MediaTimeRange::toJSONString() const
     return object->toJSONString();
 }
 
+#ifndef NDEBUG
+
 TextStream& operator<<(TextStream& stream, const MediaTime& time)
 {
     return stream << time.toJSONString();
 }
+
+#endif
 
 }

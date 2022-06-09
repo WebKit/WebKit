@@ -25,7 +25,6 @@
 
 [
     Conditional=WEB_AUDIO&VIDEO,
-    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface MediaElementAudioSourceNode : AudioNode {

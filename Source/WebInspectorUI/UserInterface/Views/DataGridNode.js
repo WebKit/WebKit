@@ -655,11 +655,12 @@ WI.DataGridNode = class DataGridNode extends WI.Object
         if (!cell || !cell.classList.contains("disclosure"))
             return false;
 
+        let computedStyle = window.getComputedStyle(cell);
         let start = 0;
         if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
-            start += cell.totalOffsetRight - cell.getComputedCSSPropertyNumberValue("padding-right") - this.disclosureToggleWidth;
+            start += cell.totalOffsetRight - computedStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX) - this.disclosureToggleWidth;
         else
-            start += cell.totalOffsetLeft + cell.getComputedCSSPropertyNumberValue("padding-left");
+            start += cell.totalOffsetLeft + computedStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
         return event.pageX >= start && event.pageX <= start + this.disclosureToggleWidth;
     }
 

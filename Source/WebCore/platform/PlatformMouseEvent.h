@@ -87,12 +87,6 @@ const double ForceAtForceClick = 2;
         bool didActivateWebView() const { return m_didActivateWebView; }
 #endif
 
-#if PLATFORM(GTK)
-        enum class IsTouch : bool { No, Yes };
-
-        bool isTouchEvent() const { return m_isTouchEvent == IsTouch::Yes; }
-#endif
-
     protected:
         MouseButton m_button { NoButton };
         SyntheticClickType m_syntheticClickType { NoTap };
@@ -111,8 +105,6 @@ const double ForceAtForceClick = 2;
         int m_menuTypeForEvent { 0 };
 #elif PLATFORM(WIN)
         bool m_didActivateWebView { false };
-#elif PLATFORM(GTK)
-        IsTouch m_isTouchEvent { IsTouch::No };
 #endif
     };
 

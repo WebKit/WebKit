@@ -117,11 +117,11 @@ UserContentControllerParameters WebUserContentControllerProxy::parameters() cons
     parameters.identifier = identifier();
     
     ASSERT(parameters.userContentWorlds.isEmpty());
-    parameters.userContentWorlds = WTF::map(m_associatedContentWorlds, [](auto& identifier) {
+    for (const auto& identifier : m_associatedContentWorlds) {
         auto* world = API::ContentWorld::worldForIdentifier(identifier);
         RELEASE_ASSERT(world);
-        return world->worldData();
-    });
+        parameters.userContentWorlds.append(world->worldData());
+    }
 
     for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         parameters.userScripts.append({ userScript->identifier(), userScript->contentWorld().identifier(), userScript->userScript() });
@@ -129,9 +129,8 @@ UserContentControllerParameters WebUserContentControllerProxy::parameters() cons
     for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
         parameters.userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->contentWorld().identifier(), userStyleSheet->userStyleSheet() });
 
-    parameters.messageHandlers = WTF::map(m_scriptMessageHandlers, [](auto entry) {
-        return WebScriptMessageHandlerData { entry.value->identifier(), entry.value->world().identifier(), entry.value->name() };
-    });
+    for (auto& handler : m_scriptMessageHandlers.values())
+        parameters.messageHandlers.append({ handler->identifier(), handler->world().identifier(), handler->name() });
 
 #if ENABLE(CONTENT_EXTENSIONS)
     parameters.contentRuleLists = contentRuleListData();
@@ -219,9 +218,11 @@ void WebUserContentControllerProxy::removeAllUserScripts()
     for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         worlds.add(const_cast<API::ContentWorld*>(&userScript->contentWorld()));
 
-    auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
-        return entry.key->identifier();
-    });
+    Vector<ContentWorldIdentifier> worldIdentifiers;
+    worldIdentifiers.reserveInitialCapacity(worlds.size());
+    for (const auto& worldCountPair : worlds)
+        worldIdentifiers.uncheckedAppend(worldCountPair.key->identifier());
+
     for (auto& process : m_processes)
         process.send(Messages::WebUserContentController::RemoveAllUserScripts(worldIdentifiers), identifier());
 
@@ -266,9 +267,11 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets()
     for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
         worlds.add(const_cast<API::ContentWorld*>(&userStyleSheet->contentWorld()));
 
-    auto worldIdentifiers = WTF::map(worlds, [](auto& entry) {
-        return entry.key->identifier();
-    });
+    Vector<ContentWorldIdentifier> worldIdentifiers;
+    worldIdentifiers.reserveInitialCapacity(worlds.size());
+    for (const auto& worldCountPair : worlds)
+        worldIdentifiers.uncheckedAppend(worldCountPair.key->identifier());
+
     for (auto& process : m_processes)
         process.send(Messages::WebUserContentController::RemoveAllUserStyleSheets(worldIdentifiers), identifier());
 
@@ -340,15 +343,15 @@ void WebUserContentControllerProxy::didPostMessage(WebPageProxyIdentifier pagePr
         return;
 
     if (!handler->client().supportsAsyncReply()) {
-        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }));
+        handler->client().didPostMessage(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::adopt({ dataReference }));
         reply({ }, { });
         return;
     }
 
-    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::createFromWireBytes({ dataReference }), [reply = WTFMove(reply)](API::SerializedScriptValue* value, const String& errorMessage) mutable {
+    handler->client().didPostMessageWithAsyncReply(*page, WTFMove(frameInfoData), handler->world(),  WebCore::SerializedScriptValue::adopt({ dataReference }), [reply = WTFMove(reply)](API::SerializedScriptValue* value, const String& errorMessage) mutable {
         if (errorMessage.isNull()) {
             ASSERT(value);
-            reply({ value->internalRepresentation().wireBytes() }, { });
+            reply({ value->internalRepresentation().toWireBytes() }, { });
             return;
         }
 

@@ -39,8 +39,7 @@
     EnabledBySetting=MediaSourceEnabled,
     ExportMacro=WEBCORE_EXPORT,
     GenerateAddOpaqueRoot,
-    Exposed=Window,
-    ReportExtraMemoryCost
+    Exposed=Window
 ] interface SourceBuffer : EventTarget {
     attribute AppendMode mode;
 

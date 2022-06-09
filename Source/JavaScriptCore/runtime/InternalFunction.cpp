@@ -31,7 +31,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(InternalFunction);
 
-const ClassInfo InternalFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(InternalFunction) };
+const ClassInfo InternalFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(InternalFunction) };
 
 InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction functionForCall, NativeFunction functionForConstruct)
     : Base(vm, structure)
@@ -42,10 +42,10 @@ InternalFunction::InternalFunction(VM& vm, Structure* structure, NativeFunction 
     ASSERT_WITH_MESSAGE(m_functionForCall, "[[Call]] must be implemented");
     ASSERT(m_functionForConstruct);
 
-    ASSERT(jsDynamicCast<InternalFunction*>(this));
+    ASSERT(jsDynamicCast<InternalFunction*>(vm, this));
     // JSCell::{getCallData,getConstructData} relies on the following conditions.
-    ASSERT(methodTable()->getCallData == InternalFunction::info()->methodTable.getCallData);
-    ASSERT(methodTable()->getConstructData == InternalFunction::info()->methodTable.getConstructData);
+    ASSERT(methodTable(vm)->getCallData == InternalFunction::info()->methodTable.getCallData);
+    ASSERT(methodTable(vm)->getConstructData == InternalFunction::info()->methodTable.getConstructData);
     ASSERT(type() == InternalFunctionType || type() == NullSetterFunctionType);
 }
 
@@ -142,26 +142,26 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
     ASSERT(baseClass->hasMonoProto());
 
     // newTarget may be an InternalFunction if we were called from Reflect.construct.
-    JSFunction* targetFunction = jsDynamicCast<JSFunction*>(newTarget);
+    JSFunction* targetFunction = jsDynamicCast<JSFunction*>(vm, newTarget);
 
     if (LIKELY(targetFunction)) {
         FunctionRareData* rareData = targetFunction->ensureRareData(vm);
         Structure* structure = rareData->internalFunctionAllocationStructure();
-        if (LIKELY(structure && structure->classInfoForCells() == baseClass->classInfoForCells() && structure->globalObject() == baseGlobalObject))
+        if (LIKELY(structure && structure->classInfo() == baseClass->classInfo() && structure->globalObject() == baseGlobalObject))
             return structure;
 
         // Note, Reflect.construct might cause the profile to churn but we don't care.
         JSValue prototypeValue = targetFunction->get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue))
+        if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue))
             return rareData->createInternalFunctionAllocationStructureFromBase(vm, baseGlobalObject, prototype, baseClass);
     } else {
         JSValue prototypeValue = newTarget->get(globalObject, vm.propertyNames->prototype);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue)) {
+        if (JSObject* prototype = jsDynamicCast<JSObject*>(vm, prototypeValue)) {
             // This only happens if someone Reflect.constructs our builtin constructor with another builtin constructor as the new.target.
             // Thus, we don't care about the cost of looking up the structure from our hash table every time.
-            return baseGlobalObject->structureCache().emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseClass);
+            return vm.structureCache.emptyStructureForPrototypeFromBaseStructure(baseGlobalObject, prototype, baseClass);
         }
     }
     
@@ -183,15 +183,11 @@ JSGlobalObject* getFunctionRealm(JSGlobalObject* globalObject, JSObject* object)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(object->isCallable());
+    ASSERT(object->isCallable(vm));
 
     while (true) {
-        if (object->inherits<JSBoundFunction>()) {
+        if (object->inherits<JSBoundFunction>(vm)) {
             object = jsCast<JSBoundFunction*>(object)->targetFunction();
-            continue;
-        }
-        if (object->inherits<JSRemoteFunction>()) {
-            object = jsCast<JSRemoteFunction*>(object)->targetFunction();
             continue;
         }
 
@@ -205,7 +201,7 @@ JSGlobalObject* getFunctionRealm(JSGlobalObject* globalObject, JSObject* object)
             continue;
         }
 
-        return object->globalObject();
+        return object->globalObject(vm);
     }
 }
 

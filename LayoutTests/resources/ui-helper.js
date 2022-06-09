@@ -141,19 +141,6 @@ window.UIHelper = class UIHelper {
 
     static async waitForScrollCompletion()
     {
-        if (this.isIOSFamily()) {
-            await new Promise(resolve => {
-                testRunner.runUIScript(`
-                    (function() {
-                        uiController.didEndScrollingCallback = function() {
-                            uiController.uiScriptComplete();
-                        }
-                    })()`, resolve);
-            });
-            // Wait for the new scroll position to get back to the web process.
-            return UIHelper.renderingUpdate();
-        }
-
         return new Promise(resolve => {
             eventSender.callAfterScrollingCompletes(() => {
                 requestAnimationFrame(resolve);
@@ -1375,11 +1362,6 @@ window.UIHelper = class UIHelper {
     static setHardwareKeyboardAttached(attached)
     {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setHardwareKeyboardAttached(${attached ? "true" : "false"})`, resolve));
-    }
-
-    static setWebViewEditable(editable)
-    {
-        return new Promise(resolve => testRunner.runUIScript(`uiController.setWebViewEditable(${editable ? "true" : "false"})`, resolve));
     }
 
     static rectForMenuAction(action)

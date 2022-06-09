@@ -86,6 +86,11 @@
 #define USE_WEBP 1
 #endif
 
+/* On Windows, use QueryPerformanceCounter by default */
+#if OS(WINDOWS)
+#define USE_QUERY_PERFORMANCE_COUNTER  1
+#endif
+
 #if PLATFORM(COCOA)
 #define USE_CF 1
 #endif
@@ -349,7 +354,7 @@
 
 #if !defined(USE_LIBPAS_JIT_HEAP) && !USE(SYSTEM_MALLOC)
 #include <bmalloc/BPlatform.h>
-#if BENABLE(LIBPAS) && OS(DARWIN)
+#if BENABLE(LIBPAS)
 #define USE_LIBPAS_JIT_HEAP 1
 #endif
 #endif

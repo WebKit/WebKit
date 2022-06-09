@@ -37,14 +37,14 @@ typedef (BufferSource or Blob or USVString) BlobPart;
     GenerateIsReachable=Impl,
     CustomToJSObject,
 ] interface Blob {
-    [CallWith=CurrentScriptExecutionContext] constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options);
+    [CallWith=ScriptExecutionContext] constructor(optional sequence<BlobPart> blobParts, optional BlobPropertyBag options);
 
     readonly attribute unsigned long long size;
     readonly attribute DOMString type;
 
-    [NewObject] Blob slice(optional long long start = 0, optional long long end = 0x7FFFFFFFFFFFFFFF, optional DOMString contentType = "");
+    [CallWith=ScriptExecutionContext] Blob slice(optional long long start = 0, optional long long end = 0x7FFFFFFFFFFFFFFF, optional DOMString contentType = "");
 
-    [NewObject] ReadableStream stream();
-    [NewObject] Promise<USVString> text();
-    [NewObject] Promise<ArrayBuffer> arrayBuffer();
+    [NewObject, CallWith=ScriptExecutionContext] ReadableStream stream();
+    [NewObject, CallWith=ScriptExecutionContext] Promise<USVString> text();
+    [NewObject, CallWith=ScriptExecutionContext] Promise<ArrayBuffer> arrayBuffer();
 };

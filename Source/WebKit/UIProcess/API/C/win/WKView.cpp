@@ -63,11 +63,6 @@ void WKViewSetIsInWindow(WKViewRef viewRef, bool isInWindow)
     toImpl(viewRef)->setIsInWindow(isInWindow);
 }
 
-void WKViewSetUsesOffscreenRendering(WKViewRef viewRef, bool enabled)
-{
-    toImpl(viewRef)->setUsesOffscreenRendering(enabled);
-}
-
 void WKViewSetScrollOffsetOnNextResize(WKViewRef viewRef, WKSize scrollOffset)
 {
     toImpl(viewRef)->setScrollOffsetOnNextResize(toIntSize(scrollOffset));

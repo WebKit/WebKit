@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 #include "SVGFEDropShadowElement.h"
 
 #include "RenderStyle.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGRenderStyle.h"
@@ -54,7 +55,7 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
 {
     m_stdDeviationX->setBaseValInternal(x);
     m_stdDeviationY->setBaseValInternal(y);
-    updateSVGRendererForElementChange();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -89,22 +90,19 @@ void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-IntOutsets SVGFEDropShadowElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
+RefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto offset = SVGFilter::calculateResolvedSize({ dx(), dy() }, targetBoundingBox, primitiveUnits);
-    auto stdDeviation = SVGFilter::calculateResolvedSize({ stdDeviationX(), stdDeviationY() }, targetBoundingBox, primitiveUnits);
-    return FEDropShadow::calculateOutsets(offset, stdDeviation);
-}
+    auto input1 = filterBuilder.getEffectById(in1());
+    if (!input1)
+        return nullptr;
 
-RefPtr<FilterEffect> SVGFEDropShadowElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
-{
     RenderObject* renderer = this->renderer();
     if (!renderer)
         return nullptr;
@@ -117,7 +115,9 @@ RefPtr<FilterEffect> SVGFEDropShadowElement::filterEffect(const SVGFilter&, cons
     Color color = renderer->style().colorByApplyingColorFilter(svgStyle.floodColor());
     float opacity = svgStyle.floodOpacity();
 
-    return FEDropShadow::create(stdDeviationX(), stdDeviationY(), dx(), dy(), color, opacity);
+    auto effect = FEDropShadow::create(stdDeviationX(), stdDeviationY(), dx(), dy(), color, opacity);
+    effect->inputEffects() = { input1.releaseNonNull() };
+    return effect;
 }
 
-} // namespace WebCore
+}

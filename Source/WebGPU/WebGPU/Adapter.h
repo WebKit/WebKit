@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,56 +25,38 @@
 
 #pragma once
 
-#import "HardwareCapabilities.h"
-#import <wtf/CompletionHandler.h>
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
-
-struct WGPUAdapterImpl {
-};
 
 namespace WebGPU {
 
 class Device;
-class Instance;
 
-// https://gpuweb.github.io/gpuweb/#gpuadapter
-class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
+class Adapter : public RefCounted<Adapter> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Adapter> create(id<MTLDevice> device, Instance& instance, HardwareCapabilities&& capabilities)
+    static Ref<Adapter> create()
     {
-        return adoptRef(*new Adapter(device, instance, WTFMove(capabilities)));
-    }
-    static Ref<Adapter> createInvalid(Instance& instance)
-    {
-        return adoptRef(*new Adapter(instance));
+        return adoptRef(*new Adapter());
     }
 
     ~Adapter();
 
-    size_t enumerateFeatures(WGPUFeatureName* features);
-    bool getLimits(WGPUSupportedLimits&);
-    void getProperties(WGPUAdapterProperties&);
+    bool getLimits(WGPUSupportedLimits*);
+    void getProperties(WGPUAdapterProperties*);
     bool hasFeature(WGPUFeatureName);
-    void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback);
-    void requestInvalidDevice(CompletionHandler<void(Ref<Device>&&)>&&);
-
-    bool isValid() const { return m_device; }
-    void makeInvalid() { m_device = nil; }
-
-    Instance& instance() const { return m_instance; }
-
+    WGPUFeatureName getFeatureAtIndex(size_t);
+    void requestDevice(const WGPUDeviceDescriptor*, WTF::Function<void(WGPURequestDeviceStatus, Ref<Device>&&, const char*)>&& callback);
 
 private:
-    Adapter(id<MTLDevice>, Instance&, HardwareCapabilities&&);
-    Adapter(Instance&);
-
-    id<MTLDevice> m_device { nil };
-    const Ref<Instance> m_instance;
-
-    HardwareCapabilities m_capabilities { };
+    Adapter();
 };
 
 } // namespace WebGPU
+
+struct WGPUAdapterImpl {
+    Ref<WebGPU::Adapter> adapter;
+};

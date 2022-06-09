@@ -92,6 +92,67 @@ static CGColorSpaceRef colorSpaceForBitmap(DestinationColorSpace imageBufferColo
     return imageBufferColorSpace.platformColorSpace();
 }
 
+static RefPtr<Image> createBitmapImageAfterScalingIfNeeded(RefPtr<NativeImage>&& image, const IntSize& logicalSize, const IntSize& backendSize, float resolutionScale, PreserveResolution preserveResolution)
+{
+    if (!image)
+        return nullptr;
+
+    if (resolutionScale == 1 || preserveResolution == PreserveResolution::Yes)
+        image = NativeImage::create(createCroppedImageIfNecessary(image->platformImage().get(), backendSize));
+    else {
+        auto context = adoptCF(CGBitmapContextCreate(0, logicalSize.width(), logicalSize.height(), 8, 4 * logicalSize.width(), colorSpaceForBitmap(image->colorSpace()), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
+        CGContextSetBlendMode(context.get(), kCGBlendModeCopy);
+        CGContextClipToRect(context.get(), FloatRect(FloatPoint::zero(), logicalSize));
+        FloatSize imageSizeInUserSpace = logicalSize;
+        CGContextDrawImage(context.get(), FloatRect(FloatPoint::zero(), imageSizeInUserSpace), image->platformImage().get());
+        image = NativeImage::create(adoptCF(CGBitmapContextCreateImage(context.get())));
+    }
+
+    if (!image)
+        return nullptr;
+
+    return BitmapImage::create(WTFMove(image));
+}
+
+RefPtr<Image> ImageBufferCGBackend::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
+{
+    RefPtr<NativeImage> image;
+    if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes)
+        image = copyNativeImage(copyBehavior);
+    else
+        image = copyNativeImage(DontCopyBackingStore);
+    return createBitmapImageAfterScalingIfNeeded(WTFMove(image), logicalSize(), backendSize(), resolutionScale(), preserveResolution);
+}
+
+RefPtr<Image> ImageBufferCGBackend::sinkIntoImage(PreserveResolution preserveResolution)
+{
+    // Get the backend size before sinking the it into a NativeImage. sinkIntoNativeImage() sets the IOSurface to null if it's an accelerated backend.
+    auto backendSize = this->backendSize();
+    return createBitmapImageAfterScalingIfNeeded(sinkIntoNativeImage(), logicalSize(), backendSize, resolutionScale(), preserveResolution);
+}
+
+void ImageBufferCGBackend::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+{
+    prepareToDrawIntoContext(destContext);
+
+    FloatRect srcRectScaled = srcRect;
+    srcRectScaled.scale(resolutionScale());
+
+    if (auto image = copyNativeImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
+        destContext.drawNativeImage(*image, backendSize(), destRect, srcRectScaled, options);
+}
+
+void ImageBufferCGBackend::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+{
+    prepareToDrawIntoContext(destContext);
+
+    FloatRect adjustedSrcRect = srcRect;
+    adjustedSrcRect.scale(resolutionScale());
+
+    if (auto image = copyImage(&destContext == &context() ? CopyBackingStore : DontCopyBackingStore))
+        image->drawPattern(destContext, destRect, adjustedSrcRect, patternTransform, phase, spacing, options);
+}
+
 void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)
 {
     auto nativeImage = copyNativeImage(DontCopyBackingStore);
@@ -120,14 +181,14 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
         if (!pixelBuffer)
             return nullptr;
 
-        Ref protectedPixelBuffer = *pixelBuffer;
-        auto dataSize = pixelBuffer->sizeInBytes();
-        auto data = pixelBuffer->bytes();
+        Ref pixelArray = pixelBuffer->data();
+        auto dataSize = pixelArray->byteLength();
+        auto data = pixelArray->data();
 
         verifyImageBufferIsBigEnough(data, dataSize);
 
-        auto dataProvider = adoptCF(CGDataProviderCreateWithData(&protectedPixelBuffer.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
-            static_cast<PixelBuffer*>(context)->deref();
+        auto dataProvider = adoptCF(CGDataProviderCreateWithData(&pixelArray.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
+            static_cast<JSC::Uint8ClampedArray*>(context)->deref();
         }));
         if (!dataProvider)
             return nullptr;
@@ -185,6 +246,10 @@ String ImageBufferCGBackend::toDataURL(const String& mimeType, std::optional<dou
 std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlusher()
 {
     return makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
+}
+
+void ImageBufferCGBackend::prepareToDrawIntoContext(GraphicsContext&)
+{
 }
 
 bool ImageBufferCGBackend::originAtBottomLeftCorner() const

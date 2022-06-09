@@ -34,29 +34,25 @@
 #endif
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(IPC_TESTING_API)
-#include "JSIPCBinding.h"
-#endif
-
 namespace WebKit {
 
-void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
+void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageName() == Messages::TestWithStream::SendString::name())
         return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.connection(), decoder, this, &TestWithStream::sendString);
-    if (decoder.messageName() == Messages::TestWithStream::SendStringSynchronized::name())
-        return IPC::handleMessageAsync<Messages::TestWithStream::SendStringSynchronized>(connection.connection(), decoder, this, &TestWithStream::sendStringSynchronized);
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name())
         return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection.connection(), decoder, this, &TestWithStream::sendMachSendRight);
 #endif
+    if (decoder.messageName() == Messages::TestWithStream::SendStringSynchronized::name())
+        return IPC::handleMessage<Messages::TestWithStream::SendStringSynchronized>(connection, decoder, this, &TestWithStream::sendStringSynchronized);
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name())
-        return IPC::handleMessageAsync<Messages::TestWithStream::ReceiveMachSendRight>(connection.connection(), decoder, this, &TestWithStream::receiveMachSendRight);
+        return IPC::handleMessage<Messages::TestWithStream::ReceiveMachSendRight>(connection, decoder, this, &TestWithStream::receiveMachSendRight);
 #endif
 #if PLATFORM(COCOA)
     if (decoder.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name())
-        return IPC::handleMessageAsync<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection.connection(), decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
+        return IPC::handleMessage<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection, decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
 #endif
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
@@ -68,47 +64,3 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connec
 }
 
 } // namespace WebKit
-
-#if ENABLE(IPC_TESTING_API)
-
-namespace IPC {
-
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendString>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendString::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendStringSynchronized>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSynchronized::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringSynchronized>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSynchronized::ReplyArguments>(globalObject, decoder);
-}
-#if PLATFORM(COCOA)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendMachSendRight::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_ReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveMachSendRight::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_ReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveMachSendRight::ReplyArguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStream_SendAndReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendAndReceiveMachSendRight::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithStream_SendAndReceiveMachSendRight>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithStream::SendAndReceiveMachSendRight::ReplyArguments>(globalObject, decoder);
-}
-#endif
-
-}
-
-#endif
-

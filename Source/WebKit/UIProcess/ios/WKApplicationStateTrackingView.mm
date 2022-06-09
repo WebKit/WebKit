@@ -51,11 +51,12 @@
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
-    if (!_applicationStateTracker || newWindow)
+    if (!self._contentView.window || newWindow)
         return;
 
     auto page = [_webViewToTrack _page];
     RELEASE_LOG(ViewState, "%p - WKApplicationStateTrackingView: View with page [%p, pageProxyID=%" PRIu64 "] was removed from a window, _lastObservedStateWasBackground=%d", self, page.get(), page ? page->identifier().toUInt64() : 0, page ? page->lastObservedStateWasBackground() : false);
+    ASSERT(_applicationStateTracker);
     _applicationStateTracker = nullptr;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,25 +75,7 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
     out.printf("Generated JIT code for ");
     va_list argList;
     va_start(argList, format);
-
-    if (m_isThunk) {
-        va_list preflightArgs;
-        va_copy(preflightArgs, argList);
-        size_t stringLength = vsnprintf(nullptr, 0, format, preflightArgs);
-        va_end(preflightArgs);
-
-        const char prefix[] = "thunk: ";
-        char* buffer = 0;
-        size_t length = stringLength + sizeof(prefix);
-        CString label = CString::newUninitialized(length, buffer);
-        snprintf(buffer, length, "%s", prefix);
-        vsnprintf(buffer + sizeof(prefix) - 1, stringLength + 1, format, argList);
-        out.printf("%s", buffer);
-
-        registerLabel(result.code().untaggedExecutableAddress(), WTFMove(label));
-    } else
-        out.vprintf(format, argList);
-
+    out.vprintf(format, argList);
     va_end(argList);
     out.printf(":\n");
 
@@ -108,17 +90,14 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         return result;
     }
     
-    void* codeStart = entrypoint<DisassemblyPtrTag>().untaggedExecutableAddress();
-    void* codeEnd = bitwise_cast<uint8_t*>(codeStart) + size();
-
     if (Options::asyncDisassembly()) {
         CodeRef<DisassemblyPtrTag> codeRefForDisassembly = result.retagged<DisassemblyPtrTag>();
-        disassembleAsynchronously(header, WTFMove(codeRefForDisassembly), m_size, codeStart, codeEnd, "    ");
+        disassembleAsynchronously(header, WTFMove(codeRefForDisassembly), m_size, "    ");
         return result;
     }
     
     dataLog(header);
-    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, codeStart, codeEnd, "    ", WTF::dataFile());
+    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, "    ", WTF::dataFile());
     
     return result;
 }

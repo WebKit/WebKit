@@ -65,6 +65,8 @@ _metal_backend_sources = [
   "mtl_format_utils.mm",
   "mtl_glslang_mtl_utils.h",
   "mtl_glslang_mtl_utils.mm",
+  "mtl_glslang_utils.h",
+  "mtl_glslang_utils.mm",
   "mtl_occlusion_query_pool.h",
   "mtl_occlusion_query_pool.mm",
   "mtl_render_utils.h",
@@ -82,12 +84,11 @@ _metal_backend_sources = [
   "shaders/rewrite_indices_shared.h",
 ]
 
-config("angle_metal_spirv_backend_config") {
-  defines = [ "ANGLE_ENABLE_METAL_SPIRV" ]
-}
-
 config("angle_metal_backend_config") {
-  defines = [ "ANGLE_ENABLE_METAL" ]
+  defines = [
+    "ANGLE_ENABLE_METAL",
+    "ANGLE_ENABLE_METAL_SPIRV",
+  ]
   ldflags = [
     "-weak_framework",
     "Metal",
@@ -115,14 +116,7 @@ angle_source_set("angle_metal_backend") {
     "${angle_root}:translator",
   ]
 
-  if (angle_enable_msl_through_spirv) {
-    public_configs += [ ":angle_metal_spirv_backend_config" ]
-    deps = [ "${angle_spirv_cross_dir}/gn:spirv_cross_sources" ]
-    sources += [
-      "mtl_glslang_utils.h",
-      "mtl_glslang_utils.mm",
-    ]
-  }
+  deps = [ "${angle_spirv_cross_dir}/gn:spirv_cross_sources" ]
 
   objc_flags = [
     "-Wno-nullability-completeness",

@@ -55,50 +55,55 @@ my $input;
 my $jsonDecoder = JSON::PP->new->utf8;
 my $jsonHashRef = $jsonDecoder->decode($input);
 my $propertiesHashRef = $jsonHashRef->{properties};
-my @allNames = sort keys(%$propertiesHashRef);
+my @allNames = keys(%$propertiesHashRef);
 die "We've reached more than 1024 CSS properties, please make sure to update CSSProperty/StylePropertyMetadata accordingly" if @allNames > 1024;
 
 my %defines = map { $_ => 1 } split(/ /, $defines);
 
 my @names;
-my @internalProperties;
+my @internalProprerties;
 my %runtimeFlags;
 my %settingsFlags;
 my $numPredefinedProperties = 2;
 my %nameIsColorProperty;
 my %nameIsDescriptorOnly;
 my %nameIsHighPriority;
-my %nameIsDeferred;
 my %nameIsInherited;
 my %namePriorityShouldSink;
 my %logicalPropertyGroups;
-my %logicalPropertyGroupResolvers = (
+my %resolverKinds = (
     "logical" => {
-        # Order matches LogicalBoxAxis enum in Source/WebCore/platform/text/WritingMode.h.
-        "axis" => ["inline", "block"],
-        # Order matches LogicalBoxSide enum in Source/WebCore/platform/text/WritingMode.h.
-        "side" => ["block-start", "inline-end", "block-end", "inline-start"],
-        # Order matches LogicalBoxCorner enum in Source/WebCore/platform/text/WritingMode.h.
-        "corner" => ["start-start", "start-end", "end-start", "end-end"],
+        "block" => "axis",
+        "inline" => "axis",
+        "block-start" => "side",
+        "block-end" => "side",
+        "inline-start" => "side",
+        "inline-end" => "side",
+        "start-start" => "corner",
+        "start-end" => "corner",
+        "end-start" => "corner",
+        "end-end" => "corner",
     },
     "physical" => {
-        # Order matches BoxAxis enum in Source/WebCore/platform/text/WritingMode.h.
-        "axis" => ["horizontal", "vertical"],
-        # Order matches BoxSide enum in Source/WebCore/platform/text/WritingMode.h.
-        "side" => ["top", "right", "bottom", "left"],
-        # Order matches BoxCorner enum in Source/WebCore/platform/text/WritingMode.h.
-        "corner" => ["top-left", "top-right", "bottom-right", "bottom-left"],
+        "horizontal" => "axis",
+        "vertical" => "axis",
+        "top" => "side",
+        "right" => "side",
+        "bottom" => "side",
+        "left" => "side",
+        "top-left" => "corner",
+        "top-right" => "corner",
+        "bottom-right" => "corner",
+        "bottom-left" => "corner",
     },
 );
 my %propertiesWithStyleBuilderOptions;
 my %styleBuilderOptions = (
     "animatable" => 1, # Defined in Source/WebCore/style/StyleBuilderConverter.h
     "auto-functions" => 1,
-    "computable" => 1,
     "conditional-converter" => 1,
     "converter" => 1,
     "custom" => 1,
-    "fast-path-inherited" => 1,
     "fill-layer-property" => 1,
     "font-property" => 1,
     "getter" => 1,
@@ -131,15 +136,16 @@ for my $name (@allNames) {
 }
 
 while (my ($groupName, $logicalPropertyGroup) = each %logicalPropertyGroups) {
-    my $kind = $logicalPropertyGroup->{"kind"};
-    while (my ($logic, $resolversForLogic) = each %logicalPropertyGroupResolvers) {
+    for my $logic (keys %resolverKinds) {
         my $properties = $logicalPropertyGroup->{$logic};
         if (!$properties) {
             die "Logical property group \"$groupName\" has no \"$logic\" property.";
         }
-        for my $resolver (@{ $resolversForLogic->{$kind} }) {
-            if (!$properties->{$resolver}) {
-                die "Logical property group \"$groupName\" requires a \"$resolver\" property.";
+        while (my ($resolver, $kind) = each %{ $resolverKinds{$logic} }) {
+            if ($kind eq $logicalPropertyGroup->{"kind"}) {
+                if (!$properties->{$resolver}) {
+                    die "Logical property group \"$groupName\" requires a \"$resolver\" property.";
+                }
             }
         }
     }
@@ -199,22 +205,24 @@ sub removeInactiveCodegenProperties($$)
 sub skippedFromComputedStyle
 {
   my $name = shift;
-  my $options = $propertiesWithStyleBuilderOptions{$name};
 
-  if (grep { $_ eq $name } @internalProperties) {
-    die "$name can't be computable since it's internal" if $options->{"computable"};
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"skip-builder"}) and not isLogical($name)) {
     return 1;
   }
 
-  return !$options->{"computable"} if exists($options->{"computable"});
+  if (grep { $_ eq $name } @internalProprerties) {
+    return 1;
+  }
 
-  return 1 if exists($options->{"skip-builder"}) and not isLogical($name);
-
-  if (exists($options->{"longhands"})) {
-    my @longhands = @{$options->{"longhands"}};
-    # Skip properties if they have a non-internal longhand property.
-    foreach my $longhand (@longhands) {
-      return 1 if !skippedFromComputedStyle($longhand);
+  if (exists($propertiesWithStyleBuilderOptions{$name}{"longhands"})) {
+    my @longhands = @{$propertiesWithStyleBuilderOptions{$name}{"longhands"}};
+    if (scalar @longhands != 1) {
+      # Skip properties if they have a non-internal longhand property.
+      foreach my $longhand (@longhands) {
+        if (!skippedFromComputedStyle($longhand)) {
+          return 1;
+        }
+      }
     }
   }
 
@@ -225,22 +233,18 @@ sub skippedFromComputedStyle
 sub isLogical
 {
     my $name = shift;
-    my $logicalPropertyGroup = $propertiesHashRef->{$name}->{"codegen-properties"}->{"logical-property-group"};
+    my $value = $propertiesHashRef->{$name};
 
-    if (!$logicalPropertyGroup) {
+    if (!exists($value->{"specification"})) {
         return 0;
     }
 
-    my $resolver = $logicalPropertyGroup->{"resolver"};
-    for my $logicalResolvers (values %{ $logicalPropertyGroupResolvers{"logical"} }) {
-        for my $logicalResolver (@{ $logicalResolvers }) {
-            if ($resolver eq $logicalResolver) {
-                return 1;
-            }
-        }
+    my $spec_properties = $value->{"specification"};
+    if (!exists($spec_properties->{"category"})) {
+        return 0;
     }
 
-    return 0;
+    return $spec_properties->{"category"} eq "css-logical-props"
 }
 
 sub isPropertyEnabled($$)
@@ -289,13 +293,10 @@ sub addProperty($$)
                 } elsif ($codegenOptionName eq "comment") {
                     next;
                 } elsif ($codegenOptionName eq "high-priority") {
-                    die "$name is a shorthand, but has high-priority" if exists $codegenProperties->{"longhands"};
                     $nameIsHighPriority{$name} = 1;
                 } elsif ($codegenOptionName eq "sink-priority") {
-                    die "$name is a shorthand, but has sink-priority" if exists $codegenProperties->{"longhands"};
                     $namePriorityShouldSink{$name} = 1;
                 } elsif ($codegenOptionName eq "related-property") {
-                    $nameIsDeferred{$name} = 1;
                     $relatedProperty{$name} = $codegenProperties->{"related-property"}
                 } elsif ($codegenOptionName eq "aliases") {
                     $nameToAliases{$name} = $codegenProperties->{"aliases"};
@@ -306,7 +307,7 @@ sub addProperty($$)
                     $propertiesWithStyleBuilderOptions{$name}{$codegenOptionName} = $codegenProperties->{$codegenOptionName};
                 } elsif ($codegenOptionName eq "internal-only") {
                     # internal-only properties exist to make it easier to parse compound properties (e.g. background-repeat) as if they were shorthands.
-                    push @internalProperties, $name
+                    push @internalProprerties, $name
                 } elsif ($codegenOptionName eq "runtime-flag") {
                     $runtimeFlags{$name} = $codegenProperties->{"runtime-flag"};
                 } elsif ($codegenOptionName eq "settings-flag") {
@@ -314,23 +315,15 @@ sub addProperty($$)
                 } elsif ($codegenOptionName eq "color-property") {
                     $nameIsColorProperty{$name} = 1;
                 } elsif ($codegenOptionName eq "logical-property-group") {
-                    die "Shorthand property $name can't belong to a logical property group\n" if exists $codegenProperties->{"longhands"};
-                    $nameIsDeferred{$name} = 1;
                     my $groupName = $codegenProperties->{$codegenOptionName}{"name"};
                     my $resolver = $codegenProperties->{$codegenOptionName}{"resolver"};
                     my $kind;
                     my $logic;
-                    while (my ($currentLogic, $resolversForLogic) = each %logicalPropertyGroupResolvers) {
-                        while (my ($currentKind, $resolverList) = each %{ $resolversForLogic }) {
-                            for my $currentResolver (@{ $resolverList }) {
-                                if ($currentResolver eq $resolver) {
-                                    $kind = $currentKind;
-                                    $logic = $currentLogic;
-                                }
-                            }
-                        }
-                    }
-                    if (!$kind) {
+                    if ($kind = $resolverKinds{"logical"}{$resolver}) {
+                        $logic = "logical";
+                    } elsif ($kind = $resolverKinds{"physical"}{$resolver}) {
+                        $logic = "physical";
+                    } else {
                         die "Unrecognized resolver \"$resolver\" for codegen property \"$codegenOptionName\" for $name property.";
                     }
                     my $otherKind = $logicalPropertyGroups{$groupName}{"kind"};
@@ -362,28 +355,13 @@ sub addProperty($$)
 
 sub sortByDescendingPriorityAndName
 {
-    # Sort shorthands to the back
-    if (exists $propertiesWithStyleBuilderOptions{$a}{"longhands"} < exists $propertiesWithStyleBuilderOptions{$b}{"longhands"}) {
-        return -1;
-    }
-    if (exists $propertiesWithStyleBuilderOptions{$a}{"longhands"} > exists $propertiesWithStyleBuilderOptions{$b}{"longhands"}) {
-        return 1;
-    }
-    # Sort longhands with high priority to the front
+    # Sort names with high priority to the front
     if (!!$nameIsHighPriority{$a} < !!$nameIsHighPriority{$b}) {
         return 1;
     }
     if (!!$nameIsHighPriority{$a} > !!$nameIsHighPriority{$b}) {
         return -1;
     }
-    # Sort deferred longhands to the back, before shorthands
-    if (!!$nameIsDeferred{$a} < !!$nameIsDeferred{$b}) {
-        return -1;
-    }
-    if (!!$nameIsDeferred{$a} > !!$nameIsDeferred{$b}) {
-        return 1;
-    }
-    # Sort sunken names at the end of their priority bucket
     if (!!$namePriorityShouldSink{$a} < !!$namePriorityShouldSink{$b}) {
         return -1;
     }
@@ -430,9 +408,9 @@ static_assert(numCSSProperties + 1 <= 65535, "CSSPropertyID should fit into uint
 
 EOF
 
-print GPERF "constexpr ASCIILiteral propertyNameStrings[numCSSProperties] = {\n";
+print GPERF "const char* const propertyNameStrings[numCSSProperties] = {\n";
 foreach my $name (@names) {
-  print GPERF "    \"$name\"_s,\n";
+  print GPERF "    \"$name\",\n";
 }
 print GPERF "};\n\n";
 
@@ -478,7 +456,7 @@ bool isInternalCSSProperty(const CSSPropertyID id)
     switch (id) {
 EOF
 
-foreach my $name (sort @internalProperties) {
+foreach my $name (sort @internalProprerties) {
   print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
 }
 
@@ -497,7 +475,7 @@ bool isEnabledCSSProperty(const CSSPropertyID id)
 {
     switch (id) {
 EOF
-  foreach my $name (sort keys %runtimeFlags) {
+  foreach my $name (keys %runtimeFlags) {
     print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
     print GPERF "        return RuntimeEnabledFeatures::sharedFeatures()." . $runtimeFlags{$name} . "Enabled();\n";
   }
@@ -525,7 +503,7 @@ bool isCSSPropertyEnabledBySettings(const CSSPropertyID id, const Settings* sett
     switch (id) {
 EOF
 
-foreach my $name (sort keys %settingsFlags) {
+foreach my $name (keys %settingsFlags) {
   print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
   print GPERF "        return settings->" . $settingsFlags{$name} . "();\n";
 }
@@ -537,13 +515,13 @@ print GPERF << "EOF";
     return true;
 }
 
-ASCIILiteral getPropertyName(CSSPropertyID id)
+const char* getPropertyName(CSSPropertyID id)
 {
     if (id < firstCSSProperty)
-        return { };
+        return 0;
     int index = id - firstCSSProperty;
     if (index >= numCSSProperties)
-        return { };
+        return 0;
     return propertyNameStrings[index];
 }
 
@@ -557,8 +535,10 @@ const AtomString& getPropertyNameAtomString(CSSPropertyID id)
 
     static AtomString* propertyStrings = new AtomString[numCSSProperties]; // Intentionally never destroyed.
     AtomString& propertyString = propertyStrings[index];
-    if (propertyString.isNull())
-        propertyString = propertyNameStrings[index];
+    if (propertyString.isNull()) {
+        const char* propertyName = propertyNameStrings[index];
+        propertyString = AtomString(propertyName, strlen(propertyName), AtomString::ConstructFromLiteral);
+    }
     return propertyString;
 }
 
@@ -587,7 +567,7 @@ String getJSPropertyName(CSSPropertyID id)
         *resultPointer++ = character;
     }
     *resultPointer = '\\0';
-    return String::fromLatin1(result);
+    return String(result);
 }
 
 static const bool isInheritedPropertyTable[numCSSProperties + $numPredefinedProperties] = {
@@ -610,42 +590,23 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID id)
     ASSERT(id != CSSPropertyInvalid);
     return isInheritedPropertyTable[id];
 }
-
-EOF
-
-if (%relatedProperty) {
-    print GPERF << "EOF";
-CSSPropertyID getRelatedPropertyId(const CSSPropertyID id)
+    
+CSSPropertyID getRelatedPropertyId(CSSPropertyID id)
 {
     switch (id) {
 EOF
-    for my $name (@names) {
-        if (!$relatedProperty{$name}) {
-            next;
-        }
-        my $related = $relatedProperty{$name};
-        die "Property $name has an unknown related property: $related\n" if !exists($nameToId{$related});
-        die "High priority property $name can't have a related property: $related\n" if $nameIsHighPriority{$name};
-        die "Shorthand property $name can't have a related property: $related\n" if exists $propertiesWithStyleBuilderOptions{$name}{"longhands"};
-        die "Property $name can't have itself as a related property\n" if $related eq $name;
-        die "Property $name has $related as a related property, but it's not reciprocal\n" if $relatedProperty{$related} ne $name;
-        print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
-        print GPERF "        return CSSPropertyID::CSSProperty" . $nameToId{$related} . ";\n";
+for my $name (@names) {
+    if (!$relatedProperty{$name}) {
+        next;
     }
-    print GPERF << "EOF";
+    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+    print GPERF "        return CSSPropertyID::CSSProperty" . $nameToId{$relatedProperty{$name}} . ";\n";
+}
+        
+print GPERF << "EOF";
     default:
         return CSSPropertyID::CSSPropertyInvalid;
     }
-EOF
-} else {
-    print GPERF << "EOF";
-CSSPropertyID getRelatedPropertyId(const CSSPropertyID)
-{
-    return CSSPropertyID::CSSPropertyInvalid;
-EOF
-}
-
-print GPERF << "EOF";
 }
 
 Vector<String> CSSProperty::aliasesForProperty(CSSPropertyID id)
@@ -689,8 +650,8 @@ bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)
 {
     switch (id) {
 EOF
-for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
-    for my $name (sort values %{ $logicalPropertyGroup->{"logical"} }) {
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+    for my $name (values %{ $logicalPropertyGroup->{"logical"} }) {
         print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
     }
 }
@@ -707,9 +668,9 @@ bool CSSProperty::isInLogicalPropertyGroup(CSSPropertyID id)
     switch (id) {
 EOF
 
-for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
     for my $kind ("logical", "physical") {
-        for my $name (sort values %{ $logicalPropertyGroup->{$kind} }) {
+        for my $name (values %{ $logicalPropertyGroup->{$kind} }) {
             print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
         }
     }
@@ -727,18 +688,16 @@ bool CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSProp
     switch (id1) {
 EOF
 
-for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
     my $logical = $logicalPropertyGroup->{"logical"};
     my $physical = $logicalPropertyGroup->{"physical"};
     for my $first ($logical, $physical) {
         my $second = $first eq $logical ? $physical : $logical;
-        for my $resolver (sort keys %{ $first }) {
-            my $name = $first->{$resolver};
+        while (my ($resolver, $name) = each %{ $first }) {
             print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
         }
         print GPERF "        switch (id2) {\n";
-        for my $resolver (sort keys %{ $second }) {
-            my $name = $second->{$resolver};
+        while (my ($resolver, $name) = each %{ $second }) {
             print GPERF "        case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
         }
         print GPERF << "EOF";
@@ -758,47 +717,29 @@ print GPERF << "EOF";
 
 CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
 {
-    auto textflow = makeTextFlow(writingMode, direction);
-    switch (propertyID) {
-EOF
-
-for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
-    for my $resolver (sort keys %{ $logicalPropertyGroup->{"logical"} }) {
-        my $name = $logicalPropertyGroup->{"logical"}->{$resolver};
-        my $kind = $logicalPropertyGroup->{"kind"};
-        my $kindId = nameToId($kind);
-        my $resolverEnum = "LogicalBox" . $kindId . "::" . nameToId($resolver);
-        my $physicals = $logicalPropertyGroupResolvers{"physical"}->{$kind};
-        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @{ $physicals };
-        print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ": {\n";
-        print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
-        print GPERF "        return properties[static_cast<size_t>(mapLogical" . $kindId . "ToPhysical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
-        print GPERF "    }\n";
-    }
-}
-
-print GPERF << "EOF";
-    default:
-        return propertyID;
-    }
-}
-
-CSSPropertyID CSSProperty::unresolvePhysicalProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
-{
-    auto textflow = makeTextFlow(writingMode, direction);
+    const TextFlow& textflow = makeTextFlow(writingMode, direction);
     switch (propertyID) {
 EOF
 
 for my $logicalPropertyGroup (values %logicalPropertyGroups) {
-    while (my ($resolver, $name) = each %{ $logicalPropertyGroup->{"physical"} }) {
+    while (my ($resolver, $name) = each %{ $logicalPropertyGroup->{"logical"} }) {
         my $kind = $logicalPropertyGroup->{"kind"};
         my $kindId = nameToId($kind);
-        my $resolverEnum = "Box" . $kindId . "::" . nameToId($resolver);
-        my $logicals = $logicalPropertyGroupResolvers{"logical"}->{$kind};
-        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"logical"}{$_}} } @{ $logicals };
+        my $resolverEnum = "LogicalBox" . $kindId . "::" . nameToId($resolver);
+        my @physicals;
+        if ($kind eq "side") {
+            @physicals = ("top", "right", "bottom", "left");
+        } elsif ($kind eq "corner") {
+            @physicals = ("top-left", "top-right", "bottom-right", "bottom-left");
+        } elsif ($kind eq "axis") {
+            @physicals = ("horizontal", "vertical");
+        } else {
+            die "Property \"$name\" belongs to a logical property group of unrecognized kind \"$kind\".";
+        }
+        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"physical"}{$_}} } @physicals;
         print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ": {\n";
         print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
-        print GPERF "        return properties[static_cast<size_t>(mapPhysical" . $kindId . "ToLogical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
+        print GPERF "        return properties[static_cast<size_t>(mapLogical" . $kindId . "ToPhysical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
         print GPERF "    }\n";
     }
 }
@@ -857,29 +798,9 @@ EOF
 my $first = $numPredefinedProperties;
 my $i = $numPredefinedProperties;
 my $maxLen = 0;
-my $firstHighPriorityPropertyName;
 my $lastHighPriorityPropertyName;
-my $firstLowPriorityPropertyName;
-my $lastLowPriorityPropertyName;
-my $firstDeferredPropertyName;
-my $lastDeferredPropertyName;
-my $firstShorthandPropertyName;
-my $lastShorthandPropertyName;
 foreach my $name (@names) {
-  # Assumes that @names is sorted by descending priorities.
-  if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"}) {
-    $firstShorthandPropertyName = $name if !$firstShorthandPropertyName;
-    $lastShorthandPropertyName = $name;
-  } elsif ($nameIsHighPriority{$name}) {
-    $firstHighPriorityPropertyName = $name if !$firstHighPriorityPropertyName;
-    $lastHighPriorityPropertyName = $name;
-  } elsif (!$nameIsDeferred{$name}) {
-    $firstLowPriorityPropertyName = $name if !$firstLowPriorityPropertyName;
-    $lastLowPriorityPropertyName = $name;
-  } else {
-    $firstDeferredPropertyName = $name if !$firstDeferredPropertyName;
-    $lastDeferredPropertyName = $name;
-  }
+  $lastHighPriorityPropertyName = $name if $nameIsHighPriority{$name}; # Assumes that @names is sorted by descending priorities.
   print HEADER "    CSSProperty" . $nameToId{$name} . " = " . $i . ",\n";
   $i = $i + 1;
   if (length($name) > $maxLen) {
@@ -894,14 +815,7 @@ print HEADER "const int firstCSSProperty = $first;\n";
 print HEADER "const int numCSSProperties = $num;\n";
 print HEADER "const int lastCSSProperty = $last;\n";
 print HEADER "const size_t maxCSSPropertyNameLength = $maxLen;\n";
-print HEADER "const CSSPropertyID firstHighPriorityProperty = CSSProperty" . $nameToId{$firstHighPriorityPropertyName} . ";\n";
-print HEADER "const CSSPropertyID lastHighPriorityProperty = CSSProperty" . $nameToId{$lastHighPriorityPropertyName} . ";\n";
-print HEADER "const CSSPropertyID firstLowPriorityProperty = CSSProperty" . $nameToId{$firstLowPriorityPropertyName} . ";\n";
-print HEADER "const CSSPropertyID lastLowPriorityProperty = CSSProperty" . $nameToId{$lastLowPriorityPropertyName} . ";\n";
-print HEADER "const CSSPropertyID firstDeferredProperty = CSSProperty" . $nameToId{$firstDeferredPropertyName} . ";\n";
-print HEADER "const CSSPropertyID lastDeferredProperty = CSSProperty" . $nameToId{$lastDeferredPropertyName} . ";\n";
-print HEADER "const CSSPropertyID firstShorthandProperty = CSSProperty" . $nameToId{$firstShorthandPropertyName} . ";\n";
-print HEADER "const CSSPropertyID lastShorthandProperty = CSSProperty" . $nameToId{$lastShorthandPropertyName} . ";\n\n";
+print HEADER "const CSSPropertyID lastHighPriorityProperty = CSSProperty" . $nameToId{$lastHighPriorityPropertyName} . ";\n\n";
 
 print HEADER "static const CSSPropertyID computedPropertyIDs[] = {\n";
 my $numComputedPropertyIDs = 0;
@@ -931,7 +845,7 @@ print HEADER << "EOF";
 bool isInternalCSSProperty(const CSSPropertyID);
 bool isEnabledCSSProperty(const CSSPropertyID);
 bool isCSSPropertyEnabledBySettings(const CSSPropertyID, const Settings* = nullptr);
-ASCIILiteral getPropertyName(CSSPropertyID);
+const char* getPropertyName(CSSPropertyID);
 const AtomString& getPropertyNameAtomString(CSSPropertyID id);
 String getPropertyNameString(CSSPropertyID id);
 String getJSPropertyName(CSSPropertyID);
@@ -1332,10 +1246,6 @@ sub generateInitialValueSetter {
     my $initialValue = ($isSVG ? "SVGRenderStyle" : "RenderStyle") . "::" . $initial . "()";
     $setterContent .= $indent . "    " . generateSetValueStatement($name, $initialValue) . ";\n";
   }
-  if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
-    $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
-  }
-
   $setterContent .= $indent . "}\n";
 
   return $setterContent;
@@ -1378,9 +1288,6 @@ sub generateInheritValueSetter {
   if (!$didCallSetValue) {
     my $inheritedValue = $parentStyle . "." . ($isSVG ? "svgStyle()." : "") .  $getter . "()";
     $setterContent .= $indent . "    " . generateSetValueStatement($name, "forwardInheritedValue(" . $inheritedValue . ")") . ";\n";
-  }
-  if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
-    $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
   }
   $setterContent .= $indent . "}\n";
 
@@ -1447,9 +1354,6 @@ sub generateValueSetter {
     }
     $setterContent .= $indent . "    " . generateSetValueStatement($name, $convertedValue) . ";\n";
   }
-  if (exists($propertiesWithStyleBuilderOptions{$name}{"fast-path-inherited"})) {
-    $setterContent .= $indent . "    builderState.style().setDisallowsFastPathInheritance();\n";
-  }
   $setterContent .= $indent . "}\n";
 
   return $setterContent;
@@ -1482,7 +1386,6 @@ foreach my $name (@names) {
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"longhands"});
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"skip-builder"});
   next if (exists $synonyms{$name});
-  die "Property $name is logical but doesn't have skip-builder\n" if isLogical($name);
 
   my $indent = "    ";
   if (!$propertiesWithStyleBuilderOptions{$name}{"custom"}{"Initial"}) {
@@ -1727,7 +1630,7 @@ sub cssPropertyToIDLAttribute($$$)
 
 my %namesAndAliasesToName;
 foreach my $name (@names) {
-    if (grep { $_ eq $name } @internalProperties) {
+    if (grep { $_ eq $name } @internalProprerties) {
         next;
     }
     $namesAndAliasesToName{$name} = $name;

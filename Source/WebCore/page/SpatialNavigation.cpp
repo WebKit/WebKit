@@ -60,7 +60,7 @@ FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
     , focusableNode(nullptr)
     , enclosingScrollableBox(nullptr)
     , distance(maxDistance())
-    , alignment(RectsAlignment::None)
+    , alignment(None)
     , isOffscreen(true)
     , isOffscreenAfterScrolling(true)
 {
@@ -96,15 +96,15 @@ static RectsAlignment alignmentForRects(FocusDirection direction, const LayoutRe
 {
     // If we found a node in full alignment, but it is too far away, ignore it.
     if (areRectsMoreThanFullScreenApart(direction, curRect, targetRect, viewSize))
-        return RectsAlignment::None;
+        return None;
 
     if (areRectsFullyAligned(direction, curRect, targetRect))
-        return RectsAlignment::Full;
+        return Full;
 
     if (areRectsPartiallyAligned(direction, curRect, targetRect))
-        return RectsAlignment::Partial;
+        return Partial;
 
-    return RectsAlignment::None;
+    return None;
 }
 
 static inline bool isHorizontalMove(FocusDirection direction)
@@ -648,7 +648,7 @@ void distanceDataForNode(FocusDirection direction, const FocusCandidate& current
     if (areElementsOnSameLine(current, candidate)) {
         if ((direction == FocusDirection::Up && current.rect.y() > candidate.rect.y()) || (direction == FocusDirection::Down && candidate.rect.y() > current.rect.y())) {
             candidate.distance = 0;
-            candidate.alignment = RectsAlignment::Full;
+            candidate.alignment = Full;
             return;
         }
     }

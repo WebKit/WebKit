@@ -43,9 +43,9 @@ static String getSystemSoftwareName()
 #if HAS_GETENV_NP
     char buf[32];
     if (!getenv_np("SYSTEM_SOFTWARE_NAME", buf, sizeof(buf)))
-        return String::fromUTF8(buf);
+        return buf;
 #endif
-    return "PlayStation"_s;
+    return "PlayStation";
 }
 
 static String getSystemSoftwareVersion()
@@ -53,9 +53,9 @@ static String getSystemSoftwareVersion()
 #if HAS_GETENV_NP
     char buf[32];
     if (!getenv_np("SYSTEM_SOFTWARE_VERSION", buf, sizeof(buf)))
-        return String::fromUTF8(buf);
+        return buf;
 #endif
-    return "0.00"_s;
+    return "0.00";
 }
 
 static constexpr const char* versionForUAString()
@@ -87,7 +87,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
 
     String finalApplicationVersion = applicationVersion;
     if (finalApplicationVersion.isEmpty())
-        finalApplicationVersion = String::fromUTF8(versionForUAString());
+        finalApplicationVersion = versionForUAString();
 
     return makeString(standardUserAgentStatic(), ' ', applicationName, '/', finalApplicationVersion);
 }

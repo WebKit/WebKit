@@ -69,7 +69,6 @@
 #endif
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
@@ -207,7 +206,7 @@ private:
     InbandTextTrackPrivateAVF* m_currentTextTrack;
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
-    MemoryCompactRobinHoodHashMap<String, Vector<RetainPtr<AVCFAssetResourceLoadingRequestRef>>> m_keyURIToRequestMap;
+    HashMap<String, Vector<RetainPtr<AVCFAssetResourceLoadingRequestRef>>> m_keyURIToRequestMap;
     AVCFAssetResourceLoaderCallbacks m_resourceLoaderCallbacks;
 #endif
 };
@@ -911,8 +910,8 @@ DestinationColorSpace MediaPlayerPrivateAVFoundationCF::colorSpace()
 
 static bool keySystemIsSupported(const String& keySystem)
 {
-    return equalLettersIgnoringASCIICase(keySystem, "com.apple.fps"_s)
-        || equalLettersIgnoringASCIICase(keySystem, "com.apple.fps.1_0"_s);
+    return equalLettersIgnoringASCIICase(keySystem, "com.apple.fps")
+        || equalLettersIgnoringASCIICase(keySystem, "com.apple.fps.1_0");
 }
 
 #endif
@@ -1167,7 +1166,7 @@ RetainPtr<AVCFAssetResourceLoadingRequestRef> MediaPlayerPrivateAVFoundationCF::
     return m_avfWrapper->takeRequestForKeyURI(keyURI);
 }
 
-std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, LegacyCDMSessionClient& client)
+std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, LegacyCDMSessionClient* client)
 {
     if (!keySystemIsSupported(keySystem))
         return nullptr;
@@ -1177,7 +1176,7 @@ std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationCF::createSessio
 
 #elif ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, LegacyCDMSessionClient&)
+std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem, LegacyCDMSessionClient*)
 {
     return nullptr;
 }
@@ -1911,7 +1910,7 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
     RetainPtr<CFStringRef> schemeRef = adoptCF(CFURLCopyScheme(requestURL.get()));
     String scheme = schemeRef.get();
 
-    if (scheme == "skd"_s) {
+    if (scheme == "skd") {
         RetainPtr<CFURLRef> absoluteURL = adoptCF(CFURLCopyAbsoluteURL(requestURL.get()));
         RetainPtr<CFStringRef> keyURIRef = CFURLGetString(absoluteURL.get());
         String keyURI = keyURIRef.get();
@@ -1920,15 +1919,15 @@ bool AVFWrapper::shouldWaitForLoadingOfResource(AVCFAssetResourceLoadingRequestR
         // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
         unsigned keyURISize = keyURI.length() * sizeof(UChar);
         auto initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
-        unsigned byteLength = initDataBuffer->byteLength();
-        auto initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, byteLength);
+        auto initDataView = JSC::DataView::create(initDataBuffer.copyRef(), 0, initDataBuffer->byteLength());
         initDataView->set<uint32_t>(0, keyURISize, true);
 
         auto keyURIArray = Uint16Array::create(initDataBuffer.copyRef(), 4, keyURI.length());
         keyURIArray->setRange(reinterpret_cast<const uint16_t*>(StringView(keyURI).upconvertedCharacters().get()), keyURI.length() / sizeof(unsigned char), 0);
 
-        auto initData = SharedBuffer::create(Vector<uint8_t> { static_cast<uint8_t*>(initDataBuffer->data()), byteLength });
-        m_owner->player()->keyNeeded(initData);
+        unsigned byteLength = initDataBuffer->byteLength();
+        auto initData = Uint8Array::create(WTFMove(initDataBuffer), 0, byteLength);
+        m_owner->player()->keyNeeded(initData.ptr());
         setRequestForKey(keyURI, avRequest);
         return true;
     }

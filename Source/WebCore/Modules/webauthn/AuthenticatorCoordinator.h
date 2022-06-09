@@ -44,6 +44,7 @@ class Document;
 
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
+
 struct CredentialRequestOptions;
 struct SecurityOriginData;
 
@@ -61,9 +62,9 @@ public:
 
     // The following methods implement static methods of PublicKeyCredential.
     void create(const Document&, const PublicKeyCredentialCreationOptions&, WebAuthn::Scope, RefPtr<AbortSignal>&&, CredentialPromise&&) const;
-    void discoverFromExternalSource(const Document&, CredentialRequestOptions&&, const ScopeAndCrossOriginParent&, CredentialPromise&&) const;
+
+    void discoverFromExternalSource(const Document&, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent&, CredentialPromise&&) const;
     void isUserVerifyingPlatformAuthenticatorAvailable(DOMPromiseDeferred<IDLBoolean>&&) const;
-    void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&) const;
 
     void resetUserGestureRequirement();
 

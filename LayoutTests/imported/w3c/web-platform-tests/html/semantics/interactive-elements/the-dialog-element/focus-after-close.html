@@ -160,17 +160,13 @@ function test_move_to_shadow_host(showModal) {
 }
 
 // Test moving the focus doesn't scroll the viewport
-async function test_move_focus_dont_scroll_viewport(showModal) {
+function test_move_focus_dont_scroll_viewport(showModal) {
   const outViewPortButton = document.createElement("button");
   outViewPortButton.style.top = (window.innerHeight + 10).toString() + "px";
   outViewPortButton.style.position = "absolute";
   document.body.appendChild(outViewPortButton);
 
-  await new Promise(resolve => {
-    document.addEventListener("scroll", () => step_timeout(resolve, 0));
-    outViewPortButton.focus();
-  });
-
+  outViewPortButton.focus();
   // Since the outViewPortButton is focused, so the viewport should be
   // scrolled to it
   assert_true(document.documentElement.scrollTop > 0 );
@@ -221,9 +217,9 @@ test(() => {
   test_move_to_shadow_host(false);
 }, "Focus should be moved to the shadow DOM host if the previouly focused element is a shadow DOM node");
 
-promise_test(async () => {
-  await test_move_focus_dont_scroll_viewport(true);
-  await test_move_focus_dont_scroll_viewport(false);
+test(() => {
+  test_move_focus_dont_scroll_viewport(true);
+  test_move_focus_dont_scroll_viewport(false);
 }, "Focus should not scroll if the previously focused element is outside the viewport");
 </script>
 </body>

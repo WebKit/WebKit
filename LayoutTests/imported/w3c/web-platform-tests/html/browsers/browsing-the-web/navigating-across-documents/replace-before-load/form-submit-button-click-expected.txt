@@ -1,0 +1,4 @@
+
+
+FAIL Replace before load, triggered by submitButton.click() assert_equals: expected "http://localhost:8800/common/blank.html?thereplacement=" but got "http://localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/resources/code-injector.html?pipe=sub(none)&code=%0A%20%20%20%20const%20form%20%3D%20document.createElement(%22form%22)%3B%0A%20%20%20%20form.action%20%3D%20%22%2Fcommon%2Fblank.html%22%3B%0A%0A%20%20%20%20const%20input%20%3D%20document.createElement(%22input%22)%3B%0A%20%20%20%20input.type%20%3D%20%22hidden%22%3B%0A%20%20%20%20input.name%20%3D%20%22thereplacement%22%3B%0A%20%20%20%20form.append(input)%3B%0A%0A%20%20%20%20const%20button%20%3D%20document.createElement(%22button%22)%3B%0A%20%20%20%20button.type%20%3D%20%22submit%22%3B%0A%20%20%20%20form.append(button)%3B%0A%0A%20%20%20%20document.currentScript.before(form)%3B%0A%20%20%20%20button.click()%3B%0A%20%20"
+

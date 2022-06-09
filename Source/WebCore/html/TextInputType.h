@@ -37,15 +37,10 @@ namespace WebCore {
 class TextInputType final : public BaseTextInputType {
     template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit TextInputType(HTMLInputElement& element)
-        : BaseTextInputType(Type::Text, element)
-    {
-    }
+    explicit TextInputType(HTMLInputElement& element) : BaseTextInputType(Type::Text, element) { }
 
 private:
-    const AtomString& formControlType() const final;
+    const AtomString& formControlType() const override;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(TextInputType, Type::Text)

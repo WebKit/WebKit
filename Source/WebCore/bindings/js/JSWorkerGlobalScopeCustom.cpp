@@ -27,11 +27,8 @@
 #include "JSWorkerGlobalScope.h"
 
 #include "JSDOMExceptionHandling.h"
-#include "JSDOMMicrotask.h"
-#include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
-#include "WorkerLocation.h"
-#include "WorkerNavigator.h"
+#include <JavaScriptCore/JSMicrotask.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -40,11 +37,11 @@ template<typename Visitor>
 void JSWorkerGlobalScope::visitAdditionalChildren(Visitor& visitor)
 {
     if (auto* location = wrapped().optionalLocation())
-        addWebCoreOpaqueRoot(visitor, *location);
+        visitor.addOpaqueRoot(location);
     if (auto* navigator = wrapped().optionalNavigator())
-        addWebCoreOpaqueRoot(visitor, *navigator);
+        visitor.addOpaqueRoot(navigator);
     ScriptExecutionContext& context = wrapped();
-    addWebCoreOpaqueRoot(visitor, context);
+    visitor.addOpaqueRoot(&context);
     
     // Normally JSEventTargetCustom.cpp's JSEventTarget::visitAdditionalChildren() would call this. But
     // even though WorkerGlobalScope is an EventTarget, JSWorkerGlobalScope does not subclass
@@ -63,11 +60,11 @@ JSValue JSWorkerGlobalScope::queueMicrotask(JSGlobalObject& lexicalGlobalObject,
         return throwException(&lexicalGlobalObject, scope, createNotEnoughArgumentsError(&lexicalGlobalObject));
 
     JSValue functionValue = callFrame.uncheckedArgument(0);
-    if (UNLIKELY(!functionValue.isCallable()))
+    if (UNLIKELY(!functionValue.isCallable(vm)))
         return JSValue::decode(throwArgumentMustBeFunctionError(lexicalGlobalObject, scope, 0, "callback", "WorkerGlobalScope", "queueMicrotask"));
 
     scope.release();
-    Base::queueMicrotask(createJSDOMMicrotask(vm, asObject(functionValue)));
+    Base::queueMicrotask(JSC::createJSMicrotask(vm, functionValue));
     return jsUndefined();
 }
 

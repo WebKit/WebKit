@@ -1,3 +1,5 @@
 
-PASS messagechannel in shared worker
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT messagechannel in shared worker Test timed out
 

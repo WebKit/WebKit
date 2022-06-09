@@ -30,7 +30,6 @@ namespace WebCore {
 class GraphicsLayer;
 
 class TextureMapperTile {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     inline RefPtr<BitmapTexture> texture() const { return m_texture; }
     inline FloatRect rect() const { return m_rect; }

@@ -30,7 +30,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 namespace WTF {
 class MediaTime;
@@ -49,7 +49,7 @@ struct MediaRecorderPrivateOptions;
 
 class MediaRecorderPrivate
     : public RealtimeMediaSource::AudioSampleObserver
-    , public RealtimeMediaSource::VideoFrameObserver {
+    , public RealtimeMediaSource::VideoSampleObserver {
 public:
     ~MediaRecorderPrivate();
 
@@ -116,12 +116,12 @@ inline void MediaRecorderPrivate::setAudioSource(RefPtr<RealtimeMediaSource>&& a
 inline void MediaRecorderPrivate::setVideoSource(RefPtr<RealtimeMediaSource>&& videoSource)
 {
     if (m_videoSource)
-        m_videoSource->removeVideoFrameObserver(*this);
+        m_videoSource->removeVideoSampleObserver(*this);
 
     m_videoSource = WTFMove(videoSource);
 
     if (m_videoSource)
-        m_videoSource->addVideoFrameObserver(*this);
+        m_videoSource->addVideoSampleObserver(*this);
 }
 
 inline MediaRecorderPrivate::~MediaRecorderPrivate()
@@ -132,9 +132,9 @@ inline MediaRecorderPrivate::~MediaRecorderPrivate()
     if (m_audioSource)
         m_audioSource->removeAudioSampleObserver(*this);
     if (m_videoSource)
-        m_videoSource->removeVideoFrameObserver(*this);
+        m_videoSource->removeVideoSampleObserver(*this);
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

@@ -6,6 +6,8 @@ set(bmalloc_PRIVATE_INCLUDE_DIRECTORIES
     "${BMALLOC_DIR}/libpas/src/libpas"
 )
 
+add_definitions(-DPAS_BMALLOC)
+
 set(bmalloc_SOURCES
     bmalloc/AllIsoHeaps.cpp
     bmalloc/Allocator.cpp
@@ -70,7 +72,6 @@ set(bmalloc_SOURCES
     libpas/src/libpas/pas_bootstrap_heap_page_provider.c
     libpas/src/libpas/pas_coalign.c
     libpas/src/libpas/pas_commit_span.c
-    libpas/src/libpas/pas_committed_pages_vector.c
     libpas/src/libpas/pas_compact_bootstrap_free_heap.c
     libpas/src/libpas/pas_compact_expendable_memory.c
     libpas/src/libpas/pas_compact_heap_reservation.c
@@ -122,7 +123,6 @@ set(bmalloc_SOURCES
     libpas/src/libpas/pas_large_map.c
     libpas/src/libpas/pas_large_sharing_pool.c
     libpas/src/libpas/pas_large_utility_free_heap.c
-    libpas/src/libpas/pas_lenient_compact_unsigned_ptr.c
     libpas/src/libpas/pas_local_allocator.c
     libpas/src/libpas/pas_local_allocator_scavenger_data.c
     libpas/src/libpas/pas_local_view_cache.c
@@ -359,7 +359,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_coalign.h
     libpas/src/libpas/pas_commit_mode.h
     libpas/src/libpas/pas_commit_span.h
-    libpas/src/libpas/pas_committed_pages_vector.h
     libpas/src/libpas/pas_compact_atomic_allocator_index_ptr.h
     libpas/src/libpas/pas_compact_atomic_biasing_directory_ptr.h
     libpas/src/libpas/pas_compact_atomic_bitfit_biasing_directory_ptr.h
@@ -400,7 +399,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_compact_tagged_page_granule_use_count_ptr.h
     libpas/src/libpas/pas_compact_tagged_ptr.h
     libpas/src/libpas/pas_compact_tagged_unsigned_ptr.h
-    libpas/src/libpas/pas_compact_thread_local_cache_layout_node.h
     libpas/src/libpas/pas_compact_unsigned_ptr.h
     libpas/src/libpas/pas_compute_summary_object_callbacks.h
     libpas/src/libpas/pas_config.h
@@ -410,7 +408,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_deallocation_mode.h
     libpas/src/libpas/pas_deallocator.h
     libpas/src/libpas/pas_deallocator_scavenge_action.h
-    libpas/src/libpas/pas_decommit_exclusion_range.h
     libpas/src/libpas/pas_debug_heap.h
     libpas/src/libpas/pas_debug_spectrum.h
     libpas/src/libpas/pas_deferred_decommit_log.h
@@ -497,11 +494,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_large_sharing_pool_epoch_update_mode.h
     libpas/src/libpas/pas_large_sharing_pool.h
     libpas/src/libpas/pas_large_utility_free_heap.h
-    libpas/src/libpas/pas_large_virtual_range.h
-    libpas/src/libpas/pas_large_virtual_range_min_heap.h
-    libpas/src/libpas/pas_lenient_compact_ptr.h
-    libpas/src/libpas/pas_lenient_compact_ptr_inlines.h
-    libpas/src/libpas/pas_lenient_compact_unsigned_ptr.h
     libpas/src/libpas/pas_line_word_config.h
     libpas/src/libpas/pas_list_direction.h
     libpas/src/libpas/pas_local_allocator_config_kind.h
@@ -518,7 +510,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_medium_megapage_cache.h
     libpas/src/libpas/pas_megapage_cache.h
     libpas/src/libpas/pas_min_heap.h
-    libpas/src/libpas/pas_mmap_capability.h
     libpas/src/libpas/pas_monotonic_time.h
     libpas/src/libpas/pas_mutation_count.h
     libpas/src/libpas/pas_object_kind.h
@@ -624,7 +615,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_thread_suspend_lock.h
     libpas/src/libpas/pas_thread_local_cache.h
     libpas/src/libpas/pas_thread_local_cache_layout.h
-    libpas/src/libpas/pas_thread_local_cache_layout_entry.h
     libpas/src/libpas/pas_thread_local_cache_layout_node.h
     libpas/src/libpas/pas_thread_local_cache_layout_node_kind.h
     libpas/src/libpas/pas_thread_local_cache_node.h
@@ -695,9 +685,7 @@ set_source_files_properties(
     libpas/src/libpas/pas_fast_megapage_cache.c
     PROPERTIES LANGUAGE CXX)
 
-WEBKIT_ADD_TARGET_CXX_FLAGS(bmalloc
-    -Wno-missing-field-initializers
-    -Wno-cast-align)
+WEBKIT_ADD_TARGET_CXX_FLAGS(bmalloc -Wno-missing-field-initializers)
 
 # Only build mbmalloc on platforms that MallocBench supports
 if (DEVELOPER_MODE AND (APPLE OR HAVE_MALLOC_TRIM))

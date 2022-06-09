@@ -25,9 +25,9 @@
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
 #include "ElementIterator.h"
-#include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "GCReachableRef.h"
 #include "HTMLSlotElement.h"
 #include "HTMLSummaryElement.h"
 #include "LocalizedStrings.h"
@@ -47,7 +47,7 @@ using namespace HTMLNames;
 
 static const AtomString& summarySlotName()
 {
-    static MainThreadNeverDestroyed<const AtomString> summarySlot("summarySlot"_s);
+    static MainThreadNeverDestroyed<const AtomString> summarySlot("summarySlot");
     return summarySlot;
 }
 
@@ -147,9 +147,9 @@ void HTMLDetailsElement::parseAttribute(const QualifiedName& name, const AtomStr
             if (m_isToggleEventTaskQueued)
                 return;
 
-            queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this] {
-                dispatchEvent(Event::create(eventNames().toggleEvent, Event::CanBubble::No, Event::IsCancelable::No));
-                m_isToggleEventTaskQueued = false;
+            document().eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = GCReachableRef { *this }] {
+                protectedThis->dispatchEvent(Event::create(eventNames().toggleEvent, Event::CanBubble::No, Event::IsCancelable::No));
+                protectedThis->m_isToggleEventTaskQueued = false;
             });
             m_isToggleEventTaskQueued = true;
         }

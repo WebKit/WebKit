@@ -25,11 +25,11 @@
 
 #import <WebKit/WKFoundation.h>
 
-#if TARGET_OS_OSX || TARGET_OS_IOS
+#if !TARGET_OS_IPHONE
 
 #import <Foundation/Foundation.h>
 
-WK_CLASS_AVAILABLE(macos(10.12), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(10.12))
 @interface _WKHitTestResult : NSObject <NSCopying>
 
 @property (nonatomic, readonly, copy) NSURL *absoluteImageURL;
@@ -47,4 +47,4 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(WK_IOS_TBA))
 
 @end
 
-#endif
+#endif // !TARGET_OS_IPHONE

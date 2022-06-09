@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <WebCore/StorageQuotaManager.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -132,9 +133,6 @@ public:
     const String& generalStorageDirectory() const { return m_generalStorageDirectory; }
     void setGeneralStorageDirectory(String&& directory) { m_generalStorageDirectory = WTFMove(directory); }
 
-    bool shouldUseCustomStoragePaths() const { return m_shouldUseCustomStoragePaths; }
-    void setShouldUseCustomStoragePaths(bool use) { m_shouldUseCustomStoragePaths = use; }
-
     const String& applicationCacheFlatFileSubdirectoryName() const { return m_applicationCacheFlatFileSubdirectoryName; }
     void setApplicationCacheFlatFileSubdirectoryName(String&& directory) { m_applicationCacheFlatFileSubdirectoryName = WTFMove(directory); }
     
@@ -183,8 +181,6 @@ public:
 
     bool shouldRunServiceWorkersOnMainThreadForTesting() const { return m_shouldRunServiceWorkersOnMainThreadForTesting; }
     void setShouldRunServiceWorkersOnMainThreadForTesting(bool shouldRunOnMainThread) { m_shouldRunServiceWorkersOnMainThreadForTesting = shouldRunOnMainThread; }
-    std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue() const { return m_overrideServiceWorkerRegistrationCountTestingValue; }
-    void setOverrideServiceWorkerRegistrationCountTestingValue(unsigned count) { m_overrideServiceWorkerRegistrationCountTestingValue = count; }
 
     const URL& standaloneApplicationURL() const { return m_standaloneApplicationURL; }
     void setStandaloneApplicationURL(URL&& url) { m_standaloneApplicationURL = WTFMove(url); }
@@ -209,10 +205,9 @@ public:
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
-    bool m_shouldUseCustomStoragePaths;
     String m_cacheStorageDirectory;
     String m_generalStorageDirectory;
-    uint64_t m_perOriginStorageQuota;
+    uint64_t m_perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };
     String m_networkCacheDirectory;
     String m_applicationCacheDirectory;
     String m_applicationCacheFlatFileSubdirectoryName { "Files"_s };
@@ -257,7 +252,6 @@ private:
     bool m_preventsSystemHTTPProxyAuthentication { false };
     bool m_requiresSecureHTTPSProxyConnection { false };
     bool m_shouldRunServiceWorkersOnMainThreadForTesting { false };
-    std::optional<unsigned> m_overrideServiceWorkerRegistrationCountTestingValue;
     unsigned m_testSpeedMultiplier { 1 };
     URL m_standaloneApplicationURL;
     bool m_enableInAppBrowserPrivacyForTesting { false };

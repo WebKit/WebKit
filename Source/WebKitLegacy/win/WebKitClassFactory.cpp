@@ -69,13 +69,13 @@ WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
     WebCore::populateJITOperations();
 
     gClassCount++;
-    gClassNameCount().add("WebKitClassFactory"_s);
+    gClassNameCount().add("WebKitClassFactory");
 }
 
 WebKitClassFactory::~WebKitClassFactory()
 {
     gClassCount--;
-    gClassNameCount().remove("WebKitClassFactory"_s);
+    gClassNameCount().remove("WebKitClassFactory");
 }
 
 // IUnknown -------------------------------------------------------------------

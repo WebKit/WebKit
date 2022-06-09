@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Igalia, S.L.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2015-2022 Apple, Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,18 +27,15 @@
 #include "FEGaussianBlurSoftwareApplier.h"
 
 #include "FEGaussianBlur.h"
-#if HAVE(ARM_NEON_INTRINSICS)
-#include "FEGaussianBlurNEON.h"
-#endif
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
-#include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/MathExtras.h>
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
 #else
+#include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/ParallelJobs.h>
 #endif
 
@@ -73,10 +70,10 @@ inline void FEGaussianBlurSoftwareApplier::kernelPosition(int blurIteration, uns
 }
 
 // This function only operates on Alpha channel.
-inline void FEGaussianBlurSoftwareApplier::boxBlurAlphaOnly(const PixelBuffer& srcPixelBuffer, PixelBuffer& dstPixelBuffer, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize)
+inline void FEGaussianBlurSoftwareApplier::boxBlurAlphaOnly(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray, unsigned dx, int& dxLeft, int& dxRight, int& stride, int& strideLine, int& effectWidth, int& effectHeight, const int& maxKernelSize)
 {
-    const uint8_t* srcData = srcPixelBuffer.bytes();
-    uint8_t* dstData = dstPixelBuffer.bytes();
+    const uint8_t* srcData = srcPixelArray.data();
+    uint8_t* dstData = dstPixelArray.data();
     // Memory alignment is: RGBA, zero-index based.
     const int channel = 3;
 
@@ -113,14 +110,14 @@ inline void FEGaussianBlurSoftwareApplier::boxBlurAlphaOnly(const PixelBuffer& s
     }
 }
 
-inline void FEGaussianBlurSoftwareApplier::boxBlur(const PixelBuffer& srcPixelBuffer, PixelBuffer& dstPixelBuffer, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType edgeMode)
+inline void FEGaussianBlurSoftwareApplier::boxBlur(const Uint8ClampedArray& srcPixelArray, Uint8ClampedArray& dstPixelArray, unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage, EdgeModeType edgeMode)
 {
     const int maxKernelSize = std::min(dxRight, effectWidth);
     if (alphaImage)
-        return boxBlurAlphaOnly(srcPixelBuffer, dstPixelBuffer, dx, dxLeft, dxRight, stride, strideLine,  effectWidth, effectHeight, maxKernelSize);
+        return boxBlurAlphaOnly(srcPixelArray, dstPixelArray, dx, dxLeft, dxRight, stride, strideLine,  effectWidth, effectHeight, maxKernelSize);
 
-    const uint8_t* srcData = srcPixelBuffer.bytes();
-    uint8_t* dstData = dstPixelBuffer.bytes();
+    const uint8_t* srcData = srcPixelArray.data();
+    uint8_t* dstData = dstPixelArray.data();
 
     // Concerning the array width/length: it is Element size + Margin + Border. The number of pixels will be
     // P = width * height * channels.
@@ -243,9 +240,9 @@ inline void FEGaussianBlurSoftwareApplier::boxBlur(const PixelBuffer& srcPixelBu
 }
 
 #if USE(ACCELERATE)
-inline void FEGaussianBlurSoftwareApplier::boxBlurAccelerated(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight)
+inline void FEGaussianBlurSoftwareApplier::boxBlurAccelerated(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSize, int stride, int effectWidth, int effectHeight)
 {
-    if (!ioBuffer.bytes() || !tempBuffer.bytes()) {
+    if (!ioBuffer.data() || !tempBuffer.data()) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -260,13 +257,13 @@ inline void FEGaussianBlurSoftwareApplier::boxBlurAccelerated(PixelBuffer& ioBuf
         kernelSize += 1;
 
     vImage_Buffer effectInBuffer;
-    effectInBuffer.data = ioBuffer.bytes();
+    effectInBuffer.data = static_cast<void*>(ioBuffer.data());
     effectInBuffer.width = effectWidth;
     effectInBuffer.height = effectHeight;
     effectInBuffer.rowBytes = stride;
 
     vImage_Buffer effectOutBuffer;
-    effectOutBuffer.data = tempBuffer.bytes();
+    effectOutBuffer.data = tempBuffer.data();
     effectOutBuffer.width = effectWidth;
     effectOutBuffer.height = effectHeight;
     effectOutBuffer.rowBytes = stride;
@@ -284,20 +281,20 @@ inline void FEGaussianBlurSoftwareApplier::boxBlurAccelerated(PixelBuffer& ioBuf
     fastFree(tmpBuffer);
 
     // The final result should be stored in ioBuffer.
-    ASSERT(ioBuffer.sizeInBytes() == tempBuffer.sizeInBytes());
-    memcpy(ioBuffer.bytes(), tempBuffer.bytes(), ioBuffer.sizeInBytes());
+    ASSERT(ioBuffer.length() == tempBuffer.length());
+    memcpy(ioBuffer.data(), tempBuffer.data(), ioBuffer.length());
 }
 #endif
 
-inline void FEGaussianBlurSoftwareApplier::boxBlurUnaccelerated(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
+inline void FEGaussianBlurSoftwareApplier::boxBlurUnaccelerated(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, int stride, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
 {
     int dxLeft = 0;
     int dxRight = 0;
     int dyLeft = 0;
     int dyRight = 0;
     
-    auto* fromBuffer = &ioBuffer;
-    auto* toBuffer = &tempBuffer;
+    Uint8ClampedArray* fromBuffer = &ioBuffer;
+    Uint8ClampedArray* toBuffer = &tempBuffer;
 
     for (int i = 0; i < 3; ++i) {
         if (kernelSizeX) {
@@ -329,34 +326,34 @@ inline void FEGaussianBlurSoftwareApplier::boxBlurUnaccelerated(PixelBuffer& ioB
 
     // The final result should be stored in ioBuffer.
     if (&ioBuffer != fromBuffer) {
-        ASSERT(ioBuffer.sizeInBytes() == fromBuffer->sizeInBytes());
-        memcpy(ioBuffer.bytes(), fromBuffer->bytes(), ioBuffer.sizeInBytes());
+        ASSERT(ioBuffer.length() == fromBuffer->length());
+        memcpy(ioBuffer.data(), fromBuffer->data(), ioBuffer.length());
     }
 }
 
-inline void FEGaussianBlurSoftwareApplier::boxBlurGeneric(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
+inline void FEGaussianBlurSoftwareApplier::boxBlurGeneric(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
 {
     int stride = 4 * paintSize.width();
 
 #if USE(ACCELERATE)
     if (kernelSizeX == kernelSizeY && (edgeMode == EdgeModeType::None || edgeMode == EdgeModeType::Duplicate)) {
-        boxBlurAccelerated(ioBuffer, tempBuffer, kernelSizeX, stride, paintSize.width(), paintSize.height());
+        boxBlurAccelerated(ioBuffer, tmpPixelArray, kernelSizeX, stride, paintSize.width(), paintSize.height());
         return;
     }
 #endif
 
-    boxBlurUnaccelerated(ioBuffer, tempBuffer, kernelSizeX, kernelSizeY, stride, paintSize, isAlphaImage, edgeMode);
+    boxBlurUnaccelerated(ioBuffer, tmpPixelArray, kernelSizeX, kernelSizeY, stride, paintSize, isAlphaImage, edgeMode);
 }
 
 #if !USE(ACCELERATE)
 inline void FEGaussianBlurSoftwareApplier::boxBlurWorker(ApplyParameters* parameters)
 {
     IntSize paintSize(parameters->width, parameters->height);
-    boxBlurGeneric(*parameters->ioBuffer, *parameters->tempBuffer, parameters->kernelSizeX, parameters->kernelSizeY, paintSize, parameters->isAlphaImage, parameters->edgeMode);
+    boxBlurGeneric(*parameters->ioPixelArray, *parameters->tmpPixelArray, parameters->kernelSizeX, parameters->kernelSizeY, paintSize, parameters->isAlphaImage, parameters->edgeMode);
 }
 #endif
 
-inline void FEGaussianBlurSoftwareApplier::applyPlatform(PixelBuffer& ioBuffer, PixelBuffer& tempBuffer, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
+inline void FEGaussianBlurSoftwareApplier::applyPlatform(Uint8ClampedArray& ioBuffer, Uint8ClampedArray& tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize, bool isAlphaImage, EdgeModeType edgeMode)
 {
 #if !USE(ACCELERATE)
     int scanline = 4 * paintSize.width();
@@ -383,15 +380,14 @@ inline void FEGaussianBlurSoftwareApplier::applyPlatform(PixelBuffer& ioBuffer, 
                 currentY += job < jobsWithExtra ? blockHeight + 1 : blockHeight;
                 int endY = job == jobs - 1 ? currentY : currentY + extraHeight;
 
-                IntSize blockSize = { paintSize.width(), endY - startY };
-
+                int blockSize = (endY - startY) * scanline;
                 if (!job) {
-                    params.ioBuffer = &ioBuffer;
-                    params.tempBuffer = &tempBuffer;
+                    params.ioPixelArray = &ioBuffer;
+                    params.tmpPixelArray = &tmpPixelArray;
                 } else {
-                    params.ioBuffer = ioBuffer.createScratchPixelBuffer(blockSize);
-                    params.tempBuffer = tempBuffer.createScratchPixelBuffer(blockSize);
-                    memcpy(params.ioBuffer->bytes(), ioBuffer.bytes() + startY * scanline, params.ioBuffer->sizeInBytes());
+                    params.ioPixelArray = Uint8ClampedArray::createUninitialized(blockSize);
+                    params.tmpPixelArray = Uint8ClampedArray::createUninitialized(blockSize);
+                    memcpy(params.ioPixelArray->data(), ioBuffer.data() + startY * scanline, blockSize);
                 }
 
                 params.width = paintSize.width();
@@ -418,7 +414,7 @@ inline void FEGaussianBlurSoftwareApplier::applyPlatform(PixelBuffer& ioBuffer, 
                 destinationOffset = currentY * scanline;
                 size = adjustedBlockHeight * scanline;
 
-                memcpy(ioBuffer.bytes() + destinationOffset, params.ioBuffer->bytes() + sourceOffset, size);
+                memcpy(ioBuffer.data() + destinationOffset, params.ioPixelArray->data() + sourceOffset, size);
             }
             return;
         }
@@ -427,7 +423,7 @@ inline void FEGaussianBlurSoftwareApplier::applyPlatform(PixelBuffer& ioBuffer, 
 #endif
 
     // The selection here eventually should happen dynamically on some platforms.
-    boxBlurGeneric(ioBuffer, tempBuffer, kernelSizeX, kernelSizeY, paintSize, isAlphaImage, edgeMode);
+    boxBlurGeneric(ioBuffer, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize, isAlphaImage, edgeMode);
 }
 
 bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
@@ -446,11 +442,12 @@ bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, const FilterImag
     auto kernelSize = m_effect.calculateKernelSize(filter, { m_effect.stdDeviationX(), m_effect.stdDeviationY() });
 
     IntSize paintSize = result.absoluteImageRect().size();
-    auto tempBuffer = destinationPixelBuffer->createScratchPixelBuffer(paintSize);
-    if (!tempBuffer)
+    auto tmpImageData = Uint8ClampedArray::tryCreateUninitialized(paintSize.area() * 4);
+    if (!tmpImageData)
         return false;
 
-    applyPlatform(*destinationPixelBuffer, *tempBuffer, kernelSize.width(), kernelSize.height(), paintSize, result.isAlphaImage(), m_effect.edgeMode());
+    auto& destinationPixelArray = destinationPixelBuffer->data();
+    applyPlatform(destinationPixelArray, *tmpImageData, kernelSize.width(), kernelSize.height(), paintSize, result.isAlphaImage(), m_effect.edgeMode());
     return true;
 }
 

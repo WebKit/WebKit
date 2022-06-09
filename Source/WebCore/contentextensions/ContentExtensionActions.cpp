@@ -30,8 +30,6 @@
 
 #include "ContentExtensionError.h"
 #include "ResourceRequest.h"
-#include <JavaScriptCore/JSRetainPtr.h>
-#include <JavaScriptCore/JavaScript.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
@@ -116,14 +114,12 @@ Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const 
     return ModifyHeadersAction { WTFMove(*requestHeaders), WTFMove(*responseHeaders) };
 }
 
-ModifyHeadersAction ModifyHeadersAction::isolatedCopy() const &
+ModifyHeadersAction ModifyHeadersAction::isolatedCopy() const
 {
-    return { crossThreadCopy(requestHeaders), crossThreadCopy(responseHeaders) };
-}
-
-ModifyHeadersAction ModifyHeadersAction::isolatedCopy() &&
-{
-    return { crossThreadCopy(WTFMove(requestHeaders)), crossThreadCopy(WTFMove(responseHeaders)) };
+    return {
+        crossThreadCopy(requestHeaders),
+        crossThreadCopy(responseHeaders)
+    };
 }
 
 bool ModifyHeadersAction::operator==(const ModifyHeadersAction& other) const
@@ -201,39 +197,36 @@ auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) 
     if (!object)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
 
-    String operation = object->getString("operation"_s);
+    String operation = object->getString("operation");
     if (!operation)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingOperation);
 
-    String header = object->getString("header"_s);
+    String header = object->getString("header");
     if (!header)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingHeader);
 
-    String value = object->getString("value"_s);
+    String value = object->getString("value");
 
-    if (operation == "set"_s) {
+    if (operation == "set") {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
         return ModifyHeaderInfo { SetOperation { WTFMove(header), WTFMove(value) } };
     }
-    if (operation == "append"_s) {
+    if (operation == "append") {
         if (!value)
             return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingValue);
         return ModifyHeaderInfo { AppendOperation { WTFMove(header), WTFMove(value) } };
     }
-    if (operation == "remove"_s)
+    if (operation == "remove")
         return ModifyHeaderInfo { RemoveOperation { WTFMove(header) } };
     return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidOperation);
 }
 
-auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() const & -> ModifyHeaderInfo
+auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() const -> ModifyHeaderInfo
 {
-    return { crossThreadCopy(operation) };
-}
-
-auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() && -> ModifyHeaderInfo
-{
-    return { crossThreadCopy(WTFMove(operation)) };
+    return {
+        crossThreadCopy(operation)
+    };
 }
 
 bool ModifyHeadersAction::ModifyHeaderInfo::operator==(const ModifyHeaderInfo& other) const
@@ -287,30 +280,30 @@ size_t ModifyHeadersAction::ModifyHeaderInfo::serializedLength(Span<const uint8_
     return deserializeLength(span, 0);
 }
 
-Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const String& urlFilter)
+Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject)
 {
-    auto redirect = redirectObject.getObject("redirect"_s);
+    auto redirect = redirectObject.getObject("redirect");
     if (!redirect)
         return makeUnexpected(ContentExtensionError::JSONRedirectMissing);
 
-    if (auto extensionPath = redirect->getString("extension-path"_s); !!extensionPath) {
+    if (auto extensionPath = redirect->getString("extension-path"); !!extensionPath) {
         if (!extensionPath.startsWith('/'))
             return makeUnexpected(ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash);
         return RedirectAction { ExtensionPathAction { WTFMove(extensionPath) } };
     }
 
-    if (auto regexSubstitution = redirect->getString("regex-substitution"_s); !!regexSubstitution)
-        return RedirectAction { RegexSubstitutionAction { WTFMove(regexSubstitution), urlFilter } };
+    if (auto regexSubstitution = redirect->getString("regex-substitution"); !!regexSubstitution)
+        return RedirectAction { RegexSubstitutionAction { WTFMove(regexSubstitution) } };
 
-    if (auto transform = redirect->getObject("transform"_s)) {
+    if (auto transform = redirect->getObject("transform")) {
         auto parsedTransform = URLTransformAction::parse(*transform);
         if (!parsedTransform)
             return makeUnexpected(parsedTransform.error());
         return RedirectAction { WTFMove(*parsedTransform) };
     }
 
-    if (auto urlString = redirect->getString("url"_s); !!urlString) {
-        URL url { urlString };
+    if (auto urlString = redirect->getString("url"); !!urlString) {
+        auto url = URL(URL(), urlString);
         if (!url.isValid())
             return makeUnexpected(ContentExtensionError::JSONRedirectURLInvalid);
         if (url.protocolIsJavaScript())
@@ -321,14 +314,11 @@ Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Obje
     return makeUnexpected(ContentExtensionError::JSONRedirectInvalidType);
 }
 
-RedirectAction RedirectAction::isolatedCopy() const &
+RedirectAction RedirectAction::isolatedCopy() const
 {
-    return { crossThreadCopy(action) };
-}
-
-RedirectAction RedirectAction::isolatedCopy() &&
-{
-    return { crossThreadCopy(WTFMove(action)) };
+    return {
+        crossThreadCopy(action)
+    };
 }
 
 bool RedirectAction::operator==(const RedirectAction& other) const
@@ -345,7 +335,7 @@ void RedirectAction::serialize(Vector<uint8_t>& vector) const
     std::visit(WTF::makeVisitor([&](const ExtensionPathAction& action) {
         append(vector, action.extensionPath.utf8());
     }, [&](const RegexSubstitutionAction& action) {
-        action.serialize(vector);
+        append(vector, action.regexSubstitution.utf8());
     }, [&](const URLTransformAction& action) {
         action.serialize(vector);
     }, [&](const URLAction& action) {
@@ -364,7 +354,7 @@ RedirectAction RedirectAction::deserialize(Span<const uint8_t> span)
         case WTF::alternativeIndexV<ExtensionPathAction, ActionVariant>:
             return ExtensionPathAction { deserializeUTF8String(span, headerSize, stringLength) };
         case WTF::alternativeIndexV<RegexSubstitutionAction, ActionVariant>:
-            return RegexSubstitutionAction::deserialize(span.subspan(headerSize));
+            return RegexSubstitutionAction { deserializeUTF8String(span, headerSize, stringLength) };
         case WTF::alternativeIndexV<URLTransformAction, ActionVariant>:
             return URLTransformAction::deserialize(span.subspan(headerSize));
         case WTF::alternativeIndexV<URLAction, ActionVariant>:
@@ -385,113 +375,29 @@ void RedirectAction::applyToRequest(ResourceRequest& request, const URL& extensi
         auto url = extensionBaseURL;
         url.setPath(action.extensionPath);
         request.setURL(WTFMove(url));
-    }, [&] (const RegexSubstitutionAction& action) {
-        auto url = request.url();
-        action.applyToURL(url);
-        request.setURL(WTFMove(url));
+    }, [&] (const RegexSubstitutionAction&) {
+        // FIXME: Implement, ideally in a way that doesn't require making a new VM and global object for each redirect operation.
     }, [&] (const URLTransformAction& action) {
         auto url = request.url();
         action.applyToURL(url);
         request.setURL(WTFMove(url));
     }, [&] (const URLAction& action) {
-        request.setURL(URL { action.url });
+        request.setURL(URL(URL(), action.url));
     }), action);
-}
-
-void RedirectAction::RegexSubstitutionAction::serialize(Vector<uint8_t>& vector) const
-{
-    auto regexSubstitutionUTF8 = regexSubstitution.utf8();
-    auto regexFilterUTF8 = regexFilter.utf8();
-    vector.reserveCapacity(vector.size()
-        + sizeof(uint32_t)
-        + sizeof(uint32_t)
-        + regexSubstitutionUTF8.length()
-        + regexFilterUTF8.length());
-    uncheckedAppend(vector, regexSubstitutionUTF8.length());
-    uncheckedAppend(vector, regexFilterUTF8.length());
-    uncheckedAppend(vector, regexSubstitutionUTF8);
-    uncheckedAppend(vector, regexFilterUTF8);
-}
-
-auto RedirectAction::RegexSubstitutionAction::deserialize(Span<const uint8_t> span) -> RegexSubstitutionAction
-{
-    auto regexSubstitutionLength = deserializeLength(span, 0);
-    auto regexFilterLength = deserializeLength(span, sizeof(uint32_t));
-    constexpr auto headerSize = sizeof(uint32_t) + sizeof(uint32_t);
-    auto regexSubstitution = deserializeUTF8String(span, headerSize, regexSubstitutionLength);
-    auto regexFilter = deserializeUTF8String(span, headerSize + regexSubstitutionLength, regexFilterLength);
-    return { WTFMove(regexSubstitution), WTFMove(regexFilter) };
-}
-
-static JSRetainPtr<JSStringRef> makeJSString(const char* utf8)
-{
-    return adopt(JSStringCreateWithUTF8CString(utf8));
-}
-
-static JSRetainPtr<JSStringRef> makeJSString(const String& string)
-{
-    return makeJSString(string.utf8().data());
-}
-
-void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
-{
-    static JSContextGroupRef contextGroup = nullptr;
-    static JSGlobalContextRef context = nullptr;
-    if (!contextGroup || !context) {
-        contextGroup = JSContextGroupCreate();
-        context = JSGlobalContextCreateInGroup(contextGroup, nullptr);
-    }
-
-    auto toObject = [&] (JSValueRef value) {
-        return JSValueToObject(context, value, nullptr);
-    };
-    auto getProperty = [&] (JSValueRef value, const char* name) {
-        return JSObjectGetProperty(context, toObject(value), makeJSString(name).get(), nullptr);
-    };
-    auto getArrayValue = [&] (JSValueRef value, size_t index) {
-        return JSObjectGetPropertyAtIndex(context, toObject(value), index, nullptr);
-    };
-    auto valueToWTFString = [&] (JSValueRef value) {
-        auto string = adopt(JSValueToStringCopy(context, value, nullptr));
-        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string.get());
-        Vector<char> buffer(bufferSize);
-        JSStringGetUTF8CString(string.get(), buffer.data(), buffer.size());
-        return String::fromUTF8(buffer.data());
-    };
-
-    // Effectively execute this JavaScript:
-    // const regexp = new RegExp(regexFilter);
-    // const result = url.match(regexp);
-    JSValueRef regexFilterValue = JSValueMakeString(context, makeJSString(regexFilter).get());
-    JSObjectRef regexp = JSObjectMakeRegExp(context, 1, &regexFilterValue, nullptr);
-    JSValueRef urlValue = JSValueMakeString(context, makeJSString(url.string()).get());
-    JSObjectRef matchFunction = JSValueToObject(context, getProperty(urlValue, "match"), nullptr);
-    JSValueRef result = JSObjectCallAsFunction(context, matchFunction, toObject(urlValue), 1, &regexp, nullptr);
-    if (!JSValueIsArray(context, result))
-        return;
-
-    String substitution = regexSubstitution;
-    size_t resultLength = JSValueToNumber(context, getProperty(result, "length"), nullptr);
-    for (size_t i = 0; i < std::min<size_t>(10, resultLength); i++)
-        substitution = makeStringByReplacingAll(substitution, makeString('\\', i), valueToWTFString(getArrayValue(result, i)));
-
-    URL replacementURL(substitution);
-    if (replacementURL.isValid())
-        url = WTFMove(replacementURL);
 }
 
 auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) -> Expected<URLTransformAction, std::error_code>
 {
     URLTransformAction action;
-    if (auto fragment = transform.getString("fragment"_s); !!fragment) {
+    if (auto fragment = transform.getString("fragment"); !!fragment) {
         if (!fragment.isEmpty() && !fragment.startsWith('#'))
             return makeUnexpected(ContentExtensionError::JSONRedirectInvalidFragment);
         action.fragment = WTFMove(fragment);
     }
-    action.host = transform.getString("host"_s);
-    action.password = transform.getString("password"_s);
-    action.path = transform.getString("path"_s);
-    auto port = transform.getString("port"_s);
+    action.host = transform.getString("host");
+    action.password = transform.getString("password");
+    action.path = transform.getString("path");
+    auto port = transform.getString("port");
     if (!!port) {
         if (port.isEmpty())
             action.port = { std::optional<uint16_t> { } };
@@ -503,22 +409,22 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
         }
     }
 
-    if (auto uncanonicalizedScheme = transform.getString("scheme"_s); !!uncanonicalizedScheme) {
+    if (auto uncanonicalizedScheme = transform.getString("scheme"); !!uncanonicalizedScheme) {
         auto scheme = WTF::URLParser::maybeCanonicalizeScheme(uncanonicalizedScheme);
         if (!scheme)
             return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemeInvalid);
-        if (scheme == "javascript"_s)
+        if (scheme == "javascript")
             return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
         action.scheme = WTFMove(*scheme);
     }
-    action.username = transform.getString("username"_s);
-    if (auto queryTransform = transform.getObject("query-transform"_s)) {
+    action.username = transform.getString("username");
+    if (auto queryTransform = transform.getObject("query-transform")) {
         auto parsedQueryTransform = QueryTransform::parse(*queryTransform);
         if (!parsedQueryTransform)
             return makeUnexpected(parsedQueryTransform.error());
         action.queryTransform = *parsedQueryTransform;
     } else {
-        auto query = transform.getString("query"_s);
+        auto query = transform.getString("query");
         if (!query.isEmpty() && !query.startsWith('?'))
             return makeUnexpected(ContentExtensionError::JSONRedirectInvalidQuery);
         action.queryTransform = WTFMove(query);
@@ -526,16 +432,18 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
     return action;
 }
 
-auto RedirectAction::URLTransformAction::isolatedCopy() const & -> URLTransformAction
+auto RedirectAction::URLTransformAction::isolatedCopy() const -> URLTransformAction
 {
-    return { crossThreadCopy(fragment), crossThreadCopy(host), crossThreadCopy(password), crossThreadCopy(path), crossThreadCopy(port), crossThreadCopy(queryTransform),
-        crossThreadCopy(scheme), crossThreadCopy(username) };
-}
-
-auto RedirectAction::URLTransformAction::isolatedCopy() && -> URLTransformAction
-{
-    return { crossThreadCopy(WTFMove(fragment)), crossThreadCopy(WTFMove(host)), crossThreadCopy(WTFMove(password)), crossThreadCopy(WTFMove(path)), crossThreadCopy(WTFMove(port)),
-        crossThreadCopy(WTFMove(queryTransform)), crossThreadCopy(WTFMove(scheme)), crossThreadCopy(WTFMove(username)) };
+    return {
+        crossThreadCopy(fragment),
+        crossThreadCopy(host),
+        crossThreadCopy(password),
+        crossThreadCopy(path),
+        crossThreadCopy(port),
+        crossThreadCopy(queryTransform),
+        crossThreadCopy(scheme),
+        crossThreadCopy(username)
+    };
 }
 
 bool RedirectAction::URLTransformAction::operator==(const URLTransformAction& other) const
@@ -699,7 +607,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
 {
     QueryTransform parsedQueryTransform;
 
-    if (auto removeParametersValue = queryTransform.getValue("remove-parameters"_s)) {
+    if (auto removeParametersValue = queryTransform.getValue("remove-parameters")) {
         auto removeParametersArray = removeParametersValue->asArray();
         if (!removeParametersArray)
             return makeUnexpected(ContentExtensionError::JSONRemoveParametersNotStringArray);
@@ -713,7 +621,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
         parsedQueryTransform.removeParams = WTFMove(removeParametersVector);
     }
 
-    if (auto addOrReplaceParametersValue = queryTransform.getValue("add-or-replace-parameters"_s)) {
+    if (auto addOrReplaceParametersValue = queryTransform.getValue("add-or-replace-parameters")) {
         auto addOrReplaceParametersArray = addOrReplaceParametersValue->asArray();
         if (!addOrReplaceParametersArray)
             return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersNotArray);
@@ -791,14 +699,12 @@ void RedirectAction::URLTransformAction::QueryTransform::applyToURL(URL& url) co
     url.setQuery(transformedQuery);
 }
 
-auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() const & -> QueryTransform
+auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() const -> QueryTransform
 {
-    return { crossThreadCopy(addOrReplaceParams), crossThreadCopy(removeParams) };
-}
-
-auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() && -> QueryTransform
-{
-    return { crossThreadCopy(WTFMove(addOrReplaceParams)), crossThreadCopy(WTFMove(removeParams)) };
+    return {
+        crossThreadCopy(addOrReplaceParams),
+        crossThreadCopy(removeParams)
+    };
 }
 
 bool RedirectAction::URLTransformAction::QueryTransform::operator==(const QueryTransform& other) const
@@ -858,19 +764,28 @@ auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(co
     if (!keyValue)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueNotADictionary);
 
-    String key = keyValue->getString("key"_s);
+    String key = keyValue->getString("key");
     if (!key)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
 
-    String value = keyValue->getString("value"_s);
+    String value = keyValue->getString("value");
     if (!value)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString);
 
     bool replaceOnly { false };
-    if (auto boolean = keyValue->getBoolean("replace-only"_s))
+    if (auto boolean = keyValue->getBoolean("replace-only"))
         replaceOnly = *boolean;
 
     return { { WTFMove(key), replaceOnly, WTFMove(value) } };
+}
+
+auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::isolatedCopy() const -> QueryKeyValue
+{
+    return {
+        crossThreadCopy(key),
+        crossThreadCopy(replaceOnly),
+        crossThreadCopy(value)
+    };
 }
 
 bool RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::operator==(const QueryKeyValue& other) const

@@ -63,7 +63,7 @@ protected:
     const char* logClassName() const final { return "RealtimeIncomingVideoSource"; }
 #endif
 
-    static VideoFrameTimeMetadata metadataFromVideoFrame(const webrtc::VideoFrame&);
+    static VideoSampleMetadata metadataFromVideoFrame(const webrtc::VideoFrame&);
 
 private:
     // RealtimeMediaSource API

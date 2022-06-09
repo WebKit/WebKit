@@ -71,7 +71,7 @@ private:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&) override;
 #endif
-    void completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&) override;
+    void completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&) override;
 
     void abortPaymentSession() override;
     void cancelPaymentSession() override;
@@ -79,6 +79,10 @@ private:
     void paymentCoordinatorDestroyed() override;
 
     bool isWebPaymentCoordinator() const override { return true; }
+
+    bool supportsUnrestrictedApplePay() const override;
+
+    String userAgentScriptsBlockedErrorMessage() const final;
 
     void getSetupFeatures(const WebCore::ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<WebCore::ApplePaySetupFeature>>&&)>&&) final;
     void beginApplePaySetup(const WebCore::ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<WebCore::ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
@@ -103,6 +107,10 @@ private:
     void didCancelPaymentSession(WebCore::PaymentSessionError&&);
 
     WebCore::PaymentCoordinator& paymentCoordinator();
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    bool remoteUIEnabled() const;
+#endif
 
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
     static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();

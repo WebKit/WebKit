@@ -26,8 +26,10 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
+
 #include "WebGLDebugRendererInfo.h"
 
+#include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

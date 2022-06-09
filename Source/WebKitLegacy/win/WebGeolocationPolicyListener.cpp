@@ -42,13 +42,13 @@ WebGeolocationPolicyListener::WebGeolocationPolicyListener(RefPtr<Geolocation>&&
     , m_geolocation(WTFMove(geolocation))
 {
     gClassCount++;
-    gClassNameCount().add("WebGeolocationPolicyListener"_s);
+    gClassNameCount().add("WebGeolocationPolicyListener");
 }
 
 WebGeolocationPolicyListener::~WebGeolocationPolicyListener()
 {
     gClassCount--;
-    gClassNameCount().remove("WebGeolocationPolicyListener"_s);
+    gClassNameCount().remove("WebGeolocationPolicyListener");
 }
 
 // IUnknown -------------------------------------------------------------------

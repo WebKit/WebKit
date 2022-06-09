@@ -1,5 +1,0 @@
-ALERT: PASS (1/4)
-ALERT: PASS (2/4)
-ALERT: PASS (3/4)
-ALERT: PASS (4/4)
-Tests CSP for manifest v2 allows hash sources.

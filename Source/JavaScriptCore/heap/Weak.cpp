@@ -30,10 +30,12 @@
 
 namespace JSC {
 
-void weakClearSlowCase(WeakImpl* impl)
+void weakClearSlowCase(WeakImpl*& impl)
 {
     ASSERT(impl);
+
     WeakSet::deallocate(impl);
+    impl = nullptr;
 }
 
 } // namespace JSC

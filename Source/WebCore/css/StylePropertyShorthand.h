@@ -66,9 +66,6 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID);
 
 unsigned indexOfShorthandForLonghand(CSSPropertyID, const StylePropertyShorthandVector&);
 
-constexpr bool isShorthandCSSProperty(CSSPropertyID id)
-{
-    return id >= firstShorthandProperty && id <= lastShorthandProperty;
-}
+bool isShorthandCSSProperty(CSSPropertyID);
 
 } // namespace WebCore

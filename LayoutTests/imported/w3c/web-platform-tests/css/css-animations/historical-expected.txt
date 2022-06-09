@@ -1,3 +1,5 @@
 
-PASS Historical CSS features must be removed: WebKitAnimationEvent
+FAIL Historical CSS features must be removed: WebKitAnimationEvent assert_equals: expected (undefined) undefined but got (function) function "function WebKitAnimationEvent() {
+    [native code]
+}"
 

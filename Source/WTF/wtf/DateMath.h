@@ -96,9 +96,9 @@ inline double jsCurrentTime()
     return floor(WallTime::now().secondsSinceEpoch().milliseconds());
 }
 
-extern WTF_EXPORT_PRIVATE const ASCIILiteral weekdayName[7];
-extern WTF_EXPORT_PRIVATE const ASCIILiteral monthName[12];
-extern WTF_EXPORT_PRIVATE const ASCIILiteral monthFullName[12];
+extern WTF_EXPORT_PRIVATE const char* const weekdayName[7];
+extern WTF_EXPORT_PRIVATE const char* const monthName[12];
+extern WTF_EXPORT_PRIVATE const char* const monthFullName[12];
 extern WTF_EXPORT_PRIVATE const int firstDayOfMonth[2][12];
 
 static constexpr double hoursPerDay = 24.0;
@@ -393,38 +393,31 @@ inline double timeToMS(double hour, double min, double sec, double ms)
     return (((hour * WTF::minutesPerHour + min) * WTF::secondsPerMinute + sec) * WTF::msPerSecond + ms);
 }
 
-WTF_EXPORT_PRIVATE bool isTimeZoneValid(StringView);
-WTF_EXPORT_PRIVATE bool setTimeZoneOverride(StringView);
-WTF_EXPORT_PRIVATE void getTimeZoneOverride(Vector<UChar, 32>& timeZoneID);
-
 // Returns combined offset in millisecond (UTC + DST).
 WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds, TimeType = UTCTime);
 
 } // namespace WTF
 
-using WTF::calculateLocalTimeOffset;
+using WTF::isLeapYear;
 using WTF::dateToDaysFrom1970;
 using WTF::dayInMonthFromDayInYear;
 using WTF::dayInYear;
-using WTF::getTimeZoneOverride;
-using WTF::isLeapYear;
-using WTF::isTimeZoneValid;
-using WTF::jsCurrentTime;
-using WTF::LocalTimeOffset;
-using WTF::makeRFC2822DateString;
 using WTF::minutesPerHour;
 using WTF::monthFromDayInYear;
 using WTF::msPerDay;
 using WTF::msPerHour;
 using WTF::msPerMinute;
 using WTF::msPerSecond;
-using WTF::msToDays;
-using WTF::msToHours;
-using WTF::msToMinutes;
 using WTF::msToYear;
-using WTF::parseDateFromNullTerminatedCharacters;
+using WTF::msToDays;
+using WTF::msToMinutes;
+using WTF::msToHours;
 using WTF::secondsPerDay;
 using WTF::secondsPerMinute;
-using WTF::setTimeZoneOverride;
-using WTF::timeClip;
+using WTF::parseDateFromNullTerminatedCharacters;
 using WTF::timeToMS;
+using WTF::makeRFC2822DateString;
+using WTF::LocalTimeOffset;
+using WTF::calculateLocalTimeOffset;
+using WTF::timeClip;
+using WTF::jsCurrentTime;

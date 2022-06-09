@@ -195,7 +195,7 @@ namespace WebCore {
     String AXMonthFieldText();
     String AXNumberFieldText();
     String AXWeekFieldText();
-    String AXARIAContentGroupText(StringView ariaType);
+    String AXARIAContentGroupText(const String& ariaType);
     String AXHorizontalRuleDescriptionText();
     String AXMarkText();
 
@@ -372,12 +372,10 @@ namespace WebCore {
 
 #if ENABLE(IMAGE_ANALYSIS)
     WEBCORE_EXPORT String contextMenuItemTagLookUpImage();
-#endif
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    WEBCORE_EXPORT String contextMenuItemTagCopySubject();
-    WEBCORE_EXPORT String contextMenuItemTitleRemoveBackground();
-#endif
+    WEBCORE_EXPORT String contextMenuItemTagQuickLookImage();
+    WEBCORE_EXPORT String contextMenuItemTagQuickLookImageForTextSelection();
+    WEBCORE_EXPORT String contextMenuItemTagQuickLookImageForVisualSearch();
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
     String contextMenuItemTagTranslate(const String& selectedString);

@@ -27,12 +27,6 @@ enum class ImageMipLevels
     InvalidEnum = 2,
 };
 
-enum class TextureUpdateResult
-{
-    ImageUnaffected,
-    ImageRespecified,
-};
-
 class TextureVk : public TextureImpl, public angle::ObserverInterface
 {
   public:
@@ -187,12 +181,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                         bool fixedSampleLocations) override;
 
     angle::Result initializeContents(const gl::Context *context,
-                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
-
-    angle::Result initializeContentsWithBlack(const gl::Context *context,
-                                              GLenum binding,
-                                              const gl::ImageIndex &imageIndex);
 
     const vk::ImageHelper &getImage() const
     {
@@ -206,9 +195,9 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
         return *mImage;
     }
 
-    void retainBufferViews(vk::CommandBufferHelperCommon *commandBufferHelper)
+    void retainBufferViews(vk::ResourceUseList *resourceUseList)
     {
-        commandBufferHelper->retainResource(&mBufferViews);
+        mBufferViews.retain(resourceUseList);
     }
 
     void releaseOwnershipOfImage(const gl::Context *context);
@@ -244,25 +233,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result ensureImageInitialized(ContextVk *contextVk, ImageMipLevels mipLevels);
 
     vk::ImageOrBufferViewSubresourceSerial getImageViewSubresourceSerial(
-        const gl::SamplerState &samplerState) const
-    {
-        if (samplerState.getSRGBDecode() == GL_DECODE_EXT)
-        {
-            ASSERT(getImageViewSubresourceSerialImpl(GL_DECODE_EXT) ==
-                   mCachedImageViewSubresourceSerialSRGBDecode);
-            return mCachedImageViewSubresourceSerialSRGBDecode;
-        }
-        else
-        {
-            ASSERT(getImageViewSubresourceSerialImpl(GL_SKIP_DECODE_EXT) ==
-                   mCachedImageViewSubresourceSerialSkipDecode);
-            return mCachedImageViewSubresourceSerialSkipDecode;
-        }
-    }
-
+        const gl::SamplerState &samplerState) const;
     vk::ImageOrBufferViewSubresourceSerial getBufferViewSerial() const;
-    vk::ImageOrBufferViewSubresourceSerial getStorageImageViewSerial(
-        const gl::ImageUnit &binding) const;
 
     GLenum getColorReadFormat(const gl::Context *context) override;
     GLenum getColorReadType(const gl::Context *context) override;
@@ -295,7 +267,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     }
 
     angle::Result ensureMutable(ContextVk *contextVk);
-    angle::Result ensureRenderable(ContextVk *contextVk, TextureUpdateResult *updateResultOut);
+    angle::Result ensureRenderable(ContextVk *contextVk);
 
     bool getAndResetImmutableSamplerDirtyState()
     {
@@ -313,8 +285,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     // Get the layer count for views.
     uint32_t getImageViewLayerCount() const;
-    // Get the level count for views.
-    uint32_t getImageViewLevelCount() const;
 
     void releaseAndDeleteImageAndViews(ContextVk *contextVk);
     angle::Result ensureImageAllocated(ContextVk *contextVk, const vk::Format &format);
@@ -460,7 +430,11 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result reinitImageAsRenderable(ContextVk *contextVk,
                                           const vk::Format &format,
                                           gl::TexLevelMask skipLevelsMask);
-    angle::Result initImageViews(ContextVk *contextVk, uint32_t levelCount);
+    angle::Result initImageViews(ContextVk *contextVk,
+                                 const angle::Format &format,
+                                 const bool sized,
+                                 uint32_t levelCount,
+                                 uint32_t layerCount);
     void initSingleLayerRenderTargets(ContextVk *contextVk,
                                       GLuint layerCount,
                                       gl::LevelIndex levelIndexGL,
@@ -477,14 +451,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // Flush image's staged updates for all levels and layers.
     angle::Result flushImageStagedUpdates(ContextVk *contextVk);
 
-    // For various reasons, the underlying image may need to be respecified.  For example because
-    // base/max level changed, usage/create flags have changed, the format needs modification to
-    // become renderable, generate mipmap is adding levels, etc.  This function is called by
-    // syncState and getAttachmentRenderTarget.  The latter calls this function to be able to sync
-    // the texture's image while an attached framebuffer is being synced.  Note that we currently
-    // sync framebuffers before textures so that the deferred clear optimization works.
-    angle::Result respecifyImageStorageIfNecessary(ContextVk *contextVk, gl::Command source);
-
     const gl::InternalFormat &getImplementationSizedFormat(const gl::Context *context) const;
     const vk::Format &getBaseLevelFormat(RendererVk *renderer) const;
     // Queues a flush of any modified image attributes. The image will be reallocated with its new
@@ -492,8 +458,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result respecifyImageStorage(ContextVk *contextVk);
 
     // Update base and max levels, and re-create image if needed.
-    angle::Result maybeUpdateBaseMaxLevels(ContextVk *contextVk,
-                                           TextureUpdateResult *changeResultOut);
+    angle::Result maybeUpdateBaseMaxLevels(ContextVk *contextVk, bool *didRespecifyOut);
 
     bool isFastUnpackPossible(const vk::Format &vkFormat, size_t offset) const;
 
@@ -510,9 +475,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     }
 
     angle::Result refreshImageViews(ContextVk *contextVk);
-    bool shouldDecodeSRGB(vk::Context *contextVk,
-                          GLenum srgbDecode,
-                          bool texelFetchStaticUse) const;
+    bool shouldDecodeSRGB(vk::Context *context, GLenum srgbDecode, bool texelFetchStaticUse) const;
     void initImageUsageFlags(ContextVk *contextVk, angle::FormatID actualFormatID);
     void handleImmutableSamplerTransition(const vk::ImageHelper *previousImage,
                                           const vk::ImageHelper *nextImage);
@@ -522,22 +485,20 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     void stageSelfAsSubresourceUpdates(ContextVk *contextVk);
 
-    vk::ImageOrBufferViewSubresourceSerial getImageViewSubresourceSerialImpl(
-        GLenum srgbDecode) const;
-
-    void updateCachedImageViewSerials();
-
     bool mOwnsImage;
     bool mRequiresMutableStorage;
     vk::ImageAccess mRequiredImageAccess;
     bool mImmutableSamplerDirty;
 
-    // Only valid if this texture is an "EGLImage target" and the associated EGL Image was
-    // originally sourced from an OpenGL texture. Such EGL Images can be a slice of the underlying
-    // resource. The layer and level offsets are used to track the location of the slice.
-    gl::TextureType mEGLImageNativeType;
-    uint32_t mEGLImageLayerOffset;
-    uint32_t mEGLImageLevelOffset;
+    gl::TextureType mImageNativeType;
+
+    // The layer offset to apply when converting from a frontend texture layer to a texture layer in
+    // mImage. Used when this texture sources a cube map face or 3D texture layer from an EGL image.
+    uint32_t mImageLayerOffset;
+
+    // The level offset to apply when converting from a frontend texture level to texture level in
+    // mImage.
+    uint32_t mImageLevelOffset;
 
     // If multisampled rendering to texture, an intermediate multisampled image is created for use
     // as renderpass color attachment.  An array of images and image views are used based on the
@@ -609,10 +570,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // Saved between updates.
     gl::LevelIndex mCurrentBaseLevel;
     gl::LevelIndex mCurrentMaxLevel;
-
-    // Cached subresource indexes.
-    vk::ImageOrBufferViewSubresourceSerial mCachedImageViewSubresourceSerialSRGBDecode;
-    vk::ImageOrBufferViewSubresourceSerial mCachedImageViewSubresourceSerialSkipDecode;
 };
 
 }  // namespace rx

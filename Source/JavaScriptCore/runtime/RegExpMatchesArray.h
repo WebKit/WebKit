@@ -30,11 +30,11 @@
 
 namespace JSC {
 
-static constexpr PropertyOffset RegExpMatchesArrayIndexPropertyOffset = firstOutOfLineOffset;
-static constexpr PropertyOffset RegExpMatchesArrayInputPropertyOffset = firstOutOfLineOffset + 1;
-static constexpr PropertyOffset RegExpMatchesArrayGroupsPropertyOffset = firstOutOfLineOffset + 2;
-static constexpr PropertyOffset RegExpMatchesArrayIndicesPropertyOffset = firstOutOfLineOffset + 3;
-static constexpr PropertyOffset RegExpMatchesIndicesGroupsPropertyOffset = firstOutOfLineOffset;
+static const PropertyOffset RegExpMatchesArrayIndexPropertyOffset = 100;
+static const PropertyOffset RegExpMatchesArrayInputPropertyOffset = 101;
+static const PropertyOffset RegExpMatchesArrayGroupsPropertyOffset = 102;
+static const PropertyOffset RegExpMatchesArrayIndicesPropertyOffset = 103;
+static const PropertyOffset RegExpMatchesIndicesGroupsPropertyOffset = 100;
 
 ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {
@@ -92,9 +92,9 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     JSObject* indicesGroups = createIndices && hasNamedCaptures ? constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure()) : nullptr;
 
     auto setProperties = [&] () {
-        array->putDirectOffset(vm, RegExpMatchesArrayIndexPropertyOffset, jsNumber(result.start));
-        array->putDirectOffset(vm, RegExpMatchesArrayInputPropertyOffset, input);
-        array->putDirectOffset(vm, RegExpMatchesArrayGroupsPropertyOffset, hasNamedCaptures ? groups : jsUndefined());
+        array->putDirect(vm, RegExpMatchesArrayIndexPropertyOffset, jsNumber(result.start));
+        array->putDirect(vm, RegExpMatchesArrayInputPropertyOffset, input);
+        array->putDirect(vm, RegExpMatchesArrayGroupsPropertyOffset, hasNamedCaptures ? groups : jsUndefined());
 
         ASSERT(!array->butterfly()->indexingHeader()->preCapacity(matchStructure));
         auto capacity = matchStructure->outOfLineCapacity();
@@ -102,11 +102,11 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
         gcSafeZeroMemory(static_cast<JSValue*>(array->butterfly()->base(0, capacity)), (capacity - size) * sizeof(JSValue));
 
         if (createIndices) {
-            array->putDirectOffset(vm, RegExpMatchesArrayIndicesPropertyOffset, indicesArray);
+            array->putDirect(vm, RegExpMatchesArrayIndicesPropertyOffset, indicesArray);
 
             Structure* indicesStructure = globalObject->regExpMatchesIndicesArrayStructure();
 
-            indicesArray->putDirectOffset(vm, RegExpMatchesIndicesGroupsPropertyOffset, indicesGroups ? indicesGroups : jsUndefined());
+            indicesArray->putDirect(vm, RegExpMatchesIndicesGroupsPropertyOffset, indicesGroups ? indicesGroups : jsUndefined());
 
             ASSERT(!indicesArray->butterfly()->indexingHeader()->preCapacity(indicesStructure));
             auto indicesCapacity = indicesStructure->outOfLineCapacity();

@@ -30,13 +30,12 @@
 
 #import "CAAudioStreamDescription.h"
 #import "Logging.h"
-#import "MediaSample.h"
 #import "MediaUtilities.h"
 #import "PlatformMediaSessionManager.h"
-#import "SharedBuffer.h"
 #import <AudioToolbox/AudioCodec.h>
 #import <AudioToolbox/AudioComponent.h>
 #import <AudioToolbox/AudioFormat.h>
+#import <CoreMedia/CMFormatDescription.h>
 #import <dlfcn.h>
 #import <wtf/FlipBytes.h>
 #import <wtf/Seconds.h>
@@ -77,7 +76,7 @@ static bool registerDecoderFactory(const char* decoderName, OSType decoderType)
 #endif
 }
 
-static RefPtr<AudioInfo> createAudioInfoForFormat(OSType formatID, Vector<uint8_t>&& magicCookie)
+static RetainPtr<CMFormatDescriptionRef> createAudioFormatDescriptionForFormat(OSType formatID, Vector<uint8_t>&& magicCookie)
 {
     AudioStreamBasicDescription asbd { };
     asbd.mFormatID = formatID;
@@ -88,16 +87,8 @@ static RefPtr<AudioInfo> createAudioInfoForFormat(OSType formatID, Vector<uint8_
         return nullptr;
     }
 
-    auto audioInfo = AudioInfo::create();
-    audioInfo->codecName = formatID;
-    audioInfo->rate = asbd.mSampleRate;
-    audioInfo->channels = asbd.mChannelsPerFrame;
-    audioInfo->framesPerPacket = asbd.mFramesPerPacket;
-    audioInfo->bitDepth = 16;
-    audioInfo->cookieData = SharedBuffer::create(WTFMove(magicCookie));
-    return audioInfo;
+    return createAudioFormatDescription(CAAudioStreamDescription(asbd), magicCookie.size(), magicCookie.data());
 }
-
 #endif // ENABLE(VORBIS) || ENABLE(OPUS)
 
 #if ENABLE(OPUS)
@@ -209,7 +200,7 @@ bool parseOpusPrivateData(size_t codecPrivateSize, const void* codecPrivateData,
 
     auto* privateDataPtr = static_cast<const uint8_t*>(codecPrivateData);
 
-    if (codecPrivateSize < kOpusHeaderSize)
+    if (codecPrivateSize < 19)
         return { };
 
     // 1. Magic Signature:
@@ -371,7 +362,7 @@ bool registerOpusDecoderIfNeeded()
 #endif
 }
 
-RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents& cookieContents)
+RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(const OpusCookieContents& cookieContents)
 {
 #if ENABLE(OPUS)
     if (!isOpusDecoderAvailable())
@@ -381,7 +372,7 @@ RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents& cookieContents)
     if (!cookieData.size())
         return nullptr;
 
-    return createAudioInfoForFormat('opus', WTFMove(cookieData));
+    return createAudioFormatDescriptionForFormat('opus', WTFMove(cookieData));
 #else
     UNUSED_PARAM(cookieContents);
     return nullptr;
@@ -474,7 +465,7 @@ bool registerVorbisDecoderIfNeeded()
 #endif
 }
 
-RefPtr<AudioInfo> createVorbisAudioInfo(size_t privateDataSize, const void* privateData)
+RetainPtr<CMFormatDescriptionRef> createVorbisAudioFormatDescription(size_t privateDataSize, const void* privateData)
 {
 #if ENABLE(VORBIS)
     if (!isVorbisDecoderAvailable())
@@ -484,7 +475,7 @@ RefPtr<AudioInfo> createVorbisAudioInfo(size_t privateDataSize, const void* priv
     if (!cookieData.size())
         return nullptr;
 
-    return createAudioInfoForFormat('vorb', WTFMove(cookieData));
+    return createAudioFormatDescriptionForFormat('vorb', WTFMove(cookieData));
 #else
     UNUSED_PARAM(privateDataSize);
     UNUSED_PARAM(privateData);

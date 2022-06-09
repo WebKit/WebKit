@@ -46,19 +46,6 @@
     return self;
 }
 
-- (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensionOutputsCBOR:(NSData *)extensionOutputsCBOR attachment:(_WKAuthenticatorAttachment)attachment
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _clientDataJSON = clientDataJSON;
-    _rawId = rawId;
-    _extensionOutputsCBOR = extensionOutputsCBOR;
-    _attachment = attachment;
-
-    return self;
-}
-
 - (_WKAuthenticationExtensionsClientOutputs *)extensions
 {
     return _extensions.get();

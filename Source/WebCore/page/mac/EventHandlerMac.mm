@@ -815,10 +815,7 @@ static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node, cons
         auto* scrollableArea = scrollableAreaForBox(*box);
         if (!scrollableArea)
             continue;
-        
-        if (scrollableArea->shouldBlockScrollPropagation(wheelEvent.delta()))
-            return candidate;
-        
+
         if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Cancelled)
             return candidate;
 
@@ -989,6 +986,18 @@ void EventHandler::processWheelEventForScrollSnap(const PlatformWheelEvent& whee
 
     if (auto* scrollAnimator = scrollableArea->existingScrollAnimator())
         scrollAnimator->processWheelEventForScrollSnap(wheelEvent);
+}
+
+VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(const HitTestResult& result)
+{
+    if (!m_frame.editor().behavior().shouldSelectBasedOnDictionaryLookup())
+        return { };
+
+    auto range = DictionaryLookup::rangeAtHitTestResult(result);
+    if (!range)
+        return { };
+
+    return std::get<SimpleRange>(*range);
 }
 
 static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& screenPoint, const FloatRect& screenRect)

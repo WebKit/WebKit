@@ -181,6 +181,8 @@ public:
     RenderInline* inlineWrapperForDisplayContents();
     void setInlineWrapperForDisplayContents(RenderInline*);
 
+    static RenderText* findByDisplayContentsInlineWrapperCandidate(RenderElement&);
+
     template <typename MeasureTextCallback>
     static float measureTextConsideringPossibleTrailingSpace(bool currentCharacterIsSpace, unsigned startIndex, unsigned wordLength, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, MeasureTextCallback&&);
 
@@ -196,7 +198,7 @@ protected:
 private:
     RenderText(Node&, const String&);
 
-    ASCIILiteral renderName() const override;
+    const char* renderName() const override;
 
     bool canHaveChildren() const final { return false; }
 

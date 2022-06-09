@@ -1,0 +1,2 @@
+
+system-styled indeterminate progress bar height should be > 0, was: 0

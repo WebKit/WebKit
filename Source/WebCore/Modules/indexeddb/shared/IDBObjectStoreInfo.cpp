@@ -25,8 +25,6 @@
 
 #include "config.h"
 #include "IDBObjectStoreInfo.h"
-
-#include <wtf/CrossThreadCopier.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -92,25 +90,24 @@ IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(uint64_t identifier)
     return &iterator->value;
 }
 
-IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const &
+IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const
 {
-    IDBObjectStoreInfo result = { m_identifier, m_name.isolatedCopy(), crossThreadCopy(m_keyPath), m_autoIncrement };
-    result.m_indexMap = crossThreadCopy(m_indexMap);
-    return result;
-}
+    IDBObjectStoreInfo result = { m_identifier, m_name.isolatedCopy(), WebCore::isolatedCopy(m_keyPath), m_autoIncrement };
 
-IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() &&
-{
-    IDBObjectStoreInfo result = { m_identifier, WTFMove(m_name).isolatedCopy(), crossThreadCopy(WTFMove(m_keyPath)), m_autoIncrement };
-    result.m_indexMap = crossThreadCopy(WTFMove(m_indexMap));
+    for (auto& iterator : m_indexMap)
+        result.m_indexMap.set(iterator.key, iterator.value.isolatedCopy());
+
     return result;
 }
 
 Vector<String> IDBObjectStoreInfo::indexNames() const
 {
-    return WTF::map(m_indexMap, [](auto& pair) -> String {
-        return pair.value.name();
-    });
+    Vector<String> names;
+    names.reserveCapacity(m_indexMap.size());
+    for (auto& index : m_indexMap.values())
+        names.uncheckedAppend(index.name());
+
+    return names;
 }
 
 void IDBObjectStoreInfo::deleteIndex(const String& indexName)

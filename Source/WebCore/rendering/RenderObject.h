@@ -29,7 +29,6 @@
 #include "Element.h"
 #include "FloatQuad.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "HTMLNames.h"
 #include "LayoutRect.h"
 #include "Page.h"
@@ -51,6 +50,7 @@ class AffineTransform;
 class Color;
 class Cursor;
 class Document;
+class DocumentTimeline;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
@@ -79,7 +79,7 @@ class VisiblePosition;
 class SelectionGeometry;
 #endif
 
-struct InlineBoxAndOffset;
+struct InlineRunAndOffset;
 struct PaintInfo;
 struct SimpleRange;
 
@@ -111,7 +111,7 @@ public:
 
     RenderTheme& theme() const;
 
-    virtual ASCIILiteral renderName() const = 0;
+    virtual const char* renderName() const = 0;
 
     RenderElement* parent() const { return m_parent; }
     bool isDescendantOf(const RenderObject*) const;
@@ -135,8 +135,6 @@ public:
 
     RenderObject* firstLeafChild() const;
     RenderObject* lastLeafChild() const;
-
-    RenderElement* firstNonAnonymousAncestor() const;
 
 #if ENABLE(TEXT_AUTOSIZING)
     // Minimal distance between the block with fixed height and overflowing content and the text block to apply text autosizing.
@@ -176,6 +174,9 @@ public:
 
     // Creates a scope where this object will assert on calls to setNeedsLayout().
     class SetLayoutNeededForbiddenScope;
+
+    // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline children.
+    virtual RenderBlock* firstLineBlock() const;
     
     // RenderObject tree manipulation
     //////////////////////////////////////////
@@ -240,6 +241,7 @@ public:
     virtual bool isRubyText() const { return false; }
 
     virtual bool isSlider() const { return false; }
+    virtual bool isSliderThumb() const { return false; }
     virtual bool isTable() const { return false; }
     virtual bool isTableCell() const { return false; }
     virtual bool isRenderTableCol() const { return false; }
@@ -328,9 +330,7 @@ public:
     virtual bool isLegacySVGRoot() const { return false; }
     virtual bool isSVGRoot() const { return false; }
     virtual bool isSVGContainer() const { return false; }
-    virtual bool isLegacySVGContainer() const { return false; }
     virtual bool isSVGTransformableContainer() const { return false; }
-    virtual bool isLegacySVGTransformableContainer() const { return false; }
     virtual bool isSVGViewportContainer() const { return false; }
     virtual bool isSVGGradientStop() const { return false; }
     virtual bool isSVGHiddenContainer() const { return false; }
@@ -351,7 +351,6 @@ public:
     bool isSVGRootOrLegacySVGRoot() const { return isSVGRoot() || isLegacySVGRoot(); }
     bool isSVGShapeOrLegacySVGShape() const { return isSVGShape() || isLegacySVGShape(); }
     bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
-    bool isSVGLayerAwareRenderer() const { return isSVGRoot() || isRenderSVGModelObject() || isSVGText() || isSVGInline() || isSVGForeignObject(); }
 
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
     // Unfortunately we don't have such a class yet, because it's not possible for all renderers
@@ -368,19 +367,6 @@ public:
     // The name objectBoundingBox is taken from the SVG 1.1 spec.
     virtual FloatRect objectBoundingBox() const;
     virtual FloatRect strokeBoundingBox() const;
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // The objectBoundingBox of a SVG container is affected by the transformations applied on its children -- the container
-    // bounding box is a union of all child bounding boxes, mapped through their transformation matrices.
-    //
-    // This method ignores all transformations and computes the objectBoundingBox, without mapping through the child
-    // transformation matrices. The SVG render tree is constructed in such a way, that it can be mapped to CSS equivalents:
-    // The SVG render tree underneath the outermost <svg> behaves as a set of absolutely positioned, possibly nested, boxes.
-    // They are laid out in such a way that transformations do NOT affect layout, as in HTML/CSS world, but take affect during
-    // painting, hit-testing etc. This allows to minimize the amount of re-layouts when animating transformations in SVG
-    // (not using CSS Animations/Transitions / Web Animations, but e.g. SMIL <animateTransform>, JS, ...).
-    virtual FloatRect objectBoundingBoxWithoutTransformations() const { return objectBoundingBox(); }
-#endif
 
     // Returns the smallest rectangle enclosing all of the painted content
     // respecting clipping, masking, filters, opacity, stroke-width and markers
@@ -399,10 +385,9 @@ public:
     // rest of the rendering tree will move to a similar model.
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
-    bool hasIntrinsicAspectRatio() const { return isReplacedOrInlineBlock() && (isImage() || isVideo() || isCanvas()); }
+    bool hasIntrinsicAspectRatio() const { return isReplaced() && (isImage() || isVideo() || isCanvas()); }
     bool isAnonymous() const { return m_bitfields.isAnonymous(); }
     bool isAnonymousBlock() const;
-    bool isBlockContainer() const;
 
     bool isFloating() const { return m_bitfields.floating(); }
 
@@ -423,19 +408,13 @@ public:
     bool isTableRow() const { return m_bitfields.isTableRow(); }
     bool isRenderView() const  { return m_bitfields.isBox() && m_bitfields.isTextOrRenderView(); }
     bool isInline() const { return m_bitfields.isInline(); } // inline object
-    bool isReplacedOrInlineBlock() const { return m_bitfields.isReplacedOrInlineBlock(); }
+    bool isReplaced() const { return m_bitfields.isReplaced(); } // a "replaced" element (see CSS)
     bool isHorizontalWritingMode() const { return m_bitfields.horizontalWritingMode(); }
 
     bool hasReflection() const { return m_bitfields.hasRareData() && rareData().hasReflection(); }
     bool isRenderFragmentedFlow() const { return m_bitfields.hasRareData() && rareData().isRenderFragmentedFlow(); }
     bool hasOutlineAutoAncestor() const { return m_bitfields.hasRareData() && rareData().hasOutlineAutoAncestor(); }
     bool paintContainmentApplies() const { return m_bitfields.hasRareData() && rareData().paintContainmentApplies(); }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool hasSVGTransform() const { return m_bitfields.hasRareData() && rareData().hasSVGTransform(); }
-#else
-    bool hasSVGTransform() const { return false; }
-#endif
 
     bool isExcludedFromNormalLayout() const { return m_bitfields.isExcludedFromNormalLayout(); }
     void setIsExcludedFromNormalLayout(bool excluded) { m_bitfields.setIsExcludedFromNormalLayout(excluded); }
@@ -471,8 +450,7 @@ public:
     bool hasPotentiallyScrollableOverflow() const;
 
     bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
-    bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate() || hasSVGTransform()); }
-    bool hasTransformOrPespective() const { return hasTransformRelatedProperty() && (hasTransform() || style().hasPerspective()); }
+    bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate() || style().offsetPath()); }
 
     inline bool preservesNewline() const;
 
@@ -526,7 +504,7 @@ public:
     void setIsBox() { m_bitfields.setIsBox(true); }
     void setIsTableRow() { m_bitfields.setIsTableRow(true); }
     void setIsRenderView() { ASSERT(isBox()); m_bitfields.setIsTextOrRenderView(true); }
-    void setReplacedOrInlineBlock(bool b = true) { m_bitfields.setIsReplacedOrInlineBlock(b); }
+    void setReplaced(bool b = true) { m_bitfields.setIsReplaced(b); }
     void setHorizontalWritingMode(bool b = true) { m_bitfields.setHorizontalWritingMode(b); }
     void setHasNonVisibleOverflow(bool b = true) { m_bitfields.setHasNonVisibleOverflow(b); }
     void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
@@ -536,9 +514,6 @@ public:
     void setIsRenderFragmentedFlow(bool = true);
     void setHasOutlineAutoAncestor(bool = true);
     void setPaintContainmentApplies(bool = true);
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    void setHasSVGTransform(bool = true);
-#endif
 
     // Hook so that RenderTextControl can return the line height of its inner renderer.
     // For other renderers, the value is the same as lineHeight(false).
@@ -629,11 +604,7 @@ public:
 
     // Return the RenderLayerModelObject in the container chain which is responsible for painting this object, or nullptr
     // if painting is root-relative. This is the container that should be passed to the 'forRepaint' functions.
-    struct RepaintContainerStatus {
-        bool fullRepaintIsScheduled { false }; // Either the repaint container or a layer in-between has aleady been scheduled for full repaint.
-        const RenderLayerModelObject* renderer { nullptr };
-    };
-    RepaintContainerStatus containerForRepaint() const;
+    RenderLayerModelObject* containerForRepaint() const;
     // Actually do the repaint of rect r for this object which has been computed in the coordinate space
     // of repaintContainer. If repaintContainer is nullptr, repaint via the view.
     void repaintUsingContainer(const RenderLayerModelObject* repaintContainer, const LayoutRect&, bool shouldClipToLayer = true) const;
@@ -747,6 +718,8 @@ public:
     void imageChanged(CachedImage*, const IntRect* = nullptr) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
+    DocumentTimeline* documentTimeline() const;
+
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed = nullptr) const;
@@ -783,6 +756,8 @@ protected:
     //////////////////////////////////////////
     void addPDFURLRect(PaintInfo&, const LayoutPoint&);
     Node& nodeForNonAnonymous() const { ASSERT(!isAnonymous()); return m_node; }
+
+    RenderElement* firstNonAnonymousAncestor() const;
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 
@@ -881,7 +856,7 @@ private:
             , m_isBox(false)
             , m_isTableRow(false)
             , m_isInline(true)
-            , m_isReplacedOrInlineBlock(false)
+            , m_isReplaced(false)
             , m_isLineBreak(false)
             , m_horizontalWritingMode(true)
             , m_hasLayer(false)
@@ -913,7 +888,7 @@ private:
         ADD_BOOLEAN_BITFIELD(isBox, IsBox);
         ADD_BOOLEAN_BITFIELD(isTableRow, IsTableRow);
         ADD_BOOLEAN_BITFIELD(isInline, IsInline);
-        ADD_BOOLEAN_BITFIELD(isReplacedOrInlineBlock, IsReplacedOrInlineBlock);
+        ADD_BOOLEAN_BITFIELD(isReplaced, IsReplaced);
         ADD_BOOLEAN_BITFIELD(isLineBreak, IsLineBreak);
         ADD_BOOLEAN_BITFIELD(horizontalWritingMode, HorizontalWritingMode);
 
@@ -970,16 +945,14 @@ private:
         ADD_BOOLEAN_BITFIELD(isRenderFragmentedFlow, IsRenderFragmentedFlow);
         ADD_BOOLEAN_BITFIELD(hasOutlineAutoAncestor, HasOutlineAutoAncestor);
         ADD_BOOLEAN_BITFIELD(paintContainmentApplies, PaintContainmentApplies);
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        ADD_BOOLEAN_BITFIELD(hasSVGTransform, HasSVGTransform);
-#endif
 
         // From RenderElement
+        std::unique_ptr<RenderStyle> cachedFirstLineStyle;
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;
         WeakPtr<RenderBlockFlow> backdropRenderer;
     };
     
-    WEBCORE_EXPORT const RenderObject::RenderObjectRareData& rareData() const;
+    const RenderObject::RenderObjectRareData& rareData() const;
     RenderObjectRareData& ensureRareData();
     void removeRareData();
     
@@ -1012,6 +985,11 @@ inline Page& RenderObject::page() const
     // so it's safe to assume Frame::page() is non-null as long as there are live RenderObjects.
     ASSERT(frame().page());
     return *frame().page();
+}
+
+inline DocumentTimeline* RenderObject::documentTimeline() const
+{
+    return document().existingTimeline();
 }
 
 inline bool RenderObject::renderTreeBeingDestroyed() const
@@ -1220,7 +1198,7 @@ inline RenderObject* RenderObject::nextInFlowSibling() const
 
 inline bool RenderObject::isAtomicInlineLevelBox() const
 {
-    return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplacedOrInlineBlock());
+    return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplaced());
 }
 
 inline bool RenderObject::hasPotentiallyScrollableOverflow() const
@@ -1237,6 +1215,12 @@ void printRenderTreeForLiveDocuments();
 void printLayerTreeForLiveDocuments();
 void printGraphicsLayerTreeForLiveDocuments();
 #endif
+
+bool shouldApplyLayoutContainment(const RenderObject&);
+bool shouldApplySizeContainment(const RenderObject&);
+bool shouldApplyStyleContainment(const RenderObject&);
+bool shouldApplyPaintContainment(const RenderObject&);
+bool shouldApplyAnyContainment(const RenderObject&);
 
 } // namespace WebCore
 

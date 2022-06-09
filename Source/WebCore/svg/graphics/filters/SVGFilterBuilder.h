@@ -21,16 +21,18 @@
 
 #pragma once
 
+#include "FilterEffect.h"
 #include "SVGFilterExpression.h"
 #include "SVGUnitTypes.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/AtomStringHash.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class FilterEffect;
-class GraphicsContext;
 class RenderObject;
-class SVGFilter;
 class SVGFilterElement;
 
 class SVGFilterBuilder {
@@ -38,14 +40,36 @@ class SVGFilterBuilder {
 public:
     SVGFilterBuilder() = default;
 
-    std::optional<SVGFilterExpression> buildFilterExpression(SVGFilterElement&, const SVGFilter&, const GraphicsContext& destinationContext);
-    static IntOutsets calculateFilterOutsets(SVGFilterElement&, const FloatRect& targetBoundingBox);
+    void setTargetBoundingBox(const FloatRect& r) { m_targetBoundingBox = r; }
+    FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
+    
+    SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits; }
+    void setPrimitiveUnits(SVGUnitTypes::SVGUnitType units) { m_primitiveUnits = units; }
+
+    void add(const AtomString& id, RefPtr<FilterEffect>);
+    RefPtr<FilterEffect> getEffectById(const AtomString&) const;
 
     // Required to change the attributes of a filter during an svgAttributeChanged.
-    FilterEffect* effectByRenderer(RenderObject* object) { return m_effectRenderer.get(object); }
+    void appendEffectToEffectRenderer(FilterEffect&, RenderObject&);
+    inline FilterEffect* effectByRenderer(RenderObject* object) { return m_effectRenderer.get(object); }
+
+    void setupBuiltinEffects(Ref<FilterEffect> sourceGraphic);
+    RefPtr<FilterEffect> buildFilterEffects(SVGFilterElement&);
+    bool buildExpression(SVGFilterExpression&) const;
 
 private:
+    std::optional<FilterEffectGeometry> effectGeometry(FilterEffect&) const;
+    bool buildEffectExpression(FilterEffect&, FilterEffectVector& stack, unsigned level, SVGFilterExpression&) const;
+
+    HashMap<AtomString, RefPtr<FilterEffect>> m_builtinEffects;
+    HashMap<AtomString, RefPtr<FilterEffect>> m_namedEffects;
     HashMap<RenderObject*, FilterEffect*> m_effectRenderer;
+
+    RefPtr<FilterEffect> m_lastEffect;
+
+    FloatRect m_targetBoundingBox;
+    SVGUnitTypes::SVGUnitType m_primitiveUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
+    FilterEffectGeometryMap m_effectGeometryMap;
 };
     
 } // namespace WebCore

@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLCompressedTextureETC.h"
 
+#include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureETC);
 WebGLCompressedTextureETC::WebGLCompressedTextureETC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_compressed_texture_etc"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_compressed_texture_etc");
 
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_R11_EAC);
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SIGNED_R11_EAC);
@@ -60,7 +61,7 @@ WebGLExtension::ExtensionName WebGLCompressedTextureETC::getName() const
 
 bool WebGLCompressedTextureETC::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension("GL_ANGLE_compressed_texture_etc"_s);
+    return context.supportsExtension("GL_ANGLE_compressed_texture_etc");
 }
 
 } // namespace WebCore

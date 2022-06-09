@@ -46,7 +46,7 @@ private:
 
     bool isFileUploadControl() const override { return true; }
 
-    ASCIILiteral renderName() const override { return "RenderFileUploadControl"_s; }
+    const char* renderName() const override { return "RenderFileUploadControl"; }
 
     void updateFromElement() override;
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;

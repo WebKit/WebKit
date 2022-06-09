@@ -166,7 +166,7 @@ private:
     const uint8_t IsKilled = 0x01;
 };
 
-static_assert(sizeof(DFANode) <= 16, "Keep the DFANodes small");
+COMPILE_ASSERT(sizeof(DFANode) <= 16, Keep the DFANodes small);
 
 } // namespace ContentExtensions
 } // namespace WebCore

@@ -54,7 +54,7 @@ WebBackForwardList::WebBackForwardList(RefPtr<BackForwardList>&& backForwardList
     backForwardListWrappers().set(m_backForwardList.get(), this);
 
     gClassCount++;
-    gClassNameCount().add("WebBackForwardList"_s);
+    gClassNameCount().add("WebBackForwardList");
 }
 
 WebBackForwardList::~WebBackForwardList()
@@ -65,7 +65,7 @@ WebBackForwardList::~WebBackForwardList()
     backForwardListWrappers().remove(m_backForwardList.get());
 
     gClassCount--;
-    gClassNameCount().remove("WebBackForwardList"_s);
+    gClassNameCount().remove("WebBackForwardList");
 }
 
 WebBackForwardList* WebBackForwardList::createInstance(RefPtr<BackForwardList>&& backForwardList)
@@ -273,8 +273,7 @@ HRESULT WebBackForwardList::containsItem(_In_opt_ IWebHistoryItem* item, _Out_ B
     if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
 
-    auto historyItem = webHistoryItem->historyItem();
-    *result = historyItem ? m_backForwardList->containsItem(*historyItem) : false;
+    *result = m_backForwardList->containsItem(webHistoryItem->historyItem());
     return S_OK;
 }
 

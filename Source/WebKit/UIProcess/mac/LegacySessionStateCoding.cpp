@@ -205,7 +205,7 @@ private:
     template<typename Type>
     HistoryEntryDataEncoder& encodeArithmeticType(Type value)
     {
-        static_assert(std::is_arithmetic<Type>::value);
+        static_assert(std::is_arithmetic<Type>::value, "");
 
         encodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));
         return *this;
@@ -611,15 +611,6 @@ public:
         return *this;
     }
 
-    HistoryEntryDataDecoder& operator>>(AtomString& value)
-    {
-        // FIXME: This could be more efficient but this matches what the IPC decoder currently does.
-        String string;
-        *this >> string;
-        value = AtomString { string };
-        return *this;
-    }
-
     HistoryEntryDataDecoder& operator>>(Vector<uint8_t>& value)
     {
         value = { };
@@ -747,7 +738,7 @@ private:
     template<typename Type>
     HistoryEntryDataDecoder& decodeArithmeticType(Type& value)
     {
-        static_assert(std::is_arithmetic<Type>::value);
+        static_assert(std::is_arithmetic<Type>::value, "");
         value = Type();
 
         decodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));
@@ -911,9 +902,9 @@ static void decodeBackForwardTreeNode(HistoryEntryDataDecoder& decoder, FrameSta
     uint64_t documentStateVectorSize;
     decoder >> documentStateVectorSize;
 
-    Vector<AtomString> documentState;
+    Vector<String> documentState;
     for (uint64_t i = 0; i < documentStateVectorSize; ++i) {
-        AtomString state;
+        String state;
         decoder >> state;
 
         if (!decoder.isValid())
@@ -1155,7 +1146,7 @@ bool decodeLegacySessionState(const uint8_t* bytes, size_t size, SessionState& s
     }
 
     if (auto provisionalURLString = dynamic_cf_cast<CFStringRef>(CFDictionaryGetValue(sessionStateDictionary, provisionalURLKey))) {
-        sessionState.provisionalURL = URL { provisionalURLString };
+        sessionState.provisionalURL = URL(URL(), provisionalURLString);
         if (!sessionState.provisionalURL.isValid())
             return false;
     }

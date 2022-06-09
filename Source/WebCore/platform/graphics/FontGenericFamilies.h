@@ -49,8 +49,7 @@ class FontGenericFamilies {
 public:
     FontGenericFamilies();
 
-    FontGenericFamilies isolatedCopy() const &;
-    FontGenericFamilies isolatedCopy() &&;
+    FontGenericFamilies isolatedCopy() const;
 
     const String& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
     const String& fixedFontFamily(UScriptCode = USCRIPT_COMMON) const;

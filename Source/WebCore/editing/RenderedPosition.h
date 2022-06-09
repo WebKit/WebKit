@@ -32,7 +32,7 @@
 
 #include "CaretRectComputation.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorLineBox.h"
+#include "InlineIteratorLine.h"
 #include "TextAffinity.h"
 
 namespace WebCore {
@@ -50,7 +50,7 @@ public:
     bool isEquivalent(const RenderedPosition&) const;
 
     bool isNull() const { return !m_renderer; }
-    InlineIterator::LineBoxIterator lineBox() const { return m_box ? m_box->lineBox() : InlineIterator::LineBoxIterator(); }
+    InlineIterator::LineIterator line() const { return m_run ? m_run->line() : InlineIterator::LineIterator(); }
 
     unsigned char bidiLevelOnLeft() const;
     unsigned char bidiLevelOnRight() const;
@@ -76,13 +76,13 @@ private:
 
     InlineIterator::LeafBoxIterator previousLeafOnLine() const;
     InlineIterator::LeafBoxIterator nextLeafOnLine() const;
-    bool atLeftmostOffsetInBox() const { return m_box && m_offset == m_box->leftmostCaretOffset(); }
-    bool atRightmostOffsetInBox() const { return m_box && m_offset == m_box->rightmostCaretOffset(); }
+    bool atLeftmostOffsetInBox() const { return m_run && m_offset == m_run->leftmostCaretOffset(); }
+    bool atRightmostOffsetInBox() const { return m_run && m_offset == m_run->rightmostCaretOffset(); }
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
 
     const RenderObject* m_renderer { nullptr };
-    InlineIterator::LeafBoxIterator m_box;
+    InlineIterator::LeafBoxIterator m_run;
     unsigned m_offset { 0 };
 
     mutable std::optional<InlineIterator::LeafBoxIterator> m_previousLeafOnLine;

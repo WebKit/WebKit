@@ -76,6 +76,7 @@ class ScmBase(object):
     def branches(self):
         raise NotImplementedError()
 
+    @property
     def tags(self):
         raise NotImplementedError()
 
@@ -154,7 +155,7 @@ class ScmBase(object):
         elif argument in self.branches:
             result = self.commit(branch=argument, include_log=include_log, include_identifier=include_identifier)
 
-        elif argument in self.tags():
+        elif argument in self.tags:
             result = self.commit(tag=argument, include_log=include_log, include_identifier=include_identifier)
 
         else:

@@ -48,22 +48,22 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<E
     return createWrapper<EventTarget>(globalObject, WTFMove(value));
 }
 
-EventTarget* JSEventTarget::toWrapped(VM&, JSValue value)
+EventTarget* JSEventTarget::toWrapped(VM& vm, JSValue value)
 {
-    if (value.inherits<JSWindowProxy>())
+    if (value.inherits<JSWindowProxy>(vm))
         return &jsCast<JSWindowProxy*>(asObject(value))->wrapped();
-    if (value.inherits<JSDOMWindow>())
+    if (value.inherits<JSDOMWindow>(vm))
         return &jsCast<JSDOMWindow*>(asObject(value))->wrapped();
-    if (value.inherits<JSWorkerGlobalScope>())
+    if (value.inherits<JSWorkerGlobalScope>(vm))
         return &jsCast<JSWorkerGlobalScope*>(asObject(value))->wrapped();
-    if (value.inherits<JSEventTarget>())
+    if (value.inherits<JSEventTarget>(vm))
         return &jsCast<JSEventTarget*>(asObject(value))->wrapped();
     return nullptr;
 }
 
 std::unique_ptr<JSEventTargetWrapper> jsEventTargetCast(VM& vm, JSValue thisValue)
 {
-    if (auto* target = jsDynamicCast<JSEventTarget*>(thisValue))
+    if (auto* target = jsDynamicCast<JSEventTarget*>(vm, thisValue))
         return makeUnique<JSEventTargetWrapper>(target->wrapped(), *target);
     if (auto* window = toJSDOMGlobalObject<JSDOMWindow>(vm, thisValue))
         return makeUnique<JSEventTargetWrapper>(window->wrapped(), *window);

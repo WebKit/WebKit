@@ -77,7 +77,7 @@ bool canAppendNewLineFeedToSelection(const VisibleSelection& selection)
     if (!node)
         return false;
     
-    Ref<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create("\n"_s);
+    Ref<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(String("\n"));
     node->dispatchEvent(event);
     return event->text().length();
 }

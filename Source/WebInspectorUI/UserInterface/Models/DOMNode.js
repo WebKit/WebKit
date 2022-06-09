@@ -53,8 +53,6 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._computedRole = null;
         this._contentSecurityPolicyHash = payload.contentSecurityPolicyHash;
         this._layoutContextType = null;
-        this._layoutOverlayShowing = false;
-        this._layoutOverlayColorSetting = null;
 
         if (this._nodeType === Node.DOCUMENT_NODE)
             this.ownerDocument = this;
@@ -163,13 +161,6 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     // Static
 
-    static resetDefaultLayoutOverlayConfiguration()
-    {
-        let configuration = WI.DOMNode._defaultLayoutOverlayConfiguration;
-        configuration.nextFlexColorIndex = 0;
-        configuration.nextGridColorIndex = 0;
-    }
-
     static getFullscreenDOMEvents(domEvents)
     {
         return domEvents.reduce((accumulator, current) => {
@@ -208,7 +199,6 @@ WI.DOMNode = class DOMNode extends WI.Object
     get children() { return this._children; }
     get domEvents() { return this._domEvents; }
     get powerEfficientPlaybackRanges() { return this._powerEfficientPlaybackRanges; }
-    get layoutOverlayShowing() { return this._layoutOverlayShowing; }
 
     get attached()
     {
@@ -267,30 +257,8 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (layoutContextType === this._layoutContextType)
             return;
 
-        let oldLayoutContextType = this._layoutContextType;
         this._layoutContextType = layoutContextType;
-
         this.dispatchEventToListeners(WI.DOMNode.Event.LayoutContextTypeChanged);
-
-        if (!this._layoutOverlayShowing)
-            return;
-
-        // The overlay is automatically hidden on the backend when the context type changes.
-        this.dispatchEventToListeners(WI.DOMNode.Event.LayoutOverlayHidden);
-
-        switch (oldLayoutContextType) {
-        case WI.DOMNode.LayoutContextType.Flex:
-            WI.settings.flexOverlayShowOrderNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            break;
-
-        case WI.DOMNode.LayoutContextType.Grid:
-            WI.settings.gridOverlayShowExtendedGridLines.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowLineNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowLineNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowTrackSizes.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowAreaNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            break;
-        }
     }
 
     markDestroyed()
@@ -604,114 +572,6 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         let target = WI.assumingMainTarget();
         target.DOMAgent.highlightNode(WI.DOMManager.buildHighlightConfig(mode), this.id);
-    }
-
-    showLayoutOverlay({color, initiator} = {})
-    {
-        console.assert(!this._destroyed, this);
-        if (this._destroyed)
-            return Promise.reject("ERROR: node is destroyed");
-
-        console.assert(Object.values(WI.DOMNode.LayoutContextType).includes(this._layoutContextType), this);
-
-        console.assert(!color || color instanceof WI.Color, color);
-        color ||= this.layoutOverlayColor;
-
-        let target = WI.assumingMainTarget();
-        let agentCommandFunction = null;
-        let agentCommandArguments = {nodeId: this.id};
-
-        switch (this._layoutContextType) {
-        case WI.DOMNode.LayoutContextType.Grid:
-            agentCommandArguments.gridColor = color.toProtocol();
-            agentCommandArguments.showLineNames = WI.settings.gridOverlayShowLineNames.value;
-            agentCommandArguments.showLineNumbers = WI.settings.gridOverlayShowLineNumbers.value;
-            agentCommandArguments.showExtendedGridLines = WI.settings.gridOverlayShowExtendedGridLines.value;
-            agentCommandArguments.showTrackSizes = WI.settings.gridOverlayShowTrackSizes.value;
-            agentCommandArguments.showAreaNames = WI.settings.gridOverlayShowAreaNames.value;
-            agentCommandFunction = target.DOMAgent.showGridOverlay;
-
-            if (!this._layoutOverlayShowing) {
-                WI.settings.gridOverlayShowExtendedGridLines.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-                WI.settings.gridOverlayShowLineNames.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-                WI.settings.gridOverlayShowLineNumbers.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-                WI.settings.gridOverlayShowTrackSizes.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-                WI.settings.gridOverlayShowAreaNames.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            }
-            break;
-
-        case WI.DOMNode.LayoutContextType.Flex:
-            agentCommandArguments.flexColor = color.toProtocol();
-            agentCommandArguments.showOrderNumbers = WI.settings.flexOverlayShowOrderNumbers.value;
-            agentCommandFunction = target.DOMAgent.showFlexOverlay;
-
-            if (!this._layoutOverlayShowing)
-                WI.settings.flexOverlayShowOrderNumbers.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            break;
-        }
-
-        this._layoutOverlayShowing = true;
-
-        this.dispatchEventToListeners(WI.DOMNode.Event.LayoutOverlayShown, {initiator});
-
-        console.assert(agentCommandFunction);
-        return agentCommandFunction.invoke(agentCommandArguments);
-    }
-
-    hideLayoutOverlay()
-    {
-        console.assert(!this._destroyed, this);
-        if (this._destroyed)
-            return Promise.reject("ERROR: node is destroyed");
-
-        console.assert(Object.values(WI.DOMNode.LayoutContextType).includes(this._layoutContextType), this);
-
-        let target = WI.assumingMainTarget();
-        let agentCommandFunction;
-        let agentCommandArguments = {nodeId: this.id};
-
-        switch (this._layoutContextType) {
-        case WI.DOMNode.LayoutContextType.Grid:
-            WI.settings.gridOverlayShowExtendedGridLines.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowLineNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowLineNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowTrackSizes.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowAreaNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-
-            agentCommandFunction = target.DOMAgent.hideGridOverlay;
-            break;
-
-        case WI.DOMNode.LayoutContextType.Flex:
-            WI.settings.flexOverlayShowOrderNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
-
-            agentCommandFunction = target.DOMAgent.hideFlexOverlay;
-            break;
-        }
-
-        console.assert(this._layoutOverlayShowing, this);
-        this._layoutOverlayShowing = false;
-
-        this.dispatchEventToListeners(WI.DOMNode.Event.LayoutOverlayHidden);
-
-        console.assert(agentCommandFunction);
-        return agentCommandFunction.invoke(agentCommandArguments);
-    }
-
-    get layoutOverlayColor()
-    {
-        this._createLayoutOverlayColorSettingIfNeeded();
-        return new WI.Color(WI.Color.Format.HSL, this._layoutOverlayColorSetting.value);
-    }
-
-    set layoutOverlayColor(color)
-    {
-        console.assert(color instanceof WI.Color, color);
-
-        this._createLayoutOverlayColorSettingIfNeeded();
-        this._layoutOverlayColorSetting.value = color.hsl;
-
-        if (this._layoutOverlayShowing)
-            this.showLayoutOverlay({color});
     }
 
     scrollIntoView()
@@ -1246,49 +1106,6 @@ WI.DOMNode = class DOMNode extends WI.Object
             return `${selector}.${(shouldEscape ? CSS.escape(className) : className)}`;
         }, "");
     }
-
-    _createLayoutOverlayColorSettingIfNeeded()
-    {
-        if (this._layoutOverlayColorSetting)
-            return;
-
-        let defaultConfiguration = WI.DOMNode._defaultLayoutOverlayConfiguration;
-
-        let url = this.ownerDocument.documentURL || WI.networkManager.mainFrame.url;
-
-        let nextColorIndex;
-        switch (this._layoutContextType) {
-        case WI.DOMNode.LayoutContextType.Grid:
-            nextColorIndex = defaultConfiguration.nextGridColorIndex;
-            defaultConfiguration.nextGridColorIndex = (nextColorIndex + 1) % defaultConfiguration.colors.length;
-            break;
-
-        case WI.DOMNode.LayoutContextType.Flex:
-            nextColorIndex = defaultConfiguration.nextFlexColorIndex;
-            defaultConfiguration.nextFlexColorIndex = (nextColorIndex + 1) % defaultConfiguration.colors.length;
-            break;
-        }
-
-        this._layoutOverlayColorSetting = new WI.Setting(`overlay-color-${url.hash}-${this.path().hash}`, defaultConfiguration.colors[nextColorIndex]);
-    }
-
-    _handleLayoutOverlaySettingChanged(event)
-    {
-        if (this._layoutOverlayShowing)
-            this.showLayoutOverlay();
-    }
-};
-
-WI.DOMNode._defaultLayoutOverlayConfiguration = {
-    colors: [
-        [329, 91, 70],
-        [207, 96, 69],
-        [92, 90, 64],
-        [291, 73, 68],
-        [40, 97, 57],
-    ],
-    nextFlexColorIndex: 0,
-    nextGridColorIndex: 0,
 };
 
 WI.DOMNode.Event = {
@@ -1299,8 +1116,6 @@ WI.DOMNode.Event = {
     DidFireEvent: "dom-node-did-fire-event",
     PowerEfficientPlaybackStateChanged: "dom-node-power-efficient-playback-state-changed",
     LayoutContextTypeChanged: "dom-node-layout-context-type-changed",
-    LayoutOverlayShown: "dom-node-layout-overlay-shown",
-    LayoutOverlayHidden: "dom-node-layout-overlay-hidden",
 };
 
 WI.DOMNode.PseudoElementType = {
@@ -1323,6 +1138,5 @@ WI.DOMNode.CustomElementState = {
 
 // Corresponds to `CSS.LayoutContextType`.
 WI.DOMNode.LayoutContextType = {
-    Flex: "flex",
     Grid: "grid",
 };

@@ -42,16 +42,16 @@ std::optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool isValid = speciesWatchpointIsValid(thisObject, mode);
+    bool isValid = speciesWatchpointIsValid(vm, thisObject, mode);
     scope.assertNoException();
     if (LIKELY(isValid))
         return std::nullopt;
 
     JSValue constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
-    if (constructor.isConstructor()) {
+    if (constructor.isConstructor(vm)) {
         JSObject* constructorObject = jsCast<JSObject*>(constructor);
-        JSGlobalObject* globalObjectFromConstructor = constructorObject->globalObject();
+        JSGlobalObject* globalObjectFromConstructor = constructorObject->globalObject(vm);
         bool isAnyArrayBufferConstructor = constructorObject == globalObjectFromConstructor->arrayBufferConstructor(mode);
         if (isAnyArrayBufferConstructor)
             return std::nullopt;
@@ -98,11 +98,11 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesCo
     MarkedArgumentBuffer args;
     args.append(jsNumber(length));
     ASSERT(!args.hasOverflowed());
-    JSObject* newObject = construct(globalObject, species.value(), args, "Species construction did not get a valid constructor"_s);
+    JSObject* newObject = construct(globalObject, species.value(), args, "Species construction did not get a valid constructor");
     RETURN_IF_EXCEPTION(scope, errorResult);
 
     // 17. Perform ? RequireInternalSlot(new, [[ArrayBufferData]]).
-    JSArrayBuffer* result = jsDynamicCast<JSArrayBuffer*>(newObject);
+    JSArrayBuffer* result = jsDynamicCast<JSArrayBuffer*>(vm, newObject);
     if (UNLIKELY(!result)) {
         throwTypeError(globalObject, scope, "Species construction does not create ArrayBuffer"_s);
         return errorResult;
@@ -153,7 +153,7 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
 
     // 2. Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
     // 3. If IsSharedArrayBuffer(O) is true, throw a TypeError exception.
-    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    JSArrayBuffer* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, arrayBufferValue);
     if (!thisObject || (mode != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be "_s, mode == ArrayBufferSharingMode::Default ? "ArrayBuffer"_s : "SharedArrayBuffer"_s));
 
@@ -224,7 +224,7 @@ static EncodedJSValue arrayBufferByteLength(JSGlobalObject* globalObject, JSValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(arrayBufferValue);
+    auto* thisObject = jsDynamicCast<JSArrayBuffer*>(vm, arrayBufferValue);
     if (!thisObject || (mode != thisObject->impl()->sharingMode()))
         return throwVMTypeError(globalObject, scope, makeString("Receiver must be "_s, mode == ArrayBufferSharingMode::Default ? "ArrayBuffer"_s : "SharedArrayBuffer"_s));
 
@@ -257,7 +257,7 @@ JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncByteLength, (JSGlobalOb
 }
 
 const ClassInfo JSArrayBufferPrototype::s_info = {
-    "ArrayBuffer"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBufferPrototype)
+    "ArrayBuffer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSArrayBufferPrototype)
 };
 
 JSArrayBufferPrototype::JSArrayBufferPrototype(VM& vm, Structure* structure)
@@ -269,7 +269,7 @@ void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
 {
     Base::finishCreation(vm);
     
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsNontrivialString(vm, arrayBufferSharingModeName(sharingMode)), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(vm, arrayBufferSharingModeName(sharingMode)), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     if (sharingMode == ArrayBufferSharingMode::Default) {
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, arrayBufferProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, arrayBufferProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);

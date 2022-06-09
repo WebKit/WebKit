@@ -19,9 +19,6 @@ namespace
 {
 constexpr size_t kInFlightCommandsLimit = 50u;
 constexpr bool kOutputVmaStatsString    = false;
-// When suballocation garbages is more than this, we may wait for GPU to finish and free up some
-// memory for allocation.
-constexpr VkDeviceSize kMaxBufferSuballocationGarbageSize = 64 * 1024 * 1024;
 
 void InitializeSubmitInfo(VkSubmitInfo *submitInfo,
                           const vk::PrimaryCommandBuffer &commandBuffer,
@@ -36,7 +33,7 @@ void InitializeSubmitInfo(VkSubmitInfo *submitInfo,
     submitInfo->commandBufferCount = commandBuffer.valid() ? 1 : 0;
     submitInfo->pCommandBuffers    = commandBuffer.ptr();
     submitInfo->waitSemaphoreCount = static_cast<uint32_t>(waitSemaphores.size());
-    submitInfo->pWaitSemaphores    = waitSemaphores.empty() ? nullptr : waitSemaphores.data();
+    submitInfo->pWaitSemaphores    = waitSemaphores.data();
     submitInfo->pWaitDstStageMask  = waitSemaphoreStageMasks.data();
 
     if (signalSemaphore)
@@ -83,27 +80,6 @@ ANGLE_MAYBE_UNUSED void ResetSecondaryCommandBuffers<std::vector<VulkanSecondary
         secondary.releaseHandle();
     }
     commandBuffers->clear();
-}
-
-// Count the number of batches with serial <= given serial.  A reference to the fence of the last
-// batch with a valid fence is returned for waiting purposes.  Note that due to empty submissions
-// being optimized out, there may not be a fence associated with every batch.
-size_t GetBatchCountUpToSerial(std::vector<CommandBatch> &inFlightCommands,
-                               Serial serial,
-                               Shared<Fence> **fenceToWaitOnOut)
-{
-    size_t batchCount = 0;
-    while (batchCount < inFlightCommands.size() && inFlightCommands[batchCount].serial <= serial)
-    {
-        if (inFlightCommands[batchCount].fence.isReferenced())
-        {
-            *fenceToWaitOnOut = &inFlightCommands[batchCount].fence;
-        }
-
-        batchCount++;
-    }
-
-    return batchCount;
 }
 }  // namespace
 
@@ -651,6 +627,12 @@ void CommandProcessor::destroy(Context *context)
     }
 }
 
+Serial CommandProcessor::getLastCompletedQueueSerial() const
+{
+    std::lock_guard<std::mutex> lock(mQueueSerialMutex);
+    return mCommandQueue.getLastCompletedQueueSerial();
+}
+
 bool CommandProcessor::isBusy() const
 {
     std::lock_guard<std::mutex> serialLock(mQueueSerialMutex);
@@ -846,8 +828,7 @@ angle::Result CommandProcessor::ensureNoPendingWork(Context *context)
 }
 
 // CommandQueue implementation.
-CommandQueue::CommandQueue() : mCurrentQueueSerial(mQueueSerialFactory.generate()), mPerfCounters{}
-{}
+CommandQueue::CommandQueue() : mCurrentQueueSerial(mQueueSerialFactory.generate()) {}
 
 CommandQueue::~CommandQueue() = default;
 
@@ -905,18 +886,12 @@ angle::Result CommandQueue::checkCompletedCommands(Context *context)
 
     for (CommandBatch &batch : mInFlightCommands)
     {
-        // For empty submissions, fence is not set but there may be garbage to be collected.  In
-        // such a case, the empty submission is "completed" at the same time as the last submission
-        // that actually happened.
-        if (batch.fence.isReferenced())
+        VkResult result = batch.fence.get().getStatus(device);
+        if (result == VK_NOT_READY)
         {
-            VkResult result = batch.fence.get().getStatus(device);
-            if (result == VK_NOT_READY)
-            {
-                break;
-            }
-            ANGLE_VK_TRY(context, result);
+            break;
         }
+        ANGLE_VK_TRY(context, result);
         ++finishedCount;
     }
 
@@ -931,39 +906,32 @@ angle::Result CommandQueue::checkCompletedCommands(Context *context)
 angle::Result CommandQueue::retireFinishedCommands(Context *context, size_t finishedCount)
 {
     ASSERT(finishedCount > 0);
+
     RendererVk *renderer = context->getRenderer();
     VkDevice device      = renderer->getDevice();
 
-    // First store the last completed queue serial value into a local variable and then update
-    // mLastCompletedQueueSerial once in the end.
-    Serial lastCompletedQueueSerial;
     for (size_t commandIndex = 0; commandIndex < finishedCount; ++commandIndex)
     {
         CommandBatch &batch = mInFlightCommands[commandIndex];
 
-        lastCompletedQueueSerial = batch.serial;
-        if (batch.fence.isReferenced())
-        {
-            mFenceRecycler.resetSharedFence(&batch.fence);
-        }
-        if (batch.primaryCommands.valid())
-        {
-            ANGLE_TRACE_EVENT0("gpu.angle", "Primary command buffer recycling");
-            PersistentCommandPool &commandPool = getCommandPool(batch.hasProtectedContent);
-            ANGLE_TRY(commandPool.collect(context, std::move(batch.primaryCommands)));
-        }
-        ANGLE_TRACE_EVENT0("gpu.angle", "Secondary command buffer recycling");
+        mLastCompletedQueueSerial = batch.serial;
+        mFenceRecycler.resetSharedFence(&batch.fence);
+        ANGLE_TRACE_EVENT0("gpu.angle", "command buffer recycling");
         batch.resetSecondaryCommandBuffers(device);
+        PersistentCommandPool &commandPool = getCommandPool(batch.hasProtectedContent);
+        ANGLE_TRY(commandPool.collect(context, std::move(batch.primaryCommands)));
     }
 
-    mLastCompletedQueueSerial = lastCompletedQueueSerial;
-    auto beginIter            = mInFlightCommands.begin();
-    mInFlightCommands.erase(beginIter, beginIter + finishedCount);
+    if (finishedCount > 0)
+    {
+        auto beginIter = mInFlightCommands.begin();
+        mInFlightCommands.erase(beginIter, beginIter + finishedCount);
+    }
 
     while (!mGarbageQueue.empty())
     {
         GarbageAndSerial &garbageList = mGarbageQueue.front();
-        if (garbageList.getSerial() < lastCompletedQueueSerial)
+        if (garbageList.getSerial() < mLastCompletedQueueSerial)
         {
             for (GarbageObject &garbage : garbageList.get())
             {
@@ -976,9 +944,6 @@ angle::Result CommandQueue::retireFinishedCommands(Context *context, size_t fini
             break;
         }
     }
-
-    // Now clean up RendererVk garbage
-    renderer->cleanupGarbage(getLastCompletedQueueSerial());
 
     return angle::Result::Continue;
 }
@@ -1017,23 +982,16 @@ void CommandQueue::handleDeviceLost(RendererVk *renderer)
     for (CommandBatch &batch : mInFlightCommands)
     {
         // On device loss we need to wait for fence to be signaled before destroying it
-        if (batch.fence.isReferenced())
-        {
-            VkResult status = batch.fence.get().wait(device, renderer->getMaxFenceWaitTimeNs());
-            // If the wait times out, it is probably not possible to recover from lost device
-            ASSERT(status == VK_SUCCESS || status == VK_ERROR_DEVICE_LOST);
-
-            batch.fence.reset(device);
-        }
+        VkResult status = batch.fence.get().wait(device, renderer->getMaxFenceWaitTimeNs());
+        // If the wait times out, it is probably not possible to recover from lost device
+        ASSERT(status == VK_SUCCESS || status == VK_ERROR_DEVICE_LOST);
 
         // On device lost, here simply destroy the CommandBuffer, it will fully cleared later
         // by CommandPool::destroy
-        if (batch.primaryCommands.valid())
-        {
-            batch.primaryCommands.destroy(device);
-        }
+        batch.primaryCommands.destroy(device);
 
         batch.resetSecondaryCommandBuffers(device);
+        batch.fence.reset(device);
     }
     mInFlightCommands.clear();
 }
@@ -1055,26 +1013,28 @@ angle::Result CommandQueue::finishToSerial(Context *context, Serial finishSerial
     // Find the serial in the the list. The serials should be in order.
     ASSERT(CommandsHaveValidOrdering(mInFlightCommands));
 
-    Shared<Fence> *fenceToWaitOn = nullptr;
-    size_t finishCount = GetBatchCountUpToSerial(mInFlightCommands, finishSerial, &fenceToWaitOn);
+    size_t finishedCount = 0;
+    while (finishedCount < mInFlightCommands.size() &&
+           mInFlightCommands[finishedCount].serial <= finishSerial)
+    {
+        finishedCount++;
+    }
 
-    if (finishCount == 0)
+    if (finishedCount == 0)
     {
         return angle::Result::Continue;
     }
 
-    // Wait for it finish.  If no fence, the serial is already finished, it might just have garbage
-    // to clean up.
-    if (fenceToWaitOn != nullptr)
-    {
-        VkDevice device = context->getDevice();
-        VkResult status = fenceToWaitOn->get().wait(device, timeout);
+    const CommandBatch &batch = mInFlightCommands[finishedCount - 1];
 
-        ANGLE_VK_TRY(context, status);
-    }
+    // Wait for it finish
+    VkDevice device = context->getDevice();
+    VkResult status = batch.fence.get().wait(device, timeout);
+
+    ANGLE_VK_TRY(context, status);
 
     // Clean up finished batches.
-    ANGLE_TRY(retireFinishedCommands(context, finishCount));
+    ANGLE_TRY(retireFinishedCommands(context, finishedCount));
     ASSERT(allInFlightCommandsAreAfterSerial(finishSerial));
 
     return angle::Result::Continue;
@@ -1104,51 +1064,38 @@ angle::Result CommandQueue::submitFrame(
     SecondaryCommandPools *commandPools,
     Serial submitQueueSerial)
 {
+    // Start an empty primary buffer if we have an empty submit.
+    PrimaryCommandBuffer &commandBuffer = getCommandBuffer(hasProtectedContent);
+    ANGLE_TRY(ensurePrimaryCommandBufferValid(context, hasProtectedContent));
+    ANGLE_VK_TRY(context, commandBuffer.end());
+
+    VkSubmitInfo submitInfo = {};
+    InitializeSubmitInfo(&submitInfo, commandBuffer, waitSemaphores, waitSemaphoreStageMasks,
+                         signalSemaphore);
+
+    VkProtectedSubmitInfo protectedSubmitInfo = {};
+    if (hasProtectedContent)
+    {
+        protectedSubmitInfo.sType           = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
+        protectedSubmitInfo.pNext           = nullptr;
+        protectedSubmitInfo.protectedSubmit = true;
+        submitInfo.pNext                    = &protectedSubmitInfo;
+    }
+
+    ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::submitFrame");
+
     RendererVk *renderer = context->getRenderer();
     VkDevice device      = renderer->getDevice();
-
-    ++mPerfCounters.commandQueueSubmitCallsTotal;
-    ++mPerfCounters.commandQueueSubmitCallsPerFrame;
 
     DeviceScoped<CommandBatch> scopedBatch(device);
     CommandBatch &batch = scopedBatch.get();
 
+    ANGLE_TRY(mFenceRecycler.newSharedFence(context, &batch.fence));
     batch.serial                = submitQueueSerial;
     batch.hasProtectedContent   = hasProtectedContent;
     batch.commandBuffersToReset = std::move(commandBuffersToReset);
 
-    // Don't make a submission if there is nothing to submit.
-    PrimaryCommandBuffer &commandBuffer = getCommandBuffer(hasProtectedContent);
-    const bool hasAnyPendingCommands    = commandBuffer.valid();
-    if (hasAnyPendingCommands || signalSemaphore != nullptr || !waitSemaphores.empty())
-    {
-        if (commandBuffer.valid())
-        {
-            ANGLE_VK_TRY(context, commandBuffer.end());
-        }
-
-        VkSubmitInfo submitInfo = {};
-        InitializeSubmitInfo(&submitInfo, commandBuffer, waitSemaphores, waitSemaphoreStageMasks,
-                             signalSemaphore);
-
-        VkProtectedSubmitInfo protectedSubmitInfo = {};
-        if (hasProtectedContent)
-        {
-            protectedSubmitInfo.sType           = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
-            protectedSubmitInfo.pNext           = nullptr;
-            protectedSubmitInfo.protectedSubmit = true;
-            submitInfo.pNext                    = &protectedSubmitInfo;
-        }
-
-        ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::submitFrame");
-
-        ANGLE_TRY(mFenceRecycler.newSharedFence(context, &batch.fence));
-        ANGLE_TRY(queueSubmit(context, priority, submitInfo, &batch.fence.get(), batch.serial));
-    }
-    else
-    {
-        mLastSubmittedQueueSerial = batch.serial;
-    }
+    ANGLE_TRY(queueSubmit(context, priority, submitInfo, &batch.fence.get(), batch.serial));
 
     if (!currentGarbage.empty())
     {
@@ -1180,19 +1127,6 @@ angle::Result CommandQueue::submitFrame(
         ANGLE_TRY(finishToSerial(context, finishSerial, renderer->getMaxFenceWaitTimeNs()));
     }
 
-    // CPU should be throttled to avoid accumulating too much memory garbage waiting to be
-    // destroyed. This is important to keep peak memory usage at check when game launched and a lot
-    // of staging buffers used for textures upload and then gets released. But if there is only one
-    // command buffer in flight, we do not wait here to ensure we keep GPU busy.
-    VkDeviceSize suballocationGarbageSize = renderer->getSuballocationGarbageSize();
-    while (suballocationGarbageSize > kMaxBufferSuballocationGarbageSize &&
-           mInFlightCommands.size() > 1)
-    {
-        Serial finishSerial = mInFlightCommands.back().serial;
-        ANGLE_TRY(finishToSerial(context, finishSerial, renderer->getMaxFenceWaitTimeNs()));
-        suballocationGarbageSize = renderer->getSuballocationGarbageSize();
-    }
-
     return angle::Result::Continue;
 }
 
@@ -1201,35 +1135,39 @@ angle::Result CommandQueue::waitForSerialWithUserTimeout(vk::Context *context,
                                                          uint64_t timeout,
                                                          VkResult *result)
 {
-    Shared<Fence> *fenceToWaitOn = nullptr;
-    size_t finishCount = GetBatchCountUpToSerial(mInFlightCommands, serial, &fenceToWaitOn);
-
-    // The serial is already complete if:
-    //
-    // - There is no in-flight work (i.e. mInFlightCommands is empty), or
-    // - The given serial is smaller than the smallest serial, or
-    // - Every batch up to this serial is a garbage-clean-up-only batch (i.e. empty submission
-    //   that's optimized out)
-    if (finishCount == 0 || fenceToWaitOn == nullptr)
+    // No in-flight work. This indicates the serial is already complete.
+    if (mInFlightCommands.empty())
     {
         *result = VK_SUCCESS;
         return angle::Result::Continue;
     }
 
-    const CommandBatch &batch = mInFlightCommands[finishCount - 1];
+    // Serial is already complete.
+    if (serial < mInFlightCommands[0].serial)
+    {
+        *result = VK_SUCCESS;
+        return angle::Result::Continue;
+    }
+
+    size_t batchIndex = 0;
+    while (batchIndex != mInFlightCommands.size() && mInFlightCommands[batchIndex].serial < serial)
+    {
+        batchIndex++;
+    }
 
     // Serial is not yet submitted. This is undefined behaviour, so we can do anything.
-    if (serial > batch.serial)
+    if (batchIndex >= mInFlightCommands.size())
     {
-        ASSERT(finishCount == mInFlightCommands.size());
-
         WARN() << "Waiting on an unsubmitted serial.";
         *result = VK_TIMEOUT;
         return angle::Result::Continue;
     }
-    ASSERT(serial == batch.serial);
 
-    *result = fenceToWaitOn->get().wait(context->getDevice(), timeout);
+    ASSERT(serial == mInFlightCommands[batchIndex].serial);
+
+    vk::Fence &fence = mInFlightCommands[batchIndex].fence.get();
+    ASSERT(fence.valid());
+    *result = fence.wait(context->getDevice(), timeout);
 
     // Don't trigger an error on timeout.
     if (*result != VK_TIMEOUT)
@@ -1340,15 +1278,8 @@ angle::Result CommandQueue::queueSubmit(Context *context,
     ANGLE_VK_TRY(context, vkQueueSubmit(queue, 1, &submitInfo, fenceHandle));
     mLastSubmittedQueueSerial = submitQueueSerial;
 
-    ++mPerfCounters.vkQueueSubmitCallsTotal;
-    ++mPerfCounters.vkQueueSubmitCallsPerFrame;
-    return angle::Result::Continue;
-}
-
-void CommandQueue::resetPerFramePerfCounters()
-{
-    mPerfCounters.commandQueueSubmitCallsPerFrame = 0;
-    mPerfCounters.vkQueueSubmitCallsPerFrame      = 0;
+    // Now that we've submitted work, clean up RendererVk garbage
+    return renderer->cleanupGarbage(mLastCompletedQueueSerial);
 }
 
 VkResult CommandQueue::queuePresent(egl::ContextPriority contextPriority,
@@ -1358,9 +1289,14 @@ VkResult CommandQueue::queuePresent(egl::ContextPriority contextPriority,
     return vkQueuePresentKHR(queue, &presentInfo);
 }
 
+Serial CommandQueue::getLastCompletedQueueSerial() const
+{
+    return mLastCompletedQueueSerial;
+}
+
 bool CommandQueue::isBusy() const
 {
-    return mLastSubmittedQueueSerial > getLastCompletedQueueSerial();
+    return mLastSubmittedQueueSerial > mLastCompletedQueueSerial;
 }
 
 // QueuePriorities:

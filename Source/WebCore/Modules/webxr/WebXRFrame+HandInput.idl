@@ -25,10 +25,10 @@
 
 // https://immersive-web.github.io/webxr-hand-input/#xrframe-interface
 [
-    Conditional=WEBXR_HANDS,
     EnabledBySetting=WebXREnabled&WebXRHandInputModuleEnabled,
+    Conditional=WEBXR_HANDS
 ] partial interface WebXRFrame {
-    [CallWith=CurrentDocument] WebXRJointPose? getJointPose(WebXRJointSpace joint, WebXRSpace baseSpace);
+    WebXRJointPose? getJointPose(WebXRJointSpace joint, WebXRSpace baseSpace);
     boolean fillJointRadii(sequence<WebXRJointSpace> jointSpaces, Float32Array radii);
-    [CallWith=CurrentDocument] boolean fillPoses(sequence<WebXRSpace> spaces, WebXRSpace baseSpace, Float32Array transforms);
+    boolean fillPoses(sequence<WebXRSpace> spaces, WebXRSpace baseSpace, Float32Array transforms);
 };

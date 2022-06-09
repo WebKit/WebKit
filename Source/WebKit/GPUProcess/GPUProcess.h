@@ -29,10 +29,8 @@
 
 #include "AuxiliaryProcess.h"
 #include "SandboxExtension.h"
-#include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCEnumTraits.h>
-#include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
@@ -49,7 +47,6 @@
 #endif
 
 namespace WebCore {
-class CaptureDevice;
 class NowPlayingManager;
 struct MockMediaDevice;
 struct ScreenProperties;
@@ -59,6 +56,7 @@ struct SecurityOriginData;
 namespace WebKit {
 
 class GPUConnectionToWebProcess;
+struct GPUProcessConnectionInitializationParameters;
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
 struct GPUProcessSessionParameters;
@@ -73,7 +71,7 @@ public:
 
     void removeGPUConnectionToWebProcess(GPUConnectionToWebProcess&);
 
-    void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);
+    void prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&&);
     void processDidResume();
     void resume();
 
@@ -94,7 +92,6 @@ public:
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     WorkQueue& videoMediaStreamTrackRendererQueue();
-    void sandboxWasUpatedForCapture();
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     WorkQueue& libWebRTCCodecsQueue();
@@ -118,8 +115,6 @@ public:
     void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
 #endif
 
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
-
 private:
     void lowMemoryHandler(Critical, Synchronous);
 
@@ -138,7 +133,7 @@ private:
 
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&);
-    void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Attachment&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
+    void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, GPUProcessConnectionParameters&&, CompletionHandler<void(std::optional<IPC::Attachment>&&, GPUProcessConnectionInitializationParameters&&)>&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
 
@@ -154,10 +149,6 @@ private:
     void resetMockMediaDevices();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     bool setCaptureAttributionString(const String&);
-#endif
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    void showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
-    void showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
 #endif
 #if PLATFORM(MAC)
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
@@ -188,17 +179,9 @@ private:
     void setMediaSourceInlinePaintingEnabled(bool);
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    void setSampleBufferContentKeySessionSupportEnabled(bool);
-#endif
-
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
     void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
-#endif
-
-#if PLATFORM(MAC)
-    void openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
 #endif
 
     // Connections to WebProcesses.
@@ -234,7 +217,6 @@ private:
     HashMap<PAL::SessionID, GPUSession> m_sessions;
     WebCore::Timer m_idleExitTimer;
     std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
-    String m_applicationVisibleName;
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;
 #endif
@@ -258,10 +240,7 @@ private:
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool m_sampleBufferContentKeySessionSupportEnabled { false };
-#endif
-
+    String m_applicationVisibleName;
 };
 
 } // namespace WebKit

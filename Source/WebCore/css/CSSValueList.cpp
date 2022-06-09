@@ -83,12 +83,12 @@ Ref<CSSValueList> CSSValueList::copy()
     return newList.releaseNonNull();
 }
 
-String CSSValueList::customCSSText(Document* document) const
+String CSSValueList::customCSSText() const
 {
     StringBuilder result;
     auto separator = separatorCSSText();
     for (auto& value : m_values)
-        result.append(result.isEmpty() ? ""_s : separator, value.get().cssText(document));
+        result.append(result.isEmpty() ? ""_s : separator, value.get().cssText());
     return result.toString();
 }
 

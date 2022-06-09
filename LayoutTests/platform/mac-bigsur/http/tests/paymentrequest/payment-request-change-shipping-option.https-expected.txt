@@ -1,3 +1,0 @@
-
-FAIL Test for PaymentRequest shippingOption attribute assert_equals: Must be 'initially-selected', as the selected member is true expected "initially-selected" but got "valid-1"
-

@@ -34,13 +34,12 @@
 #include "JSNodeCustom.h"
 #include "JSStyleSheetCustom.h"
 #include "StyledElement.h"
-#include "WebCoreOpaqueRoot.h"
 
 
 namespace WebCore {
 using namespace JSC;
 
-WebCoreOpaqueRoot root(CSSStyleDeclaration* style)
+void* root(CSSStyleDeclaration* style)
 {
     ASSERT(style);
     if (auto* parentRule = style->parentRule())
@@ -49,13 +48,13 @@ WebCoreOpaqueRoot root(CSSStyleDeclaration* style)
         return root(styleSheet);
     if (auto* parentElement = style->parentElement())
         return root(parentElement);
-    return WebCoreOpaqueRoot { style };
+    return style;
 }
 
 template<typename Visitor>
 void JSCSSStyleDeclaration::visitAdditionalChildren(Visitor& visitor)
 {
-    addWebCoreOpaqueRoot(visitor, wrapped());
+    visitor.addOpaqueRoot(root(&wrapped()));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSStyleDeclaration);

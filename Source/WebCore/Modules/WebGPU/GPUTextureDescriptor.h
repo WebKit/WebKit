@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,9 +46,6 @@ struct GPUTextureDescriptor : public GPUObjectDescriptorBase {
             WebCore::convertToBacking(dimension),
             WebCore::convertToBacking(format),
             convertTextureUsageFlagsToBacking(usage),
-            viewFormats.map([] (auto viewFormat) {
-                return WebCore::convertToBacking(viewFormat);
-            }),
         };
     }
 
@@ -58,7 +55,6 @@ struct GPUTextureDescriptor : public GPUObjectDescriptorBase {
     GPUTextureDimension dimension { GPUTextureDimension::_2d };
     GPUTextureFormat format { GPUTextureFormat::R8unorm };
     GPUTextureUsageFlags usage { 0 };
-    Vector<GPUTextureFormat> viewFormats;
 };
 
 }

@@ -39,9 +39,9 @@
 #include "FloatSize.h"
 #include "MediaStreamTrackPrivate.h"
 #include <wtf/Function.h>
+#include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/UUID.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
@@ -71,7 +71,7 @@ public:
 
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, Ref<RealtimeMediaSource>&&);
     static Ref<MediaStreamPrivate> create(Ref<const Logger>&&, RefPtr<RealtimeMediaSource>&& audioSource, RefPtr<RealtimeMediaSource>&& videoSource);
-    static Ref<MediaStreamPrivate> create(Ref<const Logger>&& logger, const MediaStreamTrackPrivateVector& tracks, String&& id = createVersion4UUIDString()) { return adoptRef(*new MediaStreamPrivate(WTFMove(logger), tracks, WTFMove(id))); }
+    static Ref<MediaStreamPrivate> create(Ref<const Logger>&& logger, const MediaStreamTrackPrivateVector& tracks, String&& id = createCanonicalUUIDString()) { return adoptRef(*new MediaStreamPrivate(WTFMove(logger), tracks, WTFMove(id))); }
 
     WEBCORE_EXPORT virtual ~MediaStreamPrivate();
 
@@ -133,13 +133,15 @@ private:
     WeakHashSet<Observer> m_observers;
     String m_id;
     MediaStreamTrackPrivate* m_activeVideoTrack { nullptr };
-    MemoryCompactRobinHoodHashMap<String, Ref<MediaStreamTrackPrivate>> m_trackSet;
+    HashMap<String, RefPtr<MediaStreamTrackPrivate>> m_trackSet;
     bool m_isActive { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
 #endif
 };
+
+typedef Vector<RefPtr<MediaStreamPrivate>> MediaStreamPrivateVector;
 
 } // namespace WebCore
 

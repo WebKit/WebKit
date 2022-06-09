@@ -30,6 +30,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "PlatformMediaSession.h"
+#include "VisibilityChangeClient.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -47,7 +48,8 @@ class AudioContext final
     : public BaseAudioContext
     , public MediaProducer
     , public MediaCanStartListener
-    , private PlatformMediaSessionClient {
+    , private PlatformMediaSessionClient
+    , private VisibilityChangeClient {
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
@@ -94,8 +96,6 @@ public:
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
-    void defaultDestinationWillBecomeConnected();
-
 private:
     AudioContext(Document&, const AudioContextOptions&);
 
@@ -127,7 +127,7 @@ private:
     bool canReceiveRemoteControlCommands() const final { return false; }
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final { }
     bool supportsSeeking() const final { return false; }
-    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final;
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final { return false; }
     bool canProduceAudio() const final { return true; }
     bool isSuspended() const final;
     bool isPlaying() const final;
@@ -135,6 +135,9 @@ private:
 
     // MediaCanStartListener.
     void mediaCanStart(Document&) final;
+
+    // VisibilityChangeClient
+    void visibilityStateChanged() final;
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -150,8 +153,6 @@ private:
     // [[suspended by user]] flag in the specification:
     // https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot
     bool m_wasSuspendedByScript { false };
-
-    bool m_canOverrideBackgroundPlaybackRestriction { true };
 };
 
 } // WebCore

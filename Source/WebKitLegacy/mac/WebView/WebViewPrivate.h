@@ -32,7 +32,6 @@
 
 #if TARGET_OS_IPHONE
 #import <CoreGraphics/CGColor.h>
-#import <WebKitLegacy/WAKView.h>
 #endif
 
 #if !defined(ENABLE_DASHBOARD_SUPPORT)
@@ -684,11 +683,7 @@ Could be worth adding to the API.
     If layer is NULL, removes any existing layer. Returns YES if the set or
     remove was successful.
  */
-#if TARGET_OS_IPHONE
-- (BOOL)_setMediaLayer:(CALayer*)layer forPluginView:(WAKView*)pluginView;
-#else
 - (BOOL)_setMediaLayer:(CALayer*)layer forPluginView:(NSView*)pluginView;
-#endif
 
 /*!
  @method _wantsTelephoneNumberParsing
@@ -900,11 +895,7 @@ Could be worth adding to the API.
 
 - (void)_setFontFallbackPrefersPictographs:(BOOL)flag;
 
-#if TARGET_OS_IPHONE
-- (void)showCandidates:(NSArray *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString forSelectedRange:(NSRange)range view:(WAKView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock;
-#else
 - (void)showCandidates:(NSArray *)candidates forString:(NSString *)string inRect:(NSRect)rectOfTypedString forSelectedRange:(NSRange)range view:(NSView *)view completionHandler:(void (^)(NSTextCheckingResult *acceptedCandidate))completionBlock;
-#endif
 - (void)forceRequestCandidatesForTesting;
 - (BOOL)shouldRequestCandidates;
 

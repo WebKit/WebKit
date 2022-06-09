@@ -23,10 +23,10 @@
 #include <wtf/MemoryPressureHandler.h>
 
 /**
- * WebKitMemoryPressureSettings:
+ * SECTION: WebKitMemoryPressureSettings
+ * @Short_description: A boxed type representing the settings for the MemoryPressureHandler
+ * @Title: WebKitMemoryPressureSettings
  * @See_also: #WebKitWebContext, #WebKitWebsiteDataManager
- *
- * A boxed type representing the settings for the memory pressure handler
  *
  * #WebKitMemoryPressureSettings is a boxed type that can be used to provide some custom settings
  * to control how the memory pressure situations are handled by the different processes.
@@ -131,9 +131,7 @@ void webkit_memory_pressure_settings_set_memory_limit(WebKitMemoryPressureSettin
  * webkit_memory_pressure_settings_get_memory_limit:
  * @settings: a #WebKitMemoryPressureSettings
  *
- * Gets the memory usage limit.
- *
- * Returns: current value, in megabytes.
+ * Returns: the value in MB of the memory limit inside @settings.
  *
  * Since: 2.34
  */
@@ -171,9 +169,7 @@ void webkit_memory_pressure_settings_set_conservative_threshold(WebKitMemoryPres
  * webkit_memory_pressure_settings_get_conservative_threshold:
  * @settings: a #WebKitMemoryPressureSettings
  *
- * Gets the conservative memory usage threshold.
- *
- * Returns: value in the `(0, 1)` range.
+ * Returns: the value of the the conservative threshold inside @settings.
  *
  * Since: 2.34
  */
@@ -213,9 +209,7 @@ void webkit_memory_pressure_settings_set_strict_threshold(WebKitMemoryPressureSe
  * webkit_memory_pressure_settings_get_strict_threshold:
  * @settings: a #WebKitMemoryPressureSettings
  *
- * Gets the strict memory usage threshold.
- *
- * Returns: value in the `(0, 1)` range.
+ * Returns: the value of the the strict threshold inside @settings.
  *
  * Since: 2.34
  */
@@ -254,9 +248,7 @@ void webkit_memory_pressure_settings_set_kill_threshold(WebKitMemoryPressureSett
  * webkit_memory_pressure_settings_get_kill_threshold:
  * @settings: a #WebKitMemoryPressureSettings
  *
- * Gets the kill memory usage threshold.
- *
- * Returns: positive value, can be zero.
+ * Returns: the value of the the kill threshold inside @settings.
  *
  * Since: 2.34
  */
@@ -291,9 +283,7 @@ void webkit_memory_pressure_settings_set_poll_interval(WebKitMemoryPressureSetti
  * webkit_memory_pressure_settings_get_poll_interval:
  * @settings: a #WebKitMemoryPressureSettings
  *
- * Gets the interval at which memory usage is checked.
- *
- * Returns: current interval value, in seconds.
+ * Returns: the value in seconds of the the poll interval inside @settings.
  *
  * Since: 2.34
  */

@@ -74,7 +74,6 @@ class OffscreenSurfaceVk : public SurfaceVk
     EGLint getSwapBehavior() const override;
 
     angle::Result initializeContents(const gl::Context *context,
-                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
     vk::ImageHelper *getColorAttachmentImage();
@@ -171,7 +170,6 @@ struct SwapchainImage : angle::NonCopyable
     vk::ImageViewHelper imageViews;
     vk::Framebuffer framebuffer;
     vk::Framebuffer fetchFramebuffer;
-    vk::Framebuffer framebufferResolveMS;
 
     // A circular array of semaphores used for presenting this image.
     static constexpr size_t kPresentHistorySize = kSwapHistorySize + 1;
@@ -181,12 +179,6 @@ struct SwapchainImage : angle::NonCopyable
 }  // namespace impl
 
 enum class FramebufferFetchMode
-{
-    Disabled,
-    Enabled,
-};
-
-enum class SwapchainResolveMode
 {
     Disabled,
     Enabled,
@@ -248,15 +240,13 @@ class WindowSurfaceVk : public SurfaceVk
     EGLint getSwapBehavior() const override;
 
     angle::Result initializeContents(const gl::Context *context,
-                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
-    vk::Framebuffer &chooseFramebuffer(const SwapchainResolveMode swapchainResolveMode);
+    vk::Framebuffer &chooseFramebuffer();
 
     angle::Result getCurrentFramebuffer(ContextVk *context,
                                         FramebufferFetchMode fetchMode,
                                         const vk::RenderPass &compatibleRenderPass,
-                                        const SwapchainResolveMode swapchainResolveMode,
                                         vk::Framebuffer **framebufferOut);
 
     const vk::Semaphore *getAndResetAcquireImageSemaphore();
@@ -276,7 +266,7 @@ class WindowSurfaceVk : public SurfaceVk
 
     bool isSharedPresentMode() const
     {
-        return (mSwapchainPresentMode == vk::PresentMode::SharedDemandRefreshKHR);
+        return (mSwapchainPresentMode == VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR);
     }
 
     egl::Error lockSurface(const egl::Display *display,
@@ -343,14 +333,12 @@ class WindowSurfaceVk : public SurfaceVk
 
     bool isMultiSampled() const;
 
-    bool supportsPresentMode(vk::PresentMode presentMode) const;
-
-    std::vector<vk::PresentMode> mPresentModes;
+    std::vector<VkPresentModeKHR> mPresentModes;
 
     VkSwapchainKHR mSwapchain;
     // Cached information used to recreate swapchains.
-    vk::PresentMode mSwapchainPresentMode;         // Current swapchain mode
-    vk::PresentMode mDesiredSwapchainPresentMode;  // Desired mode set through setSwapInterval()
+    VkPresentModeKHR mSwapchainPresentMode;         // Current swapchain mode
+    VkPresentModeKHR mDesiredSwapchainPresentMode;  // Desired mode set through setSwapInterval()
     uint32_t mMinImageCount;
     VkSurfaceTransformFlagBitsKHR mPreTransform;
     VkSurfaceTransformFlagBitsKHR mEmulatedPreTransform;

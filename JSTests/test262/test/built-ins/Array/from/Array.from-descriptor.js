@@ -3,7 +3,8 @@
 
 /*---
 description: Testing descriptor property of Array.from
-includes: [propertyHelper.js]
+includes:
+    - propertyHelper.js
 esid: sec-array.from
 ---*/
 

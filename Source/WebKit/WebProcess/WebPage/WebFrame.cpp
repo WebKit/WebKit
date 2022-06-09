@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "APIArray.h"
 #include "DownloadManager.h"
 #include "FrameInfoData.h"
-#include "InjectedBundleCSSStyleDeclarationHandle.h"
 #include "InjectedBundleHitTestResult.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
@@ -42,7 +41,6 @@
 #include "WebChromeClient.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDocumentLoader.h"
-#include "WebImage.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
@@ -111,11 +109,11 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
     page.send(Messages::WebPageProxy::DidCreateMainFrame(frameID()));
 
     m_coreFrame = coreFrame;
-    m_coreFrame->tree().setName(nullAtom());
+    m_coreFrame->tree().setName(String());
     m_coreFrame->init();
 }
 
-Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const AtomString& frameName, HTMLFrameOwnerElement* ownerElement)
+Ref<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
 {
     auto frame = create();
     page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID()));
@@ -497,7 +495,7 @@ Ref<API::Array> WebFrame::childFrames()
 String WebFrame::layerTreeAsText() const
 {
     if (!m_coreFrame)
-        return emptyString();
+        return "";
 
     return m_coreFrame->contentRenderer()->compositor().layerTreeAsText();
 }
@@ -547,7 +545,19 @@ JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScript
 #endif
 }
 
-void WebFrame::setAccessibleName(const AtomString& accessibleName)
+bool WebFrame::handlesPageScaleGesture() const
+{
+    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame.get());
+    return pluginView && pluginView->handlesPageScaleFactor();
+}
+
+bool WebFrame::requiresUnifiedScaleFactor() const
+{
+    auto* pluginView = WebPage::pluginViewForFrame(m_coreFrame.get());
+    return pluginView && pluginView->requiresUnifiedScaleFactor();
+}
+
+void WebFrame::setAccessibleName(const String& accessibleName)
 {
     if (!AXObjectCache::accessibilityEnabled())
         return;
@@ -708,23 +718,6 @@ WebFrame* WebFrame::frameForContext(JSContextRef context)
     return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
 }
 
-WebFrame* WebFrame::contentFrameForWindowOrFrameElement(JSContextRef context, JSValueRef value)
-{
-    auto* coreFrame = Frame::contentFrameFromWindowOrFrameElement(context, value);
-    return coreFrame ? WebFrame::fromCoreFrame(*coreFrame) : nullptr;
-}
-
-JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleCSSStyleDeclarationHandle* cssStyleDeclarationHandle, InjectedBundleScriptWorld* world)
-{
-    if (!m_coreFrame)
-        return nullptr;
-
-    JSDOMWindow* globalObject = m_coreFrame->script().globalObject(world->coreWorld());
-
-    JSLockHolder lock(globalObject);
-    return toRef(globalObject, toJS(globalObject, globalObject, cssStyleDeclarationHandle->coreCSSStyleDeclaration()));
-}
-
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)
 {
     if (!m_coreFrame)
@@ -749,7 +742,7 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
 
 String WebFrame::counterValue(JSObjectRef element)
 {
-    if (!toJS(element)->inherits<JSElement>())
+    if (!toJS(element)->inherits<JSElement>(toJS(element)->vm()))
         return String();
 
     return counterValueForElement(&jsCast<JSElement*>(toJS(element))->wrapped());
@@ -814,11 +807,11 @@ void WebFrame::setTextDirection(const String& direction)
     if (!m_coreFrame)
         return;
 
-    if (direction == "auto"_s)
+    if (direction == "auto")
         m_coreFrame->editor().setBaseWritingDirection(WritingDirection::Natural);
-    else if (direction == "ltr"_s)
+    else if (direction == "ltr")
         m_coreFrame->editor().setBaseWritingDirection(WritingDirection::LeftToRight);
-    else if (direction == "rtl"_s)
+    else if (direction == "rtl")
         m_coreFrame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
 }
 
@@ -848,13 +841,27 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
 }
 #endif
 
-RefPtr<WebImage> WebFrame::createSelectionSnapshot() const
+RefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
 {
-    auto snapshot = snapshotSelection(*coreFrame(), { { WebCore::SnapshotFlags::ForceBlackText, WebCore::SnapshotFlags::Shareable }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto snapshot = snapshotSelection(*coreFrame(), { { WebCore::SnapshotFlags::ForceBlackText }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
     if (!snapshot)
         return nullptr;
 
-    return WebImage::create(snapshot.releaseNonNull());
+    auto sharedSnapshot = ShareableBitmap::createShareable(snapshot->backendSize(), { });
+    if (!sharedSnapshot)
+        return nullptr;
+
+    // FIXME: We should consider providing a way to use subpixel antialiasing for the snapshot
+    // if we're compositing this image onto a solid color (e.g. the modern find indicator style).
+    auto graphicsContext = sharedSnapshot->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
+    float deviceScaleFactor = coreFrame()->page()->deviceScaleFactor();
+    graphicsContext->scale(deviceScaleFactor);
+    graphicsContext->drawConsumingImageBuffer(WTFMove(snapshot), FloatPoint());
+
+    return sharedSnapshot;
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)

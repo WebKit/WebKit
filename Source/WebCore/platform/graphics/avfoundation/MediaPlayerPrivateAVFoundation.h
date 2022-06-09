@@ -166,7 +166,7 @@ protected:
     // MediaPlayerPrivatePrivateInterface overrides.
     void load(const String& url) override;
 #if ENABLE(MEDIA_SOURCE)
-    void load(const URL&, const ContentType&, MediaSourcePrivateClient&) override;
+    void load(const URL&, const ContentType&, MediaSourcePrivateClient*) override;
 #endif
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override { setNetworkState(MediaPlayer::NetworkState::FormatError); }
@@ -311,7 +311,7 @@ protected:
     MediaPlayer* player() { return m_player; }
     const MediaPlayer* player() const { return m_player; }
 
-    String engineDescription() const override { return "AVFoundation"_s; }
+    String engineDescription() const override { return "AVFoundation"; }
     long platformErrorCode() const override { return assetErrorCode(); }
 
     void trackModeChanged() override;
@@ -328,8 +328,6 @@ protected:
 
     void setNeedsRenderingModeChanged();
     void renderingModeChanged();
-
-    bool loadingMetadata() const { return m_loadingMetadata; }
 
     bool shouldEnableInheritURIQueryComponent() const;
 

@@ -42,7 +42,7 @@ public:
 
     LayoutSize intrinsicSize() const final
     {
-        if (shouldApplySizeContainment())
+        if (shouldApplySizeContainment(*this))
             return LayoutSize();
         return m_intrinsicSize;
     }
@@ -85,7 +85,7 @@ private:
     LayoutUnit computeConstrainedLogicalWidth(ShouldComputePreferred) const;
 
     virtual RenderBox* embeddedContentBox() const { return 0; }
-    ASCIILiteral renderName() const override { return "RenderReplaced"_s; }
+    const char* renderName() const override { return "RenderReplaced"; }
 
     bool canHaveChildren() const override { return false; }
 

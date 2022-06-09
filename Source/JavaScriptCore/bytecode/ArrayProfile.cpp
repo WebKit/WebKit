@@ -123,9 +123,9 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker& locker, Co
     if (!m_lastSeenStructureID)
         return;
     
-    Structure* lastSeenStructure = m_lastSeenStructureID.decode();
+    Structure* lastSeenStructure = codeBlock->heap()->structureIDTable().get(m_lastSeenStructureID);
     computeUpdatedPrediction(locker, codeBlock, lastSeenStructure);
-    m_lastSeenStructureID = StructureID();
+    m_lastSeenStructureID = 0;
 }
 
 void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock* codeBlock, Structure* lastSeenStructure)
@@ -146,18 +146,18 @@ void ArrayProfile::computeUpdatedPrediction(const ConcurrentJSLocker&, CodeBlock
         m_usesOriginalArrayStructures = false;
 }
 
-void ArrayProfile::observeIndexedRead(JSCell* cell, unsigned index)
+void ArrayProfile::observeIndexedRead(VM& vm, JSCell* cell, unsigned index)
 {
     m_lastSeenStructureID = cell->structureID();
 
-    if (JSObject* object = jsDynamicCast<JSObject*>(cell)) {
+    if (JSObject* object = jsDynamicCast<JSObject*>(vm, cell)) {
         if (hasAnyArrayStorage(object->indexingType()) && index >= object->getVectorLength())
             setOutOfBounds();
         else if (index >= object->getArrayLength())
             setOutOfBounds();
     }
 
-    if (JSString* string = jsDynamicCast<JSString*>(cell)) {
+    if (JSString* string = jsDynamicCast<JSString*>(vm, cell)) {
         if (index >= string->length())
             setOutOfBounds();
     }

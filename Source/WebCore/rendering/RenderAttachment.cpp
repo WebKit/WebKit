@@ -32,7 +32,6 @@
 #include "FloatRoundedRect.h"
 #include "FrameSelection.h"
 #include "HTMLAttachmentElement.h"
-#include "RenderChildIterator.h"
 #include "RenderTheme.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
@@ -46,9 +45,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderAttachment);
 RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, RenderStyle&& style)
     : RenderReplaced(element, WTFMove(style), LayoutSize())
 {
-#if ENABLE(SERVICE_CONTROLS)
-    m_hasShadowControls = element.isImageMenuEnabled();
-#endif
 }
 
 HTMLAttachmentElement& RenderAttachment::attachmentElement() const
@@ -68,9 +64,6 @@ void RenderAttachment::layout()
     setIntrinsicSize(newIntrinsicSize);
 
     RenderReplaced::layout();
-    
-    if (hasShadowContent())
-        layoutShadowContent(newIntrinsicSize);
 }
 
 void RenderAttachment::invalidate()
@@ -101,16 +94,6 @@ void RenderAttachment::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& of
 
     ControlStates controlStates;
     theme().paint(*this, controlStates, paintInfo, paintRect);
-}
-
-void RenderAttachment::layoutShadowContent(const LayoutSize& size)
-{
-    for (auto& renderBox : childrenOfType<RenderBox>(*this)) {
-        renderBox.mutableStyle().setHeight(Length(size.height(), LengthType::Fixed));
-        renderBox.mutableStyle().setWidth(Length(size.width(), LengthType::Fixed));
-        renderBox.setNeedsLayout(MarkOnlyThis);
-        renderBox.layout();
-    }
 }
 
 } // namespace WebCore

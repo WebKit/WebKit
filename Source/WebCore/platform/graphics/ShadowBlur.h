@@ -38,7 +38,7 @@ namespace WebCore {
 
 class AffineTransform;
 class GraphicsContext;
-struct DropShadow;
+struct GraphicsContextState;
 class ImageBuffer;
 
 class ShadowBlur {
@@ -52,7 +52,7 @@ public:
 
     ShadowBlur();
     ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, bool shadowsIgnoreTransforms = false);
-    ShadowBlur(const DropShadow&, bool shadowsIgnoreTransforms = false);
+    ShadowBlur(const GraphicsContextState&);
 
     void setShadowValues(const FloatSize&, const FloatSize& , const Color&, bool ignoreTransforms = false);
 

@@ -21,6 +21,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/GeneratedWasmOps.asm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/GeneratorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/InitBytecodes.asm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/InitWasm.asm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/InjectedScriptSource.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlCollatorConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlCollatorPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDateTimeFormatConstructor.lut.h
@@ -41,7 +42,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmentIteratorPrototype
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmenterConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmenterPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmentsPrototype.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSDataViewPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSGlobalObject.lut.h
@@ -76,8 +76,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalInstantConstructor.l
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalInstantPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalNow.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalObject.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainDateConstructor.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainDatePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainTimeConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalPlainTimePrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TemporalTimeZoneConstructor.lut.h

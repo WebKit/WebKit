@@ -47,7 +47,7 @@ static void visitNodeList(JSC::AbstractSlotVisitor& visitor, NodeList& nodeList)
     ASSERT(!nodeList.isLiveNodeList());
     unsigned length = nodeList.length();
     for (unsigned i = 0; i < length; ++i)
-        addWebCoreOpaqueRoot(visitor, nodeList.item(i));
+        visitor.addOpaqueRoot(root(nodeList.item(i)));
 }
 
 class ChildListRecord final : public MutationRecord {
@@ -71,7 +71,7 @@ private:
 
     void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
     {
-        addWebCoreOpaqueRoot(visitor, m_target.get());
+        visitor.addOpaqueRoot(root(m_target.ptr()));
         if (m_addedNodes)
             visitNodeList(visitor, *m_addedNodes);
         if (m_removedNodes)
@@ -108,7 +108,7 @@ private:
 
     void visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const final
     {
-        addWebCoreOpaqueRoot(visitor, m_target.get());
+        visitor.addOpaqueRoot(root(m_target.ptr()));
     }
 
     Ref<Node> m_target;
@@ -175,19 +175,19 @@ private:
 
 const AtomString& ChildListRecord::type()
 {
-    static MainThreadNeverDestroyed<const AtomString> childList("childList"_s);
+    static MainThreadNeverDestroyed<const AtomString> childList("childList", AtomString::ConstructFromLiteral);
     return childList;
 }
 
 const AtomString& AttributesRecord::type()
 {
-    static MainThreadNeverDestroyed<const AtomString> attributes("attributes"_s);
+    static MainThreadNeverDestroyed<const AtomString> attributes("attributes", AtomString::ConstructFromLiteral);
     return attributes;
 }
 
 const AtomString& CharacterDataRecord::type()
 {
-    static MainThreadNeverDestroyed<const AtomString> characterData("characterData"_s);
+    static MainThreadNeverDestroyed<const AtomString> characterData("characterData", AtomString::ConstructFromLiteral);
     return characterData;
 }
 

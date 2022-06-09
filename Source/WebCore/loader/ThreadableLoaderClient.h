@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class NetworkLoadMetrics;
 class ResourceError;
 class ResourceResponse;
 class ResourceTiming;
@@ -45,10 +44,9 @@ class ThreadableLoaderClient {
 public:
     virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
-    virtual void redirectReceived(const URL& /*redirectURL*/) { }
     virtual void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) { }
     virtual void didReceiveData(const SharedBuffer&) { }
-    virtual void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) { }
+    virtual void didFinishLoading(ResourceLoaderIdentifier) { }
     virtual void didFail(const ResourceError&) { }
     virtual void didFinishTiming(const ResourceTiming&) { }
     virtual void notifyIsDone(bool) { ASSERT_NOT_REACHED(); }

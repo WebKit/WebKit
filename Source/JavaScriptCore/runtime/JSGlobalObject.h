@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- *  Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -42,7 +42,6 @@
 #include "RegExpGlobalData.h"
 #include "RuntimeFlags.h"
 #include "StringPrototype.h"
-#include "StructureCache.h"
 #include "SymbolPrototype.h"
 #include "VM.h"
 #include "Watchpoint.h"
@@ -124,7 +123,6 @@ class SetIteratorPrototype;
 class SetPrototype;
 class SourceCode;
 class SourceOrigin;
-class StringConstructor;
 class UnlinkedModuleProgramCodeBlock;
 class VariableEnvironment;
 struct ActivationStackNode;
@@ -266,9 +264,6 @@ struct GlobalObjectMethodTable {
 
     typedef JSPromise* (*InstantiateStreamingPtr)(JSGlobalObject*, JSValue, JSObject*);
     InstantiateStreamingPtr instantiateStreaming;
-
-    typedef JSGlobalObject* (*DeriveShadowRealmGlobalFunctionPtr)(JSGlobalObject*);
-    DeriveShadowRealmGlobalFunctionPtr deriveShadowRealmGlobalObject;
 };
 
 class JSGlobalObject : public JSSegmentedVariableObject {
@@ -299,6 +294,8 @@ private:
 public:
     template<typename T> using Initializer = typename LazyProperty<JSGlobalObject, T>::Initializer;
 
+    Register m_deprecatedCallFrameForDebugger[CallFrame::headerSizeInRegisters];
+    
     WriteBarrier<JSObject> m_globalThis;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
@@ -321,7 +318,6 @@ public:
     WriteBarrier<FunctionConstructor> m_functionConstructor;
     WriteBarrier<JSPromiseConstructor> m_promiseConstructor;
     WriteBarrier<JSInternalPromiseConstructor> m_internalPromiseConstructor;
-    WriteBarrier<StringConstructor> m_stringConstructor;
 
     LazyProperty<JSGlobalObject, IntlCollator> m_defaultCollator;
     LazyProperty<JSGlobalObject, Structure> m_collatorStructure;
@@ -339,7 +335,6 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_calendarStructure;
     LazyProperty<JSGlobalObject, Structure> m_durationStructure;
     LazyProperty<JSGlobalObject, Structure> m_instantStructure;
-    LazyProperty<JSGlobalObject, Structure> m_plainDateStructure;
     LazyProperty<JSGlobalObject, Structure> m_plainTimeStructure;
     LazyProperty<JSGlobalObject, Structure> m_timeZoneStructure;
 
@@ -357,7 +352,6 @@ public:
     LazyProperty<JSGlobalObject, JSFunction> m_iteratorProtocolFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_promiseResolveFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_numberProtoToStringFunction;
-    LazyProperty<JSGlobalObject, JSFunction> m_typedArrayProtoSort;
     WriteBarrier<JSFunction> m_objectProtoValueOfFunction;
     WriteBarrier<JSFunction> m_functionProtoHasInstanceSymbolFunction;
     WriteBarrier<JSObject> m_regExpProtoSymbolReplace;
@@ -382,7 +376,20 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_strictEvalActivationStructure;
+    WriteBarrier<Structure> m_lexicalEnvironmentStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleEnvironmentStructure;
+    WriteBarrier<Structure> m_directArgumentsStructure;
+    WriteBarrier<Structure> m_scopedArgumentsStructure;
+    WriteBarrier<Structure> m_clonedArgumentsStructure;
+
+    WriteBarrier<Structure> m_objectStructureForObjectConstructor;
+        
+    // Lists the actual structures used for having these particular indexing shapes.
+    WriteBarrier<Structure> m_originalArrayStructureForIndexingShape[NumberOfArrayIndexingModes];
+    // Lists the structures we should use during allocation for these particular indexing shapes.
+    // These structures will differ from the originals list above when we are having a bad time.
+    WriteBarrier<Structure> m_arrayStructureForIndexingShapeDuringAllocation[NumberOfArrayIndexingModes];
+
     LazyProperty<JSGlobalObject, Structure> m_callbackConstructorStructure;
     LazyProperty<JSGlobalObject, Structure> m_callbackFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_callbackObjectStructure;
@@ -394,59 +401,42 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_glibCallbackFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_glibWrapperObjectStructure;
 #endif
+    WriteBarrier<Structure> m_nullPrototypeObjectStructure;
+    WriteBarrier<Structure> m_calleeStructure;
 
-    WriteBarrierStructureID m_lexicalEnvironmentStructure;
-    WriteBarrierStructureID m_directArgumentsStructure;
-    WriteBarrierStructureID m_scopedArgumentsStructure;
-    WriteBarrierStructureID m_clonedArgumentsStructure;
-
-    WriteBarrierStructureID m_objectStructureForObjectConstructor;
-
-    // Lists the actual structures used for having these particular indexing shapes.
-    WriteBarrierStructureID m_originalArrayStructureForIndexingShape[NumberOfArrayIndexingModes];
-    // Lists the structures we should use during allocation for these particular indexing shapes.
-    // These structures will differ from the originals list above when we are having a bad time.
-    WriteBarrierStructureID m_arrayStructureForIndexingShapeDuringAllocation[NumberOfArrayIndexingModes];
-
-    WriteBarrierStructureID m_nullPrototypeObjectStructure;
-    WriteBarrierStructureID m_calleeStructure;
-
-    WriteBarrierStructureID m_hostFunctionStructure;
+    WriteBarrier<Structure> m_hostFunctionStructure;
 
     struct FunctionStructures {
-        WriteBarrierStructureID arrowFunctionStructure;
-        WriteBarrierStructureID sloppyFunctionStructure;
-        WriteBarrierStructureID strictFunctionStructure;
+        WriteBarrier<Structure> arrowFunctionStructure;
+        WriteBarrier<Structure> sloppyFunctionStructure;
+        WriteBarrier<Structure> strictFunctionStructure;
     };
     FunctionStructures m_builtinFunctions;
     FunctionStructures m_ordinaryFunctions;
-
-    PropertyOffset m_functionNameOffset;
-    WriteBarrierStructureID m_shadowRealmObjectStructure;
-    WriteBarrierStructureID m_regExpStructure;
-
-    WriteBarrierStructureID m_asyncFunctionStructure;
-    WriteBarrierStructureID m_asyncGeneratorFunctionStructure;
-    WriteBarrierStructureID m_generatorFunctionStructure;
-    WriteBarrierStructureID m_generatorStructure;
-    WriteBarrierStructureID m_asyncGeneratorStructure;
-    WriteBarrierStructureID m_arrayIteratorStructure;
-    WriteBarrierStructureID m_mapIteratorStructure;
-    WriteBarrierStructureID m_setIteratorStructure;
-    WriteBarrierStructureID m_regExpMatchesArrayStructure;
-    WriteBarrierStructureID m_regExpMatchesArrayWithIndicesStructure;
-    WriteBarrierStructureID m_regExpMatchesIndicesArrayStructure;
 
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customGetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customSetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_nativeStdFunctionStructure;
-    LazyProperty<JSGlobalObject, Structure> m_remoteFunctionStructure;
+    PropertyOffset m_functionNameOffset;
+    WriteBarrier<Structure> m_shadowRealmObjectStructure;
+    WriteBarrier<Structure> m_regExpStructure;
     WriteBarrier<AsyncFunctionPrototype> m_asyncFunctionPrototype;
     WriteBarrier<AsyncGeneratorFunctionPrototype> m_asyncGeneratorFunctionPrototype;
+    WriteBarrier<Structure> m_asyncFunctionStructure;
+    WriteBarrier<Structure> m_asyncGeneratorFunctionStructure;
+    WriteBarrier<Structure> m_generatorFunctionStructure;
+    WriteBarrier<Structure> m_generatorStructure;
+    WriteBarrier<Structure> m_asyncGeneratorStructure;
+    WriteBarrier<Structure> m_arrayIteratorStructure;
+    WriteBarrier<Structure> m_mapIteratorStructure;
+    WriteBarrier<Structure> m_setIteratorStructure;
     LazyProperty<JSGlobalObject, Structure> m_iteratorResultObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_dataPropertyDescriptorObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_accessorPropertyDescriptorObjectStructure;
+    WriteBarrier<Structure> m_regExpMatchesArrayStructure;
+    WriteBarrier<Structure> m_regExpMatchesArrayWithIndicesStructure;
+    WriteBarrier<Structure> m_regExpMatchesIndicesArrayStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleRecordStructure;
     LazyProperty<JSGlobalObject, Structure> m_moduleNamespaceObjectStructure;
     LazyProperty<JSGlobalObject, Structure> m_proxyObjectStructure;
@@ -454,19 +444,15 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_proxyRevokeStructure;
     LazyClassStructure m_sharedArrayBufferStructure;
 
-#define DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
-    WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype;
-
-#define DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
-    WriteBarrierStructureID m_ ## properName ## Structure;
+#define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
+    WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype; \
+    WriteBarrier<Structure> m_ ## properName ## Structure;
 
 #define DEFINE_STORAGE_FOR_LAZY_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     LazyClassStructure m_ ## properName ## Structure;
 
-    FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE)
-    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE)
-    FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE)
-    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE)
+    FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
+    FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE)
     
 #if ENABLE(WEBASSEMBLY)
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyModuleRecordStructure;
@@ -478,8 +464,7 @@ public:
 
     FOR_EACH_LAZY_BUILTIN_TYPE(DEFINE_STORAGE_FOR_LAZY_TYPE)
 
-#undef DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE
-#undef DEFINE_STORAGE_FOR_SIMPLE_TYPE_STRUCTURE
+#undef DEFINE_STORAGE_FOR_SIMPLE_TYPE
 #undef DEFINE_STORAGE_FOR_LAZY_TYPE
 
     WriteBarrier<GetterSetter> m_speciesGetterSetter;
@@ -492,8 +477,6 @@ public:
 #undef DECLARE_TYPED_ARRAY_TYPE_STRUCTURE
 
     FixedVector<LazyProperty<JSGlobalObject, JSCell>> m_linkTimeConstants;
-
-    StructureCache m_structureCache;
 
     String m_name;
 
@@ -528,7 +511,6 @@ public:
     InlineWatchpointSet m_arraySpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_arrayJoinWatchpointSet;
     InlineWatchpointSet m_numberToStringWatchpointSet;
-    InlineWatchpointSet m_structureCacheClearedWatchpoint;
     InlineWatchpointSet m_arrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     InlineWatchpointSet m_sharedArrayBufferSpeciesWatchpointSet { ClearWatchpoint };
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayConstructorSpeciesWatchpoint;
@@ -564,7 +546,6 @@ public:
         RELEASE_ASSERT(Options::useJIT());
         return m_numberToStringWatchpointSet;
     }
-    InlineWatchpointSet& structureCacheClearedWatchpoint() { return m_structureCacheClearedWatchpoint; }
     InlineWatchpointSet& arrayBufferSpeciesWatchpointSet(ArrayBufferSharingMode sharingMode)
     {
         switch (sharingMode) {
@@ -593,7 +574,6 @@ public:
 
     bool m_evalEnabled { true };
     bool m_webAssemblyEnabled { true };
-    bool m_needsSiteSpecificQuirks { false };
     unsigned m_globalLexicalBindingEpoch { 1 };
     String m_evalDisabledErrorMessage;
     String m_webAssemblyDisabledErrorMessage;
@@ -605,7 +585,7 @@ public:
     struct WeakCustomGetterOrSetterHash {
         static unsigned hash(const Weak<T>&);
         static bool equal(const Weak<T>&, const Weak<T>&);
-        static unsigned hash(const PropertyName&, typename T::CustomFunctionPointer, const ClassInfo*);
+        static unsigned hash(const PropertyName&, typename T::CustomFunctionPointer);
 
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };
@@ -636,7 +616,7 @@ public:
 
     static constexpr bool needsDestruction = true;
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.globalObjectSpace<mode>();
     }
@@ -646,7 +626,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    bool hasDebugger() const { return m_debugger; }
+    bool hasDebugger() const;
     bool hasInteractiveDebugger() const;
     const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
 
@@ -731,7 +711,6 @@ public:
     JSFunction* numberProtoToStringFunction() const { return m_numberProtoToStringFunction.getInitializedOnMainThread(this); }
     JSFunction* functionProtoHasInstanceSymbolFunction() const { return m_functionProtoHasInstanceSymbolFunction.get(); }
     JSFunction* regExpProtoExecFunction() const;
-    JSFunction* typedArrayProtoSort() const { return m_typedArrayProtoSort.get(this); }
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
     GetterSetter* regExpProtoGlobalGetter() const;
     GetterSetter* regExpProtoUnicodeGetter() const;
@@ -882,7 +861,6 @@ public:
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpMatchesArrayWithIndicesStructure() const { return m_regExpMatchesArrayWithIndicesStructure.get(); }
     Structure* regExpMatchesIndicesArrayStructure() const { return m_regExpMatchesIndicesArrayStructure.get(); }
-    Structure* remoteFunctionStructure() const { return m_remoteFunctionStructure.get(this); }
     Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(this); }
     Structure* moduleNamespaceObjectStructure() const { return m_moduleNamespaceObjectStructure.get(this); }
     Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(this); }
@@ -916,7 +894,6 @@ public:
     Structure* calendarStructure() { return m_calendarStructure.get(this); }
     Structure* durationStructure() { return m_durationStructure.get(this); }
     Structure* instantStructure() { return m_instantStructure.get(this); }
-    Structure* plainDateStructure() { return m_plainDateStructure.get(this); }
     Structure* plainTimeStructure() { return m_plainTimeStructure.get(this); }
     Structure* timeZoneStructure() { return m_timeZoneStructure.get(this); }
 
@@ -928,13 +905,9 @@ public:
     RegExpGlobalData& regExpGlobalData() { return m_regExpGlobalData; }
     static ptrdiff_t regExpGlobalDataOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_regExpGlobalData); }
 
-    static ptrdiff_t offsetOfGlobalThis() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalThis); }
     static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(JSGlobalObject, m_vm); }
     static ptrdiff_t offsetOfGlobalLexicalEnvironment() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalEnvironment); }
     static ptrdiff_t offsetOfGlobalLexicalBindingEpoch() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
-    static ptrdiff_t offsetOfVarInjectionWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint); }
-    static ptrdiff_t offsetOfVarReadOnlyWatchpoint() { return OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpoint); }
-    static ptrdiff_t offsetOfFunctionProtoHasInstanceSymbolFunction() { return OBJECT_OFFSETOF(JSGlobalObject, m_functionProtoHasInstanceSymbolFunction); }
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }
@@ -951,8 +924,6 @@ public:
 
     void setName(const String&);
     const String& name() const { return m_name; }
-
-    StructureCache& structureCache() { return m_structureCache; }
 
     void setUnhandledRejectionCallback(VM& vm, JSObject* function) { m_unhandledRejectionCallback.set(vm, function); }
     JSObject* unhandledRejectionCallback() const { return m_unhandledRejectionCallback.get(); }
@@ -1043,7 +1014,7 @@ public:
     }
     bool isOriginalTypedArrayStructure(Structure* structure)
     {
-        TypedArrayType type = structure->classInfoForCells()->typedArrayStorageType;
+        TypedArrayType type = structure->classInfo()->typedArrayStorageType;
         if (type == NotTypedArray)
             return false;
         return typedArrayStructureConcurrently(type) == structure;
@@ -1074,7 +1045,6 @@ public:
     }
         
     void haveABadTime(VM&);
-    void clearStructureCache(VM&);
         
     static bool objectPrototypeIsSaneConcurrently(Structure* objectPrototypeStructure);
     bool arrayPrototypeChainIsSaneConcurrently(Structure* arrayPrototypeStructure, Structure* objectPrototypeStructure);
@@ -1100,14 +1070,9 @@ public:
 
     const GlobalObjectMethodTable* globalObjectMethodTable() const { return m_globalObjectMethodTable; }
 
-    static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
+    JS_EXPORT_PRIVATE CallFrame* deprecatedCallFrameForDebugger();
 
-    static JSGlobalObject* deriveShadowRealmGlobalObject(JSGlobalObject* globalObject)
-    {
-        auto& vm = globalObject->vm();
-        JSGlobalObject* result = JSGlobalObject::createWithCustomMethodTable(vm, JSGlobalObject::createStructureForShadowRealm(vm, jsNull()), globalObject->globalObjectMethodTable());
-        return result;
-    }
+    static bool supportsRichSourceInfo(const JSGlobalObject*) { return true; }
 
     static bool shouldInterruptScript(const JSGlobalObject*) { return true; }
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
@@ -1147,12 +1112,6 @@ public:
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
         Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags), info());
-        result->setTransitionWatchpointIsLikelyToBeFired(true);
-        return result;
-    }
-    static Structure* createStructureForShadowRealm(VM& vm, JSValue prototype)
-    {
-        Structure* result = Structure::create(vm, nullptr, prototype, TypeInfo(GlobalObjectType, StructureFlags & ~IsImmutablePrototypeExoticObject), info());
         result->setTransitionWatchpointIsLikelyToBeFired(true);
         return result;
     }
@@ -1235,6 +1194,7 @@ private:
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
 
+    bool m_needsSiteSpecificQuirks { false };
 #if JSC_OBJC_API_ENABLED
     RetainPtr<JSWrapperMap> m_wrapperMap;
 #endif

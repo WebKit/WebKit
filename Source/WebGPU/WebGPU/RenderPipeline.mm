@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,66 +26,40 @@
 #import "config.h"
 #import "RenderPipeline.h"
 
-#import "APIConversions.h"
 #import "BindGroupLayout.h"
-#import "Device.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return RenderPipeline::createInvalid(*this);
-}
-
-void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
-{
-    // FIXME: Implement this.
-    UNUSED_PARAM(descriptor);
-    instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-        callback(WGPUCreatePipelineAsyncStatus_Error, RenderPipeline::createInvalid(strongThis), { });
-    });
-}
-
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, Device& device)
-    : m_renderPipelineState(renderPipelineState)
-    , m_device(device)
-{
-}
-
-RenderPipeline::RenderPipeline(Device& device)
-    : m_device(device)
-{
-}
+RenderPipeline::RenderPipeline() = default;
 
 RenderPipeline::~RenderPipeline() = default;
 
-BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
+Ref<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     UNUSED_PARAM(groupIndex);
-    return nullptr;
+    return BindGroupLayout::create();
 }
 
-void RenderPipeline::setLabel(String&&)
+void RenderPipeline::setLabel(const char* label)
 {
-    // MTLRenderPipelineState's labels are read-only.
+    UNUSED_PARAM(label);
 }
 
 } // namespace WebGPU
 
-#pragma mark WGPU Stubs
-
 void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 {
-    WebGPU::fromAPI(renderPipeline).deref();
+    delete renderPipeline;
 }
 
 WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
 {
-    return WebGPU::fromAPI(renderPipeline).getBindGroupLayout(groupIndex);
+    return new WGPUBindGroupLayoutImpl { renderPipeline->renderPipeline->getBindGroupLayout(groupIndex) };
 }
 
 void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, const char* label)
 {
-    WebGPU::fromAPI(renderPipeline).setLabel(WebGPU::fromAPI(label));
+    renderPipeline->renderPipeline->setLabel(label);
 }
+

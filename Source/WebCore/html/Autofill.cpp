@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Autofill.h"
 
-#include "CommonAtomStrings.h"
 #include "ElementInlines.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
@@ -108,11 +107,11 @@ AutofillFieldName toAutofillFieldName(const AtomString& value)
 
 static inline bool isContactToken(const AtomString& token)
 {
-    static MainThreadNeverDestroyed<const AtomString> home("home"_s);
-    static MainThreadNeverDestroyed<const AtomString> work("work"_s);
-    static MainThreadNeverDestroyed<const AtomString> mobile("mobile"_s);
-    static MainThreadNeverDestroyed<const AtomString> fax("fax"_s);
-    static MainThreadNeverDestroyed<const AtomString> pager("pager"_s);
+    static MainThreadNeverDestroyed<const AtomString> home("home", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> work("work", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> mobile("mobile", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> fax("fax", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> pager("pager", AtomString::ConstructFromLiteral);
 
     return token == home || token == work || token == mobile || token == fax || token == pager;
 }
@@ -137,6 +136,9 @@ static unsigned maxTokensForAutofillFieldCategory(AutofillCategory category)
 // https://html.spec.whatwg.org/multipage/forms.html#processing-model-3
 AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormControlElement& element)
 {
+    static MainThreadNeverDestroyed<const AtomString> on("on", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> off("off", AtomString::ConstructFromLiteral);
+
     // Label: Default
     // 26. Let the element's IDL-exposed autofill value be the empty string, and its autofill hint set and autofill scope be empty.
     // 27. If the element's autocomplete attribute is wearing the autofill anchor mantle, then let the element's autofill field name be the empty string and abort these steps.
@@ -144,12 +146,12 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 29. If form is not null and form's autocomplete attribute is in the off state, then let the element's autofill field name be "off". Otherwise, let the element's autofill field name be "on".
     auto defaultLabel = [&] () -> AutofillData {
         if (element.autofillMantle() == AutofillMantle::Anchor)
-            return { emptyAtom(), emptyString() };
+            return { emptyString(), emptyString() };
         
         auto form = element.form();
-        if (form && form->autocomplete() == offAtom())
-            return { offAtom(), emptyString() };
-        return { onAtom(), emptyString() };
+        if (form && form->autocomplete() == off)
+            return { off, emptyString() };
+        return { on, emptyString() };
     };
 
 
@@ -160,7 +162,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
         return defaultLabel();
 
     // 2. Let tokens be the result of splitting the attribute's value on spaces.
-    SpaceSplitString tokens(attributeValue, SpaceSplitString::ShouldFoldCase::Yes);
+    SpaceSplitString tokens(attributeValue, true);
 
     // 3. If tokens is empty, then jump to the step labeled default.
     if (tokens.isEmpty())
@@ -197,13 +199,13 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // autofill hint set be empty, and let its IDL-exposed autofill value be the string "off".
     // Then, abort these steps.
     if (category == AutofillCategory::Off)
-        return { offAtom(), offAtom().string() };
+        return { off, off.get().string() };
 
     // 8. If category is Automatic, let the element's autofill field name be the string "on",
     // let its autofill hint set be empty, and let its IDL-exposed autofill value be the string
     // "on". Then, abort these steps.
     if (category == AutofillCategory::Automatic)
-        return { onAtom(), onAtom().string() };
+        return { on, on.get().string() };
 
     // 9. Let scope tokens be an empty list.
     // 10. Let hint tokens be an empty set.
@@ -247,7 +249,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 15. If the indexth token in tokens is an ASCII case-insensitive match for one of the strings
     // in the following list, then run the substeps that follow:
     const auto& modeToken = tokens[index];
-    if (equalLettersIgnoringASCIICase(modeToken, "shipping"_s) || equalLettersIgnoringASCIICase(modeToken, "billing"_s)) {
+    if (equalIgnoringASCIICase(modeToken, "shipping") || equalIgnoringASCIICase(modeToken, "billing")) {
         // 1. Let mode be the matching string from the list above.
         const auto& mode = modeToken;
 
@@ -276,7 +278,7 @@ AutofillData AutofillData::createFromHTMLFormControlElement(const HTMLFormContro
     // 17. If the first eight characters of the indexth token in tokens are not an ASCII case-insensitive
     // match for the string "section-", then jump to the step labeled default.
     const auto& sectionToken = tokens[index];
-    if (!startsWithLettersIgnoringASCIICase(sectionToken, "section-"_s))
+    if (!startsWithLettersIgnoringASCIICase(StringView(sectionToken), "section-"))
         return defaultLabel();
 
     // 18. Let section be the indexth token in tokens, converted to ASCII lowercase.

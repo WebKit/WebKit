@@ -28,16 +28,15 @@
 div#image-controls {
     display: inline-block;
     position: relative;
+    overflow: hidden;
     color: transparent;
-    user-select: none;
-    pointer-events: none;
 }
 
-button#image-controls-button {
-    position: sticky;
-    top: 0px;
-    float: right;
-
+div#image-controls button#image-controls-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    
     display: block;
 
     appearance: auto;
@@ -46,9 +45,10 @@ button#image-controls-button {
     opacity: 0.0;
 }
 
-:host(:hover) button#image-controls-button {
+div#image-controls:hover button#image-controls-button {
     opacity: 1.0;
-    pointer-events: auto;
 }
 
 #endif
+
+

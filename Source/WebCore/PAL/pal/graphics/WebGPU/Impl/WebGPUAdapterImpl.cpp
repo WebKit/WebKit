@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDeviceImpl.h"
 #include <WebGPU/WebGPUExt.h>
-#include <wtf/BlockPtr.h>
 
 namespace PAL::WebGPU {
 
@@ -39,22 +38,18 @@ static String adapterName(WGPUAdapter adapter)
 {
     WGPUAdapterProperties properties;
     wgpuAdapterGetProperties(adapter, &properties);
-    return String::fromLatin1(properties.name);
+    return properties.name;
 }
 
 static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
 {
-    auto featureCount = wgpuAdapterEnumerateFeatures(adapter, nullptr);
-    Vector<WGPUFeatureName> features(featureCount);
-    wgpuAdapterEnumerateFeatures(adapter, features.data());
-
     Vector<String> result;
-    for (auto feature : features) {
-        switch (feature) {
-        case WGPUFeatureName_Undefined:
-            continue;
-        case WGPUFeatureName_DepthClipControl:
-            result.append("depth-clip-control"_s);
+    for (size_t i = 0; ; ++i) {
+        auto feature = wgpuAdapterGetFeatureAtIndex(adapter, i);
+        if (feature == WGPUFeatureName_Undefined)
+            break;
+        switch (static_cast<uint>(feature)) {
+        case WGPUFeatureName_DepthClamping:
             break;
         case WGPUFeatureName_Depth24UnormStencil8:
             result.append("depth24unorm-stencil8"_s);
@@ -71,17 +66,20 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
         case WGPUFeatureName_TextureCompressionBC:
             result.append("texture-compression-bc"_s);
             break;
+        case WGPUFeatureName_DepthClipControl:
+            result.append("depth-clip-control"_s);
+            break;
+        case WGPUFeatureName_IndirectFirstInstance:
+            result.append("indirect-first-instance"_s);
+            break;
         case WGPUFeatureName_TextureCompressionETC2:
             result.append("texture-compression-etc2"_s);
             break;
         case WGPUFeatureName_TextureCompressionASTC:
             result.append("texture-compression-astc"_s);
             break;
-        case WGPUFeatureName_IndirectFirstInstance:
-            result.append("indirect-first-instance"_s);
-            break;
         default:
-            continue;
+            break;
         }
     }
     return SupportedFeatures::create(WTFMove(result));
@@ -141,108 +139,79 @@ AdapterImpl::~AdapterImpl()
     wgpuAdapterRelease(m_backing);
 }
 
-void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHandler<void(Ref<Device>&&)>&& callback)
+void requestDeviceCallback(WGPURequestDeviceStatus status, WGPUDevice device, const char* message, void* userdata)
 {
+    auto adapter = adoptRef(*static_cast<AdapterImpl*>(userdata)); // adoptRef is balanced by leakRef in requestDevice() below. We have to do this because we're using a C API with no concept of reference counting or blocks.
+    adapter->requestDeviceCallback(status, device, message);
+}
+
+void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, WTF::Function<void(Ref<Device>&&)>&& callback)
+{
+    Ref protectedThis(*this);
+
     auto label = descriptor.label.utf8();
+
+    WGPUDeviceDescriptorLabel backingDescriptorLabel {
+        {
+            nullptr,
+            static_cast<WGPUSType>(WGPUSType_DeviceDescriptorLabel),
+        },
+        nullptr,
+        label.data()
+    };
 
     auto features = descriptor.requiredFeatures.map([this] (auto featureName) {
         return m_convertToBackingContext->convertToBacking(featureName);
     });
 
-    auto limits = WGPULimits {
-        /* maxTextureDimension1D */    8192,
-        /* maxTextureDimension2D */    8192,
-        /* maxTextureDimension3D */    2048,
-        /* maxTextureArrayLayers */    256,
-        /* maxBindGroups */    4,
-        /* maxDynamicUniformBuffersPerPipelineLayout */    8,
-        /* maxDynamicStorageBuffersPerPipelineLayout */    4,
-        /* maxSampledTexturesPerShaderStage */    16,
-        /* maxSamplersPerShaderStage */    16,
-        /* maxStorageBuffersPerShaderStage */    8,
-        /* maxStorageTexturesPerShaderStage */    4,
-        /* maxUniformBuffersPerShaderStage */    12,
-        /* maxUniformBufferBindingSize */    65536,
-        /* maxStorageBufferBindingSize */    134217728,
-        /* minUniformBufferOffsetAlignment */    256,
-        /* minStorageBufferOffsetAlignment */    256,
-        /* maxVertexBuffers */    8,
-        /* maxVertexAttributes */    16,
-        /* maxVertexBufferArrayStride */    2048,
-        /* maxInterStageShaderComponents */    32,
-        /* maxComputeWorkgroupStorageSize */    16352,
-        /* maxComputeInvocationsPerWorkgroup */    256,
-        /* maxComputeWorkgroupSizeX */    256,
-        /* maxComputeWorkgroupSizeY */    256,
-        /* maxComputeWorkgroupSizeZ */    64,
-        /* maxComputeWorkgroupsPerDimension */    65535,
+    WGPURequiredLimits limits {
+        nullptr, {
+            0, // maxTextureDimension1D
+            0, // maxTextureDimension2D
+            0, // maxTextureDimension3D
+            0, // maxTextureArrayLayers
+            0, // maxBindGroups
+            0, // maxDynamicUniformBuffersPerPipelineLayout
+            0, // maxDynamicStorageBuffersPerPipelineLayout
+            0, // maxSampledTexturesPerShaderStage
+            0, // maxSamplersPerShaderStage
+            0, // maxStorageBuffersPerShaderStage
+            0, // maxStorageTexturesPerShaderStage
+            0, // maxUniformBuffersPerShaderStage
+            0, // maxUniformBufferBindingSize
+            0, // maxStorageBufferBindingSize
+            0, // minUniformBufferOffsetAlignment
+            0, // minStorageBufferOffsetAlignment
+            0, // maxVertexBuffers
+            0, // maxVertexAttributes
+            0, // maxVertexBufferArrayStride
+            0, // maxInterStageShaderComponents
+            0, // maxComputeWorkgroupStorageSize
+            0, // maxComputeInvocationsPerWorkgroup
+            0, // maxComputeWorkgroupSizeX
+            0, // maxComputeWorkgroupSizeY
+            0, // maxComputeWorkgroupSizeZ
+            0, // maxComputeWorkgroupsPerDimension
+        },
     };
-
-    auto requestInvalidDevice = [this, &callback]() {
-        wgpuAdapterRequestInvalidDeviceWithBlock(m_backing, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPUDevice device) mutable {
-            callback(DeviceImpl::create(device, Ref { protectedThis->features() }, Ref { protectedThis->limits() }, convertToBackingContext));
-        }).get());
-    };
-
-    for (const auto& pair : descriptor.requiredLimits) {
-#define SET_VALUE_32(LIMIT) \
-    else if (pair.key == #LIMIT ""_s) { \
-        CheckedUint32 narrowed = pair.value; \
-        if (narrowed.hasOverflowed()) { \
-            requestInvalidDevice(); \
-            return; \
-        } \
-        limits.LIMIT = narrowed.value(); \
-    }
-#define SET_VALUE_64(LIMIT) \
-    else if (pair.key == #LIMIT ""_s) \
-        limits.LIMIT = pair.value;
-
-        if (false) { }
-        SET_VALUE_32(maxTextureDimension1D)
-        SET_VALUE_32(maxTextureDimension2D)
-        SET_VALUE_32(maxTextureDimension3D)
-        SET_VALUE_32(maxTextureArrayLayers)
-        SET_VALUE_32(maxBindGroups)
-        SET_VALUE_32(maxDynamicUniformBuffersPerPipelineLayout)
-        SET_VALUE_32(maxDynamicStorageBuffersPerPipelineLayout)
-        SET_VALUE_32(maxSampledTexturesPerShaderStage)
-        SET_VALUE_32(maxSamplersPerShaderStage)
-        SET_VALUE_32(maxStorageBuffersPerShaderStage)
-        SET_VALUE_32(maxStorageTexturesPerShaderStage)
-        SET_VALUE_32(maxUniformBuffersPerShaderStage)
-        SET_VALUE_64(maxUniformBufferBindingSize)
-        SET_VALUE_64(maxStorageBufferBindingSize)
-        SET_VALUE_32(minUniformBufferOffsetAlignment)
-        SET_VALUE_32(minStorageBufferOffsetAlignment)
-        SET_VALUE_32(maxVertexBuffers)
-        SET_VALUE_32(maxVertexAttributes)
-        SET_VALUE_32(maxVertexBufferArrayStride)
-        SET_VALUE_32(maxInterStageShaderComponents)
-        SET_VALUE_32(maxComputeWorkgroupStorageSize)
-        SET_VALUE_32(maxComputeInvocationsPerWorkgroup)
-        SET_VALUE_32(maxComputeWorkgroupSizeX)
-        SET_VALUE_32(maxComputeWorkgroupSizeY)
-        SET_VALUE_32(maxComputeWorkgroupSizeZ)
-        SET_VALUE_32(maxComputeWorkgroupsPerDimension)
-
-#undef SET_VALUE_32
-#undef SET_VALUE_64
-    }
-
-    WGPURequiredLimits requiredLimits { nullptr, WTFMove(limits) };
 
     WGPUDeviceDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
+        &backingDescriptorLabel.header,
         static_cast<uint32_t>(features.size()),
         features.data(),
-        &requiredLimits,
+        &limits,
     };
 
-    wgpuAdapterRequestDeviceWithBlock(m_backing, &backingDescriptor, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
-        callback(DeviceImpl::create(device, Ref { protectedThis->features() }, Ref { protectedThis->limits() }, convertToBackingContext));
-    }).get());
+    m_callbacks.append(WTFMove(callback));
+
+    wgpuAdapterRequestDevice(m_backing, &backingDescriptor, &WebGPU::requestDeviceCallback, &protectedThis.leakRef()); // leakRef is balanced by adoptRef in requestDeviceCallback() above. We have to do this because we're using a C API with no concept of reference counting or blocks.
+}
+
+void AdapterImpl::requestDeviceCallback(WGPURequestDeviceStatus, WGPUDevice device, const char* message)
+{
+    UNUSED_PARAM(message);
+    auto callback = m_callbacks.takeFirst();
+    callback(DeviceImpl::create(device, Ref { features() }, Ref { limits() }, m_convertToBackingContext));
 }
 
 } // namespace PAL::WebGPU

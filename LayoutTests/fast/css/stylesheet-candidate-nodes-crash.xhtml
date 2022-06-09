@@ -12,12 +12,9 @@
                 {
                     document.getElementsByTagNameNS('http://www.w3.org/1999/xhtml', 'style')[0];
                     if (document.body) {
-                        document.body.innerHTML = "TEXT";
-                        setTimeout(() => {
-                            document.body.innerHTML = "PASS";
-                            if (window.testRunner)
-                                testRunner.notifyDone();
-                        });
+                        document.body.innerHTML = "PASS";
+                        if (window.testRunner)
+                            testRunner.notifyDone();
                     }
                 }
             </script>

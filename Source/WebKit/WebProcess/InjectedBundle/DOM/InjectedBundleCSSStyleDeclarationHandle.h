@@ -27,7 +27,6 @@
 #define InjectedBundleCSSStyleDeclarationHandle_h
 
 #include "APIObject.h"
-#include <JavaScriptCore/JSBase.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
@@ -39,11 +38,8 @@ namespace WebKit {
 
 class InjectedBundleCSSStyleDeclarationHandle : public API::ObjectImpl<API::Object::Type::BundleCSSStyleDeclarationHandle> {
 public:
-    static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(JSContextRef, JSObjectRef);
     static RefPtr<InjectedBundleCSSStyleDeclarationHandle> getOrCreate(WebCore::CSSStyleDeclaration*);
     virtual ~InjectedBundleCSSStyleDeclarationHandle();
-
-    WebCore::CSSStyleDeclaration* coreCSSStyleDeclaration();
 
 private:
     InjectedBundleCSSStyleDeclarationHandle(WebCore::CSSStyleDeclaration&);

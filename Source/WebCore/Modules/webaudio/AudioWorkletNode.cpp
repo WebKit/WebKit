@@ -40,7 +40,6 @@
 #include "AudioParamMap.h"
 #include "AudioUtilities.h"
 #include "AudioWorklet.h"
-#include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "AudioWorkletNodeOptions.h"
 #include "AudioWorkletProcessor.h"
@@ -90,7 +89,7 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     {
         auto lock = JSC::JSLockHolder { &globalObject };
         auto* jsOptions = convertDictionaryToJS(globalObject, *JSC::jsCast<JSDOMGlobalObject*>(&globalObject), options);
-        serializedOptions = SerializedScriptValue::create(globalObject, jsOptions, SerializationErrorMode::NonThrowing, SerializationContext::WorkerPostMessage);
+        serializedOptions = SerializedScriptValue::create(globalObject, jsOptions, SerializationErrorMode::NonThrowing);
         if (!serializedOptions)
             serializedOptions = SerializedScriptValue::nullValue();
     }
@@ -147,11 +146,8 @@ AudioWorkletNode::~AudioWorkletNode()
     {
         Locker locker { m_processLock };
         if (m_processor) {
-            if (auto* workletProxy = context().audioWorklet().proxy()) {
-                workletProxy->postTaskForModeToWorkletGlobalScope([processor = WTFMove(m_processor)](ScriptExecutionContext& context) {
-                    downcast<AudioWorkletGlobalScope>(context).processorIsNoLongerNeeded(*processor);
-                }, WorkerRunLoop::defaultMode());
-            }
+            if (auto* workletProxy = context().audioWorklet().proxy())
+                workletProxy->postTaskForModeToWorkletGlobalScope([m_processor = WTFMove(m_processor)](ScriptExecutionContext&) { }, WorkerRunLoop::defaultMode());
         }
     }
     uninitialize();

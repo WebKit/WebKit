@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-String MIMETypeRegistry::mimeTypeForExtension(StringView string)
+String MIMETypeRegistry::mimeTypeForExtension(const String& extension)
 {
-    if (string.isEmpty())
+    if (extension.isEmpty())
         return String();
 
     // Build any filename with the given extension.
-    String filename = "a." + string;
+    String filename = "a." + extension;
     if (const char* mimeType = xdg_mime_get_mime_type_from_file_name(filename.utf8().data())) {
         if (mimeType != XDG_MIME_TYPE_UNKNOWN)
             return String::fromUTF8(mimeType);
@@ -56,7 +56,7 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return String();
 
-    if (mimeType.startsWith("text/plain"_s))
+    if (mimeType.startsWith("text/plain"))
         return String();
 
     String returnValue;

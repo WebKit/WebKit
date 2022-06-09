@@ -33,7 +33,6 @@
 #import "PrivateClickMeasurementManagerInterface.h"
 #import "PrivateClickMeasurementXPCUtilities.h"
 #import <Foundation/Foundation.h>
-#import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashSet.h>
@@ -98,10 +97,8 @@ static void registerScheduledActivityHandler()
             return;
         }
 
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"XPC activity happening");
-            PCM::doDailyActivityInManager();
-        });
+        NSLog(@"XPC activity happening");
+        PCM::doDailyActivityInManager();
     });
 }
 
@@ -133,14 +130,8 @@ int PCMDaemonMain(int argc, const char** argv)
     bool startActivity = argc > 5 && !strcmp(argv[5], "--startActivity");
 
     @autoreleasepool {
-#if ENABLE(CFPREFS_DIRECT_MODE)
-        _CFPrefsSetDirectModeEnabled(YES);
-#endif
-#if HAVE(CF_PREFS_SET_READ_ONLY)
-        _CFPrefsSetReadOnly(YES);
-#endif
         enterSandbox();
-        startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.adattributiond"_s, connectionAdded, connectionRemoved, connectionEventHandler);
+        startListeningForMachServiceConnections(machServiceName, "com.apple.private.webkit.adattributiond", connectionAdded, connectionRemoved, connectionEventHandler);
         if (startActivity)
             registerScheduledActivityHandler();
         WTF::initializeMainThread();

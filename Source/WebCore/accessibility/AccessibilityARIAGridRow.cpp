@@ -113,28 +113,27 @@ AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
 
     return nullptr;
 }
-
+    
 AccessibilityObject* AccessibilityARIAGridRow::parentObjectUnignored() const
 {
-    if (auto* table = parentTable())
-        return table;
-    return AccessibilityTableRow::parentObjectUnignored();
+    return parentTable();
 }
-
+    
 AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
 {
     // The parent table might not be the direct ancestor of the row unfortunately. ARIA states that role="grid" should
     // only have "row" elements, but if not, we still should handle it gracefully by finding the right table.
-    return downcast<AccessibilityTable>(Accessibility::findAncestor<AccessibilityObject>(*this, false, [this] (const auto& ancestor) {
+    for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
         // The parent table for an ARIA grid row should be an ARIA table.
         // Unless the row is a native tr element.
-        if (is<AccessibilityTable>(ancestor)) {
-            auto& ancestorTable = downcast<AccessibilityTable>(ancestor);
-            return ancestorTable.isExposable() && (ancestorTable.isAriaTable() || node()->hasTagName(HTMLNames::trTag));
+        if (is<AccessibilityTable>(*parent)) {
+            AccessibilityTable& tableParent = downcast<AccessibilityTable>(*parent);
+            if (tableParent.isExposable() && (tableParent.isAriaTable() || node()->hasTagName(HTMLNames::trTag)))
+                return &tableParent;
         }
-
-        return false;
-    }));
+    }
+    
+    return nullptr;
 }
 
 AXCoreObject* AccessibilityARIAGridRow::headerObject()

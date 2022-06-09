@@ -1,8 +1,11 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.20.2.tar.xz
-  ref: 4adc4c05f41051f8136b80cda99b0d049a34e777832f9fea7c5a70347658745b
+  url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.5.tar.xz
+  ref: a164923b94f0d08578a6fcaeaac6e0c05da788a46903a1086870e9ca45ad678e
+# Should be shipped in GStreamer 1.20. https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2125
+- kind: patch
+  path: patches/gst-plugins-bad-0001-debugutils-Add-fakeaudiosink-element.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
@@ -24,7 +27,6 @@ depends:
 - freedesktop-sdk.bst:components/libsrtp2.bst
 - freedesktop-sdk.bst:components/libwebp.bst
 - freedesktop-sdk.bst:components/libgudev.bst
-- freedesktop-sdk.bst:components/libva.bst
 - freedesktop-sdk.bst:components/openal.bst
 - freedesktop-sdk.bst:components/orc.bst
 - freedesktop-sdk.bst:components/sndfile.bst
@@ -43,6 +45,7 @@ variables:
     -Dbs2b=disabled
     -Dchromaprint=disabled
     -Dcolormanagement=disabled
+    -Dcuda=disabled
     -Dcurl-ssh2=disabled
     -Dcurl=disabled
     -Dd3dvideosink=disabled
@@ -59,13 +62,11 @@ variables:
     -Dflite=disabled
     -Dfluidsynth=disabled
     -Dgme=disabled
-    -Dgs=disabled
     -Dgsm=disabled
     -Diqa=disabled
-    -Disac=disabled
     -Dladspa=disabled
-    -Dldac=disabled
     -Dlibde265=disabled
+    -Dlibmms=disabled
     -Dlv2=disabled
     -Dmagicleap=disabled
     -Dmicrodns=disabled
@@ -76,16 +77,16 @@ variables:
     -Dmusepack=disabled
     -Dneon=disabled
     -Dnvcodec=disabled
-    -Donnx=disabled
+    -Dnvdec=disabled
+    -Dnvenc=disabled
+    -Dofa=disabled
     -Dopenal=disabled
-    -Dopenaptx=disabled
     -Dopencv=disabled
     -Dopenexr=disabled
     -Dopenh264=disabled
     -Dopenmpt=disabled
     -Dopenni2=disabled
     -Dopensles=disabled
-    -Dqroverlay=disabled
     -Dresindvd=disabled
     -Drsvg=disabled
     -Drtmp=disabled
@@ -98,12 +99,16 @@ variables:
     -Dteletext=disabled
     -Dtinyalsa=disabled
     -Dttml=disabled
+    -Dva=disabled
+    -Dvaacenc=disabled
+    -Dvdpau=disabled
     -Dvoaacenc=disabled
     -Dvoamrwbenc=disabled
     -Dvulkan=disabled
     -Dwasapi=disabled
     -Dwasapi2=disabled
     -Dwebp=disabled
+    -Dwebrtcdsp=disabled
     -Dwildmidi=disabled
     -Dwinks=disabled
     -Dwinscreencap=disabled

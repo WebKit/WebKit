@@ -22,7 +22,6 @@
 
 #include "WebKitContextMenuActionsPrivate.h"
 #include <WebCore/LocalizedStrings.h>
-#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

@@ -33,14 +33,14 @@
 
 namespace WebCore {
 
-bool isPublicSuffix(StringView domain)
+bool isPublicSuffix(const String& domain)
 {
     if (domain.isEmpty())
         return false;
 
     const psl_ctx_t* psl = psl_builtin();
     ASSERT(psl);
-    bool ret = psl_is_public_suffix2(psl, domain.toStringWithoutCopying().convertToLowercaseWithoutLocale().utf8().data(), PSL_TYPE_ANY | PSL_TYPE_NO_STAR_RULE);
+    bool ret = psl_is_public_suffix2(psl, domain.convertToLowercaseWithoutLocale().utf8().data(), PSL_TYPE_ANY | PSL_TYPE_NO_STAR_RULE);
     return ret;
 }
 
@@ -48,7 +48,7 @@ static String topPrivatelyControlledDomainInternal(const psl_ctx_t* psl, const c
 {
     // psl_registerable_domain returns a pointer to domain's data or null if there is no private domain
     if (const char* topPrivateDomain = psl_registrable_domain(psl, domain))
-        return String::fromLatin1(topPrivateDomain);
+        return topPrivateDomain;
     return String();
 }
 
@@ -60,7 +60,7 @@ String topPrivatelyControlledDomain(const String& domain)
         return domain;
 
     String lowercaseDomain = domain.convertToASCIILowercase();
-    if (lowercaseDomain == "localhost"_s)
+    if (lowercaseDomain == "localhost")
         return lowercaseDomain;
 
     if (isPublicSuffix(lowercaseDomain))

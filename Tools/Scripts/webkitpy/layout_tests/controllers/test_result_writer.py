@@ -97,15 +97,7 @@ class TestResultWriter(object):
           The absolute path to the output filename
         """
         fs = self._filesystem
-
-        ext_parts = fs.splitext(self._test_name)
-        output_basename = ext_parts[0]
-        if len(ext_parts) > 1 and '?' in ext_parts[1]:
-            output_basename += '_' + ext_parts[1].split('?')[1]
-        if len(ext_parts) > 1 and '#' in ext_parts[1]:
-            output_basename += '_' + ext_parts[1].split('#')[1]
-
-        output_filename = fs.join(self._root_output_dir, output_basename + ext_parts[1])
+        output_filename = fs.join(self._root_output_dir, self._test_name)
 
         # Temporary fix, also in LayoutTests/fast/harness/results.html, line 275.
         # FIXME: Refactor to avoid confusing reference to both test and process names.
@@ -204,7 +196,6 @@ class TestResultWriter(object):
             image_diff_file = self._filesystem.read_text_file(image_diff_template)
 
         html = image_diff_file.replace('__TITLE__', self._test_name)
-        html = html.replace('__TEST_NAME__', self._test_name)
         html = html.replace('__PREFIX__', self._output_testname(''))
 
         if not diff_percent_text:

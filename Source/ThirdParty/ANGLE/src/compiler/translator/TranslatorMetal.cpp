@@ -128,12 +128,10 @@ bool TranslatorMetal::translate(TIntermBlock *root,
 
     if (getShaderType() == GL_VERTEX_SHADER)
     {
-        TIntermTyped *flipNegY =
-            driverUniforms.getFlipXY(&getSymbolTable(), DriverUniformFlip::PreFragment);
-        flipNegY = (new TIntermSwizzle(flipNegY, {1}))->fold(nullptr);
+        TIntermTyped *negFlipY = driverUniforms.getNegFlipYRef();
 
         // Append gl_Position.y correction to main
-        if (!AppendVertexShaderPositionYCorrectionToMain(this, root, &getSymbolTable(), flipNegY))
+        if (!AppendVertexShaderPositionYCorrectionToMain(this, root, &getSymbolTable(), negFlipY))
         {
             return false;
         }
@@ -194,7 +192,7 @@ bool TranslatorMetal::transformDepthBeforeCorrection(TIntermBlock *root,
     TIntermSwizzle *positionZ   = new TIntermSwizzle(positionRef, swizzleOffsetZ);
 
     // Create a ref to "depthRange.reserved"
-    TIntermTyped *viewportZScale = driverUniforms->getViewportZScale();
+    TIntermTyped *viewportZScale = driverUniforms->getDepthRangeReservedFieldRef();
 
     // Create the expression "gl_Position.z * depthRange.reserved".
     TIntermBinary *zScale = new TIntermBinary(EOpMul, positionZ->deepCopy(), viewportZScale);
@@ -250,7 +248,7 @@ ANGLE_NO_DISCARD bool TranslatorMetal::insertSampleMaskWritingLogic(
     sampleMaskWriteFunc->addParameter(maskArg);
 
     // coverageMask
-    TIntermTyped *coverageMask = driverUniforms->getCoverageMaskField();
+    TIntermTyped *coverageMask = driverUniforms->getCoverageMaskFieldRef();
 
     // Insert this code to the end of main()
     // if (ANGLECoverageMaskEnabled)

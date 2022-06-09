@@ -55,7 +55,7 @@ AtomString TrackPrivateBaseGStreamer::generateUniquePlaybin2StreamID(TrackType t
         }
     }();
 
-    return makeAtomString(prefix, index);
+    return makeString(prefix, index);
 }
 
 static GRefPtr<GstPad> findBestUpstreamPad(GRefPtr<GstPad> pad)
@@ -85,15 +85,15 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
     tagsChanged();
 }
 
-TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivateBase* owner, unsigned index, GstStream* stream)
+TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivateBase* owner, unsigned index, GRefPtr<GstStream>&& stream)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
-    , m_stream(stream)
+    , m_stream(WTFMove(stream))
     , m_type(type)
     , m_owner(owner)
 {
     ASSERT(m_stream);
-    m_id = AtomString::fromLatin1(gst_stream_get_stream_id(m_stream));
+    m_id = gst_stream_get_stream_id(m_stream.get());
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     tagsChanged();
@@ -135,6 +135,9 @@ void TrackPrivateBaseGStreamer::disconnect()
 {
     m_tags.clear();
 
+    if (m_stream)
+        m_stream.clear();
+
     m_notifier->cancelPendingNotifications();
 
     if (m_bestUpstreamPad && m_eventProbe) {
@@ -172,7 +175,7 @@ void TrackPrivateBaseGStreamer::tagsChanged()
             i++;
         } while (tagEvent);
     } else if (m_stream)
-        tags = adoptGRef(gst_stream_get_tags(m_stream));
+        tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
 
     if (!tags)
         tags = adoptGRef(gst_tag_list_new_empty());
@@ -192,10 +195,10 @@ bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomString& va
 {
     String language;
     if (getTag(tags, GST_TAG_LANGUAGE_CODE, language)) {
-        AtomString convertedLanguage = AtomString::fromLatin1(gst_tag_get_language_code_iso_639_1(language.utf8().data()));
-        GST_DEBUG("Converted track %d's language code to %s.", m_index, convertedLanguage.string().utf8().data());
-        if (convertedLanguage != value) {
-            value = WTFMove(convertedLanguage);
+        language = gst_tag_get_language_code_iso_639_1(language.utf8().data());
+        GST_DEBUG("Converted track %d's language code to %s.", m_index, language.utf8().data());
+        if (language != value) {
+            value = language;
             return true;
         }
     }
@@ -208,7 +211,7 @@ bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, S
     GUniqueOutPtr<gchar> tagValue;
     if (gst_tag_list_get_string(tags, tagName, &tagValue.outPtr())) {
         GST_DEBUG("Track %d got %s %s.", m_index, tagName, tagValue.get());
-        value = StringType { String::fromLatin1(tagValue.get()) };
+        value = tagValue.get();
         return true;
     }
     return false;
@@ -249,7 +252,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()
         return;
 
     GST_INFO("Track %d got stream start for stream %s.", m_index, streamId.get());
-    m_id = AtomString::fromLatin1(streamId.get());
+    m_id = streamId.get();
 }
 
 void TrackPrivateBaseGStreamer::streamChanged()

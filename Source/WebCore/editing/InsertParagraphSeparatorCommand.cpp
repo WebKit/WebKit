@@ -390,24 +390,23 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Move the start node and the siblings of the start node.
     if (VisiblePosition(insertionPosition) != VisiblePosition(positionBeforeNode(blockToInsert.get()))) {
-        RefPtr<Node> n;
+        Node* n;
         if (insertionPosition.containerNode() == startBlock)
             n = insertionPosition.computeNodeAfterPosition();
         else {
-            RefPtr<Node> splitTo = insertionPosition.containerNode();
+            Node* splitTo = insertionPosition.containerNode();
             if (is<Text>(*splitTo) && insertionPosition.offsetInContainerNode() >= caretMaxOffset(*splitTo))
                 splitTo = NodeTraversal::next(*splitTo, startBlock.get());
-            if (splitTo) {
-                splitTreeToNode(*splitTo, *startBlock);
+            ASSERT(splitTo);
+            splitTreeToNode(*splitTo, *startBlock);
 
-                for (n = startBlock->firstChild(); n; n = n->nextSibling()) {
-                    if (VisiblePosition(insertionPosition) <= VisiblePosition(positionBeforeNode(n.get())))
-                        break;
-                }
+            for (n = startBlock->firstChild(); n; n = n->nextSibling()) {
+                if (VisiblePosition(insertionPosition) <= VisiblePosition(positionBeforeNode(n)))
+                    break;
             }
         }
 
-        moveRemainingSiblingsToNewParent(n.get(), blockToInsert.get(), *blockToInsert);
+        moveRemainingSiblingsToNewParent(n, blockToInsert.get(), *blockToInsert);
     }            
 
     // Handle whitespace that occurs after the split

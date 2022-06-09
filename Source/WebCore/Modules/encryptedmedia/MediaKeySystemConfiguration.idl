@@ -31,7 +31,7 @@
     JSGenerateToJSObject
 ] dictionary MediaKeySystemConfiguration {
     DOMString label = "";
-    sequence<[AtomString] DOMString> initDataTypes = [];
+    sequence<DOMString> initDataTypes = [];
     sequence<MediaKeySystemMediaCapability> audioCapabilities = [];
     sequence<MediaKeySystemMediaCapability> videoCapabilities = [];
     MediaKeysRequirement distinctiveIdentifier = "optional";

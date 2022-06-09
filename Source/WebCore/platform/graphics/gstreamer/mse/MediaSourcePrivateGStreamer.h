@@ -92,7 +92,7 @@ private:
 
     HashSet<RefPtr<SourceBufferPrivateGStreamer>> m_sourceBuffers;
     HashSet<SourceBufferPrivateGStreamer*> m_activeSourceBuffers;
-    WeakPtr<MediaSourcePrivateClient> m_mediaSource;
+    Ref<MediaSourcePrivateClient> m_mediaSource;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     bool m_isEnded { false };
     bool m_hasAllTracks { false };

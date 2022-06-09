@@ -84,6 +84,16 @@ void RemoteWebInspectorUI::updateFindString(const String& findString)
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("updateFindString"_s, { JSON::Value::create(findString) });
 }
 
+void RemoteWebInspectorUI::didSave(const String& url)
+{
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("savedURL"_s, { JSON::Value::create(url) });
+}
+
+void RemoteWebInspectorUI::didAppend(const String& url)
+{
+    m_frontendAPIDispatcher->dispatchCommandWithResultAsync("appendedToURL"_s, { JSON::Value::create(url) });
+}
+
 void RemoteWebInspectorUI::sendMessageToFrontend(const String& message)
 {
     m_frontendAPIDispatcher->dispatchMessageAsync(message);
@@ -208,24 +218,14 @@ void RemoteWebInspectorUI::openURLExternally(const String& url)
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::OpenURLExternally(url), m_page.identifier());
 }
 
-void RemoteWebInspectorUI::revealFileExternally(const String& path)
+void RemoteWebInspectorUI::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::RevealFileExternally(path), m_page.identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::Save(filename, content, base64Encoded, forceSaveAs), m_page.identifier());
 }
 
-void RemoteWebInspectorUI::save(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
+void RemoteWebInspectorUI::append(const String& filename, const String& content)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::Save(WTFMove(saveDatas), forceSaveAs), m_page.identifier());
-}
-
-void RemoteWebInspectorUI::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
-{
-    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::Load(path), WTFMove(completionHandler), m_page.identifier());
-}
-
-void RemoteWebInspectorUI::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
-{
-    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::RemoteWebInspectorUIProxy::PickColorFromScreen(), WTFMove(completionHandler), m_page.identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::Append(filename, content), m_page.identifier());
 }
 
 void RemoteWebInspectorUI::inspectedURLChanged(const String& urlString)
@@ -290,12 +290,12 @@ bool RemoteWebInspectorUI::supportsWebExtensions()
     return true;
 }
 
-void RemoteWebInspectorUI::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID, WebCore::FrameIdentifier frameID)
+void RemoteWebInspectorUI::didShowExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
 {
     if (!m_extensionController)
         return;
-
-    m_extensionController->didShowExtensionTab(extensionID, extensionTabID, frameID);
+    
+    m_extensionController->didShowExtensionTab(extensionID, extensionTabID);
 }
 
 void RemoteWebInspectorUI::didHideExtensionTab(const Inspector::ExtensionID& extensionID, const Inspector::ExtensionTabID& extensionTabID)
@@ -330,24 +330,6 @@ WebCore::Page* RemoteWebInspectorUI::frontendPage()
 
 
 #if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
-bool RemoteWebInspectorUI::canSave(InspectorFrontendClient::SaveMode)
-{
-    notImplemented();
-    return false;
-}
-
-bool RemoteWebInspectorUI::canLoad()
-{
-    notImplemented();
-    return false;
-}
-
-bool RemoteWebInspectorUI::canPickColorFromScreen()
-{
-    notImplemented();
-    return false;
-}
-
 String RemoteWebInspectorUI::localizedStringsURL() const
 {
     notImplemented();

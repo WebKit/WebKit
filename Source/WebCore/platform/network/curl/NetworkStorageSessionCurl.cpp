@@ -40,10 +40,10 @@ namespace WebCore {
 
 static String defaultCookieJarPath()
 {
-    static constexpr auto defaultFileName = "cookie.jar.db"_s;
+    static const char* defaultFileName = "cookie.jar.db";
     char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
     if (cookieJarPath)
-        return String::fromUTF8(cookieJarPath);
+        return cookieJarPath;
 
 #if PLATFORM(WIN)
     return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), defaultFileName);
@@ -58,7 +58,7 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
     StringBuilder cookies;
 
     auto searchHTTPOnly = forHTTPHeader ? std::nullopt : std::optional<bool> { false };
-    auto secure = url.protocolIs("https"_s) ? std::nullopt : std::optional<bool> { false };
+    auto secure = url.protocolIs("https") ? std::nullopt : std::optional<bool> { false };
 
     if (auto result = session.cookieDatabase().searchCookies(firstParty, url, searchHTTPOnly, secure, std::nullopt)) {
         for (const auto& cookie : *result) {
@@ -152,36 +152,36 @@ void NetworkStorageSession::setCookie(const Cookie& cookie)
     cookieDatabase().setCookie(cookie);
 }
 
-void NetworkStorageSession::deleteCookie(const Cookie& cookie, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookie(const Cookie& cookie)
 {
     String url = makeString(cookie.secure ? "https"_s : "http"_s, "://"_s, cookie.domain, cookie.path);
     cookieDatabase().deleteCookie(url, cookie.name);
-    completionHandler();
 }
 
-void NetworkStorageSession::deleteCookie(const URL& url, const String& name, CompletionHandler<void()>&& completionHandler) const
+void NetworkStorageSession::deleteCookie(const URL& url, const String& name) const
 {
     cookieDatabase().deleteCookie(url.string(), name);
-    completionHandler();
 }
 
-void NetworkStorageSession::deleteAllCookies(CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteAllCookies()
 {
     cookieDatabase().deleteAllCookies();
-    completionHandler();
 }
 
-void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime)
 {
     // FIXME: Not yet implemented
-    completionHandler();
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies includeHttpOnlyCookies)
 {
     for (auto hostname : cookieHostNames)
         cookieDatabase().deleteCookiesForHostname(hostname, includeHttpOnlyCookies);
-    completionHandler();
+}
+
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames)
+{
+    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes);
 }
 
 Vector<Cookie> NetworkStorageSession::getAllCookies()
@@ -214,6 +214,11 @@ bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteI
 
     rawCookies = WTFMove(*cookies);
     return true;
+}
+
+void NetworkStorageSession::flushCookieStore()
+{
+    // FIXME: Implement for WebKit to use.
 }
 
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ShouldAskITP, ShouldRelaxThirdPartyCookieBlocking) const

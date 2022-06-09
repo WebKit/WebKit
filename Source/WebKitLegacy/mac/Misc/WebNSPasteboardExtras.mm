@@ -276,7 +276,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     NSString *originIdentifier = core(element)->document().originIdentifierForPasteboard();
     RetainPtr<NSData> customDataBuffer;
     if (originIdentifier.length) {
-        [types addObject:@(PasteboardCustomData::cocoaType().characters())];
+        [types addObject:@(PasteboardCustomData::cocoaType())];
         PasteboardCustomData customData;
         customData.setOrigin(originIdentifier);
         customDataBuffer = customData.createSharedBuffer()->createNSData();
@@ -305,7 +305,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
 
     [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types.get() source:source];
     if (customDataBuffer)
-        [self setData:customDataBuffer.get() forType:@(PasteboardCustomData::cocoaType().characters())];
+        [self setData:customDataBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
 
     [self setPropertyList:@[extension] forType:legacyFilesPromisePasteboardType()];
 

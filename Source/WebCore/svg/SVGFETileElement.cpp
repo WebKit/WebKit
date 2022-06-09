@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,7 +23,10 @@
 #include "SVGFETileElement.h"
 
 #include "FETile.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
+#include "SVGRenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -58,19 +61,24 @@ void SVGFETileElement::parseAttribute(const QualifiedName& name, const AtomStrin
 
 void SVGFETileElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
-        ASSERT(attrName == SVGNames::inAttr);
+    if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFETileElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFETileElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    return FETile::create();
+    auto input1 = filterBuilder.getEffectById(in1());
+    if (!input1)
+        return nullptr;
+
+    auto effect = FETile::create();
+    effect->inputEffects() = { input1.releaseNonNull() };
+    return effect;
 }
 
-} // namespace WebCore
+}

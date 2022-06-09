@@ -69,17 +69,8 @@ double pas_scavenger_period_in_milliseconds = 100.;
 uint64_t pas_scavenger_max_epoch_delta = 300ll * 1000ll * 1000ll;
 #endif
 
-static uint32_t pas_scavenger_tick_count = 0;
-/* Run thread-local-cache decommit once a N. It should be power of two. */
-#define PAS_THREAD_LOCAL_CACHE_DECOMMIT_PERIOD_COUNT 128 /* Roughly speaking, it runs once per 13 seconds. */
-
 #if PAS_OS(DARWIN)
-static _Atomic qos_class_t pas_scavenger_requested_qos_class = QOS_CLASS_USER_INITIATED;
-
-void pas_scavenger_set_requested_qos_class(qos_class_t qos_class)
-{
-    pas_scavenger_requested_qos_class = qos_class;
-}
+qos_class_t pas_scavenger_requested_qos_class = QOS_CLASS_USER_INITIATED;
 #endif
 
 pas_scavenger_activity_callback pas_scavenger_did_start_callback = NULL;
@@ -160,9 +151,6 @@ static void* scavenger_thread_main(void* arg)
 {
     pas_scavenger_data* data;
     pas_scavenger_activity_callback did_start_callback;
-#if PAS_OS(DARWIN)
-    qos_class_t configured_qos_class;
-#endif
     
     PAS_UNUSED_PARAM(arg);
     
@@ -185,35 +173,21 @@ static void* scavenger_thread_main(void* arg)
     
     data = ensure_data_instance(pas_lock_is_not_held);
     
-#if PAS_OS(DARWIN)
-    configured_qos_class = pas_scavenger_requested_qos_class;
-    pthread_set_qos_class_self_np(configured_qos_class, 0);
-#endif
-
     for (;;) {
         pas_page_sharing_pool_scavenge_result scavenge_result;
         bool should_shut_down;
         double time_in_milliseconds;
         double absolute_timeout_in_milliseconds_for_period_sleep;
         pas_scavenger_activity_callback completion_callback;
-        pas_thread_local_cache_decommit_action thread_local_cache_decommit_action;
         bool should_go_again;
         uint64_t epoch;
         uint64_t delta;
         uint64_t max_epoch;
         bool did_overflow;
-#if PAS_OS(DARWIN)
-        qos_class_t current_qos_class;
-#endif
 
 #if PAS_OS(DARWIN)
-        current_qos_class = pas_scavenger_requested_qos_class;
-        if (configured_qos_class != current_qos_class) {
-            configured_qos_class = current_qos_class;
-            pthread_set_qos_class_self_np(configured_qos_class, 0);
-        }
+        pthread_set_qos_class_self_np(pas_scavenger_requested_qos_class, 0);
 #endif
-        ++pas_scavenger_tick_count;
 
         should_go_again = false;
         
@@ -235,16 +209,9 @@ static void* scavenger_thread_main(void* arg)
             pas_utility_heap_for_all_allocators(pas_allocator_scavenge_request_stop_action,
                                                 pas_lock_is_not_held);
         
-        thread_local_cache_decommit_action = pas_thread_local_cache_decommit_no_action;
-        if ((pas_scavenger_tick_count % PAS_THREAD_LOCAL_CACHE_DECOMMIT_PERIOD_COUNT) == 0) {
-            if (verbose)
-                printf("Attempt to decommit unused TLC\n");
-            thread_local_cache_decommit_action = pas_thread_local_cache_decommit_if_possible_action;
-        }
         should_go_again |=
             pas_thread_local_cache_for_all(pas_allocator_scavenge_request_stop_action,
-                                           pas_deallocator_scavenge_flush_log_if_clean_action,
-                                           thread_local_cache_decommit_action);
+                                           pas_deallocator_scavenge_flush_log_if_clean_action);
 
         should_go_again |= handle_expendable_memory(pas_expendable_memory_scavenge_periodic);
 
@@ -515,8 +482,7 @@ void pas_scavenger_clear_all_caches(void)
     pas_scavenger_clear_all_caches_except_remote_tlcs();
     
     pas_thread_local_cache_for_all(pas_allocator_scavenge_force_stop_action,
-                                   pas_deallocator_scavenge_flush_log_action,
-                                   pas_thread_local_cache_decommit_if_possible_action);
+                                   pas_deallocator_scavenge_flush_log_action);
 }
 
 void pas_scavenger_decommit_expendable_memory(void)

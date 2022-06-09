@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo NullSetterFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NullSetterFunction) };
+const ClassInfo NullSetterFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NullSetterFunction) };
 
 
 #if ASSERT_ENABLED
@@ -44,17 +44,17 @@ public:
     {
     }
 
-    IterationStatus operator()(StackVisitor& visitor) const
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         ++m_iterations;
         if (m_iterations < 2)
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
 
         CodeBlock* codeBlock = visitor->codeBlock();
         // This does not take into account that we might have an strict opcode in a non-strict context, but that's
         // ok since we assert below that this function should never be called from any kind strict context.
         m_callerIsStrict = codeBlock && codeBlock->ownerExecutable()->isInStrictContext();
-        return IterationStatus::Done;
+        return StackVisitor::Done;
     }
 
     bool callerIsStrict() const { return m_callerIsStrict; }

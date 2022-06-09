@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ struct WeakMapBucketDataKey {
     static const HashTableType Type = HashTableType::Key;
     WriteBarrier<JSObject> key;
 };
-static_assert(sizeof(WeakMapBucketDataKey) == sizeof(void*));
+static_assert(sizeof(WeakMapBucketDataKey) == sizeof(void*), "");
 
 struct WeakMapBucketDataKeyValue {
     static const HashTableType Type = HashTableType::KeyValue;
@@ -48,7 +48,7 @@ struct WeakMapBucketDataKeyValue {
 #endif
     WriteBarrier<Unknown> value;
 };
-static_assert(sizeof(WeakMapBucketDataKeyValue) == 16);
+static_assert(sizeof(WeakMapBucketDataKeyValue) == 16, "");
 
 ALWAYS_INLINE uint32_t jsWeakMapHash(JSObject* key);
 ALWAYS_INLINE uint32_t nextCapacityAfterBatchRemoval(uint32_t capacity, uint32_t keyCount);
@@ -197,13 +197,21 @@ public:
 
     static size_t estimatedSize(JSCell*, VM&);
 
-    static constexpr uint32_t initialCapacity = 4;
-
     WeakMapImpl(VM& vm, Structure* structure)
         : Base(vm, structure)
     {
+    }
+
+    static constexpr uint32_t initialCapacity = 4;
+
+    void finishCreation(VM& vm)
+    {
         ASSERT_WITH_MESSAGE(WeakMapBucket<WeakMapBucketDataKey>::offsetOfKey() == WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey(), "We assume this to be true in the DFG and FTL JIT.");
-        makeAndSetNewBuffer(initialCapacity);
+
+        Base::finishCreation(vm);
+
+        Locker locker { cellLock() };
+        makeAndSetNewBuffer(locker, initialCapacity);
     }
 
     // WeakMap operations must not cause GC. We model operations in DFG based on this guarantee.
@@ -274,7 +282,7 @@ public:
     }
 
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         if constexpr (isWeakMap())
             return vm.weakMapSpace<mode>();
@@ -387,7 +395,7 @@ private:
         }
     }
 
-    void makeAndSetNewBuffer(uint32_t capacity)
+    void makeAndSetNewBuffer(const AbstractLocker&, uint32_t capacity)
     {
         ASSERT(!(capacity & (capacity - 1)));
 

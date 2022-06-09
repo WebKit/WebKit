@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,9 @@
 
 #pragma once
 
-#include "ImageBufferBackendHandleSharing.h"
-#include <WebCore/ImageBuffer.h>
+#if ENABLE(GPU_PROCESS)
+
+#include "ImageBufferBackendHandle.h"
 #include <WebCore/PlatformImageBufferBackend.h>
 #include <wtf/IsoMalloc.h>
 
@@ -38,45 +39,40 @@ namespace WebKit {
 
 class ShareableBitmap;
 
-class ImageBufferShareableBitmapBackend final : public WebCore::PlatformImageBufferBackend, public ImageBufferBackendHandleSharing {
+class ImageBufferShareableBitmapBackend : public WebCore::PlatformImageBufferBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
-
 public:
     static ShareableBitmap::Configuration configuration(const Parameters&);
     static WebCore::IntSize calculateSafeBackendSize(const Parameters&);
     static unsigned calculateBytesPerRow(const Parameters&, const WebCore::IntSize& backendSize);
     static size_t calculateMemoryCost(const Parameters&);
 
-    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, const WebCore::ImageBuffer::CreationContext&);
+    static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, const WebCore::HostWindow*);
     static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, ImageBufferBackendHandle);
 
-    ImageBufferShareableBitmapBackend(const Parameters&, Ref<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
+    ImageBufferShareableBitmapBackend(const Parameters&, RefPtr<ShareableBitmap>&&, std::unique_ptr<WebCore::GraphicsContext>&&);
 
-    WebCore::GraphicsContext& context() const final { return *m_context; }
-    WebCore::IntSize backendSize() const final;
+    ImageBufferBackendHandle createImageBufferBackendHandle() const;
 
-    ImageBufferBackendHandle createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const final;
-    RefPtr<ShareableBitmap> bitmap() const final { return m_bitmap.ptr(); }
-#if USE(CAIRO)
-    RefPtr<cairo_surface_t> createCairoSurface() final;
-#endif
+    WebCore::GraphicsContext& context() const override { return *m_context; }
+    
+    WebCore::IntSize backendSize() const override;
 
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const override;
+    RefPtr<WebCore::Image> copyImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore, WebCore::PreserveResolution = WebCore::PreserveResolution::No) const override;
 
-    RefPtr<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&, const WebCore::ImageBufferAllocator&) const final;
-    void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
+    std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& outputFormat, const WebCore::IntRect&) const override;
+    void putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
     void setOwnershipIdentity(const WebCore::ProcessIdentity&) { }
-
 private:
-    unsigned bytesPerRow() const final;
+    unsigned bytesPerRow() const override;
 
-    ImageBufferBackendSharing* toBackendSharing() final { return this; }
-    void releaseGraphicsContext() final { /* Do nothing. This is only relevant for IOSurface backends */ }
-
-    Ref<ShareableBitmap> m_bitmap;
+    RefPtr<ShareableBitmap> m_bitmap;
     std::unique_ptr<WebCore::GraphicsContext> m_context;
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(GPU_PROCESS)

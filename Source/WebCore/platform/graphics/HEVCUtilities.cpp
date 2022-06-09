@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,29 @@
 #include "SharedBuffer.h"
 #include <JavaScriptCore/DataView.h>
 #include <wtf/HexNumber.h>
-#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+#if __has_include(<bmalloc/pas_utils.h>)
+#include <bmalloc/pas_utils.h>
+#endif
+
 namespace WebCore {
+
+static inline uint32_t reverseBits(uint32_t value)
+{
+#if __has_include(<bmalloc/pas_utils.h>)
+    return pas_reverse(value);
+#else
+    // From pas_reverse():
+    value = ((value & 0xaaaaaaaa) >> 1) | ((value & 0x55555555) << 1);
+    value = ((value & 0xcccccccc) >> 2) | ((value & 0x33333333) << 2);
+    value = ((value & 0xf0f0f0f0) >> 4) | ((value & 0x0f0f0f0f) << 4);
+    value = ((value & 0xff00ff00) >> 8) | ((value & 0x00ff00ff) << 8);
+    return (value >> 16) | (value << 16);
+#endif
+}
 
 std::optional<AVCParameters> parseAVCCodecParameters(StringView codecString)
 {
@@ -50,7 +67,7 @@ std::optional<AVCParameters> parseAVCCodecParameters(StringView codecString)
 
     // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
     auto codecName = *nextElement;
-    if (codecName != "avc1"_s)
+    if (codecName != "avc1")
         return std::nullopt;
 
     if (++nextElement == codecSplit.end())
@@ -132,9 +149,9 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 
     // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
     auto codecName = *nextElement;
-    if (codecName == "hvc1"_s)
+    if (codecName == "hvc1")
         parameters.codec = HEVCParameters::Codec::Hvc1;
-    else if (codecName == "hev1"_s)
+    else if (codecName == "hev1")
         parameters.codec = HEVCParameters::Codec::Hev1;
     else
         return std::nullopt;
@@ -168,7 +185,7 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     auto compatibilityFlags = parseInteger<uint32_t>(*nextElement, 16);
     if (!compatibilityFlags)
         return std::nullopt;
-    parameters.generalProfileCompatibilityFlags = reverseBits32(*compatibilityFlags);
+    parameters.generalProfileCompatibilityFlags = reverseBits(*compatibilityFlags);
 
     if (++nextElement == codecSplit.end())
         return std::nullopt;
@@ -202,36 +219,43 @@ std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 
 String createHEVCCodecParametersString(const HEVCParameters& parameters)
 {
+    // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
+    char profileSpaceCharacter = 'A' + parameters.generalProfileSpace - 1;
+
+    String profileSpaceString;
+    if (parameters.generalProfileSpace)
+        profileSpaceString.append(profileSpaceCharacter);
+
     // For the second parameter, from ISO/IEC 14496-15:2014, Annex E.3.
     // * the 32 bits of the general_profile_compatibility_flags, but in reverse bit order, i.e. with
     // general_profile_compatibility_flag[ 31 ] as the most significant bit, followed by, general_profile_compatibility_flag[ 30 ],
     // and down to general_profile_compatibility_flag[ 0 ] as the least significant bit, where general_profile_compatibility_flag[ i ]
     // for i in the range of 0 to 31, inclusive, are specified in ISO/IEC 23008‐2, encoded in hexadecimal (leading zeroes may be omitted)
-    auto compatFlagParameter = hex(reverseBits32(parameters.generalProfileCompatibilityFlags));
+    auto compatFlagParameter = hex(reverseBits(parameters.generalProfileCompatibilityFlags));
 
     // * each of the 6 bytes of the constraint flags, starting from the byte containing the
     // general_progressive_source_flag, each encoded as a hexadecimal number, and the encoding
     // of each byte separated by a period; trailing bytes that are zero may be omitted.
     StringBuilder compatibilityFlags;
-    auto lastFlagByte = parameters.generalConstraintIndicatorFlags.reverseFindIf([] (auto& flag) { return flag; });
+    auto lastFlagByte = parameters.generalConstraintIndicatorFlags.reverseFindMatching([] (auto& flag) { return flag; });
     for (size_t i = 0; lastFlagByte != notFound && i <= lastFlagByte; ++i) {
         compatibilityFlags.append('.');
         compatibilityFlags.append(hex(parameters.generalConstraintIndicatorFlags[i], 2));
     }
 
-    StringBuilder resultBuilder;
-    resultBuilder.append(parameters.codec == HEVCParameters::Codec::Hev1 ? "hev1" : "hvc1", '.');
-    if (parameters.generalProfileSpace) {
-        // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
-        char profileSpaceCharacter = 'A' + parameters.generalProfileSpace - 1;
-        resultBuilder.append(profileSpaceCharacter);
-    }
-    resultBuilder.append(parameters.generalProfileIDC, '.', compatFlagParameter, '.', parameters.generalTierFlag ? 'H' : 'L', parameters.generalLevelIDC);
-    resultBuilder.append(compatibilityFlags);
-    return resultBuilder.toString();
+    return makeString(parameters.codec == HEVCParameters::Codec::Hev1 ? "hev1" : "hvc1"
+        , '.'
+        , profileSpaceString
+        , parameters.generalProfileIDC
+        , '.'
+        , compatFlagParameter
+        , '.'
+        , parameters.generalTierFlag ? 'H' : 'L'
+        , parameters.generalLevelIDC
+        , compatibilityFlags.toString());
 }
 
-std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCode, const SharedBuffer& buffer)
+std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(const FourCC& codecCode, const SharedBuffer& buffer)
 {
     // ISO/IEC 14496-15:2014
     // 8.3.3.1 HEVC decoder configuration record
@@ -241,9 +265,9 @@ std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCo
         return std::nullopt;
 
     HEVCParameters parameters;
-    if (codecCode == "hev1")
+    if (codecCode == FourCC('hev1'))
         parameters.codec = HEVCParameters::Codec::Hev1;
-    else if (codecCode == "hvc1")
+    else if (codecCode == FourCC('hvc1'))
         parameters.codec = HEVCParameters::Codec::Hvc1;
     else
         return std::nullopt;

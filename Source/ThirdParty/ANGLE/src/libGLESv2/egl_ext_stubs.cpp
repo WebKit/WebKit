@@ -94,9 +94,9 @@ EGLSurface CreatePlatformWindowSurfaceEXT(Thread *thread,
     // In X11, eglCreatePlatformWindowSurfaceEXT expects the native_window argument to be a pointer
     // to a Window while the EGLNativeWindowType for X11 is its actual value.
     // https://www.khronos.org/registry/EGL/extensions/KHR/EGL_KHR_platform_x11.txt
-    void *actualNativeWindow         = display->getImplementation()->isX11()
-                                           ? *reinterpret_cast<void **>(native_window)
-                                           : native_window;
+    void *actualNativeWindow = display->getImplementation()->isX11()
+                                   ? *reinterpret_cast<void **>(native_window)
+                                   : native_window;
     EGLNativeWindowType nativeWindow = reinterpret_cast<EGLNativeWindowType>(actualNativeWindow);
 
     ANGLE_EGL_TRY_RETURN(
@@ -199,24 +199,20 @@ EGLDisplay GetPlatformDisplayEXT(Thread *thread,
                                  void *native_display,
                                  const AttributeMap &attribMap)
 {
-    switch (platform)
+    if (platform == EGL_PLATFORM_ANGLE_ANGLE)
     {
-        case EGL_PLATFORM_ANGLE_ANGLE:
-        case EGL_PLATFORM_GBM_KHR:
-        {
-            return egl::Display::GetDisplayFromNativeDisplay(
-                platform, gl::bitCast<EGLNativeDisplayType>(native_display), attribMap);
-        }
-        case EGL_PLATFORM_DEVICE_EXT:
-        {
-            Device *eglDevice = static_cast<Device *>(native_display);
-            return egl::Display::GetDisplayFromDevice(eglDevice, attribMap);
-        }
-        default:
-        {
-            UNREACHABLE();
-            return EGL_NO_DISPLAY;
-        }
+        return egl::Display::GetDisplayFromNativeDisplay(
+            gl::bitCast<EGLNativeDisplayType>(native_display), attribMap);
+    }
+    else if (platform == EGL_PLATFORM_DEVICE_EXT)
+    {
+        Device *eglDevice = static_cast<Device *>(native_display);
+        return egl::Display::GetDisplayFromDevice(eglDevice, attribMap);
+    }
+    else
+    {
+        UNREACHABLE();
+        return EGL_NO_DISPLAY;
     }
 }
 

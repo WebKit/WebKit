@@ -26,11 +26,8 @@
 #import "config.h"
 #import "MediaSampleAVFObjC.h"
 
-#import "CVUtilities.h"
 #import "PixelBuffer.h"
 #import "PixelBufferConformerCV.h"
-#import "ProcessIdentity.h"
-#import "VideoFrameCV.h"
 #import <JavaScriptCore/JSCInlines.h>
 #import <JavaScriptCore/TypedArrayInlines.h>
 #import <wtf/PrintStream.h>
@@ -66,8 +63,66 @@ MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackI
     , m_id(AtomString::number(trackID))
 {
 }
+MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, VideoRotation rotation, bool mirrored)
+    : m_sample(sample)
+    , m_rotation(rotation)
+    , m_mirrored(mirrored)
+{
+}
 
 MediaSampleAVFObjC::~MediaSampleAVFObjC() = default;
+
+RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(PixelBuffer&& pixelBuffer)
+{
+    auto size = pixelBuffer.size();
+    auto width = size.width();
+    auto height = size.height();
+
+    auto data = pixelBuffer.takeData();
+    auto dataBaseAddress = data->data();
+    auto leakedData = &data.leakRef();
+    
+    auto derefBuffer = [] (void* context, const void*) {
+        static_cast<JSC::Uint8ClampedArray*>(context)->deref();
+    };
+
+    CVPixelBufferRef cvPixelBufferRaw = nullptr;
+    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, leakedData, nullptr, &cvPixelBufferRaw);
+
+    auto cvPixelBuffer = adoptCF(cvPixelBufferRaw);
+    if (!cvPixelBuffer) {
+        derefBuffer(leakedData, nullptr);
+        return nullptr;
+    }
+    ASSERT_UNUSED(status, !status);
+    return createImageSample(WTFMove(cvPixelBuffer), VideoRotation::None, false);
+}
+
+RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(RetainPtr<CVPixelBufferRef>&& pixelBuffer, VideoRotation rotation, bool mirrored)
+{
+    CMVideoFormatDescriptionRef formatDescriptionRaw = nullptr;
+    auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), &formatDescriptionRaw);
+    if (status || !formatDescriptionRaw) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    auto formatDescription = adoptCF(formatDescriptionRaw);
+
+    CMSampleTimingInfo sampleTimingInformation = { PAL::kCMTimeInvalid, PAL::kCMTimeInvalid, PAL::kCMTimeInvalid };
+    CMSampleBufferRef sampleBufferRaw = nullptr;
+    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), formatDescription.get(), &sampleTimingInformation, &sampleBufferRaw);
+    if (status || !sampleBufferRaw) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    auto sampleBuffer = adoptCF(sampleBufferRaw);
+    CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+    for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
+        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
+        CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
+    }
+    return create(sampleBuffer.get(), rotation, mirrored);
+}
 
 MediaTime MediaSampleAVFObjC::presentationTime() const
 {
@@ -98,10 +153,37 @@ size_t MediaSampleAVFObjC::sizeInBytes() const
     return PAL::CMSampleBufferGetTotalSampleSize(m_sample.get());
 }
 
-PlatformSample MediaSampleAVFObjC::platformSample() const
+PlatformSample MediaSampleAVFObjC::platformSample()
 {
     PlatformSample sample = { PlatformSample::CMSampleBufferType, { .cmSampleBuffer = m_sample.get() } };
     return sample;
+}
+
+uint32_t MediaSampleAVFObjC::videoPixelFormat() const
+{
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
+    return CVPixelBufferGetPixelFormatType(pixelBuffer);
+}
+
+std::optional<MediaSampleVideoFrame> MediaSampleAVFObjC::videoFrame() const
+{
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
+    if (!pixelBuffer)
+        return std::nullopt;
+    ImageOrientation orientation = [&] {
+        // Sample transform first flips x-coordinates, then rotates.
+        switch (m_rotation) {
+        case MediaSample::VideoRotation::None:
+            return m_mirrored ? ImageOrientation::OriginTopRight : ImageOrientation::OriginTopLeft;
+        case MediaSample::VideoRotation::Right:
+            return m_mirrored ? ImageOrientation::OriginRightBottom : ImageOrientation::OriginRightTop;
+        case MediaSample::VideoRotation::UpsideDown:
+            return m_mirrored ? ImageOrientation::OriginBottomLeft : ImageOrientation::OriginBottomRight;
+        case MediaSample::VideoRotation::Left:
+            return m_mirrored ? ImageOrientation::OriginLeftTop : ImageOrientation::OriginLeftBottom;
+        }
+    }();
+    return MediaSampleVideoFrame { RetainPtr { pixelBuffer }, orientation };
 }
 
 static bool isCMSampleBufferAttachmentRandomAccess(CFDictionaryRef attachmentDict)
@@ -169,6 +251,11 @@ FloatSize MediaSampleAVFObjC::presentationSize() const
         return FloatSize();
     
     return FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
+}
+
+void MediaSampleAVFObjC::dump(PrintStream& out) const
+{
+    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
 }
 
 void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
@@ -281,17 +368,51 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
     PAL::CMSampleBufferCreateCopy(kCFAllocatorDefault, m_sample.get(), &newSampleBuffer);
     ASSERT(newSampleBuffer);
 
-    CMFormatDescriptionRef formatDescription = PAL::CMSampleBufferGetFormatDescription(m_sample.get());
-    bool isAudio = PAL::CMFormatDescriptionGetMediaType(formatDescription) == kCMMediaType_Audio;
-    const CFStringRef attachmentKey = isAudio ? PAL::kCMSampleBufferAttachmentKey_TrimDurationAtStart : PAL::kCMSampleAttachmentKey_DoNotDisplay;
-
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(newSampleBuffer, true);
     for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
         CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        CFDictionarySetValue(attachments, attachmentKey, kCFBooleanTrue);
+        CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DoNotDisplay, kCFBooleanTrue);
     }
 
     return MediaSampleAVFObjC::create(adoptCF(newSampleBuffer).get(), m_id);
+}
+
+RefPtr<JSC::Uint8ClampedArray> MediaSampleAVFObjC::getRGBAImageData() const
+{
+    const OSType imageFormat = kCVPixelFormatType_32RGBA;
+    RetainPtr<CFNumberRef> imageFormatNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &imageFormat));
+
+    RetainPtr<CFMutableDictionaryRef> conformerOptions = adoptCF(CFDictionaryCreateMutable(0, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    CFDictionarySetValue(conformerOptions.get(), kCVPixelBufferPixelFormatTypeKey, imageFormatNumber.get());
+    PixelBufferConformerCV pixelBufferConformer(conformerOptions.get());
+
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
+    auto rgbaPixelBuffer = pixelBufferConformer.convert(pixelBuffer);
+    auto status = CVPixelBufferLockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+    ASSERT(status == noErr);
+
+    void* data = CVPixelBufferGetBaseAddressOfPlane(rgbaPixelBuffer.get(), 0);
+    size_t byteLength = CVPixelBufferGetHeight(pixelBuffer) * CVPixelBufferGetWidth(pixelBuffer) * 4;
+    auto result = JSC::Uint8ClampedArray::tryCreate(JSC::ArrayBuffer::create(data, byteLength), 0, byteLength);
+
+    status = CVPixelBufferUnlockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+    ASSERT(status == noErr);
+
+    return result;
+}
+
+static inline void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
+{
+    CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
+    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
+        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
+        CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
+    }
+}
+
+void MediaSampleAVFObjC::setAsDisplayImmediately(MediaSample& sample)
+{
+    setSampleBufferAsDisplayImmediately(sample.platformSample().sample.cmSampleBuffer);
 }
 
 bool MediaSampleAVFObjC::isHomogeneous() const
@@ -362,6 +483,77 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
         samples.uncheckedAppend(MediaSampleAVFObjC::create(adoptCF(rawSample).get(), m_id));
     }
     return samples;
+}
+
+RetainPtr<CMSampleBufferRef> MediaSampleAVFObjC::cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef sample)
+{
+    auto pixelBuffer = static_cast<CVImageBufferRef>(PAL::CMSampleBufferGetImageBuffer(sample));
+    if (!pixelBuffer)
+        return nullptr;
+
+    CMVideoFormatDescriptionRef formatDescription = nullptr;
+    auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer, &formatDescription);
+    if (status)
+        return nullptr;
+    auto retainedFormatDescription = adoptCF(formatDescription);
+
+    CMItemCount itemCount = 0;
+    status = PAL::CMSampleBufferGetSampleTimingInfoArray(sample, 0, nullptr, &itemCount);
+    if (status)
+        return nullptr;
+
+    Vector<CMSampleTimingInfo> timingInfoArray;
+    timingInfoArray.grow(itemCount);
+    status = PAL::CMSampleBufferGetSampleTimingInfoArray(sample, itemCount, timingInfoArray.data(), nullptr);
+    if (status)
+        return nullptr;
+
+    CMSampleBufferRef newSampleBuffer;
+    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer, formatDescription, timingInfoArray.data(), &newSampleBuffer);
+    if (status)
+        return nullptr;
+
+    setSampleBufferAsDisplayImmediately(newSampleBuffer);
+
+    return adoptCF(newSampleBuffer);
+}
+
+static CFStringRef byteRangeOffsetAttachmentKey()
+{
+    static CFStringRef key = CFSTR("WebKitMediaSampleByteRangeOffset");
+    return key;
+}
+
+std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRange() const
+{
+    return byteRangeForAttachment(byteRangeOffsetAttachmentKey());
+}
+
+void MediaSampleAVFObjC::setByteRangeOffset(size_t byteOffset)
+{
+    int64_t checkedOffset = CheckedInt64(byteOffset);
+    auto offsetNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &checkedOffset));
+    PAL::CMSetAttachment(m_sample.get(), byteRangeOffsetAttachmentKey(), offsetNumber.get(), kCMAttachmentMode_ShouldPropagate);
+}
+
+std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment(CFStringRef key) const
+{
+    auto byteOffsetCF = dynamic_cf_cast<CFNumberRef>(PAL::CMGetAttachment(m_sample.get(), key, nullptr));
+    if (!byteOffsetCF)
+        return std::nullopt;
+
+    int64_t byteOffset = 0;
+    if (!CFNumberGetValue(byteOffsetCF, kCFNumberSInt64Type, &byteOffset))
+        return std::nullopt;
+
+    CMItemCount sizeArrayEntries = 0;
+    PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 0, nullptr, &sizeArrayEntries);
+    if (sizeArrayEntries != 1)
+        return std::nullopt;
+
+    size_t singleSizeEntry = 0;
+    PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 1, &singleSizeEntry, nullptr);
+    return { { CheckedSize(byteOffset), singleSizeEntry } };
 }
 
 }

@@ -44,14 +44,12 @@ typedef struct _WebKitPrintCustomWidgetPrivate WebKitPrintCustomWidgetPrivate;
 struct _WebKitPrintCustomWidget {
     GObject parent;
 
-    /*< private >*/
     WebKitPrintCustomWidgetPrivate *priv;
 };
 
 struct _WebKitPrintCustomWidgetClass {
     GObjectClass parent_class;
 
-    /*< public >*/
     void    (* apply)               (WebKitPrintCustomWidget *print_custom_widget,
                                      GtkWidget               *widget);
     void    (* update)              (WebKitPrintCustomWidget *print_custom_widget,
@@ -59,7 +57,6 @@ struct _WebKitPrintCustomWidgetClass {
                                      GtkPageSetup            *page_setup,
                                      GtkPrintSettings        *print_settings);
 
-    /*< private >*/
     void    (*_webkit_reserved0) (void);
     void    (*_webkit_reserved1) (void);
     void    (*_webkit_reserved2) (void);

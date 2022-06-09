@@ -10,12 +10,6 @@
 
 
 
-if(angle_has_build AND ozone_platform_gbm)
-
-
-endif()
-
-
 
 
 set(_gl_backend_sources
@@ -169,8 +163,6 @@ if(ozone_platform_gbm)
         "src/libANGLE/renderer/gl/egl/gbm/SurfaceGbm.cpp"
         "src/libANGLE/renderer/gl/egl/gbm/SurfaceGbm.h"
     )
-
-
 endif()
 
 

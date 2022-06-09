@@ -41,6 +41,7 @@
 #include "LayoutTreeBuilder.h"
 #include "RenderStyleConstants.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"
 #include "TableWrapperBlockFormattingContext.h"

@@ -1,0 +1,20 @@
+Tests the keygen.keytype attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS keygen.keytype is "rsa"
+PASS keygen.getAttribute('keytype') is null
+keygen.keytype = 'RSA'
+PASS keygen.keytype is "rsa"
+PASS keygen.getAttribute('keytype') is "RSA"
+keygen.keytype = 'INVALID'
+PASS keygen.keytype is ""
+PASS keygen.getAttribute('keytype') is "INVALID"
+keygen.keytype = 'rsa'
+PASS keygen.keytype is "rsa"
+PASS keygen.getAttribute('keytype') is "rsa"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

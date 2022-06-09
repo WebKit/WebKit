@@ -33,7 +33,6 @@ WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @interface _WKAuthenticatorAttestationResponse : _WKAuthenticatorResponse
 
 @property (nonatomic, readonly) NSData *attestationObject;
-@property (nonatomic, copy) NSArray<NSNumber *> *transports;
 
 @end
 

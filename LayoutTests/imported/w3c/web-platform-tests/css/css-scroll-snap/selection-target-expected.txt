@@ -1,4 +1,0 @@
-
-
-FAIL Test scrolling into view when typing promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
-

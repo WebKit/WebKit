@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,17 @@
 
 #pragma once
 
-#if USE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
+#if USE(LIBPAS_JIT_HEAP)
 #include <wtf/MetaAllocatorPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <bmalloc/jit_heap.h>
 #else
 #include <wtf/MetaAllocatorHandle.h>
 #endif
 
 namespace JSC {
 
-#if USE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
+#if USE(LIBPAS_JIT_HEAP)
 class ExecutableMemoryHandle : public ThreadSafeRefCounted<ExecutableMemoryHandle> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ExecutableMemoryHandle);
 
@@ -104,9 +105,9 @@ private:
     unsigned m_sizeInBytes;
     MemoryPtr m_start;
 };
-#else // not (USE(LIBPAS_JIT_HEAP) && ENABLE(JIT))
+#else // USE(LIBPAS_JIT_HEAP) -> so start of !USE(LIBPAS_JIT_HEAP) case
 typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
-#endif // USE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
+#endif // USE(LIBPAS_JIT_HEAP) -> so end of !USE(LIBPAS_JIT_HEAP) case
 
 } // namespace JSC
 

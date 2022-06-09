@@ -31,8 +31,6 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
     [CEReactions=NotNeeded, Reflect] attribute boolean noModule;
-    [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
+    [CEReactions=NotNeeded, Reflect, EnabledBySetting=SubresourceIntegrityEnabled] attribute DOMString integrity;
     [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
-
-    static boolean supports(DOMString type);
 };

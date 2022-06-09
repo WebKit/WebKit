@@ -45,7 +45,6 @@ struct MarkedText {
         TextMatch,
         DictationAlternatives,
         Highlight,
-        FragmentHighlight,
 #if ENABLE(APP_HIGHLIGHTS)
         AppHighlight,
 #endif
@@ -72,7 +71,7 @@ struct MarkedText {
     unsigned endOffset;
     Type type;
     const RenderedDocumentMarker* marker { nullptr };
-    AtomString highlightName { };
+    String highlightName { };
 
     bool isEmpty() const { return endOffset <= startOffset; }
     bool operator!=(const MarkedText& other) const { return !(*this == other); }

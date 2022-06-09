@@ -70,7 +70,6 @@ public:
     void clientWillBeginAutoplaying() final;
     bool clientWillBeginPlayback() final;
     bool clientWillPausePlayback() final;
-    void clientCharacteristicsChanged(bool) final;
 
     void visibilityChanged();
     void isVisibleInViewportChanged();

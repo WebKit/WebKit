@@ -60,7 +60,7 @@ Ref<HTMLOutputElement> HTMLOutputElement::create(Document& document)
 
 const AtomString& HTMLOutputElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> output("output"_s);
+    static MainThreadNeverDestroyed<const AtomString> output("output", AtomString::ConstructFromLiteral);
     return output;
 }
 
@@ -87,10 +87,10 @@ String HTMLOutputElement::value() const
     return textContent();
 }
 
-void HTMLOutputElement::setValue(String&& value)
+void HTMLOutputElement::setValue(const String& value)
 {
     m_defaultValueOverride = defaultValue();
-    stringReplaceAll(WTFMove(value));
+    stringReplaceAll(value);
 }
 
 String HTMLOutputElement::defaultValue() const
@@ -98,12 +98,12 @@ String HTMLOutputElement::defaultValue() const
     return m_defaultValueOverride.isNull() ? textContent() : m_defaultValueOverride;
 }
 
-void HTMLOutputElement::setDefaultValue(String&& value)
+void HTMLOutputElement::setDefaultValue(const String& value)
 {
     if (m_defaultValueOverride.isNull())
-        stringReplaceAll(WTFMove(value));
+        stringReplaceAll(value);
     else
-        m_defaultValueOverride = WTFMove(value);
+        m_defaultValueOverride = value;
 }
 
 DOMTokenList& HTMLOutputElement::htmlFor()

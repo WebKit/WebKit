@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,15 +26,14 @@ namespace WebCore {
 
 class SourceAlpha;
 
-class SourceAlphaSoftwareApplier final : public FilterEffectConcreteApplier<SourceAlpha> {
+class SourceAlphaSoftwareApplier : public FilterEffectConcreteApplier<SourceAlpha> {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<SourceAlpha>;
 
 public:
     using Base::Base;
 
-private:
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 };
 
 } // namespace WebCore

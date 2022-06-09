@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlDisplayNames::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDisplayNames) };
+const ClassInfo IntlDisplayNames::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDisplayNames) };
 
 IntlDisplayNames* IntlDisplayNames::create(VM& vm, Structure* structure)
 {
@@ -58,7 +58,7 @@ IntlDisplayNames::IntlDisplayNames(VM& vm, Structure* structure)
 void IntlDisplayNames::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 // https://tc39.es/ecma402/#sec-Intl.DisplayNames
@@ -338,8 +338,8 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
 
         buffer = vm.intlCache().getFieldDisplayName(m_localeCString.data(), field.value(), style, status);
         if (U_FAILURE(status))
-            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, WTFMove(code));
-        return jsString(vm, String(WTFMove(buffer)));
+            return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, code);
+        return jsString(vm, String(buffer));
     }
     }
     if (U_FAILURE(status)) {
@@ -349,7 +349,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, String(canonicalCode.data(), canonicalCode.length()));
         return throwTypeError(globalObject, scope, "Failed to query a display name."_s);
     }
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String(buffer));
 }
 
 // https://tc39.es/proposal-intl-displaynames/#sec-Intl.DisplayNames.prototype.resolvedOptions
@@ -377,7 +377,7 @@ ASCIILiteral IntlDisplayNames::styleString(Style style)
         return "long"_s;
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return ASCIILiteral::null();
 }
 
 ASCIILiteral IntlDisplayNames::typeString(Type type)
@@ -397,7 +397,7 @@ ASCIILiteral IntlDisplayNames::typeString(Type type)
         return "dateTimeField"_s;
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return ASCIILiteral::null();
 }
 
 ASCIILiteral IntlDisplayNames::fallbackString(Fallback fallback)
@@ -409,7 +409,7 @@ ASCIILiteral IntlDisplayNames::fallbackString(Fallback fallback)
         return "none"_s;
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return ASCIILiteral::null();
 }
 
 ASCIILiteral IntlDisplayNames::languageDisplayString(LanguageDisplay languageDisplay)
@@ -421,7 +421,7 @@ ASCIILiteral IntlDisplayNames::languageDisplayString(LanguageDisplay languageDis
         return "standard"_s;
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return ASCIILiteral::null();
 }
 
 } // namespace JSC

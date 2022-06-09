@@ -87,11 +87,11 @@ void CurlResourceHandleDelegate::curlDidSendData(CurlRequest&, unsigned long lon
 
 static void handleCookieHeaders(ResourceHandleInternal* d, const ResourceRequest& request, const CurlResponse& response)
 {
-    static constexpr auto setCookieHeader = "set-cookie: "_s;
+    static const auto setCookieHeader = "set-cookie: ";
 
     for (const auto& header : response.headers) {
         if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
-            const auto contents = header.right(header.length() - setCookieHeader.length());
+            const auto contents = header.right(header.length() - strlen(setCookieHeader));
             d->m_context->storageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, contents);
         }
     }
@@ -130,7 +130,7 @@ void CurlResourceHandleDelegate::curlDidReceiveResponse(CurlRequest& request, Cu
         if (CurlCacheManager::singleton().getCachedResponse(cacheUrl.string(), m_response)) {
             if (d()->m_addedCacheValidationHeaders) {
                 m_response.setHTTPStatusCode(200);
-                m_response.setHTTPStatusText("OK"_s);
+                m_response.setHTTPStatusText("OK");
             }
         }
     }

@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static constexpr auto ALG = "RSA1_5"_s;
+static const char* const ALG = "RSA1_5";
 
 Ref<CryptoAlgorithm> CryptoAlgorithmRSAES_PKCS1_v1_5::create()
 {
@@ -104,7 +104,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData&
             exceptionCallback(SyntaxError);
             return;
         }
-        if (usages && !key.use.isNull() && key.use != "enc"_s) {
+        if (usages && !key.use.isNull() && key.use != "enc") {
             exceptionCallback(DataError);
             return;
         }

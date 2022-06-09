@@ -630,7 +630,6 @@ TTypeQualifier GetVariableTypeQualifierFromSortedSequence(
 }
 
 TTypeQualifier GetParameterTypeQualifierFromSortedSequence(
-    TBasicType parameterBasicType,
     const TTypeQualifierBuilder::QualifierSequence &sortedSequence,
     TDiagnostics *diagnostics)
 {
@@ -685,9 +684,7 @@ TTypeQualifier GetParameterTypeQualifierFromSortedSequence(
         case EvqParamInOut:
             break;
         case EvqConst:
-            // Opaque parameters can only be |in|.  |const| is allowed, but is meaningless and is
-            // dropped.
-            typeQualifier.qualifier = IsOpaqueType(parameterBasicType) ? EvqParamIn : EvqParamConst;
+            typeQualifier.qualifier = EvqParamConst;
             break;
         case EvqTemporary:
             // no qualifier has been specified, set it to EvqParamIn which is the default
@@ -953,8 +950,7 @@ bool TTypeQualifierBuilder::checkSequenceIsValid(TDiagnostics *diagnostics) cons
     return true;
 }
 
-TTypeQualifier TTypeQualifierBuilder::getParameterTypeQualifier(TBasicType parameterBasicType,
-                                                                TDiagnostics *diagnostics) const
+TTypeQualifier TTypeQualifierBuilder::getParameterTypeQualifier(TDiagnostics *diagnostics) const
 {
     ASSERT(IsInvariantCorrect(mQualifiers));
     ASSERT(static_cast<const TStorageQualifierWrapper *>(mQualifiers[0])->getQualifier() ==
@@ -973,11 +969,9 @@ TTypeQualifier TTypeQualifierBuilder::getParameterTypeQualifier(TBasicType param
         // Copy the qualifier sequence so that we can sort them.
         QualifierSequence sortedQualifierSequence = mQualifiers;
         SortSequence(sortedQualifierSequence);
-        return GetParameterTypeQualifierFromSortedSequence(parameterBasicType,
-                                                           sortedQualifierSequence, diagnostics);
+        return GetParameterTypeQualifierFromSortedSequence(sortedQualifierSequence, diagnostics);
     }
-    return GetParameterTypeQualifierFromSortedSequence(parameterBasicType, mQualifiers,
-                                                       diagnostics);
+    return GetParameterTypeQualifierFromSortedSequence(mQualifiers, diagnostics);
 }
 
 TTypeQualifier TTypeQualifierBuilder::getVariableTypeQualifier(TDiagnostics *diagnostics) const

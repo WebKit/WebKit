@@ -63,32 +63,24 @@ struct PatchpointExceptionHandle {
 };
 
 
-static inline void computeExceptionHandlerAndLoopEntrypointLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, Vector<CodeLocationLabel<WasmEntryPtrTag>>& loopEntrypoints, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
+static inline void computeExceptionHandlerLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
 {
     if (!context.procedure)
         return;
 
-    unsigned entrypointIndex = 1;
+    unsigned entrypointIndex = 0;
     unsigned numEntrypoints = context.procedure->numEntrypoints();
     for (const UnlinkedHandlerInfo& handlerInfo : function->exceptionHandlers) {
+        RELEASE_ASSERT(entrypointIndex < numEntrypoints);
         if (handlerInfo.m_type == HandlerType::Delegate) {
             handlers.append({ });
             continue;
         }
 
-        RELEASE_ASSERT(entrypointIndex < numEntrypoints);
-        handlers.append(linkBuffer.locationOf<ExceptionHandlerPtrTag>(context.procedure->code().entrypointLabel(entrypointIndex)));
         ++entrypointIndex;
+        handlers.append(linkBuffer.locationOf<ExceptionHandlerPtrTag>(context.procedure->code().entrypointLabel(entrypointIndex)));
     }
-
-    for (; entrypointIndex < numEntrypoints; ++entrypointIndex)
-        loopEntrypoints.append(linkBuffer.locationOf<WasmEntryPtrTag>(context.procedure->code().entrypointLabel(entrypointIndex)));
-}
-
-static inline void computeExceptionHandlerLocations(Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>& handlers, const InternalFunction* function, const CompilationContext& context, LinkBuffer& linkBuffer)
-{
-    Vector<CodeLocationLabel<WasmEntryPtrTag>> ignored;
-    computeExceptionHandlerAndLoopEntrypointLocations(handlers, ignored, function, context, linkBuffer);
+    RELEASE_ASSERT(entrypointIndex == numEntrypoints - 1);
 }
 
 static inline void emitRethrowImpl(CCallHelpers& jit)

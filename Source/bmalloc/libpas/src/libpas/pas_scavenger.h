@@ -74,7 +74,7 @@ PAS_API extern uint64_t pas_scavenger_max_epoch_delta; /* How much to subtract f
 
 #if PAS_OS(DARWIN)
 /* It's legal to set this anytime. */
-PAS_API void pas_scavenger_set_requested_qos_class(qos_class_t);
+PAS_API extern qos_class_t pas_scavenger_requested_qos_class;
 #endif
 
 typedef void (*pas_scavenger_activity_callback)(void);

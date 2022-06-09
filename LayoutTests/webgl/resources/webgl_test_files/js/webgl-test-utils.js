@@ -1733,10 +1733,6 @@ var glErrorShouldBe = function(gl, glErrors, opt_msg) {
   return glErrorShouldBeImpl(gl, glErrors, true, opt_msg);
 };
 
-const glErrorAssert = function(gl, glErrors, opt_msg) {
-  return glErrorShouldBeImpl(gl, glErrors, false, opt_msg);
-};
-
 /**
  * Tests that the given framebuffer has a specific status
  * @param {!WebGLRenderingContext} gl The WebGLRenderingContext to use.
@@ -2927,6 +2923,14 @@ var requestAnimFrame = function(callback) {
   _requestAnimFrame.call(window, callback);
 };
 
+/**
+ * Provides video.requestVideoFrameCallback in a cross browser way.
+ * Returns a property, or undefined if unsuported.
+ */
+var getRequestVidFrameCallback = function() {
+  return HTMLVideoElement.prototype["requestVideoFrameCallback"];
+};
+
 var _cancelAnimFrame;
 
 /**
@@ -3095,11 +3099,7 @@ var setZeroTimeout = (function() {
 function dispatchPromise(fn) {
   return new Promise((fn_resolve, fn_reject) => {
     setZeroTimeout(() => {
-      let val;
-      if (fn) {
-        val = fn();
-      }
-      fn_resolve(val);
+      fn_resolve(fn());
     });
   });
 }
@@ -3132,30 +3132,38 @@ var runSteps = function(steps) {
  * @param {!function(!HTMLVideoElement): void} callback Function to call when
  *        video is ready.
  */
-async function startPlayingAndWaitForVideo(video, callback) {
+function startPlayingAndWaitForVideo(video, callback) {
   if (video.error) {
     testFailed('Video failed to load: ' + video.error);
     return;
+  }
+
+  video.addEventListener(
+      'error', e => { testFailed('Video playback failed: ' + e.message); },
+      true);
+
+  var rvfc = getRequestVidFrameCallback();
+  if (rvfc === undefined) {
+    var timeWatcher = function() {
+      if (video.currentTime > 0) {
+        callback(video);
+      } else {
+        requestAnimFrame.call(window, timeWatcher);
+      }
+    };
+
+    timeWatcher();
+  } else {
+    // Calls video.requestVideoFrameCallback(_ => { callback(video) })
+    rvfc.call(video, _ => { callback(video) });
   }
 
   video.loop = true;
   video.muted = true;
   // See whether setting the preload flag de-flakes video-related tests.
   video.preload = 'auto';
-
-  try {
-    await video.play();
-  } catch (e) {
-    testFailed('video.play failed: ' + e);
-    return;
-  }
-
-  if (video.requestVideoFrameCallback) {
-    await new Promise(go => video.requestVideoFrameCallback(go));
-  }
-
-  callback(video);
-}
+  video.play();
+};
 
 var getHost = function(url) {
   url = url.replace("\\", "/");
@@ -3445,7 +3453,6 @@ var API = {
   getAttribMap: getAttribMap,
   getUniformMap: getUniformMap,
   glEnumToString: glEnumToString,
-  glErrorAssert: glErrorAssert,
   glErrorShouldBe: glErrorShouldBe,
   glTypeToTypedArrayType: glTypeToTypedArrayType,
   hasAttributeCaseInsensitive: hasAttributeCaseInsensitive,

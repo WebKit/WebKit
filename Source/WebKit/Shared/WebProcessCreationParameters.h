@@ -54,10 +54,6 @@
 #include <wtf/MemoryPressureHandler.h>
 #endif
 
-#if PLATFORM(GTK)
-#include "GtkSettingsState.h"
-#endif
-
 namespace API {
 class Data;
 }
@@ -85,6 +81,11 @@ struct WebProcessCreationParameters {
 
     UserData initializationUserData;
 
+#if PLATFORM(IOS_FAMILY)
+    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
+    SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
+    SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
+#endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     SandboxExtension::Handle enableRemoteWebInspectorExtensionHandle;
 #endif
@@ -137,6 +138,8 @@ struct WebProcessCreationParameters {
     bool hasSelectionServices { false };
     bool hasRichContentServices { false };
 #endif
+
+    Seconds terminationTimeout;
 
     TextCheckerState textCheckerState;
 
@@ -201,13 +204,11 @@ struct WebProcessCreationParameters {
     std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
     std::optional<SandboxExtension::Handle> launchServicesExtensionHandle;
 #if HAVE(VIDEO_RESTRICTED_DECODING)
-#if PLATFORM(MAC)
-    SandboxExtension::Handle trustdExtensionHandle;
-#endif
-    bool enableDecodingHEIC { false };
+    Vector<SandboxExtension::Handle> videoDecoderExtensionHandles;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    Vector<SandboxExtension::Handle> dynamicMachExtensionHandles;
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
 #endif
 
@@ -225,9 +226,14 @@ struct WebProcessCreationParameters {
     String contentSizeCategory;
 #endif
 
+#if PLATFORM(COCOA)
+#if ENABLE(CFPREFS_DIRECT_MODE)
+    std::optional<Vector<SandboxExtension::Handle>> preferencesExtensionHandles;
+#endif
+#endif
+
 #if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars { false };
-    GtkSettingsState gtkSettings;
 #endif
 
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
@@ -248,16 +254,11 @@ struct WebProcessCreationParameters {
 #if USE(GLIB)
     String applicationID;
     String applicationName;
-#if ENABLE(REMOTE_INSPECTOR)
-    CString inspectorServerAddress;
-#endif
 #endif
 
 #if USE(ATSPI)
     String accessibilityBusAddress;
 #endif
-
-    String timeZoneOverride;
 };
 
 } // namespace WebKit

@@ -29,7 +29,6 @@
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -44,7 +43,7 @@ public:
     RenderView(Document&, RenderStyle&&);
     virtual ~RenderView();
 
-    ASCIILiteral renderName() const override { return "RenderView"_s; }
+    const char* renderName() const override { return "RenderView"; }
 
     bool requiresLayer() const override { return true; }
 
@@ -128,6 +127,11 @@ public:
     WEBCORE_EXPORT RenderLayerCompositor& compositor();
     WEBCORE_EXPORT bool usesCompositing() const;
 
+    bool usesFirstLineRules() const { return m_usesFirstLineRules; }
+    bool usesFirstLetterRules() const { return m_usesFirstLetterRules; }
+    void setUsesFirstLineRules(bool value) { m_usesFirstLineRules = value; }
+    void setUsesFirstLetterRules(bool value) { m_usesFirstLetterRules = value; }
+
     WEBCORE_EXPORT IntRect unscaledDocumentRect() const;
     LayoutRect unextendedBackgroundRect() const;
     LayoutRect backgroundRect() const;
@@ -200,10 +204,6 @@ public:
     void unregisterBoxWithScrollSnapPositions(const RenderBox&);
     const HashSet<const RenderBox*>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
 
-    void registerContainerQueryBox(const RenderBox&);
-    void unregisterContainerQueryBox(const RenderBox&);
-    const WeakHashSet<const RenderBox>& containerQueryBoxes() const { return m_containerQueryBoxes; }
-
 private:
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
@@ -260,6 +260,8 @@ private:
     unsigned m_renderersWithOutlineCount { 0 };
 
     bool m_hasSoftwareFilters { false };
+    bool m_usesFirstLineRules { false };
+    bool m_usesFirstLetterRules { false };
     bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };
     bool m_needsEventRegionUpdateForNonCompositedFrame { false };
 
@@ -268,7 +270,6 @@ private:
     Vector<RefPtr<RenderWidget>> m_protectedRenderWidgets;
 
     HashSet<const RenderBox*> m_boxesWithScrollSnapPositions;
-    WeakHashSet<const RenderBox> m_containerQueryBoxes;
 };
 
 } // namespace WebCore

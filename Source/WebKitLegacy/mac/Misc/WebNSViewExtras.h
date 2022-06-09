@@ -41,18 +41,10 @@
 @class WebFrameView;
 @class WebView;
 
-#if TARGET_OS_IPHONE
-@interface WAKView (WebExtras)
-#else
 @interface NSView (WebExtras)
-#endif
 
 // Returns the nearest enclosing view of the given class, or nil if none.
-#if TARGET_OS_IPHONE
-- (WAKView *)_web_superviewOfClass:(Class)viewClass;
-#else
 - (NSView *)_web_superviewOfClass:(Class)viewClass;
-#endif
 - (WebFrameView *)_web_parentWebFrameView;
 #if !TARGET_OS_IPHONE
 - (WebView *)_webView;
@@ -86,7 +78,7 @@
 @class WebFrame;
 @class WebView;
 
-@interface WAKView (WebDocumentViewExtras)
+@interface NSView (WebDocumentViewExtras)
 - (WebFrame *)_frame;
 - (WebView *)_webView;
 @end

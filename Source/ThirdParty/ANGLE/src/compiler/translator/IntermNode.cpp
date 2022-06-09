@@ -1521,7 +1521,6 @@ TIntermSwizzle::TIntermSwizzle(TIntermTyped *operand, const TVector<int> &swizzl
       mHasFoldedDuplicateOffsets(false)
 {
     ASSERT(mOperand);
-    ASSERT(mOperand->getType().isVector());
     ASSERT(mSwizzleOffsets.size() <= 4);
     promote();
 }

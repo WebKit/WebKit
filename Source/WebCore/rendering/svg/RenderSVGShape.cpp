@@ -151,10 +151,11 @@ void RenderSVGShape::layout()
         updateShapeFromElement();
 
         m_needsShapeUpdate = false;
-        setCurrentSVGLayoutRect(enclosingLayoutRect(m_fillBoundingBox));
+        setLayoutRect(enclosingLayoutRect(m_fillBoundingBox));
     }
 
-    updateLayerTransform();
+    // FIXME: [LBSE] Upstream SVGLayerTransformUpdater
+    // SVGRenderSupport::updateLayerTransform(*this);
 
     // Invalidate all resources of this client if our layout changed.
     if (everHadLayout() && selfNeedsLayout())
@@ -288,7 +289,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
     }
 
-    auto adjustedPaintOffset = paintOffset + currentSVGLayoutLocation();
+    auto adjustedPaintOffset = paintOffset + layoutLocation();
     if (paintInfo.phase == PaintPhase::Mask) {
         // FIXME: [LBSE] Upstream SVGRenderSupport changes
         // SVGRenderSupport::paintSVGMask(*this, paintInfo, adjustedPaintOffset);
@@ -308,7 +309,7 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
-    auto coordinateSystemOriginTranslation = adjustedPaintOffset - nominalSVGLayoutLocation();
+    auto coordinateSystemOriginTranslation = adjustedPaintOffset - flooredLayoutPoint(objectBoundingBox().location());
     paintInfo.context().translate(coordinateSystemOriginTranslation.width(), coordinateSystemOriginTranslation.height());
 
     if (style().svgStyle().shapeRendering() == ShapeRendering::CrispEdges)
@@ -345,10 +346,11 @@ bool RenderSVGShape::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     if (hitTestAction != HitTestForeground)
         return false;
 
-    auto adjustedLocation = accumulatedOffset + currentSVGLayoutLocation();
+    auto adjustedLocation = accumulatedOffset + layoutLocation();
 
     auto localPoint = locationInContainer.point();
-    auto coordinateSystemOriginTranslation = nominalSVGLayoutLocation() - adjustedLocation;
+    auto boundingBoxTopLeftCorner = flooredLayoutPoint(objectBoundingBox().minXMinYCorner());
+    auto coordinateSystemOriginTranslation = boundingBoxTopLeftCorner - adjustedLocation;
     localPoint.move(coordinateSystemOriginTranslation);
 
     if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
@@ -398,7 +400,7 @@ static inline RenderSVGResourceMarker* markerForType(SVGMarkerType type, RenderS
     return 0;
 }
 
-FloatRect RenderSVGShape::computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const
+FloatRect RenderSVGShape::computeMarkerBoundingBox() const
 {
     if (m_markerPositions.isEmpty())
         return FloatRect();
@@ -415,11 +417,8 @@ FloatRect RenderSVGShape::computeMarkerBoundingBox(const SVGBoundingBoxComputati
     FloatRect boundaries;
     unsigned size = m_markerPositions.size();
     for (unsigned i = 0; i < size; ++i) {
-        if (auto* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd)) {
-            // FIXME: [LBSE] Upstream RenderSVGResourceMarker changes
-            // boundaries.unite(marker->computeMarkerBoundingBox(options, marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
+        if (RenderSVGResourceMarker* marker = markerForType(m_markerPositions[i].type, markerStart, markerMid, markerEnd))
             boundaries.unite(marker->markerBoundaries(marker->markerTransformation(m_markerPositions[i].origin, m_markerPositions[i].angle, strokeWidth())));
-        }
     }
     return boundaries;
 }
@@ -530,11 +529,6 @@ void RenderSVGShape::styleWillChange(StyleDifference diff, const RenderStyle& ne
     }
 
     RenderSVGModelObject::styleWillChange(diff, newStyle);
-}
-
-void RenderSVGShape::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
-{
-    applySVGTransform(transform, graphicsElement(), style, boundingBox, options);
 }
 
 }

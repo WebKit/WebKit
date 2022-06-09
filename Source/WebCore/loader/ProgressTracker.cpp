@@ -75,9 +75,8 @@ public:
     long long estimatedLength;
 };
 
-ProgressTracker::ProgressTracker(Page& page, UniqueRef<ProgressTrackerClient>&& client)
-    : m_page(page)
-    , m_client(WTFMove(client))
+ProgressTracker::ProgressTracker(UniqueRef<ProgressTrackerClient>&& client)
+    : m_client(WTFMove(client))
     , m_progressHeartbeatTimer(*this, &ProgressTracker::progressHeartbeatTimerFired)
 {
 }
@@ -130,7 +129,6 @@ void ProgressTracker::progressStarted(Frame& frame)
         m_isMainLoad = isMainFrame || elapsedTimeSinceMainLoadComplete < subframePartOfMainLoadThreshold;
 
         m_client->progressStarted(*m_originatingProgressFrame);
-        m_page.progressEstimateChanged(*m_originatingProgressFrame);
     }
     m_numProgressTrackedFrames++;
 
@@ -138,12 +136,6 @@ void ProgressTracker::progressStarted(Frame& frame)
 
     m_client->didChangeEstimatedProgress();
     InspectorInstrumentation::frameStartedLoading(frame);
-}
-
-void ProgressTracker::progressEstimateChanged(Frame& frame)
-{
-    m_client->progressEstimateChanged(frame);
-    m_page.progressEstimateChanged(frame);
 }
 
 void ProgressTracker::progressCompleted(Frame& frame)
@@ -174,7 +166,7 @@ void ProgressTracker::finalProgressComplete()
     // with final progress value.
     if (!m_finalProgressChangedSent) {
         m_progressValue = 1;
-        progressEstimateChanged(*frame);
+        m_client->progressEstimateChanged(*frame);
     }
 
     reset();
@@ -184,7 +176,6 @@ void ProgressTracker::finalProgressComplete()
 
     frame->loader().client().setMainFrameDocumentReady(true);
     m_client->progressFinished(*frame);
-    m_page.progressFinished(*frame);
     frame->loader().loadProgressingStatusChanged();
 
     InspectorInstrumentation::frameStoppedLoading(*frame);
@@ -263,7 +254,7 @@ void ProgressTracker::incrementProgress(ResourceLoaderIdentifier identifier, uns
             if (m_progressValue == 1)
                 m_finalProgressChangedSent = true;
 
-            progressEstimateChanged(*frame);
+            m_client->progressEstimateChanged(*frame);
 
             m_lastNotifiedProgressValue = m_progressValue;
             m_lastNotifiedProgressTime = now;

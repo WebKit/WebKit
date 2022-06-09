@@ -25,11 +25,12 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledBySetting=PushAPIEnabled,
+    EnabledAtRuntime=PushAPIEnabled,
     Exposed=ServiceWorker,
+    ImplementationLacksVTable,
 ] interface PushMessageData {
     ArrayBuffer arrayBuffer();
-    [CallWith=CurrentScriptExecutionContext] Blob blob();
-    [CallWith=CurrentGlobalObject] any json();
+    [CallWith=ScriptExecutionContext] Blob blob();
+    [CallWith=GlobalObject] any json();
     USVString text();
 };

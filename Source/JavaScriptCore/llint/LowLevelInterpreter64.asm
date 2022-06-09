@@ -39,36 +39,20 @@ macro getOperandNarrow(opcodeStruct, fieldName, dst)
     loadbsq constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PB, PC, 1], dst
 end
 
-macro getuOperandWide16JS(opcodeStruct, fieldName, dst)
-    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16SizeJS[PB, PC, 1], dst
+macro getuOperandWide16(opcodeStruct, fieldName, dst)
+    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
 end
 
-macro getuOperandWide16Wasm(opcodeStruct, fieldName, dst)
-    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16SizeWasm[PB, PC, 1], dst
+macro getOperandWide16(opcodeStruct, fieldName, dst)
+    loadhsq constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
 end
 
-macro getOperandWide16JS(opcodeStruct, fieldName, dst)
-    loadhsq constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16SizeJS[PB, PC, 1], dst
+macro getuOperandWide32(opcodeStruct, fieldName, dst)
+    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
 end
 
-macro getOperandWide16Wasm(opcodeStruct, fieldName, dst)
-    loadhsq constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16SizeWasm[PB, PC, 1], dst
-end
-
-macro getuOperandWide32JS(opcodeStruct, fieldName, dst)
-    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeJS[PB, PC, 1], dst
-end
-
-macro getuOperandWide32Wasm(opcodeStruct, fieldName, dst)
-    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeWasm[PB, PC, 1], dst
-end
-
-macro getOperandWide32JS(opcodeStruct, fieldName, dst)
-    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeJS[PB, PC, 1], dst
-end
-
-macro getOperandWide32Wasm(opcodeStruct, fieldName, dst)
-    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeWasm[PB, PC, 1], dst
+macro getOperandWide32(opcodeStruct, fieldName, dst)
+    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
 end
 
 macro makeReturn(get, dispatch, fn)
@@ -112,9 +96,7 @@ end
 
 macro cCall2(function)
     checkStackPointerAlignment(t4, 0xbad0c002)
-    if C_LOOP or C_LOOP_WIN
-        cloopCallSlowPath function, a0, a1
-    elsif X86_64 or ARM64 or ARM64E or RISCV64
+    if X86_64 or ARM64 or ARM64E or RISCV64
         call function
     elsif X86_64_WIN
         # Note: this implementation is only correct if the return type size is > 8 bytes.
@@ -131,9 +113,11 @@ macro cCall2(function)
         move sp, a0
         addp 32, a0
         call function
+        addp 48, sp
         move 8[r0], r1
         move [r0], r0
-        addp 48, sp
+    elsif C_LOOP or C_LOOP_WIN
+        cloopCallSlowPath function, a0, a1
     else
         error
     end
@@ -153,36 +137,6 @@ macro cCall2Void(function)
         addp 32, sp
     else
         cCall2(function)
-    end
-end
-
-macro cCall3(function)
-    checkStackPointerAlignment(t4, 0xbad0c004)
-    if C_LOOP or C_LOOP_WIN
-        cloopCallSlowPath3 function, a0, a1, a2
-    elsif X86_64 or ARM64 or ARM64E or RISCV64
-        call function
-    elsif X86_64_WIN
-        # Note: this implementation is only correct if the return type size is > 8 bytes.
-        # See macro cCall2Void for an implementation when the return type <= 8 bytes.
-        # On Win64, when the return type is larger than 8 bytes, we need to allocate space on the stack for the return value.
-        # On entry rcx (a0), should contain a pointer to this stack space. The other parameters are shifted to the right,
-        # rdx (a1) should contain the first argument, r8 (a2) should contain the second argument, and r9 (a3) should contain the third argument.
-        # On return, rax contains a pointer to this stack value, and we then need to copy the 16 byte return value into rax (r0) and rdx (r1)
-        # since the return value is expected to be split between the two.
-        # See http://msdn.microsoft.com/en-us/library/7572ztz4.aspx
-        move a2, a3
-        move a1, a2
-        move a0, a1
-        subp 64, sp
-        move sp, a0
-        addp 32, a0
-        call function
-        move 8[r0], r1
-        move [r0], r0
-        addp 64, sp
-    else
-        error
     end
 end
 
@@ -740,20 +694,20 @@ macro writeBarrierOnGlobalLexicalEnvironment(size, get, valueFieldName)
         end)
 end
 
-macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
-    if STRUCTURE_ID_WITH_SHIFT
-        lshiftp (constexpr StructureID::encodeShiftAmount), structureIDThenStructure
-    elsif ADDRESS64
-        andq (constexpr StructureID::structureIDMask), structureIDThenStructure
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
-        loadp [scratch], scratch
-        addp scratch, structureIDThenStructure
-    end
+macro structureIDToStructureWithScratch(structureIDThenStructure, scratch, scratch2)
+    loadp CodeBlock[cfr], scratch
+    move structureIDThenStructure, scratch2
+    loadp CodeBlock::m_vm[scratch], scratch
+    rshifti NumberOfStructureIDEntropyBits, scratch2
+    loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
+    loadp [scratch, scratch2, PtrSize], scratch2
+    lshiftp StructureEntropyBitsShift, structureIDThenStructure
+    xorp scratch2, structureIDThenStructure
 end
 
-macro loadStructureWithScratch(cell, structure, scratch)
+macro loadStructureWithScratch(cell, structure, scratch, scratch2)
     loadi JSCell::m_structureID[cell], structure
-    structureIDToStructureWithScratch(structure, scratch)
+    structureIDToStructureWithScratch(structure, scratch, scratch2)
 end
 
 # Entrypoints into the interpreter.
@@ -976,7 +930,7 @@ macro equalNullComparisonOp(opcodeName, opcodeStruct, fn)
         move 0, t0
         jmp .done
     .masqueradesAsUndefined:
-        loadStructureWithScratch(t0, t2, t1)
+        loadStructureWithScratch(t0, t2, t1, t3)
         loadp CodeBlock[cfr], t0
         loadp CodeBlock::m_globalObject[t0], t0
         cpeq Structure::m_globalObject[t2], t0, t0
@@ -1517,7 +1471,7 @@ llintOpWithReturn(op_typeof_is_undefined, OpTypeofIsUndefined, macro (size, get,
     move ValueFalse, t1
     return(t1)
 .masqueradesAsUndefined:
-    loadStructureWithScratch(t0, t3, t1)
+    loadStructureWithScratch(t0, t3, t1, t2)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_globalObject[t1], t1
     cpeq Structure::m_globalObject[t3], t1, t0
@@ -1729,7 +1683,7 @@ llintOpWithProfile(op_get_prototype_of, OpGetPrototypeOf, macro (size, get, disp
     btqnz t0, notCellMask, .opGetPrototypeOfSlow
     bbb JSCell::m_type[t0], ObjectType, .opGetPrototypeOfSlow
 
-    loadStructureWithScratch(t0, t2, t1)
+    loadStructureWithScratch(t0, t2, t1, t3)
     loadh Structure::m_outOfLineTypeFlags[t2], t3
     btinz t3, OverridesGetPrototypeOutOfLine, .opGetPrototypeOfSlow
 
@@ -1769,7 +1723,19 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadp OpPutById::Metadata::m_structureChain[t5], t3
     btpz t3, .opPutByIdTransitionDirect
 
-    structureIDToStructureWithScratch(t2, t1)
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_vm[t1], t1
+    loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[t1], t1
+
+    macro structureIDToStructureWithScratchAndTable(structureIDThenStructure, table, scratch)
+        move structureIDThenStructure, scratch
+        rshifti NumberOfStructureIDEntropyBits, scratch
+        loadp [table, scratch, PtrSize], scratch
+        lshiftp StructureEntropyBitsShift, structureIDThenStructure
+        xorp scratch, structureIDThenStructure
+    end
+
+    structureIDToStructureWithScratchAndTable(t2, t1, t0)
 
     loadp StructureChain::m_vector[t3], t3
     assert(macro (ok) btpnz t3, ok end)
@@ -1780,7 +1746,7 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadi JSCell::m_structureID[t2], t2
     bineq t2, [t3], .opPutByIdSlow
     addp 4, t3
-    structureIDToStructureWithScratch(t2, t1)
+    structureIDToStructureWithScratchAndTable(t2, t1, t0)
     loadq Structure::m_prototype[t2], t2
     bqneq t2, ValueNull, .opPutByIdTransitionChainLoop
 
@@ -2155,7 +2121,7 @@ macro equalNullJumpOp(opcodeName, opcodeStruct, cellHandler, immediateHandler)
         assertNotConstant(size, t0)
         loadq [cfr, t0, 8], t0
         btqnz t0, notCellMask, .immediate
-        loadStructureWithScratch(t0, t2, t1)
+        loadStructureWithScratch(t0, t2, t1, t3)
         cellHandler(t2, JSCell::m_flags[t0], .target)
         dispatch()
 
@@ -2487,10 +2453,7 @@ macro callHelper(opcodeName, slowPath, opcodeStruct, valueProfileName, dstVirtua
 
 .notPolymorphic:
     bqneq t0, t1, .opCallSlow
-    prepareCall(t2, t3, t4, t1, macro(address)
-        loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
-        storep t2, address
-    end)
+    prepareCall(t2, t3, t4, t1)
 
 .goPolymorphic:
     loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
@@ -2568,10 +2531,7 @@ macro doCallVarargs(opcodeName, size, get, opcodeStruct, valueProfileName, dstVi
 
         .notPolymorphic:
             bqneq t0, t1, .opCallSlow
-            prepareCall(t2, t3, t4, t1, macro(address)
-                loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_codeBlock[t5], t2
-                storep t2, address
-            end)
+            prepareCall(t2, t3, t4, t1)
 
         .goPolymorphic:
             loadp %opcodeStruct%::Metadata::m_callLinkInfo.u.dataIC.m_monomorphicCallDestination[t5], t5
@@ -2882,7 +2842,7 @@ end)
 macro loadWithStructureCheck(opcodeStruct, get, slowPath)
     get(m_scope, t0)
     loadq [cfr, t0, 8], t0
-    loadStructureWithScratch(t0, t2, t1)
+    loadStructureWithScratch(t0, t2, t1, t3)
     loadp %opcodeStruct%::Metadata::m_structure[t5], t1
     bpneq t2, t1, slowPath
 end
@@ -3333,7 +3293,7 @@ llintOpWithReturn(op_get_property_enumerator, OpGetPropertyEnumerator, macro (si
     andi IndexingTypeMask, t1
     bia t1, ArrayWithUndecided, .slowPath
 
-    loadStructureWithScratch(t0, t1, t2)
+    loadStructureWithScratch(t0, t1, t2, t3)
     loadp Structure::m_previousOrRareData[t1], t1
     btpz t1, .slowPath
     bbeq JSCell::m_type[t1], StructureType, .slowPath

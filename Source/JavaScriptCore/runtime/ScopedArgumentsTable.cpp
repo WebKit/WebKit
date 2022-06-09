@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo ScopedArgumentsTable::s_info = { "ScopedArgumentsTable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ScopedArgumentsTable) };
+const ClassInfo ScopedArgumentsTable::s_info = { "ScopedArgumentsTable", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ScopedArgumentsTable) };
 
 ScopedArgumentsTable::ScopedArgumentsTable(VM& vm)
     : Base(vm, vm.scopedArgumentsTableStructure.get())
@@ -104,7 +104,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::trySetLength(VM& vm, uint32_t newLen
     return result;
 }
 
-static_assert(std::is_trivially_destructible<ScopeOffset>::value);
+static_assert(std::is_trivially_destructible<ScopeOffset>::value, "");
 
 ScopedArgumentsTable* ScopedArgumentsTable::trySet(VM& vm, uint32_t i, ScopeOffset value)
 {

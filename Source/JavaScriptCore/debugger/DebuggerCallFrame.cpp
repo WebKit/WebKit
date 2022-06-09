@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013-2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,10 +44,10 @@ namespace JSC {
 
 class LineAndColumnFunctor {
 public:
-    IterationStatus operator()(StackVisitor& visitor) const
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         visitor->computeLineAndColumn(m_line, m_column);
-        return IterationStatus::Done;
+        return StackVisitor::Done;
     }
 
     unsigned line() const { return m_line; }
@@ -66,7 +66,7 @@ Ref<DebuggerCallFrame> DebuggerCallFrame::create(VM& vm, CallFrame* callFrame)
         return adoptRef(*new DebuggerCallFrame(vm, callFrame, emptyFrame));
     }
 
-    if (callFrame->isEmptyTopLevelCallFrameForDebugger()) {
+    if (callFrame->isDeprecatedCallFrameForDebugger()) {
         ShadowChicken::Frame emptyFrame;
         RELEASE_ASSERT(!emptyFrame.isTailDeleted);
         return adoptRef(*new DebuggerCallFrame(vm, callFrame, emptyFrame));
@@ -111,9 +111,18 @@ RefPtr<DebuggerCallFrame> DebuggerCallFrame::callerFrame()
     return m_caller;
 }
 
-JSGlobalObject* DebuggerCallFrame::globalObject(VM& vm)
+JSGlobalObject* DebuggerCallFrame::globalObject()
 {
-    return scope(vm)->globalObject();
+    return scope()->globalObject();
+}
+
+JSC::JSGlobalObject* DebuggerCallFrame::deprecatedVMEntryGlobalObject() const
+{
+    ASSERT(isValid());
+    if (!isValid())
+        return nullptr;
+    VM& vm = m_validMachineFrame->deprecatedVM();
+    return vm.deprecatedVMEntryGlobalObject(m_validMachineFrame->lexicalGlobalObject(vm));
 }
 
 SourceID DebuggerCallFrame::sourceID() const
@@ -126,35 +135,37 @@ SourceID DebuggerCallFrame::sourceID() const
     return sourceIDForCallFrame(m_validMachineFrame);
 }
 
-String DebuggerCallFrame::functionName(VM& vm) const
+String DebuggerCallFrame::functionName() const
 {
     ASSERT(isValid());
     if (!isValid())
         return String();
 
+    VM& vm = m_validMachineFrame->deprecatedVM();
     if (isTailDeleted()) {
-        if (JSFunction* func = jsDynamicCast<JSFunction*>(m_shadowChickenFrame.callee))
+        if (JSFunction* func = jsDynamicCast<JSFunction*>(vm, m_shadowChickenFrame.callee))
             return func->calculatedDisplayName(vm);
-        return String::fromLatin1(m_shadowChickenFrame.codeBlock->inferredName().data());
+        return m_shadowChickenFrame.codeBlock->inferredName().data();
     }
 
     return m_validMachineFrame->friendlyFunctionName();
 }
 
-DebuggerScope* DebuggerCallFrame::scope(VM& vm)
+DebuggerScope* DebuggerCallFrame::scope()
 {
     ASSERT(isValid());
     if (!isValid())
         return nullptr;
 
     if (!m_scope) {
+        VM& vm = m_validMachineFrame->deprecatedVM();
         JSScope* scope;
         CodeBlock* codeBlock = m_validMachineFrame->codeBlock();
         if (isTailDeleted())
             scope = m_shadowChickenFrame.scope;
         else if (codeBlock && codeBlock->scopeRegister().isValid())
             scope = m_validMachineFrame->scope(codeBlock->scopeRegister().offset());
-        else if (JSCallee* callee = jsDynamicCast<JSCallee*>(m_validMachineFrame->jsCallee()))
+        else if (JSCallee* callee = jsDynamicCast<JSCallee*>(vm, m_validMachineFrame->jsCallee()))
             scope = callee->scope();
         else
             scope = m_validMachineFrame->lexicalGlobalObject(vm)->globalLexicalEnvironment();
@@ -164,7 +175,7 @@ DebuggerScope* DebuggerCallFrame::scope(VM& vm)
     return m_scope.get();
 }
 
-DebuggerCallFrame::Type DebuggerCallFrame::type(VM&) const
+DebuggerCallFrame::Type DebuggerCallFrame::type() const
 {
     ASSERT(isValid());
     if (!isValid())
@@ -173,7 +184,7 @@ DebuggerCallFrame::Type DebuggerCallFrame::type(VM&) const
     if (isTailDeleted())
         return FunctionType;
 
-    if (jsDynamicCast<JSFunction*>(m_validMachineFrame->jsCallee()))
+    if (jsDynamicCast<JSFunction*>(m_validMachineFrame->deprecatedVM(), m_validMachineFrame->jsCallee()))
         return FunctionType;
 
     return ProgramType;
@@ -205,7 +216,7 @@ JSValue DebuggerCallFrame::thisValue(VM& vm) const
 }
 
 // Evaluate some JavaScript code in the scope of this frame.
-JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
+JSValue DebuggerCallFrame::evaluateWithScopeExtension(const String& script, JSObject* scopeExtensionObject, NakedPtr<Exception>& exception)
 {
     CallFrame* callFrame = nullptr;
     CodeBlock* codeBlock = nullptr;
@@ -231,6 +242,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
     if (!callFrame || !codeBlock)
         return jsUndefined();
 
+    VM& vm = callFrame->deprecatedVM();
     JSLockHolder lock(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     
@@ -248,7 +260,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
 
     TDZEnvironment variablesUnderTDZ;
     PrivateNameEnvironment privateNameEnvironment;
-    JSScope::collectClosureVariablesUnderTDZ(scope(vm)->jsScope(), variablesUnderTDZ, privateNameEnvironment);
+    JSScope::collectClosureVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ, privateNameEnvironment);
 
     ECMAMode ecmaMode = codeBlock->ownerExecutable()->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
     auto* eval = DirectEvalExecutable::create(globalObject, makeSource(script, callFrame->callerSourceOrigin(vm)), codeBlock->unlinkedCodeBlock()->derivedContextType(), codeBlock->unlinkedCodeBlock()->needsClassFieldInitializer(), codeBlock->unlinkedCodeBlock()->privateBrandRequirement(), codeBlock->unlinkedCodeBlock()->isArrowFunction(), codeBlock->ownerExecutable()->isInsideOrdinaryFunction(), evalContextType, &variablesUnderTDZ, &privateNameEnvironment, ecmaMode);
@@ -263,7 +275,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
-    JSValue result = vm.interpreter->execute(eval, globalObject, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope(vm)->jsScope());
+    JSValue result = vm.interpreter->execute(eval, globalObject, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope()->jsScope());
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();
@@ -308,8 +320,6 @@ TextPosition DebuggerCallFrame::currentPosition(VM& vm)
 TextPosition DebuggerCallFrame::positionForCallFrame(VM& vm, CallFrame* callFrame)
 {
     LineAndColumnFunctor functor;
-    if (!callFrame)
-        return TextPosition(OrdinalNumber::fromOneBasedInt(0), OrdinalNumber::fromOneBasedInt(0));
     StackVisitor::visit(callFrame, vm, functor);
     return TextPosition(OrdinalNumber::fromOneBasedInt(functor.line()), OrdinalNumber::fromOneBasedInt(functor.column()));
 }

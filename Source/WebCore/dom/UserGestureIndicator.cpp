@@ -29,7 +29,6 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "ResourceLoadObserver.h"
 #include "SecurityOrigin.h"
 #include <wtf/MainThread.h>

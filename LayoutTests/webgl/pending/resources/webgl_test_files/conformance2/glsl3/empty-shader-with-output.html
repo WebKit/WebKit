@@ -1,0 +1,93 @@
+<!--
+Copyright (c) 2021 The Khronos Group Inc.
+Use of this source code is governed by an MIT-style license that can be
+found in the LICENSE.txt file.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL GLSL Conformance Tests - Empty Shader as Output</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<link rel="stylesheet" href="../../resources/glsl-feature-tests.css"/>
+<script src="../../js/js-test-pre.js"></script>
+<script src="../../js/webgl-test-utils.js"></script>
+<script src="../../js/glsl-conformance-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<!--
+Test that an empty vertex shader and fragment shader compile.
+-->
+<script id="fs0" type="text/something-not-javascript">#version 300 es
+precision mediump float;
+out vec4 outColor0;
+void main()
+{
+}
+</script>
+
+<script id="fs1" type="text/something-not-javascript">#version 300 es
+precision mediump float;
+void main()
+{
+}
+</script>
+
+<script id="vs2" type="text/something-not-javascript">#version 300 es
+precision mediump float;
+void main()
+{
+}
+</script>
+<script id="fs2" type="text/something-not-javascript">#version 300 es
+precision mediump float;
+out vec4 outColor0;
+void main()
+{
+    outColor0 = vec4(0,255,0,255);
+}
+</script>
+
+<script>
+"use strict";
+
+description();
+
+var tests = [];
+var fsrc = document.getElementById("fs0").text;
+tests.push({
+    fShaderSource: fsrc,
+    fShaderSuccess: true,
+    linkSuccess: true,
+    renderColor: [255, 255, 255, 255],
+    passMsg:`Empty fragment shader with colorOut works`
+})
+
+var fsrc1 = document.getElementById("fs1").text;
+tests.push({
+    fShaderSource: fsrc1,
+    fShaderSuccess: true,
+    linkSuccess: true,
+    renderColor: [255, 255, 255, 255],
+    passMsg: `Empty fragment shader with no output works`
+})
+
+var vsrc2 = document.getElementById("vs2").text;
+var fsrc2 = document.getElementById("fs2").text;
+tests.push({
+    vShaderSource: vsrc2,
+    vShaderSuccess: true,
+    fShaderSource: fsrc2,
+    fShaderSuccess: true,
+    linkSuccess: true,
+    renderColor: [255, 255, 255, 255],
+    passMsg: `Empty Vertex shader works`
+})
+
+GLSLConformanceTester.runRenderTests(tests, 2);
+</script>
+</body>
+</html>

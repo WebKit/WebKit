@@ -1,3 +1,0 @@
-
-PASS Access-Control-Request-Origin accept different origin between preflight and actual request
-

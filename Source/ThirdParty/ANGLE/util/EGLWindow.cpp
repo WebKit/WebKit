@@ -36,7 +36,6 @@ ConfigParameters::ConfigParameters()
       bindGeneratesResource(true),
       clientArraysEnabled(true),
       robustAccess(false),
-      mutableRenderBuffer(false),
       samples(-1),
       resetStrategy(EGL_NO_RESET_NOTIFICATION_EXT),
       colorSpace(EGL_COLORSPACE_LINEAR),
@@ -203,16 +202,145 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
         displayAttributes.push_back(params.displayPowerPreference);
     }
 
-    std::vector<const char *> enabledFeatureOverrides;
     std::vector<const char *> disabledFeatureOverrides;
+    std::vector<const char *> enabledFeatureOverrides;
 
-    for (angle::Feature feature : params.enabledFeatureOverrides)
+    if (params.transformFeedbackFeature == EGL_FALSE)
     {
-        enabledFeatureOverrides.push_back(angle::GetFeatureName(feature));
+        disabledFeatureOverrides.push_back("supportsTransformFeedbackExtension");
+        disabledFeatureOverrides.push_back("supportsGeometryStreamsCapability");
+        disabledFeatureOverrides.push_back("emulateTransformFeedback");
     }
-    for (angle::Feature feature : params.disabledFeatureOverrides)
+
+    if (params.allocateNonZeroMemoryFeature == EGL_TRUE)
     {
-        disabledFeatureOverrides.push_back(angle::GetFeatureName(feature));
+        enabledFeatureOverrides.push_back("allocateNonZeroMemory");
+    }
+    else if (params.allocateNonZeroMemoryFeature == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("allocateNonZeroMemory");
+    }
+
+    if (params.emulateCopyTexImage2DFromRenderbuffers == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("emulate_copyteximage2d_from_renderbuffers");
+    }
+
+    if (params.shaderStencilOutputFeature == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("has_shader_stencil_output");
+    }
+
+    if (params.genMultipleMipsPerPassFeature == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("gen_multiple_mips_per_pass");
+    }
+
+    if (params.supportsVulkanViewportFlip == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("supportsViewportFlip");
+    }
+    else if (params.supportsVulkanViewportFlip == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("supportsViewportFlip");
+    }
+
+    if (params.supportsVulkanMultiDrawIndirect == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("supportsMultiDrawIndirect");
+    }
+    else if (params.supportsVulkanMultiDrawIndirect == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("supportsMultiDrawIndirect");
+    }
+
+    if (params.WithVulkanPreferCPUForBufferSubData == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("preferCPUForBufferSubData");
+    }
+    else if (params.WithVulkanPreferCPUForBufferSubData == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("preferCPUForBufferSubData");
+    }
+
+    switch (params.emulatedPrerotation)
+    {
+        case 90:
+            enabledFeatureOverrides.push_back("emulatedPrerotation90");
+            break;
+        case 180:
+            enabledFeatureOverrides.push_back("emulatedPrerotation180");
+            break;
+        case 270:
+            enabledFeatureOverrides.push_back("emulatedPrerotation270");
+            break;
+        default:
+            break;
+    }
+
+    if (params.asyncCommandQueueFeatureVulkan == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("asyncCommandQueue");
+    }
+
+    if (params.generateSPIRVThroughGlslang == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("generateSPIRVThroughGlslang");
+    }
+
+    if (params.directMetalGeneration == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("directMetalGeneration");
+    }
+
+    if (params.hasExplicitMemBarrierFeatureMtl == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("has_explicit_mem_barrier_mtl");
+    }
+
+    if (params.hasCheapRenderPassFeatureMtl == EGL_FALSE)
+    {
+        disabledFeatureOverrides.push_back("has_cheap_render_pass_mtl");
+    }
+
+    if (params.forceBufferGPUStorageFeatureMtl == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("force_buffer_gpu_storage_mtl");
+    }
+
+    if (params.emulatedVAOs == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("sync_vertex_arrays_to_default");
+    }
+
+    if (params.captureLimits == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("enable_capture_limits");
+    }
+
+    if (params.forceRobustResourceInit == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("forceRobustResourceInit");
+    }
+
+    if (params.forceInitShaderVariables == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("forceInitShaderVariables");
+    }
+
+    if (params.forceVulkanFallbackFormat == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("forceFallbackFormat");
+    }
+
+    if (params.forceSubmitImmutableTextureUpdates == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("forceSubmitImmutableTextureUpdates");
+    }
+
+    if (params.createPipelineDuringLink == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("createPipelineDuringLink");
     }
 
     const bool hasFeatureControlANGLE =
@@ -286,18 +414,9 @@ GLWindowResult EGLWindow::initializeSurface(OSWindow *osWindow,
     mConfigParams                 = params;
     const char *displayExtensions = eglQueryString(mDisplay, EGL_EXTENSIONS);
 
-    bool hasMutableRenderBuffer =
-        strstr(displayExtensions, "EGL_KHR_mutable_render_buffer") != nullptr;
-    if (mConfigParams.mutableRenderBuffer && !hasMutableRenderBuffer)
-    {
-        fprintf(stderr, "Mising EGL_KHR_mutable_render_buffer.\n");
-        destroyGL();
-        return GLWindowResult::NoMutableRenderBufferSupport;
-    }
-
     std::vector<EGLint> configAttributes = {
         EGL_SURFACE_TYPE,
-        EGL_WINDOW_BIT | (params.mutableRenderBuffer ? EGL_MUTABLE_RENDER_BUFFER_BIT_KHR : 0),
+        EGL_WINDOW_BIT,
         EGL_RED_SIZE,
         (mConfigParams.redBits >= 0) ? mConfigParams.redBits : EGL_DONT_CARE,
         EGL_GREEN_SIZE,
@@ -715,32 +834,6 @@ bool EGLWindow::makeCurrentGeneric(GLWindowContext context)
 bool EGLWindow::makeCurrent()
 {
     return makeCurrent(mContext);
-}
-
-EGLWindow::Image EGLWindow::createImage(GLWindowContext context,
-                                        Enum target,
-                                        ClientBuffer buffer,
-                                        const Attrib *attrib_list)
-{
-    return eglCreateImage(getDisplay(), context, target, buffer, attrib_list);
-}
-
-EGLWindow::Image EGLWindow::createImageKHR(GLWindowContext context,
-                                           Enum target,
-                                           ClientBuffer buffer,
-                                           const AttribKHR *attrib_list)
-{
-    return eglCreateImageKHR(getDisplay(), context, target, buffer, attrib_list);
-}
-
-EGLBoolean EGLWindow::destroyImage(Image image)
-{
-    return eglDestroyImage(getDisplay(), image);
-}
-
-EGLBoolean EGLWindow::destroyImageKHR(Image image)
-{
-    return eglDestroyImageKHR(getDisplay(), image);
 }
 
 bool EGLWindow::makeCurrent(EGLContext context)

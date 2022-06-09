@@ -86,7 +86,7 @@ TestInvocation::TestInvocation(WKURLRef url, const TestOptions& options)
     m_urlString = toWTFString(adoptWK(WKURLCopyString(m_url.get())).get());
 
     // FIXME: Avoid mutating the setting via a test directory like this.
-    m_dumpFrameLoadCallbacks = urlContains("loading/"_s) && !urlContains("://localhost"_s);
+    m_dumpFrameLoadCallbacks = urlContains("loading/") && !urlContains("://localhost");
 }
 
 TestInvocation::~TestInvocation()
@@ -100,7 +100,7 @@ WKURLRef TestInvocation::url() const
     return m_url.get();
 }
 
-bool TestInvocation::urlContains(StringView searchString) const
+bool TestInvocation::urlContains(const char* searchString) const
 {
     return m_urlString.containsIgnoringASCIICase(searchString);
 }
@@ -127,15 +127,12 @@ WTF::Seconds TestInvocation::shortTimeout() const
 
 bool TestInvocation::shouldLogHistoryClientCallbacks() const
 {
-    return urlContains("globalhistory/"_s);
+    return urlContains("globalhistory/");
 }
 
 WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary()
 {
     auto beginTestMessageBody = adoptWK(WKMutableDictionaryCreate());
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    setValue(beginTestMessageBody, "IsAccessibilityIsolatedTreeEnabled", options().accessibilityIsolatedTreeMode());
-#endif
     setValue(beginTestMessageBody, "UseFlexibleViewport", options().useFlexibleViewport());
     setValue(beginTestMessageBody, "DumpPixels", m_dumpPixels);
     setValue(beginTestMessageBody, "Timeout", static_cast<uint64_t>(m_timeout.milliseconds()));
@@ -396,11 +393,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     if (WKStringIsEqualToUTF8CString(messageName, "SimulateWebNotificationClick")) {
         WKDataRef notificationID = dataValue(messageBody);
         TestController::singleton().simulateWebNotificationClick(notificationID);
-        return;
-    }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "SimulateWebNotificationClickForServiceWorkerNotifications")) {
-        TestController::singleton().simulateWebNotificationClickForServiceWorkerNotifications();
         return;
     }
 
@@ -908,8 +900,13 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SecureEventInputIsEnabled"))
-        return adoptWK(WKBooleanCreate(TestController::singleton().mainWebView()->isSecureEventInputEnabled()));
+    if (WKStringIsEqualToUTF8CString(messageName, "SecureEventInputIsEnabled")) {
+#if PLATFORM(MAC)
+        return adoptWK(WKBooleanCreate(IsSecureEventInputEnabled()));
+#else
+        return adoptWK(WKBooleanCreate(false));
+#endif
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetCustomUserAgent")) {
         WKPageSetCustomUserAgent(TestController::singleton().mainWebView()->page(), stringValue(messageBody));
@@ -1030,15 +1027,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         unsigned count = TestController::singleton().userMediaPermissionRequestCountForOrigin(originWK, parentOriginWK);
         return adoptWK(WKUInt64Create(count));
     }
-
-    if (WKStringIsEqualToUTF8CString(messageName, "GrantNotificationPermission"))
-        return adoptWK(WKBooleanCreate(TestController::singleton().grantNotificationPermission(stringValue(messageBody))));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermission"))
-        return adoptWK(WKBooleanCreate(TestController::singleton().denyNotificationPermission(stringValue(messageBody))));
-
-    if (WKStringIsEqualToUTF8CString(messageName, "DenyNotificationPermissionOnPrompt"))
-        return adoptWK(WKBooleanCreate(TestController::singleton().denyNotificationPermissionOnPrompt(stringValue(messageBody))));
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsDoingMediaCapture"))
         return adoptWK(WKBooleanCreate(TestController::singleton().isDoingMediaCapture()));
@@ -1684,7 +1672,7 @@ void TestInvocation::waitToDumpWatchdogTimerFired()
 {
     invalidateWaitToDumpWatchdogTimer();
     
-    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n"_s);
+    outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
 
     postPageMessage("ForceImmediateCompletion");
 
@@ -1711,7 +1699,7 @@ void TestInvocation::waitForPostDumpWatchdogTimerFired()
 #if PLATFORM(COCOA)
     char buffer[1024];
     snprintf(buffer, sizeof(buffer), "#PID UNRESPONSIVE - %s (pid %d)\n", getprogname(), getpid());
-    outputText(String::fromLatin1(buffer));
+    outputText(buffer);
 #endif
     done();
 }

@@ -66,7 +66,7 @@ static inline String nextToken(FILE* file)
         }
     }
 
-    return String::fromLatin1(buffer);
+    return String(buffer);
 }
 
 static inline void appendKeyValuePair(WebMemoryStatistics& stats, const String& key, size_t value)

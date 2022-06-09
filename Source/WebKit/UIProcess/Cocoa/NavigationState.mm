@@ -424,7 +424,7 @@ static void trySOAuthorization(Ref<API::NavigationAction>&& navigationAction, We
         completionHandler(false);
         return;
     }
-    page.websiteDataStore().soAuthorizationCoordinator(page).tryAuthorize(WTFMove(navigationAction), page, WTFMove(completionHandler));
+    page.websiteDataStore().soAuthorizationCoordinator().tryAuthorize(WTFMove(navigationAction), page, WTFMove(completionHandler));
 #else
     completionHandler(false);
 #endif
@@ -537,46 +537,48 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._customNavigatorPlatform must be nil for subframe navigations."];
         }
 
-        ensureOnMainRunLoop([navigationAction = WTFMove(navigationAction), webPageProxy = WTFMove(webPageProxy), actionPolicy, localListener = WTFMove(localListener), apiWebsitePolicies = WTFMove(apiWebsitePolicies)] () mutable {
-            switch (actionPolicy) {
-            case WKNavigationActionPolicyAllow:
-            case _WKNavigationActionPolicyAllowInNewProcess:
-                tryInterceptNavigation(WTFMove(navigationAction), webPageProxy, [actionPolicy, localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)](bool interceptedNavigation) mutable {
-                    if (interceptedNavigation) {
-                        localListener->ignore();
-                        return;
-                    }
+        switch (actionPolicy) {
+        case WKNavigationActionPolicyAllow:
+        case _WKNavigationActionPolicyAllowInNewProcess:
+            tryInterceptNavigation(WTFMove(navigationAction), webPageProxy, [actionPolicy, localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)](bool interceptedNavigation) mutable {
+                if (interceptedNavigation) {
+                    localListener->ignore();
+                    return;
+                }
 
-                    localListener->use(websitePolicies.get(), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ProcessSwapRequestedByClient::Yes : ProcessSwapRequestedByClient::No);
-                });
-                break;
+                localListener->use(websitePolicies.get(), actionPolicy == _WKNavigationActionPolicyAllowInNewProcess ? ProcessSwapRequestedByClient::Yes : ProcessSwapRequestedByClient::No);
+            });
+        
+            break;
 
-            case WKNavigationActionPolicyCancel:
-                localListener->ignore();
-                break;
+        case WKNavigationActionPolicyCancel:
+            localListener->ignore();
+            break;
 
-            case WKNavigationActionPolicyDownload:
-                localListener->download();
-                break;
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        case _WKNavigationActionPolicyDownload:
+            ALLOW_DEPRECATED_DECLARATIONS_END
+            localListener->download();
+            break;
 
-            case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
-                trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
-                    if (optimizedLoad) {
-                        localListener->ignore();
-                        return;
-                    }
+        case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
+            trySOAuthorization(WTFMove(navigationAction), webPageProxy, [localListener = WTFMove(localListener), websitePolicies = WTFMove(apiWebsitePolicies)] (bool optimizedLoad) {
+                if (optimizedLoad) {
+                    localListener->ignore();
+                    return;
+                }
 
-                    localListener->use(websitePolicies.get());
-                });
-                break;
-            }        });
+                localListener->use(websitePolicies.get());
+            });
+            break;
+        }
     };
 
     if (delegateHasWebpagePreferences) {
         if (m_navigationState->m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler)
             [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
         else
-            [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
+            [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo ? static_cast<id<NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
     } else {
         auto decisionHandler = [decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies)] (WKNavigationActionPolicy actionPolicy) mutable {
             decisionHandlerWithPreferencesOrPolicies(actionPolicy, nil);
@@ -652,25 +654,24 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
         return;
 
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
-    [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:makeBlockPtr([localListener = WTFMove(listener), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) mutable {
+    [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:makeBlockPtr([localListener = WTFMove(listener), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
-        ensureOnMainRunLoop([responsePolicy, localListener = WTFMove(localListener)] {
-            switch (responsePolicy) {
-            case WKNavigationResponsePolicyAllow:
-                localListener->use();
-                break;
 
-            case WKNavigationResponsePolicyCancel:
-                localListener->ignore();
-                break;
+        switch (responsePolicy) {
+        case WKNavigationResponsePolicyAllow:
+            localListener->use();
+            break;
 
-            case WKNavigationResponsePolicyDownload:
-                localListener->download();
-                break;
-            }
-        });
+        case WKNavigationResponsePolicyCancel:
+            localListener->ignore();
+            break;
+
+        case WKNavigationResponsePolicyDownload:
+            localListener->download();
+            break;
+        }
     }).get()];
 }
 
@@ -732,7 +733,7 @@ void NavigationState::NavigationClient::willPerformClientRedirect(WebPageProxy& 
     if (!navigationDelegate)
         return;
 
-    URL url { urlString };
+    URL url(URL(), urlString);
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState->m_webView willPerformClientRedirectToURL:url delay:delay];
 }
@@ -749,8 +750,8 @@ void NavigationState::NavigationClient::didPerformClientRedirect(WebPageProxy& p
     if (!navigationDelegate)
         return;
 
-    URL sourceURL { sourceURLString };
-    URL destinationURL { destinationURLString };
+    URL sourceURL(URL(), sourceURLString);
+    URL destinationURL(URL(), destinationURLString);
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState->m_webView didPerformClientRedirectFromURL:sourceURL toURL:destinationURL];
 }
@@ -1056,14 +1057,12 @@ static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTermination
     case ProcessTerminationReason::ExceededCPULimit:
         return _WKProcessTerminationReasonExceededCPULimit;
     case ProcessTerminationReason::NavigationSwap:
-    case ProcessTerminationReason::IdleExit:
         // We probably shouldn't bother coming up with a new API type for process-swapping.
         // "Requested by client" seems like the best match for existing types.
         FALLTHROUGH;
     case ProcessTerminationReason::RequestedByClient:
         return _WKProcessTerminationReasonRequestedByClient;
     case ProcessTerminationReason::ExceededProcessCountLimit:
-    case ProcessTerminationReason::Unresponsive:
     case ProcessTerminationReason::RequestedByNetworkProcess:
     case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::Crash:

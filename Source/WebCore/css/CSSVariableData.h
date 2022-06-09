@@ -59,6 +59,8 @@ private:
 
     String m_backingString;
     Vector<CSSParserToken> m_tokens;
+
+    // FIXME-NEWPARSER: We want to cache StyleProperties once we support @apply.
 };
 
 } // namespace WebCore

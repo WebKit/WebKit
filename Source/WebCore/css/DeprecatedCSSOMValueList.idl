@@ -25,6 +25,7 @@
 
 // Introduced in DOM Level 2:
 [
+    ImplementationLacksVTable,
     InterfaceName=CSSValueList,
     Exposed=Window
 ] interface DeprecatedCSSOMValueList : DeprecatedCSSOMValue {

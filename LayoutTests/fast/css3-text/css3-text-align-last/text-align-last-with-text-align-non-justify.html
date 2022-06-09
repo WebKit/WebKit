@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#tests div {
+    width: 100px;
+    margin-bottom: 20px;
+    border: 1px solid #000000;
+    font: 20px/1 Ahem, sans-serif;
+}
+</style>
+</head>
+<body>
+
+<div id="tests">
+    text-align : start; text-align-last : end
+    <div style='text-align: start; -webkit-text-align-last: end;'>X X X XXX</div>
+
+    text-align : end; text-align-last : start
+    <div style='text-align: end; -webkit-text-align-last: start;'>X X X XXX</div>
+
+    text-align : left; text-align-last : right
+    <div style='text-align: left; -webkit-text-align-last: right;'>X X X XXX</div>
+
+    text-align : right; text-align-last : left
+    <div style='text-align: right; -webkit-text-align-last: left;'>X X X XXX</div>
+
+    text-align : center; text-align-last : left
+    <div style='text-align: center; -webkit-text-align-last: left;'>X X X XXX</div>
+</div>
+
+<p>Since text-align is not justify, text-align-last property shouldn't be respected,
+thus the alignment should be as defined by text-align.</p>
+
+
+</body>
+</html>
+

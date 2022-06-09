@@ -35,6 +35,18 @@
 
 namespace WebKit {
 
+#if PLATFORM(COCOA)
+bool isFeatureFlagEnabled(const char*, bool defaultValue = false);
+#endif
+
+#if HAVE(INCREMENTAL_PDF_APIS)
+bool defaultIncrementalPDFEnabled();
+#endif
+
+#if ENABLE(WEBXR)
+bool defaultWebXREnabled();
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 bool defaultAllowsInlineMediaPlayback();
 bool defaultAllowsInlineMediaPlaybackAfterFullscreen();
@@ -70,8 +82,17 @@ bool defaultPassiveWheelListenersAsDefaultOnDocument();
 bool defaultWheelEventGesturesBecomeNonBlocking();
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+bool defaultWebMParserEnabled();
+#endif
+
 #if ENABLE(MEDIA_SOURCE) && PLATFORM(IOS_FAMILY)
 bool defaultMediaSourceEnabled();
+#endif
+
+#if ENABLE(VP9)
+bool defaultVP8DecoderEnabled();
+bool defaultVP9DecoderEnabled();
 #endif
 
 } // namespace WebKit

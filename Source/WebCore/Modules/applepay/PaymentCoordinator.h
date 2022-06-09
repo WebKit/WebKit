@@ -43,14 +43,15 @@ class PaymentMerchantSession;
 class PaymentMethod;
 class PaymentSession;
 class PaymentSessionError;
+enum class PaymentAuthorizationStatus;
 struct ApplePayCouponCodeUpdate;
-struct ApplePayPaymentAuthorizationResult;
 struct ApplePayPaymentMethodUpdate;
 struct ApplePaySetupConfiguration;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethod;
 struct ApplePayShippingMethodUpdate;
 struct ExceptionDetails;
+struct PaymentAuthorizationResult;
 
 class PaymentCoordinator : public CanMakeWeakPtr<PaymentCoordinator> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -61,7 +62,7 @@ public:
     PaymentCoordinatorClient& client() { return m_client; }
 
     bool supportsVersion(Document&, unsigned version) const;
-    bool canMakePayments();
+    bool canMakePayments(Document&);
     void canMakePaymentsWithActiveCard(Document&, const String& merchantIdentifier, Function<void(bool)>&& completionHandler);
     void openPaymentSetup(Document&, const String& merchantIdentifier, Function<void(bool)>&& completionHandler);
 
@@ -75,7 +76,7 @@ public:
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&);
 #endif
-    void completePaymentSession(ApplePayPaymentAuthorizationResult&&);
+    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&);
     void abortPaymentSession();
     void cancelPaymentSession();
 
@@ -91,11 +92,16 @@ public:
 
     std::optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
 
+    bool shouldEnableApplePayAPIs(Document&) const;
+    WEBCORE_EXPORT Expected<void, ExceptionDetails> shouldAllowUserAgentScripts(Document&) const;
+
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&);
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&);
     void endApplePaySetup();
 
 private:
+    bool setApplePayIsActiveIfAllowed(Document&) const;
+
     PaymentCoordinatorClient& m_client;
     RefPtr<PaymentSession> m_activeSession;
 };

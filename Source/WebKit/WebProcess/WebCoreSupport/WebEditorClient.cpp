@@ -27,7 +27,7 @@
 #include "WebEditorClient.h"
 
 #include "EditorState.h"
-#include "SharedBufferReference.h"
+#include "SharedBufferCopy.h"
 #include "UndoOrRedo.h"
 #include "WKBundlePageEditorClient.h"
 #include "WebCoreArgumentCoders.h"
@@ -144,7 +144,7 @@ bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const std::
 
 void WebEditorClient::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<FragmentedSharedBuffer>&& data)
 {
-    m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromData(identifier, contentType, preferredFileName, IPC::SharedBufferReference(WTFMove(data))));
+    m_page->send(Messages::WebPageProxy::RegisterAttachmentIdentifierFromData(identifier, contentType, preferredFileName, IPC::SharedBufferCopy(WTFMove(data))));
 }
 
 void WebEditorClient::registerAttachments(Vector<WebCore::SerializedAttachmentData>&& data)
@@ -217,7 +217,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     if (!frame)
         return;
 
-    m_page->didChangeSelection(*frame);
+    m_page->didChangeSelection();
 
 #if PLATFORM(GTK)
     updateGlobalSelection(frame);
@@ -352,54 +352,50 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent&)
 
 #endif // !PLATFORM(COCOA) && !USE(GLIB)
 
-void WebEditorClient::textFieldDidBeginEditing(Element& element)
+void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    if (!inputElement)
+    if (!is<HTMLInputElement>(*element))
         return;
 
-    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textFieldDidBeginEditing(m_page, *inputElement, webFrame);
+    m_page->injectedBundleFormClient().textFieldDidBeginEditing(m_page, downcast<HTMLInputElement>(element), webFrame);
 }
 
-void WebEditorClient::textFieldDidEndEditing(Element& element)
+void WebEditorClient::textFieldDidEndEditing(Element* element)
 {
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    if (!inputElement)
+    if (!is<HTMLInputElement>(*element))
         return;
 
-    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textFieldDidEndEditing(m_page, *inputElement, webFrame);
+    m_page->injectedBundleFormClient().textFieldDidEndEditing(m_page, downcast<HTMLInputElement>(element), webFrame);
 }
 
-void WebEditorClient::textDidChangeInTextField(Element& element)
+void WebEditorClient::textDidChangeInTextField(Element* element)
 {
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    if (!inputElement)
+    if (!is<HTMLInputElement>(*element))
         return;
 
-    bool initiatedByUserTyping = UserTypingGestureIndicator::processingUserTypingGesture() && UserTypingGestureIndicator::focusedElementAtGestureStart() == inputElement;
+    bool initiatedByUserTyping = UserTypingGestureIndicator::processingUserTypingGesture() && UserTypingGestureIndicator::focusedElementAtGestureStart() == element;
 
-    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textDidChangeInTextField(m_page, *inputElement, webFrame, initiatedByUserTyping);
+    m_page->injectedBundleFormClient().textDidChangeInTextField(m_page, downcast<HTMLInputElement>(element), webFrame, initiatedByUserTyping);
 }
 
-void WebEditorClient::textDidChangeInTextArea(Element& element)
+void WebEditorClient::textDidChangeInTextArea(Element* element)
 {
-    auto* textAreaElement = dynamicDowncast<HTMLTextAreaElement>(element);
-    if (!textAreaElement)
+    if (!is<HTMLTextAreaElement>(*element))
         return;
 
-    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, *textAreaElement, webFrame);
+    m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, downcast<HTMLTextAreaElement>(element), webFrame);
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -417,18 +413,18 @@ void WebEditorClient::subFrameScrollPositionChanged()
 static bool getActionTypeForKeyEvent(KeyboardEvent* event, WKInputFieldActionType& type)
 {
     String key = event->keyIdentifier();
-    if (key == "Up"_s)
+    if (key == "Up")
         type = WKInputFieldActionTypeMoveUp;
-    else if (key == "Down"_s)
+    else if (key == "Down")
         type = WKInputFieldActionTypeMoveDown;
-    else if (key == "U+001B"_s)
+    else if (key == "U+001B")
         type = WKInputFieldActionTypeCancel;
-    else if (key == "U+0009"_s) {
+    else if (key == "U+0009") {
         if (event->shiftKey())
             type = WKInputFieldActionTypeInsertBacktab;
         else
             type = WKInputFieldActionTypeInsertTab;
-    } else if (key == "Enter"_s)
+    } else if (key == "Enter")
         type = WKInputFieldActionTypeInsertNewline;
     else
         return false;
@@ -459,32 +455,30 @@ static API::InjectedBundle::FormClient::InputFieldAction toInputFieldAction(WKIn
     return API::InjectedBundle::FormClient::InputFieldAction::Cancel;
 }
 
-bool WebEditorClient::doTextFieldCommandFromEvent(Element& element, KeyboardEvent* event)
+bool WebEditorClient::doTextFieldCommandFromEvent(Element* element, KeyboardEvent* event)
 {
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    if (!inputElement)
+    if (!is<HTMLInputElement>(*element))
         return false;
 
     WKInputFieldActionType actionType = static_cast<WKInputFieldActionType>(0);
     if (!getActionTypeForKeyEvent(event, actionType))
         return false;
 
-    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
-    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, *inputElement, toInputFieldAction(actionType), webFrame);
+    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, downcast<HTMLInputElement>(element), toInputFieldAction(actionType), webFrame);
 }
 
-void WebEditorClient::textWillBeDeletedInTextField(Element& element)
+void WebEditorClient::textWillBeDeletedInTextField(Element* element)
 {
-    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    if (!inputElement)
+    if (!is<HTMLInputElement>(*element))
         return;
 
-    auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
+    WebFrame* webFrame = WebFrame::fromCoreFrame(*element->document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, *inputElement, toInputFieldAction(WKInputFieldActionTypeInsertDelete), webFrame);
+    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, downcast<HTMLInputElement>(element), toInputFieldAction(WKInputFieldActionTypeInsertDelete), webFrame);
 }
 
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType type) const
@@ -516,6 +510,12 @@ void WebEditorClient::checkSpellingOfString(StringView text, int* misspellingLoc
         Messages::WebPageProxy::CheckSpellingOfString::Reply(resultLocation, resultLength));
     *misspellingLocation = resultLocation;
     *misspellingLength = resultLength;
+}
+
+String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String&)
+{
+    notImplemented();
+    return String();
 }
 
 void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::GrammarDetail>& grammarDetails, int* badGrammarLocation, int* badGrammarLength)

@@ -32,12 +32,9 @@
 #include "AudioArray.h"
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"
-#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/WeakPtr.h>
 
 namespace JSC {
 class JSArray;
@@ -47,15 +44,12 @@ class MarkedArgumentBufferBase;
 namespace WebCore {
 
 class AudioBus;
-class AudioWorkletGlobalScope;
 class AudioWorkletProcessorConstructionData;
 class JSCallbackDataStrong;
 class MessagePort;
 class ScriptExecutionContext;
-class WebCoreOpaqueRoot;
 
-class AudioWorkletProcessor : public ScriptWrappable, public ThreadSafeRefCounted<AudioWorkletProcessor>, public CanMakeWeakPtr<AudioWorkletProcessor> {
-    WTF_MAKE_ISO_ALLOCATED(AudioWorkletProcessor);
+class AudioWorkletProcessor : public ThreadSafeRefCounted<AudioWorkletProcessor> {
 public:
     static ExceptionOr<Ref<AudioWorkletProcessor>> create(ScriptExecutionContext&);
     ~AudioWorkletProcessor();
@@ -63,25 +57,25 @@ public:
     const String& name() const { return m_name; }
     MessagePort& port() { return m_port.get(); }
 
-    bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException);
+    bool process(const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, bool& threwException);
+
+    void setProcessCallback(std::unique_ptr<JSCallbackDataStrong>&&);
 
     JSValueInWrappedObject& jsInputsWrapper() { return m_jsInputs; }
     JSValueInWrappedObject& jsOutputsWrapper() { return m_jsOutputs; }
     JSValueInWrappedObject& jsParamValuesWrapper() { return m_jsParamValues; }
 
 private:
-    explicit AudioWorkletProcessor(AudioWorkletGlobalScope&, const AudioWorkletProcessorConstructionData&);
-    void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBufferBase&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
+    explicit AudioWorkletProcessor(const AudioWorkletProcessorConstructionData&);
+    void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBufferBase&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
 
-    AudioWorkletGlobalScope& m_globalScope;
     String m_name;
     Ref<MessagePort> m_port;
+    std::unique_ptr<JSCallbackDataStrong> m_processCallback;
     JSValueInWrappedObject m_jsInputs;
     JSValueInWrappedObject m_jsOutputs;
     JSValueInWrappedObject m_jsParamValues;
 };
-
-WebCoreOpaqueRoot root(AudioWorkletProcessor*);
 
 } // namespace WebCore
 

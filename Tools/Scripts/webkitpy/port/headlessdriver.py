@@ -40,5 +40,4 @@ class HeadlessDriver(Driver):
     def _setup_environ_for_test(self):
         driver_environment = super(HeadlessDriver, self)._setup_environ_for_test()
         driver_environment['WPE_USE_HEADLESS_VIEW_BACKEND'] = "1"
-        driver_environment['EGL_PLATFORM'] = "wayland"
         return driver_environment

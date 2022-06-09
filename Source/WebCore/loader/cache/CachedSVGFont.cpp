@@ -76,7 +76,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomString& remoteURI)
             // We may get here during render tree updates when events are forbidden.
             // Frameless document can't run scripts or call back to the client so this is safe.
             auto externalSVGDocument = SVGDocument::create(nullptr, m_settings, URL());
-            auto decoder = TextResourceDecoder::create("application/xml"_s);
+            auto decoder = TextResourceDecoder::create("application/xml");
 
             ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
 
@@ -103,7 +103,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomString& remoteURI)
     return m_externalSVGDocument && CachedFont::ensureCustomFontData(m_convertedFont.get());
 }
 
-SVGFontElement* CachedSVGFont::getSVGFontById(const AtomString& fontName) const
+SVGFontElement* CachedSVGFont::getSVGFontById(const String& fontName) const
 {
     ASSERT(m_externalSVGDocument);
     auto elements = descendantsOfType<SVGFontElement>(*m_externalSVGDocument);
@@ -122,10 +122,10 @@ SVGFontElement* CachedSVGFont::maybeInitializeExternalSVGFontElement(const AtomS
 {
     if (m_externalSVGFontElement)
         return m_externalSVGFontElement;
-    AtomString fragmentIdentifier;
+    String fragmentIdentifier;
     size_t start = remoteURI.find('#');
     if (start != notFound)
-        fragmentIdentifier = StringView(remoteURI).substring(start + 1).toAtomString();
+        fragmentIdentifier = remoteURI.string().substring(start + 1);
     m_externalSVGFontElement = getSVGFontById(fragmentIdentifier);
     return m_externalSVGFontElement;
 }

@@ -46,12 +46,10 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKExperimentalFeature.h>
-#import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
-#import <WebKit/_WKWebsiteDataStoreDelegate.h>
 #import <wtf/Deque.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -165,7 +163,7 @@ static bool navigationFailed = false;
 }
 @end
 
-static constexpr auto mainCacheStorageBytes = R"SWRESOURCE(
+static const char* mainCacheStorageBytes = R"SWRESOURCE(
 <script>
 
 function log(msg)
@@ -190,9 +188,9 @@ async function doTest()
 doTest();
 
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto mainBytes = R"SWRESOURCE(
+static const char* mainBytes = R"SWRESOURCE(
 <script>
 
 function log(msg)
@@ -217,17 +215,17 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
 }
 
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto scriptBytes = R"SWRESOURCE(
+static const char* scriptBytes = R"SWRESOURCE(
 
 self.addEventListener("message", (event) => {
     event.source.postMessage("ServiceWorker received: " + event.data);
 });
 
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto mainForFetchTestBytes = R"SWRESOURCE(
+static const char* mainForFetchTestBytes = R"SWRESOURCE(
 <html>
 <body>
 <script>
@@ -266,9 +264,9 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
 </script>
 </body>
 </html>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto scriptHandlingFetchBytes = R"SWRESOURCE(
+static const char* scriptHandlingFetchBytes = R"SWRESOURCE(
 
 self.addEventListener("fetch", (event) => {
     if (event.request.url.indexOf("test.html") !== -1) {
@@ -276,9 +274,9 @@ self.addEventListener("fetch", (event) => {
     }
 });
 
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto scriptInterceptingFirstLoadBytes = R"SWRESOURCE(
+static const char* scriptInterceptingFirstLoadBytes = R"SWRESOURCE(
 
 self.addEventListener("fetch", (event) => {
     if (event.request.url.indexOf("main.html") !== -1) {
@@ -286,9 +284,9 @@ self.addEventListener("fetch", (event) => {
     }
 });
 
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto mainForFirstLoadInterceptTestBytes = R"SWRESOURCE(
+static const char* mainForFirstLoadInterceptTestBytes = R"SWRESOURCE(
  <html>
 <body>
 <script>
@@ -320,9 +318,9 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
 </script>
 </body>
 </html>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto mainRegisteringWorkerBytes = R"SWRESOURCE(
+static const char* mainRegisteringWorkerBytes = R"SWRESOURCE(
 <script>
 try {
 function log(msg)
@@ -347,9 +345,9 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
     log("Exception: " + e);
 }
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto mainRegisteringAlreadyExistingWorkerBytes = R"SWRESOURCE(
+static const char* mainRegisteringAlreadyExistingWorkerBytes = R"SWRESOURCE(
 <script>
 try {
 function log(msg)
@@ -376,9 +374,9 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
     log("Exception: " + e);
 }
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto mainBytesForSessionIDTest = R"SWRESOURCE(
+static const char* mainBytesForSessionIDTest = R"SWRESOURCE(
 <script>
 
 function log(msg)
@@ -406,9 +404,9 @@ navigator.serviceWorker.register('/sw.js').then(function(reg) {
 }
 
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto scriptBytesForSessionIDTest = R"SWRESOURCE(
+static const char* scriptBytesForSessionIDTest = R"SWRESOURCE(
 
 var wasActivated = false;
 
@@ -425,7 +423,7 @@ self.addEventListener("message", (event) => {
         event.source.postMessage("FAIL: failed to activate");
 });
 
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 enum class ShouldRunServiceWorkersOnMainThread : bool { No, Yes };
 
@@ -440,8 +438,8 @@ static void setViewDataStore(WKWebViewConfiguration* viewConfiguration, ShouldRu
 static void runBasicSWTest(ShouldRunServiceWorkersOnMainThread shouldRunServiceWorkersOnMainThread)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -538,13 +536,13 @@ TEST(ServiceWorkers, BasicWithMainThreadSW)
 }
 @end
 
-static constexpr auto userAgentSWBytes = R"SWRESOURCE(
+static const char* userAgentSWBytes = R"SWRESOURCE(
 
 self.addEventListener("message", (event) => {
     event.source.postMessage(navigator.userAgent);
 });
 
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 TEST(ServiceWorkers, UserAgentOverride)
 {
@@ -563,8 +561,8 @@ TEST(ServiceWorkers, UserAgentOverride)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, userAgentSWBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, userAgentSWBytes } },
     });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -616,14 +614,14 @@ TEST(ServiceWorkers, RestoreFromDisk)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { mainRegisteringWorkerBytes } },
-        { "/second.html"_s, { mainRegisteringAlreadyExistingWorkerBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/first.html", { mainRegisteringWorkerBytes } },
+        { "/second.html", { mainRegisteringAlreadyExistingWorkerBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/first.html"_s)];
+    [webView loadRequest:server.request("/first.html")];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -639,7 +637,7 @@ TEST(ServiceWorkers, RestoreFromDisk)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/second.html"_s)];
+    [webView loadRequest:server.request("/second.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -658,7 +656,7 @@ TEST(ServiceWorkers, CacheStorageRestoreFromDisk)
     done = false;
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainCacheStorageBytes } }
+        { "/", { mainCacheStorageBytes } }
     });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -707,8 +705,8 @@ TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainForFetchTestBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptHandlingFetchBytes } },
+        { "/", { mainForFetchTestBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptHandlingFetchBytes } },
     });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -752,14 +750,14 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/main.html"_s, { mainForFirstLoadInterceptTestBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptInterceptingFirstLoadBytes } },
+        { "/main.html", { mainForFirstLoadInterceptTestBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptInterceptingFirstLoadBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    expectedMessage = "Service Worker activated"_s;
-    [webView loadRequest:server.request("/main.html"_s)];
+    expectedMessage = "Service Worker activated";
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -775,8 +773,8 @@ TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    expectedMessage = "Intercepted by worker"_s;
-    [webView loadRequest:server.request("/main.html"_s)];
+    expectedMessage = "Intercepted by worker";
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -801,14 +799,14 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/main.html"_s, { mainForFirstLoadInterceptTestBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptInterceptingFirstLoadBytes } },
+        { "/main.html", { mainForFirstLoadInterceptTestBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptInterceptingFirstLoadBytes } },
     });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    expectedMessage = "Service Worker activated"_s;
-    [webView loadRequest:server.request("/main.html"_s)];
+    expectedMessage = "Service Worker activated";
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -825,8 +823,8 @@ TEST(ServiceWorkers, MainThreadSWInterceptsLoad)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    expectedMessage = "Intercepted by worker"_s;
-    [webView loadRequest:server.request("/main.html"_s)];
+    expectedMessage = "Intercepted by worker";
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -849,15 +847,15 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/main.html"_s, { mainForFirstLoadInterceptTestBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptInterceptingFirstLoadBytes } },
+        { "/main.html", { mainForFirstLoadInterceptTestBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptInterceptingFirstLoadBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Register a service worker and activate it.
-    expectedMessage = "Service Worker activated"_s;
-    [webView loadRequest:server.request("/main.html"_s)];
+    expectedMessage = "Service Worker activated";
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
 
@@ -874,8 +872,8 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Verify service worker is intercepting load.
-    expectedMessage = "Intercepted by worker"_s;
-    [webView loadRequest:server.request("/main.html"_s)];
+    expectedMessage = "Intercepted by worker";
+    [webView loadRequest:server.request("/main.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -890,7 +888,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     navigationComplete = false;
 
     // Verify service worker load goes well when policy delegate is ok.
-    [webView loadRequest:server.request("/main.html"_s)];
+    [webView loadRequest:server.request("/main.html")];
     TestWebKitAPI::Util::run(&navigationComplete);
 
     EXPECT_FALSE(navigationFailed);
@@ -904,7 +902,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
     navigationComplete = false;
 
     // Verify service worker load fails well when policy delegate is not ok.
-    [webView loadRequest:server.request("/main.html"_s)];
+    [webView loadRequest:server.request("/main.html")];
     TestWebKitAPI::Util::run(&navigationComplete);
 
     EXPECT_TRUE(navigationFailed);
@@ -929,11 +927,11 @@ void setConfigurationInjectedBundlePath(WKWebViewConfiguration* configuration)
 }
 @end
 
-static constexpr auto regularPageWithConnectionBytes = R"SWRESOURCE(
+static const char* regularPageWithConnectionBytes = R"SWRESOURCE(
 <script>
 window.webkit.messageHandlers.regularPage.postMessage("PASS");
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 TEST(ServiceWorkers, SWProcessConnectionCreation)
 {
@@ -964,11 +962,11 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { regularPageWithConnectionBytes } },
-        { "/second.html"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
-        { "/third.html"_s, { regularPageWithConnectionBytes } },
-        { "/fourth.html"_s, { regularPageWithConnectionBytes } },
+        { "/first.html", { regularPageWithConnectionBytes } },
+        { "/second.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/third.html", { regularPageWithConnectionBytes } },
+        { "/fourth.html", { regularPageWithConnectionBytes } },
     });
 
     RetainPtr<WKWebView> regularPageWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -976,23 +974,23 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     RetainPtr<WKWebView> newRegularPageWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Test that a regular page does not trigger a service worker connection to network process if there is no registered service worker.
-    [regularPageWebView loadRequest:server.request("/first.html"_s)];
+    [regularPageWebView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     // Test that a sw scheme page can register a service worker.
-    [webView loadRequest:server.request("/second.html"_s)];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     webView = nullptr;
 
     // Now that a service worker is registered, the regular page should have a service worker connection.
-    [regularPageWebView loadRequest:server.request("/third.html"_s)];
+    [regularPageWebView loadRequest:server.request("/third.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     regularPageWebView = nullptr;
 
-    [newRegularPageWebView loadRequest:server.request("/fourth.html"_s)];
+    [newRegularPageWebView loadRequest:server.request("/fourth.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     newRegularPageWebView = nullptr;
@@ -1013,7 +1011,7 @@ TEST(ServiceWorkers, SWProcessConnectionCreation)
     TestWebKitAPI::Util::run(&done);
 }
 
-static constexpr auto mainBytesWithScope = R"SWRESOURCE(
+static const char* mainBytesWithScope = R"SWRESOURCE(
 <script>
 
 function log(msg)
@@ -1037,7 +1035,7 @@ navigator.serviceWorker.register('/sw.js', {scope: 'whateverscope'}).then(functi
 }
 
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 {
@@ -1068,16 +1066,16 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { mainBytesWithScope } },
-        { "/second.html"_s, { regularPageWithConnectionBytes } },
-        { "/third.html"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/first.html", { mainBytesWithScope } },
+        { "/second.html", { regularPageWithConnectionBytes } },
+        { "/third.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     // Load a page that registers a service worker.
-    [webView loadRequest:server.request("/first.html"_s)];
+    [webView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     webView = nullptr;
@@ -1092,7 +1090,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(1u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
-    [webView loadRequest:server.request("/second.html"_s)];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -1101,7 +1099,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:newConfiguration.get()]);
     EXPECT_EQ(2u, webView.get().configuration.processPool._webProcessCountIgnoringPrewarmed);
-    [webView loadRequest:server.request("/third.html"_s)];
+    [webView loadRequest:server.request("/third.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -1114,7 +1112,7 @@ TEST(ServiceWorkers, ServiceWorkerProcessCreation)
     done = false;
 }
 
-static constexpr auto readCacheBytes = R"SWRESOURCE(
+static const char* readCacheBytes = R"SWRESOURCE(
 <script>
 
 function log(msg)
@@ -1129,9 +1127,9 @@ window.caches.keys().then(keys => {
 });
 
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto writeCacheBytes = R"SWRESOURCE(
+static const char* writeCacheBytes = R"SWRESOURCE(
 <script>
 
 function log(msg)
@@ -1146,7 +1144,7 @@ window.caches.open("test").then(() => {
 });
 
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 @interface SWMessageHandlerForCacheStorage : NSObject <WKScriptMessageHandler>
 @end
@@ -1169,24 +1167,24 @@ TEST(ServiceWorkers, CacheStorageInPrivateBrowsingMode)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { writeCacheBytes } },
-        { "/second.html"_s, { readCacheBytes } },
+        { "/first.html", { writeCacheBytes } },
+        { "/second.html", { readCacheBytes } },
     });
 
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:server.request("/first.html"_s)];
+    [webView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:server.request("/second.html"_s)];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
 
-static constexpr auto serviceWorkerCacheAccessEphemeralSessionMainBytes = R"SWRESOURCE(
+static const char* serviceWorkerCacheAccessEphemeralSessionMainBytes = R"SWRESOURCE(
 <script>
 try {
     navigator.serviceWorker.addEventListener("message", (event) => {
@@ -1205,9 +1203,9 @@ try {
     webkit.messageHandlers.sw.postMessage("" + e);
 }
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto serviceWorkerCacheAccessEphemeralSessionSWBytes = R"SWRESOURCE(
+static const char* serviceWorkerCacheAccessEphemeralSessionSWBytes = R"SWRESOURCE(
 self.addEventListener("message", (event) => {
     try {
         self.caches.keys().then((keys) => {
@@ -1217,7 +1215,7 @@ self.addEventListener("message", (event) => {
          event.source.postMessage("" + e);
     }
 });
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 // Opens a cache in the default session and checks that an ephemeral service worker
 // does not have access to it.
@@ -1241,8 +1239,8 @@ TEST(ServiceWorkers, ServiceWorkerCacheAccessEphemeralSession)
     [defaultPreferences _setSecureContextChecksEnabled:NO];
     
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { serviceWorkerCacheAccessEphemeralSessionMainBytes } },
-        { "/serviceworker-private-browsing-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerCacheAccessEphemeralSessionSWBytes } },
+        { "/", { serviceWorkerCacheAccessEphemeralSessionMainBytes } },
+        { "/serviceworker-private-browsing-worker.js", { { { "Content-Type", "application/javascript" } }, serviceWorkerCacheAccessEphemeralSessionSWBytes } },
     });
 
     auto defaultWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1266,7 +1264,7 @@ TEST(ServiceWorkers, ServiceWorkerCacheAccessEphemeralSession)
     done = false;
 }
 
-static constexpr auto differentSessionsUseDifferentRegistrationsMainBytes = R"SWRESOURCE(
+static const char* differentSessionsUseDifferentRegistrationsMainBytes = R"SWRESOURCE(
 <script>
 try {
     navigator.serviceWorker.register("empty-worker.js", { scope : "/test" }).then((registration) => {
@@ -1280,9 +1278,9 @@ try {
     webkit.messageHandlers.sw.postMessage("" + e);
 }
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto defaultPageMainBytes = R"SWRESOURCE(
+static const char* defaultPageMainBytes = R"SWRESOURCE(
 <script>
 async function getResult()
 {
@@ -1291,9 +1289,9 @@ async function getResult()
 }
 getResult();
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
-static constexpr auto privatePageMainBytes = R"SWRESOURCE(
+static const char* privatePageMainBytes = R"SWRESOURCE(
 <script>
 async function getResult()
 {
@@ -1302,7 +1300,7 @@ async function getResult()
 }
 getResult();
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 TEST(ServiceWorkers, DifferentSessionsUseDifferentRegistrations)
 {
@@ -1322,32 +1320,32 @@ TEST(ServiceWorkers, DifferentSessionsUseDifferentRegistrations)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
     
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { differentSessionsUseDifferentRegistrationsMainBytes } },
-        { "/empty-worker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, emptyString() } },
-        { "/second.html"_s, { defaultPageMainBytes } },
-        { "/third.html"_s, { privatePageMainBytes } },
+        { "/first.html", { differentSessionsUseDifferentRegistrationsMainBytes } },
+        { "/empty-worker.js", { { { "Content-Type", "application/javascript" } }, "" } },
+        { "/second.html", { defaultPageMainBytes } },
+        { "/third.html", { privatePageMainBytes } },
     });
 
     auto defaultWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [defaultWebView synchronouslyLoadRequest:server.request("/first.html"_s)];
+    [defaultWebView synchronouslyLoadRequest:server.request("/first.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    [defaultWebView synchronouslyLoadRequest:server.request("/second.html"_s)];
+    [defaultWebView synchronouslyLoadRequest:server.request("/second.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
     auto ephemeralWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [ephemeralWebView synchronouslyLoadRequest:server.request("/third.html"_s)];
+    [ephemeralWebView synchronouslyLoadRequest:server.request("/third.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
 
-static constexpr auto regularPageGrabbingCacheStorageDirectory = R"SWRESOURCE(
+static const char* regularPageGrabbingCacheStorageDirectory = R"SWRESOURCE(
 <script>
 async function getResult()
 {
@@ -1356,7 +1354,7 @@ async function getResult()
 }
 getResult();
 </script>
-)SWRESOURCE"_s;
+)SWRESOURCE";
 
 @interface DirectoryPageMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -1380,14 +1378,14 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
     [[configuration userContentController] addScriptMessageHandler:directoryPageMessageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
-        { "/second.html"_s, { regularPageGrabbingCacheStorageDirectory } },
+        { "/first.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/second.html", { regularPageGrabbingCacheStorageDirectory } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/first.html"_s)];
+    [webView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     while (![[configuration websiteDataStore] _hasRegisteredServiceWorker])
@@ -1395,10 +1393,10 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageDefaultDirectories)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/second.html"_s)];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_TRUE(retrievedString.contains("/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/CacheStorage"_s));
+    EXPECT_TRUE(retrievedString.contains("/Caches/com.apple.WebKit.TestWebKitAPI/WebKit/CacheStorage"));
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -1423,14 +1421,14 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
     [[configuration userContentController] addScriptMessageHandler:directoryPageMessageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
-        { "/second.html"_s, { regularPageGrabbingCacheStorageDirectory } },
+        { "/first.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/second.html", { regularPageGrabbingCacheStorageDirectory } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/first.html"_s)];
+    [webView loadRequest:server.request("/first.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
     while (![websiteDataStore _hasRegisteredServiceWorker])
@@ -1438,10 +1436,10 @@ TEST(ServiceWorkers, ServiceWorkerAndCacheStorageSpecificDirectories)
 
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    [webView loadRequest:server.request("/second.html"_s)];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
-    EXPECT_TRUE(retrievedString.contains("\"path\": \"/var/tmp\""_s));
+    EXPECT_TRUE(retrievedString.contains("\"path\": \"/var/tmp\""));
 
     [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
@@ -1474,11 +1472,11 @@ TEST(ServiceWorkers, NonDefaultSessionID)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytesForSessionIDTest } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytesForSessionIDTest } },
+        { "/", { mainBytesForSessionIDTest } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytesForSessionIDTest } },
     });
 
-    expectedMessage = "PASS: activation successful"_s;
+    expectedMessage = "PASS: activation successful";
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     [webView loadRequest:server.request()];
@@ -1538,12 +1536,12 @@ TEST(ServiceWorkers, ProcessPerSite)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server1({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
     TestWebKitAPI::HTTPServer server2({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     WKProcessPool *processPool = configuration.get().processPool;
@@ -1614,12 +1612,12 @@ TEST(ServiceWorkers, ParallelProcessLaunch)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server1({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
     TestWebKitAPI::HTTPServer server2({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto *processPool = configuration.get().processPool;
@@ -1651,8 +1649,8 @@ static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, b
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, scriptBytes } }
+        { "/", { mainBytes } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, scriptBytes } }
     });
 
     auto *processPool = configuration.get().processPool;
@@ -1728,8 +1726,8 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto *processPool = configuration.get().processPool;
@@ -1802,8 +1800,8 @@ TEST(ServiceWorkers, ThrottleCrash)
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, scriptBytes } },
     });
 
     auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
@@ -1869,8 +1867,8 @@ TEST(ServiceWorkers, LoadData)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1909,9 +1907,9 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
     RetainPtr<WKWebsiteDataStore> protectedWebsiteDataStore;
 
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { mainRegisteringWorkerBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
-        { "/second.html"_s, { mainRegisteringAlreadyExistingWorkerBytes } },
+        { "/first.html", { mainRegisteringWorkerBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/second.html", { mainRegisteringAlreadyExistingWorkerBytes } },
     });
 
     @autoreleasepool {
@@ -1929,7 +1927,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
         protectedProcessPool = webView.get().configuration.processPool;
         protectedWebsiteDataStore = webView.get().configuration.websiteDataStore;
 
-        [webView loadRequest:server.request("/first.html"_s)];
+        [webView loadRequest:server.request("/first.html")];
 
         TestWebKitAPI::Util::run(&done);
         done = false;
@@ -1952,7 +1950,7 @@ TEST(ServiceWorkers, RestoreFromDiskNonDefaultStore)
 
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-        [webView loadRequest:server.request("/second.html"_s)];
+        [webView loadRequest:server.request("/second.html")];
 
         TestWebKitAPI::Util::run(&done);
         done = false;
@@ -1976,9 +1974,9 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/first.html"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
-        { "/second.html"_s, { mainBytes } },
+        { "/first.html", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
+        { "/second.html", { mainBytes } },
     });
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -1990,7 +1988,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     done = false;
 
     // Normal load to get SW registered.
-    [webView loadRequest:server.request("/first.html"_s)];
+    [webView loadRequest:server.request("/first.html")];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
@@ -2013,7 +2011,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
 
     [webView.get().configuration.websiteDataStore _sendNetworkProcessDidResume];
 
-    [webView loadRequest:server.request("/second.html"_s)];
+    [webView loadRequest:server.request("/second.html")];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
@@ -2064,8 +2062,8 @@ TEST(ServiceWorkers, ProcessPerSession)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server1({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     WKProcessPool *processPool = configuration.get().processPool;
@@ -2080,8 +2078,8 @@ TEST(ServiceWorkers, ProcessPerSession)
     configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
 
     TestWebKitAPI::HTTPServer server2({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -2092,7 +2090,7 @@ TEST(ServiceWorkers, ProcessPerSession)
     EXPECT_EQ(2U, processPool._serviceWorkerProcessCount);
 }
 
-static constexpr auto contentRuleListWorkerScript =
+static const char* contentRuleListWorkerScript =
 "self.addEventListener('message', (event) => {"
 "    fetch('blockedsubresource').then(() => {"
 "        event.source.postMessage('FAIL - should have blocked first request');"
@@ -2103,7 +2101,7 @@ static constexpr auto contentRuleListWorkerScript =
 "            event.source.postMessage('FAIL - should have allowed second request');"
 "        });"
 "    });"
-"});"_s;
+"});";
 
 TEST(ServiceWorkers, ContentRuleList)
 {
@@ -2135,12 +2133,12 @@ TEST(ServiceWorkers, ContentRuleList)
     using namespace TestWebKitAPI;
     HTTPServer server([] (Connection connection) {
         connection.receiveHTTPRequest([=](Vector<char>&&) {
-            connection.send(HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, mainBytes).serialize(), [=] {
+            connection.send(HTTPResponse({{ "Content-Type", "text/html" }}, mainBytes).serialize(), [=] {
                 connection.receiveHTTPRequest([=](Vector<char>&&) {
-                    connection.send(HTTPResponse({ { "Content-Type"_s, "application/javascript"_s } }, contentRuleListWorkerScript).serialize(), [=] {
+                    connection.send(HTTPResponse({{ "Content-Type", "application/javascript" }}, contentRuleListWorkerScript).serialize(), [=] {
                         connection.receiveHTTPRequest([=](Vector<char>&& lastRequest) {
                             EXPECT_TRUE(strnstr((const char*)lastRequest.data(), "allowedsubresource", lastRequest.size()));
-                            connection.send(HTTPResponse("successful fetch"_s).serialize());
+                            connection.send(HTTPResponse("successful fetch").serialize());
                         });
                     });
                 });
@@ -2192,7 +2190,7 @@ static void runTest(ResponseType responseType)
     }];
     TestWebKitAPI::Util::run(&removedAnyExistingData);
 
-    static constexpr auto main =
+    static const char* main =
     "<script>"
     "try {"
     "    navigator.serviceWorker.register('/sw.js').then(function(reg) {"
@@ -2211,29 +2209,29 @@ static void runTest(ResponseType responseType)
     "} catch(e) {"
     "    alert('Exception: ' + e);"
     "}"
-    "</script>"_s;
+    "</script>";
     
-    ASCIILiteral js = ""_s;
+    const char* js = nullptr;
     const char* expectedAlert = nullptr;
     size_t expectedServerRequests1 = 0;
     size_t expectedServerRequests2 = 0;
 
     switch (responseType) {
     case ResponseType::Synthetic:
-        js = "self.addEventListener('fetch', (event) => { event.respondWith(new Response(new Blob(['<script>alert(\"synthetic response\")</script>'], {type: 'text/html'}))); })"_s;
+        js = "self.addEventListener('fetch', (event) => { event.respondWith(new Response(new Blob(['<script>alert(\"synthetic response\")</script>'], {type: 'text/html'}))); })";
         expectedAlert = "synthetic response";
         expectedServerRequests1 = 2;
         expectedServerRequests2 = 2;
         break;
     case ResponseType::Cached:
         js = "self.addEventListener('install', (event) => { event.waitUntil( caches.open('v1').then((cache) => { return cache.addAll(['/cached.html']); }) ); });"
-            "self.addEventListener('fetch', (event) => { event.respondWith(caches.match('/cached.html')) });"_s;
+            "self.addEventListener('fetch', (event) => { event.respondWith(caches.match('/cached.html')) });";
         expectedAlert = "loaded from cache";
         expectedServerRequests1 = 3;
         expectedServerRequests2 = 3;
         break;
     case ResponseType::Fetched:
-        js = "self.addEventListener('fetch', (event) => { event.respondWith(fetch('/fetched.html')) });"_s;
+        js = "self.addEventListener('fetch', (event) => { event.respondWith(fetch('/fetched.html')) });";
         expectedAlert = "fetched from server";
         expectedServerRequests1 = 2;
         expectedServerRequests2 = 3;
@@ -2241,10 +2239,10 @@ static void runTest(ResponseType responseType)
     }
 
     HTTPServer server({
-        { "/"_s, { main } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, js } },
-        { "/cached.html"_s, { "<script>alert('loaded from cache')</script>"_s } },
-        { "/fetched.html"_s, { "<script>alert('fetched from server')</script>"_s } },
+        { "/", { main } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } },
+        { "/cached.html", { "<script>alert('loaded from cache')</script>" } },
+        { "/fetched.html", { "<script>alert('fetched from server')</script>" } },
     }, HTTPServer::Protocol::Https);
 
     auto webView = adoptNS([WKWebView new]);
@@ -2285,7 +2283,7 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
     }];
     TestWebKitAPI::Util::run(&removedAnyExistingData);
 
-    static constexpr auto main =
+    static const char* main =
     "<script>"
     "async function test() {"
     "    try {"
@@ -2305,8 +2303,8 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
     "    }"
     "}"
     "window.onload = test;"
-    "</script>"_s;
-    static constexpr auto js = ""_s;
+    "</script>";
+    static const char* js = "";
 
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
@@ -2326,8 +2324,8 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
     // Load webView1 with a first server.
     {
         TestWebKitAPI::HTTPServer server1({
-            { "/"_s, { main } },
-            { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, js } }
+            { "/", { main } },
+            { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } }
         }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, testIdentity());
         serverPort = server1.port();
 
@@ -2341,8 +2339,8 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
     // This should trigger installing a new worker.
     {
         TestWebKitAPI::HTTPServer server2({
-            { "/"_s, { main } },
-            { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, js } }
+            { "/", { main } },
+            { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } }
         }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, testIdentity2(), serverPort);
 
         [webView2 loadRequest:server2.request()];
@@ -2367,8 +2365,8 @@ TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -2422,8 +2420,8 @@ TEST(ServiceWorkers, CustomDataStorePathsVersusCompletionHandlers)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/", { mainBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } },
     });
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -2497,7 +2495,7 @@ TEST(ServiceWorkers, WebProcessCache)
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
-    static constexpr auto main =
+    static const char* main =
     "<script>"
     "function registerServiceWorker()"
     "{"
@@ -2520,11 +2518,11 @@ TEST(ServiceWorkers, WebProcessCache)
     "   }"
     "}"
     "alert('loaded');"
-    "</script>"_s;
+    "</script>";
 
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { main } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, emptyString() } }
+        { "/", { main } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, "" } }
     });
 
     // Create a first web view and load a page
@@ -2584,7 +2582,7 @@ static bool didStartURLSchemeTask = false;
     NSURL *finalURL = task.request.URL;
 
     NSMutableDictionary* headerDictionary = [NSMutableDictionary dictionary];
-    if (URL(finalURL).string().endsWith(".js"_s))
+    if (URL(finalURL).string().endsWith(".js"))
         [headerDictionary setObject:@"text/javascript" forKey:@"Content-Type"];
     else
         [headerDictionary setObject:@"text/html" forKey:@"Content-Type"];
@@ -2805,250 +2803,6 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureViewDestroyed)
     TestWebKitAPI::Util::run(&done);
 }
 
-static constexpr auto ServiceWorkerWindowClientFocusMain =
-"<div>test page</div>"
-"<script>"
-"let worker;"
-"async function test() {"
-"    try {"
-"        const registration = await navigator.serviceWorker.register('/sw.js');"
-"        if (registration.active) {"
-"            worker = registration.active;"
-"            alert('already active');"
-"            return;"
-"        }"
-"        worker = registration.installing;"
-"        worker.addEventListener('statechange', () => {"
-"            if (worker.state == 'activated')"
-"                alert('successfully registered');"
-"        });"
-"    } catch(e) {"
-"        alert('Exception: ' + e);"
-"    }"
-"}"
-"window.onload = test;"
-""
-"function focusClient() {"
-"    worker.postMessage('start');"
-"    navigator.serviceWorker.onmessage = (event) => {"
-"        window.webkit.messageHandlers.sw.postMessage(event.data);"
-"    }"
-"}"
-""
-"function checkFocusValue(value, name) {"
-"    window.webkit.messageHandlers.sw.postMessage(document.hasFocus() === value ? 'PASS' : 'FAIL: expected ' + value + ' for ' + name);"
-"}"
-"</script>"_s;
-static constexpr auto ServiceWorkerWindowClientFocusJS =
-"self.addEventListener('message', (event) => {"
-"   event.source.focus().then((client) => {"
-"       event.source.postMessage('focused');"
-"   }, (error) => {"
-"       event.source.postMessage('not focused');"
-"   });"
-"});"_s;
-
-TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
-    }
-
-    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { ServiceWorkerWindowClientFocusMain } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerWindowClientFocusJS } }
-    });
-
-    [webView1 loadRequest:server.request()];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
-
-    [webView2 loadRequest:server.request()];
-    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "already active");
-
-#if PLATFORM(MAC)
-    [[webView1 hostWindow] miniaturize:[webView1 hostWindow]];
-    [[webView2 hostWindow] miniaturize:[webView2 hostWindow]];
-    EXPECT_FALSE([webView1 hostWindow].isVisible);
-    EXPECT_FALSE([webView2 hostWindow].isVisible);
-#endif
-
-    done = false;
-    expectedMessage = "focused"_s;
-    [webView1 evaluateJavaScript:@"focusClient()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
-#if PLATFORM(MAC)
-    EXPECT_TRUE([webView1 hostWindow].isVisible);
-    EXPECT_FALSE([webView2 hostWindow].isVisible);
-    EXPECT_FALSE([webView1 hostWindow].isMiniaturized);
-    EXPECT_TRUE([webView2 hostWindow].isMiniaturized);
-
-    // FIXME: We should be able to run these tests in iOS once pages are actually visible.
-    done = false;
-    expectedMessage = "PASS"_s;
-    [webView1 evaluateJavaScript:@"checkFocusValue(true, 'webView1')" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
-
-    done = false;
-    expectedMessage = "PASS"_s;
-    [webView2 evaluateJavaScript:@"checkFocusValue(false, 'webView2')" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
-#endif
-
-    done = false;
-    expectedMessage = "focused"_s;
-    [webView2 evaluateJavaScript:@"focusClient()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
-#if PLATFORM(MAC)
-    EXPECT_TRUE([webView2 hostWindow].isVisible);
-    EXPECT_FALSE([webView1 hostWindow].isMiniaturized);
-    EXPECT_FALSE([webView2 hostWindow].isMiniaturized);
-
-    // FIXME: We should be able to run these tests in iOS once pages are actually visible.
-    done = false;
-    expectedMessage = "PASS"_s;
-    [webView2 evaluateJavaScript:@"checkFocusValue(true, 'webView2')" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
-#endif
-}
-
-TEST(ServiceWorker, ServiceWorkerWindowClientFocusRequiresUserGesture)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:YES forInternalDebugFeature:feature];
-    }
-
-    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { ServiceWorkerWindowClientFocusMain } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerWindowClientFocusJS } }
-    });
-
-    [webView loadRequest:server.request()];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
-
-    done = false;
-    expectedMessage = "not focused"_s;
-    [webView evaluateJavaScript:@"focusClient()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
-}
-
-static constexpr auto ServiceWorkerWindowClientOpenWindowMain =
-"<div id='log'>test page</div>"
-"<script>"
-"let worker;"
-"async function test() {"
-"    log.innerHTML = 'test';"
-"    try {"
-"        const registration = await navigator.serviceWorker.register('/sw.js');"
-"        log.innerHTML = 'registered';"
-"        if (registration.active) {"
-"            worker = registration.active;"
-"            alert('already active');"
-"            return;"
-"        }"
-"        worker = registration.installing;"
-"        worker.addEventListener('statechange', () => {"
-"           log.innerHTML = 'worker.state=' + worker.state;"
-"            if (worker.state == 'activated')"
-"                alert('successfully registered');"
-"        });"
-"    } catch(e) {"
-"        alert('Exception: ' + e);"
-"    }"
-"}"
-"window.onload = test;"
-""
-"function openWindowClient() {"
-"    log.innerHTML = 'openWindowClient';"
-"    worker.postMessage('start');"
-"    navigator.serviceWorker.onmessage = (event) => {"
-"        window.webkit.messageHandlers.sw.postMessage(event.data);"
-"    }"
-"}"
-"</script>"_s;
-static constexpr auto ServiceWorkerWindowClientOpenWindowJS =
-"self.addEventListener('message', (event) => {"
-"   self.clients.openWindow('/sw.js').then((client) => {"
-"       event.source.postMessage(client ? 'opened with client' : 'opened without client');"
-"   }, (error) => {"
-"       event.source.postMessage('not opened');"
-"   });"
-"});"_s;
-
-TEST(ServiceWorker, openWindowWithoutDelegate)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto preferences = [configuration preferences];
-
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
-    }
-
-    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { ServiceWorkerWindowClientOpenWindowMain } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerWindowClientOpenWindowJS } }
-    });
-
-    [webView loadRequest:server.request()];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
-
-    done = false;
-    expectedMessage = "opened without client"_s;
-    [webView evaluateJavaScript:@"openWindowClient()" completionHandler: nil];
-    TestWebKitAPI::Util::run(&done);
-}
-
 static constexpr auto ServiceWorkerWindowClientNavigateMain =
 "<div>test page</div>"
 "<script>"
@@ -3070,7 +2824,13 @@ static constexpr auto ServiceWorkerWindowClientNavigateMain =
 "        alert('Exception: ' + e);"
 "    }"
 "}"
-"window.onload = registerServiceWorker;"
+"window.onload = async () => {"
+"   await registerServiceWorker();"
+"   navigator.serviceWorker.onmessage = (event) => {"
+"       if (event.data.navigateOtherClientToURL)"
+"           window.location = event.data.navigateOtherClientToURL;"
+"   };"
+"};"
 ""
 "function navigateOtherClientToURL(url) {"
 "    worker.postMessage({navigateOtherClientToURL: url});"
@@ -3095,6 +2855,20 @@ static constexpr auto ServiceWorkerWindowClientNavigateMain =
 "</script>"_s;
 
 static constexpr auto ServiceWorkerWindowClientNavigateJS =
+"async function waitForClientToDisappear(clientId, counter) {"
+"    if (!counter)"
+"        counter = 0;"
+"    else if (counter >= 100)"
+"        return 'fail';"
+"    const currentClients = await self.clients.matchAll();"
+"    for (let client of currentClients) {"
+"       if (client.id == clientId) {"
+"           await new Promise(resolve => setTimeout(resolve, 50));"
+"           return waitForClientToDisappear(clientId, ++counter);"
+"       }"
+"    }"
+"    return 'pass';"
+"}"
 "self.addEventListener('message', async (event) => {"
 "   if (event.data && event.data.navigateOtherClientToURL) {"
 "       let otherClient;"
@@ -3107,24 +2881,13 @@ static constexpr auto ServiceWorkerWindowClientNavigateJS =
 "           event.source.postMessage('failed, no other client, client number = ' + currentClients.length);"
 "           return;"
 "       }"
-"       await otherClient.navigate(event.data.navigateOtherClientToURL).then((client) => {"
-"           event.source.postMessage(client ? 'client' : 'none');"
-"       }, (e) => {"
-"           event.source.postMessage('failed');"
-"       });"
+"       otherClient.postMessage(event.data);"
+"       event.source.postMessage(await waitForClientToDisappear(otherClient.id));"
 "       return;"
 "   }"
 "   if (event.data === 'countServiceWorkerClients') {"
 "       let currentClients = await self.clients.matchAll();"
 "       event.source.postMessage(currentClients.length + ' client(s)');"
-"       return;"
-"   }"
-"   if (event.data && event.data.openWindowToURL) {"
-"       await self.clients.openWindow(event.data.openWindowToURL).then((client) => {"
-"           event.source.postMessage(client ? 'client' : 'none');"
-"       }, (e) => {"
-"           event.source.postMessage('failed');"
-"       });"
 "       return;"
 "   }"
 "});"_s;
@@ -3158,7 +2921,7 @@ static bool shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = t
 
 @end
 
-TEST(ServiceWorker, WindowClientNavigate)
+TEST(ServiceWorker, WindowClientNavigateCOOP)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
@@ -3191,325 +2954,24 @@ TEST(ServiceWorker, WindowClientNavigate)
 
     [webView1 loadRequest:server.request()];
     EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
+
+    [webView1 evaluateJavaScript:@"countServiceWorkerClients()" completionHandler: nil];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "0 client(s)");
+
     [webView2 loadRequest:server.request()];
     EXPECT_WK_STREQ([webView2 _test_waitForAlert], "already active");
+
+    [webView1 evaluateJavaScript:@"countServiceWorkerClients()" completionHandler: nil];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "1 client(s)");
 
     auto navigationDelegate = adoptNS([[ServiceWorkerPSONNavigationDelegate alloc] init]);
     [webView2 setNavigationDelegate:navigationDelegate.get()];
 
     auto *baseURL = [[server.request() URL] absoluteString];
 
-    [webView1 evaluateJavaScript:[NSString stringWithFormat:@"navigateOtherClientToURL('%@')", baseURL] completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "client");
-
-    [webView1 evaluateJavaScript:[NSString stringWithFormat:@"navigateOtherClientToURL('%@#test')", baseURL] completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "client");
-
-    [webView1 evaluateJavaScript:[NSString stringWithFormat:@"navigateOtherClientToURL('%@?test')", baseURL] completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "client");
-
     [webView1 evaluateJavaScript:[NSString stringWithFormat:@"navigateOtherClientToURL('%@?swap')", baseURL] completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "client");
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "pass");
 
     [webView1 evaluateJavaScript:@"countServiceWorkerClients()" completionHandler: nil];
     EXPECT_WK_STREQ([webView1 _test_waitForAlert], "1 client(s)");
-
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigation = false;
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = true;
-    [webView1 evaluateJavaScript:[NSString stringWithFormat:@"navigateOtherClientToURL('%@?fail1')", baseURL] completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "none");
-
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigation = true;
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = false;
-    [webView1 evaluateJavaScript:[NSString stringWithFormat:@"navigateOtherClientToURL('%@?fail2')", baseURL] completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "none");
-
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigation = true;
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = true;
 }
-
-TEST(ServiceWorker, WindowClientNavigateCrossOrigin)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-
-    TestWebKitAPI::HTTPServer server1({
-        { "/"_s, { ServiceWorkerWindowClientNavigateMain } },
-        { "/?test"_s, { ServiceWorkerWindowClientNavigateMain } },
-        { "/?swap"_s, { {{ "Content-Type"_s, "application/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, ServiceWorkerWindowClientNavigateMain } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerWindowClientNavigateJS } }
-    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 8091);
-
-    TestWebKitAPI::HTTPServer server2({
-        { "/"_s, { ServiceWorkerWindowClientNavigateMain } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerWindowClientNavigateJS } }
-    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9091);
-
-    [webView1 loadRequest:server1.request()];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
-    [webView2 loadRequest:server1.request()];
-    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "already active");
-    [webView1 evaluateJavaScript:[NSString stringWithFormat:@"navigateOtherClientToURL('%@')", [[server2.request() URL] absoluteString]] completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "none");
-}
-
-@interface ServiceWorkerOpenWindowWebsiteDataStoreDelegate: NSObject <_WKWebsiteDataStoreDelegate> {
-@private
-    WKWebViewConfiguration* _configuration;
-    RetainPtr<ServiceWorkerPSONNavigationDelegate> _navigationDelegate;
-    RetainPtr<TestWKWebView> _webView;
-}
-- (instancetype)initWithConfiguration:(WKWebViewConfiguration*)configuration;
-@end
-
-@implementation ServiceWorkerOpenWindowWebsiteDataStoreDelegate { }
-- (instancetype)initWithConfiguration:(WKWebViewConfiguration*)configuration
-{
-    _configuration = configuration;
-    return self;
-}
-
-- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore openWindow:(NSURL *)url fromServiceWorkerOrigin:(WKSecurityOrigin *)serviceWorkerOrigin completionHandler:(void (^)(WKWebView *newWebView))completionHandler
-{
-    _navigationDelegate = adoptNS([[ServiceWorkerPSONNavigationDelegate alloc] init]);
-    _webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:_configuration addToWindow:YES]);
-    [_webView setNavigationDelegate:_navigationDelegate.get()];
-
-    [_webView loadRequest:[NSURLRequest requestWithURL:url]];
-    completionHandler(_webView.get());
-}
-
-@end
-
-TEST(ServiceWorker, OpenWindowWebsiteDataStoreDelegate)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    auto preferences = [configuration preferences];
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
-    }
-
-    auto dataStoreDelegate = adoptNS([[ServiceWorkerOpenWindowWebsiteDataStoreDelegate alloc] initWithConfiguration:configuration.get()]);
-    [[configuration websiteDataStore] set_delegate:dataStoreDelegate.get()];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { ServiceWorkerWindowClientNavigateMain } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerWindowClientNavigateJS } }
-    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 8091);
-
-    [webView loadRequest:server.request()];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
-
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigation = true;
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = true;
-    [webView evaluateJavaScript:[NSString stringWithFormat:@"openWindowToURL('%@')", [[server.request() URL] absoluteString]] completionHandler: nil];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "client");
-
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigation = false;
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = true;
-    [webView evaluateJavaScript:[NSString stringWithFormat:@"openWindowToURL('%@')", [[server.request() URL] absoluteString]] completionHandler: nil];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "none");
-
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigation = true;
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = false;
-    [webView evaluateJavaScript:[NSString stringWithFormat:@"openWindowToURL('%@')", [[server.request() URL] absoluteString]] completionHandler: nil];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "none");
-
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigation = true;
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = true;
-}
-
-TEST(ServiceWorker, OpenWindowCOOP)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-
-    auto preferences = [configuration preferences];
-    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
-        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
-            [preferences _setEnabled:NO forInternalDebugFeature:feature];
-    }
-
-    auto dataStoreDelegate = adoptNS([[ServiceWorkerOpenWindowWebsiteDataStoreDelegate alloc] initWithConfiguration:configuration.get()]);
-    [[configuration websiteDataStore] set_delegate:dataStoreDelegate.get()];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
-
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { ServiceWorkerWindowClientNavigateMain } },
-        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerWindowClientNavigateJS } },
-        { "/?swap"_s, { {{ "Content-Type"_s, "application/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, ServiceWorkerWindowClientNavigateMain } }
-    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 8091);
-
-    [webView loadRequest:server.request()];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
-
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigation = true;
-    shouldServiceWorkerPSONNavigationDelegateAllowNavigationResponse = true;
-    [webView evaluateJavaScript:[NSString stringWithFormat:@"openWindowToURL('%@?swap')", [[server.request() URL] absoluteString]] completionHandler: nil];
-    EXPECT_WK_STREQ([webView _test_waitForAlert], "client");
-}
-
-#if WK_HAVE_C_SPI
-
-static constexpr auto serviceWorkerStorageTimingMainBytes = R"SWRESOURCE(
-<script>
-function log(msg)
-{
-    window.webkit.messageHandlers.sw.postMessage(msg);
-}
-
-navigator.serviceWorker.addEventListener("message", function(event) {
-    log("Message from worker: " + event.data);
-});
-
-let registration;
-try {
-navigator.serviceWorker.register('/sw.js').then(function(reg) {
-    registration = reg;
-    worker = reg.installing ? reg.installing : reg.active;
-    worker.postMessage("Hello from the web page");
-}).catch(function(error) {
-    log("Registration failed with: " + error);
-});
-} catch(e) {
-    log("Exception: " + e);
-}
-
-function storeRegistration()
-{
-    if (!window.internals) {
-        alert("no internals");
-        return;
-    }
-    internals.storeRegistrationsOnDisk().then(() => {
-        alert("ok");
-    }, () => {
-        alert("ko");
-    });
-}
-
-function waitForWaitingWorker(counter)
-{
-    try {
-        if (registration.waiting) {
-            alert("ok");
-            return;
-        }
-        if (!counter)
-            counter = 0;
-        else if (counter > 100) {
-            alert("ko");
-            return;
-        }
-        setTimeout(() => waitForWaitingWorker(++counter), 50);
-    } catch (e) {
-        alert("error: " + e);
-        return;
-    }
-}
-
-</script>
-)SWRESOURCE"_s;
-
-static constexpr auto serviceWorkerStorageTimingScriptBytesV1 = R"SWRESOURCE(
-self.addEventListener("message", (event) => {
-    event.source.postMessage("V1");
-});
-)SWRESOURCE"_s;
-
-static constexpr auto serviceWorkerStorageTimingScriptBytesV2 = R"SWRESOURCE(
-self.addEventListener("message", (event) => {
-    event.source.postMessage("V2");
-});
-)SWRESOURCE"_s;
-
-TEST(ServiceWorkers, ServiceWorkerStorageTiming)
-{
-    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-    // Start with a clean slate data store
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
-
-    TestWebKitAPI::HTTPServer server({
-        { "/"_s, { { { "Cache-Control"_s, "no-cache"_s } }, serviceWorkerStorageTimingMainBytes } },
-        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerStorageTimingScriptBytesV1 } },
-    });
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    setConfigurationInjectedBundlePath(configuration.get());
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
-
-    done = false;
-    expectedMessage = "Message from worker: V1"_s;
-    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow: YES]);
-    [webView1 loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-
-    HashMap<String, String> sourceHeaders;
-    sourceHeaders.add("Cache-Control"_s, "no-cache"_s);
-    sourceHeaders.add("Content-Type"_s, "application/javascript"_s);
-    server.setResponse("/sw.js"_s, TestWebKitAPI::HTTPResponse { WTFMove(sourceHeaders), serviceWorkerStorageTimingScriptBytesV2 });
-
-    done = false;
-    expectedMessage = "Message from worker: V1"_s;
-    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView2 loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-
-    // Let's wait for a V2 service worker.
-    [webView1 evaluateJavaScript:@"waitForWaitingWorker()" completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "ok");
-
-    // Let's ensure we store it on disk.
-    [webView1 evaluateJavaScript:@"storeRegistration()" completionHandler: nil];
-    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "ok");
-
-    [[webView1 configuration].websiteDataStore _terminateNetworkProcess];
-
-    done = false;
-    expectedMessage = "Message from worker: V2"_s;
-    auto webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView3 loadRequest:server.request()];
-    TestWebKitAPI::Util::run(&done);
-}
-
-#endif // WK_HAVE_C_SPI

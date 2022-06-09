@@ -115,13 +115,13 @@ void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
 const AtomString& HTMLTextAreaElement::formControlType() const
 {
-    static MainThreadNeverDestroyed<const AtomString> textarea("textarea"_s);
+    static MainThreadNeverDestroyed<const AtomString> textarea("textarea", AtomString::ConstructFromLiteral);
     return textarea;
 }
 
 FormControlState HTMLTextAreaElement::saveFormControlState() const
 {
-    return m_isDirty ? FormControlState { { AtomString { value() } } } : FormControlState { };
+    return m_isDirty ? FormControlState { { value() } } : FormControlState { };
 }
 
 void HTMLTextAreaElement::restoreFormControlState(const FormControlState& state)
@@ -136,7 +136,7 @@ void HTMLTextAreaElement::childrenChanged(const ChildChange& change)
     if (m_isDirty)
         setInnerTextValue(value());
     else
-        setNonDirtyValue(defaultValue(), TextControlSetValueSelection::Clamp);
+        setNonDirtyValue(defaultValue());
 }
 
 bool HTMLTextAreaElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
@@ -157,10 +157,10 @@ void HTMLTextAreaElement::collectPresentationalHintsForAttribute(const Qualified
     if (name == wrapAttr) {
         if (shouldWrapText()) {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePreWrap);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyOverflowWrap, CSSValueBreakWord);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
         } else {
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
-            addPropertyToPresentationalHintStyle(style, CSSPropertyOverflowWrap, CSSValueNormal);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWordWrap, CSSValueNormal);
         }
     } else
         HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
@@ -186,9 +186,9 @@ void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomSt
         // The virtual/physical values were a Netscape extension of HTML 3.0, now deprecated.
         // The soft/hard /off values are a recommendation for HTML 4 extension by IE and NS 4.
         WrapMethod wrap;
-        if (equalLettersIgnoringASCIICase(value, "physical"_s) || equalLettersIgnoringASCIICase(value, "hard"_s) || equalLettersIgnoringASCIICase(value, "on"_s))
+        if (equalLettersIgnoringASCIICase(value, "physical") || equalLettersIgnoringASCIICase(value, "hard") || equalLettersIgnoringASCIICase(value, "on"))
             wrap = HardWrap;
-        else if (equalLettersIgnoringASCIICase(value, "off"_s))
+        else if (equalLettersIgnoringASCIICase(value, "off"))
             wrap = NoWrap;
         else
             wrap = SoftWrap;
@@ -241,7 +241,7 @@ bool HTMLTextAreaElement::appendFormData(DOMFormData& formData)
 
 void HTMLTextAreaElement::reset()
 {
-    setNonDirtyValue(defaultValue(), TextControlSetValueSelection::SetSelectionToEnd);
+    setNonDirtyValue(defaultValue());
 }
 
 bool HTMLTextAreaElement::hasCustomFocusLogic() const
@@ -297,8 +297,8 @@ void HTMLTextAreaElement::subtreeHasChanged()
 
     setChangedSinceLastFormControlChangeEvent(true);
 
-    if (RefPtr frame = document().frame())
-        frame->editor().textDidChangeInTextArea(*this);
+    if (RefPtr<Frame> frame = document().frame())
+        frame->editor().textDidChangeInTextArea(this);
     // When typing in a textarea, childrenChanged is not called, so we need to force the directionality check.
     calculateAndAdjustDirectionality();
 }
@@ -374,53 +374,46 @@ String HTMLTextAreaElement::value() const
     return m_value;
 }
 
-ExceptionOr<void> HTMLTextAreaElement::setValue(const String& value, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void HTMLTextAreaElement::setValue(const String& value)
 {
-    setValueCommon(value, eventBehavior, selection);
+    setValueCommon(value);
     m_isDirty = true;
     updateValidity();
-    return { };
 }
 
-void HTMLTextAreaElement::setNonDirtyValue(const String& value, TextControlSetValueSelection selection)
+void HTMLTextAreaElement::setNonDirtyValue(const String& value)
 {
-    setValueCommon(value, TextFieldEventBehavior::DispatchNoEvent, selection);
+    setValueCommon(value);
     m_isDirty = false;
     updateValidity();
 }
 
-void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventBehavior, TextControlSetValueSelection selection)
+void HTMLTextAreaElement::setValueCommon(const String& newValue)
 {
     m_wasModifiedByUser = false;
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We normalize line endings coming from JavaScript here.
-    auto normalizedValue = newValue.isNull() ? emptyString() : makeStringBySimplifyingNewLines(newValue);
+    String normalizedValue = newValue.isNull() ? emptyString() : newValue;
+    normalizedValue.replace("\r\n", "\n");
+    normalizedValue.replace('\r', '\n');
 
     // Return early because we don't want to move the caret or trigger other side effects
     // when the value isn't changing. This matches Firefox behavior, at least.
     if (normalizedValue == value())
         return;
 
-    bool shouldClamp = selection == TextControlSetValueSelection::Clamp;
-    auto selectionStartValue = shouldClamp ? computeSelectionStart() : 0;
-    auto selectionEndValue = shouldClamp ? computeSelectionEnd() : 0;
-
     m_value = normalizedValue;
-    setInnerTextValue(String { m_value });
+    setInnerTextValue(m_value);
     setLastChangeWasNotUserEdit();
     updatePlaceholderVisibility();
     invalidateStyleForSubtree();
     setFormControlValueMatchesRenderer(true);
 
-    auto endOfString = m_value.length();
-    if (document().focusedElement() == this)
+    // Set the caret to the end of the text value.
+    if (document().focusedElement() == this) {
+        unsigned endOfString = m_value.length();
         setSelectionRange(endOfString, endOfString);
-    else if (selection == TextControlSetValueSelection::SetSelectionToEnd) {
-        // We don't change text selection here but need to update caret to
-        // the end of the text value except for initialize.
-        cacheSelection(endOfString, endOfString, SelectionHasNoDirection);
-    } else if (shouldClamp)
-        cacheSelection(std::min(endOfString, selectionStartValue), std::min(endOfString, selectionEndValue), SelectionHasNoDirection);
+    }
 
     setTextAsOfLastFormControlChangeEvent(normalizedValue);
 }
@@ -430,9 +423,9 @@ String HTMLTextAreaElement::defaultValue() const
     return TextNodeTraversal::childTextContent(*this);
 }
 
-void HTMLTextAreaElement::setDefaultValue(String&& defaultValue)
+void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
 {
-    setTextContent(WTFMove(defaultValue));
+    setTextContent(defaultValue);
 }
 
 String HTMLTextAreaElement::validationMessage() const
@@ -550,7 +543,7 @@ bool HTMLTextAreaElement::matchesReadWritePseudoClass() const
 
 void HTMLTextAreaElement::updatePlaceholderText()
 {
-    auto& placeholderText = attributeWithoutSynchronization(placeholderAttr);
+    String placeholderText = strippedPlaceholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
             userAgentShadowRoot()->removeChild(*m_placeholder);
@@ -562,10 +555,10 @@ void HTMLTextAreaElement::updatePlaceholderText()
         m_placeholder = TextControlPlaceholderElement::create(document());
         userAgentShadowRoot()->insertBefore(*m_placeholder, innerTextElement()->nextSibling());
     }
-    m_placeholder->setInnerText(String { placeholderText });
+    m_placeholder->setInnerText(placeholderText);
 }
 
-bool HTMLTextAreaElement::willRespondToMouseClickEventsWithEditability(Editability) const
+bool HTMLTextAreaElement::willRespondToMouseClickEvents()
 {
     return !isDisabledFormControl();
 }
@@ -583,7 +576,7 @@ void HTMLTextAreaElement::copyNonAttributePropertiesFromElement(const Element& s
 {
     auto& sourceElement = downcast<HTMLTextAreaElement>(source);
 
-    setValueCommon(sourceElement.value(), DispatchNoEvent, TextControlSetValueSelection::SetSelectionToEnd);
+    setValueCommon(sourceElement.value());
     m_isDirty = sourceElement.m_isDirty;
     HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);
 

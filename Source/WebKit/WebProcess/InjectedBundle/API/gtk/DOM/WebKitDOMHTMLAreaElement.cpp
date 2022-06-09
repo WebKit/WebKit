@@ -372,7 +372,8 @@ void webkit_dom_html_area_element_set_alt(WebKitDOMHTMLAreaElement* self, const 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAreaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_area_element_get_coords(WebKitDOMHTMLAreaElement* self)
@@ -390,7 +391,8 @@ void webkit_dom_html_area_element_set_coords(WebKitDOMHTMLAreaElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAreaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::coordsAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::coordsAttr, convertedValue);
 }
 
 gboolean webkit_dom_html_area_element_get_no_href(WebKitDOMHTMLAreaElement* self)
@@ -425,7 +427,8 @@ void webkit_dom_html_area_element_set_shape(WebKitDOMHTMLAreaElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAreaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::shapeAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::shapeAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_area_element_get_target(WebKitDOMHTMLAreaElement* self)
@@ -443,7 +446,8 @@ void webkit_dom_html_area_element_set_target(WebKitDOMHTMLAreaElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAreaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_area_element_get_href(WebKitDOMHTMLAreaElement* self)
@@ -461,7 +465,8 @@ void webkit_dom_html_area_element_set_href(WebKitDOMHTMLAreaElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_AREA_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLAreaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_area_element_get_protocol(WebKitDOMHTMLAreaElement* self)

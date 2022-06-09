@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,9 +115,9 @@ void WebDataListSuggestionsDropdownMac::selectOption()
 
 void WebDataListSuggestionsDropdownMac::handleKeydownWithIdentifier(const String& key)
 {
-    if (key == "Enter"_s)
+    if (key == "Enter")
         selectOption();
-    else if (key == "Up"_s || key == "Down"_s)
+    else if (key == "Up" || key == "Down")
         [m_dropdownUI moveSelectionByDirection:key];
 }
 
@@ -307,7 +307,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggestion>& suggestions)
 {
-    return notFound != suggestions.findIf([](auto& suggestion) {
+    return notFound != suggestions.findMatching([](auto& suggestion) {
         return !suggestion.label.isEmpty();
     });
 }
@@ -401,12 +401,12 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
 
     size_t newSelection;
     if (oldSelection != -1) {
-        if (direction == "Up"_s)
+        if (direction == "Up")
             newSelection = oldSelection ? (oldSelection - 1) : (size - 1);
         else
             newSelection = (oldSelection + 1) % size;
     } else
-        newSelection = (direction == "Up"_s) ? (size - 1) : 0;
+        newSelection = (direction == "Up") ? (size - 1) : 0;
 
     [_table selectRowIndexes:[NSIndexSet indexSetWithIndex:newSelection] byExtendingSelection:NO];
     [_table scrollRowToVisible:newSelection];

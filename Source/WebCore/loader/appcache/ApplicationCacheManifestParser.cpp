@@ -40,7 +40,7 @@ static StringView manifestPath(const URL& manifestURL)
 {
     auto manifestPath = manifestURL.path();
     ASSERT(manifestPath[0] == '/');
-    manifestPath = manifestPath.left(manifestPath.reverseFind('/') + 1);
+    manifestPath = manifestPath.substring(0, manifestPath.reverseFind('/') + 1);
     ASSERT(manifestPath[0] == manifestPath[manifestPath.length() - 1]);
     return manifestPath;
 }
@@ -74,11 +74,11 @@ template<typename CharacterType> static constexpr CharacterType networkModeIdent
 
 std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& manifestURL, const String& manifestMIMEType, const uint8_t* data, int length)
 {
-    static constexpr auto cacheManifestMIMEType = "text/cache-manifest"_s;
+    static constexpr const char cacheManifestMIMEType[] = "text/cache-manifest";
     bool allowFallbackNamespaceOutsideManifestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
     auto manifestPath = WebCore::manifestPath(manifestURL);
 
-    auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8")->decodeAndFlush(data, length);
+    auto manifestString = TextResourceDecoder::create(ASCIILiteral::fromLiteralUnsafe(cacheManifestMIMEType), "UTF-8")->decodeAndFlush(data, length);
 
     return readCharactersForParsing(manifestString, [&](auto buffer) -> std::optional<ApplicationCacheManifest> {
         using CharacterType = typename decltype(buffer)::CharacterType;
@@ -156,7 +156,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
                 if (!equalIgnoringASCIICase(url.protocol(), manifestURL.protocol()))
                     continue;
                 
-                if (manifestURL.protocolIs("https"_s) && !protocolHostAndPortAreEqual(manifestURL, url))
+                if (manifestURL.protocolIs("https") && !protocolHostAndPortAreEqual(manifestURL, url))
                     continue;
                 
                 manifest.explicitURLs.add(url.string());
@@ -180,7 +180,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
                 if (!equalIgnoringASCIICase(url.protocol(), manifestURL.protocol()))
                     continue;
 
-                manifest.onlineAllowedURLs.append(WTFMove(url));
+                manifest.onlineAllowedURLs.append(url);
                 continue;
             }
             

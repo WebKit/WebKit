@@ -60,7 +60,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(m_mutability != Wasm::Immutable);
+    ASSERT(m_mutability != Wasm::GlobalInformation::Immutable);
     switch (m_type.kind) {
     case TypeKind::I32: {
         int32_t value = argument.toInt32(globalObject);
@@ -90,7 +90,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
         if (isExternref(m_type)) {
             RELEASE_ASSERT(m_owner);
             if (!m_type.isNullable() && argument.isNull()) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"_s));
+                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"));
                 return;
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
@@ -98,16 +98,16 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             RELEASE_ASSERT(m_owner);
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-            if (!isWebAssemblyHostFunction(argument, wasmFunction, wasmWrapperFunction) && (!m_type.isNullable() || !argument.isNull())) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
+            if (!isWebAssemblyHostFunction(vm, argument, wasmFunction, wasmWrapperFunction) && (!m_type.isNullable() || !argument.isNull())) {
+                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
                 return;
             }
 
             if (isRefWithTypeIndex(m_type) && !argument.isNull()) {
-                Wasm::TypeIndex paramIndex = m_type.index;
-                Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
+                Wasm::SignatureIndex paramIndex = m_type.index;
+                Wasm::SignatureIndex argIndex = wasmFunction ? wasmFunction->signatureIndex() : wasmWrapperFunction->signatureIndex();
                 if (paramIndex != argIndex) {
-                    throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"_s));
+                    throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"));
                     return;
                 }
             }

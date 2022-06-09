@@ -43,7 +43,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyTagProtoFuncType);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyTagPrototype::s_info = { "WebAssembly.Tag"_s, &Base::s_info, &prototypeTableWebAssemblyTag, nullptr, CREATE_METHOD_TABLE(WebAssemblyTagPrototype) };
+const ClassInfo WebAssemblyTagPrototype::s_info = { "WebAssembly.Tag", &Base::s_info, &prototypeTableWebAssemblyTag, nullptr, CREATE_METHOD_TABLE(WebAssemblyTagPrototype) };
 
 /* Source for WebAssemblyTagPrototype.lut.h
  @begin prototypeTableWebAssemblyTag
@@ -67,7 +67,7 @@ Structure* WebAssemblyTagPrototype::createStructure(VM& vm, JSGlobalObject* glob
 void WebAssemblyTagPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -85,7 +85,7 @@ ALWAYS_INLINE static JSWebAssemblyTag* getTag(JSGlobalObject* globalObject, JSVa
         throwVMError(globalObject, scope, createNotAnObjectError(globalObject, thisValue));
         return nullptr;
     }
-    auto* tag = jsDynamicCast<JSWebAssemblyTag*>(thisValue.asCell());
+    auto* tag = jsDynamicCast<JSWebAssemblyTag*>(vm, thisValue.asCell());
     if (LIKELY(tag))
         return tag;
     throwTypeError(globalObject, scope, "WebAssembly.Tag operation called on non-Tag object"_s);
@@ -113,7 +113,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTagProtoFuncType, (JSGlobalObject* globalObj
 
     JSArray* parameters = constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), argList);
     JSObject* type = constructEmptyObject(globalObject, globalObject->objectPrototype(), 1);
-    type->putDirect(vm, Identifier::fromString(vm, "parameters"_s), parameters);
+    type->putDirect(vm, Identifier::fromString(vm, "parameters"), parameters);
 
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     RELEASE_AND_RETURN(throwScope, JSValue::encode(type));

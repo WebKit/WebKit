@@ -809,7 +809,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 0.5;
     _avPlayerViewController.get().playerController = playerController;
 }
 
-- (AVPlayerViewController *)avPlayerViewController
+- (AVPlayerViewController *) avPlayerViewController
 {
     return _avPlayerViewController.get();
 }
@@ -838,7 +838,7 @@ VideoFullscreenInterfaceAVKit::~VideoFullscreenInterfaceAVKit()
 {
     WebAVPlayerController* playerController = this->playerController();
     if (playerController && playerController.externalPlaybackActive)
-        externalPlaybackChanged(false, PlaybackSessionModel::TargetTypeNone, emptyString());
+        externalPlaybackChanged(false, PlaybackSessionModel::TargetTypeNone, "");
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->removeClient(*this);
 }
@@ -846,11 +846,6 @@ VideoFullscreenInterfaceAVKit::~VideoFullscreenInterfaceAVKit()
 WebAVPlayerController *VideoFullscreenInterfaceAVKit::playerController() const
 {
     return m_playbackSessionInterface->playerController();
-}
-
-AVPlayerViewController *VideoFullscreenInterfaceAVKit::avPlayerViewController() const
-{
-    return [m_playerViewController avPlayerViewController];
 }
 
 void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel* model)
@@ -1371,7 +1366,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
         [[m_viewController view] setFrame:[m_window bounds]];
         [m_viewController _setIgnoreAppSupportedOrientations:YES];
         [m_window setRootViewController:m_viewController.get()];
-        [m_window setWindowLevel:PAL::get_UIKit_UITextEffectsBeneathStatusBarWindowLevel() - 1];
+        [m_window setWindowLevel:PAL::get_UIKit_UITextEffectsBeneathStatusBarWindowLevel() + 1];
         [m_window makeKeyAndVisible];
     }
 #endif

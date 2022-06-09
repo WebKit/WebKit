@@ -104,6 +104,7 @@ public:
     virtual IntSize tileSize() const = 0;
 
     virtual void revalidateTiles() = 0;
+    virtual void forceRepaint() = 0;
 
     virtual void setScrollingPerformanceTestingEnabled(bool) = 0;
     virtual bool scrollingPerformanceTestingEnabled() const = 0;

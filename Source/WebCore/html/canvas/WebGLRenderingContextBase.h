@@ -48,7 +48,6 @@
 #include <limits>
 #include <memory>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/Lock.h>
 
 #if ENABLE(WEBGL2)
@@ -76,30 +75,26 @@ class EXTBlendMinMax;
 class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
 class EXTFloatBlend;
-class EXTFragDepth;
-class EXTShaderTextureLOD;
-class EXTTextureCompressionBPTC;
 class EXTTextureCompressionRGTC;
 class EXTTextureFilterAnisotropic;
-class EXTTextureNorm16;
+class EXTShaderTextureLOD;
 class EXTsRGB;
+class EXTFragDepth;
 class HTMLImageElement;
 class ImageData;
 class IntSize;
 class KHRParallelShaderCompile;
-class OESDrawBuffersIndexed;
-class OESElementIndexUint;
-class OESFBORenderMipmap;
 class OESStandardDerivatives;
 class OESTextureFloat;
 class OESTextureFloatLinear;
 class OESTextureHalfFloat;
 class OESTextureHalfFloatLinear;
 class OESVertexArrayObject;
+class OESElementIndexUint;
+class OESFBORenderMipmap;
 #if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
 #endif
-class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
 class WebGLColorBufferFloat;
 class WebGLCompressedTextureASTC;
@@ -120,8 +115,8 @@ class WebGLLoseContext;
 class WebGLMultiDraw;
 class WebGLObject;
 class WebGLShader;
-class WebGLShaderPrecisionFormat;
 class WebGLSharedObject;
+class WebGLShaderPrecisionFormat;
 class WebGLUniformLocation;
 
 #if ENABLE(VIDEO)
@@ -135,7 +130,7 @@ using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-class VideoFrame;
+class MediaSample;
 #endif
 
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
@@ -397,9 +392,9 @@ public:
 
     void prepareForDisplayWithPaint() final;
     void paintRenderingResultsToCanvas() final;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer();
+    std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer();
 #if ENABLE(MEDIA_STREAM)
-    RefPtr<VideoFrame> paintCompositedResultsToVideoFrame();
+    RefPtr<MediaSample> paintCompositedResultsToMediaSample();
 #endif
 
     void removeSharedObject(WebGLSharedObject&);
@@ -417,9 +412,8 @@ public:
     // GraphicsContextGL::Client
     void didComposite() override;
     void forceContextLost() override;
+    void recycleContext() override;
     void dispatchContextChangedNotification() override;
-
-    void recycleContext();
 
     virtual void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&);
     // This lock must be held across all mutations of containers like
@@ -438,15 +432,16 @@ public:
     // prohibitively expensive.
     Lock& objectGraphLock() WTF_RETURNS_LOCK(m_objectGraphLock);
 
-    // Returns the ordinal number of when the context was last active (drew, read pixels).
-    uint64_t activeOrdinal() const { return m_activeOrdinal; }
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
 
-    friend class EXTTextureCompressionBPTC;
     friend class EXTTextureCompressionRGTC;
+    friend class WebGLDrawBuffers;
+    friend class WebGLFramebuffer;
+    friend class WebGLObject;
     friend class OESVertexArrayObject;
+    friend class WebGLDebugShaders;
     friend class WebGLCompressedTextureASTC;
     friend class WebGLCompressedTextureATC;
     friend class WebGLCompressedTextureETC;
@@ -454,17 +449,12 @@ protected:
     friend class WebGLCompressedTexturePVRTC;
     friend class WebGLCompressedTextureS3TC;
     friend class WebGLCompressedTextureS3TCsRGB;
-    friend class WebGLDebugShaders;
-    friend class WebGLDrawBuffers;
     friend class WebGLMultiDraw;
-
-    friend class WebGLFramebuffer;
-    friend class WebGLObject;
     friend class WebGLRenderingContextErrorMessageCallback;
-    friend class WebGLSync;
+    friend class WebGLVertexArrayObjectOES;
     friend class WebGLVertexArrayObject;
     friend class WebGLVertexArrayObjectBase;
-    friend class WebGLVertexArrayObjectOES;
+    friend class WebGLSync;
 
     // Implementation helpers.
     friend class ScopedUnpackParametersResetRestore;
@@ -483,7 +473,6 @@ protected:
     void addContextObject(WebGLContextObject&);
     void detachAndRemoveAllObjects();
 
-    void setGraphicsContextGL(Ref<GraphicsContextGL>&&);
     void destroyGraphicsContextGL();
     void markContextChanged();
     void markContextChangedAndNotifyCanvasObserver();
@@ -553,22 +542,12 @@ protected:
     bool compositingResultsNeedUpdating() const final { return m_compositingResultsNeedUpdating; }
     bool needsPreparationForDisplay() const final { return true; }
     void prepareForDisplay() final;
-    void updateActiveOrdinal();
-
-    struct ContextLostState {
-        ContextLostState(LostContextMode mode)
-            : mode(mode)
-        {
-        }
-        ListHashSet<GCGLint> errors; // Losing context and WEBGL_lose_context generates errors here.
-        LostContextMode mode { LostContextMode::RealLostContext };
-        bool restoreRequested { false };
-    };
 
     RefPtr<GraphicsContextGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
     Lock m_objectGraphLock;
 
+    bool m_restoreAllowed { false };
     SuspendableTimer m_restoreTimer;
 
     bool m_needsUpdate;
@@ -668,7 +647,8 @@ protected:
     bool m_unpackPremultiplyAlpha;
     GCGLenum m_unpackColorspaceConversion;
 
-    std::optional<ContextLostState>  m_contextLostState;
+    bool m_contextLost { false };
+    LostContextMode m_contextLostMode { SyntheticLostContext };
     WebGLContextAttributes m_attributes;
 
     bool m_layerCleared;
@@ -708,29 +688,24 @@ protected:
 
     // Enabled extension objects.
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2
-    RefPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
-    RefPtr<EXTBlendMinMax> m_extBlendMinMax;
-    RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
-    RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
-    RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<EXTFragDepth> m_extFragDepth;
-    RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
-    RefPtr<EXTTextureCompressionBPTC> m_extTextureCompressionBPTC;
+    RefPtr<EXTBlendMinMax> m_extBlendMinMax;
+    RefPtr<EXTsRGB> m_extsRGB;
     RefPtr<EXTTextureCompressionRGTC> m_extTextureCompressionRGTC;
     RefPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
-    RefPtr<EXTTextureNorm16> m_extTextureNorm16;
-    RefPtr<EXTsRGB> m_extsRGB;
+    RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
     RefPtr<KHRParallelShaderCompile> m_khrParallelShaderCompile;
-    RefPtr<OESDrawBuffersIndexed> m_oesDrawBuffersIndexed;
-    RefPtr<OESElementIndexUint> m_oesElementIndexUint;
-    RefPtr<OESFBORenderMipmap> m_oesFBORenderMipmap;
-    RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     RefPtr<OESTextureFloat> m_oesTextureFloat;
     RefPtr<OESTextureFloatLinear> m_oesTextureFloatLinear;
     RefPtr<OESTextureHalfFloat> m_oesTextureHalfFloat;
     RefPtr<OESTextureHalfFloatLinear> m_oesTextureHalfFloatLinear;
+    RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     RefPtr<OESVertexArrayObject> m_oesVertexArrayObject;
-    RefPtr<WebGLColorBufferFloat> m_webglColorBufferFloat;
+    RefPtr<OESElementIndexUint> m_oesElementIndexUint;
+    RefPtr<OESFBORenderMipmap> m_oesFBORenderMipmap;
+    RefPtr<WebGLLoseContext> m_webglLoseContext;
+    RefPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
+    RefPtr<WebGLDebugShaders> m_webglDebugShaders;
     RefPtr<WebGLCompressedTextureASTC> m_webglCompressedTextureASTC;
     RefPtr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
     RefPtr<WebGLCompressedTextureETC> m_webglCompressedTextureETC;
@@ -738,11 +713,13 @@ protected:
     RefPtr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
     RefPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
     RefPtr<WebGLCompressedTextureS3TCsRGB> m_webglCompressedTextureS3TCsRGB;
-    RefPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
-    RefPtr<WebGLDebugShaders> m_webglDebugShaders;
     RefPtr<WebGLDepthTexture> m_webglDepthTexture;
     RefPtr<WebGLDrawBuffers> m_webglDrawBuffers;
-    RefPtr<WebGLLoseContext> m_webglLoseContext;
+    RefPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
+    RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
+    RefPtr<EXTFloatBlend> m_extFloatBlend;
+    RefPtr<WebGLColorBufferFloat> m_webglColorBufferFloat;
+    RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
     RefPtr<WebGLMultiDraw> m_webglMultiDraw;
 
     bool m_areWebGL2TexImageSourceFormatsAndTypesAdded { false };
@@ -1113,8 +1090,8 @@ protected:
 #endif
 
     // Wrapper for GraphicsContextGLOpenGL::synthesizeGLError that sends a message to the JavaScript console.
-    void synthesizeGLError(GCGLenum, const char* functionName, const char* description);
-    void synthesizeLostContextGLError(GCGLenum, const char* functionName, const char* description);
+    enum ConsoleDisplayPreference { DisplayInConsole, DontDisplayInConsole };
+    void synthesizeGLError(GCGLenum, const char* functionName, const char* description, ConsoleDisplayPreference = DisplayInConsole);
 
     String ensureNotNull(const String&) const;
 
@@ -1165,8 +1142,6 @@ private:
 #if ENABLE(WEBXR)
     bool m_isXRCompatible { false };
 #endif
-    // The ordinal number of when the context was last active (drew, read pixels).
-    uint64_t m_activeOrdinal { 0 };
 };
 
 template <typename T>
@@ -1204,8 +1179,6 @@ inline unsigned WebGLRenderingContextBase::getMaxIndex(const RefPtr<JSC::ArrayBu
 
     return maxIndex;
 }
-
-WebCoreOpaqueRoot root(WebGLRenderingContextBase*);
 
 } // namespace WebCore
 

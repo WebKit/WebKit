@@ -432,7 +432,7 @@ bool WaylandCompositor::initializeEGL()
 #else
     std::unique_ptr<ExtensionsGLOpenGL> glExtensions = makeUnique<ExtensionsGLOpenGL>(nullptr, GLContext::current()->version() >= 320);
 #endif
-    if (glExtensions->supports("GL_OES_EGL_image"_s) || glExtensions->supports("GL_OES_EGL_image_external"_s))
+    if (glExtensions->supports("GL_OES_EGL_image") || glExtensions->supports("GL_OES_EGL_image_external"))
         glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 
     if (!glImageTargetTexture2D) {
@@ -501,7 +501,7 @@ WaylandCompositor::WaylandCompositor()
         return;
     }
 
-    String displayName = makeString("webkitgtk-wayland-compositor-"_s, UUID::createVersion4());
+    String displayName = "webkitgtk-wayland-compositor-" + createCanonicalUUIDString();
     if (wl_display_add_socket(display.get(), displayName.utf8().data()) == -1) {
         WTFLogAlways("Nested Wayland compositor could not create display socket");
         return;

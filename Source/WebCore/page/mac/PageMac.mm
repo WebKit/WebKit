@@ -57,15 +57,15 @@ void Page::platformInitialize()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if ENABLE(TREE_DEBUGGING)
-        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree"_s, printRenderTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree"_s, printLayerTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree", printGraphicsLayerTreeForLiveDocuments);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree"_s, Layout::printLayoutTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree", Layout::printLayoutTreeForLiveDocuments);
 #endif
 #endif // ENABLE(TREE_DEBUGGING)
 
-        PAL::registerNotifyCallback("com.apple.WebKit.showAllDocuments"_s, [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.showAllDocuments", [] {
             unsigned numPages = 0;
             Page::forEachPage([&numPages](Page&) {
                 ++numPages;
@@ -81,7 +81,7 @@ void Page::platformInitialize()
             WTFLogAlways("%u live documents:", Document::allDocuments().size());
             for (const auto* document : Document::allDocuments()) {
                 const char* documentType = is<SVGDocument>(document) ? "SVGDocument" : "Document";
-                WTFLogAlways("%s %p %" PRIu64 "-%s (refCount %d, referencingNodeCount %d) %s", documentType, document, document->identifier().processIdentifier().toUInt64(), document->identifier().toString().utf8().data(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8().data());
+                WTFLogAlways("%s %p %s (refCount %d, referencingNodeCount %d) %s", documentType, document, document->identifier().toString().utf8().data(), document->refCount(), document->referencingNodeCount(), document->url().string().utf8().data());
             }
         });
     });

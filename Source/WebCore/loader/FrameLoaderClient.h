@@ -89,6 +89,7 @@ class LegacyPreviewLoaderClient;
 class MessageEvent;
 class NavigationAction;
 class Page;
+class PluginViewBase;
 class ProtectionSpace;
 class RegistrableDomain;
 class RTCPeerConnectionHandler;
@@ -254,8 +255,8 @@ public:
     virtual bool canHandleRequest(const ResourceRequest&) const = 0;
     virtual bool canShowMIMEType(const String& MIMEType) const = 0;
     virtual bool canShowMIMETypeAsHTML(const String& MIMEType) const = 0;
-    virtual bool representationExistsForURLScheme(StringView URLScheme) const = 0;
-    virtual String generatedMIMETypeForURLScheme(StringView URLScheme) const = 0;
+    virtual bool representationExistsForURLScheme(const String& URLScheme) const = 0;
+    virtual String generatedMIMETypeForURLScheme(const String& URLScheme) const = 0;
 
     virtual void frameLoadCompleted() = 0;
     virtual void saveViewStateToItem(HistoryItem&) = 0;
@@ -284,8 +285,8 @@ public:
     virtual bool canCachePage() const = 0;
     virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) = 0;
 
-    virtual RefPtr<Frame> createFrame(const AtomString& name, HTMLFrameOwnerElement&) = 0;
-    virtual RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) = 0;
+    virtual RefPtr<Frame> createFrame(const String& name, HTMLFrameOwnerElement&) = 0;
+    virtual RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
     virtual void redirectDataToPlugin(Widget&) = 0;
 
     virtual ObjectContentType objectContentType(const URL&, const String& mimeType) = 0;
@@ -339,6 +340,9 @@ public:
 
 #if ENABLE(WEBGL)
     virtual bool allowWebGL(bool enabledPerSettings) { return enabledPerSettings; }
+    // Informs the embedder that a WebGL canvas inside this frame received a lost context
+    // notification with the given GL_ARB_robustness guilt/innocence code (see GraphicsContextGL.h).
+    virtual void didLoseWebGLContext(int) { }
     virtual WebGLLoadPolicy webGLPolicyForURL(const URL&) const { return WebGLLoadPolicy::WebGLAllowCreation; }
     virtual WebGLLoadPolicy resolveWebGLPolicyForURL(const URL&) const { return WebGLLoadPolicy::WebGLAllowCreation; }
 #endif
@@ -347,7 +351,7 @@ public:
 
     // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.
     virtual bool isEmptyFrameLoaderClient() const { return false; }
-    virtual bool isRemoteWorkerFrameLoaderClient() const { return false; }
+    virtual bool isServiceWorkerFrameLoaderClient() const { return false; }
 
 #if USE(QUICK_LOOK)
     virtual RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) = 0;
@@ -388,10 +392,6 @@ public:
 #endif
 
     virtual bool isParentProcessAFullWebBrowser() const { return false; }
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    virtual void modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>)>&&) const { }
-#endif
 };
 
 } // namespace WebCore

@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-class CanvasRenderingContext;
+class CanvasBase;
 class Gradient;
 
 class CanvasGradient : public RefCounted<CanvasGradient> {
 public:
-    static Ref<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1, CanvasRenderingContext&);
-    static Ref<CanvasGradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasRenderingContext&);
-    static Ref<CanvasGradient> create(const FloatPoint& centerPoint, float angleInRadians, CanvasRenderingContext&);
+    static Ref<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1, CanvasBase&);
+    static Ref<CanvasGradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasBase&);
+    static Ref<CanvasGradient> create(const FloatPoint& centerPoint, float angleInRadians, CanvasBase&);
     ~CanvasGradient();
 
     Gradient& gradient() { return m_gradient; }
@@ -47,12 +47,12 @@ public:
     ExceptionOr<void> addColorStop(double value, const String& color);
 
 private:
-    CanvasGradient(const FloatPoint& p0, const FloatPoint& p1, CanvasRenderingContext&);
-    CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasRenderingContext&);
-    CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasRenderingContext&);
+    CanvasGradient(const FloatPoint& p0, const FloatPoint& p1, CanvasBase&);
+    CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasBase&);
+    CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasBase&);
 
     Ref<Gradient> m_gradient;
-    Ref<CanvasRenderingContext> m_context;
+    CanvasBase& m_canvas;
 };
 
 }

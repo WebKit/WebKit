@@ -42,7 +42,7 @@ public:
 
 private:
     void updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild);
-    void createRenderers(RenderText& currentTextChild);
+    void createRenderers(RenderBlock& firstLetterBlock, RenderText& currentTextChild);
 
     RenderTreeBuilder& m_builder;
 };

@@ -25,11 +25,11 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    Conditional=MEDIA_RECORDER,
+    Conditional=MEDIA_STREAM,
     EnabledBySetting=MediaRecorderEnabled,
     Exposed=Window
 ]  interface BlobEvent : Event {
-    constructor([AtomString] DOMString type, BlobEventInit eventInitDict);
+    constructor(DOMString type, BlobEventInit eventInitDict);
 
     // FIXME: Implement these:
     [SameObject] readonly attribute Blob data;

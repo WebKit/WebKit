@@ -45,7 +45,7 @@
       'android-arm64-pixel6': {
         'os_type': 'android',
         'mixins': [
-          'android_t',
+          'android_s',
           'oriole',
           'gpu-swarming-pool',
           'limited_capacity_bot',
@@ -249,6 +249,24 @@
         ],
         'test_suites': {
           'gtest_tests': 'swangle_gtests',
+        },
+      },
+      'win7-x64-nvidia': {
+        'os_type': 'win',
+        'mixins': [
+          'win7_nvidia_quadro_p400',
+        ],
+        'test_suites': {
+          'gtest_tests': 'win7_nvidia_gtests',
+        },
+      },
+      'win7-x86-amd': {
+        'os_type': 'win',
+        'mixins': [
+          'win7_amd_r7_240',
+        ],
+        'test_suites': {
+          'gtest_tests': 'win7_amd_gtests',
         },
       },
     },

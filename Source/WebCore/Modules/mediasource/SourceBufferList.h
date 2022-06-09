@@ -40,7 +40,6 @@
 namespace WebCore {
 
 class SourceBuffer;
-class WebCoreOpaqueRoot;
 
 class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTargetWithInlineData, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(SourceBufferList);
@@ -48,9 +47,8 @@ public:
     static Ref<SourceBufferList> create(ScriptExecutionContext*);
     virtual ~SourceBufferList();
 
-    unsigned length() const { return m_list.size(); }
-
-    SourceBuffer* item(unsigned index) const { return (index < m_list.size()) ? m_list[index].get() : nullptr; }
+    unsigned long length() const { return m_list.size(); }
+    SourceBuffer* item(unsigned long index) const { return (index < m_list.size()) ? m_list[index].get() : nullptr; }
 
     void add(Ref<SourceBuffer>&&);
     void remove(SourceBuffer&);
@@ -58,11 +56,8 @@ public:
     void clear();
     void swap(Vector<RefPtr<SourceBuffer>>&);
 
-    auto begin() { return m_list.begin(); }
-    auto end() { return m_list.end(); }
-    auto begin() const { return m_list.begin(); }
-    auto end() const { return m_list.end(); }
-    size_t size() const { return m_list.size(); }
+    Vector<RefPtr<SourceBuffer>>::iterator begin() { return m_list.begin(); }
+    Vector<RefPtr<SourceBuffer>>::iterator end() { return m_list.end(); }
 
     // EventTarget interface
     EventTargetInterface eventTargetInterface() const final { return SourceBufferListEventTargetInterfaceType; }
@@ -83,8 +78,6 @@ private:
 
     Vector<RefPtr<SourceBuffer>> m_list;
 };
-
-WebCoreOpaqueRoot root(SourceBufferList*);
 
 } // namespace WebCore
 

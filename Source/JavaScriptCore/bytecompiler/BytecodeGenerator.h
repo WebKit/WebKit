@@ -334,7 +334,6 @@ namespace JSC {
         using OpcodeID = ::JSC::OpcodeID;
         using OpNop = ::JSC::OpNop;
         using CodeBlock = std::unique_ptr<UnlinkedCodeBlockGenerator>;
-        using InstructionType = JSInstruction;
         static constexpr OpcodeID opcodeForDisablingOptimizations = op_end;
     };
 
@@ -469,7 +468,7 @@ namespace JSC {
 
         void emitNode(RegisterID* dst, StatementNode* n)
         {
-            SetForScope tailPositionPoisoner(m_inTailPosition, false);
+            SetForScope<bool> tailPositionPoisoner(m_inTailPosition, false);
             return emitNodeInTailPosition(dst, n);
         }
 
@@ -503,7 +502,7 @@ namespace JSC {
 
         RegisterID* emitNode(RegisterID* dst, ExpressionNode* n)
         {
-            SetForScope tailPositionPoisoner(m_inTailPosition, false);
+            SetForScope<bool> tailPositionPoisoner(m_inTailPosition, false);
             return emitNodeInTailPosition(dst, n);
         }
 
@@ -901,7 +900,7 @@ namespace JSC {
         RegisterID* emitIsUndefinedOrNull(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsEmpty(RegisterID* dst, RegisterID* src);
         RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, DerivedArrayType); }
-        void emitRequireObjectCoercible(RegisterID* value, ASCIILiteral error);
+        void emitRequireObjectCoercible(RegisterID* value, const String& error);
 
         void emitIteratorOpen(RegisterID* iterator, RegisterID* nextOrIndex, RegisterID* symbolIterator, CallArguments& iterable, const ThrowableExpressionData*);
         void emitIteratorNext(RegisterID* done, RegisterID* value, RegisterID* iterable, RegisterID* nextOrIndex, CallArguments& iterator, const ThrowableExpressionData*);
@@ -955,8 +954,8 @@ namespace JSC {
 
         void emitThrowStaticError(ErrorTypeWithExtension, RegisterID*);
         void emitThrowStaticError(ErrorTypeWithExtension, const Identifier& message);
-        void emitThrowReferenceError(ASCIILiteral message);
-        void emitThrowTypeError(ASCIILiteral message);
+        void emitThrowReferenceError(const String& message);
+        void emitThrowTypeError(const String& message);
         void emitThrowTypeError(const Identifier& message);
         void emitThrowRangeError(const Identifier& message);
         void emitThrowOutOfMemoryError();
@@ -1091,7 +1090,7 @@ namespace JSC {
         void allocateAndEmitScope();
 
         template<typename JumpOp>
-        void setTargetForJumpInstruction(JSInstructionStream::MutableRef&, int target);
+        void setTargetForJumpInstruction(InstructionStream::MutableRef&, int target);
 
         using BigIntMapEntry = std::tuple<UniquedStringImpl*, uint8_t, bool>;
 
@@ -1189,7 +1188,7 @@ namespace JSC {
         JSValue addBigIntConstant(const Identifier&, uint8_t radix, bool sign);
         RegisterID* addTemplateObjectConstant(Ref<TemplateObjectDescriptor>&&, int);
 
-        const JSInstructionStreamWriter& instructions() const { return m_writer; }
+        const InstructionStream& instructions() const { return m_writer; }
 
         RegisterID* emitThrowExpressionTooDeepException();
 
@@ -1205,7 +1204,7 @@ namespace JSC {
         void restoreTDZStack(const PreservedTDZStack&);
 
         template<typename Func>
-        void withWriter(JSInstructionStreamWriter& writer, const Func& fn)
+        void withWriter(InstructionStreamWriter& writer, const Func& fn)
         {
             auto prevLastOpcodeID = m_lastOpcodeID;
             auto prevLastInstruction = m_lastInstruction;

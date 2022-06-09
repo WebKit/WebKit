@@ -64,7 +64,7 @@ private:
 
     void imageChanged(WrappedImagePtr, const IntRect*) final;
 
-    ASCIILiteral renderName() const final { return "RenderVideo"_s; }
+    const char* renderName() const final { return "RenderVideo"; }
 
     bool requiresLayer() const final { return true; }
     bool isVideo() const final { return true; }

@@ -1,3 +1,0 @@
-
-PASS Rotate responsive to inherited rotate changes
-

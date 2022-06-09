@@ -36,45 +36,34 @@
 
 namespace API {
 
-static constexpr auto sharedJSContextMaxIdleTime = 10_s;
-
 class SharedJSContext {
 public:
     SharedJSContext()
-        : m_timer(RunLoop::main(), this, &SharedJSContext::releaseContextIfNecessary)
+        : m_timer(RunLoop::main(), this, &SharedJSContext::releaseContext)
     {
     }
 
     JSContext* ensureContext()
     {
-        m_lastUseTime = MonotonicTime::now();
         if (!m_context) {
             bool previous = JSRemoteInspectorGetInspectionEnabledByDefault();
             JSRemoteInspectorSetInspectionEnabledByDefault(false);
             m_context = adoptNS([[JSContext alloc] init]);
             JSRemoteInspectorSetInspectionEnabledByDefault(previous);
 
-            m_timer.startOneShot(sharedJSContextMaxIdleTime);
+            m_timer.startOneShot(1_s);
         }
         return m_context.get();
     }
 
-    void releaseContextIfNecessary()
+    void releaseContext()
     {
-        auto idleTime = MonotonicTime::now() - m_lastUseTime;
-        if (idleTime < sharedJSContextMaxIdleTime) {
-            // We lazily restart the timer if needed every 10 seconds instead of doing so every time ensureContext()
-            // is called, for performance reasons.
-            m_timer.startOneShot(sharedJSContextMaxIdleTime - idleTime);
-            return;
-        }
         m_context.clear();
     }
 
 private:
     RetainPtr<JSContext> m_context;
     RunLoop::Timer<SharedJSContext> m_timer;
-    MonotonicTime m_lastUseTime;
 };
 
 static SharedJSContext& sharedContext()

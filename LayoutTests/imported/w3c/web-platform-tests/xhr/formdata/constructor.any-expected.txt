@@ -1,3 +1,0 @@
-
-PASS Constructors should throw a type error
-

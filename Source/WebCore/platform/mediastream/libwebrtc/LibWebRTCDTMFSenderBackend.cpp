@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LibWebRTCDTMFSenderBackend.h"
 
-#if USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include <wtf/MainThread.h>
 
@@ -94,4 +94,4 @@ void LibWebRTCDTMFSenderBackend::onTonePlayed(Function<void(const String&)>&& on
 
 } // namespace WebCore
 
-#endif // USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC)

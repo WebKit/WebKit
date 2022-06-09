@@ -36,7 +36,6 @@
 #import "Editing.h"
 #import "EditingStyle.h"
 #import "EditorClient.h"
-#import "ElementInlines.h"
 #import "FontAttributes.h"
 #import "FontCascade.h"
 #import "Frame.h"
@@ -46,10 +45,8 @@
 #import "HTMLConverter.h"
 #import "HTMLImageElement.h"
 #import "HTMLSpanElement.h"
-#import "ImageOverlay.h"
 #import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
-#import "Page.h"
 #import "PagePasteboardContext.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
@@ -78,9 +75,8 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
 
 String Editor::selectionInHTMLFormat()
 {
-    if (ImageOverlay::isInsideOverlay(m_document.selection().selection()))
-        return { };
-    return serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy, SerializeComposedTree::Yes);
+    return serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy,
+        m_document.settings().selectionAcrossShadowBoundariesEnabled() ? SerializeComposedTree::Yes : SerializeComposedTree::No);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -105,52 +101,9 @@ void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<Str
 
 #endif
 
-static RetainPtr<NSAttributedString> selectionInImageOverlayAsAttributedString(const VisibleSelection& selection)
-{
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    auto* page = selection.document()->page();
-    if (!page)
-        return nil;
-
-    RefPtr hostElement = dynamicDowncast<HTMLElement>(selection.start().containerNode()->shadowHost());
-    if (!hostElement) {
-        ASSERT_NOT_REACHED();
-        return nil;
-    }
-
-    auto cachedResult = page->cachedTextRecognitionResult(*hostElement);
-    if (!cachedResult)
-        return nil;
-
-    auto characterRange = valueOrDefault(ImageOverlay::characterRange(selection));
-    if (!characterRange.length)
-        return nil;
-
-    auto string = stringForRange(*cachedResult, characterRange);
-    __block bool hasAnyAttributes = false;
-    [string enumerateAttributesInRange:NSMakeRange(0, [string length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange, BOOL *stop) {
-        if (attributes.count) {
-            hasAnyAttributes = true;
-            *stop = YES;
-        }
-    }];
-
-    if (!hasAnyAttributes)
-        return nil;
-
-    return string;
-#else
-    UNUSED_PARAM(selection);
-    return nil;
-#endif
-}
-
 static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document& document)
 {
-    auto selection = document.selection().selection();
-    if (ImageOverlay::isInsideOverlay(selection))
-        return selectionInImageOverlayAsAttributedString(selection);
-    auto range = selection.firstRange();
+    auto range = document.selection().selection().firstRange();
     return range ? attributedString(*range).string : adoptNS([[NSAttributedString alloc] init]);
 }
 
@@ -194,8 +147,6 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
 
 RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
 {
-    if (ImageOverlay::isInsideOverlay(m_document.selection().selection()))
-        return nullptr;
     auto archive = LegacyWebArchive::createFromSelection(m_document.frame());
     if (!archive)
         return nullptr;
@@ -208,14 +159,18 @@ String Editor::stringSelectionForPasteboard()
 {
     if (!canCopy())
         return emptyString();
-    return makeStringByReplacingAll(selectedText(), noBreakSpace, ' ');
+    String text = selectedText();
+    text.replace(noBreakSpace, ' ');
+    return text;
 }
 
 String Editor::stringSelectionForPasteboardWithImageAltText()
 {
     if (!canCopy())
         return emptyString();
-    return makeStringByReplacingAll(selectedTextForDataTransfer(), noBreakSpace, ' ');
+    String text = selectedTextForDataTransfer();
+    text.replace(noBreakSpace, ' ');
+    return text;
 }
 
 void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributedString, MailBlockquoteHandling mailBlockquoteHandling)
@@ -307,78 +262,6 @@ String Editor::platformContentTypeForBlobType(const String& type) const
     if (!utiType.isEmpty())
         return utiType;
     return type;
-}
-
-void Editor::readSelectionFromPasteboard(const String& pasteboardName)
-{
-    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
-    if (m_document.selection().selection().isContentRichlyEditable())
-        pasteWithPasteboard(&pasteboard, { PasteOption::AllowPlainText });
-    else
-        pasteAsPlainTextWithPasteboard(pasteboard);
-}
-
-static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment& fragment)
-{
-    // This is only supported for single-Node fragments.
-    RefPtr firstChild = fragment.firstChild();
-    if (!firstChild || firstChild != fragment.lastChild())
-        return;
-
-    // And only supported for HTML elements.
-    if (!node.isHTMLElement() || !firstChild->isHTMLElement())
-        return;
-
-    // And only if the source Element and destination Element have the same HTML tag name.
-    Ref oldElement = downcast<HTMLElement>(node);
-    Ref newElement = downcast<HTMLElement>(*firstChild);
-    if (oldElement->localName() != newElement->localName())
-        return;
-
-    for (auto& attribute : oldElement->attributesIterator()) {
-        if (newElement->hasAttribute(attribute.name()))
-            continue;
-        newElement->setAttribute(attribute.name(), attribute.value());
-    }
-}
-
-void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName, EditAction action)
-{
-    if (node.document() != m_document)
-        return;
-
-    auto range = makeRangeSelectingNode(node);
-    if (!range)
-        return;
-
-    Ref protectedDocument = m_document;
-    m_document.selection().setSelection({ *range }, FrameSelection::DoNotSetFocus);
-
-    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
-    if (!m_document.selection().selection().isContentRichlyEditable()) {
-        pasteAsPlainTextWithPasteboard(pasteboard);
-        return;
-    }
-
-#if PLATFORM(MAC)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
-    // FIXME: We can also remove `setInsertionPasteboard` altogether once Mail compose on macOS no longer uses WebKitLegacy,
-    // since it's only implemented for WebKitLegacy on macOS, and the only known client is Mail compose.
-    client()->setInsertionPasteboard(NSGeneralPboard);
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-
-    bool chosePlainText;
-    if (auto fragment = webContentFromPasteboard(pasteboard, *range, true, chosePlainText)) {
-        maybeCopyNodeAttributesToFragment(node, *fragment);
-        if (shouldInsertFragment(*fragment, *range, EditorInsertAction::Pasted))
-            pasteAsFragment(fragment.releaseNonNull(), false, false, MailBlockquoteHandling::IgnoreBlockquote, action);
-    }
-
-#if PLATFORM(MAC)
-    client()->setInsertionPasteboard({ });
-#endif
 }
 
 }

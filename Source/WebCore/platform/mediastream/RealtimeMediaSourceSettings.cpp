@@ -58,13 +58,13 @@ String RealtimeMediaSourceSettings::facingMode(RealtimeMediaSourceSettings::Vide
 
 RealtimeMediaSourceSettings::VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(const String& mode)
 {
-    if (mode == "user"_s)
+    if (mode == "user")
         return RealtimeMediaSourceSettings::VideoFacingMode::User;
-    if (mode == "environment"_s)
+    if (mode == "environment")
         return RealtimeMediaSourceSettings::VideoFacingMode::Environment;
-    if (mode == "left"_s)
+    if (mode == "left")
         return RealtimeMediaSourceSettings::VideoFacingMode::Left;
-    if (mode == "right"_s)
+    if (mode == "right")
         return RealtimeMediaSourceSettings::VideoFacingMode::Right;
 
     return RealtimeMediaSourceSettings::Unknown;

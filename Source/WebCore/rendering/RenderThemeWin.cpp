@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -308,7 +308,16 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
     return platformActiveSelectionForegroundColor(options);
 }
 
-FontCascadeDescription RenderThemeWin::systemFont(CSSValueID valueID) const
+static void fillFontDescription(FontCascadeDescription& fontDescription, LOGFONT& logFont, float fontSize)
+{    
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setOneFamily(logFont.lfFaceName);
+    fontDescription.setSpecifiedSize(fontSize);
+    fontDescription.setWeight(logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue()); // FIXME: Use real weight.
+    fontDescription.setIsItalic(logFont.lfItalic);
+}
+
+void RenderThemeWin::updateCachedSystemFontDescription(CSSValueID valueID, FontCascadeDescription& fontDescription) const
 {
     static bool initialized;
     static NONCLIENTMETRICS ncm;
@@ -348,18 +357,12 @@ FontCascadeDescription RenderThemeWin::systemFont(CSSValueID valueID) const
     default: { // Everything else uses the stock GUI font.
         HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
         if (!hGDI)
-            return FontCascadeDescription();
+            return;
         if (::GetObject(hGDI, sizeof(logFont), &logFont) <= 0)
-            return FontCascadeDescription();
+            return;
     }
     }
-    FontCascadeDescription fontDescription;
-    fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setOneFamily(logFont.lfFaceName);
-    fontDescription.setSpecifiedSize(shouldUseDefaultControlFontPixelSize ? defaultControlFontPixelSize : abs(logFont.lfHeight));
-    fontDescription.setWeight(logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue()); // FIXME: Use real weight.
-    fontDescription.setIsItalic(logFont.lfItalic);
-    return fontDescription;
+    fillFontDescription(fontDescription, logFont, shouldUseDefaultControlFontPixelSize ? defaultControlFontPixelSize : abs(logFont.lfHeight));
 }
 
 bool RenderThemeWin::supportsFocus(ControlPart appearance) const
@@ -440,10 +443,10 @@ unsigned RenderThemeWin::determineState(const RenderObject& o)
         result = TS_FOCUSED;
     else if (isHovered(o))
         result = TS_HOVER;
-    if (isIndeterminate(o) && appearance == CheckboxPart)
-        result += 8;
-    else if (isChecked(o))
+    if (isChecked(o))
         result += 4; // 4 unchecked states, 4 checked states.
+    else if (isIndeterminate(o) && appearance == CheckboxPart)
+        result += 8;
     return result;
 }
 
@@ -743,7 +746,6 @@ bool RenderThemeWin::paintMenuList(const RenderObject& renderer, const PaintInfo
 
 void RenderThemeWin::adjustMenuListStyle(RenderStyle& style, const Element* e) const
 {
-    RenderTheme::adjustMenuListStyle(style, e);
     style.resetBorder();
     adjustMenuListButtonStyle(style, e);
 }
@@ -768,7 +770,7 @@ void RenderThemeWin::adjustMenuListButtonStyle(RenderStyle& style, const Element
     style.setHeight(Length(LengthType::Auto));
 
     // Calculate our min-height
-    int minHeight = style.metricsOfPrimaryFont().height();
+    int minHeight = style.fontMetrics().height();
     minHeight = std::max(minHeight, dropDownBoxMinHeight);
 
     style.setMinHeight(Length(minHeight, LengthType::Fixed));

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TestRunner.h"
 
-#include "ActivateFonts.h"
 #include "DictionaryFunctions.h"
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
@@ -374,6 +373,7 @@ void TestRunner::replaceFindMatchesAtIndices(JSValueRef matchIndicesAsValue, JSS
 
 void TestRunner::clearAllDatabases()
 {
+    WKBundleClearAllDatabases(InjectedBundle::singleton().bundle());
     postSynchronousMessage("DeleteAllIndexedDatabases", true);
 }
 
@@ -866,18 +866,11 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), true);
-    postSynchronousPageMessageWithReturnValue("GrantNotificationPermission", toWK(origin));
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef origin)
 {
     WKBundleSetWebNotificationPermission(InjectedBundle::singleton().bundle(), page(), toWK(origin).get(), false);
-    postSynchronousPageMessageWithReturnValue("DenyNotificationPermission", toWK(origin));
-}
-
-void TestRunner::denyWebNotificationPermissionOnPrompt(JSStringRef origin)
-{
-    postSynchronousPageMessageWithReturnValue("DenyNotificationPermissionOnPrompt", toWK(origin));
 }
 
 void TestRunner::removeAllWebNotificationPermissions()
@@ -891,11 +884,6 @@ void TestRunner::simulateWebNotificationClick(JSValueRef notification)
 
     auto notificationID = adoptWK(WKBundleCopyWebNotificationID(injectedBundle.bundle(), mainFrameJSContext(), notification));
     injectedBundle.postSimulateWebNotificationClick(notificationID.get());
-}
-
-void TestRunner::simulateWebNotificationClickForServiceWorkerNotifications()
-{
-    InjectedBundle::singleton().postSimulateWebNotificationClickForServiceWorkerNotifications();
 }
 
 void TestRunner::setGeolocationPermission(bool enabled)
@@ -1998,11 +1986,6 @@ void TestRunner::getApplicationManifestThen(JSValueRef callback)
 void TestRunner::didGetApplicationManifest()
 {
     callTestRunnerCallback(GetApplicationManifestCallbackID);
-}
-
-void TestRunner::installFakeHelvetica(JSStringRef configuration)
-{
-    WTR::installFakeHelvetica(toWK(configuration).get());
 }
 
 void TestRunner::performCustomMenuAction()

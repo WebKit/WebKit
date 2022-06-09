@@ -27,6 +27,7 @@
 
 [
     EnabledBySetting=WebGPU,
+    ImplementationLacksVTable,
     Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
     SecureContext
 ]
@@ -36,5 +37,5 @@ interface GPUAdapter {
     [SameObject] readonly attribute GPUSupportedLimits limits;
     readonly attribute boolean isFallbackAdapter;
 
-    [CallWith=CurrentScriptExecutionContext] Promise<GPUDevice> requestDevice(optional GPUDeviceDescriptor descriptor);
+    [CallWith=ScriptExecutionContext] Promise<GPUDevice> requestDevice(optional GPUDeviceDescriptor descriptor);
 };

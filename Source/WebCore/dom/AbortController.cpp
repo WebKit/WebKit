@@ -61,9 +61,4 @@ void AbortController::abort(JSDOMGlobalObject& globalObject, JSC::JSValue reason
     m_signal->signalAbort(reason);
 }
 
-WebCoreOpaqueRoot AbortController::opaqueRoot()
-{
-    return root(&signal());
-}
-
 }

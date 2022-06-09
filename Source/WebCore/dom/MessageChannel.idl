@@ -28,8 +28,9 @@
     Exposed=(Window,Worker),
     Conditional=CHANNEL_MESSAGING,
     JSCustomMarkFunction,
+    ImplementationLacksVTable
 ] interface MessageChannel {
-    [CallWith=CurrentScriptExecutionContext] constructor();
+    [CallWith=ScriptExecutionContext] constructor();
 
     readonly attribute MessagePort port1;
     readonly attribute MessagePort port2;

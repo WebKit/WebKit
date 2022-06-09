@@ -9,6 +9,7 @@ elseif (WIN32)
     set(angle_is_winuwp FALSE)
 elseif (UNIX)
     set(is_linux TRUE)
+    set(ozone_platform_gbm TRUE)
 endif ()
 
 include(Compiler.cmake)
@@ -244,7 +245,6 @@ if (COMPILER_IS_GCC_OR_CLANG)
         if (TARGET ${angle_target})
             WEBKIT_ADD_TARGET_CXX_FLAGS(${angle_target}
                 -Wno-cast-align
-                -Wno-dangling-pointer
                 -Wno-extra
                 -Wno-suggest-attribute=format
                 -Wno-undef

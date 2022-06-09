@@ -16,7 +16,7 @@
 #include "libANGLE/renderer/d3d/d3d9/RenderTarget9.h"
 #include "libANGLE/renderer/d3d/d3d9/formatutils9.h"
 #include "libANGLE/renderer/driver_utils.h"
-#include "platform/FeaturesD3D_autogen.h"
+#include "platform/FeaturesD3D.h"
 #include "platform/PlatformMethods.h"
 
 #include "third_party/systeminfo/SystemInfo.h"
@@ -521,6 +521,11 @@ void GenerateCaps(IDirect3D9 *d3d9,
         textureCapsMap->insert(internalFormat, textureCaps);
 
         maxSamples = std::max(maxSamples, textureCaps.getMaxSamples());
+
+        if (gl::GetSizedInternalFormatInfo(internalFormat).compressed)
+        {
+            caps->compressedTextureFormats.push_back(internalFormat);
+        }
     }
 
     // GL core feature limits
@@ -749,7 +754,7 @@ void GenerateCaps(IDirect3D9 *d3d9,
     extensions->fragDepthEXT                = true;
     extensions->textureUsageANGLE           = true;
     extensions->translatedShaderSourceANGLE = true;
-    extensions->fboRenderMipmapOES          = true;
+    extensions->fboRenderMipmapOES          = false;
     extensions->discardFramebufferEXT = false;  // It would be valid to set this to true, since
                                                 // glDiscardFramebufferEXT is just a hint
     extensions->colorBufferFloatEXT   = false;
@@ -834,6 +839,10 @@ void InitializeFeatures(angle::FeaturesD3D *features)
 
     // crbug.com/1011627 Turn this on for D3D9.
     ANGLE_FEATURE_CONDITION(features, allowClearForRobustResourceInit, true);
+
+    // Call platform hooks for testing overrides.
+    auto *platform = ANGLEPlatformCurrent();
+    platform->overrideWorkaroundsD3D(platform, features);
 }
 
 }  // namespace d3d9

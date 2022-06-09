@@ -83,13 +83,11 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask, SandboxFlagsSource 
 
 bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 {
-    static constexpr ASCIILiteral supportedPolicies[] = {
-        "allow-top-navigation-to-custom-protocols"_s, "allow-forms"_s, "allow-same-origin"_s, "allow-scripts"_s,
-        "allow-top-navigation"_s, "allow-pointer-lock"_s, "allow-popups"_s, "allow-popups-to-escape-sandbox"_s,
-        "allow-top-navigation-by-user-activation"_s, "allow-modals"_s, "allow-storage-access-by-user-activation"_s
+    static const char* const supportedPolicies[] = {
+        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox", "allow-top-navigation-by-user-activation", "allow-modals", "allow-storage-access-by-user-activation"
     };
 
-    for (auto supportedPolicy : supportedPolicies) {
+    for (auto* supportedPolicy : supportedPolicies) {
         if (equalIgnoringASCIICase(policy, supportedPolicy))
             return true;
     }
@@ -97,7 +95,7 @@ bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 }
 
 // Keep SecurityContext::isSupportedSandboxPolicy() in sync when updating this function.
-SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& invalidTokensErrorMessage)
+SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage)
 {
     // http://www.w3.org/TR/html5/the-iframe-element.html#attr-iframe-sandbox
     // Parse the unordered set of unique space-separated tokens.
@@ -116,30 +114,28 @@ SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& inva
             ++end;
 
         // Turn off the corresponding sandbox flag if it's set as "allowed".
-        auto sandboxToken = policy.substring(start, end - start);
-        if (equalLettersIgnoringASCIICase(sandboxToken, "allow-same-origin"_s))
+        String sandboxToken = policy.substring(start, end - start);
+        if (equalLettersIgnoringASCIICase(sandboxToken, "allow-same-origin"))
             flags &= ~SandboxOrigin;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-forms"_s))
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-forms"))
             flags &= ~SandboxForms;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-scripts"_s)) {
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-scripts")) {
             flags &= ~SandboxScripts;
             flags &= ~SandboxAutomaticFeatures;
-        } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation"_s)) {
+        } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation")) {
             flags &= ~SandboxTopNavigation;
             flags &= ~SandboxTopNavigationByUserActivation;
-        } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups"_s))
+        } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups"))
             flags &= ~SandboxPopups;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-pointer-lock"_s))
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-pointer-lock"))
             flags &= ~SandboxPointerLock;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups-to-escape-sandbox"_s))
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups-to-escape-sandbox"))
             flags &= ~SandboxPropagatesToAuxiliaryBrowsingContexts;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation-by-user-activation"_s))
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation-by-user-activation"))
             flags &= ~SandboxTopNavigationByUserActivation;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation-to-custom-protocols"_s))
-            flags &= ~SandboxTopNavigationToCustomProtocols;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-modals"_s))
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-modals"))
             flags &= ~SandboxModals;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-storage-access-by-user-activation"_s))
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-storage-access-by-user-activation"))
             flags &= ~SandboxStorageAccessByUserActivation;
         else {
             if (numberOfTokenErrors)

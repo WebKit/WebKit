@@ -39,7 +39,6 @@ class VisibleSelection;
 struct SimpleRange;
 struct TextRecognitionResult;
 
-enum class PageIsEditable : bool;
 enum class EnterKeyHint : uint8_t;
 
 #if PLATFORM(IOS_FAMILY)
@@ -53,8 +52,8 @@ public:
 
     WEBCORE_EXPORT String title() const final;
 
-    WEBCORE_EXPORT ExceptionOr<void> setInnerText(String&&);
-    WEBCORE_EXPORT ExceptionOr<void> setOuterText(String&&);
+    WEBCORE_EXPORT ExceptionOr<void> setInnerText(const String&);
+    WEBCORE_EXPORT ExceptionOr<void> setOuterText(const String&);
 
     virtual bool hasCustomFocusLogic() const;
     bool supportsFocus() const override;
@@ -62,7 +61,7 @@ public:
     WEBCORE_EXPORT String contentEditable() const;
     WEBCORE_EXPORT ExceptionOr<void> setContentEditable(const String&);
 
-    static Editability editabilityFromContentEditableAttr(const Node&, PageIsEditable);
+    static Editability editabilityFromContentEditableAttr(const Node&);
 
     virtual bool draggable() const;
     WEBCORE_EXPORT void setDraggable(bool);
@@ -94,9 +93,9 @@ public:
     virtual bool isTextControlInnerTextElement() const { return false; }
     virtual bool isSearchFieldResultsButtonElement() const { return false; }
 
-    bool willRespondToMouseMoveEvents() const override;
-    bool willRespondToMouseWheelEvents() const override;
-    bool willRespondToMouseClickEventsWithEditability(Editability) const override;
+    bool willRespondToMouseMoveEvents() override;
+    bool willRespondToMouseWheelEvents() override;
+    bool willRespondToMouseClickEvents() override;
 
     virtual bool isLabelable() const { return false; }
     virtual FormNamedItem* asFormNamedItem();
@@ -130,7 +129,7 @@ public:
 
     WEBCORE_EXPORT EnterKeyHint canonicalEnterKeyHint() const;
     String enterKeyHint() const;
-    void setEnterKeyHint(const AtomString& value);
+    void setEnterKeyHint(const String& value);
 
     WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
 
@@ -141,8 +140,7 @@ public:
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);
 
-    enum class AllowZeroValue : bool { No, Yes };
-    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowZeroValue = AllowZeroValue::Yes);
+    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
     void addHTMLMultiLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
     void addHTMLPixelsToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
     void addHTMLNumberToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
@@ -179,7 +177,7 @@ private:
     enum class AllowPercentage : bool { No, Yes };
     enum class UseCSSPXAsUnitType : bool { No, Yes };
     enum class IsMultiLength : bool { No, Yes };
-    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength, AllowZeroValue = AllowZeroValue::Yes);
+    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength);
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, ConstructionType type = CreateHTMLElement)

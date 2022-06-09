@@ -26,10 +26,10 @@
 #include <wtf/glib/WTFGType.h>
 
 /**
- * WebKitBackForwardList:
+ * SECTION: WebKitBackForwardList
+ * @Short_description: List of visited pages
+ * @Title: WebKitBackForwardList
  * @See_also: #WebKitWebView, #WebKitBackForwardListItem
- *
- * List of visited pages.
  *
  * WebKitBackForwardList maintains a list of visited pages used to
  * navigate to recent pages. Items are inserted in the list in the
@@ -219,8 +219,6 @@ WebKitBackForwardListItem* webkit_back_forward_list_get_nth_item(WebKitBackForwa
  * webkit_back_forward_list_get_length:
  * @back_forward_list: a #WebKitBackForwardList
  *
- * Obtain the amount of items in the list.
- *
  * Returns: the length of @back_forward_list.
  */
 guint webkit_back_forward_list_get_length(WebKitBackForwardList* backForwardList)
@@ -236,9 +234,7 @@ guint webkit_back_forward_list_get_length(WebKitBackForwardList* backForwardList
  * webkit_back_forward_list_get_back_list:
  * @back_forward_list: a #WebKitBackForwardList
  *
- * Obtain the list of items preceding the current one.
- *
- * Returns: (element-type WebKitBackForwardListItem) (transfer container): a #GList of
+ * Returns: (element-type WebKit2.BackForwardListItem) (transfer container): a #GList of
  *    items preceding the current item.
  */
 GList* webkit_back_forward_list_get_back_list(WebKitBackForwardList* backForwardList)
@@ -253,9 +249,7 @@ GList* webkit_back_forward_list_get_back_list(WebKitBackForwardList* backForward
  * @back_forward_list: a #WebKitBackForwardList
  * @limit: the number of items to retrieve
  *
- * Obtain a list up to some number of items preceding the current one.
- *
- * Returns: (element-type WebKitBackForwardListItem) (transfer container): a #GList of
+ * Returns: (element-type WebKit2.BackForwardListItem) (transfer container): a #GList of
  *    items preceding the current item limited by @limit.
  */
 GList* webkit_back_forward_list_get_back_list_with_limit(WebKitBackForwardList* backForwardList, guint limit)
@@ -271,9 +265,7 @@ GList* webkit_back_forward_list_get_back_list_with_limit(WebKitBackForwardList* 
  * webkit_back_forward_list_get_forward_list:
  * @back_forward_list: a #WebKitBackForwardList
  *
- * Obtain the list of items following the current one.
- *
- * Returns: (element-type WebKitBackForwardListItem) (transfer container): a #GList of
+ * Returns: (element-type WebKit2.BackForwardListItem) (transfer container): a #GList of
  *    items following the current item.
  */
 GList* webkit_back_forward_list_get_forward_list(WebKitBackForwardList* backForwardList)
@@ -288,9 +280,7 @@ GList* webkit_back_forward_list_get_forward_list(WebKitBackForwardList* backForw
  * @back_forward_list: a #WebKitBackForwardList
  * @limit: the number of items to retrieve
  *
- * Obtain a list up to some number of items following the current one.
- *
- * Returns: (element-type WebKitBackForwardListItem) (transfer container): a #GList of
+ * Returns: (element-type WebKit2.BackForwardListItem) (transfer container): a #GList of
  *    items following the current item limited by @limit.
  */
 GList* webkit_back_forward_list_get_forward_list_with_limit(WebKitBackForwardList* backForwardList, guint limit)

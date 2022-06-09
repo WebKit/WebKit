@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,18 +116,14 @@ void BifurcatedGraphicsContext::strokePath(const Path& path)
 
 void BifurcatedGraphicsContext::beginTransparencyLayer(float opacity)
 {
-    GraphicsContext::beginTransparencyLayer(opacity);
     m_primaryContext.beginTransparencyLayer(opacity);
     m_secondaryContext.beginTransparencyLayer(opacity);
-    m_state.didBeginTransparencyLayer();
 }
 
 void BifurcatedGraphicsContext::endTransparencyLayer()
 {
-    GraphicsContext::endTransparencyLayer();
     m_primaryContext.endTransparencyLayer();
     m_secondaryContext.endTransparencyLayer();
-    m_state.didEndTransparencyLayer(m_primaryContext.alpha());
 }
 
 void BifurcatedGraphicsContext::applyDeviceScaleFactor(float factor)
@@ -267,22 +263,23 @@ void BifurcatedGraphicsContext::drawNativeImage(NativeImage& nativeImage, const 
     m_secondaryContext.drawNativeImage(nativeImage, selfSize, destRect, srcRect, options);
 }
 
-void BifurcatedGraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    m_primaryContext.drawSystemImage(systemImage, destinationRect);
-    m_secondaryContext.drawSystemImage(systemImage, destinationRect);
-}
-
-void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
-{
-    m_primaryContext.drawPattern(nativeImage, destRect, tileRect, patternTransform, phase, spacing, options);
-    m_secondaryContext.drawPattern(nativeImage, destRect, tileRect, patternTransform, phase, spacing, options);
+    m_primaryContext.drawPattern(nativeImage, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
+    m_secondaryContext.drawPattern(nativeImage, imageSize, destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
 ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
 {
     auto result = m_primaryContext.drawImage(image, destination, source, options);
     m_secondaryContext.drawImage(image, destination, source, options);
+    return result;
+}
+
+ImageDrawResult BifurcatedGraphicsContext::drawImageForCanvas(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options, DestinationColorSpace canvasColorSpace)
+{
+    auto result = m_primaryContext.drawImageForCanvas(image, destination, source, options, canvasColorSpace);
+    m_secondaryContext.drawImageForCanvas(image, destination, source, options, canvasColorSpace);
     return result;
 }
 
@@ -387,12 +384,6 @@ void BifurcatedGraphicsContext::drawGlyphs(const Font& font, const GlyphBufferGl
     m_secondaryContext.drawGlyphs(font, glyphs, advances, numGlyphs, point, fontSmoothingMode);
 }
 
-void BifurcatedGraphicsContext::drawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
-{
-    m_primaryContext.drawDecomposedGlyphs(font, decomposedGlyphs);
-    m_secondaryContext.drawDecomposedGlyphs(font, decomposedGlyphs);
-}
-
 void BifurcatedGraphicsContext::drawEmphasisMarks(const FontCascade& cascade, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
 {
     m_primaryContext.drawEmphasisMarks(cascade, run, mark, point, from, to);
@@ -440,14 +431,13 @@ bool BifurcatedGraphicsContext::supportsInternalLinks() const
     return m_primaryContext.supportsInternalLinks();
 }
 
-void BifurcatedGraphicsContext::didUpdateState(GraphicsContextState& state)
+void BifurcatedGraphicsContext::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
 {
     // This calls updateState() instead of didUpdateState() so that changes
     // are also applied to each context's GraphicsContextState, so that code
     // internal to the child contexts that reads from the state gets the right values.
-    m_primaryContext.updateState(state);
-    m_secondaryContext.updateState(state);
-    state.didApplyChanges();
+    m_primaryContext.updateState(state, flags);
+    m_secondaryContext.updateState(state, flags);
 }
 
 #if OS(WINDOWS) && !USE(CAIRO)

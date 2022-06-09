@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2019 Igalia S.L.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +29,8 @@
 
 #include "Element.h"
 #include "InspectorInstrumentation.h"
-#include "JSNodeCustom.h"
 #include "ResizeObserverEntry.h"
 #include "ResizeObserverOptions.h"
-#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 
 namespace WebCore {
@@ -62,7 +59,7 @@ void ResizeObserver::observe(Element& target, const ResizeObserverOptions& optio
     if (!m_callback)
         return;
 
-    auto position = m_observations.findIf([&](auto& observation) {
+    auto position = m_observations.findMatching([&](auto& observation) {
         return observation->target() == &target;
     });
 
@@ -127,10 +124,11 @@ size_t ResizeObserver::gatherObservations(size_t deeperThan)
 
 void ResizeObserver::deliverObservations()
 {
-    auto entries = m_activeObservations.map([](auto& observation) {
+    Vector<Ref<ResizeObserverEntry>> entries;
+    for (const auto& observation : m_activeObservations) {
         ASSERT(observation->target());
-        return ResizeObserverEntry::create(observation->target(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize());
-    });
+        entries.append(ResizeObserverEntry::create(observation->target(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize()));
+    }
     m_activeObservations.clear();
     auto activeObservationTargets = std::exchange(m_activeObservationTargets, { });
 
@@ -151,11 +149,11 @@ void ResizeObserver::deliverObservations()
 bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visitor) const
 {
     for (auto& observation : m_observations) {
-        if (auto* target = observation->target(); target && containsWebCoreOpaqueRoot(visitor, target))
+        if (auto* target = observation->target(); target && visitor.containsOpaqueRoot(target->opaqueRoot()))
             return true;
     }
     for (auto& target : m_activeObservationTargets) {
-        if (containsWebCoreOpaqueRoot(visitor, target.get()))
+        if (visitor.containsOpaqueRoot(target->opaqueRoot()))
             return true;
     }
     return false;

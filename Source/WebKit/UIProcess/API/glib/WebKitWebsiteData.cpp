@@ -29,10 +29,10 @@
 using namespace WebKit;
 
 /**
- * WebKitWebsiteData: (ref-func webkit_website_data_ref) (unref-func webkit_website_data_unref)
+ * SECTION: WebKitWebsiteData
+ * @Short_description: Website data
+ * @Title: WebKitWebsiteData
  * @See_also: #WebKitWebsiteDataManager
- *
- * Data stored locally by a web site.
  *
  * WebKitWebsiteData represents data stored in the client by a particular website.
  * A website is normally a set of URLs grouped by domain name. You can get the website name,
@@ -191,7 +191,7 @@ const char* webkit_website_data_get_name(WebKitWebsiteData* websiteData)
     g_return_val_if_fail(websiteData, nullptr);
 
     if (websiteData->displayName.isNull()) {
-        if (websiteData->record.displayName == "Local documents on your computer"_s)
+        if (websiteData->record.displayName == "Local documents on your computer")
             websiteData->displayName = _("Local files");
         else
             websiteData->displayName = websiteData->record.displayName.utf8();

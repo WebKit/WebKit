@@ -206,13 +206,13 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setShowsToolTipOverTruncatedText(BOOL);
     virtual HRESULT STDMETHODCALLTYPE shouldInvertColors(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setShouldInvertColors(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE requestAnimationFrameEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setRequestAnimationFrameEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE mockScrollbarsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setMockScrollbarsEnabled(BOOL);
 
-    // These methods are no-ops, and only retained to keep
+    // These two methods are no-ops, and only retained to keep
     // the Interface consistent. DO NOT USE THEM.
-    virtual HRESULT STDMETHODCALLTYPE requestAnimationFrameEnabled(_Out_ BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE setRequestAnimationFrameEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE screenFontSubstitutionEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setScreenFontSubstitutionEnabled(BOOL);
 
@@ -255,6 +255,8 @@ public:
     // IWebPreferencesPrivate6
     virtual HRESULT STDMETHODCALLTYPE dataTransferItemsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setDataTransferItemsEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE inspectorAdditionsEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setInspectorAdditionsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE visualViewportAPIEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setVisualViewportAPIEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE CSSOMViewScrollingAPIEnabled(_Out_ BOOL*);
@@ -344,12 +346,9 @@ public:
     // The following preference accessors are not exposed via IWebPreferences* as they are only
     // needed for testing purposes and can be toggled via the set*PreferenceForTesting functions.
     bool canvasColorSpaceEnabled();
-    bool cssGradientInterpolationColorSpacesEnabled();
     bool cssGradientPremultipliedAlphaInterpolationEnabled();
     bool mockScrollbarsControllerEnabled();
     bool cssInputSecurityEnabled();
-    bool cssTextAlignLastEnabled();
-    bool cssTextJustifyEnabled();
 
 private:
     WebPreferences();

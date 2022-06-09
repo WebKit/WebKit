@@ -69,9 +69,7 @@ public:
     float borderLeftWidth() const
     {
         if (m_left.style() == BorderStyle::None || m_left.style() == BorderStyle::Hidden)
-            return 0;
-        if (m_image.overridesBorderWidths() && m_image.borderSlices().left().isFixed())
-            return m_image.borderSlices().left().value();
+            return 0; 
         return m_left.width();
     }
 
@@ -79,8 +77,6 @@ public:
     {
         if (m_right.style() == BorderStyle::None || m_right.style() == BorderStyle::Hidden)
             return 0;
-        if (m_image.overridesBorderWidths() && m_image.borderSlices().right().isFixed())
-            return m_image.borderSlices().right().value();
         return m_right.width();
     }
 
@@ -88,8 +84,6 @@ public:
     {
         if (m_top.style() == BorderStyle::None || m_top.style() == BorderStyle::Hidden)
             return 0;
-        if (m_image.overridesBorderWidths() && m_image.borderSlices().top().isFixed())
-            return m_image.borderSlices().top().value();
         return m_top.width();
     }
 
@@ -97,8 +91,6 @@ public:
     {
         if (m_bottom.style() == BorderStyle::None || m_bottom.style() == BorderStyle::Hidden)
             return 0;
-        if (m_image.overridesBorderWidths() && m_image.borderSlices().bottom().isFixed())
-            return m_image.borderSlices().bottom().value();
         return m_bottom.width();
     }
 
@@ -106,8 +98,6 @@ public:
     {
         return FloatBoxExtent(borderTopWidth(), borderRightWidth(), borderBottomWidth(), borderLeftWidth());
     }
-
-    bool isEquivalentForPainting(const BorderData& other, bool currentColorDiffers) const;
 
     bool operator==(const BorderData& o) const
     {

@@ -60,22 +60,10 @@ promise_test(async () => {
 
 promise_test(async () => {
     const promise = self.internals.schedulePushEvent("test");
-    const event = await new Promise(resolve => self.onpush = (event) => {
-        self.registration.showNotification("notification");
-        resolve(event);
-    });
+    const event = await new Promise(resolve => self.onpush = resolve);
     assert_equals(event.data.text(), "test");
     assert_true(await promise);
 }, "Simulating firing of a push event");
-
-promise_test(async () => {
-    const promise = self.internals.schedulePushEvent("test");
-    const event = await new Promise(resolve => self.onpush = (event) => {
-        resolve(event);
-    });
-    assert_equals(event.data.text(), "test");
-    assert_false(await promise);
-}, "Simulating firing of a push event without notification");
 
 promise_test(async () => {
     if (!self.internals)
@@ -89,7 +77,6 @@ promise_test(async () => {
     promise.then(() => isPushEventPromiseResolved = true);
 
     const event = await new Promise(resolve => self.onpush = (event) => {
-        self.registration.showNotification("notification");
         event.waitUntil(waitUntilPromise);
         resolve(event);
     });
@@ -106,33 +93,8 @@ promise_test(async () => {
     if (!self.internals)
         return;
 
-    let resolveWaitUntilPromise;
-    const waitUntilPromise = new Promise(resolve => resolveWaitUntilPromise = resolve);
-
-    let isPushEventPromiseResolved = false;
-    const promise = internals.schedulePushEvent("test");
-    promise.then(() => isPushEventPromiseResolved = true);
-
-    const event = await new Promise(resolve => self.onpush = (event) => {
-        event.waitUntil(waitUntilPromise);
-        resolve(event);
-    });
-    assert_equals(event.data.text(), "test");
-
-    await new Promise(resolve => self.setTimeout(resolve, 100));
-    assert_false(isPushEventPromiseResolved);
-
-    resolveWaitUntilPromise();
-    assert_false(await promise);
-}, "Simulating firing of a push event - successful waitUntil without notification");
-
-promise_test(async () => {
-    if (!self.internals)
-        return;
-
     const promise = internals.schedulePushEvent("test");
     const event = await new Promise(resolve => self.onpush = (event) => {
-        self.registration.showNotification("notification");
         event.waitUntil(Promise.resolve());
         event.waitUntil(Promise.reject('error'));
         resolve(event);

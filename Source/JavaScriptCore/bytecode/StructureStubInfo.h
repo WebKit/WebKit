@@ -46,10 +46,6 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
-namespace DFG {
-struct UnlinkedStructureStubInfo;
-}
-
 class AccessCase;
 class AccessGenerationResult;
 class PolymorphicAccess;
@@ -86,7 +82,6 @@ enum class CacheType : int8_t {
 };
 
 struct UnlinkedStructureStubInfo;
-struct BaselineUnlinkedStructureStubInfo;
 
 class StructureStubInfo {
     WTF_MAKE_NONCOPYABLE(StructureStubInfo);
@@ -96,7 +91,17 @@ public:
         : codeOrigin(codeOrigin)
         , accessType(accessType)
         , bufferingCountdown(Options::repatchBufferingCountdown())
+        , resetByGC(false)
+        , tookSlowPath(false)
+        , everConsidered(false)
+        , prototypeIsKnownObject(false)
+        , sawNonCell(false)
+        , hasConstantIdentifier(true)
+        , propertyIsString(false)
+        , propertyIsInt32(false)
+        , propertyIsSymbol(false)
     {
+        regs.thisGPR = InvalidGPRReg;
     }
 
     StructureStubInfo()
@@ -118,8 +123,7 @@ public:
     void deref();
     void aboutToDie();
 
-    void initializeFromUnlinkedStructureStubInfo(const BaselineUnlinkedStructureStubInfo&);
-    void initializeFromDFGUnlinkedStructureStubInfo(const DFG::UnlinkedStructureStubInfo&);
+    void initializeFromUnlinkedStructureStubInfo(CodeBlock*, UnlinkedStructureStubInfo&);
 
     DECLARE_VISIT_AGGREGATE;
 
@@ -164,30 +168,30 @@ public:
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            m_valueTagGPR,
+            valueTagGPR,
 #endif
-            m_valueGPR);
+            valueGPR);
     }
 
     JSValueRegs propertyRegs() const
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            m_extraTagGPR,
+            v.propertyTagGPR,
 #endif
-            m_extraGPR);
+            regs.propertyGPR);
     }
 
     JSValueRegs baseRegs() const
     {
         return JSValueRegs(
 #if USE(JSVALUE32_64)
-            m_baseTagGPR,
+            baseTagGPR,
 #endif
-            m_baseGPR);
+            baseGPR);
     }
 
-    bool thisValueIsInExtraGPR() const { return accessType == AccessType::GetByIdWithThis; }
+    bool thisValueIsInThisGPR() const { return accessType == AccessType::GetByIdWithThis; }
 
 #if ASSERT_ENABLED
     void checkConsistency();
@@ -208,10 +212,6 @@ public:
         return considerCaching(vm, codeBlock, structure, impl);
     }
 
-    Structure* inlineAccessBaseStructure() const
-    {
-        return m_inlineAccessBaseStructureID.get();
-    }
 private:
     ALWAYS_INLINE bool considerCaching(VM& vm, CodeBlock* codeBlock, Structure* structure, CacheableIdentifier impl)
     {
@@ -352,28 +352,24 @@ private:
 
 public:
     static ptrdiff_t offsetOfByIdSelfOffset() { return OBJECT_OFFSETOF(StructureStubInfo, byIdSelfOffset); }
-    static ptrdiff_t offsetOfInlineAccessBaseStructureID() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructureID); }
+    static ptrdiff_t offsetOfInlineAccessBaseStructure() { return OBJECT_OFFSETOF(StructureStubInfo, m_inlineAccessBaseStructure); }
     static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
     static ptrdiff_t offsetOfDoneLocation() { return OBJECT_OFFSETOF(StructureStubInfo, doneLocation); }
     static ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
     static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
     static ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(StructureStubInfo, countdown); }
 
-    GPRReg thisGPR() const { return m_extraGPR; }
-    GPRReg prototypeGPR() const { return m_extraGPR; }
-    GPRReg propertyGPR() const { return m_extraGPR; }
-    GPRReg brandGPR() const { return m_extraGPR; }
-
-#if USE(JSVALUE32_64)
-    GPRReg thisTagGPR() const { return m_extraTagGPR; }
-    GPRReg prototypeTagGPR() const { return m_extraTagGPR; }
-    GPRReg propertyTagGPR() const { return m_extraTagGPR; }
-#endif
+    Structure* inlineAccessBaseStructure(VM& vm)
+    {
+        if (!m_inlineAccessBaseStructure)
+            return nullptr;
+        return vm.getStructure(m_inlineAccessBaseStructure);
+    }
 
     CodeOrigin codeOrigin;
     PropertyOffset byIdSelfOffset;
     std::unique_ptr<PolymorphicAccess> m_stub;
-    WriteBarrierStructureID m_inlineAccessBaseStructureID;
+    StructureID m_inlineAccessBaseStructure { 0 };
 private:
     CacheableIdentifier m_identifier;
     // Represents those structures that already have buffered AccessCases in the PolymorphicAccess.
@@ -395,17 +391,26 @@ public:
 
     RegisterSet usedRegisters;
 
-    GPRReg m_baseGPR { InvalidGPRReg };
-    GPRReg m_valueGPR { InvalidGPRReg };
-    GPRReg m_extraGPR { InvalidGPRReg };
+    GPRReg baseGPR { InvalidGPRReg };
+    GPRReg valueGPR { InvalidGPRReg };
+    union {
+        GPRReg thisGPR;
+        GPRReg prototypeGPR;
+        GPRReg propertyGPR;
+        GPRReg brandGPR;
+    } regs;
     GPRReg m_stubInfoGPR { InvalidGPRReg };
     GPRReg m_arrayProfileGPR { InvalidGPRReg };
 #if USE(JSVALUE32_64)
-    GPRReg m_valueTagGPR { InvalidGPRReg };
-    // FIXME: [32-bits] Check if StructureStubInfo::m_baseTagGPR is used somewhere.
+    GPRReg valueTagGPR;
+    // FIXME: [32-bits] Check if StructureStubInfo::baseTagGPR is used somewhere.
     // https://bugs.webkit.org/show_bug.cgi?id=204726
-    GPRReg m_baseTagGPR { InvalidGPRReg };
-    GPRReg m_extraTagGPR { InvalidGPRReg };
+    GPRReg baseTagGPR;
+    union {
+        GPRReg thisTagGPR;
+        GPRReg propertyTagGPR;
+        GPRReg brandTagGPR;
+    } v;
 #endif
 
     AccessType accessType;
@@ -417,21 +422,21 @@ public:
     uint8_t countdown { 1 };
     uint8_t repatchCount { 0 };
     uint8_t numberOfCoolDowns { 0 };
+
+    CallSiteIndex callSiteIndex;
+
     uint8_t bufferingCountdown;
+    bool resetByGC : 1;
+    bool tookSlowPath : 1;
+    bool everConsidered : 1;
+    bool prototypeIsKnownObject : 1; // Only relevant for InstanceOf.
+    bool sawNonCell : 1;
+    bool hasConstantIdentifier : 1;
+    bool propertyIsString : 1;
+    bool propertyIsInt32 : 1;
+    bool propertyIsSymbol : 1;
 private:
     Lock m_bufferedStructuresLock;
-public:
-    CallSiteIndex callSiteIndex;
-    bool resetByGC : 1 { false };
-    bool tookSlowPath : 1 { false };
-    bool everConsidered : 1 { false };
-    bool prototypeIsKnownObject : 1 { false }; // Only relevant for InstanceOf.
-    bool sawNonCell : 1 { false };
-    bool hasConstantIdentifier : 1 { true };
-    bool propertyIsString : 1 { false };
-    bool propertyIsInt32 : 1 { false };
-    bool propertyIsSymbol : 1 { false };
-    bool useDataIC : 1 { false };
 };
 
 inline CodeOrigin getStructureStubInfoCodeOrigin(StructureStubInfo& structureStubInfo)
@@ -477,20 +482,14 @@ inline auto appropriateGenericGetByIdFunction(AccessType type) -> decltype(&oper
 
 struct UnlinkedStructureStubInfo {
     AccessType accessType;
-    PutKind putKind { PutKind::Direct };
+    PutKind putKind;
     PrivateFieldPutKind privateFieldPutKind { PrivateFieldPutKind::none() };
     ECMAMode ecmaMode { ECMAMode::sloppy() };
     bool propertyIsInt32 { false };
-    bool propertyIsString { false };
-    bool propertyIsSymbol { false };
-    bool prototypeIsKnownObject { false };
+    BytecodeIndex bytecodeIndex;
     CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
-};
-
-struct BaselineUnlinkedStructureStubInfo : UnlinkedStructureStubInfo {
-    BytecodeIndex bytecodeIndex;
 };
 
 #else

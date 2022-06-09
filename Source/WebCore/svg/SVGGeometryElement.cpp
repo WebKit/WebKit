@@ -69,14 +69,14 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
 {
     document().updateLayoutIgnorePendingStylesheets();
 
-    // Spec: Clamp distance to [0, length].
-    distance = clampTo<float>(distance, 0, getTotalLength());
-
     auto* renderer = this->renderer();
 
     // Spec: If current element is a non-rendered element, throw an InvalidStateError.
     if (!renderer)
         return Exception { InvalidStateError };
+
+    // Spec: Clamp distance to [0, length].
+    distance = clampTo<float>(distance, 0, getTotalLength());
 
     // Spec: Return a newly created, detached SVGPoint object.
     if (is<LegacyRenderSVGShape>(renderer))
@@ -138,7 +138,7 @@ void SVGGeometryElement::parseAttribute(const QualifiedName& name, const AtomStr
     if (name == SVGNames::pathLengthAttr) {
         m_pathLength->setBaseValInternal(value.toFloat());
         if (m_pathLength->baseVal() < 0)
-            document().accessSVGExtensions().reportError("A negative value for path attribute <pathLength> is not allowed"_s);
+            document().accessSVGExtensions().reportError("A negative value for path attribute <pathLength> is not allowed");
         return;
     }
 
@@ -147,10 +147,9 @@ void SVGGeometryElement::parseAttribute(const QualifiedName& name, const AtomStr
 
 void SVGGeometryElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
-        ASSERT(attrName == SVGNames::pathLengthAttr);
+    if (attrName == SVGNames::pathLengthAttr) {
         InstanceInvalidationGuard guard(*this);
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

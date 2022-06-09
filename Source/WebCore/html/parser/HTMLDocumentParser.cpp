@@ -32,7 +32,6 @@
 #include "DocumentLoader.h"
 #include "EventLoop.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "HTMLDocument.h"
 #include "HTMLParserScheduler.h"
 #include "HTMLPreloadScanner.h"
@@ -277,9 +276,15 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
         if (UNLIKELY(mode == AllowYield && m_parserScheduler->shouldYieldBeforeToken(session)))
             return true;
 
+        if (!parsingFragment)
+            m_sourceTracker.startToken(m_input.current(), m_tokenizer);
+
         auto token = m_tokenizer.nextToken(m_input.current());
         if (!token)
             return false;
+
+        if (!parsingFragment)
+            m_sourceTracker.endToken(m_input.current(), m_tokenizer);
 
         constructTreeFromHTMLToken(token);
     } while (!isStopped());
@@ -346,7 +351,7 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLTokenizer::TokenPtr& raw
     // FIXME: Stop clearing the rawToken once we start running the parser off
     // the main thread or once we stop allowing synchronous JavaScript
     // execution from parseAttribute.
-    if (rawToken->type() != HTMLToken::Type::Character) {
+    if (rawToken->type() != HTMLToken::Character) {
         // Clearing the TokenPtr makes sure we don't clear the HTMLToken a second time
         // later when the TokenPtr is destroyed.
         rawToken.clear();

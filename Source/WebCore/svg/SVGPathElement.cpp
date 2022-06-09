@@ -65,14 +65,13 @@ void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomString&
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
-        ASSERT(attrName == SVGNames::dAttr);
+    if (attrName == SVGNames::dAttr) {
         InstanceInvalidationGuard guard(*this);
         invalidateMPathDependencies();
 
         if (auto* renderer = this->renderer())
             static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
 
         return;
     }

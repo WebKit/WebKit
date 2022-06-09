@@ -35,10 +35,7 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
-#include "RenderListItem.h"
-#include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
-#include "RenderTable.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
@@ -89,6 +86,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowIsInsideANonMultiColumnThread:
         stream << "flow is inside a non-multicolumn container";
         break;
+    case AvoidanceReason::FlowHasHorizonalWritingMode:
+        stream << "horizontal writing mode";
+        break;
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
@@ -113,11 +113,14 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowHasOverflowNotVisible:
         stream << "overflow: hidden | scroll | auto";
         break;
+    case AvoidanceReason::FlowMayNotBeLTR:
+        stream << "dir may not be LTR";
+        break;
     case AvoidanceReason::FlowHasLineBoxContainProperty:
         stream << "line-box-contain value indicates variable line height";
         break;
-    case AvoidanceReason::FlowHasUnsupportedWritingMode:
-        stream << "unsupported writing mode (vertical-rl/horizontal-bt";
+    case AvoidanceReason::FlowIsNotTopToBottom:
+        stream << "non top-to-bottom flow";
         break;
     case AvoidanceReason::FlowHasLineAlignEdges:
         stream << "-webkit-line-align edges";
@@ -158,6 +161,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
         break;
+    case AvoidanceReason::FlowHasComplexFontCodePath:
+        stream << "text with complex font codepath";
+        break;
     case AvoidanceReason::FlowHasLineBoxContainGlyphs:
         stream << "-webkit-line-box-contain: glyphs";
         break;
@@ -197,9 +203,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::BoxDecorationBreakClone:
         stream << "webkit-box-decoration-break: clone";
         break;
-    case AvoidanceReason::FlowIsUnsupportedListItem:
-        stream << "list item with text-indent";
-        break;
     default:
         break;
     }
@@ -214,69 +217,78 @@ static void printReasons(OptionSet<AvoidanceReason> reasons, TextStream& stream)
     }
 }
 
-static void printTextForSubtree(const RenderElement& renderer, unsigned& charactersLeft, TextStream& stream)
+static void printTextForSubtree(const RenderObject& renderer, unsigned& charactersLeft, TextStream& stream)
 {
-    for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
-        if (is<RenderText>(child)) {
-            String text = downcast<RenderText>(child).text();
-            auto textView = StringView(text).stripWhiteSpace();
-            auto length = std::min(charactersLeft, textView.length());
-            stream << textView.left(length);
-            charactersLeft -= length;
-            continue;
-        }
-        printTextForSubtree(downcast<RenderElement>(child), charactersLeft, stream);
+    if (!charactersLeft)
+        return;
+    if (is<RenderText>(renderer)) {
+        String text = downcast<RenderText>(renderer).text();
+        text = text.stripWhiteSpace();
+        unsigned len = std::min(charactersLeft, text.length());
+        stream << text.left(len);
+        charactersLeft -= len;
+        return;
     }
+    if (!is<RenderElement>(renderer))
+        return;
+    for (const auto* child = downcast<RenderElement>(renderer).firstChild(); child; child = child->nextSibling())
+        printTextForSubtree(*child, charactersLeft, stream);
 }
 
-static unsigned contentLengthForSubtreeStayWithinBlockFlow(const RenderElement& renderer)
+static unsigned textLengthForSubtree(const RenderObject& renderer)
 {
+    if (is<RenderText>(renderer))
+        return downcast<RenderText>(renderer).text().length();
+    if (!is<RenderElement>(renderer))
+        return 0;
     unsigned textLength = 0;
-    for (auto& child : childrenOfType<RenderObject>(renderer)) {
-        if (is<RenderBlockFlow>(child)) {
-            // Do not descend into nested RenderBlockFlow.
-            continue;
-        }
-        if (is<RenderText>(child)) {
-            textLength += downcast<RenderText>(child).text().length();
-            continue;
-        }
-        textLength += contentLengthForSubtreeStayWithinBlockFlow(downcast<RenderElement>(child));
-    }
+    for (const auto* child = downcast<RenderElement>(renderer).firstChild(); child; child = child->nextSibling())
+        textLength += textLengthForSubtree(*child);
     return textLength;
 }
 
-static unsigned contentLengthForBlockFlow(const RenderBlockFlow& blockFlow)
+static void collectNonEmptyLeafRenderBlockFlows(const RenderObject& renderer, HashSet<const RenderBlockFlow*>& leafRenderers)
 {
-    return contentLengthForSubtreeStayWithinBlockFlow(blockFlow);
+    if (is<RenderText>(renderer)) {
+        if (!downcast<RenderText>(renderer).text().length())
+            return;
+        // Find RenderBlockFlow ancestor.
+        for (const auto* current = renderer.parent(); current; current = current->parent()) {
+            if (!is<RenderBlockFlow>(current))
+                continue;
+            leafRenderers.add(downcast<RenderBlockFlow>(current));
+            break;
+        }
+        return;
+    }
+    if (!is<RenderElement>(renderer))
+        return;
+    for (const auto* child = downcast<RenderElement>(renderer).firstChild(); child; child = child->nextSibling())
+        collectNonEmptyLeafRenderBlockFlows(*child, leafRenderers);
 }
 
-static Vector<const RenderBlockFlow*> collectRenderBlockFlowsForCurrentPage()
+static void collectNonEmptyLeafRenderBlockFlowsForCurrentPage(HashSet<const RenderBlockFlow*>& leafRenderers)
 {
-    Vector<const RenderBlockFlow*> renderFlows;
     for (const auto* document : Document::allDocuments()) {
         if (!document->renderView() || document->backForwardCacheState() != Document::NotInBackForwardCache)
             continue;
         if (!document->isHTMLDocument() && !document->isXHTMLDocument())
             continue;
-        for (auto& descendant : descendantsOfType<RenderBlockFlow>(*document->renderView())) {
-            if (descendant.childrenInline())
-                renderFlows.append(&descendant);
-        }
+        collectNonEmptyLeafRenderBlockFlows(*document->renderView(), leafRenderers);
     }
-    return renderFlows;
 }
 
 static void printModernLineLayoutBlockList(void)
 {
-    auto renderBlockFlows = collectRenderBlockFlowsForCurrentPage();
-    if (!renderBlockFlows.size()) {
+    HashSet<const RenderBlockFlow*> leafRenderers;
+    collectNonEmptyLeafRenderBlockFlowsForCurrentPage(leafRenderers);
+    if (!leafRenderers.size()) {
         WTFLogAlways("No text found in this document\n");
         return;
     }
     TextStream stream;
     stream << "---------------------------------------------------\n";
-    for (auto* flow : renderBlockFlows) {
+    for (const auto* flow : leafRenderers) {
         auto reasons = canUseForLineLayoutWithReason(*flow, IncludeReasons::All);
         if (reasons.isEmpty())
             continue;
@@ -285,7 +297,7 @@ static void printModernLineLayoutBlockList(void)
         printTextForSubtree(*flow, printedLength, stream);
         for (;printedLength > 0; --printedLength)
             stream << " ";
-        stream << "\"(" << contentLengthForBlockFlow(*flow) << "):";
+        stream << "\"(" << textLengthForSubtree(*flow) << "):";
         printReasons(reasons, stream);
         stream << "\n";
     }
@@ -295,8 +307,9 @@ static void printModernLineLayoutBlockList(void)
 
 static void printModernLineLayoutCoverage(void)
 {
-    auto renderBlockFlows = collectRenderBlockFlowsForCurrentPage();
-    if (!renderBlockFlows.size()) {
+    HashSet<const RenderBlockFlow*> leafRenderers;
+    collectNonEmptyLeafRenderBlockFlowsForCurrentPage(leafRenderers);
+    if (!leafRenderers.size()) {
         WTFLogAlways("No text found in this document\n");
         return;
     }
@@ -307,8 +320,8 @@ static void printModernLineLayoutCoverage(void)
     unsigned numberOfUnsupportedLeafBlocks = 0;
     unsigned supportedButForcedToLineLayoutTextLength = 0;
     unsigned numberOfSupportedButForcedToLineLayoutLeafBlocks = 0;
-    for (auto* flow : renderBlockFlows) {
-        auto flowLength = contentLengthForBlockFlow(*flow);
+    for (const auto* flow : leafRenderers) {
+        auto flowLength = textLengthForSubtree(*flow);
         textLength += flowLength;
         auto reasons = canUseForLineLayoutWithReason(*flow, IncludeReasons::All);
         if (reasons.isEmpty()) {
@@ -318,8 +331,6 @@ static void printModernLineLayoutCoverage(void)
             }
             continue;
         }
-        if (reasons.contains(AvoidanceReason::FlowDoesNotEstablishInlineFormattingContext))
-            continue;
         ++numberOfUnsupportedLeafBlocks;
         unsupportedTextLength += flowLength;
         for (auto reason : reasons) {
@@ -335,7 +346,7 @@ static void printModernLineLayoutCoverage(void)
     } else
         stream << "Modern line layout coverage: " << (float)(textLength - unsupportedTextLength) / (float)textLength * 100 << "%";
     stream << "\n\n";
-    stream << "Number of blocks: total(" <<  renderBlockFlows.size() << ") legacy(" << numberOfUnsupportedLeafBlocks << ")\nContent length: total(" <<
+    stream << "Number of blocks: total(" <<  leafRenderers.size() << ") legacy(" << numberOfUnsupportedLeafBlocks << ")\nContent length: total(" <<
         textLength << ") legacy(" << unsupportedTextLength << ")\n";
     for (const auto& reasonEntry : flowStatistics) {
         printReason(static_cast<AvoidanceReason>(reasonEntry.key), stream);
@@ -377,6 +388,7 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
     OptionSet<AvoidanceReason> reasons;
     // We assume that all lines have metrics based purely on the primary font.
     const auto& style = container.style();
+    auto& fontCascade = style.fontCascade();
     if (style.lineBoxContain().contains(LineBoxContain::Glyphs))
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineBoxContainGlyphs, reasons, includeReasons);
     for (const auto& textRenderer : childrenOfType<RenderText>(container)) {
@@ -389,6 +401,15 @@ static OptionSet<AvoidanceReason> canUseForFontAndText(const RenderBoxModelObjec
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsTextFragment, reasons, includeReasons);
         if (textRenderer.isSVGInlineText())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsSVGInlineText, reasons, includeReasons);
+        if (!textRenderer.canUseSimpleFontCodePath()) {
+            // No need to check the code path at this point. We already know it can't be simple.
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
+        } else {
+            WebCore::TextRun run(String(textRenderer.text()));
+            run.setCharacterScanForCodePath(false);
+            if (fontCascade.codePath(run) != FontCascade::CodePath::Simple)
+                SET_REASON_AND_RETURN_IF_NEEDED(FlowHasComplexFontCodePath, reasons, includeReasons);
+        }
 
         if (checkForBidiCharacters == CheckForBidiCharacters::Yes) {
             if (auto textReasons = canUseForText(textRenderer.stringView(), includeReasons))
@@ -407,8 +428,10 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasOverflowNotVisible, reasons, includeReasons);
     if (style.textOverflow() == TextOverflow::Ellipsis)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextOverflow, reasons, includeReasons);
-    if (style.writingMode() == WritingMode::BottomToTop)
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
+    if (is<RenderBlockFlow>(renderer) && style.unicodeBidi() == EUnicodeBidi::Plaintext)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowMayNotBeLTR, reasons, includeReasons);
+    if (style.writingMode() != WritingMode::TopToBottom)
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsNotTopToBottom, reasons, includeReasons);
     if (style.textEmphasisFill() != TextEmphasisFill::Filled || style.textEmphasisMark() != TextEmphasisMark::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasTextEmphasisFillOrMark, reasons, includeReasons);
     if (style.hasPseudoStyle(PseudoId::FirstLetter))
@@ -467,7 +490,7 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
     return reasons;
 }
 
-static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
 
@@ -476,6 +499,11 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
 
         return reasons;
+    }
+
+    if (flow.containsFloats()) {
+        // Non-text content may stretch the line and we don't yet have support for dynamic float avoiding (as the line grows).
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
     }
 
     if (is<RenderLineBreak>(child))
@@ -503,25 +531,9 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         return reasons;
     }
 
-    if (is<RenderListItem>(child)) {
-        if (child.style().textIndent().value() || !child.style().isHorizontalWritingMode() || !child.style().isLeftToRightDirection() || child.isPositioned() || child.isFloating())
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
-        return reasons;
-    }
-
-    if (is<RenderListMarker>(child) && is<RenderListItem>(child.parent()) && !is<RenderListMarker>(child.nextSibling()))
-        return reasons;
-
-    if (is<RenderTable>(child)) {
-        auto& table = downcast<RenderTable>(child);
-        if (!table.isInline() || table.isPositioned() || !table.style().isHorizontalWritingMode())
-            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
-        return reasons;
-    }
-
     if (is<RenderBlockFlow>(child)) {
         auto& block = downcast<RenderBlockFlow>(child);
-        if (!block.isReplacedOrInlineBlock() || !block.isInline())
+        if (!block.isReplaced() || !block.isInline())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons)
         if (block.isFloating() || block.isPositioned())
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
@@ -537,12 +549,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         return reasons;
     }
 
-    if (is<RenderInline>(child)) {
-        auto renderInlineReasons = canUseForRenderInlineChild(downcast<RenderInline>(child), includeReasons);
-        if (renderInlineReasons)
-            ADD_REASONS_AND_RETURN_IF_NEEDED(renderInlineReasons, reasons, includeReasons);
-        return reasons;
-    }
+    if (is<RenderInline>(child))
+        return canUseForRenderInlineChild(downcast<RenderInline>(child), includeReasons);
 
     SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
     return reasons;
@@ -553,13 +561,13 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
 #ifndef NDEBUG
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.showModernLineLayoutCoverage"_s, Function<void()> { printModernLineLayoutCoverage });
-        PAL::registerNotifyCallback("com.apple.WebKit.showModernLineLayoutReasons"_s, Function<void()> { printModernLineLayoutBlockList });
+        PAL::registerNotifyCallback("com.apple.WebKit.showModernLineLayoutCoverage", Function<void()> { printModernLineLayoutCoverage });
+        PAL::registerNotifyCallback("com.apple.WebKit.showModernLineLayoutReasons", Function<void()> { printModernLineLayoutBlockList });
     });
 #endif
     OptionSet<AvoidanceReason> reasons;
     // FIXME: For tests that disable SLL and expect to get CLL.
-    if (!RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled())
+    if (!flow.settings().simpleLineLayoutEnabled())
         SET_REASON_AND_RETURN_IF_NEEDED(FeatureIsDisabled, reasons, includeReasons);
     auto establishesInlineFormattingContext = [&] {
         if (flow.isRenderView()) {
@@ -581,7 +589,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         if (!is<RenderMultiColumnFlow>(fragmentedFlow))
             SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideANonMultiColumnThread, reasons, includeReasons);
         auto& columnThread = downcast<RenderMultiColumnFlow>(*fragmentedFlow);
-        if (columnThread.parent() != &flow.view() || !flow.style().isHorizontalWritingMode())
+        if (columnThread.parent() != &flow.view())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsNotTopLevel, reasons, includeReasons);
         if (columnThread.hasColumnSpanner())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasColumnSpanner, reasons, includeReasons);
@@ -591,10 +599,10 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         if (style.isFloating())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
     }
+    if (!flow.isHorizontalWritingMode())
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHorizonalWritingMode, reasons, includeReasons);
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-    if (is<RenderListItem>(flow) && (flow.style().textIndent().value() || !flow.style().isHorizontalWritingMode() || !flow.style().isLeftToRightDirection() || flow.isPositioned() || flow.isFloating()))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
     if (!flow.style().hangingPunctuation().isEmpty())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons);
 
@@ -609,7 +617,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     auto hasSeenInlineBox = false;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
-        if (auto childReasons = canUseForChild(*walker.current(), includeReasons))
+        if (auto childReasons = canUseForChild(flow, *walker.current(), includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
         hasSeenInlineBox = hasSeenInlineBox || is<RenderInline>(*walker.current());
     }
@@ -652,7 +660,7 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     case StyleDifference::RecompositeLayer:
         return true;
     case StyleDifference::Repaint:
-    case StyleDifference::RepaintIfText:
+    case StyleDifference::RepaintIfTextOrBorderOrOutline:
     case StyleDifference::RepaintLayer:
         // FIXME: We could do a more focused style check by matching RendererStyle::changeRequiresRepaint&co.
         return canUseForStyle(blockContainer, IncludeReasons::First).isEmpty();
@@ -672,39 +680,6 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
 bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline& renderer, StyleDifference)
 {
     return canUseForRenderInlineChild(renderer, IncludeReasons::First).isEmpty();
-}
-
-bool canUseForFlexLayout(const RenderFlexibleBox& flexBox)
-{
-    if (!flexBox.document().settings().flexFormattingContextIntegrationEnabled())
-        return false;
-
-    auto& flexBoxStyle = flexBox.style();
-    if (!flexBoxStyle.isHorizontalWritingMode() || !flexBoxStyle.isLeftToRightDirection())
-        return false;
-    if (flexBoxStyle.flexWrap() == FlexWrap::Reverse)
-        return false;
-    if (flexBoxStyle.alignItems().position() == ItemPosition::Baseline)
-        return false;
-    if (flexBoxStyle.alignContent().position() != ContentPosition::Normal || flexBoxStyle.alignContent().distribution() != ContentDistribution::Default || flexBoxStyle.alignContent().overflow() != OverflowAlignment::Default)
-        return false;
-    if (!flexBoxStyle.rowGap().isNormal() || !flexBoxStyle.columnGap().isNormal())
-        return false;
-
-    for (auto& flexItem : childrenOfType<RenderElement>(flexBox)) {
-        if (!is<RenderBox>(flexItem))
-            return false;
-        if (flexItem.isFloating() || flexItem.isOutOfFlowPositioned())
-            return false;
-        if (flexItem.isSVGRootOrLegacySVGRoot())
-            return false;
-        auto& flexItemStyle = flexItem.style();
-        if (!flexItemStyle.maxWidth().isUndefined() || !flexItemStyle.maxHeight().isUndefined())
-            return false;
-        if (flexItem.hasIntrinsicAspectRatio() || flexItemStyle.hasAspectRatio())
-            return false;
-    }
-    return true;
 }
 
 }

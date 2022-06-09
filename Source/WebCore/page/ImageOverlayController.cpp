@@ -76,7 +76,7 @@ void ImageOverlayController::selectionQuadsDidChange(Frame& frame, const Vector<
             return nullptr;
 
         if (RefPtr host = selectedRange->startContainer().shadowHost(); is<HTMLElement>(host))
-            return static_pointer_cast<HTMLElement>(WTFMove(host));
+            return static_pointer_cast<HTMLElement>(host);
 
         return nullptr;
     })();
@@ -210,19 +210,6 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent&)
 void ImageOverlayController::elementUnderMouseDidChange(Frame&, Element*)
 {
 }
-
-#if ENABLE(DATA_DETECTION)
-
-void ImageOverlayController::textRecognitionResultsChanged(HTMLElement&)
-{
-}
-
-bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
-{
-    return false;
-}
-
-#endif // ENABLE(DATA_DETECTION)
 
 #endif // !PLATFORM(MAC)
 

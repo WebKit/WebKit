@@ -71,17 +71,17 @@ RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(RenderStyle&
 // We exclude "application/mathml+xml" which is ambiguous about whether it is Presentation or Content MathML. Authors must use a more explicit encoding value.
 bool MathMLSelectElement::isMathMLEncoding(const AtomString& value)
 {
-    return value == "application/mathml-presentation+xml"_s || value == "MathML-Presentation"_s;
+    return value == "application/mathml-presentation+xml" || value == "MathML-Presentation";
 }
 
 bool MathMLSelectElement::isSVGEncoding(const AtomString& value)
 {
-    return value == "image/svg+xml"_s || value == "SVG1.1"_s;
+    return value == "image/svg+xml" || value == "SVG1.1";
 }
 
 bool MathMLSelectElement::isHTMLEncoding(const AtomString& value)
 {
-    return value == "application/xhtml+xml"_s || value == "text/html"_s;
+    return value == "application/xhtml+xml" || value == "text/html";
 }
 
 bool MathMLSelectElement::childShouldCreateRenderer(const Node& child) const
@@ -140,13 +140,13 @@ Element* MathMLSelectElement::getSelectedActionChild()
 
     // The value of the actiontype attribute is case-sensitive.
     auto& actiontype = attributeWithoutSynchronization(MathMLNames::actiontypeAttr);
-    if (actiontype == "statusline"_s) {
+    if (actiontype == "statusline")
         // FIXME: implement user interaction for the "statusline" action type (http://wkbug/124922).
         { }
-    } else if (actiontype == "tooltip"_s) {
+    else if (actiontype == "tooltip")
         // FIXME: implement user interaction for the "tooltip" action type (http://wkbug/124921).
         { }
-    } else {
+    else {
         // For the "toggle" action type or any unknown action type, we rely on the value of the selection attribute to determine the visible child.
         getSelectedActionChildAndIndex(child);
     }
@@ -215,7 +215,7 @@ void MathMLSelectElement::updateSelectedChild()
 void MathMLSelectElement::defaultEventHandler(Event& event)
 {
     if (event.type() == eventNames().clickEvent) {
-        if (attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle"_s) {
+        if (attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle") {
             toggle();
             event.setDefaultHandled();
             return;
@@ -225,9 +225,9 @@ void MathMLSelectElement::defaultEventHandler(Event& event)
     MathMLRowElement::defaultEventHandler(event);
 }
 
-bool MathMLSelectElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
+bool MathMLSelectElement::willRespondToMouseClickEvents()
 {
-    return attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle"_s || MathMLRowElement::willRespondToMouseClickEventsWithEditability(editability);
+    return attributeWithoutSynchronization(MathMLNames::actiontypeAttr) == "toggle" || MathMLRowElement::willRespondToMouseClickEvents();
 }
 
 void MathMLSelectElement::toggle()

@@ -29,12 +29,16 @@
 #include "config.h"
 #include "NicosiaGCGLLayer.h"
 
-#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER) && !USE(ANGLE)
+#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #if USE(COORDINATED_GRAPHICS)
 #include "TextureMapperGL.h"
 #include "TextureMapperPlatformLayerBuffer.h"
-#include "TextureMapperPlatformLayerProxyGL.h"
+#include "TextureMapperPlatformLayerProxy.h"
+#endif
+
+#if USE(ANGLE)
+#include "ImageBuffer.h"
 #endif
 
 #include "GLContext.h"
@@ -43,7 +47,7 @@ namespace Nicosia {
 
 using namespace WebCore;
 
-GCGLLayer::GCGLLayer(GraphicsContextGLOpenGL& context)
+GCGLLayer::GCGLLayer(GraphicsContextGLType& context)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {
@@ -61,7 +65,7 @@ bool GCGLLayer::makeContextCurrent()
     return m_glContext->makeContextCurrent();
 }
 
-GCGLContext GCGLLayer::platformContext() const
+PlatformGraphicsContextGL GCGLLayer::platformContext() const
 {
     ASSERT(m_glContext);
     return m_glContext->platformContext();
@@ -75,16 +79,52 @@ void GCGLLayer::swapBuffersIfNeeded()
 
     m_context.prepareTexture();
     IntSize textureSize(m_context.m_currentWidth, m_context.m_currentHeight);
+    TextureMapperGL::Flags flags = m_context.contextAttributes().alpha ? TextureMapperGL::ShouldBlend : 0;
+#if USE(ANGLE)
+    RefPtr<WebCore::ImageBuffer> imageBuffer = ImageBuffer::create(textureSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!imageBuffer)
+        return;
 
-    TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture;
-    if (m_context.contextAttributes().alpha)
-        flags |= TextureMapperGL::ShouldBlend;
+    m_context.paintRenderingResultsToCanvas(*imageBuffer.get());
+#else
+    flags |= TextureMapperGL::ShouldFlipTexture;
+#endif
 
     {
         auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
+#if USE(ANGLE)
+        auto proxyOperation =
+            [this, textureSize, flags, imageBuffer = WTFMove(imageBuffer)] () {
+                RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+                if (!image)
+                    return;
+
+                std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer;
+                auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
+                Locker locker { proxy.lock() };
+                layerBuffer = proxy.getAvailableBuffer(textureSize, m_context.m_internalColorFormat);
+
+                if (!layerBuffer) {
+                    auto texture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), flags, m_context.m_internalColorFormat);
+                    static_cast<BitmapTextureGL&>(texture.get()).setPendingContents(WTFMove(image));
+                    layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture), flags);
+                } else
+                    layerBuffer->textureGL().setPendingContents(WTFMove(image));
+
+                proxy.pushNextBuffer(WTFMove(layerBuffer));
+
+                m_context.markLayerComposited();
+            };
+
+        proxy.scheduleUpdateOnCompositorThread([proxyOperation] {
+            proxyOperation();
+        });
+
+        return;
+#else
         Locker locker { proxy.lock() };
-        ASSERT(is<TextureMapperPlatformLayerProxyGL>(proxy));
-        downcast<TextureMapperPlatformLayerProxyGL>(proxy).pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
+        proxy.pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
+#endif
     }
 
     m_context.markLayerComposited();

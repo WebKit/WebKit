@@ -1,0 +1,75 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 8 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 25 of #text > SPAN > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > DIV > DIV > BODY > HTML > #document to 0 of SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x118 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,15) size 738x88
+          text run at (14,15) width 719: "Size check should say: 24px. The first two words of the second line should"
+          text run at (732,15) width 7: " "
+          text run at (14,45) width 329: "appear to be 24px. The rest of the "
+          text run at (342,45) width 404: "words on the second line should appear to"
+          text run at (745,45) width 7: " "
+          text run at (14,75) width 83: "be 30px."
+      RenderBlock {DIV} at (0,142) size 784x30
+        RenderText {#text} at (0,1) size 116x28
+          text run at (0,1) width 116: "Size check: "
+        RenderInline {SPAN} at (0,0) size 49x28
+          RenderText {#text} at (115,1) size 49x28
+            text run at (115,1) width 49: "24px"
+      RenderBlock {DIV} at (0,188) size 784x153
+        RenderBlock {DIV} at (0,0) size 784x153 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x30
+            RenderText {#text} at (0,1) size 137x28
+              text run at (0,1) width 137: "There is a tide"
+          RenderBlock {DIV} at (14,44) size 756x64 [border: (2px solid #FF0000)]
+            RenderInline {SPAN} at (0,0) size 62x28
+              RenderText {#text} at (14,20) size 62x28
+                text run at (14,20) width 62: "In the "
+            RenderText {#text} at (75,15) size 169x34
+              text run at (75,15) width 169: "affairs of men"
+          RenderBlock (anonymous) at (14,108) size 756x31
+            RenderInline {SPAN} at (0,0) size 248x29
+              RenderText {#text} at (0,1) size 248x29
+                text run at (0,1) width 248: "Which taken at the flood"
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
+selection end:   position 7 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body

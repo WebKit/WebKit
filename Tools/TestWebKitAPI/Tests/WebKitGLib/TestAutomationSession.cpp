@@ -192,7 +192,7 @@ public:
         m_createWebViewWasCalled = false;
         m_message = CString();
         auto signalID = g_signal_connect(m_session, "create-web-view", G_CALLBACK(createWebViewCallback), this);
-        sendCommandToBackend("createBrowsingContext"_s);
+        sendCommandToBackend("createBrowsingContext");
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewWasCalled);
@@ -212,7 +212,7 @@ public:
         m_createWebViewInWindowWasCalled = false;
         m_message = { };
         auto signalID = g_signal_connect(m_session, "create-web-view::window", G_CALLBACK(createWebViewInWindowCallback), this);
-        sendCommandToBackend("createBrowsingContext"_s, "{\"presentationHint\":\"Window\"}"_s);
+        sendCommandToBackend("createBrowsingContext", "{\"presentationHint\":\"Window\"}");
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewInWindowWasCalled);
@@ -230,7 +230,7 @@ public:
         m_createWebViewInTabWasCalled = false;
         m_message = { };
         auto signalID = g_signal_connect(m_session, "create-web-view::tab", G_CALLBACK(createWebViewInTabCallback), this);
-        sendCommandToBackend("createBrowsingContext"_s, "{\"presentationHint\":\"Tab\"}"_s);
+        sendCommandToBackend("createBrowsingContext", "{\"presentationHint\":\"Tab\"}");
         g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(m_session, signalID);
         g_assert_true(m_createWebViewInTabWasCalled);
@@ -300,7 +300,7 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
-    String sessionID = createVersion4UUIDString();
+    String sessionID = createCanonicalUUIDString();
     // WebKitAutomationSession::automation-started is never emitted if automation is not enabled.
     g_assert_false(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
     auto* session = test->requestSession(sessionID.utf8().data());

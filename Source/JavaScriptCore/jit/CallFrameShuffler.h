@@ -119,11 +119,11 @@ public:
             data.registers[reg] = cachedRecovery->recovery();
 #elif USE(JSVALUE32_64)
             ValueRecovery recovery = cachedRecovery->recovery();
-            if (reg.isGPR() && recovery.technique() == DisplacedInJSStack) {
+            if (recovery.technique() == DisplacedInJSStack) {
                 JSValueRegs wantedJSValueReg = cachedRecovery->wantedJSValueRegs();
                 ASSERT(reg == wantedJSValueReg.payloadGPR() || reg == wantedJSValueReg.tagGPR());
                 bool inTag = reg == wantedJSValueReg.tagGPR();
-                data.registers[reg] = ValueRecovery::calleeSaveGPRDisplacedInJSStack(recovery.virtualRegister(), inTag);
+                data.registers[reg] = ValueRecovery::calleeSaveRegDisplacedInJSStack(recovery.virtualRegister(), inTag);
             } else
                 data.registers[reg] = recovery;
 #else

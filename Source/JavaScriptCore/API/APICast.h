@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #ifndef APICast_h
 #define APICast_h
 
-#include "Integrity.h"
 #include "JSAPIValueWrapper.h"
 #include "JSCJSValue.h"
 #include "JSCJSValueInlines.h"
@@ -53,13 +52,13 @@ typedef struct OpaqueJSValue* JSObjectRef;
 inline JSC::JSGlobalObject* toJS(JSContextRef context)
 {
     ASSERT(context);
-    return JSC::Integrity::audit(reinterpret_cast<JSC::JSGlobalObject*>(const_cast<OpaqueJSContext*>(context)));
+    return reinterpret_cast<JSC::JSGlobalObject*>(const_cast<OpaqueJSContext*>(context));
 }
 
 inline JSC::JSGlobalObject* toJS(JSGlobalContextRef context)
 {
     ASSERT(context);
-    return JSC::Integrity::audit(reinterpret_cast<JSC::JSGlobalObject*>(context));
+    return reinterpret_cast<JSC::JSGlobalObject*>(context);
 }
 
 inline JSC::JSGlobalObject* toJSGlobalObject(JSGlobalContextRef context)
@@ -84,17 +83,15 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* globalObject, JSValueRef v)
 #endif
     if (!result)
         return JSC::jsNull();
-    if (result.isCell()) {
-        JSC::Integrity::audit(result.asCell());
-        RELEASE_ASSERT(result.asCell()->methodTable());
-    }
+    if (result.isCell())
+        RELEASE_ASSERT(result.asCell()->methodTable(getVM(globalObject)));
     return result;
 }
 
 #if CPU(ADDRESS64)
 inline JSC::JSValue toJS(JSValueRef value)
 {
-    return JSC::Integrity::audit(bitwise_cast<JSC::JSValue>(value));
+    return bitwise_cast<JSC::JSValue>(value);
 }
 #endif
 
@@ -109,24 +106,22 @@ inline JSC::JSValue toJSForGC(JSC::JSGlobalObject* globalObject, JSValueRef v)
 #else
     JSC::JSValue result = bitwise_cast<JSC::JSValue>(v);
 #endif
-    if (result && result.isCell()) {
-        JSC::Integrity::audit(result.asCell());
-        RELEASE_ASSERT(result.asCell()->methodTable());
-    }
+    if (result && result.isCell())
+        RELEASE_ASSERT(result.asCell()->methodTable(getVM(globalObject)));
     return result;
 }
 
 // Used in JSObjectGetPrivate as that may be called during finalization
 inline JSC::JSObject* uncheckedToJS(JSObjectRef o)
 {
-    return JSC::Integrity::audit(reinterpret_cast<JSC::JSObject*>(o));
+    return reinterpret_cast<JSC::JSObject*>(o);
 }
 
 inline JSC::JSObject* toJS(JSObjectRef o)
 {
     JSC::JSObject* object = uncheckedToJS(o);
     if (object)
-        RELEASE_ASSERT(object->methodTable());
+        RELEASE_ASSERT(object->methodTable(object->vm()));
     return object;
 }
 
@@ -137,7 +132,7 @@ inline JSC::PropertyNameArray* toJS(JSPropertyNameAccumulatorRef a)
 
 inline JSC::VM* toJS(JSContextGroupRef g)
 {
-    return JSC::Integrity::audit(reinterpret_cast<JSC::VM*>(const_cast<OpaqueJSContextGroup*>(g)));
+    return reinterpret_cast<JSC::VM*>(const_cast<OpaqueJSContextGroup*>(g));
 }
 
 inline JSValueRef toRef(JSC::VM& vm, JSC::JSValue v)
@@ -151,7 +146,7 @@ inline JSValueRef toRef(JSC::VM& vm, JSC::JSValue v)
     return reinterpret_cast<JSValueRef>(v.asCell());
 #else
     UNUSED_PARAM(vm);
-    return bitwise_cast<JSValueRef>(JSC::Integrity::audit(v));
+    return bitwise_cast<JSValueRef>(v);
 #endif
 }
 
@@ -163,28 +158,28 @@ inline JSValueRef toRef(JSC::JSGlobalObject* globalObject, JSC::JSValue v)
 #if CPU(ADDRESS64)
 inline JSValueRef toRef(JSC::JSValue v)
 {
-    return bitwise_cast<JSValueRef>(JSC::Integrity::audit(v));
+    return bitwise_cast<JSValueRef>(v);
 }
 #endif
 
 inline JSObjectRef toRef(JSC::JSObject* o)
 {
-    return reinterpret_cast<JSObjectRef>(JSC::Integrity::audit(o));
+    return reinterpret_cast<JSObjectRef>(o);
 }
 
 inline JSObjectRef toRef(const JSC::JSObject* o)
 {
-    return reinterpret_cast<JSObjectRef>(JSC::Integrity::audit(const_cast<JSC::JSObject*>(o)));
+    return reinterpret_cast<JSObjectRef>(const_cast<JSC::JSObject*>(o));
 }
 
 inline JSContextRef toRef(JSC::JSGlobalObject* globalObject)
 {
-    return reinterpret_cast<JSContextRef>(JSC::Integrity::audit(globalObject));
+    return reinterpret_cast<JSContextRef>(globalObject);
 }
 
 inline JSGlobalContextRef toGlobalRef(JSC::JSGlobalObject* globalObject)
 {
-    return reinterpret_cast<JSGlobalContextRef>(JSC::Integrity::audit(globalObject));
+    return reinterpret_cast<JSGlobalContextRef>(globalObject);
 }
 
 inline JSPropertyNameAccumulatorRef toRef(JSC::PropertyNameArray* l)
@@ -194,7 +189,7 @@ inline JSPropertyNameAccumulatorRef toRef(JSC::PropertyNameArray* l)
 
 inline JSContextGroupRef toRef(JSC::VM* g)
 {
-    return reinterpret_cast<JSContextGroupRef>(JSC::Integrity::audit(g));
+    return reinterpret_cast<JSContextGroupRef>(g);
 }
 
 #endif // APICast_h

@@ -27,38 +27,36 @@
 
 #if USE(CG)
 
-#include "ImageBuffer.h"
 #include "ImageBufferCGBackend.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 
-class ImageBufferCGBitmapBackend final : public ImageBufferCGBackend {
+class ImageBufferCGBitmapBackend : public ImageBufferCGBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferCGBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCGBitmapBackend);
 public:
-    ~ImageBufferCGBitmapBackend();
+    WEBCORE_EXPORT static IntSize calculateSafeBackendSize(const Parameters&);
+    WEBCORE_EXPORT static size_t calculateMemoryCost(const Parameters&);
 
-    static IntSize calculateSafeBackendSize(const Parameters&);
-    static size_t calculateMemoryCost(const Parameters&);
-
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const ImageBuffer::CreationContext&);
+    WEBCORE_EXPORT static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const HostWindow*);
 
     // FIXME: Rename to createUsingColorSpaceOfGraphicsContext() (or something like that).
-    static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
+    WEBCORE_EXPORT static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
 
-    GraphicsContext& context() const final;
+    GraphicsContext& context() const override;
+
+    IntSize backendSize() const override;
+
+    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
+
+    std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
+    void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
 private:
     ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
 
-    IntSize backendSize() const final;
-    unsigned bytesPerRow() const final;
-
-    RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const final;
-
-    RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator&) const final;
-    void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
+    unsigned bytesPerRow() const override;
 
     void* m_data;
     RetainPtr<CGDataProviderRef> m_dataProvider;

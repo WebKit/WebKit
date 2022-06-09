@@ -27,7 +27,6 @@
 
 #include "ProcessIdentifier.h"
 #include <wtf/Hasher.h>
-#include <wtf/Markable.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
 
@@ -98,11 +97,6 @@ public:
 
     template<typename Encoder> void encode(Encoder& encoder) const { encoder << m_object << m_processIdentifier; }
     template<typename Decoder> static std::optional<ProcessQualified> decode(Decoder&);
-
-    struct MarkableTraits {
-        static bool isEmptyValue(const ProcessQualified& identifier) { return !identifier; }
-        static constexpr ProcessQualified emptyValue() { return { }; }
-    };
 
 private:
     T m_object;

@@ -39,7 +39,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -50,7 +49,6 @@ namespace WebCore {
 
 class Event;
 class RegisteredEventListener;
-class ScriptExecutionContext;
 
 class InspectorDOMDebuggerAgent : public InspectorAgentBase, public Inspector::DOMDebuggerBackendDispatcherHandler, public Inspector::InspectorDebuggerAgent::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
@@ -99,13 +97,13 @@ private:
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_listenerBreakpoints;
+    HashMap<String, Ref<JSC::Breakpoint>> m_listenerBreakpoints;
     RefPtr<JSC::Breakpoint> m_pauseOnAllIntervalsBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllListenersBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllTimeoutsBreakpoint;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_urlTextBreakpoints;
-    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_urlRegexBreakpoints;
+    HashMap<String, Ref<JSC::Breakpoint>> m_urlTextBreakpoints;
+    HashMap<String, Ref<JSC::Breakpoint>> m_urlRegexBreakpoints;
     RefPtr<JSC::Breakpoint> m_pauseOnAllURLsBreakpoint;
 };
 

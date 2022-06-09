@@ -34,7 +34,6 @@
 #include "MessagePortChannelProvider.h"
 #include "MessageWithMessagePorts.h"
 #include "StructuredSerializeOptions.h"
-#include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <wtf/CompletionHandler.h>
@@ -150,7 +149,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::JSGlobalObject& state, JSC::JSVa
         return { };
     ASSERT(scriptExecutionContext());
 
-    Vector<TransferredMessagePort> transferredPorts;
+    TransferredMessagePortArray transferredPorts;
     // Make sure we aren't connected to any of the passed-in ports.
     if (!ports.isEmpty()) {
         for (auto& port : ports) {
@@ -285,7 +284,7 @@ void MessagePort::dispatchMessages()
                 return;
             auto ports = MessagePort::entanglePorts(*context, WTFMove(message.transferredPorts));
             // Per specification, each MessagePort object has a task source called the port message queue.
-            queueTaskToDispatchEvent(*this, TaskSource::PostedMessageQueue, MessageEvent::create(message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports)));
+            queueTaskToDispatchEvent(*this, TaskSource::PostedMessageQueue, MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
         }
     };
 
@@ -374,10 +373,10 @@ MessagePort* MessagePort::locallyEntangledPort() const
     return nullptr;
 }
 
-ExceptionOr<Vector<TransferredMessagePort>> MessagePort::disentanglePorts(Vector<RefPtr<MessagePort>>&& ports)
+ExceptionOr<TransferredMessagePortArray> MessagePort::disentanglePorts(Vector<RefPtr<MessagePort>>&& ports)
 {
     if (ports.isEmpty())
-        return Vector<TransferredMessagePort> { };
+        return TransferredMessagePortArray { };
 
     // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
     HashSet<MessagePort*> portSet;
@@ -387,21 +386,26 @@ ExceptionOr<Vector<TransferredMessagePort>> MessagePort::disentanglePorts(Vector
     }
 
     // Passed-in ports passed validity checks, so we can disentangle them.
-    return WTF::map(ports, [](auto& port) {
-        return port->disentangle();
-    });
+    TransferredMessagePortArray portArray;
+    portArray.reserveInitialCapacity(ports.size());
+    for (auto& port : ports)
+        portArray.uncheckedAppend(port->disentangle());
+
+    return portArray;
 }
 
-Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& context, Vector<TransferredMessagePort>&& transferredPorts)
+Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& context, TransferredMessagePortArray&& transferredPorts)
 {
     LOG(MessagePorts, "Entangling %zu transferred ports to ScriptExecutionContext %s (%p)", transferredPorts.size(), context.url().string().utf8().data(), &context);
 
     if (transferredPorts.isEmpty())
         return { };
 
-    return WTF::map(transferredPorts, [&](auto& port) -> RefPtr<MessagePort> {
-        return MessagePort::entangle(context, WTFMove(port));
-    });
+    Vector<RefPtr<MessagePort>> ports;
+    ports.reserveInitialCapacity(transferredPorts.size());
+    for (auto& transferredPort : transferredPorts)
+        ports.uncheckedAppend(MessagePort::entangle(context, WTFMove(transferredPort)));
+    return ports;
 }
 
 Ref<MessagePort> MessagePort::entangle(ScriptExecutionContext& context, TransferredMessagePort&& transferredPort)
@@ -436,11 +440,6 @@ bool MessagePort::removeEventListener(const AtomString& eventType, EventListener
 const char* MessagePort::activeDOMObjectName() const
 {
     return "MessagePort";
-}
-
-WebCoreOpaqueRoot root(MessagePort* port)
-{
-    return WebCoreOpaqueRoot { port };
 }
 
 } // namespace WebCore

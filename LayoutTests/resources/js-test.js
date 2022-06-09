@@ -52,7 +52,7 @@ var unexpectedErrorMessage; // set by onerror when expectingError is not true
             document.documentElement.appendChild(rootElement);
     }
 
-    getOrCreate = function getOrCreate(id, tagName)
+    function getOrCreate(id, tagName)
     {
         var element = document.getElementById(id);
         if (element)

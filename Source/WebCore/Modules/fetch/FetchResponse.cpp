@@ -131,9 +131,9 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& co
     r->suspendIfNeeded();
 
     r->m_contentType = contentType;
-    AtomString mimeType { extractMIMETypeFromMediaType(contentType) };
-    r->m_internalResponse.setMimeType(mimeType.isEmpty() ? AtomString { defaultMIMEType() } : mimeType);
-    r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType).toAtomString());
+    auto mimeType = extractMIMETypeFromMediaType(contentType);
+    r->m_internalResponse.setMimeType(mimeType.isEmpty() ? defaultMIMEType() : mimeType);
+    r->m_internalResponse.setTextEncodingName(extractCharsetFromMediaType(contentType));
 
     r->m_internalResponse.setHTTPStatusCode(status);
     r->m_internalResponse.setHTTPStatusText(statusText);
@@ -273,11 +273,11 @@ const ResourceResponse& FetchResponse::filteredResponse() const
     return m_internalResponse;
 }
 
-void FetchResponse::BodyLoader::didSucceed(const NetworkLoadMetrics& metrics)
+void FetchResponse::BodyLoader::didSucceed()
 {
     ASSERT(m_response.hasPendingActivity());
     m_response.m_body->loadingSucceeded(m_response.contentType());
-    m_response.setNetworkLoadMetrics(metrics);
+
     if (m_response.m_readableStreamSource) {
         if (m_response.body().consumer().hasData())
             m_response.m_readableStreamSource->enqueue(m_response.body().consumer().takeAsArrayBuffer());
@@ -487,15 +487,6 @@ void FetchResponse::closeStream()
     m_readableStreamSource = nullptr;
 }
 
-void FetchResponse::cancelStream()
-{
-    if (isAllowedToRunScript() && hasReadableStreamBody()) {
-        body().readableStream()->cancel(Exception { AbortError, "load is cancelled"_s });
-        return;
-    }
-    cancel();
-}
-
 void FetchResponse::feedStream()
 {
     ASSERT(m_readableStreamSource);
@@ -547,12 +538,8 @@ ResourceResponse FetchResponse::resourceResponse() const
 
     if (headers().guard() != FetchHeaders::Guard::Immutable) {
         // FIXME: Add a setHTTPHeaderFields on ResourceResponseBase.
-        for (auto& header : headers().internalHeaders()) {
-            if (header.keyAsHTTPHeaderName)
-                response.setHTTPHeaderField(*header.keyAsHTTPHeaderName, header.value);
-            else
-                response.setUncommonHTTPHeaderField(header.key, header.value);
-        }
+        for (auto& header : headers().internalHeaders())
+            response.setHTTPHeaderField(header.key, header.value);
     }
 
     return response;
@@ -574,7 +561,7 @@ bool FetchResponse::isCORSSameOrigin() const
 
 bool FetchResponse::hasWasmMIMEType() const
 {
-    return MIMETypeRegistry::isSupportedWebAssemblyMIMEType(m_headers->fastGet(HTTPHeaderName::ContentType));
+    return equalLettersIgnoringASCIICase(m_headers->fastGet(HTTPHeaderName::ContentType), "application/wasm");
 }
 
 } // namespace WebCore

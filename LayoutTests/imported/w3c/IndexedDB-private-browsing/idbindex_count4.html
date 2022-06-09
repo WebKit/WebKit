@@ -27,7 +27,7 @@
                       .objectStore("store")
                       .index("index");
 
-        assert_throws_dom("DataError", function() {
+        assert_throws("DataError", function() {
             index.count(NaN);
         });
 

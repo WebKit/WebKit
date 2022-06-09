@@ -52,7 +52,7 @@ void ChildChangeInvalidation::invalidateForChangedElement(Element& changedElemen
             return isChild;
         case MatchElement::HasDescendant:
         case MatchElement::HasSiblingDescendant:
-        case MatchElement::HasNonSubjectOrScopeBreaking:
+        case MatchElement::HasNonSubject:
             return true;
         default:
             ASSERT_NOT_REACHED();
@@ -137,7 +137,7 @@ void ChildChangeInvalidation::invalidateForHasAfterMutation()
 
 static bool needsDescendantTraversal(const RuleFeatureSet& features)
 {
-    if (features.usesMatchElement(MatchElement::HasNonSubjectOrScopeBreaking))
+    if (features.usesMatchElement(MatchElement::HasNonSubject))
         return true;
     return features.usesMatchElement(MatchElement::HasDescendant) || features.usesMatchElement(MatchElement::HasSiblingDescendant);
 };

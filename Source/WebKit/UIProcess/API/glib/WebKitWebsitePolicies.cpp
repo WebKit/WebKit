@@ -29,10 +29,10 @@
 using namespace WebKit;
 
 /**
- * WebKitWebsitePolicies:
+ * SECTION: WebKitWebsitePolicies
+ * @Short_description: View specific website policies
+ * @Title: WebKitWebsitePolicies
  * @See_also: #WebKitWebView
- *
- * View specific website policies.
  *
  * WebKitWebsitePolicies allows you to configure per-page policies,
  * currently only autoplay policies are supported.
@@ -177,22 +177,19 @@ WebKitWebsitePolicies* webkit_website_policies_new(void)
  *
  * Returns: (transfer full): the newly created #WebKitWebsitePolicies
  *
- * ```c
+ * <informalexample><programlisting>
  * WebKitWebsitePolicies *default_website_policies = webkit_website_policies_new_with_policies(
  *     "autoplay", WEBKIT_AUTOPLAY_DENY,
  *     NULL);
- *
- * // ...
- *
+ * ...
  * WebKitWebView *view = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
  *     "web-context", ctx,
  *     "settings", settings,
  *     "user-content-manager", content_manager,
  *     "website-policies", default_website_policies,
  *     NULL));
- *
- * // ...
- * ```
+ * ...
+ * </programlisting></informalexample>
  *
  * Since: 2.30
  */

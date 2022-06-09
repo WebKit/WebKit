@@ -26,7 +26,6 @@
 #include "config.h"
 #include "FontGenericFamilies.h"
 
-#include <wtf/CrossThreadCopier.h>
 #include <wtf/Language.h>
 
 namespace WebCore {
@@ -46,12 +45,11 @@ static bool setGenericFontFamilyForScript(ScriptFontFamilyMap& fontMap, const St
 
 static inline bool computeUserPrefersSimplified()
 {
-    // FIXME: This is not passing ShouldMinimizeLanguages::No and then getting minimized languages,
-    // which may cause the matching below to fail.
-    for (auto& language : userPreferredLanguages()) {
-        if (equalLettersIgnoringASCIICase(language, "zh-tw"_s))
+    const Vector<String>& preferredLanguages = userPreferredLanguages();
+    for (auto& language : preferredLanguages) {
+        if (equalIgnoringASCIICase(language, "zh-tw"))
             return false;
-        if (equalLettersIgnoringASCIICase(language, "zh-cn"_s))
+        if (equalIgnoringASCIICase(language, "zh-cn"))
             return true;
     }
     return true;
@@ -94,29 +92,23 @@ FontGenericFamilies::FontGenericFamilies()
     });
 }
 
-FontGenericFamilies FontGenericFamilies::isolatedCopy() const &
+FontGenericFamilies FontGenericFamilies::isolatedCopy() const
 {
     FontGenericFamilies copy;
-    copy.m_standardFontFamilyMap = crossThreadCopy(m_standardFontFamilyMap);
-    copy.m_serifFontFamilyMap = crossThreadCopy(m_serifFontFamilyMap);
-    copy.m_fixedFontFamilyMap = crossThreadCopy(m_fixedFontFamilyMap);
-    copy.m_sansSerifFontFamilyMap = crossThreadCopy(m_sansSerifFontFamilyMap);
-    copy.m_cursiveFontFamilyMap = crossThreadCopy(m_cursiveFontFamilyMap);
-    copy.m_fantasyFontFamilyMap = crossThreadCopy(m_fantasyFontFamilyMap);
-    copy.m_pictographFontFamilyMap = crossThreadCopy(m_pictographFontFamilyMap);
-    return copy;
-}
-
-FontGenericFamilies FontGenericFamilies::isolatedCopy() &&
-{
-    FontGenericFamilies copy;
-    copy.m_standardFontFamilyMap = crossThreadCopy(WTFMove(m_standardFontFamilyMap));
-    copy.m_serifFontFamilyMap = crossThreadCopy(WTFMove(m_serifFontFamilyMap));
-    copy.m_fixedFontFamilyMap = crossThreadCopy(WTFMove(m_fixedFontFamilyMap));
-    copy.m_sansSerifFontFamilyMap = crossThreadCopy(WTFMove(m_sansSerifFontFamilyMap));
-    copy.m_cursiveFontFamilyMap = crossThreadCopy(WTFMove(m_cursiveFontFamilyMap));
-    copy.m_fantasyFontFamilyMap = crossThreadCopy(WTFMove(m_fantasyFontFamilyMap));
-    copy.m_pictographFontFamilyMap = crossThreadCopy(WTFMove(m_pictographFontFamilyMap));
+    for (auto &keyValue : m_standardFontFamilyMap)
+        copy.m_standardFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_serifFontFamilyMap)
+        copy.m_serifFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_fixedFontFamilyMap)
+        copy.m_fixedFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_sansSerifFontFamilyMap)
+        copy.m_sansSerifFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_cursiveFontFamilyMap)
+        copy.m_cursiveFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_fantasyFontFamilyMap)
+        copy.m_fantasyFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
+    for (auto &keyValue : m_pictographFontFamilyMap)
+        copy.m_pictographFontFamilyMap.add(keyValue.key, keyValue.value.isolatedCopy());
     return copy;
 }
 

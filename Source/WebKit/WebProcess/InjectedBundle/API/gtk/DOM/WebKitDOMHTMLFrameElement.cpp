@@ -344,7 +344,8 @@ void webkit_dom_html_frame_element_set_frame_border(WebKitDOMHTMLFrameElement* s
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::frameborderAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::frameborderAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_frame_element_get_long_desc(WebKitDOMHTMLFrameElement* self)
@@ -362,7 +363,8 @@ void webkit_dom_html_frame_element_set_long_desc(WebKitDOMHTMLFrameElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::longdescAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::longdescAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_frame_element_get_margin_height(WebKitDOMHTMLFrameElement* self)
@@ -380,7 +382,8 @@ void webkit_dom_html_frame_element_set_margin_height(WebKitDOMHTMLFrameElement* 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginheightAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginheightAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_frame_element_get_margin_width(WebKitDOMHTMLFrameElement* self)
@@ -398,7 +401,8 @@ void webkit_dom_html_frame_element_set_margin_width(WebKitDOMHTMLFrameElement* s
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginwidthAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::marginwidthAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_frame_element_get_name(WebKitDOMHTMLFrameElement* self)
@@ -416,7 +420,8 @@ void webkit_dom_html_frame_element_set_name(WebKitDOMHTMLFrameElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
 gboolean webkit_dom_html_frame_element_get_no_resize(WebKitDOMHTMLFrameElement* self)
@@ -451,7 +456,8 @@ void webkit_dom_html_frame_element_set_scrolling(WebKitDOMHTMLFrameElement* self
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::scrollingAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::scrollingAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_frame_element_get_src(WebKitDOMHTMLFrameElement* self)
@@ -469,7 +475,8 @@ void webkit_dom_html_frame_element_set_src(WebKitDOMHTMLFrameElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, convertedValue);
 }
 
 WebKitDOMDocument* webkit_dom_html_frame_element_get_content_document(WebKitDOMHTMLFrameElement* self)

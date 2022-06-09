@@ -53,7 +53,7 @@ using namespace WebCore;
 WebDownload::WebDownload()
 {
     gClassCount++;
-    gClassNameCount().add("WebDownload"_s);
+    gClassNameCount().add("WebDownload");
 }
 
 WebDownload::~WebDownload()
@@ -61,7 +61,7 @@ WebDownload::~WebDownload()
     LOG(Download, "WebDownload - Destroying download (%p)", this);
     cancel();
     gClassCount--;
-    gClassNameCount().remove("WebDownload"_s);
+    gClassNameCount().remove("WebDownload");
 }
 
 WebDownload* WebDownload::createInstance()
@@ -140,7 +140,10 @@ HRESULT WebDownload::bundlePathForTargetPath(_In_ BSTR targetPath, __deref_out_o
     if (bundle.isEmpty())
         return E_INVALIDARG;
 
-    bundle = bundle[bundle.length() - 1] == '/' ? makeString(StringView(bundle).left(bundle.length() - 1), DownloadBundle::fileExtension()) : makeString(bundle, DownloadBundle::fileExtension());
+    if (bundle[bundle.length()-1] == '/')
+        bundle.truncate(1);
+
+    bundle.append(DownloadBundle::fileExtension());
     *bundlePath = BString(bundle).release();
     if (!*bundlePath)
        return E_FAIL;

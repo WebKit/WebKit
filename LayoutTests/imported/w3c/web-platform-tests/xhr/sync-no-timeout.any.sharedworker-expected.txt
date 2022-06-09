@@ -1,3 +1,0 @@
-
-PASS Sync XHR should not have a timeout
-

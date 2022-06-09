@@ -27,7 +27,7 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledBySetting=PushAPIEnabled,
+    EnabledAtRuntime=PushAPIEnabled,
     ImplementedBy=ServiceWorkerRegistrationPushAPI
 ] partial interface ServiceWorkerRegistration {
     readonly attribute PushManager pushManager;

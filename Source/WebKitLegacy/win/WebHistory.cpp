@@ -89,7 +89,7 @@ static inline COMPtr<IPropertyBag> createUserInfoFromHistoryItem(BSTR notificati
 WebHistory::WebHistory()
 {
     gClassCount++;
-    gClassNameCount().add("WebHistory"_s);
+    gClassNameCount().add("WebHistory");
 
     m_preferences = WebPreferences::sharedStandardPreferences();
 }
@@ -97,7 +97,7 @@ WebHistory::WebHistory()
 WebHistory::~WebHistory()
 {
     gClassCount--;
-    gClassNameCount().remove("WebHistory"_s);
+    gClassNameCount().remove("WebHistory");
 }
 
 WebHistory* WebHistory::createInstance()

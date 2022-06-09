@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -34,6 +34,7 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_documentFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -54,6 +55,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_documentFunctions = {
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -68,76 +70,91 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_documentFunctions = {
     // set_property,
     nullptr,
     // padding
-    { nullptr }
+    nullptr
 };
 
 String AccessibilityObjectAtspi::documentAttribute(const String& name) const
 {
-    if (!m_coreObject)
+    return Accessibility::retrieveValueFromMainThread<String>([this, name = name.isolatedCopy()]() -> String {
+        if (m_coreObject)
+            m_coreObject->updateBackingStore();
+
+        if (!m_coreObject)
+            return { };
+
+        auto* document = m_coreObject->document();
+        if (!document)
+            return { };
+
+        if (name == "DocType"_s)
+            return document->doctype() ? document->doctype()->name().isolatedCopy() : String();
+        if (name == "Encoding"_s)
+            return document->charset().isolatedCopy();
+        if (name == "URI"_s)
+            return document->documentURI().isolatedCopy();
+        if (name == "MimeType"_s)
+            return document->contentType().isolatedCopy();
+        if (name == "Title"_s)
+            return document->title().isolatedCopy();
+
         return { };
-
-    auto* document = m_coreObject->document();
-    if (!document)
-        return { };
-
-    if (name == "DocType"_s)
-        return document->doctype() ? document->doctype()->name() : String();
-    if (name == "Encoding"_s)
-        return document->charset();
-    if (name == "URI"_s)
-        return document->documentURI();
-    if (name == "MimeType"_s)
-        return document->contentType();
-    if (name == "Title"_s)
-        return document->title();
-
-    return { };
+    });
 }
 
 HashMap<String, String> AccessibilityObjectAtspi::documentAttributes() const
 {
-    HashMap<String, String> map;
-    if (!m_coreObject)
+    return Accessibility::retrieveValueFromMainThread<HashMap<String, String>>([this]() -> HashMap<String, String> {
+        HashMap<String, String> map;
+        if (m_coreObject)
+            m_coreObject->updateBackingStore();
+
+        if (!m_coreObject)
+            return map;
+
+        auto* document = m_coreObject->document();
+        if (!document)
+            return map;
+
+        if (auto* doctype = document->doctype())
+            map.add("DocType"_s, doctype->name());
+
+        auto charset = document->charset();
+        if (!charset.isEmpty())
+            map.add("Encoding"_s, WTFMove(charset));
+
+        auto uri = document->documentURI();
+        if (!uri.isEmpty())
+            map.add("URI"_s, WTFMove(uri));
+
+        auto contentType = document->contentType();
+        if (!contentType.isEmpty())
+            map.add("MimeType"_s, WTFMove(contentType));
+
+        const auto& title = document->title();
+        if (!title.isEmpty())
+            map.add("Title"_s, title);
+
         return map;
-
-    auto* document = m_coreObject->document();
-    if (!document)
-        return map;
-
-    if (auto* doctype = document->doctype())
-        map.add("DocType"_s, doctype->name());
-
-    auto charset = document->charset();
-    if (!charset.isEmpty())
-        map.add("Encoding"_s, WTFMove(charset));
-
-    auto uri = document->documentURI();
-    if (!uri.isEmpty())
-        map.add("URI"_s, WTFMove(uri));
-
-    auto contentType = document->contentType();
-    if (!contentType.isEmpty())
-        map.add("MimeType"_s, WTFMove(contentType));
-
-    const auto& title = document->title();
-    if (!title.isEmpty())
-        map.add("Title"_s, title);
-
-    return map;
+    });
 }
 
 String AccessibilityObjectAtspi::documentLocale() const
 {
-    if (!m_coreObject)
-        return { };
+    return Accessibility::retrieveValueFromMainThread<String>([this]() -> String {
+        if (m_coreObject)
+            m_coreObject->updateBackingStore();
 
-    auto* document = m_coreObject->document();
-    if (!document)
-        return { };
+        if (!m_coreObject)
+            return { };
 
-    return document->contentLanguage();
+        auto* document = m_coreObject->document();
+        if (!document)
+            return { };
+
+        return document->contentLanguage().isolatedCopy();
+    });
 }
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

@@ -236,7 +236,7 @@ bool PlatformMediaSession::clientWillBeginPlayback()
 
     ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
 
-    SetForScope preparingToPlay(m_preparingToPlay, true);
+    SetForScope<bool> preparingToPlay(m_preparingToPlay, true);
 
     if (!PlatformMediaSessionManager::sharedManager().sessionWillBeginPlayback(*this)) {
         if (state() == Interrupted)
@@ -375,9 +375,9 @@ void PlatformMediaSession::canProduceAudioChanged()
     PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
 }
 
-void PlatformMediaSession::clientCharacteristicsChanged(bool positionChanged)
+void PlatformMediaSession::clientCharacteristicsChanged()
 {
-    PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this, positionChanged);
+    PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this);
 }
 
 static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)

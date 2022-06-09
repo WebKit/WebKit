@@ -69,15 +69,15 @@ bool HTMLOListElement::hasPresentationalHintsForAttribute(const QualifiedName& n
 void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == typeAttr) {
-        if (value == "a"_s)
+        if (value == "a")
             addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueLowerAlpha);
-        else if (value == "A"_s)
+        else if (value == "A")
             addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueUpperAlpha);
-        else if (value == "i"_s)
+        else if (value == "i")
             addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueLowerRoman);
-        else if (value == "I"_s)
+        else if (value == "I")
             addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueUpperRoman);
-        else if (value == "1"_s)
+        else if (value == "1")
             addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueDecimal);
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);

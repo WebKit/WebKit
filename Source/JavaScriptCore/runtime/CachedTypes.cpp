@@ -395,7 +395,7 @@ static std::enable_if_t<!std::is_same<T, SourceType<T>>::value, SourceType<T>>&&
 
 template<typename Source>
 class CachedObject {
-    WTF_MAKE_NONCOPYABLE(CachedObject);
+    WTF_MAKE_NONCOPYABLE(CachedObject<Source>);
 
 public:
     using SourceType_ = Source;
@@ -755,7 +755,7 @@ public:
         if (!m_length) {
             if (m_isSymbol)
                 return &SymbolImpl::createNullSymbol().leakRef();
-            return RefPtr { emptyAtom().impl() }.leakRef();
+            return AtomStringImpl::add("").leakRef();
         }
 
         if (m_is8Bit)
@@ -983,7 +983,7 @@ private:
     CachedVector<CachedStringJumpTable> m_unlinkedStringSwitchJumpTables;
     CachedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     CachedHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
-    CachedVector<JSInstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
+    CachedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     CachedVector<CachedBitVector> m_bitVectors;
     CachedVector<CachedHashSet<CachedRefPtr<CachedUniquedStringImpl>, IdentifierRepHash>> m_constantIdentifierSets;
     unsigned m_needsClassFieldInitializer : 1;
@@ -1350,39 +1350,40 @@ public:
         }
 
         JSCell* cell = v.asCell();
+        VM& vm = encoder.vm();
 
-        if (auto* symbolTable = jsDynamicCast<SymbolTable*>(cell)) {
+        if (auto* symbolTable = jsDynamicCast<SymbolTable*>(vm, cell)) {
             m_type = EncodedType::SymbolTable;
             this->allocate<CachedSymbolTable>(encoder)->encode(encoder, *symbolTable);
             return;
         }
 
-        if (auto* string = jsDynamicCast<JSString*>(cell)) {
+        if (auto* string = jsDynamicCast<JSString*>(vm, cell)) {
             m_type = EncodedType::String;
             StringImpl* impl = string->tryGetValue().impl();
             this->allocate<CachedUniquedStringImpl>(encoder)->encode(encoder, *impl);
             return;
         }
 
-        if (auto* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(cell)) {
+        if (auto* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(vm, cell)) {
             m_type = EncodedType::ImmutableButterfly;
             this->allocate<CachedImmutableButterfly>(encoder)->encode(encoder, *immutableButterfly);
             return;
         }
 
-        if (auto* regexp = jsDynamicCast<RegExp*>(cell)) {
+        if (auto* regexp = jsDynamicCast<RegExp*>(vm, cell)) {
             m_type = EncodedType::RegExp;
             this->allocate<CachedRegExp>(encoder)->encode(encoder, *regexp);
             return;
         }
 
-        if (auto* templateObjectDescriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(cell)) {
+        if (auto* templateObjectDescriptor = jsDynamicCast<JSTemplateObjectDescriptor*>(vm, cell)) {
             m_type = EncodedType::TemplateObjectDescriptor;
             this->allocate<CachedTemplateObjectDescriptor>(encoder)->encode(encoder, *templateObjectDescriptor);
             return;
         }
 
-        if (auto* bigInt = jsDynamicCast<JSBigInt*>(cell)) {
+        if (auto* bigInt = jsDynamicCast<JSBigInt*>(vm, cell)) {
             m_type = EncodedType::BigInt;
             this->allocate<CachedBigInt>(encoder)->encode(encoder, *bigInt);
             return;
@@ -1438,18 +1439,18 @@ private:
     EncodedType m_type;
 };
 
-class CachedInstructionStream : public CachedObject<JSInstructionStream> {
+class CachedInstructionStream : public CachedObject<InstructionStream> {
 public:
-    void encode(Encoder& encoder, const JSInstructionStream& stream)
+    void encode(Encoder& encoder, const InstructionStream& stream)
     {
         m_instructions.encode(encoder, stream.m_instructions);
     }
 
-    JSInstructionStream* decode(Decoder& decoder) const
+    InstructionStream* decode(Decoder& decoder) const
     {
         Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc> instructionsVector;
         m_instructions.decode(decoder, instructionsVector);
-        return new JSInstructionStream(WTFMove(instructionsVector));
+        return new InstructionStream(WTFMove(instructionsVector));
     }
 
 private:
@@ -1593,7 +1594,7 @@ public:
     void encode(Encoder& encoder, const WebAssemblySourceProvider& sourceProvider)
     {
         Base::encode(encoder, sourceProvider);
-        m_data.encode(encoder, sourceProvider.dataVector());
+        m_data.encode(encoder, sourceProvider.data());
     }
 
     WebAssemblySourceProvider* decode(Decoder& decoder) const
@@ -1878,7 +1879,7 @@ public:
     void encode(Encoder&, const UnlinkedCodeBlock&);
     void decode(Decoder&, UnlinkedCodeBlock&) const;
 
-    JSInstructionStream* instructions(Decoder& decoder) const { return m_instructions.decode(decoder); }
+    InstructionStream* instructions(Decoder& decoder) const { return m_instructions.decode(decoder); }
 
     VirtualRegister thisRegister() const { return m_thisRegister; }
     VirtualRegister scopeRegister() const { return m_scopeRegister; }
@@ -1965,11 +1966,11 @@ private:
     CachedRefPtr<CachedStringImpl> m_sourceMappingURLDirective;
 
     CachedPtr<CachedInstructionStream> m_instructions;
-    CachedVector<JSInstructionStream::Offset> m_jumpTargets;
+    CachedVector<InstructionStream::Offset> m_jumpTargets;
     CachedVector<CachedJSValue> m_constantRegisters;
     CachedVector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     CachedVector<ExpressionRangeInfo> m_expressionInfo;
-    CachedHashMap<JSInstructionStream::Offset, int> m_outOfLineJumpTargets;
+    CachedHashMap<InstructionStream::Offset, int> m_outOfLineJumpTargets;
 
     CachedVector<CachedIdentifier> m_identifiers;
     CachedVector<CachedWriteBarrier<CachedFunctionExecutable>> m_functionDecls;
@@ -2511,7 +2512,7 @@ void encodeCodeBlock(Encoder& encoder, const SourceCodeKey& key, const UnlinkedC
 
 RefPtr<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock, FileSystem::PlatformFileHandle fd, BytecodeCacheError& error)
 {
-    const ClassInfo* classInfo = codeBlock->classInfo();
+    const ClassInfo* classInfo = codeBlock->classInfo(vm);
 
     Encoder encoder(vm, fd);
     if (classInfo == UnlinkedProgramCodeBlock::info())

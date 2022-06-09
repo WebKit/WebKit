@@ -322,13 +322,7 @@ Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
         dirname = filesystem.join(LAYOUT_TEST_DIR, test.name[0:test.name.rfind('/')])
         base = test.base
         filesystem.maybe_make_directory(dirname)
-
-        path = filesystem.join(dirname, base + suffix)
-        if contents is None:
-            if filesystem.exists(path):
-                filesystem.remove(path)
-        else:
-            filesystem.write_binary_file(path, contents)
+        filesystem.write_binary_file(filesystem.join(dirname, base + suffix), contents)
 
     # Add each test and the expected output, if any.
     test_list = unit_test_list()
@@ -341,6 +335,9 @@ Bug(test) corner-cases/ews/directory-flaky [ Pass Timeout Failure ]
             continue
         add_file(test, '-expected.txt', test.expected_text)
         add_file(test, '-expected.png', test.expected_image)
+
+    # Clear the list of written files so that we can watch what happens during testing.
+    filesystem.clear_written_files()
 
 
 def add_checkout_information_json_to_mock_filesystem(filesystem):
@@ -441,10 +438,10 @@ class TestPort(Port):
         return ImageDiffResult(passed=True, diff_image=None, difference=0, tolerance=tolerance or 0, fuzzy_data={'max_difference': 0, 'total_pixels': 0})
 
     def layout_tests_dir(self):
-        return self._filesystem.abspath(LAYOUT_TEST_DIR)
+        return LAYOUT_TEST_DIR
 
     def perf_tests_dir(self):
-        return self._filesystem.abspath(PERF_TEST_DIR)
+        return PERF_TEST_DIR
 
     def webkit_base(self):
         return '/test.checkout'
@@ -488,6 +485,9 @@ class TestPort(Port):
 
     def _path_to_lighttpd_modules(self):
         return "/usr/lib/lighttpd"
+
+    def _path_to_lighttpd_php(self):
+        return "/usr/bin/php-cgi"
 
     def _path_to_apache(self):
         return "/usr/sbin/httpd"

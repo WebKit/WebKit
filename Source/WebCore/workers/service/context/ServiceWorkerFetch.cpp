@@ -33,7 +33,6 @@
 #include "FetchEvent.h"
 #include "FetchRequest.h"
 #include "FetchResponse.h"
-#include "JSDOMPromise.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -46,14 +45,11 @@ namespace WebCore {
 
 namespace ServiceWorkerFetch {
 
-// https://fetch.spec.whatwg.org/#http-fetch step 5.5
+// https://fetch.spec.whatwg.org/#http-fetch step 3.3
 static inline ResourceError validateResponse(const ResourceResponse& response, FetchOptions::Mode mode, FetchOptions::Redirect redirect)
 {
     if (response.type() == ResourceResponse::Type::Error)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is an error"_s, ResourceError::Type::General, ResourceError::IsSanitized::Yes };
-
-    if (mode == FetchOptions::Mode::SameOrigin && response.type() == ResourceResponse::Type::Cors)
-        return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is CORS while mode is same origin"_s, ResourceError::Type::AccessControl, ResourceError::IsSanitized::Yes };
 
     if (mode != FetchOptions::Mode::NoCors && response.tainting() == ResourceResponse::Tainting::Opaque)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Response served by service worker is opaque"_s, ResourceError::Type::AccessControl, ResourceError::IsSanitized::Yes };
@@ -68,17 +64,15 @@ static inline ResourceError validateResponse(const ResourceResponse& response, F
     return { };
 }
 
-static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result, FetchOptions::Mode mode, FetchOptions::Redirect redirect, const URL& requestURL, CertificateInfo&& certificateInfo, DeferredPromise& promise)
+static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result, FetchOptions::Mode mode, FetchOptions::Redirect redirect, const URL& requestURL, CertificateInfo&& certificateInfo)
 {
     if (!result.has_value()) {
         auto& error = result.error();
         if (!error) {
             client->didNotHandle();
-            promise.resolve();
             return;
         }
         client->didFail(*error);
-        promise.reject(Exception { ExceptionCode::NetworkError });
         return;
     }
     auto response = WTFMove(result.value());
@@ -86,18 +80,14 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     auto loadingError = response->loadingError();
     if (!loadingError.isNull()) {
         client->didFail(loadingError);
-        promise.reject(Exception { ExceptionCode::NetworkError });
         return;
     }
 
     auto resourceResponse = response->resourceResponse();
     if (auto error = validateResponse(resourceResponse, mode, redirect); !error.isNull()) {
         client->didFail(error);
-        promise.reject(Exception { ExceptionCode::NetworkError });
         return;
     }
-
-    promise.resolve();
 
     if (resourceResponse.isRedirection() && resourceResponse.httpHeaderFields().contains(HTTPHeaderName::Location)) {
         client->didReceiveRedirection(resourceResponse);
@@ -123,11 +113,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
     client->didReceiveResponse(resourceResponse);
 
     if (response->isBodyReceivedByChunk()) {
-        client->setCancelledCallback([response = WeakPtr { response.get() }] {
-            if (response)
-                response->cancelStream();
-        });
-        response->consumeBodyReceivedByChunk([client = WTFMove(client), response = WeakPtr { response.get() }] (auto&& result) mutable {
+        response->consumeBodyReceivedByChunk([client = WTFMove(client)] (auto&& result) mutable {
             if (result.hasException()) {
                 auto error = FetchEvent::createResponseError(URL { }, result.exception().message(), ResourceError::IsSanitized::Yes);
                 client->didFail(error);
@@ -137,7 +123,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
             if (auto* chunk = result.returnValue())
                 client->didReceiveData(SharedBuffer::create(chunk->data(), chunk->size()));
             else
-                client->didFinish(response ? response->networkLoadMetrics() : NetworkLoadMetrics { });
+                client->didFinish();
         });
         return;
     }
@@ -147,13 +133,13 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
         client->didReceiveFormDataAndFinish(WTFMove(formData));
     }, [&] (Ref<SharedBuffer>& buffer) {
         client->didReceiveData(WTFMove(buffer));
-        client->didFinish(response->networkLoadMetrics());
+        client->didFinish();
     }, [&] (std::nullptr_t&) {
-        client->didFinish(response->networkLoadMetrics());
+        client->didFinish();
     });
 }
 
-void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, ResourceRequest&& request, String&& referrer, FetchOptions&& options, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier)
+void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ScriptExecutionContextIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options, FetchIdentifier fetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled)
 {
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
 
@@ -188,28 +174,22 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     FetchEvent::Init init;
     init.request = WTFMove(fetchRequest);
-    init.resultingClientId = WTFMove(resultingClientIdentifier);
-    init.clientId = WTFMove(clientIdentifier);
+    if (isNavigation) {
+        // FIXME: Set reservedClientId.
+        if (clientId)
+            init.targetClientId = clientId->toString();
+    } else if (clientId)
+        init.clientId = clientId->toString();
     init.cancelable = true;
-
-    auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(globalScope.globalObject());
-    JSC::JSLockHolder lock(jsDOMGlobalObject.vm());
-
-    auto* promise = JSC::JSPromise::create(jsDOMGlobalObject.vm(), jsDOMGlobalObject.promiseStructure());
-    ASSERT(promise);
-
-    auto deferredPromise = DeferredPromise::create(jsDOMGlobalObject, *promise);
-    init.handled = DOMPromise::create(jsDOMGlobalObject, *promise);
-
-    auto event = FetchEvent::create(*globalScope.globalObject(), eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
+    auto event = FetchEvent::create(eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
 
     if (isServiceWorkerNavigationPreloadEnabled)
         event->setNavigationPreloadIdentifier(fetchIdentifier);
 
     CertificateInfo certificateInfo = globalScope.certificateInfo();
 
-    event->onResponse([client, mode, redirect, requestURL, certificateInfo = WTFMove(certificateInfo), deferredPromise] (auto&& result) mutable {
-        processResponse(WTFMove(client), WTFMove(result), mode, redirect, requestURL, WTFMove(certificateInfo), deferredPromise.get());
+    event->onResponse([client, mode, redirect, requestURL, certificateInfo = WTFMove(certificateInfo)] (auto&& result) mutable {
+        processResponse(WTFMove(client), WTFMove(result), mode, redirect, requestURL, WTFMove(certificateInfo));
     });
 
     globalScope.dispatchEvent(event);
@@ -218,11 +198,9 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
         if (event->defaultPrevented()) {
             ResourceError error { errorDomainWebKitInternal, 0, requestURL, "Fetch event was canceled"_s, ResourceError::Type::General, ResourceError::IsSanitized::Yes };
             client->didFail(error);
-            deferredPromise->reject(Exception { NetworkError });
             return;
         }
         client->didNotHandle();
-        deferredPromise->resolve();
     }
 
     globalScope.updateExtendedEventsSet(event.ptr());

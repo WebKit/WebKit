@@ -48,15 +48,18 @@ class GraphicsContext;
 class Image;
 class ImageBuffer;
 class ImageData;
+class MediaSample;
 class MediaStream;
 class OffscreenCanvas;
-class VideoFrame;
 class WebGLRenderingContextBase;
 class GPUCanvasContext;
-class WebCoreOpaqueRoot;
 struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
+
+namespace DisplayList {
+using AsTextFlags = unsigned;
+}
 
 class HTMLCanvasElement final : public HTMLElement, public CanvasBase, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLCanvasElement);
@@ -93,9 +96,9 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);
-    ExceptionOr<void> toBlob(Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
+    ExceptionOr<void> toBlob(ScriptExecutionContext&, Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
 #if ENABLE(OFFSCREEN_CANVAS)
-    ExceptionOr<Ref<OffscreenCanvas>> transferControlToOffscreen();
+    ExceptionOr<Ref<OffscreenCanvas>> transferControlToOffscreen(ScriptExecutionContext&);
 #endif
 
     // Used for rendering
@@ -104,8 +107,8 @@ public:
     void paint(GraphicsContext&, const LayoutRect&);
 
 #if ENABLE(MEDIA_STREAM)
-    RefPtr<VideoFrame> toVideoFrame();
-    ExceptionOr<Ref<MediaStream>> captureStream(std::optional<double>&& frameRequestRate);
+    RefPtr<MediaSample> toMediaSample();
+    ExceptionOr<Ref<MediaStream>> captureStream(Document&, std::optional<double>&& frameRequestRate);
 #endif
 
     Image* copiedImage() const final;
@@ -197,8 +200,6 @@ private:
     mutable bool m_mustGuardAgainstUseByPendingLayerTransaction { false };
 #endif
 };
-
-WebCoreOpaqueRoot root(HTMLCanvasElement*);
 
 } // namespace WebCore
 

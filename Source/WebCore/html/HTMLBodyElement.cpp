@@ -91,7 +91,7 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
     } else if (name == textAttr) {
         addHTMLColorToStyle(style, CSSPropertyColor, value);
     } else if (name == bgpropertiesAttr) {
-        if (equalLettersIgnoringASCIICase(value, "fixed"_s))
+        if (equalLettersIgnoringASCIICase(value, "fixed"))
             addPropertyToPresentationalHintStyle(style, CSSPropertyBackgroundAttachment, CSSValueFixed);
     } else
         HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
@@ -123,7 +123,7 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomString
             else
                 document().resetActiveLinkColor();
         } else {
-            Color color = CSSParser::parseColorWithoutContext(value, !document().inQuirksMode());
+            Color color = CSSParser::parseColor(value, !document().inQuirksMode());
             if (color.isValid()) {
                 if (name == linkAttr)
                     document().setLinkColor(color);

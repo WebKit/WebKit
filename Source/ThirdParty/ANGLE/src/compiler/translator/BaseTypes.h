@@ -1118,8 +1118,7 @@ enum TQualifier
     EvqPrimitiveIDIn,  // gl_PrimitiveIDIn
     EvqInvocationID,   // gl_InvocationID
     EvqPrimitiveID,    // gl_PrimitiveID
-    EvqLayerOut,       // gl_Layer (GS output)
-    EvqLayerIn,        // gl_Layer (FS input)
+    EvqLayer,          // gl_Layer
 
     // GLSL ES 3.1 extension EXT_gpu_shader5 qualifiers
     EvqPrecise,
@@ -1542,8 +1541,7 @@ inline const char *getQualifierString(TQualifier q)
     case EvqSecondaryFragDataEXT:   return "SecondaryFragDataEXT";
     case EvqViewIDOVR:              return "ViewIDOVR";
     case EvqViewportIndex:          return "ViewportIndex";
-    case EvqLayerOut:               return "LayerOut";
-    case EvqLayerIn:                return "LayerIn";
+    case EvqLayer:                  return "Layer";
     case EvqLastFragColor:          return "LastFragColor";
     case EvqLastFragData:           return "LastFragData";
     case EvqFragmentInOut:          return "inout";

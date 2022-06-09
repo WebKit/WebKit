@@ -62,13 +62,13 @@ AccessibleBase::AccessibleBase(AccessibilityObject* obj, HWND window)
     ASSERT_ARG(obj, obj);
     m_object->setWrapper(this);
     ++gClassCount;
-    gClassNameCount().add("AccessibleBase"_s);
+    gClassNameCount().add("AccessibleBase");
 }
 
 AccessibleBase::~AccessibleBase()
 {
     --gClassCount;
-    gClassNameCount().remove("AccessibleBase"_s);
+    gClassNameCount().remove("AccessibleBase");
 }
 
 AccessibleBase* AccessibleBase::createInstance(AccessibilityObject* obj, HWND window)

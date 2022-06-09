@@ -68,7 +68,7 @@ AccessibilityRole AccessibilityTree::determineAccessibilityRole()
 bool AccessibilityTree::nodeHasTreeItemChild(Node& node) const
 {
     for (auto* child = node.firstChild(); child; child = child->nextSibling()) {
-        if (nodeHasRole(child, "treeitem"_s))
+        if (nodeHasRole(child, "treeitem"))
             return true;
     }
     return false;
@@ -92,14 +92,14 @@ bool AccessibilityTree::isTreeValid() const
 
         if (!is<Element>(*child))
             continue;
-        if (nodeHasRole(child, "treeitem"_s))
+        if (nodeHasRole(child, "treeitem"))
             continue;
-        if (nodeHasRole(child, "presentation"_s)) {
+        if (nodeHasRole(child, "presentation")) {
             if (!nodeHasTreeItemChild(*child))
                 return false;
             continue;
         }
-        if (!nodeHasRole(child, "group"_s))
+        if (!nodeHasRole(child, "group"))
             return false;
 
         for (auto* groupChild = child->firstChild(); groupChild; groupChild = groupChild->nextSibling())

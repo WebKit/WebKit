@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSCSSRule.h"
 
-#include "CSSContainerRule.h"
 #include "CSSCounterStyleRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontPaletteValuesRule.h"
@@ -40,7 +39,6 @@
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
-#include "JSCSSContainerRule.h"
 #include "JSCSSCounterStyleRule.h"
 #include "JSCSSFontFaceRule.h"
 #include "JSCSSFontPaletteValuesRule.h"
@@ -56,7 +54,6 @@
 #include "JSCSSSupportsRule.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"
-#include "WebCoreOpaqueRoot.h"
 
 
 namespace WebCore {
@@ -65,7 +62,7 @@ using namespace JSC;
 template<typename Visitor>
 void JSCSSRule::visitAdditionalChildren(Visitor& visitor)
 {
-    addWebCoreOpaqueRoot(visitor, wrapped());
+    visitor.addOpaqueRoot(root(&wrapped()));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSCSSRule);
@@ -100,13 +97,11 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     case StyleRuleType::LayerStatement:
         return createWrapper<CSSLayerStatementRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Container:
-        return createWrapper<CSSContainerRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:
         return createWrapper<CSSRule>(globalObject, WTFMove(rule));
     }
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, CSSRule& object)

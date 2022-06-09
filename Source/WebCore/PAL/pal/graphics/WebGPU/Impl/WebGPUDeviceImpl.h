@@ -28,8 +28,6 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUDevice.h"
-#include "WebGPUDeviceHolderImpl.h"
-#include "WebGPUQueueImpl.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
 
@@ -49,6 +47,9 @@ public:
 
 private:
     friend class DowncastConvertToBackingContext;
+    friend void createComputePipelineAsyncCallback(WGPUCreatePipelineAsyncStatus, WGPUComputePipeline, const char* message, void* userdata);
+    friend void createRenderPipelineAsyncCallback(WGPUCreatePipelineAsyncStatus, WGPURenderPipeline, const char* message, void* userdata);
+    friend void popErrorScopeCallback(WGPUErrorType, const char* message, void* userdata);
 
     DeviceImpl(WGPUDevice, Ref<SupportedFeatures>&&, Ref<SupportedLimits>&&, ConvertToBackingContext&);
 
@@ -57,9 +58,7 @@ private:
     DeviceImpl& operator=(const DeviceImpl&) = delete;
     DeviceImpl& operator=(DeviceImpl&&) = delete;
 
-    WGPUDevice backing() const { return m_deviceHolder->backingDevice(); }
-
-    Queue& queue() final;
+    WGPUDevice backing() const { return m_backing; }
 
     void destroy() final;
 
@@ -75,8 +74,10 @@ private:
     Ref<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) final;
     Ref<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) final;
     Ref<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) final;
-    void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(Ref<ComputePipeline>&&)>&&) final;
-    void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(Ref<RenderPipeline>&&)>&&) final;
+    void createComputePipelineAsyncCallback(WGPUCreatePipelineAsyncStatus, WGPUComputePipeline, const char* message);
+    void createComputePipelineAsync(const ComputePipelineDescriptor&, WTF::Function<void(Ref<ComputePipeline>&&)>&&) final;
+    void createRenderPipelineAsyncCallback(WGPUCreatePipelineAsyncStatus, WGPURenderPipeline, const char* message);
+    void createRenderPipelineAsync(const RenderPipelineDescriptor&, WTF::Function<void(Ref<RenderPipeline>&&)>&&) final;
 
     Ref<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) final;
     Ref<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) final;
@@ -84,13 +85,17 @@ private:
     Ref<QuerySet> createQuerySet(const QuerySetDescriptor&) final;
 
     void pushErrorScope(ErrorFilter) final;
-    void popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&) final;
+    void popErrorScopeCallback(WGPUErrorType, const char* message);
+    void popErrorScope(WTF::Function<void(std::optional<Error>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
 
-    Ref<DeviceHolderImpl> m_deviceHolder;
+    Deque<WTF::Function<void(Ref<ComputePipeline>&&)>> m_createComputePipelineAsyncCallbacks;
+    Deque<WTF::Function<void(Ref<RenderPipeline>&&)>> m_createRenderPipelineAsyncCallbacks;
+    Deque<WTF::Function<void(std::optional<Error>&&)>> m_popErrorScopeCallbacks;
+
+    WGPUDevice m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    Ref<QueueImpl> m_queue;
 };
 
 } // namespace PAL::WebGPU

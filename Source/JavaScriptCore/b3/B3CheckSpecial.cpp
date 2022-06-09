@@ -176,7 +176,7 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
 
     context.latePaths.append(
         createSharedTask<GenerationContext::LatePathFunction>(
-            [=, this] (CCallHelpers& jit, GenerationContext& context) {
+            [=] (CCallHelpers& jit, GenerationContext& context) {
                 fail.link(&jit);
 
                 // If necessary, undo the operation.

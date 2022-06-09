@@ -20,7 +20,7 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
-#if USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 #include "AXTextStateChangeIntent.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectAtspi.h"
@@ -35,11 +35,14 @@ namespace WebCore {
 
 void AXObjectCache::attachWrapper(AXCoreObject* axObject)
 {
-    auto wrapper = AccessibilityObjectAtspi::create(axObject, document().page()->accessibilityRootObject());
+    auto* rootWrapper = document().page()->accessibilityRootObject();
+    if (!rootWrapper)
+        return;
+
+    auto wrapper = AccessibilityObjectAtspi::create(axObject, *rootWrapper);
     axObject->setWrapper(wrapper.ptr());
 
     m_deferredParentChangedList.add(axObject);
-    m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
 void AXObjectCache::platformPerformDeferredCacheUpdate()
@@ -52,7 +55,7 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
         auto* axParent = axObject.parentObjectUnignored();
         if (!axParent) {
             if (axObject.isScrollView() && axObject.scrollView() == document().view())
-                wrapper->setParent(nullptr); // nullptr means root.
+                wrapper->setParent(nullptr); // nullptr parent means root.
             return;
         }
 
@@ -65,8 +68,23 @@ void AXObjectCache::platformPerformDeferredCacheUpdate()
     m_deferredParentChangedList.clear();
 }
 
+bool AXObjectCache::isIsolatedTreeEnabled()
+{
+    return true;
+}
+
+void AXObjectCache::initializeSecondaryAXThread()
+{
+}
+
+bool AXObjectCache::usedOnAXThread()
+{
+    return true;
+}
+
 void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotification notification)
 {
+    RELEASE_ASSERT(isMainThread());
     auto* wrapper = coreObject->wrapper();
     if (!wrapper)
         return;
@@ -102,13 +120,12 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
             wrapper->valueChanged(coreObject->valueForRange());
         break;
     case AXInvalidStatusChanged:
-        wrapper->stateChanged("invalid-entry", coreObject->invalidStatus() != "false"_s);
+        wrapper->stateChanged("invalid-entry", coreObject->invalidStatus() != "false");
         break;
     case AXElementBusyChanged:
         wrapper->stateChanged("busy", coreObject->isBusy());
         break;
     case AXCurrentStateChanged:
-        wrapper->stateChanged("active", coreObject->currentState() != AccessibilityCurrentState::False);
         break;
     case AXRowExpanded:
         wrapper->stateChanged("expanded", true);
@@ -138,12 +155,13 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         if (auto* descendant = coreObject->activeDescendant())
             platformHandleFocusedUIElementChanged(nullptr, descendant->node());
         break;
+    case AXAriaAttributeChanged:
+        break;
     case AXAriaRoleChanged:
         break;
     case AXAutocorrectionOccured:
         break;
     case AXChildrenChanged:
-        coreObject->updateChildrenIfNecessary();
         break;
     case AXFocusedUIElementChanged:
         break;
@@ -195,29 +213,12 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXDraggingExitedDropZone:
         break;
-    case AXGrabbedStateChanged:
-        break;
-    case AXPositionInSetChanged:
-        break;
-    case AXDescribedByChanged:
-        break;
-    case AXHasPopupChanged:
-        break;
-    case AXSetSizeChanged:
-        break;
-    case AXLevelChanged:
-        break;
-    case AXMaximumValueChanged:
-        break;
-    case AXMinimumValueChanged:
-        break;
-    case AXMultiSelectableStateChanged:
-        break;
     }
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* coreObject, const AXTextStateChangeIntent&, const VisibleSelection& selection)
 {
+    RELEASE_ASSERT(isMainThread());
     if (!coreObject)
         coreObject = rootWebArea();
 
@@ -233,6 +234,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* coreOb
 
 void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject* coreObject, AXTextEditType editType, const String& text, const VisiblePosition& position)
 {
+    RELEASE_ASSERT(isMainThread());
     if (text.isEmpty())
         return;
 
@@ -261,6 +263,7 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
 
 void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCoreObject* coreObject, const String& deletedText, const String& insertedText, HTMLTextFormControlElement&)
 {
+    RELEASE_ASSERT(isMainThread());
     if (!coreObject)
         coreObject = rootWebArea();
 
@@ -282,6 +285,7 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AXCore
 
 void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* coreObject, AXTextEditType, const String& deletedText, AXTextEditType, const String& insertedText, const VisiblePosition& position)
 {
+    RELEASE_ASSERT(isMainThread());
     if (!coreObject)
         coreObject = rootWebArea();
 
@@ -303,6 +307,7 @@ void AXObjectCache::postTextReplacementPlatformNotification(AXCoreObject* coreOb
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* coreObject, AXLoadingEvent loadingEvent)
 {
+    RELEASE_ASSERT(isMainThread());
     if (!coreObject)
         return;
 
@@ -350,4 +355,4 @@ void AXObjectCache::handleScrolledToAnchor(const Node*)
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

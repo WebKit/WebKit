@@ -42,7 +42,7 @@ struct CDMKeySystemConfiguration {
     using KeysRequirement = CDMRequirement;
 
     String label;
-    Vector<AtomString> initDataTypes;
+    Vector<String> initDataTypes;
     Vector<CDMMediaCapability> audioCapabilities;
     Vector<CDMMediaCapability> videoCapabilities;
     CDMRequirement distinctiveIdentifier { CDMRequirement::Optional };
@@ -69,7 +69,7 @@ struct CDMKeySystemConfiguration {
         if (!label)
             return std::nullopt;
 
-        std::optional<Vector<AtomString>> initDataTypes;
+        std::optional<Vector<String>> initDataTypes;
         decoder >> initDataTypes;
         if (!initDataTypes)
             return std::nullopt;

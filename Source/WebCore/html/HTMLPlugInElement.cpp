@@ -72,7 +72,7 @@ HTMLPlugInElement::~HTMLPlugInElement()
     ASSERT(!m_instance); // cleared in detach()
 }
 
-bool HTMLPlugInElement::willRespondToMouseClickEventsWithEditability(Editability) const
+bool HTMLPlugInElement::willRespondToMouseClickEvents()
 {
     if (isDisabledFormControl())
         return false;
@@ -112,13 +112,34 @@ JSC::Bindings::Instance* HTMLPlugInElement::bindingsInstance()
     return m_instance.get();
 }
 
-PluginViewBase* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) const
+bool HTMLPlugInElement::guardedDispatchBeforeLoadEvent(const String& sourceURL)
 {
+    // FIXME: Our current plug-in loading design can't guarantee the following
+    // assertion is true, since plug-in loading can be initiated during layout,
+    // and synchronous layout can be initiated in a beforeload event handler!
+    // See <http://webkit.org/b/71264>.
+    // ASSERT(!m_inBeforeLoadEventHandler);
+    m_inBeforeLoadEventHandler = true;
+    // static_cast is used to avoid a compile error since dispatchBeforeLoadEvent
+    // is intentionally undefined on this class.
+    bool beforeLoadAllowedLoad = static_cast<HTMLFrameOwnerElement*>(this)->dispatchBeforeLoadEvent(sourceURL);
+    m_inBeforeLoadEventHandler = false;
+    return beforeLoadAllowedLoad;
+}
+
+Widget* HTMLPlugInElement::pluginWidget(PluginLoadingPolicy loadPolicy) const
+{
+    if (m_inBeforeLoadEventHandler) {
+        // The plug-in hasn't loaded yet, and it makes no sense to try to load if beforeload handler happened to touch the plug-in element.
+        // That would recursively call beforeload for the same element.
+        return nullptr;
+    }
+
     RenderWidget* renderWidget = loadPolicy == PluginLoadingPolicy::Load ? renderWidgetLoadingPlugin() : this->renderWidget();
     if (!renderWidget)
         return nullptr;
 
-    return dynamicDowncast<PluginViewBase>(renderWidget->widget());
+    return renderWidget->widget();
 }
 
 RenderWidget* HTMLPlugInElement::renderWidgetLoadingPlugin() const
@@ -187,12 +208,37 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
 
 bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return false;
+    // FIXME: Why is this check needed?
+    if (!document().page())
+        return false;
+
+    RefPtr<Widget> widget = pluginWidget();
+    if (!is<PluginViewBase>(widget))
+        return false;
+
+    return downcast<PluginViewBase>(*widget).supportsKeyboardFocus();
 }
 
 bool HTMLPlugInElement::isPluginElement() const
 {
     return true;
+}
+
+bool HTMLPlugInElement::isUserObservable() const
+{
+    // No widget - can't be anything to see or hear here.
+    RefPtr<Widget> widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
+    if (!is<PluginViewBase>(widget))
+        return false;
+
+    PluginViewBase& pluginView = downcast<PluginViewBase>(*widget);
+
+    // If audio is playing (or might be) then the plugin is detectable.
+    if (pluginView.audioHardwareActivity() != AudioHardwareActivityType::IsInactive)
+        return true;
+
+    // If the plugin is visible and not vanishingly small in either dimension it is detectable.
+    return pluginView.isVisible() && pluginView.width() > 2 && pluginView.height() > 2;
 }
 
 bool HTMLPlugInElement::supportsFocus() const
@@ -243,11 +289,17 @@ void HTMLPlugInElement::didAddUserAgentShadowRoot(ShadowRoot& root)
         return;
     
     root.setResetStyleInheritance(true);
+    auto result = m_pluginReplacement->installReplacement(root);
 
-    m_pluginReplacement->installReplacement(root);
+#if PLATFORM(COCOA)
+    RELEASE_ASSERT(result.success || !result.scriptObject);
+    m_pluginReplacementScriptObject.setWeakly(result.scriptObject);
+#endif
 
-    setDisplayState(DisplayingPluginReplacement);
-    invalidateStyleAndRenderersForSubtree();
+    if (result.success) {
+        setDisplayState(DisplayingPluginReplacement);
+        invalidateStyleAndRenderersForSubtree();
+    }
 }
 
 #if PLATFORM(COCOA)
@@ -283,11 +335,11 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
     if (replacements.isEmpty())
         return nullptr;
 
-    StringView extension;
+    String extension;
     auto lastPathComponent = url.lastPathComponent();
     size_t dotOffset = lastPathComponent.reverseFind('.');
     if (dotOffset != notFound)
-        extension = lastPathComponent.substring(dotOffset + 1);
+        extension = lastPathComponent.substring(dotOffset + 1).toString();
 
     String type = mimeType;
     if (type.isEmpty() && url.protocolIsData())
@@ -317,7 +369,7 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
     return nullptr;
 }
 
-bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
+bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     if (m_pluginReplacement)
         return true;
@@ -335,6 +387,27 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
     m_pluginReplacement = replacement->create(*this, paramNames, paramValues);
     setDisplayState(PreparingPluginReplacement);
     return true;
+}
+
+JSC::JSObject* HTMLPlugInElement::scriptObjectForPluginReplacement()
+{
+#if PLATFORM(COCOA)
+    JSC::JSValue value = m_pluginReplacementScriptObject.getValue();
+    if (!value)
+        return nullptr;
+    return value.getObject();
+#else
+    return nullptr;
+#endif
+}
+
+bool HTMLPlugInElement::isBelowSizeThreshold() const
+{
+    auto* renderObject = renderer();
+    if (!is<RenderEmbeddedObject>(renderObject))
+        return true;
+    auto& renderEmbeddedObject = downcast<RenderEmbeddedObject>(*renderObject);
+    return renderEmbeddedObject.isPluginUnavailable() && renderEmbeddedObject.pluginUnavailabilityReason() == RenderEmbeddedObject::PluginTooSmall;
 }
 
 bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason reason, const String& unavailabilityDescription)

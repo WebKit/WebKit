@@ -38,6 +38,19 @@
 
 namespace WTR {
 
+void initializeGtkSettings()
+{
+    GtkSettings* settings = gtk_settings_get_default();
+    if (!settings)
+        return;
+    g_object_set(settings, 
+        "gtk-xft-dpi", 98304,
+        "gtk-xft-antialias", 1,
+        "gtk-xft-hinting", 0,
+        "gtk-font-name", "Liberation Sans 12",
+        "gtk-xft-rgba", "none", nullptr);
+}
+
 CString getOutputDir()
 {
     const char* webkitOutputDir = g_getenv("WEBKIT_OUTPUTDIR");
@@ -142,6 +155,7 @@ void initializeFontConfigSetting()
 
 void activateFonts()
 {
+    initializeGtkSettings();
     initializeFontConfigSetting();
 }
 

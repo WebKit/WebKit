@@ -71,10 +71,15 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 class SerializedScriptValue : public ThreadSafeRefCounted<SerializedScriptValue> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SerializedScriptValue);
 public:
+    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::JSGlobalObject&, JSC::JSValue, SerializationErrorMode = SerializationErrorMode::Throwing);
+
     WEBCORE_EXPORT static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<RefPtr<MessagePort>>&, SerializationContext = SerializationContext::Default);
-    WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSC::JSGlobalObject&, JSC::JSValue, SerializationErrorMode = SerializationErrorMode::Throwing, SerializationContext = SerializationContext::Default);
 
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(StringView);
+    static Ref<SerializedScriptValue> adopt(Vector<uint8_t>&& buffer)
+    {
+        return adoptRef(*new SerializedScriptValue(WTFMove(buffer)));
+    }
 
     static Ref<SerializedScriptValue> nullValue();
 
@@ -84,12 +89,13 @@ public:
 
     static uint32_t wireFormatVersion();
 
-    String toString() const;
+    String toString();
 
     // API implementation helpers. These don't expose special behavior for ArrayBuffers or MessagePorts.
     WEBCORE_EXPORT static RefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
     WEBCORE_EXPORT JSValueRef deserialize(JSContextRef, JSValueRef* exception);
 
+    const Vector<uint8_t>& data() const { return m_data; }
     bool hasBlobURLs() const { return !m_blobHandles.isEmpty(); }
 
     Vector<String> blobURLs() const;
@@ -100,7 +106,7 @@ public:
     {
         return adoptRef(*new SerializedScriptValue(WTFMove(data)));
     }
-    const Vector<uint8_t>& wireBytes() const { return m_data; }
+    const Vector<uint8_t>& toWireBytes() const { return m_data; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static RefPtr<SerializedScriptValue> decode(Decoder&);
@@ -110,10 +116,10 @@ public:
     WEBCORE_EXPORT ~SerializedScriptValue();
 
 private:
-    static ExceptionOr<Ref<SerializedScriptValue>> create(JSC::JSGlobalObject&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer, Vector<RefPtr<MessagePort>>&, SerializationErrorMode, SerializationContext);
-    WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&, std::unique_ptr<ArrayBufferContentsArray>&& = nullptr
+    WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&);
+    WEBCORE_EXPORT SerializedScriptValue(Vector<unsigned char>&&, std::unique_ptr<ArrayBufferContentsArray>&&
 #if ENABLE(WEB_RTC)
-        , Vector<std::unique_ptr<DetachedRTCDataChannel>>&& = { }
+        , Vector<std::unique_ptr<DetachedRTCDataChannel>>&&
 #endif
         );
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,8 @@
 #include "config.h"
 #include "SVGFEColorMatrixElement.h"
 
-#include "FEColorMatrix.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -84,22 +85,28 @@ bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect* effect, con
 
 void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::inAttr)
-            updateSVGRendererForElementChange();
-        else {
-            ASSERT(attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr);
-            primitiveAttributeChanged(attrName);
-        }
+        primitiveAttributeChanged(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
+        InstanceInvalidationGuard guard(*this);
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEColorMatrixElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder& filterBuilder) const
 {
+    auto input1 = filterBuilder.getEffectById(in1());
+
+    if (!input1)
+        return nullptr;
+
     Vector<float> filterValues;
     ColorMatrixType filterType = type();
 
@@ -129,12 +136,14 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::filterEffect(const SVGFilter&, con
             || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
             || (filterType == FECOLORMATRIX_TYPE_SATURATE && size != 1))
             return nullptr;
-
+        
         filterValues = values();
         filterValues.shrinkToFit();
     }
 
-    return FEColorMatrix::create(filterType, WTFMove(filterValues));
+    auto effect = FEColorMatrix::create(filterType, WTFMove(filterValues));
+    effect->inputEffects() = { input1.releaseNonNull() };
+    return effect;
 }
 
 } // namespace WebCore

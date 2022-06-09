@@ -34,7 +34,7 @@ public:
     virtual ~NameNodeList();
 
     bool elementMatches(Element&) const final;
-    bool isRootedAtTreeScope() const final { return false; }
+    bool isRootedAtDocument() const final { return false; }
 
 private:
     NameNodeList(ContainerNode& rootNode, const AtomString& name);

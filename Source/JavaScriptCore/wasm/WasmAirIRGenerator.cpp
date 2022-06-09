@@ -44,7 +44,6 @@
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "ScratchRegisterAllocator.h"
-#include "WasmBranchHints.h"
 #include "WasmCallingConvention.h"
 #include "WasmContextInlines.h"
 #include "WasmExceptionType.h"
@@ -55,8 +54,8 @@
 #include "WasmOSREntryData.h"
 #include "WasmOpcodeOrigin.h"
 #include "WasmOperations.h"
+#include "WasmSignatureInlines.h"
 #include "WasmThunks.h"
-#include "WasmTypeDefinitionInlines.h"
 #include <limits>
 #include <wtf/Box.h>
 #include <wtf/StdLibExtras.h>
@@ -218,19 +217,19 @@ public:
             special = nullptr;
         }
 
-        FunctionArgCount branchTargetArity() const
+        SignatureArgCount branchTargetArity() const
         {
             if (blockType() == BlockType::Loop)
-                return returnType->as<FunctionSignature>()->argumentCount();
-            return returnType->as<FunctionSignature>()->returnCount();
+                return returnType->argumentCount();
+            return returnType->returnCount();
         }
 
         Type branchTargetType(unsigned i) const
         {
             ASSERT(i < branchTargetArity());
             if (blockType() == BlockType::Loop)
-                return returnType->as<FunctionSignature>()->argumentType(i);
-            return returnType->as<FunctionSignature>()->returnType(i);
+                return returnType->argument(i);
+            return returnType->returnType(i);
         }
 
         void convertTryToCatch(unsigned tryEndCallSiteIndex, TypedTmp exception)
@@ -323,11 +322,11 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, const TypeDefinition&, unsigned& osrEntryScratchBufferSize);
+    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, const Signature&);
 
     void finalizeEntrypoints();
 
-    PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
+    PartialResult WARN_UNUSED_RETURN addArguments(const Signature&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
     ExpressionType addConstant(BasicBlock*, Type, uint64_t);
@@ -377,9 +376,6 @@ public:
     // Saturated truncation.
     PartialResult WARN_UNUSED_RETURN truncSaturated(Ext1OpType, ExpressionType operand, ExpressionType& result, Type returnType, Type operandType);
 
-    // GC
-    PartialResult WARN_UNUSED_RETURN addRttCanon(uint32_t typeIndex, ExpressionType& result);
-
     // Basic operators
     template<OpType>
     PartialResult WARN_UNUSED_RETURN addOp(ExpressionType arg, ExpressionType& result);
@@ -396,8 +392,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
     PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
-    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition&, Stack&, ControlType&, ResultList&);
-    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const Signature&, Stack&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const Signature&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
@@ -414,12 +410,12 @@ public:
     PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const Signature&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
-    PartialResult WARN_UNUSED_RETURN emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&);
-    std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const TypeDefinition&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> extraArgs = { });
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const Signature&, const Vector<ExpressionType>& args, ResultList&);
+    std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> WARN_UNUSED_RETURN emitCallPatchpoint(BasicBlock*, const Signature&, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> extraArgs = { });
 
     PartialResult addShift(Type, B3::Air::Opcode, ExpressionType value, ExpressionType shift, ExpressionType& result);
     PartialResult addIntegerSub(B3::Air::Opcode, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
@@ -514,7 +510,6 @@ private:
     TypedTmp gExternref() { return { newTmp(B3::GP), Types::Externref }; }
     TypedTmp gFuncref() { return { newTmp(B3::GP), Types::Funcref }; }
     TypedTmp gRef(Type type) { return { newTmp(B3::GP), type }; }
-    TypedTmp gRtt() { return { newTmp(B3::GP), Types::Rtt }; }
     TypedTmp f32() { return { newTmp(B3::FP), Types::F32 }; }
     TypedTmp f64() { return { newTmp(B3::FP), Types::F64 }; }
 
@@ -530,8 +525,6 @@ private:
         case TypeKind::Ref:
         case TypeKind::RefNull:
             return gRef(type);
-        case TypeKind::Rtt:
-            return gRtt();
         case TypeKind::Externref:
             return gExternref();
         case TypeKind::F32:
@@ -547,9 +540,9 @@ private:
 
     ResultList tmpsForSignature(BlockSignature signature)
     {
-        ResultList result(signature->as<FunctionSignature>()->returnCount());
-        for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
-            result[i] = tmpForType(signature->as<FunctionSignature>()->returnType(i));
+        ResultList result(signature->returnCount());
+        for (unsigned i = 0; i < signature->returnCount(); ++i)
+            result[i] = tmpForType(signature->returnType(i));
         return result;
     }
 
@@ -717,7 +710,6 @@ private:
             case TypeKind::Funcref:
             case TypeKind::Ref:
             case TypeKind::RefNull:
-            case TypeKind::Rtt:
                 resultType = B3::Int64;
                 break;
             case TypeKind::F32:
@@ -791,7 +783,7 @@ private:
         }
     }
 
-    void emitLoad(Tmp base, size_t offset, const TypedTmp& result)
+    void emitLoad(Tmp base, size_t offset, TypedTmp result)
     {
         emitLoad(moveOpForValueType(result.type()), toB3Type(result.type()), base, offset, result.tmp());
     }
@@ -799,7 +791,7 @@ private:
     void emitThrowException(CCallHelpers&, ExceptionType);
 
     void emitEntryTierUpCheck();
-    void emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedTmp>& liveValues);
+    void emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack);
 
     void emitWriteBarrierForJSWrapper();
     ExpressionType emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOp);
@@ -892,9 +884,6 @@ private:
     Checked<unsigned> m_callSiteIndex { 0 };
     StackMaps m_stackmaps;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
-
-    Vector<std::pair<BasicBlock*, Vector<TypedTmp>>> m_loopEntryVariableData;
-    unsigned& m_osrEntryScratchBufferSize;
 };
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
@@ -940,7 +929,7 @@ void AirIRGenerator::restoreWasmContextInstance(BasicBlock* block, TypedTmp inst
     emitPatchpoint(block, patchpoint, Tmp(), instance);
 }
 
-AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, const TypeDefinition& signature, unsigned& osrEntryScratchBufferSize)
+AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, const Signature& signature)
     : m_info(info)
     , m_mode(mode)
     , m_functionIndex(functionIndex)
@@ -949,7 +938,6 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     , m_code(m_proc.code())
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
     , m_numImportFunctions(info.importFunctionCount())
-    , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
 {
     m_currentBlock = m_code.addBlock();
     m_rootBlock = m_currentBlock;
@@ -971,7 +959,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
 
     m_prologueWasmContextGPR = Context::useFastTLS() ? wasmCallingConvention().prologueScratchGPRs[1] : m_wasmContextInstanceGPR;
 
-    m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this] (CCallHelpers& jit, B3::Air::Code& code) {
+    m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=] (CCallHelpers& jit, B3::Air::Code& code) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         code.emitDefaultPrologue(jit);
 
@@ -979,7 +967,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             GPRReg calleeGPR = wasmCallingConvention().prologueScratchGPRs[0];
             auto moveLocation = jit.moveWithPatch(MacroAssembler::TrustedImmPtr(nullptr), calleeGPR);
             jit.addLinkTask([compilation, moveLocation] (LinkBuffer& linkBuffer) {
-                compilation->calleeMoveLocations.append(linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation));
+                compilation->calleeMoveLocation = linkBuffer.locationOf<WasmEntryPtrTag>(moveLocation);
             });
             jit.emitPutToCallFrameHeader(calleeGPR, CallFrameSlot::callee);
             jit.emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
@@ -1046,9 +1034,9 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     m_currentBlock = m_mainEntrypointStart;
 
     ASSERT(!m_locals.size());
-    m_locals.grow(signature.as<FunctionSignature>()->argumentCount());
-    for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
-        Type type = signature.as<FunctionSignature>()->argumentType(i);
+    m_locals.grow(signature.argumentCount());
+    for (unsigned i = 0; i < signature.argumentCount(); ++i) {
+        Type type = signature.argument(i);
         m_locals[i] = tmpForType(type);
     }
 
@@ -1057,7 +1045,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     for (unsigned i = 0; i < wasmCallInfo.params.size(); ++i) {
         B3::ValueRep location = wasmCallInfo.params[i];
         Arg arg = location.isReg() ? Arg(Tmp(location.reg())) : Arg::addr(Tmp(GPRInfo::callFrameRegister), location.offsetFromFP());
-        switch (signature.as<FunctionSignature>()->argumentType(i).kind) {
+        switch (signature.argument(i).kind) {
         case TypeKind::I32:
             append(Move32, arg, m_locals[i]);
             break;
@@ -1066,7 +1054,6 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
         case TypeKind::Funcref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-        case TypeKind::Rtt:
             append(Move, arg, m_locals[i]);
             break;
         case TypeKind::F32:
@@ -1085,11 +1072,9 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
 
 void AirIRGenerator::finalizeEntrypoints()
 {
-    unsigned numEntrypoints = Checked<unsigned>(1) + m_catchEntrypoints.size() + m_loopEntryVariableData.size();
+    unsigned numEntrypoints = 1 + m_catchEntrypoints.size();
     m_proc.setNumEntrypoints(numEntrypoints);
     m_code.setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
-    for (unsigned i = 1 + m_catchEntrypoints.size(); i < numEntrypoints; ++i)
-        m_code.setPrologueForEntrypoint(i, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
 
     if (m_catchEntrypoints.size()) {
         Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([this] (CCallHelpers& jit, B3::Air::Code& code) {
@@ -1110,41 +1095,22 @@ void AirIRGenerator::finalizeEntrypoints()
     successors.append(m_mainEntrypointStart);
     successors.appendVector(m_catchEntrypoints);
 
-    for (auto& pair : m_loopEntryVariableData) {
-        BasicBlock* loopBody = pair.first;
-        BasicBlock* entry = m_code.addBlock();
-        successors.append(entry);
-        m_currentBlock = entry;
-
-        auto& temps = pair.second;
-        m_osrEntryScratchBufferSize = std::max(m_osrEntryScratchBufferSize, static_cast<unsigned>(temps.size()));
-        Tmp basePtr = Tmp(GPRInfo::argumentGPR0);
-
-        for (size_t i = 0; i < temps.size(); ++i) {
-            size_t offset = static_cast<size_t>(i) * sizeof(uint64_t);
-            emitLoad(basePtr, offset, temps[i]);
-        }
-
-        append(Jump);
-        entry->setSuccessors(loopBody);
-    }
-
     RELEASE_ASSERT(numEntrypoints == successors.size());
     m_rootBlock->successors() = successors;
 }
 
 B3::Type AirIRGenerator::toB3ResultType(BlockSignature returnType)
 {
-    if (returnType->as<FunctionSignature>()->returnsVoid())
+    if (returnType->returnsVoid())
         return B3::Void;
 
-    if (returnType->as<FunctionSignature>()->returnCount() == 1)
-        return toB3Type(returnType->as<FunctionSignature>()->returnType(0));
+    if (returnType->returnCount() == 1)
+        return toB3Type(returnType->returnType(0));
 
     auto result = m_tupleMap.ensure(returnType, [&] {
         Vector<B3::Type> result;
-        for (unsigned i = 0; i < returnType->as<FunctionSignature>()->returnCount(); ++i)
-            result.append(toB3Type(returnType->as<FunctionSignature>()->returnType(i)));
+        for (unsigned i = 0; i < returnType->returnCount(); ++i)
+            result.append(toB3Type(returnType->returnType(i)));
         return m_proc.addTuple(WTFMove(result));
     });
     return result.iterator->value;
@@ -1296,9 +1262,9 @@ auto AirIRGenerator::addBottom(BasicBlock* block, Type type) -> ExpressionType
     return addConstant(type, 0);
 }
 
-auto AirIRGenerator::addArguments(const TypeDefinition& signature) -> PartialResult
+auto AirIRGenerator::addArguments(const Signature& signature) -> PartialResult
 {
-    RELEASE_ASSERT(m_locals.size() == signature.as<FunctionSignature>()->argumentCount()); // We handle arguments in the prologue
+    RELEASE_ASSERT(m_locals.size() == signature.argumentCount()); // We handle arguments in the prologue
     return { };
 }
 
@@ -1318,8 +1284,8 @@ auto AirIRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Parti
 {
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     if (Options::useWebAssemblyTypedFunctionReferences()) {
-        TypeIndex typeIndex = m_info.typeIndexFromFunctionIndexSpace(index);
-        result = tmpForType(Type { TypeKind::Ref, Nullable::No, typeIndex });
+        SignatureIndex signatureIndex = m_info.signatureIndexFromFunctionIndexSpace(index);
+        result = tmpForType(Type { TypeKind::Ref, Nullable::No, signatureIndex });
     } else
         result = tmpForType(Types::Funcref);
     emitCCall(&operationWasmRefFunc, result, instanceValue(), addConstant(Types::I32, index));
@@ -1338,7 +1304,7 @@ auto AirIRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, Expr
     emitCCall(&operationGetWasmTableElement, result, instanceValue(), addConstant(Types::I32, tableIndex), index);
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
@@ -1357,7 +1323,7 @@ auto AirIRGenerator::addTableSet(unsigned tableIndex, ExpressionType index, Expr
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), shouldThrow, shouldThrow);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
@@ -1384,7 +1350,7 @@ auto AirIRGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, Ex
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
@@ -1434,7 +1400,7 @@ auto AirIRGenerator::addTableFill(unsigned tableIndex, ExpressionType offset, Ex
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
@@ -1461,7 +1427,7 @@ auto AirIRGenerator::addTableCopy(unsigned dstTableIndex, unsigned srcTableIndex
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
@@ -1536,7 +1502,7 @@ auto AirIRGenerator::addMemoryFill(ExpressionType dstAddress, ExpressionType tar
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
     });
 
@@ -1561,8 +1527,8 @@ auto AirIRGenerator::addMemoryCopy(ExpressionType dstAddress, ExpressionType src
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
     return { };
@@ -1587,8 +1553,8 @@ auto AirIRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dst
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::Zero), result, result);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTableAccess);
     });
 
     return { };
@@ -1632,7 +1598,7 @@ auto AirIRGenerator::getGlobal(uint32_t index, ExpressionType& result) -> Partia
         }
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
-        ASSERT(global.mutability == Wasm::Mutability::Mutable);
+        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
         if (Arg::isValidAddrForm(offset, B3::Width64))
             append(Move, Arg::addr(temp, offset), temp);
         else {
@@ -1672,7 +1638,7 @@ auto AirIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
             emitWriteBarrierForJSWrapper();
         break;
     case Wasm::GlobalInformation::BindingMode::Portable:
-        ASSERT(global.mutability == Wasm::Mutability::Mutable);
+        ASSERT(global.mutability == Wasm::GlobalInformation::Mutability::Mutable);
         if (Arg::isValidAddrForm(offset, B3::Width64))
             append(Move, Arg::addr(temp, offset), temp);
         else {
@@ -1794,7 +1760,7 @@ inline AirIRGenerator::ExpressionType AirIRGenerator::emitCheckAndPreparePointer
 
         emitCheck([&] {
             return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), temp, Tmp(m_boundsCheckingSizeGPR));
-        }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
         break;
@@ -1820,7 +1786,7 @@ inline AirIRGenerator::ExpressionType AirIRGenerator::emitCheckAndPreparePointer
 
             emitCheck([&] {
                 return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), temp, sizeMax);
-            }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
                 this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
             });
         }
@@ -2391,7 +2357,7 @@ inline TypedTmp AirIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueT
     if (accessWidth(op) != B3::Width8) {
         emitCheck([&] {
             return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), newPtr, isX86() ? Arg::bitImm(sizeOfAtomicOpMemoryAccess(op) - 1) : Arg::bitImm64(sizeOfAtomicOpMemoryAccess(op) - 1));
-        }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
     }
@@ -2463,7 +2429,7 @@ inline void AirIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType
     if (accessWidth(op) != B3::Width8) {
         emitCheck([&] {
             return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), newPtr, isX86() ? Arg::bitImm(sizeOfAtomicOpMemoryAccess(op) - 1) : Arg::bitImm64(sizeOfAtomicOpMemoryAccess(op) - 1));
-        }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
     }
@@ -2517,7 +2483,7 @@ TypedTmp AirIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueTyp
     if (accessWidth(op) != B3::Width8) {
         emitCheck([&] {
             return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), newPtr, isX86() ? Arg::bitImm(sizeOfAtomicOpMemoryAccess(op) - 1) : Arg::bitImm64(sizeOfAtomicOpMemoryAccess(op) - 1));
-        }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
     }
@@ -2689,7 +2655,7 @@ TypedTmp AirIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valu
     if (accessWidth != B3::Width8) {
         emitCheck([&] {
             return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::NonZero), newPtr, isX86() ? Arg::bitImm(sizeOfAtomicOpMemoryAccess(op) - 1) : Arg::bitImm64(sizeOfAtomicOpMemoryAccess(op) - 1));
-        }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
     }
@@ -2787,7 +2753,7 @@ auto AirIRGenerator::atomicWait(ExtAtomicOpType op, ExpressionType pointer, Expr
         emitCCall(&operationMemoryAtomicWait64, result, instanceValue(), pointer, addConstant(Types::I32, offset), value, timeout);
     emitCheck([&] {
         return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::LessThan), result, Arg::imm(0));
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
     });
 
@@ -2801,7 +2767,7 @@ auto AirIRGenerator::atomicNotify(ExtAtomicOpType, ExpressionType pointer, Expre
     emitCCall(&operationMemoryAtomicNotify, result, instanceValue(), pointer, addConstant(Types::I32, offset), count);
     emitCheck([&] {
         return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::LessThan), result, Arg::imm(0));
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
     });
 
@@ -3002,14 +2968,6 @@ auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, Expressio
     return { };
 }
 
-auto AirIRGenerator::addRttCanon(uint32_t typeIndex, ExpressionType& result) -> PartialResult
-{
-    result = gRtt();
-    emitCCall(&operationWasmRttCanon, result, instanceValue(), addConstant(Types::I32, typeIndex));
-
-    return { };
-}
-
 auto AirIRGenerator::addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result) -> PartialResult
 {
     ASSERT(nonZero.type() == zero.type());
@@ -3046,13 +3004,13 @@ void AirIRGenerator::emitEntryTierUpCheck()
     patch->effects = effects;
     patch->clobber(RegisterSet::macroScratchRegisters());
 
-    patch->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 
         CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(TierUpCount::functionEntryIncrement()), CCallHelpers::Address(params[0].gpr()));
         CCallHelpers::Label tierUpResume = jit.label();
 
-        params.addLatePath([=, this] (CCallHelpers& jit) {
+        params.addLatePath([=] (CCallHelpers& jit) {
             tierUp.link(&jit);
 
             const unsigned extraPaddingBytes = 0;
@@ -3075,7 +3033,7 @@ void AirIRGenerator::emitEntryTierUpCheck()
     emitPatchpoint(patch, Tmp(), countdownPtr);
 }
 
-void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedTmp>& liveValues)
+void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosingStack, const Stack& newStack)
 {
     uint32_t outerLoopIndex = this->outerLoopIndex();
     m_outerLoops.append(loopIndex);
@@ -3104,13 +3062,19 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedT
 
     Vector<ConstrainedTmp> patchArgs;
     patchArgs.append(countdownPtr);
-    for (const TypedTmp& tmp : liveValues)
-        patchArgs.append(ConstrainedTmp(tmp.tmp(), B3::ValueRep::ColdAny));
+
+    forEachLiveValue([&] (Tmp tmp) {
+        patchArgs.append(ConstrainedTmp(tmp, B3::ValueRep::ColdAny));
+    });
+    for (TypedExpression value : enclosingStack)
+        patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
+    for (TypedExpression value : newStack)
+        patchArgs.append(ConstrainedTmp(value.value(), B3::ValueRep::ColdAny));
 
     TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
     static_assert(!static_cast<uint8_t>(TierUpCount::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
     static_assert(sizeof(TierUpCount::TriggerReason) == 1, "branchTest8 assumes this size");
-    patch->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patch->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         CCallHelpers::Jump forceOSREntry = jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::AbsoluteAddress(forceEntryTrigger));
         CCallHelpers::Jump tierUp = jit.branchAdd32(CCallHelpers::PositiveOrZero, CCallHelpers::TrustedImm32(TierUpCount::loopIncrement()), CCallHelpers::Address(params[0].gpr()));
@@ -3146,22 +3110,10 @@ AirIRGenerator::ControlData AirIRGenerator::addTopLevel(BlockSignature signature
 
 auto AirIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
 {
-    RELEASE_ASSERT(loopIndex == m_loopEntryVariableData.size());
-
     BasicBlock* body = m_code.addBlock();
     BasicBlock* continuation = m_code.addBlock();
 
     splitStack(signature, enclosingStack, newStack);
-
-    Vector<TypedTmp> liveValues;
-    forEachLiveValue([&] (TypedTmp tmp) {
-        liveValues.append(tmp);
-    });
-    for (auto variable : enclosingStack)
-        liveValues.append(variable);
-    for (auto variable : newStack)
-        liveValues.append(variable);
-
     ResultList results;
     results.reserveInitialCapacity(newStack.size());
     for (auto item : newStack)
@@ -3172,9 +3124,7 @@ auto AirIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     m_currentBlock->setSuccessors(body);
 
     m_currentBlock = body;
-    emitLoopTierUpCheck(loopIndex, liveValues);
-
-    m_loopEntryVariableData.append(std::pair<BasicBlock*, Vector<TypedTmp>>(body, WTFMove(liveValues)));
+    emitLoopTierUpCheck(loopIndex, enclosingStack, newStack);
 
     return { };
 }
@@ -3191,27 +3141,10 @@ auto AirIRGenerator::addIf(ExpressionType condition, BlockSignature signature, S
     BasicBlock* taken = m_code.addBlock();
     BasicBlock* notTaken = m_code.addBlock();
     BasicBlock* continuation = m_code.addBlock();
-    B3::FrequencyClass takenFrequency = B3::FrequencyClass::Normal;
-    B3::FrequencyClass notTakenFrequency= B3::FrequencyClass::Normal;
-
-    if (Options::useWebAssemblyBranchHints()) {
-        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
-
-        switch (hint) {
-        case BranchHint::Unlikely:
-            takenFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Likely:
-            notTakenFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Invalid:
-            break;
-        }
-    }
-
+    
     // Wasm bools are i32.
     append(BranchTest32, Arg::resCond(MacroAssembler::NonZero), condition, condition);
-    m_currentBlock->setSuccessors(FrequentedBlock(taken, takenFrequency), FrequentedBlock(notTaken, notTakenFrequency));
+    m_currentBlock->setSuccessors(taken, notTaken);
 
     m_currentBlock = taken;
     splitStack(signature, enclosingStack, newStack);
@@ -3245,7 +3178,7 @@ auto AirIRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Con
     return { };
 }
 
-auto AirIRGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCatch(unsigned exceptionIndex, const Signature& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
 {
     unifyValuesWithBlock(currentStack, data.results);
     append(Jump);
@@ -3261,11 +3194,11 @@ auto AirIRGenerator::addCatchAll(Stack& currentStack, ControlType& data) -> Part
     return addCatchAllToUnreachable(data);
 }
 
-auto AirIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const Signature& signature, ControlType& data, ResultList& results) -> PartialResult
 {
     Tmp buffer = emitCatchImpl(CatchKind::Catch, data, exceptionIndex);
-    for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
-        Type type = signature.as<FunctionSignature>()->argumentType(i);
+    for (unsigned i = 0; i < signature.argumentCount(); ++i) {
+        Type type = signature.argument(i);
         TypedTmp tmp = tmpForType(type);
         emitLoad(buffer, i * sizeof(uint64_t), tmp);
         results.append(tmp);
@@ -3435,7 +3368,7 @@ auto AirIRGenerator::addReturn(const ControlData& data, const Stack& returnValue
         }
 
         ASSERT(rep.isReg());
-        if (data.signature()->as<FunctionSignature>()->returnType(i).isI32())
+        if (data.signature()->returnType(i).isI32())
             append(Move32, tmp, tmp);
         returnConstraints.append(ConstrainedTmp(tmp, wasmCallInfo.results[i]));
     }
@@ -3451,32 +3384,14 @@ auto AirIRGenerator::addBranch(ControlData& data, ExpressionType condition, cons
     unifyValuesWithBlock(returnValues, data.results);
 
     BasicBlock* target = data.targetBlockForBranch();
-    B3::FrequencyClass targetFrequency = B3::FrequencyClass::Normal;
-    B3::FrequencyClass continuationFrequency = B3::FrequencyClass::Normal;
-
-    if (Options::useWebAssemblyBranchHints()) {
-        BranchHint hint = m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
-
-        switch (hint) {
-        case BranchHint::Unlikely:
-            targetFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Likely:
-            continuationFrequency = B3::FrequencyClass::Rare;
-            break;
-        case BranchHint::Invalid:
-            break;
-        }
-    }
-
     if (condition) {
         BasicBlock* continuation = m_code.addBlock();
         append(BranchTest32, Arg::resCond(MacroAssembler::NonZero), condition, condition);
-        m_currentBlock->setSuccessors(FrequentedBlock(target, targetFrequency), FrequentedBlock(continuation, continuationFrequency));
+        m_currentBlock->setSuccessors(target, continuation);
         m_currentBlock = continuation;
     } else {
         append(Jump);
-        m_currentBlock->setSuccessors(FrequentedBlock(target, targetFrequency));
+        m_currentBlock->setSuccessors(target);
     }
 
     return { };
@@ -3571,17 +3486,17 @@ auto AirIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 
     if (data.blockType() == BlockType::Loop) {
         m_outerLoops.removeLast();
-        for (unsigned i = 0; i < data.signature()->as<FunctionSignature>()->returnCount(); ++i) {
+        for (unsigned i = 0; i < data.signature()->returnCount(); ++i) {
             if (i < expressionStack.size())
                 entry.enclosedExpressionStack.append(expressionStack[i]);
             else {
-                Type type = data.signature()->as<FunctionSignature>()->returnType(i);
+                Type type = data.signature()->returnType(i);
                 entry.enclosedExpressionStack.constructAndAppend(type, addBottom(m_currentBlock, type));
             }
         }
     } else {
-        for (unsigned i = 0; i < data.signature()->as<FunctionSignature>()->returnCount(); ++i)
-            entry.enclosedExpressionStack.constructAndAppend(data.signature()->as<FunctionSignature>()->returnType(i), data.results[i]);
+        for (unsigned i = 0; i < data.signature()->returnCount(); ++i)
+            entry.enclosedExpressionStack.constructAndAppend(data.signature()->returnType(i), data.results[i]);
     }
 
     // TopLevel does not have any code after this so we need to make sure we emit a return here.
@@ -3591,7 +3506,7 @@ auto AirIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
     return { };
 }
 
-std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const TypeDefinition& signature, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> patchArgs)
+std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitCallPatchpoint(BasicBlock* block, const Signature& signature, const ResultList& results, const Vector<TypedTmp>& args, Vector<ConstrainedTmp> patchArgs)
 {
     auto* patchpoint = addPatchpoint(toB3ResultType(&signature));
     patchpoint->effects.writesPinned = true;
@@ -3621,14 +3536,14 @@ std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitC
     return { patchpoint, exceptionHandle };
 }
 
-auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCall(uint32_t functionIndex, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
 
     m_makesCalls = true;
 
-    for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
-        results.append(tmpForType(signature.as<FunctionSignature>()->returnType(i)));
+    for (unsigned i = 0; i < signature.returnCount(); ++i)
+        results.append(tmpForType(signature.returnType(i)));
 
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
@@ -3662,7 +3577,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
             patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
-            patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 exceptionHandle.generate(jit, params, this);
                 CCallHelpers::Call call = jit.threadSafePatchableNearCall();
@@ -3691,7 +3606,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
             patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-            patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 exceptionHandle.generate(jit, params, this);
                 jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
@@ -3711,7 +3626,7 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
         // We need to clobber the size register since the LLInt always bounds checks
         if (m_mode == MemoryMode::Signaling || m_info.memory.isShared())
             patchpoint->clobberLate(RegisterSet { PinnedRegisterInfo::get().boundsCheckingSizeRegister });
-        patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             exceptionHandle.generate(jit, params, this);
             CCallHelpers::Call call = jit.threadSafePatchableNearCall();
@@ -3724,10 +3639,10 @@ auto AirIRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signa
     return { };
 }
 
-auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     ExpressionType calleeIndex = args.takeLast();
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
     ASSERT(m_info.tableCount() > tableIndex);
     ASSERT(m_info.tables[tableIndex].type() == TableElementType::Funcref);
 
@@ -3761,7 +3676,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     // Check the index we are looking for is valid.
     emitCheck([&] {
         return Inst(Branch32, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), calleeIndex, callableFunctionBufferLength);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsCallIndirect);
     });
 
@@ -3777,7 +3692,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
 
         // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
         // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
-        static_assert(sizeof(WasmToWasmImportableFunction::typeIndex) == sizeof(uint64_t), "Load codegen assumes i64");
+        static_assert(sizeof(WasmToWasmImportableFunction::signatureIndex) == sizeof(uint64_t), "Load codegen assumes i64");
 
         // FIXME: This seems wasteful to do two checks just for a nicer error message.
         // We should move just to use a single branch and then figure out what
@@ -3786,17 +3701,17 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
         append(Move, Arg::addr(calleeSignatureIndex, WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
 
         emitCheck([&] {
-            static_assert(!TypeDefinition::invalidIndex, "");
+            static_assert(Signature::invalidIndex == 0, "");
             return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::Zero), calleeSignatureIndex, calleeSignatureIndex);
-        }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::NullTableEntry);
         });
 
         ExpressionType expectedSignatureIndex = g64();
-        append(Move, Arg::bigImm(TypeInformation::get(signature)), expectedSignatureIndex);
+        append(Move, Arg::bigImm(SignatureInformation::get(signature)), expectedSignatureIndex);
         emitCheck([&] {
             return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::NotEqual), calleeSignatureIndex, expectedSignatureIndex);
-        }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::BadSignature);
         });
     }
@@ -3807,7 +3722,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     return emitIndirectCall(calleeInstance, calleeCode, signature, args, results);
 }
 
-auto AirIRGenerator::addCallRef(const TypeDefinition& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto AirIRGenerator::addCallRef(const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     m_makesCalls = true;
     // Note: call ref can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
@@ -3821,7 +3736,7 @@ auto AirIRGenerator::addCallRef(const TypeDefinition& signature, Vector<Expressi
     append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
     emitCheck([&] {
         return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), calleeFunction, tmpForNull);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::NullReference);
     });
 
@@ -3835,7 +3750,7 @@ auto AirIRGenerator::addCallRef(const TypeDefinition& signature, Vector<Expressi
     return emitIndirectCall(calleeInstance, calleeCode, signature, args, results);
 }
 
-auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType calleeCode, const Signature& signature, const Vector<ExpressionType>& args, ResultList& results) -> PartialResult
 {
     auto currentInstance = g64();
     append(Move, instanceValue(), currentInstance);
@@ -3889,8 +3804,8 @@ auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType ca
     Vector<ConstrainedTmp> extraArgs;
     extraArgs.append(calleeCode);
 
-    for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
-        results.append(tmpForType(signature.as<FunctionSignature>()->returnType(i)));
+    for (unsigned i = 0; i < signature.returnCount(); ++i)
+        results.append(tmpForType(signature.returnType(i)));
 
     auto pair = emitCallPatchpoint(m_currentBlock, signature, results, args, WTFMove(extraArgs));
     auto* patchpoint = pair.first;
@@ -3904,7 +3819,7 @@ auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType ca
 
     patchpoint->clobberLate(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
 
-    patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         exceptionHandle.generate(jit, params, this);
         jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
@@ -3960,7 +3875,7 @@ auto AirIRGenerator::origin() -> B3::Origin
     return B3::Origin();
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const Signature& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
 
@@ -3983,7 +3898,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     
     procedure.setOptLevel(Options::webAssemblyBBQAirOptimizationLevel());
 
-    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, signature, result->osrEntryScratchBufferSize);
+    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, signature);
     FunctionParser<AirIRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
@@ -4014,11 +3929,11 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
 template <typename IntType>
 void AirIRGenerator::emitChecksForModOrDiv(bool isSignedDiv, ExpressionType left, ExpressionType right)
 {
-    static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8);
+    static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8, "");
 
     emitCheck([&] {
         return Inst(sizeof(IntType) == 4 ? BranchTest32 : BranchTest64, nullptr, Arg::resCond(MacroAssembler::Zero), right, right);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::DivisionByZero);
     });
 
@@ -4041,7 +3956,7 @@ void AirIRGenerator::emitChecksForModOrDiv(bool isSignedDiv, ExpressionType left
         emitCheck([&] {
             return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), minTmp, negOne);
         },
-        [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::IntegerOverflow);
         });
     }
@@ -4050,7 +3965,7 @@ void AirIRGenerator::emitChecksForModOrDiv(bool isSignedDiv, ExpressionType left
 template <typename IntType>
 void AirIRGenerator::emitModOrDiv(bool isDiv, ExpressionType lhs, ExpressionType rhs, ExpressionType& result)
 {
-    static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8);
+    static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8, "");
 
     result = sizeof(IntType) == 4 ? g32() : g64();
 
@@ -4402,7 +4317,7 @@ auto AirIRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionT
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
@@ -4431,7 +4346,7 @@ auto AirIRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionT
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
@@ -4460,7 +4375,7 @@ auto AirIRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionT
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
@@ -4488,7 +4403,7 @@ auto AirIRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionT
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
@@ -4516,7 +4431,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionT
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
@@ -4545,7 +4460,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionT
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
@@ -4592,7 +4507,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionT
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
     });
 
@@ -4620,7 +4535,7 @@ auto AirIRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionT
 
     emitCheck([&] {
         return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+    }, [=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
         this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
     });
 

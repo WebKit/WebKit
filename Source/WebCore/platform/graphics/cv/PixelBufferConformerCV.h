@@ -27,9 +27,8 @@
 
 #include <wtf/RetainPtr.h>
 
-typedef struct CGColorSpace *CGColorSpaceRef;
-typedef struct CGImage* CGImageRef;
 typedef struct OpaqueVTPixelBufferConformer* VTPixelBufferConformerRef;
+typedef struct CGImage* CGImageRef;
 typedef struct __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
@@ -40,7 +39,6 @@ public:
     WEBCORE_EXPORT PixelBufferConformerCV(CFDictionaryRef attributes);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
-    static WEBCORE_EXPORT RetainPtr<CGImageRef> imageFrom32BGRAPixelBuffer(RetainPtr<CVPixelBufferRef>&&, CGColorSpaceRef);
 
 private:
     RetainPtr<VTPixelBufferConformerRef> m_pixelConformer;

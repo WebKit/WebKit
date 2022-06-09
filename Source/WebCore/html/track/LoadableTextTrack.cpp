@@ -42,13 +42,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LoadableTextTrack);
 
-LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
-    : TextTrack(&track.document(), kind, emptyAtom(), label, language, TrackElement)
+LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
+    : TextTrack(&track.document(), kind, emptyString(), label, language, TrackElement)
     , m_trackElement(&track)
 {
 }
 
-Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, const AtomString& kind, const AtomString& label, const AtomString& language)
+Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
 {
     auto textTrack = adoptRef(*new LoadableTextTrack(track, kind, label, language));
     textTrack->suspendIfNeeded();
@@ -79,7 +79,7 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
     // 3. Asynchronously run the remaining steps, while continuing with whatever task
     // was responsible for creating the text track or changing the text track mode.
     m_trackElement->scheduleTask([this]() mutable {
-        SetForScope loadPending { m_loadPending, true, false };
+        SetForScope<bool> loadPending { m_loadPending, true, false };
 
         if (m_loader)
             m_loader->cancelLoad();

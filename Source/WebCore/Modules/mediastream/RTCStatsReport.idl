@@ -26,6 +26,7 @@
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface RTCStatsReport {
     readonly maplike<DOMString, object>;

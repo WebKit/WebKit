@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,6 @@
 #include "ShareableBitmap.h"
 #include "WKPage.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebFrame.h"
-#include "WebImage.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/DocumentMarkerController.h>
@@ -59,6 +57,24 @@
 namespace WebKit {
 using namespace WebCore;
 
+WebCore::FindOptions core(OptionSet<FindOptions> options)
+{
+    WebCore::FindOptions result;
+    if (options.contains(FindOptions::CaseInsensitive))
+        result.add(WebCore::CaseInsensitive);
+    if (options.contains(FindOptions::AtWordStarts))
+        result.add(WebCore::AtWordStarts);
+    if (options.contains(FindOptions::TreatMedialCapitalAsWordStart))
+        result.add(WebCore::TreatMedialCapitalAsWordStart);
+    if (options.contains(FindOptions::Backwards))
+        result.add(WebCore::Backwards);
+    if (options.contains(FindOptions::WrapAround))
+        result.add(WebCore::WrapAround);
+    if (options.contains(FindOptions::AtWordEnds))
+        result.add(WebCore::AtWordEnds);
+    return result;
+}
+
 FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)
 {
@@ -68,27 +84,17 @@ FindController::~FindController()
 {
 }
 
-#if ENABLE(PDFKIT_PLUGIN)
-
-PluginView* FindController::mainFramePlugIn()
-{
-    return m_webPage->mainFramePlugIn();
-}
-
-#endif
-
 void FindController::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
 {
     if (maxMatchCount == std::numeric_limits<unsigned>::max())
         --maxMatchCount;
-
+    
+    auto* pluginView = WebPage::pluginViewForFrame(m_webPage->mainFrame());
+    
     unsigned matchCount;
-#if ENABLE(PDFKIT_PLUGIN)
-    if (auto* pluginView = mainFramePlugIn())
+    if (pluginView)
         matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
-    else
-#endif
-    {
+    else {
         matchCount = m_webPage->corePage()->countFindMatches(string, core(options), maxMatchCount + 1);
         m_webPage->corePage()->unmarkAllTextMatches();
     }
@@ -110,7 +116,7 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
     const uint32_t maximumNumberOfMatchesToReplace = 1000;
 
     Vector<SimpleRange> rangesToReplace;
-    rangesToReplace.reserveInitialCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
+    rangesToReplace.reserveCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
     for (auto index : matchIndices) {
         if (index < m_findMatches.size())
             rangesToReplace.uncheckedAppend(m_findMatches[index]);
@@ -133,17 +139,13 @@ static Frame* frameWithSelection(Page* page)
 void FindController::updateFindUIAfterPageScroll(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, DidWrap didWrap, FindUIOriginator originator)
 {
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
-
-#if ENABLE(PDFKIT_PLUGIN)
-    auto* pluginView = mainFramePlugIn();
-#endif
+    
+    auto* pluginView = WebPage::pluginViewForFrame(m_webPage->mainFrame());
 
     bool shouldShowOverlay = false;
 
     if (!found) {
-#if ENABLE(PDFKIT_PLUGIN)
         if (!pluginView)
-#endif
             m_webPage->corePage()->unmarkAllTextMatches();
 
         if (selectedFrame)
@@ -161,11 +163,9 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         unsigned matchCount = 1;
 
         if (shouldDetermineMatchIndex) {
-#if ENABLE(PDFKIT_PLUGIN)
             if (pluginView)
                 matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
             else
-#endif
                 matchCount = m_webPage->corePage()->countFindMatches(string, core(options), maxMatchCount + 1);
         }
 
@@ -173,14 +173,11 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             if (maxMatchCount == std::numeric_limits<unsigned>::max())
                 --maxMatchCount;
 
-#if ENABLE(PDFKIT_PLUGIN)
             if (pluginView) {
                 if (!shouldDetermineMatchIndex)
                     matchCount = pluginView->countFindMatches(string, core(options), maxMatchCount + 1);
                 shouldShowOverlay = false;
-            } else
-#endif
-            {
+            } else {
                 m_webPage->corePage()->unmarkAllTextMatches();
                 matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
             }
@@ -234,9 +231,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
 
 void FindController::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)
 {
-#if ENABLE(PDFKIT_PLUGIN)
-    auto* pluginView = mainFramePlugIn();
-#endif
+    auto* pluginView = WebPage::pluginViewForFrame(m_webPage->mainFrame());
 
     WebCore::FindOptions coreOptions = core(options);
 
@@ -251,10 +246,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     willFindString();
 
     bool foundStringStartsAfterSelection = false;
-#if ENABLE(PDFKIT_PLUGIN)
-    if (!pluginView)
-#endif
-    {
+    if (!pluginView) {
         if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
             if (selectedFrame->selection().selectionBounds().isEmpty()) {
                 auto result = m_webPage->corePage()->findTextMatches(string, coreOptions, maxMatchCount);
@@ -269,11 +261,9 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 
     bool found;
     DidWrap didWrap = DidWrap::No;
-#if ENABLE(PDFKIT_PLUGIN)
     if (pluginView)
         found = pluginView->findString(string, coreOptions, maxMatchCount);
     else
-#endif
         found = m_webPage->corePage()->findString(string, coreOptions, &didWrap);
 
     if (found) {
@@ -300,9 +290,10 @@ void FindController::findStringMatches(const String& string, OptionSet<FindOptio
     auto result = m_webPage->corePage()->findTextMatches(string, core(options), maxMatchCount);
     m_findMatches = WTFMove(result.ranges);
 
-    auto matchRects = m_findMatches.map([](auto& range) {
-        return RenderObject::absoluteTextRects(range);
-    });
+    Vector<Vector<IntRect>> matchRects;
+    for (auto& range : m_findMatches)
+        matchRects.append(RenderObject::absoluteTextRects(range));
+
     m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, result.indexForSelection));
 
     if (!options.contains(FindOptions::ShowOverlay) && !options.contains(FindOptions::ShowFindIndicator))
@@ -346,18 +337,20 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(m_findMatches[matchIndex]);
 
-    auto selectionSnapshot = WebFrame::fromCoreFrame(*frame)->createSelectionSnapshot();
+    RefPtr<ShareableBitmap> selectionSnapshot = WebFrame::fromCoreFrame(*frame)->createSelectionSnapshot();
 
     frame->selection().setSelection(oldSelection);
 
     if (!selectionSnapshot)
         return;
 
-    auto handle = selectionSnapshot->createHandle();
+    ShareableBitmap::Handle handle;
+    selectionSnapshot->createHandle(handle);
+
     if (handle.isNull())
         return;
 
-    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(selectionSnapshot->parameters(), handle, matchIndex));
+    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(handle, matchIndex));
 }
 
 void FindController::selectFindMatch(uint32_t matchIndex)
@@ -391,11 +384,9 @@ void FindController::hideFindUI()
     if (m_findPageOverlay)
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
 
-#if ENABLE(PDFKIT_PLUGIN)
-    if (auto* pluginView = mainFramePlugIn())
+    if (auto* pluginView = WebPage::pluginViewForFrame(m_webPage->mainFrame()))
         pluginView->findString(emptyString(), { }, 0);
     else
-#endif
         m_webPage->corePage()->unmarkAllTextMatches();
     
     hideFindIndicator();

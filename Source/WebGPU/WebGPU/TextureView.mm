@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,27 @@
 #import "config.h"
 #import "TextureView.h"
 
-#import "APIConversions.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-TextureView::TextureView(id<MTLTexture> texture, const WGPUTextureViewDescriptor& descriptor, const std::optional<WGPUExtent3D>& renderExtent, Device& device)
-    : m_texture(texture)
-    , m_descriptor(descriptor)
-    , m_renderExtent(renderExtent)
-    , m_device(device)
-{
-}
-
-TextureView::TextureView(Device& device)
-    : m_descriptor { }
-    , m_device(device)
-{
-}
+TextureView::TextureView() = default;
 
 TextureView::~TextureView() = default;
 
-void TextureView::setLabel(String&& label)
+void TextureView::setLabel(const char* label)
 {
-    m_texture.label = label;
+    UNUSED_PARAM(label);
 }
 
-} // namespace WebGPU
-
-#pragma mark WGPU Stubs
+}
 
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {
-    WebGPU::fromAPI(textureView).deref();
+    UNUSED_PARAM(textureView);
 }
 
 void wgpuTextureViewSetLabel(WGPUTextureView textureView, const char* label)
 {
-    WebGPU::fromAPI(textureView).setLabel(WebGPU::fromAPI(label));
+    textureView->textureView->setLabel(label);
 }

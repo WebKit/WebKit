@@ -30,6 +30,7 @@
 
 [
     CustomIsReachable,
+    ImplementationLacksVTable,
     LegacyWindowAlias=WebKitMutationObserver,
     JSCustomMarkFunction,
     Exposed=Window
@@ -48,5 +49,5 @@ dictionary MutationObserverInit {
     boolean subtree = false;
     boolean attributeOldValue;
     boolean characterDataOldValue;
-    sequence<[AtomString] DOMString> attributeFilter;
+    sequence<DOMString> attributeFilter;
 };

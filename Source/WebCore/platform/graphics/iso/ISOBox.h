@@ -36,34 +36,31 @@ class DataView;
 
 namespace WebCore {
 
-class ISOBox {
+class WEBCORE_EXPORT ISOBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT ISOBox();
-    WEBCORE_EXPORT ISOBox(const ISOBox&);
-    ISOBox(ISOBox&&) = default;
-    WEBCORE_EXPORT virtual ~ISOBox();
-
-    ISOBox& operator=(const ISOBox&) = default;
-    ISOBox& operator=(ISOBox&&) = default;
+    virtual ~ISOBox() = default;
 
     using PeekResult = std::optional<std::pair<FourCC, uint64_t>>;
     static PeekResult peekBox(JSC::DataView&, unsigned offset);
-    static constexpr size_t minimumBoxSize() { return 2 * sizeof(uint32_t); }
+    static size_t minimumBoxSize() { return 2 * sizeof(uint32_t); }
 
-    WEBCORE_EXPORT bool read(JSC::DataView&);
+    bool read(JSC::DataView&);
     bool read(JSC::DataView&, unsigned& offset);
 
     uint64_t size() const { return m_size; }
-    FourCC boxType() const { return m_boxType; }
+    const FourCC& boxType() const { return m_boxType; }
     const Vector<uint8_t>& extendedType() const { return m_extendedType; }
 
 protected:
     virtual bool parse(JSC::DataView&, unsigned& offset);
 
-    enum Endianness { BigEndian, LittleEndian };
+    enum Endianness {
+        BigEndian,
+        LittleEndian,
+    };
 
-    template<typename T, typename R, typename V>
+    template <typename T, typename R, typename V>
     static bool checkedRead(R& returnValue, V& view, unsigned& offset, Endianness endianness)
     {
         bool readStatus = false;
@@ -79,16 +76,12 @@ protected:
     }
 
     uint64_t m_size { 0 };
-    FourCC m_boxType;
+    FourCC m_boxType { uint32_t { 0 } };
     Vector<uint8_t> m_extendedType;
 };
 
-class ISOFullBox : public ISOBox {
+class WEBCORE_EXPORT ISOFullBox : public ISOBox {
 public:
-    WEBCORE_EXPORT ISOFullBox();
-    WEBCORE_EXPORT ISOFullBox(const ISOFullBox&);
-    ISOFullBox(ISOFullBox&&) = default;
-
     uint8_t version() const { return m_version; }
     uint32_t flags() const { return m_flags; }
 

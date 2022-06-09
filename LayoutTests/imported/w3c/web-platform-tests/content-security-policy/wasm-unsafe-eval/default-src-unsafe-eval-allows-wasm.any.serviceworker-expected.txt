@@ -1,3 +1,0 @@
-
-PASS default-src-unsafe-eval-allows-wasm
-

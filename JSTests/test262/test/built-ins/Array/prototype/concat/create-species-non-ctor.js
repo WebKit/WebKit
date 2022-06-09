@@ -18,15 +18,8 @@ info: |
        b. If C is null, let C be undefined.
     [...]
     9. If IsConstructor(C) is false, throw a TypeError exception.
-includes: [isConstructor.js]
-features: [Symbol.species, Reflect.construct]
+features: [Symbol.species]
 ---*/
-
-assert.sameValue(
-  isConstructor(parseInt),
-  false,
-  'precondition: isConstructor(parseInt) must return false'
-);
 
 var a = [];
 

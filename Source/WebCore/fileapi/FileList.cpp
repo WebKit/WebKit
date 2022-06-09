@@ -41,9 +41,11 @@ File* FileList::item(unsigned index) const
 
 Vector<String> FileList::paths() const
 {
-    return m_files.map([](auto& file) {
-        return file->path();
-    });
+    Vector<String> paths;
+    paths.reserveInitialCapacity(m_files.size());
+    for (auto& file : m_files)
+        paths.uncheckedAppend(file->path());
+    return paths;
 }
 
 } // namespace WebCore

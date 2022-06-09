@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-enum class UnicodeBidi : uint8_t {
-    Normal,
+enum EUnicodeBidi {
+    UBNormal,
     Embed,
     Override,
     Isolate,
@@ -37,14 +37,14 @@ enum class UnicodeBidi : uint8_t {
     IsolateOverride,
 }; 
 
-inline bool isIsolated(const UnicodeBidi& unicodeBidi)
+inline bool isIsolated(const EUnicodeBidi& unicodeBidi)
 {
-    return unicodeBidi == UnicodeBidi::Isolate || unicodeBidi == UnicodeBidi::IsolateOverride || unicodeBidi == UnicodeBidi::Plaintext;
+    return unicodeBidi == Isolate || unicodeBidi == IsolateOverride || unicodeBidi == Plaintext;
 }
 
-inline bool isOverride(UnicodeBidi unicodeBidi)
+inline bool isOverride(EUnicodeBidi unicodeBidi)
 {
-    return unicodeBidi == UnicodeBidi::Override || unicodeBidi == UnicodeBidi::IsolateOverride;
+    return unicodeBidi == Override || unicodeBidi == IsolateOverride;
 }
 
 }

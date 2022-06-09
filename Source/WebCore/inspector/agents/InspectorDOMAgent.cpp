@@ -95,7 +95,6 @@
 #include "Pasteboard.h"
 #include "PseudoElement.h"
 #include "RenderGrid.h"
-#include "RenderObject.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptController.h"
@@ -105,7 +104,6 @@
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleSheetList.h"
-#include "Styleable.h"
 #include "Text.h"
 #include "TextNodeTraversal.h"
 #include "Timer.h"
@@ -308,9 +306,6 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
     m_instrumentingAgents.setPersistentDOMAgent(this);
     m_document = m_inspectedPage.mainFrame().document();
 
-    // Force a layout so that we can collect additional information from the layout process.
-    relayoutDocument();
-
 #if ENABLE(VIDEO)
     if (m_document)
         addEventListenersToNode(*m_document);
@@ -333,7 +328,6 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     hideHighlight();
 
     m_overlay->clearAllGridOverlays();
-    m_overlay->clearAllFlexOverlays();
 
     m_instrumentingAgents.setPersistentDOMAgent(nullptr);
     m_documentRequested = false;
@@ -377,25 +371,12 @@ void InspectorDOMAgent::setDocument(Document* document)
 
     m_document = document;
 
-    // Force a layout so that we can collect additional information from the layout process.
-    relayoutDocument();
-
     if (!m_documentRequested)
         return;
 
     // Immediately communicate null document or document that has finished loading.
     if (!document || !document->parsing())
         m_frontendDispatcher->documentUpdated();
-}
-
-void InspectorDOMAgent::relayoutDocument()
-{
-    if (!m_document)
-        return;
-
-    m_flexibleBoxRendererCachedItemsAtStartOfLine.clear();
-    
-    m_document->updateLayout();
 }
 
 Protocol::DOM::NodeId InspectorDOMAgent::bind(Node& node)
@@ -557,25 +538,6 @@ void InspectorDOMAgent::discardBindings()
     m_childrenRequested.clear();
 }
 
-static Element* elementToPushForStyleable(const Styleable& styleable)
-{
-    // FIXME: We want to get rid of PseudoElement.
-    auto* element = &styleable.element;
-
-    if (styleable.pseudoId == PseudoId::Before)
-        element = element->beforePseudoElement();
-    else if (styleable.pseudoId == PseudoId::After)
-        element = element->afterPseudoElement();
-
-    return element;
-}
-
-Protocol::DOM::NodeId InspectorDOMAgent::pushStyleableElementToFrontend(const Styleable& styleable)
-{
-    auto* element = elementToPushForStyleable(styleable);
-    return pushNodeToFrontend(element ? element : &styleable.element);
-}
-
 Protocol::DOM::NodeId InspectorDOMAgent::pushNodeToFrontend(Node* nodeToPush)
 {
     if (!nodeToPush)
@@ -679,23 +641,6 @@ Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush
     return pushNodePathToFrontend(ignored, nodeToPush);
 }
 
-Ref<Protocol::DOM::Styleable> InspectorDOMAgent::pushStyleablePathToFrontend(Protocol::ErrorString errorString, const Styleable& styleable)
-{
-    auto* element = elementToPushForStyleable(styleable);
-    auto nodeId = pushNodePathToFrontend(errorString, element ? element : &styleable.element);
-
-    auto protocolStyleable = Protocol::DOM::Styleable::create()
-        .setNodeId(nodeId)
-        .release();
-
-    if (styleable.pseudoId != PseudoId::None) {
-        if (auto pseudoId = InspectorCSSAgent::protocolValueForPseudoId(styleable.pseudoId))
-            protocolStyleable->setPseudoId(*pseudoId);
-    }
-
-    return protocolStyleable;
-}
-
 Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Protocol::ErrorString errorString, Node* nodeToPush)
 {
     ASSERT(nodeToPush);  // Invalid input
@@ -758,7 +703,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributeValue(Protocol::DOM
     if (!element)
         return makeUnexpected(errorString);
 
-    if (!m_domEditor->setAttribute(*element, AtomString { name }, AtomString { value }, errorString))
+    if (!m_domEditor->setAttribute(*element, name, value, errorString))
         return makeUnexpected(errorString);
 
     return { };
@@ -783,7 +728,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(Protocol::D
 
     Element* childElement = downcast<Element>(child);
     if (!childElement->hasAttributes() && !!name) {
-        if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
+        if (!m_domEditor->removeAttribute(*element, name, errorString))
             return makeUnexpected(errorString);
         return { };
     }
@@ -791,14 +736,13 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributesAsText(Protocol::D
     bool foundOriginalAttribute = false;
     for (const Attribute& attribute : childElement->attributesIterator()) {
         // Add attribute pair
-        auto attributeName = attribute.name().toAtomString();
-        foundOriginalAttribute = foundOriginalAttribute || attributeName == name;
-        if (!m_domEditor->setAttribute(*element, attributeName, attribute.value(), errorString))
+        foundOriginalAttribute = foundOriginalAttribute || attribute.name().toString() == name;
+        if (!m_domEditor->setAttribute(*element, attribute.name().toString(), attribute.value(), errorString))
             return makeUnexpected(errorString);
     }
 
-    if (!foundOriginalAttribute && name.find(isNotSpaceOrNewline) != notFound) {
-        if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
+    if (!foundOriginalAttribute && !name.stripWhiteSpace().isEmpty()) {
+        if (!m_domEditor->removeAttribute(*element, name, errorString))
             return makeUnexpected(errorString);
     }
 
@@ -813,7 +757,7 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::removeAttribute(Protocol::DOM::
     if (!element)
         return makeUnexpected(errorString);
 
-    if (!m_domEditor->removeAttribute(*element, AtomString { name }, errorString))
+    if (!m_domEditor->removeAttribute(*element, name, errorString))
         return makeUnexpected(errorString);
 
     return { };
@@ -845,7 +789,7 @@ Protocol::ErrorStringOr<Protocol::DOM::NodeId> InspectorDOMAgent::setNodeName(Pr
     if (!oldNode)
         return makeUnexpected(errorString);
 
-    auto createElementResult = oldNode->document().createElementForBindings(AtomString { tagName });
+    auto createElementResult = oldNode->document().createElementForBindings(tagName);
     if (createElementResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(createElementResult.releaseException()));
 
@@ -959,7 +903,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorDOMAgent::getSuppor
 {
     auto eventNames = JSON::ArrayOf<String>::create();
 
-#define DOM_EVENT_NAMES_ADD(name) eventNames->addItem(#name""_s);
+#define DOM_EVENT_NAMES_ADD(name) eventNames->addItem(#name);
     DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_ADD)
 #undef DOM_EVENT_NAMES_ADD
 
@@ -1534,7 +1478,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Insp
 
     auto parsedColor = parseColor(WTFMove(gridColor));
     if (!parsedColor)
-        return makeUnexpected("Invalid color could not be parsed."_s);
+        return makeUnexpected("Invalid color could not be parsed.");
 
     InspectorOverlay::Grid::Config config;
     config.gridColor = *parsedColor;
@@ -1561,42 +1505,6 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideGridOverlay(std:
 }
 
     m_overlay->clearAllGridOverlays();
-
-    return { };
-}
-
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Object>&& flexColor, std::optional<bool>&& showOrderNumbers)
-{
-    Protocol::ErrorString errorString;
-    Node* node = assertNode(errorString, nodeId);
-    if (!node)
-        return makeUnexpected(errorString);
-
-    auto parsedColor = parseColor(WTFMove(flexColor));
-    if (!parsedColor)
-        return makeUnexpected("Invalid color could not be parsed."_s);
-
-    InspectorOverlay::Flex::Config config;
-    config.flexColor = *parsedColor;
-    config.showOrderNumbers = showOrderNumbers.value_or(false);
-
-    m_overlay->setFlexOverlayForNode(*node, config);
-
-    return { };
-}
-
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideFlexOverlay(std::optional<Protocol::DOM::NodeId>&& nodeId)
-{
-    if (nodeId) {
-        Protocol::ErrorString errorString;
-        auto node = assertNode(errorString, *nodeId);
-        if (!node)
-            return makeUnexpected(errorString);
-
-        return m_overlay->clearFlexOverlayForNode(*node);
-    }
-
-    m_overlay->clearAllFlexOverlays();
 
     return { };
 }
@@ -1811,8 +1719,10 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
     case Node::COMMENT_NODE:
     case Node::CDATA_SECTION_NODE:
         nodeValue = node->nodeValue();
-        if (nodeValue.length() > maxTextSize)
-            nodeValue = makeString(StringView(nodeValue).left(maxTextSize), ellipsisUChar);
+        if (nodeValue.length() > maxTextSize) {
+            nodeValue = nodeValue.left(maxTextSize);
+            nodeValue.append(ellipsisUChar);
+        }
         break;
     case Node::ATTRIBUTE_NODE:
         localName = node->localName();
@@ -1993,19 +1903,19 @@ Ref<Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener
 
         if (handlerObject && globalObject) {
             JSC::VM& vm = globalObject->vm();
-            JSC::JSFunction* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(handlerObject);
+            JSC::JSFunction* handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(vm, handlerObject);
 
             if (!handlerFunction) {
                 auto scope = DECLARE_CATCH_SCOPE(vm);
 
                 // If the handler is not actually a function, see if it implements the EventListener interface and use that.
-                auto handleEventValue = handlerObject->get(globalObject, JSC::Identifier::fromString(vm, "handleEvent"_s));
+                auto handleEventValue = handlerObject->get(globalObject, JSC::Identifier::fromString(vm, "handleEvent"));
 
                 if (UNLIKELY(scope.exception()))
                     scope.clearException();
 
                 if (handleEventValue)
-                    handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(handleEventValue);
+                    handlerFunction = JSC::jsDynamicCast<JSC::JSFunction*>(vm, handleEventValue);
             }
 
             if (handlerFunction && !handlerFunction->isHostOrBuiltinFunction()) {
@@ -2114,8 +2024,8 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
     unsigned hierarchicalLevel = 0;
     unsigned level = 0;
 
-    if (auto* axObjectCache = node.document().axObjectCache()) {
-        if (auto* axObject = axObjectCache->getOrCreate(&node)) {
+    if (AXObjectCache* axObjectCache = node.document().axObjectCache()) {
+        if (AXCoreObject* axObject = axObjectCache->getOrCreate(&node)) {
 
             if (AXCoreObject* activeDescendant = axObject->activeDescendant())
                 activeDescendantNode = activeDescendant->node();
@@ -2142,8 +2052,9 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
                 childNodeIds = JSON::ArrayOf<Protocol::DOM::NodeId>::create();
                 processAccessibilityChildren(*axObject, *childNodeIds);
             }
-
-            auto controlledElements = axObject->elementsFromAttribute(aria_controlsAttr);
+            
+            Vector<Element*> controlledElements;
+            axObject->elementsFromAttribute(controlledElements, aria_controlsAttr);
             if (controlledElements.size()) {
                 controlledNodeIds = JSON::ArrayOf<Protocol::DOM::NodeId>::create();
                 for (Element* controlledElement : controlledElements) {
@@ -2183,7 +2094,8 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
             if (supportsExpanded)
                 expanded = axObject->isExpanded();
 
-            auto flowedElements = axObject->elementsFromAttribute(aria_flowtoAttr);
+            Vector<Element*> flowedElements;
+            axObject->elementsFromAttribute(flowedElements, aria_flowtoAttr);
             if (flowedElements.size()) {
                 flowedNodeIds = JSON::ArrayOf<Protocol::DOM::NodeId>::create();
                 for (Element* flowedElement : flowedElements) {
@@ -2191,7 +2103,7 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
                         flowedNodeIds->addItem(flowedElementId);
                 }
             }
-
+            
             if (is<Element>(node)) {
                 supportsFocused = axObject->canSetFocusAttribute();
                 if (supportsFocused)
@@ -2202,11 +2114,11 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
             ignoredByDefault = axObject->accessibilityIsIgnoredByDefault();
             
             String invalidValue = axObject->invalidStatus();
-            if (invalidValue == "false"_s)
+            if (invalidValue == "false")
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::False;
-            else if (invalidValue == "grammar"_s)
+            else if (invalidValue == "grammar")
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::Grammar;
-            else if (invalidValue == "spelling"_s)
+            else if (invalidValue == "spelling")
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::Spelling;
             else // Future versions of ARIA may allow additional truthy values. Ex. format, order, or size.
                 invalid = Protocol::DOM::AccessibilityProperties::Invalid::True;
@@ -2220,34 +2132,34 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
                 supportsLiveRegion = true;
                 liveRegionAtomic = axObject->liveRegionAtomic();
 
-                auto ariaRelevantAttrValue = axObject->liveRegionRelevant();
+                String ariaRelevantAttrValue = axObject->liveRegionRelevant();
                 if (!ariaRelevantAttrValue.isEmpty()) {
                     // FIXME: Pass enum values rather than strings once unblocked. http://webkit.org/b/133711
                     String ariaRelevantAdditions = Protocol::Helpers::getEnumConstantValue(Protocol::DOM::LiveRegionRelevant::Additions);
                     String ariaRelevantRemovals = Protocol::Helpers::getEnumConstantValue(Protocol::DOM::LiveRegionRelevant::Removals);
                     String ariaRelevantText = Protocol::Helpers::getEnumConstantValue(Protocol::DOM::LiveRegionRelevant::Text);
                     liveRegionRelevant = JSON::ArrayOf<String>::create();
-                    SpaceSplitString values(AtomString { ariaRelevantAttrValue }, SpaceSplitString::ShouldFoldCase::Yes);
+                    const SpaceSplitString& values = SpaceSplitString(ariaRelevantAttrValue, true);
                     // @aria-relevant="all" is exposed as ["additions","removals","text"], in order.
                     // This order is controlled in WebCore and expected in WebInspectorUI.
-                    if (values.contains("all"_s)) {
+                    if (values.contains("all")) {
                         liveRegionRelevant->addItem(ariaRelevantAdditions);
                         liveRegionRelevant->addItem(ariaRelevantRemovals);
                         liveRegionRelevant->addItem(ariaRelevantText);
                     } else {
-                        if (values.contains(AtomString { ariaRelevantAdditions }))
+                        if (values.contains(ariaRelevantAdditions))
                             liveRegionRelevant->addItem(ariaRelevantAdditions);
-                        if (values.contains(AtomString { ariaRelevantRemovals }))
+                        if (values.contains(ariaRelevantRemovals))
                             liveRegionRelevant->addItem(ariaRelevantRemovals);
-                        if (values.contains(AtomString { ariaRelevantText }))
+                        if (values.contains(ariaRelevantText))
                             liveRegionRelevant->addItem(ariaRelevantText);
                     }
                 }
 
                 String ariaLive = axObject->liveRegionStatus();
-                if (ariaLive == "assertive"_s)
+                if (ariaLive == "assertive")
                     liveRegionStatus = Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Assertive;
-                else if (ariaLive == "polite"_s)
+                else if (ariaLive == "polite")
                     liveRegionStatus = Protocol::DOM::AccessibilityProperties::LiveRegionStatus::Polite;
             }
 
@@ -2255,7 +2167,8 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
                 mouseEventNode = downcast<AccessibilityNodeObject>(*axObject).mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
 
             if (axObject->supportsARIAOwns()) {
-                auto ownedElements = axObject->elementsFromAttribute(aria_ownsAttr);
+                Vector<Element*> ownedElements;
+                axObject->elementsFromAttribute(ownedElements, aria_ownsAttr);
                 if (ownedElements.size()) {
                     ownedNodeIds = JSON::ArrayOf<Protocol::DOM::NodeId>::create();
                     for (Element* ownedElement : ownedElements) {
@@ -2809,23 +2722,6 @@ void InspectorDOMAgent::eventDidResetAfterDispatch(const Event& event)
     m_dispatchedEvents.remove(&event);
 }
 
-void InspectorDOMAgent::flexibleBoxRendererBeganLayout(const RenderObject& renderer)
-{
-    m_flexibleBoxRendererCachedItemsAtStartOfLine.remove(renderer);
-}
-
-void InspectorDOMAgent::flexibleBoxRendererWrappedToNextLine(const RenderObject& renderer, size_t lineStartItemIndex)
-{
-    m_flexibleBoxRendererCachedItemsAtStartOfLine.ensure(renderer, [] {
-        return Vector<size_t>();
-    }).iterator->value.append(lineStartItemIndex);
-}
-
-Vector<size_t> InspectorDOMAgent::flexibleBoxRendererCachedItemsAtStartOfLine(const RenderObject& renderer)
-{
-    return m_flexibleBoxRendererCachedItemsAtStartOfLine.get(renderer);
-}
-
 RefPtr<JSC::Breakpoint> InspectorDOMAgent::breakpointForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
@@ -2895,16 +2791,12 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
         return nullptr;
 
     Node* node = m_document.get();
-    auto pathTokens = StringView(path).split(',');
-    auto it = pathTokens.begin();
-    if (it == pathTokens.end())
+    Vector<String> pathTokens = path.split(',');
+    if (!pathTokens.size())
         return nullptr;
 
-    for (; it != pathTokens.end(); ++it) {
-        auto childNumberView = *it;
-        if (++it == pathTokens.end())
-            break;
-        auto childNumber = parseIntegerAllowingTrailingJunk<unsigned>(childNumberView);
+    for (size_t i = 0; i < pathTokens.size() - 1; i += 2) {
+        auto childNumber = parseIntegerAllowingTrailingJunk<unsigned>(pathTokens[i]);
         if (!childNumber)
             return nullptr;
 
@@ -2921,12 +2813,11 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
                 child = innerNextSibling(child);
         }
 
-        auto childName = *it;
+        const auto& childName = pathTokens[i + 1];
         if (!child || child->nodeName() != childName)
             return nullptr;
         node = child;
     }
-
     return node;
 }
 

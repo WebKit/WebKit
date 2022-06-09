@@ -58,14 +58,14 @@ void WorkerStorageConnection::scopeClosed()
     m_scope = nullptr;
 }
 
-void WorkerStorageConnection::getPersisted(ClientOrigin&& origin, StorageConnection::PersistCallback&& completionHandler)
+void WorkerStorageConnection::getPersisted(const ClientOrigin& origin, StorageConnection::PersistCallback&& completionHandler)
 {
     ASSERT(m_scope);
 
     auto callbackIdentifier = ++m_lastCallbackIdentifier;
     m_getPersistedCallbacks.add(callbackIdentifier, WTFMove(completionHandler));
 
-    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, origin = WTFMove(origin).isolatedCopy()]() mutable {
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, origin = origin.isolatedCopy()]() mutable {
         auto mainThreadConnection = workerThread->workerLoaderProxy().storageConnection();
         auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](bool result) mutable {
             workerThread->runLoop().postTaskForMode([callbackIdentifier, result] (auto& scope) mutable {
@@ -75,7 +75,7 @@ void WorkerStorageConnection::getPersisted(ClientOrigin&& origin, StorageConnect
         if (!mainThreadConnection)
             return mainThreadCallback(false);
 
-        mainThreadConnection->getPersisted(WTFMove(origin), WTFMove(mainThreadCallback));
+        mainThreadConnection->getPersisted(origin, WTFMove(mainThreadCallback));
     });
 }
 
@@ -85,24 +85,21 @@ void WorkerStorageConnection::didGetPersisted(uint64_t callbackIdentifier, bool 
         callback(persisted);
 }
 
-void WorkerStorageConnection::fileSystemGetDirectory(ClientOrigin&& origin, StorageConnection::GetDirectoryCallback&& completionHandler)
+void WorkerStorageConnection::fileSystemGetDirectory(const ClientOrigin& origin, StorageConnection::GetDirectoryCallback&& completionHandler)
 {
     ASSERT(m_scope);
     
     auto callbackIdentifier = ++m_lastCallbackIdentifier;
     m_getDirectoryCallbacks.add(callbackIdentifier, WTFMove(completionHandler));
 
-    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, origin = WTFMove(origin).isolatedCopy()]() mutable {
+    callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, origin = origin.isolatedCopy()]() mutable {
         auto mainThreadConnection = workerThread->workerLoaderProxy().storageConnection();
-        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto&& result) mutable {
-            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(result)] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).storageConnection().didGetDirectory(callbackIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         };
-        if (!mainThreadConnection)
-            return mainThreadCallback(Exception { InvalidStateError });
-
-        mainThreadConnection->fileSystemGetDirectory(WTFMove(origin), WTFMove(mainThreadCallback));
+        mainThreadConnection->fileSystemGetDirectory(origin, WTFMove(mainThreadCallback));
     });
 }
 

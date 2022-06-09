@@ -68,7 +68,7 @@ const char* ImportedFunctionsEnumerator::currentFunctionName() const
 const void* const* ImportedFunctionsEnumerator::addressOfCurrentFunctionPointer() const
 {
     ASSERT(m_addressTableEntry);
-    static_assert(sizeof(void*) == sizeof(m_addressTableEntry->u1.Function), "FunctionAddress size matches pointer size");
+    COMPILE_ASSERT(sizeof(void*) == sizeof(m_addressTableEntry->u1.Function), FunctionAddressSizeMatchesPointerSize);
     return reinterpret_cast<const void* const*>(&m_addressTableEntry->u1.Function);
 }
 

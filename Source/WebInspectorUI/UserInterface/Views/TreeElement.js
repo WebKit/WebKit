@@ -81,11 +81,6 @@ WI.TreeElement = class TreeElement extends WI.Object
         this._selectable = x;
     }
 
-    get expandable()
-    {
-        return this.hasChildren;
-    }
-
     get listItemElement()
     {
         return this._listItemNode;
@@ -313,7 +308,8 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (!treeElement)
             return;
 
-        if (treeElement.toggleOnClick || treeElement.isEventWithinDisclosureTriangle(event)) {
+        let toggleOnClick = treeElement.toggleOnClick && !treeElement.selectable;
+        if (toggleOnClick || treeElement.isEventWithinDisclosureTriangle(event)) {
             if (treeElement.expanded) {
                 if (event.altKey)
                     treeElement.collapseRecursively();
@@ -660,9 +656,9 @@ WI.TreeElement = class TreeElement extends WI.Object
         let computedStyle = window.getComputedStyle(this._listItemNode);
         let start = 0;
         if (computedStyle.direction === WI.LayoutDirection.RTL)
-            start += this._listItemNode.totalOffsetRight - this._listItemNode.getComputedCSSPropertyNumberValue("padding-right") - this.arrowToggleWidth;
+            start += this._listItemNode.totalOffsetRight - computedStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX) - this.arrowToggleWidth;
         else
-            start += this._listItemNode.totalOffsetLeft + this._listItemNode.getComputedCSSPropertyNumberValue("padding-left");
+            start += this._listItemNode.totalOffsetLeft + computedStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
 
         return event.pageX >= start && event.pageX <= start + this.arrowToggleWidth && this.hasChildren;
     }

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 #include "Event.h"
 
@@ -58,4 +58,4 @@ private:
     
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

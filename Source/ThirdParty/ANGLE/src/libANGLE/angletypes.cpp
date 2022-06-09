@@ -346,20 +346,20 @@ ImageUnit::ImageUnit(const ImageUnit &other) = default;
 
 ImageUnit::~ImageUnit() = default;
 
-BlendStateExt::BlendStateExt(const size_t drawBufferCount)
-    : mParameterMask(FactorStorage::GetMask(drawBufferCount)),
-      mSrcColor(FactorStorage::GetReplicatedValue(BlendFactorType::One, mParameterMask)),
-      mDstColor(FactorStorage::GetReplicatedValue(BlendFactorType::Zero, mParameterMask)),
-      mSrcAlpha(FactorStorage::GetReplicatedValue(BlendFactorType::One, mParameterMask)),
-      mDstAlpha(FactorStorage::GetReplicatedValue(BlendFactorType::Zero, mParameterMask)),
-      mEquationColor(EquationStorage::GetReplicatedValue(BlendEquationType::Add, mParameterMask)),
-      mEquationAlpha(EquationStorage::GetReplicatedValue(BlendEquationType::Add, mParameterMask)),
-      mAllColorMask(
-          ColorMaskStorage::GetReplicatedValue(PackColorMask(true, true, true, true),
-                                               ColorMaskStorage::GetMask(drawBufferCount))),
-      mColorMask(mAllColorMask),
-      mAllEnabledMask(0xFF >> (8 - drawBufferCount)),
-      mDrawBufferCount(drawBufferCount)
+BlendStateExt::BlendStateExt(const size_t drawBuffers)
+    : mMaxFactorMask(FactorStorage::GetMask(drawBuffers)),
+      mSrcColor(FactorStorage::GetReplicatedValue(BlendFactorType::One, mMaxFactorMask)),
+      mDstColor(FactorStorage::GetReplicatedValue(BlendFactorType::Zero, mMaxFactorMask)),
+      mSrcAlpha(FactorStorage::GetReplicatedValue(BlendFactorType::One, mMaxFactorMask)),
+      mDstAlpha(FactorStorage::GetReplicatedValue(BlendFactorType::Zero, mMaxFactorMask)),
+      mMaxEquationMask(EquationStorage::GetMask(drawBuffers)),
+      mEquationColor(EquationStorage::GetReplicatedValue(BlendEquationType::Add, mMaxEquationMask)),
+      mEquationAlpha(EquationStorage::GetReplicatedValue(BlendEquationType::Add, mMaxEquationMask)),
+      mMaxColorMask(ColorMaskStorage::GetMask(drawBuffers)),
+      mColorMask(ColorMaskStorage::GetReplicatedValue(PackColorMask(true, true, true, true),
+                                                      mMaxColorMask)),
+      mMaxEnabledMask(0xFF >> (8 - drawBuffers)),
+      mMaxDrawBuffers(drawBuffers)
 {}
 
 BlendStateExt::BlendStateExt(const BlendStateExt &other) = default;
@@ -368,12 +368,12 @@ BlendStateExt &BlendStateExt::operator=(const BlendStateExt &other) = default;
 
 void BlendStateExt::setEnabled(const bool enabled)
 {
-    mEnabledMask = enabled ? mAllEnabledMask : DrawBufferMask::Zero();
+    mEnabledMask = enabled ? mMaxEnabledMask : DrawBufferMask::Zero();
 }
 
 void BlendStateExt::setEnabledIndexed(const size_t index, const bool enabled)
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     mEnabledMask.set(index, enabled);
 }
 
@@ -383,14 +383,14 @@ BlendStateExt::ColorMaskStorage::Type BlendStateExt::expandColorMaskValue(const 
                                                                           const bool alpha) const
 {
     return BlendStateExt::ColorMaskStorage::GetReplicatedValue(
-        PackColorMask(red, green, blue, alpha), mAllColorMask);
+        PackColorMask(red, green, blue, alpha), mMaxColorMask);
 }
 
 BlendStateExt::ColorMaskStorage::Type BlendStateExt::expandColorMaskIndexed(
     const size_t index) const
 {
     return ColorMaskStorage::GetReplicatedValue(
-        ColorMaskStorage::GetValueIndexed(index, mColorMask), mAllColorMask);
+        ColorMaskStorage::GetValueIndexed(index, mColorMask), mMaxColorMask);
 }
 
 void BlendStateExt::setColorMask(const bool red,
@@ -403,7 +403,7 @@ void BlendStateExt::setColorMask(const bool red,
 
 void BlendStateExt::setColorMaskIndexed(const size_t index, const uint8_t value)
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     ASSERT(value <= 0xF);
     ColorMaskStorage::SetValueIndexed(index, value, &mColorMask);
 }
@@ -414,13 +414,13 @@ void BlendStateExt::setColorMaskIndexed(const size_t index,
                                         const bool blue,
                                         const bool alpha)
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     ColorMaskStorage::SetValueIndexed(index, PackColorMask(red, green, blue, alpha), &mColorMask);
 }
 
 uint8_t BlendStateExt::getColorMaskIndexed(const size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return ColorMaskStorage::GetValueIndexed(index, mColorMask);
 }
 
@@ -430,7 +430,7 @@ void BlendStateExt::getColorMaskIndexed(const size_t index,
                                         bool *blue,
                                         bool *alpha) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     UnpackColorMask(ColorMaskStorage::GetValueIndexed(index, mColorMask), red, green, blue, alpha);
 }
 
@@ -439,29 +439,24 @@ DrawBufferMask BlendStateExt::compareColorMask(ColorMaskStorage::Type other) con
     return ColorMaskStorage::GetDiffMask(mColorMask, other);
 }
 
-BlendStateExt::EquationStorage::Type BlendStateExt::expandEquationValue(const GLenum mode) const
-{
-    return EquationStorage::GetReplicatedValue(FromGLenum<BlendEquationType>(mode), mParameterMask);
-}
-
 BlendStateExt::EquationStorage::Type BlendStateExt::expandEquationValue(
     const gl::BlendEquationType equation) const
 {
-    return EquationStorage::GetReplicatedValue(equation, mParameterMask);
+    return EquationStorage::GetReplicatedValue(equation, mMaxEquationMask);
 }
 
 BlendStateExt::EquationStorage::Type BlendStateExt::expandEquationColorIndexed(
     const size_t index) const
 {
     return EquationStorage::GetReplicatedValue(
-        EquationStorage::GetValueIndexed(index, mEquationColor), mParameterMask);
+        EquationStorage::GetValueIndexed(index, mEquationColor), mMaxEquationMask);
 }
 
 BlendStateExt::EquationStorage::Type BlendStateExt::expandEquationAlphaIndexed(
     const size_t index) const
 {
     return EquationStorage::GetReplicatedValue(
-        EquationStorage::GetValueIndexed(index, mEquationAlpha), mParameterMask);
+        EquationStorage::GetValueIndexed(index, mEquationAlpha), mMaxEquationMask);
 }
 
 void BlendStateExt::setEquations(const GLenum modeColor, const GLenum modeAlpha)
@@ -476,7 +471,7 @@ void BlendStateExt::setEquations(const GLenum modeColor, const GLenum modeAlpha)
     // the color equation can be checked.
     if (IsAdvancedBlendEquation(colorEquation))
     {
-        mUsesAdvancedBlendEquationMask = mAllEnabledMask;
+        mUsesAdvancedBlendEquationMask = mMaxEnabledMask;
     }
     else
     {
@@ -488,7 +483,7 @@ void BlendStateExt::setEquationsIndexed(const size_t index,
                                         const GLenum modeColor,
                                         const GLenum modeAlpha)
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
 
     const gl::BlendEquationType colorEquation = FromGLenum<BlendEquationType>(modeColor);
     const gl::BlendEquationType alphaEquation = FromGLenum<BlendEquationType>(modeAlpha);
@@ -503,8 +498,8 @@ void BlendStateExt::setEquationsIndexed(const size_t index,
                                         const size_t sourceIndex,
                                         const BlendStateExt &source)
 {
-    ASSERT(index < mDrawBufferCount);
-    ASSERT(sourceIndex < source.mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
+    ASSERT(sourceIndex < source.mMaxDrawBuffers);
 
     const gl::BlendEquationType colorEquation =
         EquationStorage::GetValueIndexed(sourceIndex, source.mEquationColor);
@@ -519,13 +514,13 @@ void BlendStateExt::setEquationsIndexed(const size_t index,
 
 GLenum BlendStateExt::getEquationColorIndexed(size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return ToGLenum(EquationStorage::GetValueIndexed(index, mEquationColor));
 }
 
 GLenum BlendStateExt::getEquationAlphaIndexed(size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return ToGLenum(EquationStorage::GetValueIndexed(index, mEquationAlpha));
 }
 
@@ -538,35 +533,35 @@ DrawBufferMask BlendStateExt::compareEquations(const EquationStorage::Type color
 
 BlendStateExt::FactorStorage::Type BlendStateExt::expandFactorValue(const GLenum func) const
 {
-    return FactorStorage::GetReplicatedValue(FromGLenum<BlendFactorType>(func), mParameterMask);
+    return FactorStorage::GetReplicatedValue(FromGLenum<BlendFactorType>(func), mMaxFactorMask);
 }
 
 BlendStateExt::FactorStorage::Type BlendStateExt::expandSrcColorIndexed(const size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return FactorStorage::GetReplicatedValue(FactorStorage::GetValueIndexed(index, mSrcColor),
-                                             mParameterMask);
+                                             mMaxFactorMask);
 }
 
 BlendStateExt::FactorStorage::Type BlendStateExt::expandDstColorIndexed(const size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return FactorStorage::GetReplicatedValue(FactorStorage::GetValueIndexed(index, mDstColor),
-                                             mParameterMask);
+                                             mMaxFactorMask);
 }
 
 BlendStateExt::FactorStorage::Type BlendStateExt::expandSrcAlphaIndexed(const size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return FactorStorage::GetReplicatedValue(FactorStorage::GetValueIndexed(index, mSrcAlpha),
-                                             mParameterMask);
+                                             mMaxFactorMask);
 }
 
 BlendStateExt::FactorStorage::Type BlendStateExt::expandDstAlphaIndexed(const size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return FactorStorage::GetReplicatedValue(FactorStorage::GetValueIndexed(index, mDstAlpha),
-                                             mParameterMask);
+                                             mMaxFactorMask);
 }
 
 void BlendStateExt::setFactors(const GLenum srcColor,
@@ -586,7 +581,7 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
                                       const GLenum srcAlpha,
                                       const GLenum dstAlpha)
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     FactorStorage::SetValueIndexed(index, FromGLenum<BlendFactorType>(srcColor), &mSrcColor);
     FactorStorage::SetValueIndexed(index, FromGLenum<BlendFactorType>(dstColor), &mDstColor);
     FactorStorage::SetValueIndexed(index, FromGLenum<BlendFactorType>(srcAlpha), &mSrcAlpha);
@@ -597,8 +592,8 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
                                       const size_t sourceIndex,
                                       const BlendStateExt &source)
 {
-    ASSERT(index < mDrawBufferCount);
-    ASSERT(sourceIndex < source.mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
+    ASSERT(sourceIndex < source.mMaxDrawBuffers);
     FactorStorage::SetValueIndexed(
         index, FactorStorage::GetValueIndexed(sourceIndex, source.mSrcColor), &mSrcColor);
     FactorStorage::SetValueIndexed(
@@ -611,25 +606,25 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
 
 GLenum BlendStateExt::getSrcColorIndexed(size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return ToGLenum(FactorStorage::GetValueIndexed(index, mSrcColor));
 }
 
 GLenum BlendStateExt::getDstColorIndexed(size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return ToGLenum(FactorStorage::GetValueIndexed(index, mDstColor));
 }
 
 GLenum BlendStateExt::getSrcAlphaIndexed(size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return ToGLenum(FactorStorage::GetValueIndexed(index, mSrcAlpha));
 }
 
 GLenum BlendStateExt::getDstAlphaIndexed(size_t index) const
 {
-    ASSERT(index < mDrawBufferCount);
+    ASSERT(index < mMaxDrawBuffers);
     return ToGLenum(FactorStorage::GetValueIndexed(index, mDstAlpha));
 }
 

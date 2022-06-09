@@ -46,7 +46,7 @@ sub writeFileWithContent($$)
 }
 
 my $temporaryDirectory = File::Temp->newdir();
-system("git", "init", "-q", $temporaryDirectory);
+system("git", "init", $temporaryDirectory);
 my $filename = File::Spec->catfile($temporaryDirectory, "FileWith(Parentheses).txt");
 writeFileWithContent($filename, "");
 writeFileWithContent(File::Spec->catfile($temporaryDirectory, ".gitattributes"), "* foo=1\nb");

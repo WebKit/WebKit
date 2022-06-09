@@ -36,7 +36,6 @@
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
-#include "WorkerEventLoop.h"
 #include "WorkerOrWorkletGlobalScope.h"
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerThread.h"
@@ -66,16 +65,10 @@ private:
 
 class ModePredicate {
 public:
-    explicit ModePredicate(String&& mode, bool allowEventLoopTasks)
+    explicit ModePredicate(String&& mode)
         : m_mode(WTFMove(mode))
         , m_defaultMode(m_mode == WorkerRunLoop::defaultMode())
-        , m_allowEventLoopTasks(allowEventLoopTasks)
     {
-    }
-
-    const String mode() const
-    {
-        return m_mode;
     }
 
     bool isDefaultMode() const
@@ -85,13 +78,12 @@ public:
 
     bool operator()(const WorkerDedicatedRunLoop::Task& task) const
     {
-        return m_defaultMode || m_mode == task.mode() || (m_allowEventLoopTasks && task.mode() == WorkerEventLoop::taskMode());
+        return m_defaultMode || m_mode == task.mode();
     }
 
 private:
     String m_mode;
     bool m_defaultMode;
-    bool m_allowEventLoopTasks;
 };
 
 WorkerDedicatedRunLoop::WorkerDedicatedRunLoop()
@@ -145,7 +137,7 @@ private:
 void WorkerDedicatedRunLoop::run(WorkerOrWorkletGlobalScope* context)
 {
     RunLoopSetup setup(*this, RunLoopSetup::IsForDebugging::No);
-    ModePredicate modePredicate(defaultMode(), false);
+    ModePredicate modePredicate(defaultMode());
     MessageQueueWaitResult result;
     do {
         result = runInMode(context, modePredicate);
@@ -156,14 +148,14 @@ void WorkerDedicatedRunLoop::run(WorkerOrWorkletGlobalScope* context)
 MessageQueueWaitResult WorkerDedicatedRunLoop::runInDebuggerMode(WorkerOrWorkletGlobalScope& context)
 {
     RunLoopSetup setup(*this, RunLoopSetup::IsForDebugging::Yes);
-    return runInMode(&context, ModePredicate { debuggerMode(), false });
+    return runInMode(&context, ModePredicate { debuggerMode() });
 }
 
-bool WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalScope* context, const String& mode, bool allowEventLoopTasks)
+bool WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalScope* context, const String& mode)
 {
     ASSERT(mode != debuggerMode());
     RunLoopSetup setup(*this, RunLoopSetup::IsForDebugging::No);
-    ModePredicate modePredicate(String { mode }, allowEventLoopTasks);
+    ModePredicate modePredicate(String { mode });
     return runInMode(context, modePredicate) != MessageQueueWaitResult::MessageQueueTerminated;
 }
 
@@ -172,11 +164,10 @@ MessageQueueWaitResult WorkerDedicatedRunLoop::runInMode(WorkerOrWorkletGlobalSc
     ASSERT(context);
     ASSERT(context->workerOrWorkletThread()->thread() == &Thread::current());
 
-    const String predicateMode = predicate.mode();
-    JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this, predicateMode] {
+    JSC::JSRunLoopTimer::TimerNotificationCallback timerAddedTask = createSharedTask<JSC::JSRunLoopTimer::TimerNotificationType>([this] {
         // We don't actually do anything here, we just want to loop around runInMode
         // to both recalculate our deadline and to potentially run the run loop.
-        this->postTaskForMode([predicateMode](ScriptExecutionContext&) { }, predicateMode);
+        this->postTask([](ScriptExecutionContext&) { });
     });
 
 #if USE(GLIB)
@@ -320,7 +311,7 @@ void WorkerMainRunLoop::postTaskForMode(ScriptExecutionContext::Task&& task, con
     });
 }
 
-bool WorkerMainRunLoop::runInMode(WorkerOrWorkletGlobalScope*, const String&, bool)
+bool WorkerMainRunLoop::runInMode(WorkerOrWorkletGlobalScope*, const String&)
 {
     RunLoop::main().cycle();
     return true;

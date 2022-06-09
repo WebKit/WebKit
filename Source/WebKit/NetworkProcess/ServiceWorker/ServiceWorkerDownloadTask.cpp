@@ -31,8 +31,7 @@
 #include "DownloadManager.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
-#include "ServiceWorkerDownloadTaskMessages.h"
-#include "SharedBufferReference.h"
+#include "SharedBufferCopy.h"
 #include "WebErrors.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebSWServerToContextConnection.h"
@@ -65,17 +64,11 @@ ServiceWorkerDownloadTask::~ServiceWorkerDownloadTask()
     ASSERT(!m_serviceWorkerConnection);
 }
 
-void ServiceWorkerDownloadTask::startListeningForIPC()
-{
-    m_serviceWorkerConnection->ipcConnection().addThreadMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), this, fetchIdentifier().toUInt64());
-}
-
 void ServiceWorkerDownloadTask::close()
 {
     ASSERT(isMainRunLoop());
 
     if (m_serviceWorkerConnection) {
-        m_serviceWorkerConnection->ipcConnection().removeThreadMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
         m_serviceWorkerConnection->unregisterDownload(*this);
         m_serviceWorkerConnection = nullptr;
     }
@@ -181,7 +174,7 @@ void ServiceWorkerDownloadTask::start()
     downloadPtr->didCreateDestination(m_pendingDownloadLocation);
 }
 
-void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference& data, int64_t encodedDataLength)
+void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferCopy& data, int64_t encodedDataLength)
 {
     ASSERT(!isMainRunLoop());
 

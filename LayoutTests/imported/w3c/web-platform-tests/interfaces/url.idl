@@ -3,7 +3,7 @@
 // (https://github.com/w3c/webref)
 // Source: URL Standard (https://url.spec.whatwg.org/)
 
-[Exposed=*,
+[Exposed=(Window,Worker),
  LegacyWindowAlias=webkitURL]
 interface URL {
   constructor(USVString url, optional USVString base);
@@ -24,7 +24,7 @@ interface URL {
   USVString toJSON();
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker)]
 interface URLSearchParams {
   constructor(optional (sequence<sequence<USVString>> or record<USVString, USVString> or USVString) init = "");
 

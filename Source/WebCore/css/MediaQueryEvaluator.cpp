@@ -139,16 +139,16 @@ MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, const 
 bool MediaQueryEvaluator::mediaTypeMatch(const String& mediaTypeToMatch) const
 {
     return mediaTypeToMatch.isEmpty()
-        || equalLettersIgnoringASCIICase(mediaTypeToMatch, "all"_s)
+        || equalLettersIgnoringASCIICase(mediaTypeToMatch, "all")
         || equalIgnoringASCIICase(mediaTypeToMatch, m_mediaType);
 }
 
-bool MediaQueryEvaluator::mediaTypeMatchSpecific(ASCIILiteral mediaTypeToMatch) const
+bool MediaQueryEvaluator::mediaTypeMatchSpecific(const char* mediaTypeToMatch) const
 {
     // Like mediaTypeMatch, but without the special cases for "" and "all".
-    ASSERT(!mediaTypeToMatch.isNull());
-    ASSERT(mediaTypeToMatch.characterAt(0) != '\0');
-    ASSERT(!equalLettersIgnoringASCIICase(mediaTypeToMatch, "all"_s));
+    ASSERT(mediaTypeToMatch);
+    ASSERT(mediaTypeToMatch[0] != '\0');
+    ASSERT(!equalLettersIgnoringASCIICase(StringView(mediaTypeToMatch), "all"));
     return equalIgnoringASCIICase(m_mediaType, mediaTypeToMatch);
 }
 
@@ -267,7 +267,7 @@ static bool compareAspectRatioValue(CSSValue* value, int width, int height, Medi
 
 static std::optional<double> doubleValue(CSSValue* value)
 {
-    if (!is<CSSPrimitiveValue>(value) || !downcast<CSSPrimitiveValue>(*value).isNumberOrInteger())
+    if (!is<CSSPrimitiveValue>(value) || !downcast<CSSPrimitiveValue>(*value).isNumber())
         return std::nullopt;
     return downcast<CSSPrimitiveValue>(*value).doubleValue(CSSUnitType::CSS_NUMBER);
 }
@@ -419,9 +419,9 @@ static bool evaluateResolution(CSSValue* value, Frame& frame, MediaFeaturePrefix
     // in the query. Thus, if if the document's media type is "print", the
     // media type of the query will either be "print" or "all".
     String mediaType = view->mediaType();
-    if (equalLettersIgnoringASCIICase(mediaType, "screen"_s))
+    if (equalLettersIgnoringASCIICase(mediaType, "screen"))
         deviceScaleFactor = frame.page() ? frame.page()->deviceScaleFactor() : 1;
-    else if (equalLettersIgnoringASCIICase(mediaType, "print"_s)) {
+    else if (equalLettersIgnoringASCIICase(mediaType, "print")) {
         // The resolution of images while printing should not depend on the dpi
         // of the screen. Until we support proper ways of querying this info
         // we use 300px which is considered minimum for current printers.
@@ -435,7 +435,7 @@ static bool evaluateResolution(CSSValue* value, Frame& frame, MediaFeaturePrefix
         return false;
 
     auto& resolution = downcast<CSSPrimitiveValue>(*value);
-    float resolutionValue = resolution.isNumberOrInteger() ? resolution.floatValue() : resolution.floatValue(CSSUnitType::CSS_DPPX);
+    float resolutionValue = resolution.isNumber() ? resolution.floatValue() : resolution.floatValue(CSSUnitType::CSS_DPPX);
     bool result = compareValue(deviceScaleFactor, resolutionValue, op);
     LOG_WITH_STREAM(MediaQueries, stream << "  evaluateResolution: " << op << " " << resolutionValue << " device scale factor " << deviceScaleFactor << ": " << result);
     return result;
@@ -443,12 +443,12 @@ static bool evaluateResolution(CSSValue* value, Frame& frame, MediaFeaturePrefix
 
 static bool devicePixelRatioEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
-    return (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isNumberOrInteger())) && evaluateResolution(value, frame, op);
+    return (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isNumber())) && evaluateResolution(value, frame, op);
 }
 
 static bool resolutionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
 {
-    if (!frame.settings().resolutionMediaFeatureEnabled() || frame.document()->quirks().shouldDisableResolutionMediaQuery())
+    if (!frame.settings().resolutionMediaFeatureEnabled())
         return false;
 
     return (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isResolution())) && evaluateResolution(value, frame, op);
@@ -492,7 +492,7 @@ static std::optional<double> computeLength(CSSValue* value, bool strict, const C
         return std::nullopt;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (primitiveValue.isNumberOrInteger()) {
+    if (primitiveValue.isNumber()) {
         double value = primitiveValue.doubleValue();
         // The only unitless number value allowed in strict mode is zero.
         if (strict && value)
@@ -946,14 +946,14 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
     defaultStyle.fontCascade().update();
     
     // Pass `nullptr` for `parentStyle` because we are in the context of a media query.
-    return function(expression.value(), { *m_style, &defaultStyle, nullptr, document.renderView() }, *frame, NoPrefix);
+    return function(expression.value(), { m_style, &defaultStyle, nullptr, document.renderView(), 1, std::nullopt }, *frame, NoPrefix);
 }
 
 bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)
 {
     ASSERT(document.renderView());
     auto mediaQueries = MediaQuerySet::create(attributeValue, MediaQueryParserContext(document));
-    return MediaQueryEvaluator { "screen"_s, document, &document.renderView()->style() }.evaluate(mediaQueries.get());
+    return MediaQueryEvaluator { "screen", document, &document.renderView()->style() }.evaluate(mediaQueries.get());
 }
 
 } // WebCore

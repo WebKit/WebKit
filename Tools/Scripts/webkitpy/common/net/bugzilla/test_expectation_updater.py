@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright (C) 2017 Apple Inc. All rights reserved.
 # Copyright (C) 2020 Igalia S.L.
 #

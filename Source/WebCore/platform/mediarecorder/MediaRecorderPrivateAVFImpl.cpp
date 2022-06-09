@@ -26,17 +26,16 @@
 #include "config.h"
 #include "MediaRecorderPrivateAVFImpl.h"
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 #include "AudioStreamDescription.h"
 #include "CAAudioStreamDescription.h"
-#include "CVUtilities.h"
 #include "Logging.h"
 #include "MediaRecorderPrivateWriterCocoa.h"
+#include "MediaSampleAVFObjC.h"
 #include "MediaStreamPrivate.h"
 #include "RealtimeIncomingVideoSourceCocoa.h"
 #include "SharedBuffer.h"
-#include "VideoFrameCV.h"
 #include "WebAudioBufferList.h"
 
 #include "CoreVideoSoftLink.h"
@@ -83,19 +82,40 @@ void MediaRecorderPrivateAVFImpl::startRecording(StartRecordingCallback&& callba
     callback(String(m_writer->mimeType()), m_writer->audioBitRate(), m_writer->videoBitRate());
 }
 
-void MediaRecorderPrivateAVFImpl::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
+void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer, VideoSampleMetadata)
 {
     if (shouldMuteVideo()) {
         if (!m_blackFrame) {
-            auto size = videoFrame.presentationSize();
-            m_blackFrame = VideoFrameCV::create(videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), createBlackPixelBuffer(size.width(), size.height()));
+            m_blackFrameDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer.platformSample().sample.cmSampleBuffer);
+            auto dimensions = PAL::CMVideoFormatDescriptionGetDimensions(m_blackFrameDescription.get());
+            m_blackFrame = createBlackPixelBuffer(dimensions.width, dimensions.height);
+
+            CMVideoFormatDescriptionRef formatDescription = nullptr;
+            auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, m_blackFrame.get(), &formatDescription);
+            if (status != noErr) {
+                RELEASE_LOG_ERROR(Media, "MediaRecorderPrivateAVFImpl::videoSampleAvailable ::unable to create a black frame description: %d", static_cast<int>(status));
+                m_blackFrame = nullptr;
+                return;
+            }
+            m_blackFrameDescription = adoptCF(formatDescription);
         }
-        m_writer->appendVideoFrame(*m_blackFrame);
+
+        CMSampleBufferRef sample = nullptr;
+        CMSampleTimingInfo timingInfo { PAL::kCMTimeInvalid, PAL::toCMTime(sampleBuffer.presentationTime()), PAL::toCMTime(sampleBuffer.decodeTime()) };
+        auto status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)m_blackFrame.get(), m_blackFrameDescription.get(), &timingInfo, &sample);
+
+        if (status != noErr) {
+            RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateAVFImpl::videoSampleAvailable - unable to create a black frame: %d", static_cast<int>(status));
+            return;
+        }
+        auto newSample = adoptCF(sample);
+        m_writer->appendVideoSampleBuffer(MediaSampleAVFObjC::create(newSample.get(), sampleBuffer.videoRotation(), sampleBuffer.videoMirrored()));
         return;
     }
 
     m_blackFrame = nullptr;
-    m_writer->appendVideoFrame(videoFrame);
+    m_blackFrameDescription = nullptr;
+    m_writer->appendVideoSampleBuffer(sampleBuffer);
 }
 
 void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
@@ -149,4 +169,4 @@ const String& MediaRecorderPrivateAVFImpl::mimeType() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

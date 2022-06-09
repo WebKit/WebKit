@@ -27,14 +27,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from urllib import parse
+from mod_pywebsocket import msgutil
+import urlparse
 
 
 def _add_set_cookie(request, value):
     request.extra_headers.append(('Set-Cookie', value))
 
 def web_socket_do_extra_handshake(request):
-    components = parse.urlparse(request.uri)
+    components = urlparse.urlparse(request.uri)
     command = components[4]
 
     ONE_DAY_LIFE = 'Max-Age=86400'

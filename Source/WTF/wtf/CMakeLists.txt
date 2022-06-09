@@ -35,8 +35,6 @@ set(WTF_PUBLIC_HEADERS
     ClockType.h
     CommaPrinter.h
     CompactPointerTuple.h
-    CompactPtr.h
-    CompactRefPtr.h
     CompactRefPtrTuple.h
     CompactUniquePtrTuple.h
     CompilationThread.h
@@ -68,7 +66,6 @@ set(WTF_PUBLIC_HEADERS
     EnumClassOperatorOverloads.h
     EnumTraits.h
     Expected.h
-    ExperimentalFeatureNames.h
     ExportMacros.h
     FailureAction.h
     FastBitVector.h
@@ -77,15 +74,12 @@ set(WTF_PUBLIC_HEADERS
     FilePrintStream.h
     FileSystem.h
     FixedVector.h
-    FixedWidthDouble.h
     FlipBytes.h
     ForbidHeapAllocation.h
     Forward.h
     Function.h
     FunctionDispatcher.h
     FunctionTraits.h
-    GenerateProfiles.h
-    GenericHashKey.h
     GenericTimeMixin.h
     GetPtr.h
     Gigacage.h
@@ -475,7 +469,6 @@ set(WTF_SOURCES
     SixCharacterHash.cpp
     SmallSet.cpp
     StackBounds.cpp
-    StackCheck.cpp
     StackPointer.cpp
     StackStats.cpp
     StackTrace.cpp

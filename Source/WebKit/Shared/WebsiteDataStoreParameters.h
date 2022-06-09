@@ -53,12 +53,26 @@ struct WebsiteDataStoreParameters {
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     NetworkSessionCreationParameters networkSessionParameters;
 
-#if PLATFORM(IOS_FAMILY)
-    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
-    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
-    std::optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
-    std::optional<SandboxExtension::Handle> tempDirectoryExtensionHandle;
+    String indexedDatabaseDirectory;
+    SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
+
+#if ENABLE(SERVICE_WORKER)
+    String serviceWorkerRegistrationDirectory;
+    SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
+    bool serviceWorkerProcessTerminationDelayEnabled { true };
 #endif
+
+    String localStorageDirectory;
+    SandboxExtension::Handle localStorageDirectoryExtensionHandle;
+
+    String cacheStorageDirectory;
+    SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
+
+    String generalStorageDirectory;
+    SandboxExtension::Handle generalStorageDirectoryHandle;
+
+    uint64_t perOriginStorageQuota { WebCore::StorageQuotaManager::defaultQuota() };
+    uint64_t perThirdPartyOriginStorageQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
 };
 
 } // namespace WebKit

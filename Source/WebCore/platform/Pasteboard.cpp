@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Pasteboard.h"
 
-#include "CommonAtomStrings.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
 #include "Settings.h"
@@ -45,7 +44,7 @@ PasteboardBuffer::~PasteboardBuffer() = default;
 
 bool Pasteboard::isSafeTypeForDOMToReadAndWrite(const String& type)
 {
-    return type == textPlainContentTypeAtom() || type == "text/html"_s || type == "text/uri-list"_s;
+    return type == "text/plain" || type == "text/html" || type == "text/uri-list";
 }
 
 bool Pasteboard::canExposeURLToDOMWhenPasteboardContainsFiles(const String& urlString)

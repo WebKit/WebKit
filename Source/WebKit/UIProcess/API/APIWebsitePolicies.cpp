@@ -59,8 +59,18 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
     policies->setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
-    policies->setLegacyCustomHeaderFields(Vector<WebCore::HTTPHeaderField> { m_legacyCustomHeaderFields });
-    policies->setCustomHeaderFields(Vector<WebCore::CustomHeaderFields> { m_customHeaderFields });
+    
+    Vector<WebCore::HTTPHeaderField> legacyCustomHeaderFields;
+    legacyCustomHeaderFields.reserveInitialCapacity(m_legacyCustomHeaderFields.size());
+    for (auto& field : m_legacyCustomHeaderFields)
+        legacyCustomHeaderFields.uncheckedAppend(field);
+    policies->setLegacyCustomHeaderFields(WTFMove(legacyCustomHeaderFields));
+
+    Vector<WebCore::CustomHeaderFields> customHeaderFields;
+    customHeaderFields.reserveInitialCapacity(m_customHeaderFields.size());
+    for (auto& field : m_customHeaderFields)
+        customHeaderFields.uncheckedAppend(field);
+    policies->setCustomHeaderFields(WTFMove(customHeaderFields));
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
     policies->setApplicationNameForDesktopUserAgent(m_applicationNameForDesktopUserAgent);
     policies->setAllowsContentJavaScript(m_allowsContentJavaScript);
@@ -88,7 +98,8 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
     bool hasLegacyCustomHeaderFields = legacyCustomHeaderFields().size();
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
     customHeaderFields.reserveInitialCapacity(this->customHeaderFields().size() + hasLegacyCustomHeaderFields);
-    customHeaderFields.appendVector(this->customHeaderFields());
+    for (auto& field : this->customHeaderFields())
+        customHeaderFields.uncheckedAppend(field);
     if (hasLegacyCustomHeaderFields)
         customHeaderFields.uncheckedAppend({ legacyCustomHeaderFields(), { }});
 

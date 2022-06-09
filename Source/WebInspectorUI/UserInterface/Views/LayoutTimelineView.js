@@ -339,5 +339,3 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
         this._updateHighlight();
     }
 };
-
-WI.LayoutTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.LayoutAndRenderingTimeline;

@@ -46,7 +46,7 @@ namespace WebCore {
 
 auto CDMPrivateMediaSourceAVFObjC::parseKeySystem(const String& keySystem) -> std::optional<KeySystemParameters>
 {
-    static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.[23]_\\d+(?:,\\d+)*$"_s, JSC::Yarr::TextCaseInsensitive);
+    static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.[23]_\\d+(?:,\\d+)*$", JSC::Yarr::TextCaseInsensitive);
 
     if (keySystemRE.get().match(keySystem) < 0)
         return std::nullopt;
@@ -104,7 +104,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType(const String& ke
         return true;
 
     // FIXME: Why is this ignoring case since the check in supportsMIMEType is checking case?
-    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"_s))
+    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"))
         return true;
 
     MediaEngineSupportParameters parameters;
@@ -117,7 +117,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType(const String& ke
 bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
 {
     // FIXME: Why is this checking case since the check in supportsKeySystemAndMimeType is ignoring case?
-    if (mimeType == "keyrelease"_s)
+    if (mimeType == "keyrelease")
         return true;
 
     MediaEngineSupportParameters parameters;
@@ -127,7 +127,7 @@ bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
     return MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) != MediaPlayer::SupportsType::IsNotSupported;
 }
 
-std::unique_ptr<LegacyCDMSession> CDMPrivateMediaSourceAVFObjC::createSession(LegacyCDMSessionClient& client)
+std::unique_ptr<LegacyCDMSession> CDMPrivateMediaSourceAVFObjC::createSession(LegacyCDMSessionClient* client)
 {
     String keySystem = m_cdm->keySystem(); // Local copy for StringView usage
     auto parameters = parseKeySystem(m_cdm->keySystem());

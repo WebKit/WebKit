@@ -41,9 +41,7 @@ class MacroAssemblerARM64 : public AbstractMacroAssembler<Assembler> {
 public:
     static constexpr unsigned numGPRs = 32;
     static constexpr unsigned numFPRs = 32;
-
-    static constexpr size_t nearJumpRange = 128 * MB;
-
+    
     static constexpr RegisterID dataTempRegister = ARM64Registers::ip0;
     static constexpr RegisterID memoryTempRegister = ARM64Registers::ip1;
 
@@ -1522,7 +1520,6 @@ public:
         case Extend::None:
             return Assembler::UXTX;
         }
-        RELEASE_ASSERT_NOT_REACHED();
     }
 
     void load64(Address address, RegisterID dest)
@@ -1952,17 +1949,6 @@ public:
         store64(dataTempRegister, address);
     }
 
-    void store64(TrustedImmPtr imm, Address address)
-    {
-        if (!imm.m_value) {
-            store64(ARM64Registers::zr, address);
-            return;
-        }
-
-        moveToCachedReg(imm, dataMemoryTempRegister());
-        store64(dataTempRegister, address);
-    }
-
     void store64(TrustedImm64 imm, BaseIndex address)
     {
         if (!imm.m_value) {
@@ -1972,17 +1958,6 @@ public:
 
         moveToCachedReg(imm, dataMemoryTempRegister());
         store64(dataTempRegister, address);
-    }
-
-    void transfer64(Address src, Address dest)
-    {
-        load64(src, getCachedDataTempRegisterIDAndInvalidate());
-        store64(getCachedDataTempRegisterIDAndInvalidate(), dest);
-    }
-
-    void transferPtr(Address src, Address dest)
-    {
-        transfer64(src, dest);
     }
 
     DataLabel32 store64WithAddressOffsetPatch(RegisterID src, Address address)
@@ -3367,19 +3342,6 @@ public:
     {
         load64(left, getCachedMemoryTempRegisterIDAndInvalidate());
         return branch64(cond, memoryTempRegister, right);
-    }
-
-    Jump branch64(RelationalCondition cond, Address left, Address right)
-    {
-        // load64 clobbers memoryTempRegister, thus we should first use dataTempRegister here.
-        load64(left, getCachedDataTempRegisterIDAndInvalidate());
-        // And branch64 will use memoryTempRegister to load right to a register.
-        return branch64(cond, dataTempRegister, right);
-    }
-
-    Jump branchPtr(RelationalCondition cond, Address left, Address right)
-    {
-        return branch64(cond, left, right);
     }
 
     Jump branchPtr(RelationalCondition cond, BaseIndex left, RegisterID right)

@@ -1,0 +1,11 @@
+<p>This tests caret movement through -webkit-user-select:none content.  The caret should move over <b>yyy</b>.</p>
+<div id="div" contenteditable="true">x<span style="font-weight:bold; -webkit-user-select:none;">yyy</span>x</div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "character");
+sel.modify("move", "forward", "character");
+</script>

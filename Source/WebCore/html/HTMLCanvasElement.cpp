@@ -52,7 +52,6 @@
 #include "InMemoryDisplayList.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMConvertDictionary.h"
-#include "JSNodeCustom.h"
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvas.h"
 #include "PlaceholderRenderingContext.h"
@@ -63,7 +62,6 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "StringAdaptors.h"
-#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <math.h>
 #include <wtf/IsoMallocInlines.h>
@@ -96,11 +94,11 @@
 #endif
 
 #if USE(GSTREAMER)
-#include "VideoFrameGStreamer.h"
+#include "MediaSampleGStreamer.h"
 #endif
 
 #if PLATFORM(COCOA)
-#include "VideoFrameCV.h"
+#include "MediaSampleAVFObjC.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 #endif
 
@@ -347,7 +345,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 
 bool HTMLCanvasElement::is2dType(const String& type)
 {
-    return type == "2d"_s;
+    return type == "2d";
 }
 
 CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
@@ -410,18 +408,18 @@ static bool shouldEnableWebGL(const Settings& settings)
 bool HTMLCanvasElement::isWebGLType(const String& type)
 {
     // Retain support for the legacy "webkit-3d" name.
-    return type == "webgl"_s || type == "experimental-webgl"_s
+    return type == "webgl" || type == "experimental-webgl"
 #if ENABLE(WEBGL2)
-        || type == "webgl2"_s
+        || type == "webgl2"
 #endif
-        || type == "webkit-3d"_s;
+        || type == "webkit-3d";
 }
 
 GraphicsContextGLWebGLVersion HTMLCanvasElement::toWebGLVersion(const String& type)
 {
     ASSERT(isWebGLType(type));
 #if ENABLE(WEBGL2)
-    if (type == "webgl2"_s)
+    if (type == "webgl2")
         return WebGLVersion::WebGL2;
 #else
     UNUSED_PARAM(type);
@@ -486,7 +484,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(WebGLVersion type,
 
 bool HTMLCanvasElement::isBitmapRendererType(const String& type)
 {
-    return type == "bitmaprenderer"_s;
+    return type == "bitmaprenderer";
 }
 
 ImageBitmapRenderingContext* HTMLCanvasElement::createContextBitmapRenderer(const String& type, ImageBitmapRenderingContextSettings&& settings)
@@ -710,13 +708,13 @@ ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType)
     return toDataURL(mimeType, { });
 }
 
-ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
+ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
 {
     if (!originClean())
         return Exception { SecurityError };
 
     if (size().isEmpty() || !buffer()) {
-        callback->scheduleCallback(document(), nullptr);
+        callback->scheduleCallback(context, nullptr);
         return { };
     }
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
@@ -731,7 +729,7 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const 
         Vector<uint8_t> blobData = data(imageData->pixelBuffer(), encodingMIMEType, quality);
         if (!blobData.isEmpty())
             blob = Blob::create(&document(), WTFMove(blobData), encodingMIMEType);
-        callback->scheduleCallback(document(), WTFMove(blob));
+        callback->scheduleCallback(context, WTFMove(blob));
         return { };
     }
 #endif
@@ -742,12 +740,12 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(Ref<BlobCallback>&& callback, const 
     Vector<uint8_t> blobData = buffer()->toData(encodingMIMEType, quality);
     if (!blobData.isEmpty())
         blob = Blob::create(&document(), WTFMove(blobData), encodingMIMEType);
-    callback->scheduleCallback(document(), WTFMove(blob));
+    callback->scheduleCallback(context, WTFMove(blob));
     return { };
 }
 
 #if ENABLE(OFFSCREEN_CANVAS)
-ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen()
+ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(ScriptExecutionContext& context)
 {
     if (m_context)
         return Exception { InvalidStateError };
@@ -756,39 +754,32 @@ ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(
     if (m_context->isAccelerated())
         invalidateStyleAndLayerComposition();
 
-    return OffscreenCanvas::create(document(), *this);
+    return OffscreenCanvas::create(context, *this);
 }
 #endif
 
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
-    if (!is<WebGLRenderingContextBase>(m_context))
-        return nullptr;
-
-    if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
-        ResourceLoadObserver::shared().logCanvasRead(document());
-
-    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer();
-    if (!is<ByteArrayPixelBuffer>(pixelBuffer))
-        return nullptr;
-
-    return ImageData::create(static_reference_cast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull()));
-#else
-    return nullptr;
+    if (is<WebGLRenderingContextBase>(m_context)) {
+        if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
+            ResourceLoadObserver::shared().logCanvasRead(document());
+        return ImageData::create(downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer());
+    }
 #endif
+    return nullptr;
 }
 
 #if ENABLE(MEDIA_STREAM)
 
-RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
+RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 {
 #if PLATFORM(COCOA) || USE(GSTREAMER)
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(m_context.get())) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logCanvasRead(document());
-        return downcast<WebGLRenderingContextBase>(*m_context).paintCompositedResultsToVideoFrame();
+        return downcast<WebGLRenderingContextBase>(*m_context).paintCompositedResultsToMediaSample();
     }
 #endif
     auto* imageBuffer = buffer();
@@ -801,22 +792,22 @@ RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 
     // FIXME: This can likely be optimized quite a bit, especially in the cases where
     // the ImageBuffer is backed by GPU memory already and/or is in the GPU process by
-    // specializing toVideoFrame() in ImageBufferBackend to not use getPixelBuffer().
+    // specializing toMediaSample() in ImageBufferBackend to not use getPixelBuffer().
     auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, { { }, imageBuffer->truncatedLogicalSize() });
     if (!pixelBuffer)
         return nullptr;
 
 #if PLATFORM(COCOA)
-    return VideoFrameCV::createFromPixelBuffer(pixelBuffer.releaseNonNull());
+    return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer));
 #elif USE(GSTREAMER)
-    return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull());
+    return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
 #endif
 #else
     return nullptr;
 #endif
 }
 
-ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(std::optional<double>&& frameRequestRate)
+ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(Document& document, std::optional<double>&& frameRequestRate)
 {
     if (!originClean())
         return Exception(SecurityError, "Canvas is tainted"_s);
@@ -826,8 +817,8 @@ ExceptionOr<Ref<MediaStream>> HTMLCanvasElement::captureStream(std::optional<dou
     if (frameRequestRate && frameRequestRate.value() < 0)
         return Exception(NotSupportedError, "frameRequestRate is negative"_s);
 
-    auto track = CanvasCaptureMediaStreamTrack::create(document(), *this, WTFMove(frameRequestRate));
-    auto stream = MediaStream::create(document());
+    auto track = CanvasCaptureMediaStreamTrack::create(document, *this, WTFMove(frameRequestRate));
+    auto stream =  MediaStream::create(document);
     stream->addTrack(track);
     return stream;
 }
@@ -895,12 +886,9 @@ void HTMLCanvasElement::createImageBuffer() const
 
     auto hostWindow = (document().view() && document().view()->root()) ? document().view()->root()->hostWindow() : nullptr;
 
-    OptionSet<ImageBufferOptions> bufferOptions;
-    if (shouldAccelerate(area))
-        bufferOptions.add(ImageBufferOptions::Accelerated);
+    auto renderingMode = shouldAccelerate(area) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
     // FIXME: Add a new setting for DisplayList drawing on canvas.
-    if (m_usesDisplayListDrawing.value_or(document().settings().displayListDrawingEnabled()))
-        bufferOptions.add(ImageBufferOptions::UseDisplayList);
+    auto useDisplayList = m_usesDisplayListDrawing.value_or(document().settings().displayListDrawingEnabled()) ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
 
     auto [colorSpace, pixelFormat] = [&] {
         if (m_context)
@@ -908,7 +896,7 @@ void HTMLCanvasElement::createImageBuffer() const
         return std::pair { DestinationColorSpace::SRGB(), PixelFormat::BGRA8 };
     }();
 
-    setImageBuffer(ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, { hostWindow }));
+    setImageBuffer(ImageBuffer::create(size(), renderingMode, useDisplayList, RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, hostWindow));
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     if (m_context && m_context->is2d()) {
@@ -994,10 +982,9 @@ bool HTMLCanvasElement::virtualHasPendingActivity() const
 void HTMLCanvasElement::eventListenersDidChange()
 {
 #if ENABLE(WEBGL)
-    auto& eventNames = WebCore::eventNames();
-    m_hasRelevantWebGLEventListener = hasEventListeners(eventNames.webglcontextchangedEvent)
-        || hasEventListeners(eventNames.webglcontextlostEvent)
-        || hasEventListeners(eventNames.webglcontextrestoredEvent);
+    m_hasRelevantWebGLEventListener = hasEventListeners(eventNames().webglcontextchangedEvent)
+        || hasEventListeners(eventNames().webglcontextlostEvent)
+        || hasEventListeners(eventNames().webglcontextrestoredEvent);
 #endif
 }
 
@@ -1067,11 +1054,6 @@ void HTMLCanvasElement::prepareForDisplay()
 bool HTMLCanvasElement::isControlledByOffscreen() const
 {
     return m_context && m_context->isPlaceholder();
-}
-
-WebCoreOpaqueRoot root(HTMLCanvasElement* canvas)
-{
-    return root(static_cast<Node*>(canvas));
 }
 
 #if PLATFORM(COCOA)

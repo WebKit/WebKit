@@ -18,9 +18,10 @@
  */
 
 [
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface DOMParser {
-    [CallWith=CurrentDocument] constructor();
+    [CallWith=Document] constructor();
 
     [NewObject] Document parseFromString(DOMString string, DOMString contentType);
 };

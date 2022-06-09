@@ -1,3 +1,0 @@
-
-PASS Transition end events generated for transition on shorthand property
-

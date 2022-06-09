@@ -82,7 +82,7 @@ private:
 
     void element() const = delete;
 
-    ASCIILiteral renderName() const override { return "RenderSVGResourceClipper"_s; }
+    const char* renderName() const override { return "RenderSVGResourceClipper"; }
     bool isSVGResourceClipper() const override { return true; }
 
     bool pathOnlyClipping(GraphicsContext&, const AffineTransform&, const FloatRect&, float effectiveZoom);

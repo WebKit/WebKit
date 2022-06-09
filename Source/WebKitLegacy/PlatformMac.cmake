@@ -4,7 +4,6 @@ find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
-add_definitions(-fobjc-weak)
 
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
     ${SECURITYINTERFACE_LIBRARY}
@@ -601,9 +600,9 @@ foreach (_file ${WebKitLegacy_SOURCES})
     if (NOT ${_c99_index} EQUAL -1)
         set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c99)
     elseif (NOT ${_cpp_index} EQUAL -1)
-        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c++2a)
+        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS -std=c++1z)
     else ()
-        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++2a")
+        set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++17")
     endif ()
 endforeach ()
 

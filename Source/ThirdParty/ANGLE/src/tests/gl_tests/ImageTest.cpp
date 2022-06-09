@@ -29,7 +29,6 @@ namespace
 constexpr char kOESExt[]                         = "GL_OES_EGL_image";
 constexpr char kExternalExt[]                    = "GL_OES_EGL_image_external";
 constexpr char kExternalESSL3Ext[]               = "GL_OES_EGL_image_external_essl3";
-constexpr char kYUVInternalFormatExt[]           = "GL_ANGLE_yuv_internal_format";
 constexpr char kYUVTargetExt[]                   = "GL_EXT_YUV_target";
 constexpr char kBaseExt[]                        = "EGL_KHR_image_base";
 constexpr char k2DTextureExt[]                   = "EGL_KHR_gl_texture_2D_image";
@@ -40,11 +39,10 @@ constexpr char kCubemapExt[]                     = "EGL_KHR_gl_texture_cubemap_i
 constexpr char kImageGLColorspaceExt[]           = "EGL_EXT_image_gl_colorspace";
 constexpr char kEGLImageArrayExt[]               = "GL_EXT_EGL_image_array";
 constexpr char kEGLAndroidImageNativeBufferExt[] = "EGL_ANDROID_image_native_buffer";
-constexpr char kEGLImageStorageExt[]             = "GL_EXT_EGL_image_storage";
 constexpr EGLint kDefaultAttribs[]               = {
-                  EGL_IMAGE_PRESERVED,
-                  EGL_TRUE,
-                  EGL_NONE,
+    EGL_IMAGE_PRESERVED,
+    EGL_TRUE,
+    EGL_NONE,
 };
 constexpr EGLint kColorspaceAttribs[] = {
     EGL_IMAGE_PRESERVED, EGL_TRUE, EGL_GL_COLORSPACE, EGL_GL_COLORSPACE_SRGB_KHR, EGL_NONE,
@@ -92,13 +90,8 @@ GLubyte kSrgbColor3D[]   = {58, 226, 32, 255, 149, 26, 60, 255};
 GLubyte kLinearColorCube[] = {75, 135, 205, 255, 201, 89,  133, 255, 111, 201, 108, 255,
                               30, 90,  230, 255, 180, 210, 70,  255, 77,  111, 99,  255};
 GLubyte kSrgbColorCube[]   = {18, 62, 155, 255, 149, 26,  60, 255, 41, 149, 38, 255,
-                              3,  26, 202, 255, 117, 164, 16, 255, 19, 41,  32, 255};
-GLfloat kCubeFaceX[]       = {1.0, -1.0, 0.0, 0.0, 0.0, 0.0};
-GLfloat kCubeFaceY[]       = {0.0, 0.0, 1.0, -1.0, 0.0, 0.0};
-GLfloat kCubeFaceZ[]       = {0.0, 0.0, 0.0, 0.0, 1.0, -1.0};
-
+                            3,  26, 202, 255, 117, 164, 16, 255, 19, 41,  32, 255};
 constexpr int kColorspaceAttributeIndex = 2;
-constexpr size_t kCubeFaceCount         = 6;
 
 constexpr int AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM  = 1;
 constexpr int AHARDWAREBUFFER_FORMAT_D24_UNORM       = 0x31;
@@ -144,20 +137,6 @@ class ImageTest : public ANGLETest
             "    gl_Position = vec4(position.xy, 0.0, 1.0);\n"
             "    texcoord = (position.xy * 0.5) + 0.5;\n"
             "}\n";
-        constexpr char kVSCube[] =
-            "#version 300 es\n"
-            "in vec4 position;\n"
-            "void main()\n"
-            "{\n"
-            "    gl_Position = vec4(position.xy, 0.0, 1.0);\n"
-            "}\n";
-        constexpr char kVSCubeArray[] =
-            "#version 310 es\n"
-            "in vec4 position;\n"
-            "void main()\n"
-            "{\n"
-            "    gl_Position = vec4(position.xy, 0.0, 1.0);\n"
-            "}\n";
         constexpr char kVSESSL3[] =
             "#version 300 es\n"
             "precision highp float;\n"
@@ -190,28 +169,6 @@ class ImageTest : public ANGLETest
             "void main()\n"
             "{\n"
             "    fragColor = texture(tex2DArray, vec3(texcoord.x, texcoord.y, float(layer)));\n"
-            "}\n";
-        constexpr char kTextureCubeFS[] =
-            "#version 300 es\n"
-            "precision highp float;\n"
-            "uniform highp samplerCube texCube;\n"
-            "uniform vec3 faceCoord;\n"
-            "out vec4 fragColor;\n"
-            "void main()\n"
-            "{\n"
-            "    fragColor = texture(texCube, faceCoord);\n"
-            "}\n";
-        constexpr char kTextureCubeArrayFS[] =
-            "#version 310 es\n"
-            "#extension GL_OES_texture_cube_map_array : require\n"
-            "precision highp float;\n"
-            "uniform highp samplerCubeArray texCubeArray;\n"
-            "uniform vec3 faceCoord;\n"
-            "uniform uint layer;\n"
-            "out vec4 fragColor;\n"
-            "void main()\n"
-            "{\n"
-            "    fragColor = texture(texCubeArray, vec4(faceCoord, float(layer)));\n"
             "}\n";
         constexpr char kTextureExternalFS[] =
             "#extension GL_OES_EGL_image_external : require\n"
@@ -309,34 +266,6 @@ class ImageTest : public ANGLETest
             ASSERT_NE(0u, mRenderYUVProgram) << "shader compilation failed.";
 
             mRenderYUVUniformLocation = glGetUniformLocation(mRenderYUVProgram, "u_color");
-        }
-
-        if (IsGLExtensionEnabled(kEGLImageStorageExt))
-        {
-            mCubeTextureProgram = CompileProgram(kVSCube, kTextureCubeFS);
-            if (mCubeTextureProgram == 0)
-            {
-                FAIL() << "shader compilation failed.";
-            }
-            mCubeTextureUniformLocation = glGetUniformLocation(mCubeTextureProgram, "texCube");
-            mCubeTextureFaceCoordUniformLocation =
-                glGetUniformLocation(mCubeTextureProgram, "faceCoord");
-
-            if ((getClientMajorVersion() >= 3 && getClientMinorVersion() >= 1) &&
-                IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"))
-            {
-                mCubeArrayTextureProgram = CompileProgram(kVSCubeArray, kTextureCubeArrayFS);
-                if (mCubeArrayTextureProgram == 0)
-                {
-                    FAIL() << "shader compilation failed.";
-                }
-                mCubeArrayTextureUniformLocation =
-                    glGetUniformLocation(mCubeArrayTextureProgram, "texCubeArray");
-                mCubeArrayTextureFaceCoordUniformLocation =
-                    glGetUniformLocation(mCubeArrayTextureProgram, "faceCoord");
-                mCubeArrayTextureLayerUniformLocation =
-                    glGetUniformLocation(mCubeArrayTextureProgram, "layer");
-            }
         }
 
         ASSERT_GL_NO_ERROR();
@@ -533,21 +462,6 @@ class ImageTest : public ANGLETest
         ASSERT_GL_NO_ERROR();
     }
 
-    void createEGLImageTargetTextureStorage(EGLImageKHR image,
-                                            GLenum targetType,
-                                            GLTexture &targetTexture)
-    {
-        // Create a target texture from the image
-        glBindTexture(targetType, targetTexture);
-        glEGLImageTargetTexStorageEXT(targetType, image, nullptr);
-
-        // Disable mipmapping
-        glTexParameteri(targetType, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(targetType, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        ASSERT_GL_NO_ERROR();
-    }
-
     size_t getLayerPitch(size_t height, size_t rowStride)
     {
         // Undocumented alignment of layer stride.  This is potentially platform dependent, but
@@ -646,10 +560,8 @@ class ImageTest : public ANGLETest
 
     enum AHBUsage
     {
-        kAHBUsageGPUSampledImage   = 1 << 0,
-        kAHBUsageGPUFramebuffer    = 1 << 1,
-        kAHBUsageGPUCubeMap        = 1 << 2,
-        kAHBUsageGPUMipMapComplete = 1 << 3,
+        kAHBUsageGPUSampledImage = 1 << 0,
+        kAHBUsageGPUFramebuffer  = 1 << 1,
     };
 
     constexpr static uint32_t kDefaultAHBUsage = kAHBUsageGPUSampledImage | kAHBUsageGPUFramebuffer;
@@ -677,14 +589,6 @@ class ImageTest : public ANGLETest
         if ((usage & kAHBUsageGPUFramebuffer) != 0)
         {
             aHardwareBufferDescription.usage |= AHARDWAREBUFFER_USAGE_GPU_FRAMEBUFFER;
-        }
-        if ((usage & kAHBUsageGPUCubeMap) != 0)
-        {
-            aHardwareBufferDescription.usage |= AHARDWAREBUFFER_USAGE_GPU_CUBE_MAP;
-        }
-        if ((usage & kAHBUsageGPUMipMapComplete) != 0)
-        {
-            aHardwareBufferDescription.usage |= AHARDWAREBUFFER_USAGE_GPU_MIPMAP_COMPLETE;
         }
         aHardwareBufferDescription.stride = 0;
         aHardwareBufferDescription.rfu0   = 0;
@@ -841,30 +745,6 @@ class ImageTest : public ANGLETest
 
         verifyResultsTexture(texture, data, GL_TEXTURE_2D_ARRAY, m2DArrayTextureProgram,
                              m2DArrayTextureUniformLocation);
-    }
-
-    void verifyResultsCube(GLTexture &texture, const GLubyte data[4], uint32_t faceIndex = 0)
-    {
-        glUseProgram(mCubeTextureProgram);
-        glUniform3f(mCubeTextureFaceCoordUniformLocation, kCubeFaceX[faceIndex],
-                    kCubeFaceY[faceIndex], kCubeFaceZ[faceIndex]);
-
-        verifyResultsTexture(texture, data, GL_TEXTURE_CUBE_MAP, mCubeTextureProgram,
-                             mCubeTextureUniformLocation);
-    }
-
-    void verifyResultsCubeArray(GLTexture &texture,
-                                const GLubyte data[4],
-                                uint32_t faceIndex  = 0,
-                                uint32_t layerIndex = 0)
-    {
-        glUseProgram(mCubeArrayTextureProgram);
-        glUniform1ui(mCubeArrayTextureLayerUniformLocation, layerIndex);
-        glUniform3f(mCubeArrayTextureFaceCoordUniformLocation, kCubeFaceX[faceIndex],
-                    kCubeFaceY[faceIndex], kCubeFaceZ[faceIndex]);
-
-        verifyResultsTexture(texture, data, GL_TEXTURE_CUBE_MAP_ARRAY, mCubeArrayTextureProgram,
-                             mCubeArrayTextureUniformLocation);
     }
 
     void verifyResultsExternal(GLTexture &texture, const GLubyte data[4])
@@ -1056,8 +936,6 @@ class ImageTest : public ANGLETest
                                             kEGLAndroidImageNativeBufferExt);
     }
 
-    bool hasEglImageStorageExt() const { return IsGLExtensionEnabled(kEGLImageStorageExt); }
-
     bool hasAndroidHardwareBufferSupport() const
     {
 #if defined(ANGLE_AHARDWARE_BUFFER_SUPPORT)
@@ -1074,8 +952,6 @@ class ImageTest : public ANGLETest
     bool hasExternalExt() const { return IsGLExtensionEnabled(kExternalExt); }
 
     bool hasExternalESSL3Ext() const { return IsGLExtensionEnabled(kExternalESSL3Ext); }
-
-    bool hasYUVInternalFormatExt() const { return IsGLExtensionEnabled(kYUVInternalFormatExt); }
 
     bool hasYUVTargetExt() const { return IsGLExtensionEnabled(kYUVTargetExt); }
 
@@ -1135,16 +1011,9 @@ class ImageTest : public ANGLETest
     };
     GLuint mTextureProgram;
     GLuint m2DArrayTextureProgram;
-    GLuint mCubeTextureProgram;
-    GLuint mCubeArrayTextureProgram;
     GLint mTextureUniformLocation;
     GLuint m2DArrayTextureUniformLocation;
     GLuint m2DArrayTextureLayerUniformLocation;
-    GLuint mCubeTextureUniformLocation;
-    GLuint mCubeTextureFaceCoordUniformLocation;
-    GLuint mCubeArrayTextureUniformLocation;
-    GLuint mCubeArrayTextureFaceCoordUniformLocation;
-    GLuint mCubeArrayTextureLayerUniformLocation;
 
     GLuint mTextureExternalProgram        = 0;
     GLint mTextureExternalUniformLocation = -1;
@@ -1160,9 +1029,6 @@ class ImageTest : public ANGLETest
 };
 
 class ImageTestES3 : public ImageTest
-{};
-
-class ImageTestES31 : public ImageTest
 {};
 
 // Tests that the extension is exposed on the platforms we think it should be. Please modify this as
@@ -1786,52 +1652,6 @@ TEST_P(ImageTest, ValidationGLEGLImageExternalESSL3)
     EXPECT_GL_NO_ERROR();
 }
 
-// Check validation from the GL_EXT_EGL_image_storage extension
-TEST_P(ImageTest, ValidationGLEGLImageStorage)
-{
-    ANGLE_SKIP_TEST_IF(!hasEglImageStorageExt());
-
-    // Make sure this extension is not exposed without ES3.
-    ASSERT_GE(getClientMajorVersion(), 3);
-
-    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
-
-    // Create the Image
-    GLTexture source2D;
-    EGLImageKHR image2D;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs, kLinearColor,
-                                  source2D, &image2D);
-
-    // <target> must be one of GL_TEXTURE_2D, GL_TEXTURE_2D_ARRAY, GL_TEXTURE_3D,
-    // GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_ARRAY.  On OpenGL implementations
-    // (non-ES), <target> can also be GL_TEXTURE_1D or GL_TEXTURE_1D_ARRAY.
-    // If the implementation supports OES_EGL_image_external, <target> can be
-    // GL_TEXTURE_EXTERNAL_OES
-    glEGLImageTargetTexStorageEXT(GL_TEXTURE_CUBE_MAP_POSITIVE_X, image2D, nullptr);
-    EXPECT_GL_ERROR(GL_INVALID_ENUM);
-
-    // If <image> is NULL, the error INVALID_VALUE is generated.  If <image> is
-    // neither NULL nor a valid value, the behavior is undefined, up to and
-    // including program termination.
-    glEGLImageTargetTexStorageEXT(GL_TEXTURE_2D, nullptr, nullptr);
-    EXPECT_GL_ERROR(GL_INVALID_VALUE);
-
-    // If the GL is unable to specify a texture object using the supplied
-    // eglImageOES <image> the error INVALID_OPERATION is generated.
-    glEGLImageTargetTexStorageEXT(GL_TEXTURE_3D, image2D, nullptr);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-
-    GLint nonNullAttrib[1] = {GL_TEXTURE_2D};
-
-    // If <attrib_list> is neither NULL nor a pointer to the value GL_NONE, the
-    // error INVALID_VALUE is generated.
-    glEGLImageTargetTexStorageEXT(GL_TEXTURE_2D, image2D, nonNullAttrib);
-    EXPECT_GL_ERROR(GL_INVALID_VALUE);
-
-    // Clean up
-    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image2D);
-}
-
 TEST_P(ImageTest, Source2DTarget2D)
 {
     Source2DTarget2D_helper(kDefaultAttribs);
@@ -1869,35 +1689,6 @@ void ImageTest::Source2DTarget2D_helper(const EGLint *attribs)
         // Expect that the target texture has the same color as the source texture
         verifyResults2D(target, kLinearColor);
     }
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image);
-}
-
-// Try to orphan image created with the GL_EXT_EGL_image_storage extension
-TEST_P(ImageTestES3, Source2DTarget2DStorageOrphan)
-{
-    EGLWindow *window = getEGLWindow();
-    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
-    ANGLE_SKIP_TEST_IF(!hasEglImageStorageExt());
-
-    // Create the Image
-    GLTexture source;
-    EGLImageKHR image;
-    createEGLImage2DTextureSource(1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kDefaultAttribs,
-                                  static_cast<void *>(&kLinearColor), source, &image);
-
-    // Create the target
-    GLTexture target;
-    createEGLImageTargetTextureStorage(image, GL_TEXTURE_2D, target);
-
-    // Expect that the target texture has the same color as the source texture
-    verifyResults2D(target, kLinearColor);
-
-    // Try to orphan this target texture
-    glBindTexture(GL_TEXTURE_2D, target);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, kLinearColor);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -2641,196 +2432,6 @@ TEST_P(ImageTestES3, SourceAHBTargetExternalESSL3)
 {
     ANGLE_SKIP_TEST_IF(!IsAndroid());
     SourceAHBTargetExternalESSL3_helper(kDefaultAttribs);
-}
-
-// Test sampling from a YUV texture using GL_ANGLE_yuv_internal_format as external texture and then
-// switching to raw YUV sampling using EXT_yuv_target
-TEST_P(ImageTestES3, SourceYUVTextureTargetExternalRGBSampleYUVSample)
-{
-    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
-                       !hasYUVInternalFormatExt() || !hasYUVTargetExt());
-
-    // Create source YUV texture
-    GLTexture yuvTexture;
-    GLubyte yuvColor[6]         = {7, 51, 197, 231, 128, 192};
-    GLubyte expectedRgbColor[4] = {255, 159, 211, 255};
-    constexpr size_t kWidth     = 2;
-    constexpr size_t kHeight    = 2;
-
-    glBindTexture(GL_TEXTURE_2D, yuvTexture);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, kWidth, kHeight);
-    ASSERT_GL_NO_ERROR();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
-                    GL_UNSIGNED_BYTE, yuvColor);
-    ASSERT_GL_NO_ERROR();
-    // Disable mipmapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    ASSERT_GL_NO_ERROR();
-
-    // Create the Image
-    EGLWindow *window = getEGLWindow();
-    EGLImageKHR image =
-        eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
-                          reinterpretHelper<EGLClientBuffer>(yuvTexture.get()), kDefaultAttribs);
-    ASSERT_EGL_SUCCESS();
-
-    // Create a texture target to bind the egl image
-    GLTexture target;
-    createEGLImageTargetTextureExternal(image, target);
-
-    // Draw quad with program that samples YUV data with implicit RGB conversion
-    glUseProgram(mTextureExternalProgram);
-    glUniform1i(mTextureExternalUniformLocation, 0);
-    drawQuad(mTextureExternalProgram, "position", 0.5f);
-    // Expect that the rendered quad's color is converted to RGB
-    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
-                      expectedRgbColor[3], 1);
-
-    // Draw quad with program that samples raw YUV data
-    glUseProgram(mTextureYUVProgram);
-    glUniform1i(mTextureYUVUniformLocation, 0);
-    drawQuad(mTextureYUVProgram, "position", 0.5f);
-    // Expect that the rendered quad's color matches the raw YUV data
-    EXPECT_PIXEL_NEAR(0, 0, yuvColor[2], yuvColor[4], yuvColor[5], 255, 1);
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image);
-}
-
-// Test interaction between GL_ANGLE_yuv_internal_format and EXT_yuv_target when a program has
-// both __samplerExternal2DY2YEXT and samplerExternalOES samplers.
-TEST_P(ImageTestES3, ProgramWithBothExternalY2YAndExternalOESSampler)
-{
-    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
-                       !hasYUVInternalFormatExt() || !hasYUVTargetExt());
-
-    GLubyte yuvColor[6]         = {40, 40, 40, 40, 240, 109};
-    GLubyte expectedRgbColor[4] = {0, 0, 255, 255};
-    constexpr size_t kWidth     = 2;
-    constexpr size_t kHeight    = 2;
-
-    // Create 2 plane YUV texture source
-    GLTexture yuvTexture0;
-    glBindTexture(GL_TEXTURE_2D, yuvTexture0);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, kWidth, kHeight);
-    ASSERT_GL_NO_ERROR();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
-                    GL_UNSIGNED_BYTE, yuvColor);
-    ASSERT_GL_NO_ERROR();
-    // Disable mipmapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    ASSERT_GL_NO_ERROR();
-
-    // Create 2 plane YUV texture source
-    GLTexture yuvTexture1;
-    glBindTexture(GL_TEXTURE_2D, yuvTexture1);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, kWidth, kHeight);
-    ASSERT_GL_NO_ERROR();
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
-                    GL_UNSIGNED_BYTE, yuvColor);
-    ASSERT_GL_NO_ERROR();
-    // Disable mipmapping
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    ASSERT_GL_NO_ERROR();
-
-    // Create the Images
-    EGLWindow *window = getEGLWindow();
-    EGLImageKHR image0 =
-        eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
-                          reinterpretHelper<EGLClientBuffer>(yuvTexture0.get()), kDefaultAttribs);
-    ASSERT_EGL_SUCCESS();
-
-    EGLImageKHR image1 =
-        eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
-                          reinterpretHelper<EGLClientBuffer>(yuvTexture1.get()), kDefaultAttribs);
-    ASSERT_EGL_SUCCESS();
-
-    // Create texture targets for EGLImages
-    GLTexture target0;
-    createEGLImageTargetTextureExternal(image0, target0);
-
-    GLTexture target1;
-    createEGLImageTargetTextureExternal(image1, target1);
-
-    // Create program with 2 samplers
-    const char *vertexShaderSource   = R"(#version 300 es
-out vec2 texcoord;
-in vec4 position;
-void main()
-{
-    gl_Position = vec4(position.xy, 0.0, 1.0);
-    texcoord = (position.xy * 0.5) + 0.5;
-})";
-    const char *fragmentShaderSource = R"(#version 300 es
-#extension GL_EXT_YUV_target : require
-#extension GL_OES_EGL_image_external_essl3 : require
-precision highp float;
-uniform __samplerExternal2DY2YEXT tex0;
-uniform samplerExternalOES tex1;
-uniform uint samplerSelector;
-in vec2 texcoord;
-out vec4 fragColor;
-
-void main()
-{
-    vec4 color0 = texture(tex0, texcoord);
-    vec4 color1 = texture(tex1, texcoord);
-    if (samplerSelector == 0u)
-    {
-        fragColor = color0;
-    }
-    else if (samplerSelector == 1u)
-    {
-        fragColor = color1;
-    }
-    else
-    {
-        fragColor = vec4(1.0);
-    }
-})";
-
-    ANGLE_GL_PROGRAM(twoSamplersProgram, vertexShaderSource, fragmentShaderSource);
-    glUseProgram(twoSamplersProgram);
-    GLint tex0Location = glGetUniformLocation(twoSamplersProgram, "tex0");
-    ASSERT_NE(-1, tex0Location);
-    GLint tex1Location = glGetUniformLocation(twoSamplersProgram, "tex1");
-    ASSERT_NE(-1, tex1Location);
-    GLint samplerSelectorLocation = glGetUniformLocation(twoSamplersProgram, "samplerSelector");
-    ASSERT_NE(-1, samplerSelectorLocation);
-
-    // Bind texture target to GL_TEXTURE_EXTERNAL_OES
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, target0);
-    ASSERT_GL_NO_ERROR();
-
-    // Bind texture target to GL_TEXTURE_EXTERNAL_OES
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, target1);
-    ASSERT_GL_NO_ERROR();
-
-    // Set sampler uniform values
-    glUniform1i(tex0Location, 0);
-    glUniform1i(tex1Location, 1);
-
-    // Set sampler selector uniform value and draw
-    glUniform1ui(samplerSelectorLocation, 0);
-    drawQuad(twoSamplersProgram, "position", 0.5f);
-    ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_NEAR(0, 0, yuvColor[3], yuvColor[4], yuvColor[5], 255, 1);
-
-    // Switch sampler selector uniform value and draw
-    glUniform1ui(samplerSelectorLocation, 1);
-    drawQuad(twoSamplersProgram, "position", 0.5f);
-    ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_NEAR(0, 0, expectedRgbColor[0], expectedRgbColor[1], expectedRgbColor[2],
-                      expectedRgbColor[3], 1);
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image0);
-    eglDestroyImageKHR(window->getDisplay(), image1);
 }
 
 // Test sampling from a YUV AHB with a regular external sampler and pre-initialized data
@@ -3639,218 +3240,6 @@ void ImageTest::SourceAHBTargetExternalESSL3_helper(const EGLint *attribs)
         // Expect that the target texture has the same color as the source texture
         verifyResultsExternalESSL3(target, kLinearColor);
     }
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image);
-    destroyAndroidHardwareBuffer(source);
-}
-
-// Testing source multi-layered AHB EGL image, target 2D array texture
-TEST_P(ImageTestES3, SourceAHBArrayTarget2DArray)
-{
-    EGLWindow *window = getEGLWindow();
-
-    ANGLE_SKIP_TEST_IF(!IsAndroid());
-    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
-                       !hasEglImageArrayExt());
-    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
-
-    // Create the Image
-    AHardwareBuffer *source;
-    EGLImageKHR image;
-    constexpr size_t kDepth = 2;
-    createEGLImageAndroidHardwareBufferSource(1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
-                                              kDefaultAHBUsage, kDefaultAttribs, {}, &source,
-                                              &image);
-
-    // Create a texture target to bind the egl image
-    GLTexture target;
-    createEGLImageTargetTexture2DArray(image, target);
-
-    // Upload texture data
-    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, 0, 1, 1, kDepth, GL_RGBA, GL_UNSIGNED_BYTE,
-                    kLinearColor3D);
-
-    // Use texture target bound to egl image as source and render to framebuffer
-    for (size_t layer = 0; layer < kDepth; layer++)
-    {
-        // Expect that the target texture has the same color as the source texture
-        verifyResults2DArray(target, &kLinearColor3D[layer * 4], layer);
-    }
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image);
-    destroyAndroidHardwareBuffer(source);
-}
-
-// Testing source cubemap AHB EGL image, target cubemap texture
-TEST_P(ImageTestES3, SourceAHBCubeTargetCube)
-{
-    EGLWindow *window = getEGLWindow();
-
-    ANGLE_SKIP_TEST_IF(!IsAndroid());
-    ANGLE_SKIP_TEST_IF(!hasEglImageStorageExt());
-    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
-
-    // Create the Image
-    AHardwareBuffer *source;
-    EGLImageKHR image;
-    createEGLImageAndroidHardwareBufferSource(
-        1, 1, kCubeFaceCount, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
-        kDefaultAHBUsage | kAHBUsageGPUCubeMap, kDefaultAttribs, {}, &source, &image);
-
-    // Create a texture target to bind the egl image
-    GLTexture target;
-    createEGLImageTargetTextureStorage(image, GL_TEXTURE_CUBE_MAP, target);
-
-    // Upload texture data
-    for (size_t faceIdx = 0; faceIdx < kCubeFaceCount; faceIdx++)
-    {
-        glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + faceIdx, 0, 0, 0, 1, 1, GL_RGBA,
-                        GL_UNSIGNED_BYTE, &kLinearColorCube[faceIdx * 4]);
-        ASSERT_GL_NO_ERROR();
-    }
-
-    // Use texture target bound to egl image as source and render to framebuffer
-    for (size_t faceIdx = 0; faceIdx < kCubeFaceCount; faceIdx++)
-    {
-        // Expect that the target texture has the same color as the source texture
-        verifyResultsCube(target, &kLinearColorCube[faceIdx * 4], faceIdx);
-    }
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image);
-    destroyAndroidHardwareBuffer(source);
-}
-
-// Testing source cubemap array AHB EGL image, target cubemap array texture
-TEST_P(ImageTestES31, SourceAHBCubeArrayTargetCubeArray)
-{
-    EGLWindow *window = getEGLWindow();
-
-    ANGLE_SKIP_TEST_IF(!IsAndroid());
-    ANGLE_SKIP_TEST_IF(!(getClientMajorVersion() >= 3 && getClientMinorVersion() >= 1));
-    ANGLE_SKIP_TEST_IF(!hasEglImageStorageExt() ||
-                       !IsGLExtensionEnabled("GL_EXT_texture_cube_map_array"));
-    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
-
-    // Create the Image
-    AHardwareBuffer *source;
-    EGLImageKHR image;
-    constexpr size_t kDepth = kCubeFaceCount * 2;
-    createEGLImageAndroidHardwareBufferSource(1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
-                                              kDefaultAHBUsage | kAHBUsageGPUCubeMap,
-                                              kDefaultAttribs, {}, &source, &image);
-
-    // Create a texture target to bind the egl image
-    GLTexture target;
-    createEGLImageTargetTextureStorage(image, GL_TEXTURE_CUBE_MAP_ARRAY, target);
-
-    // Upload texture data
-    for (size_t faceIdx = 0; faceIdx < kCubeFaceCount; faceIdx++)
-    {
-        glTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, faceIdx, 1, 1, 1, GL_RGBA,
-                        GL_UNSIGNED_BYTE, &kLinearColorCube[faceIdx * 4]);
-        glTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, 0, 0, 11 - faceIdx, 1, 1, 1, GL_RGBA,
-                        GL_UNSIGNED_BYTE, &kLinearColorCube[faceIdx * 4]);
-        ASSERT_GL_NO_ERROR();
-    }
-
-    // Use texture target bound to egl image as source and render to framebuffer
-    for (size_t faceIdx = 0; faceIdx < kCubeFaceCount; faceIdx++)
-    {
-        // Expect that the target texture has the same color as the source texture
-        verifyResultsCubeArray(target, &kLinearColorCube[faceIdx * 4], faceIdx, 0);
-        verifyResultsCubeArray(target, &kLinearColorCube[(5 - faceIdx) * 4], faceIdx, 1);
-    }
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image);
-    destroyAndroidHardwareBuffer(source);
-}
-
-// Testing source 2D AHB with mipmap EGL image, target 2D texture with mipmap
-TEST_P(ImageTestES3, SourceAHBMipTarget2DMip)
-{
-    EGLWindow *window = getEGLWindow();
-
-    ANGLE_SKIP_TEST_IF(!IsAndroid());
-    ANGLE_SKIP_TEST_IF(!hasEglImageStorageExt());
-    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
-
-    // Create the Image
-    AHardwareBuffer *source;
-    EGLImageKHR image;
-    createEGLImageAndroidHardwareBufferSource(2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
-                                              kDefaultAHBUsage | kAHBUsageGPUMipMapComplete,
-                                              kDefaultAttribs, {}, &source, &image);
-
-    // Create a texture target to bind the egl image
-    GLTexture target;
-    createEGLImageTargetTextureStorage(image, GL_TEXTURE_2D, target);
-
-    // Upload texture data
-    // Set Mip level 0 to one color
-    const std::vector<GLColor> kRedData(4, GLColor::red);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, kRedData.data());
-
-    // Set Mip level 1 to a different color
-    const std::vector<GLColor> kGreenData(1, GLColor::green);
-    glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kGreenData.data());
-
-    // Use texture target bound to egl image as source and render to framebuffer
-    // Expect that the target texture has the same color as the corresponding mip level in the
-    // source texture
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-    verifyResults2D(target, GLColor::red.data());
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
-    verifyResults2D(target, GLColor::green.data());
-
-    // Clean up
-    eglDestroyImageKHR(window->getDisplay(), image);
-    destroyAndroidHardwareBuffer(source);
-}
-
-// Test glGenerateMipmap and GL_EXT_EGL_image_storage interaction
-TEST_P(ImageTestES3, SourceAHBMipTarget2DMipGenerateMipmap)
-{
-    EGLWindow *window = getEGLWindow();
-
-    ANGLE_SKIP_TEST_IF(!IsAndroid());
-    ANGLE_SKIP_TEST_IF(!hasEglImageStorageExt());
-    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
-
-    // Create the Image
-    AHardwareBuffer *source;
-    EGLImageKHR image;
-    createEGLImageAndroidHardwareBufferSource(2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
-                                              kDefaultAHBUsage | kAHBUsageGPUMipMapComplete,
-                                              kDefaultAttribs, {}, &source, &image);
-
-    // Create a texture target to bind the egl image
-    GLTexture target;
-    createEGLImageTargetTextureStorage(image, GL_TEXTURE_2D, target);
-
-    // Upload texture data
-    // Set Mip level 0 to one color
-    const std::vector<GLColor> kRedData(4, GLColor::red);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, kRedData.data());
-
-    // Set Mip level 1 to a different color
-    const std::vector<GLColor> kGreenData(1, GLColor::green);
-    glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, kGreenData.data());
-
-    // Generate mipmap level 1
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Use mipmap level 1 of texture target bound to egl image as source and render to framebuffer
-    // Expect that the target texture has the same color as the mip level 0 in the source texture
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
-    verifyResults2D(target, GLColor::red.data());
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -5224,5 +4613,4 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ImageTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ImageTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(ImageTestES3);
-ANGLE_INSTANTIATE_TEST_ES31(ImageTestES31);
 }  // namespace angle

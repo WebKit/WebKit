@@ -53,7 +53,7 @@ public:
 
     struct Init {
         unsigned short status { 200 };
-        AtomString statusText;
+        String statusText;
         std::optional<FetchHeaders::Init> headers;
     };
 
@@ -96,7 +96,6 @@ public:
 
     using ConsumeDataByChunkCallback = Function<void(ExceptionOr<Span<const uint8_t>*>&&)>;
     void consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&&);
-    void cancelStream();
 
     WEBCORE_EXPORT ResourceResponse resourceResponse() const;
     ResourceResponse::Tainting tainting() const { return m_internalResponse.tainting(); }
@@ -112,8 +111,6 @@ public:
     bool isCORSSameOrigin() const;
     bool hasWasmMIMEType() const;
 
-    const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
-
 private:
     FetchResponse(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 
@@ -121,7 +118,7 @@ private:
     const char* activeDOMObjectName() const final;
 
     const ResourceResponse& filteredResponse() const;
-    void setNetworkLoadMetrics(const NetworkLoadMetrics& metrics) { m_networkLoadMetrics = metrics; }
+
     void closeStream();
 
     void addAbortSteps(Ref<AbortSignal>&&);
@@ -143,7 +140,7 @@ private:
 
     private:
         // FetchLoaderClient API
-        void didSucceed(const NetworkLoadMetrics&) final;
+        void didSucceed() final;
         void didFail(const ResourceError&) final;
         void didReceiveResponse(const ResourceResponse&) final;
         void didReceiveData(const SharedBuffer&) final;
@@ -164,7 +161,6 @@ private:
     uint64_t m_bodySizeWithPadding { 0 };
     uint64_t m_opaqueLoadIdentifier { 0 };
     RefPtr<AbortSignal> m_abortSignal;
-    NetworkLoadMetrics m_networkLoadMetrics;
 };
 
 } // namespace WebCore

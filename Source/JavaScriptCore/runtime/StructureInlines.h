@@ -33,7 +33,6 @@
 #include "Structure.h"
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
-#include <wtf/CompactRefPtr.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -57,7 +56,7 @@ inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValu
     ASSERT(vm.structureStructure);
     ASSERT(classInfo);
     if (auto* object = prototype.getObject()) {
-        ASSERT(!object->anyObjectInChainMayInterceptIndexedAccesses() || hasSlowPutArrayStorage(indexingModeIncludingHistory) || !hasIndexedProperties(indexingModeIncludingHistory));
+        ASSERT(!object->anyObjectInChainMayInterceptIndexedAccesses(vm) || hasSlowPutArrayStorage(indexingModeIncludingHistory) || !hasIndexedProperties(indexingModeIncludingHistory));
         object->didBecomePrototype();
     }
 
@@ -163,19 +162,21 @@ ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName)
 ALWAYS_INLINE PropertyOffset Structure::get(VM& vm, PropertyName propertyName, unsigned& attributes)
 {
     ASSERT(!isCompilationThread());
-    ASSERT(structure()->classInfoForCells() == info());
+    ASSERT(structure(vm)->classInfo() == info());
 
-    if (m_seenProperties.ruleOut(CompactPtr<UniquedStringImpl>::encode(propertyName.uid())))
+    if (m_seenProperties.ruleOut(bitwise_cast<uintptr_t>(propertyName.uid())))
         return invalidOffset;
 
     PropertyTable* propertyTable = ensurePropertyTableIfNotEmpty(vm);
     if (!propertyTable)
         return invalidOffset;
 
-    auto [offset, entryAttributes] = propertyTable->get(propertyName.uid());
-    if (offset != invalidOffset)
-        attributes = entryAttributes;
-    return offset;
+    PropertyMapEntry* entry = propertyTable->get(propertyName.uid());
+    if (!entry)
+        return invalidOffset;
+
+    attributes = entry->attributes;
+    return entry->offset;
 }
 
 template<typename Functor>
@@ -207,7 +208,7 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
             break;
         }
 
-        if (!functor(PropertyTableEntry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes()))) {
+        if (!functor(PropertyMapEntry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes()))) {
             if (didFindStructure) {
                 assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
                 tableStructure->m_lock.unlock();
@@ -218,15 +219,15 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
     
     if (didFindStructure) {
         assertIsHeld(tableStructure->m_lock); // Sadly Clang needs some help here.
-        table->forEachProperty([&](const auto& entry) {
-            if (seenProperties.contains(entry.key()))
-                return IterationStatus::Continue;
+        for (auto& entry : *table) {
+            if (seenProperties.contains(entry.key))
+                continue;
 
-            if (!functor(entry))
-                return IterationStatus::Done;
-
-            return IterationStatus::Continue;
-        });
+            if (!functor(entry)) {
+                tableStructure->m_lock.unlock();
+                return;
+            }
+        }
         tableStructure->m_lock.unlock();
     }
 }
@@ -235,11 +236,10 @@ template<typename Functor>
 void Structure::forEachProperty(VM& vm, const Functor& functor)
 {
     if (PropertyTable* table = ensurePropertyTableIfNotEmpty(vm)) {
-        table->forEachProperty([&](const auto& entry) {
+        for (auto& entry : *table) {
             if (!functor(entry))
-                return IterationStatus::Done;
-            return IterationStatus::Continue;
-        });
+                return;
+        }
         ensureStillAliveHere(table);
     }
 }
@@ -337,7 +337,7 @@ inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject, JSCel
 
 inline StructureChain* Structure::prototypeChain(VM& vm, JSGlobalObject* globalObject, JSObject* base) const
 {
-    ASSERT(base->structure() == this);
+    ASSERT(base->structure(vm) == this);
     // We cache our prototype chain so our clients can share it.
     if (!isValid(globalObject, m_cachedPrototypeChain.get(), base)) {
         JSValue prototype = prototypeForLookup(globalObject, base);
@@ -352,13 +352,14 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
     if (!cachedPrototypeChain)
         return false;
 
+    VM& vm = globalObject->vm();
     JSValue prototype = prototypeForLookup(globalObject, base);
     StructureID* cachedStructure = cachedPrototypeChain->head();
     while (*cachedStructure && !prototype.isNull()) {
         if (asObject(prototype)->structureID() != *cachedStructure)
             return false;
         ++cachedStructure;
-        prototype = asObject(prototype)->getPrototypeDirect();
+        prototype = asObject(prototype)->getPrototypeDirect(vm);
     }
     return prototype.isNull() && !*cachedStructure;
 }
@@ -388,14 +389,14 @@ inline WatchpointSet* Structure::propertyReplacementWatchpointSet(PropertyOffset
 }
 
 template<typename DetailsFunc>
-ALWAYS_INLINE void Structure::checkOffsetConsistency(PropertyTable* propertyTable, const DetailsFunc& detailsFunc) const
+ALWAYS_INLINE bool Structure::checkOffsetConsistency(PropertyTable* propertyTable, const DetailsFunc& detailsFunc) const
 {
     // We cannot reliably assert things about the property table in the concurrent
     // compilation thread. It is possible for the table to be stolen and then have
     // things added to it, which leads to the offsets being all messed up. We could
     // get around this by grabbing a lock here, but I think that would be overkill.
     if (isCompilationThread())
-        return;
+        return true;
     
     unsigned totalSize = propertyTable->propertyStorageSize();
     unsigned inlineOverflowAccordingToTotalSize = totalSize < m_inlineCapacity ? 0 : totalSize - m_inlineCapacity;
@@ -419,14 +420,27 @@ ALWAYS_INLINE void Structure::checkOffsetConsistency(PropertyTable* propertyTabl
         fail("numberOfSlotsForMaxOffset doesn't match totalSize");
     if (inlineOverflowAccordingToTotalSize != numberOfOutOfLineSlotsForMaxOffset(maxOffset()))
         fail("inlineOverflowAccordingToTotalSize doesn't match numberOfOutOfLineSlotsForMaxOffset");
+
+    return true;
 }
 
-ALWAYS_INLINE void Structure::checkOffsetConsistency() const
+ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
 {
-    if (auto* propertyTable = propertyTableOrNull())
-        checkOffsetConsistency(propertyTable, [] { });
-    else
+    PropertyTable* propertyTable = propertyTableOrNull();
+
+    if (!propertyTable) {
         ASSERT(!isPinnedPropertyTable());
+        return true;
+    }
+
+    // We cannot reliably assert things about the property table in the concurrent
+    // compilation thread. It is possible for the table to be stolen and then have
+    // things added to it, which leads to the offsets being all messed up. We could
+    // get around this by grabbing a lock here, but I think that would be overkill.
+    if (isCompilationThread())
+        return true;
+
+    return checkOffsetConsistency(propertyTable, [] () { });
 }
 
 inline void Structure::checkConsistency()
@@ -477,12 +491,11 @@ inline PropertyOffset Structure::add(VM& vm, PropertyName propertyName, unsigned
     PropertyOffset newOffset = table->nextOffset(m_inlineCapacity);
 
     m_propertyHash = m_propertyHash ^ rep->existingSymbolAwareHash();
-    m_seenProperties.add(CompactPtr<UniquedStringImpl>::encode(rep));
+    m_seenProperties.add(bitwise_cast<uintptr_t>(rep));
 
-    auto [offset, attribute, result] = table->add(vm, PropertyTableEntry(rep, newOffset, attributes));
-    ASSERT_UNUSED(result, result);
-    ASSERT_UNUSED(offset, offset == newOffset);
-    UNUSED_VARIABLE(attribute);
+    auto result = table->add(vm, PropertyMapEntry(rep, newOffset, attributes));
+    ASSERT_UNUSED(result, result.second);
+    ASSERT_UNUSED(result, result.first.first->offset == newOffset);
     auto newMaxOffset = std::max(newOffset, maxOffset());
     
     func(locker, newOffset, newMaxOffset);
@@ -514,13 +527,15 @@ inline PropertyOffset Structure::remove(VM& vm, PropertyName propertyName, const
 
     auto rep = propertyName.uid();
 
-    auto [offset, attributes] = table->take(vm, rep);
-    UNUSED_VARIABLE(attributes);
-    if (offset == invalidOffset)
+    PropertyTable::find_iterator position = table->find(rep);
+    if (!position.first)
         return invalidOffset;
 
     setIsQuickPropertyAccessAllowedForEnumeration(false);
+    
+    PropertyOffset offset = position.first->offset;
 
+    table->remove(vm, position);
     table->addDeletedOffset(offset);
 
     PropertyOffset newMaxOffset = maxOffset();
@@ -553,14 +568,18 @@ inline PropertyOffset Structure::attributeChange(VM& vm, PropertyName propertyNa
     ASSERT(JSC::isValidOffset(get(vm, propertyName)));
 
     checkConsistency();
-    PropertyOffset offset = table->updateAttributeIfExists(propertyName.uid(), attributes);
-    if (offset == invalidOffset)
-        return offset;
+    PropertyMapEntry* entry = table->get(propertyName.uid());
+    if (!entry)
+        return invalidOffset;
+
+    PropertyOffset offset = entry->offset;
 
     if (attributes & PropertyAttribute::DontEnum)
         setIsQuickPropertyAccessAllowedForEnumeration(false);
     if (attributes & PropertyAttribute::ReadOnly)
         setContainsReadOnlyProperties();
+
+    entry->attributes = attributes;
 
     PropertyOffset newMaxOffset = maxOffset();
 
@@ -649,11 +668,12 @@ ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const
     if (a->storedPrototype() == b->storedPrototype())
         return false;
 
+    VM& vm = a->vm();
     JSObject* aObj = a->storedPrototypeObject();
     JSObject* bObj = b->storedPrototypeObject();
     while (aObj && bObj) {
-        a = aObj->structure();
-        b = bObj->structure();
+        a = aObj->structure(vm);
+        b = bObj->structure(vm);
 
         if (a->propertyHash() != b->propertyHash())
             return false;

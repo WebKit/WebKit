@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ private:
 
     PAL::WebGPU::RenderPassEncoder& backing() { return m_backing; }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
     void setPipeline(WebGPUIdentifier);
 
@@ -110,8 +110,11 @@ private:
     void beginOcclusionQuery(PAL::WebGPU::Size32 queryIndex);
     void endOcclusionQuery();
 
+    void beginPipelineStatisticsQuery(WebGPUIdentifier, PAL::WebGPU::Size32 queryIndex);
+    void endPipelineStatisticsQuery();
+
     void executeBundles(Vector<WebGPUIdentifier>&&);
-    void end();
+    void endPass();
 
     void setLabel(String&&);
 

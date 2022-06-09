@@ -23,15 +23,12 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
-#include "DisplayCaptureManager.h"
+#include "CaptureDeviceManager.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerCaptureDevice.h"
-#include "GStreamerVideoCapturer.h"
 #include "RealtimeMediaSourceFactory.h"
 
 namespace WebCore {
-
-using NodeAndFD = GStreamerVideoCapturer::NodeAndFD;
 
 class GStreamerCaptureDeviceManager : public CaptureDeviceManager {
 public:
@@ -69,7 +66,7 @@ private:
     GStreamerVideoCaptureDeviceManager() = default;
 };
 
-class GStreamerDisplayCaptureDeviceManager final : public DisplayCaptureManager {
+class GStreamerDisplayCaptureDeviceManager final : public CaptureDeviceManager {
     friend class NeverDestroyed<GStreamerDisplayCaptureDeviceManager>;
 public:
     static GStreamerDisplayCaptureDeviceManager& singleton();
@@ -85,37 +82,35 @@ public:
     void stopSource(const String& persistentID);
 
 protected:
-    void notifyResponse(GVariant* parameters) { m_currentResponseCallback(parameters); }
+    void notifyResponse() { m_currentResponseCallback(); }
 
 private:
     GStreamerDisplayCaptureDeviceManager();
     ~GStreamerDisplayCaptureDeviceManager();
 
-    using ResponseCallback = CompletionHandler<void(GVariant*)>;
-
-    void waitResponseSignal(const char* objectPath, ResponseCallback&& = [](GVariant*) { });
+    void waitResponseSignal(const char* objectPath);
 
     Vector<CaptureDevice> m_devices;
 
     struct Session {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(Session);
-        Session(const NodeAndFD& nodeAndFd, String&& path)
-            : nodeAndFd(nodeAndFd)
+        Session(int fd, String&& path)
+            : fd(fd)
             , path(WTFMove(path)) { }
 
         ~Session()
         {
-            close(nodeAndFd.second);
+            close(fd);
         }
 
-        NodeAndFD nodeAndFd;
+        int fd;
         String path;
     };
     HashMap<String, std::unique_ptr<Session>> m_sessions;
 
     GRefPtr<GDBusProxy> m_proxy;
-    ResponseCallback m_currentResponseCallback;
+    CompletionHandler<void()> m_currentResponseCallback;
 };
 }
 

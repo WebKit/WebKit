@@ -176,7 +176,6 @@ static_assert((PROBE_EXECUTOR_OFFSET + PTR_SIZE) <= (PROBE_SIZE + OUT_SIZE), "Mu
 #if CPU(X86)
 #if COMPILER(GCC_COMPATIBLE)
 asm (
-    ".text" "\n"
     ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
     HIDE_SYMBOL(ctiMasmProbeTrampoline) "\n"
     SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
@@ -341,7 +340,6 @@ asm (
     "popl %ecx" "\n"
     "popl %ebp" "\n"
     "ret" "\n"
-    ".previous" "\n"
 );
 #endif
 
@@ -518,7 +516,6 @@ extern "C" __declspec(naked) void ctiMasmProbeTrampoline()
 #if CPU(X86_64)
 #if COMPILER(GCC_COMPATIBLE)
 asm (
-    ".text" "\n"
     ".globl " SYMBOL_STRING(ctiMasmProbeTrampoline) "\n"
     HIDE_SYMBOL(ctiMasmProbeTrampoline) "\n"
     SYMBOL_STRING(ctiMasmProbeTrampoline) ":" "\n"
@@ -710,7 +707,6 @@ asm (
     "popq %rcx" "\n"
     "popq %rbp" "\n"
     "ret" "\n"
-    ".previous" "\n"
 );
 #endif // COMPILER(GCC_COMPATIBLE)
 #endif // CPU(X86_64)

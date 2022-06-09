@@ -90,11 +90,11 @@ WebWorkersPrivate* WebWorkersPrivate::createInstance()
 WebWorkersPrivate::WebWorkersPrivate()
 {
     gClassCount++;
-    gClassNameCount().add("WebWorkersPrivate"_s);
+    gClassNameCount().add("WebWorkersPrivate");
 }
 
 WebWorkersPrivate::~WebWorkersPrivate()
 {
     gClassCount--;
-    gClassNameCount().remove("WebWorkersPrivate"_s);
+    gClassNameCount().remove("WebWorkersPrivate");
 }

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WebContextClient_h
+#define WebContextClient_h
 
 #include "APIClient.h"
 #include "APIData.h"
@@ -32,7 +33,7 @@
 
 namespace API {
 template<> struct ClientTraits<WKContextClientBase> {
-    typedef std::tuple<WKContextClientV0, WKContextClientV1, WKContextClientV2, WKContextClientV3, WKContextClientV4> Versions;
+    typedef std::tuple<WKContextClientV0, WKContextClientV1, WKContextClientV2, WKContextClientV3> Versions;
 };
 }
 
@@ -40,14 +41,15 @@ template<> struct ClientTraits<WKContextClientBase> {
 namespace WebKit {
 
 class WebProcessPool;
-enum class ProcessTerminationReason;
 
 class WebContextClient : public API::Client<WKContextClientBase> {
 public:
     void plugInAutoStartOriginHashesChanged(WebProcessPool*);
-    void networkProcessDidCrash(WebProcessPool*, ProcessID, ProcessTerminationReason);
-    void serviceWorkerProcessDidCrash(WebProcessPool*, ProcessID, ProcessTerminationReason);
-    void gpuProcessDidCrash(WebProcessPool*, ProcessID, ProcessTerminationReason);
+    void networkProcessDidCrash(WebProcessPool*);
+    void serviceWorkerProcessDidCrash(WebProcessPool*, ProcessID);
+    void gpuProcessDidCrash(WebProcessPool*, ProcessID);
 };
 
 } // namespace WebKit
+
+#endif // WebContextClient_h

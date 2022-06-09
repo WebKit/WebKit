@@ -1740,8 +1740,8 @@ yyreduce:
         String nametest = adoptRef((yyvsp[(1) - (2)].string));
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(2) - (2)].expressionVector));
 
-        AtomString localName;
-        AtomString namespaceURI;
+        String localName;
+        String namespaceURI;
         if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
             (yyval.step) = nullptr;
             YYABORT;
@@ -1773,8 +1773,8 @@ yyreduce:
         String nametest = adoptRef((yyvsp[(2) - (3)].string));
         std::unique_ptr<Vector<std::unique_ptr<WebCore::XPath::Expression>>> predicateList((yyvsp[(3) - (3)].expressionVector));
 
-        AtomString localName;
-        AtomString namespaceURI;
+        String localName;
+        String namespaceURI;
         if (!parser.expandQualifiedName(nametest, localName, namespaceURI)) {
             (yyval.step) = nullptr;
             YYABORT;
@@ -1825,10 +1825,8 @@ yyreduce:
   case 23:
 #line 262 "XPathGrammar.y"
     {
-        auto stringImpl = adoptRef((yyvsp[(3) - (4)].string));
-        if (stringImpl)
-            stringImpl = stringImpl->stripWhiteSpace();
-        (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, stringImpl.get());
+        String literal = adoptRef((yyvsp[(3) - (4)].string));
+        (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, literal.stripWhiteSpace());
     ;}
     break;
 

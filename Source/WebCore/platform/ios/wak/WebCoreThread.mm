@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "CommonAtomStrings.h"
 #import "CommonVM.h"
 #import "FloatingPointEnvironment.h"
 #import "GraphicsContextGLANGLE.h"
@@ -245,14 +244,12 @@ static void HandleDelegateSource(void*)
 
 class WebThreadDelegateMessageScope {
 public:
-    IGNORE_CLANG_WARNINGS_BEGIN("deprecated-volatile")
     WebThreadDelegateMessageScope() { ++webThreadDelegateMessageScopeCount; }
     ~WebThreadDelegateMessageScope()
     {
         ASSERT(webThreadDelegateMessageScopeCount);
         --webThreadDelegateMessageScopeCount;
     }
-    IGNORE_CLANG_WARNINGS_END
 };
 
 static void SendDelegateMessage(RetainPtr<NSInvocation>&& invocation)
@@ -692,7 +689,7 @@ static void StartWebThread()
     WTF::initializeMainThread();
 
     // Initialize AtomString on the main thread.
-    WebCore::initializeCommonAtomStrings();
+    WTF::AtomString::init();
 
     // Initialize ThreadGlobalData on the main UI thread so that the WebCore thread
     // can later set it's thread-specific data to point to the same objects.

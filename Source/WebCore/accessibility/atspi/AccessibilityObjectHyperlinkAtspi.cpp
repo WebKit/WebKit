@@ -20,9 +20,9 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
-#include "AccessibilityAtspi.h"
+#include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
 #include <wtf/URL.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -32,22 +32,24 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_hyperlinkFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
         if (!g_strcmp0(methodName, "GetObject")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", !index ? atspiObject->reference() : AccessibilityAtspi::singleton().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", !index ? atspiObject->reference() : atspiObject->m_root.atspi().nullReference()));
         } else if (!g_strcmp0(methodName, "GetURI")) {
             int index;
             g_variant_get(parameters, "(i)", &index);
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", !index ? atspiObject->url().string().utf8().data() : ""));
         } else if (!g_strcmp0(methodName, "IsValid"))
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->m_coreObject ? TRUE : FALSE));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->m_axObject ? TRUE : FALSE));
     },
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -64,44 +66,50 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hyperlinkFunctions = {
     // set_property,
     nullptr,
     // padding
-    { nullptr }
+    nullptr
 };
 
 URL AccessibilityObjectAtspi::url() const
 {
-    return m_coreObject ? m_coreObject->url() : URL();
+    AXCoreObject* axObject = isMainThread() ? m_coreObject : m_axObject;
+    return axObject ? axObject->url() : URL();
 }
 
 unsigned AccessibilityObjectAtspi::offsetInParent() const
 {
-    if (!m_coreObject)
-        return 0;
+    return Accessibility::retrieveValueFromMainThread<unsigned>([this]() -> unsigned {
+        if (m_coreObject)
+            m_coreObject->updateBackingStore();
 
-    auto* parent = m_coreObject->parentObjectUnignored();
-    if (!parent || !parent->wrapper())
-        return 0;
+        if (!m_coreObject)
+            return 0;
 
-    int index = -1;
-    const auto& children = parent->children();
-    for (const auto& child : children) {
-        if (child->accessibilityIsIgnored())
-            continue;
+        auto* parent = m_coreObject->parentObjectUnignored();
+        if (!parent || !parent->wrapper())
+            return 0;
 
-        auto* wrapper = child->wrapper();
-        if (!wrapper || !wrapper->interfaces().contains(Interface::Hyperlink))
-            continue;
+        int index = -1;
+        const auto& children = parent->children();
+        for (const auto& child : children) {
+            if (child->accessibilityIsIgnored())
+                continue;
 
-        index++;
-        if (wrapper == this)
-            break;
-    }
+            auto* wrapper = child->wrapper();
+            if (!wrapper || !wrapper->interfaces().contains(Interface::Hyperlink))
+                continue;
 
-    if (index == -1)
-        return 0;
+            index++;
+            if (wrapper == this)
+                break;
+        }
 
-    return parent->wrapper()->characterOffset(objectReplacementCharacter, index).value_or(0);
+        if (index == -1)
+            return 0;
+
+        return parent->wrapper()->characterOffset(objectReplacementCharacter, index).value_or(0);
+    });
 }
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

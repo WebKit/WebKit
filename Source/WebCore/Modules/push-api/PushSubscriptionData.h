@@ -28,22 +28,19 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "EpochTimeStamp.h"
-#include "PushSubscriptionIdentifier.h"
 
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct PushSubscriptionData {
-    PushSubscriptionIdentifier identifier;
     String endpoint;
     std::optional<WebCore::EpochTimeStamp> expirationTime;
     Vector<uint8_t> serverVAPIDPublicKey;
     Vector<uint8_t> clientECDHPublicKey;
     Vector<uint8_t> sharedAuthenticationSecret;
 
-    WEBCORE_EXPORT PushSubscriptionData isolatedCopy() const &;
-    WEBCORE_EXPORT PushSubscriptionData isolatedCopy() &&;
+    WEBCORE_EXPORT PushSubscriptionData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PushSubscriptionData> decode(Decoder&);
@@ -52,7 +49,6 @@ struct PushSubscriptionData {
 template<class Encoder>
 void PushSubscriptionData::encode(Encoder& encoder) const
 {
-    encoder << identifier;
     encoder << endpoint;
     encoder << expirationTime;
     encoder << serverVAPIDPublicKey;
@@ -63,37 +59,18 @@ void PushSubscriptionData::encode(Encoder& encoder) const
 template<class Decoder>
 std::optional<PushSubscriptionData> PushSubscriptionData::decode(Decoder& decoder)
 {
-    std::optional<PushSubscriptionIdentifier> identifier;
-    decoder >> identifier;
-    if (!identifier)
+    PushSubscriptionData result;
+    if (!decoder.decode(result.endpoint))
         return std::nullopt;
-
-    std::optional<String> endpoint;
-    decoder >> endpoint;
-    if (!endpoint)
+    if (!decoder.decode(result.expirationTime))
         return std::nullopt;
-
-    std::optional<std::optional<WebCore::EpochTimeStamp>> expirationTime;
-    decoder >> expirationTime;
-    if (!expirationTime)
+    if (!decoder.decode(result.serverVAPIDPublicKey))
         return std::nullopt;
-
-    std::optional<Vector<uint8_t>> serverVAPIDPublicKey;
-    decoder >> serverVAPIDPublicKey;
-    if (!serverVAPIDPublicKey)
+    if (!decoder.decode(result.clientECDHPublicKey))
         return std::nullopt;
-
-    std::optional<Vector<uint8_t>> clientECDHPublicKey;
-    decoder >> clientECDHPublicKey;
-    if (!clientECDHPublicKey)
+    if (!decoder.decode(result.sharedAuthenticationSecret))
         return std::nullopt;
-
-    std::optional<Vector<uint8_t>> sharedAuthenticationSecret;
-    decoder >> sharedAuthenticationSecret;
-    if (!sharedAuthenticationSecret)
-        return std::nullopt;
-
-    return PushSubscriptionData { WTFMove(*identifier), WTFMove(*endpoint), WTFMove(*expirationTime), WTFMove(*serverVAPIDPublicKey), WTFMove(*clientECDHPublicKey), WTFMove(*sharedAuthenticationSecret) };
+    return result;
 }
 
 } // namespace WebCore

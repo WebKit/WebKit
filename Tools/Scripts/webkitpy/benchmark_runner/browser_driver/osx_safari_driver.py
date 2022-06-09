@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import logging
 import os
 import sys
@@ -6,6 +8,7 @@ import subprocess
 import time
 
 from webkitpy.benchmark_runner.browser_driver.osx_browser_driver import OSXBrowserDriver
+from webkitpy.benchmark_runner.utils import force_remove
 
 
 _log = logging.getLogger(__name__)
@@ -23,37 +26,38 @@ class OSXSafariDriver(OSXBrowserDriver):
         self._maximize_window()
 
     def launch_url(self, url, options, browser_build_path, browser_path):
-        safari_app_path = '/Applications/Safari.app'
-        safari_binary_path = os.path.join(safari_app_path, 'Contents/MacOS/Safari')
+        args = ['/Applications/Safari.app/Contents/MacOS/Safari']
         env = {}
         for key, value in os.environ.items():
             if re.match(r"^__XPC_", key):
                 env[key] = value
         if browser_build_path:
             browser_build_absolute_path = os.path.abspath(browser_build_path)
-            safari_app_path = os.path.join(browser_build_absolute_path, 'Safari.app')
-            safari_binary_path = os.path.join(safari_app_path, 'Contents/MacOS/Safari')
-            has_safari_binary = os.path.exists(safari_binary_path)
+            safari_app_in_build_path = os.path.join(browser_build_absolute_path, 'Safari.app/Contents/MacOS/Safari')
+            has_safari_app = os.path.exists(safari_app_in_build_path)
+            content_in_path = os.listdir(browser_build_absolute_path)
             contains_frameworks = any(map(lambda entry: entry.endswith('.framework'), os.listdir(browser_build_absolute_path)))
+
+            if has_safari_app:
+                args = [safari_app_in_build_path]
 
             if contains_frameworks:
                 env['DYLD_FRAMEWORK_PATH'] = browser_build_absolute_path
                 env['DYLD_LIBRARY_PATH'] = browser_build_absolute_path
                 env['__XPC_DYLD_FRAMEWORK_PATH'] = browser_build_absolute_path
                 env['__XPC_DYLD_LIBRARY_PATH'] = browser_build_absolute_path
-            elif not has_safari_binary:
+            elif not has_safari_app:
                 raise Exception('Could not find any framework "{}"'.format(browser_build_path))
 
         elif browser_path:
-            safari_binary_path = os.path.join(browser_path, 'Contents/MacOS/Safari')
-            if os.path.exists(safari_binary_path):
-                safari_app_path = browser_path
+            safari_app_in_browser_path = os.path.join(browser_path, 'Contents/MacOS/Safari')
+            if os.path.exists(safari_app_in_browser_path):
+                args = [safari_app_in_browser_path]
             else:
-                raise Exception('Could not find Safari.app at {}'.format(safari_app_path))
+                raise Exception('Could not find Safari.app at {}'.format(safari_app_in_browser_path))
 
-        args = [safari_binary_path] + self._safari_preferences
-
-        _log.info('Launching safari: %s with url: %s' % (safari_binary_path, url))
+        args.extend(self._safari_preferences)
+        _log.info('Launching safari: %s with url: %s' % (args[0], url))
         self._safari_process = OSXSafariDriver._launch_process_with_caffeinate(args, env)
 
         # Stop for initialization of the safari process, otherwise, open
@@ -70,12 +74,12 @@ class OSXSafariDriver(OSXBrowserDriver):
                 **(dict(encoding='utf-8') if sys.version_info >= (3, 6) else dict())
             )
             output = process.communicate()[0]
-            if has_safari_binary:
+            if has_safari_app:
                 assert 'Safari.app/Contents/MacOS/Safari' in output, 'Safari.app is not launched from "{}"'.format(browser_build_path)
             if contains_frameworks:
                 assert '.framework' in output, 'No framework is loaded from "{}"'.format(browser_build_path)
 
-        subprocess.Popen(['open', '-a', safari_app_path, url])
+        subprocess.Popen(['open', '-a', args[0], url])
 
     def launch_driver(self, url, options, browser_build_path):
         from selenium import webdriver

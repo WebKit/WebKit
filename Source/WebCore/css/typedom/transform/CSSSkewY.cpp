@@ -40,30 +40,25 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSSkewY);
 
-ExceptionOr<Ref<CSSSkewY>> CSSSkewY::create(Ref<CSSNumericValue> ay)
+Ref<CSSSkewY> CSSSkewY::create(Ref<CSSNumericValue>&& ay)
 {
-    if (!ay->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
     return adoptRef(*new CSSSkewY(WTFMove(ay)));
 }
 
-CSSSkewY::CSSSkewY(Ref<CSSNumericValue> ay)
-    : CSSTransformComponent(Is2D::Yes)
-    , m_ay(WTFMove(ay))
+CSSSkewY::CSSSkewY(Ref<CSSNumericValue>&& ay)
+    : m_ay(WTFMove(ay))
 {
 }
 
-void CSSSkewY::serialize(StringBuilder& builder) const
+// FIXME: Fix all the following virtual functions
+
+String CSSSkewY::toString() const
 {
-    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskewy
-    builder.append("skewY(");
-    m_ay->serialize(builder);
-    builder.append(')');
+    return emptyString();
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSSkewY::toMatrix()
 {
-    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

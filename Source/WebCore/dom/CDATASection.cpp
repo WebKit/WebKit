@@ -29,14 +29,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CDATASection);
 
-inline CDATASection::CDATASection(Document& document, String&& data)
-    : Text(document, WTFMove(data), CreateText)
+inline CDATASection::CDATASection(Document& document, const String& data)
+    : Text(document, data, CreateText)
 {
 }
 
-Ref<CDATASection> CDATASection::create(Document& document, String&& data)
+Ref<CDATASection> CDATASection::create(Document& document, const String& data)
 {
-    return adoptRef(*new CDATASection(document, WTFMove(data)));
+    return adoptRef(*new CDATASection(document, data));
 }
 
 String CDATASection::nodeName() const
@@ -51,7 +51,7 @@ Node::NodeType CDATASection::nodeType() const
 
 Ref<Node> CDATASection::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
-    return create(targetDocument, String { data() });
+    return create(targetDocument, data());
 }
 
 bool CDATASection::childTypeAllowed(NodeType) const
@@ -59,9 +59,9 @@ bool CDATASection::childTypeAllowed(NodeType) const
     return false;
 }
 
-Ref<Text> CDATASection::virtualCreate(String&& data)
+Ref<Text> CDATASection::virtualCreate(const String& data)
 {
-    return create(document(), WTFMove(data));
+    return create(document(), data);
 }
 
 } // namespace WebCore

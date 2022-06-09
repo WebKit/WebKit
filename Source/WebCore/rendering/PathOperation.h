@@ -30,7 +30,6 @@
 #pragma once
 
 #include "BasicShapes.h"
-#include "OffsetRotation.h"
 #include "Path.h"
 #include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
@@ -38,8 +37,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-class SVGElement;
 
 class PathOperation : public RefCounted<PathOperation> {
 public:
@@ -69,10 +66,13 @@ protected:
 
 class ReferencePathOperation final : public PathOperation {
 public:
-    static Ref<ReferencePathOperation> create(const String& url, const AtomString& fragment, const RefPtr<SVGElement>);
+    static Ref<ReferencePathOperation> create(const String& url, const String& fragment)
+    {
+        return adoptRef(*new ReferencePathOperation(url, fragment));
+    }
+
     const String& url() const { return m_url; }
-    const AtomString& fragment() const { return m_fragment; }
-    const SVGElement* element() const;
+    const String& fragment() const { return m_fragment; }
 
 private:
     bool operator==(const PathOperation& other) const override
@@ -83,11 +83,15 @@ private:
         return m_url == referenceClip.m_url;
     }
 
-    ReferencePathOperation(const String& url, const AtomString& fragment, const RefPtr<SVGElement>);
+    ReferencePathOperation(const String& url, const String& fragment)
+        : PathOperation(Reference)
+        , m_url(url)
+        , m_fragment(fragment)
+    {
+    }
 
     String m_url;
-    AtomString m_fragment;
-    RefPtr<SVGElement> m_element;
+    String m_fragment;
 };
 
 class ShapePathOperation final : public PathOperation {
@@ -138,14 +142,6 @@ public:
         path.addRoundedRect(boundingRect);
         return path;
     }
-    
-    void setPathForReferenceRect(const FloatRoundedRect& boundingRect)
-    {
-        m_path.clear();
-        m_path.addRoundedRect(boundingRect);
-    }
-    
-    const Path getPath() const { return m_path; }
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
 private:
@@ -162,7 +158,7 @@ private:
         , m_referenceBox(referenceBox)
     {
     }
-    Path m_path;
+
     CSSBoxType m_referenceBox;
 };
 
@@ -197,18 +193,6 @@ public:
         return RayPathOperation::create(WebCore::blend(m_angle, to.m_angle, context), m_size, m_isContaining);
     }
 
-    const Path pathForReferenceRect(const FloatRect& elementRect, const FloatPoint& anchor, const OffsetRotation rotation) const;
-    double lengthForPath() const;
-    double lengthForContainPath(const FloatRect& elementRect, double computedPathLength, const FloatPoint& anchor, const OffsetRotation rotation) const;
-    
-    void setContainingBlockReferenceRect(const FloatRect& boundingRect)
-    {
-        m_containingBlockBoundingRect = boundingRect;
-    }
-    void setStartingPosition(const FloatPoint& position)
-    {
-        m_position = position;
-    }
 private:
     bool operator==(const PathOperation& other) const override
     {
@@ -229,11 +213,9 @@ private:
     {
     }
 
-    float m_angle { 0 };
+    float m_angle;
     Size m_size;
-    bool m_isContaining { false };
-    FloatRect m_containingBlockBoundingRect;
-    FloatPoint m_position;
+    bool m_isContaining;
 };
 
 } // namespace WebCore

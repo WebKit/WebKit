@@ -56,28 +56,26 @@ public:
     WEBCORE_EXPORT SQLiteDatabase();
     WEBCORE_EXPORT ~SQLiteDatabase();
 
-    static constexpr ASCIILiteral inMemoryPath() { return ":memory:"_s; }
-
     enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
     WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 
-    WEBCORE_EXPORT bool executeCommandSlow(StringView);
+    WEBCORE_EXPORT bool executeCommandSlow(const String&);
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
     
-    WEBCORE_EXPORT bool tableExists(StringView);
-    WEBCORE_EXPORT String tableSQL(StringView);
-    WEBCORE_EXPORT String indexSQL(StringView);
+    WEBCORE_EXPORT bool tableExists(const String&);
+    WEBCORE_EXPORT String tableSQL(const String&);
+    WEBCORE_EXPORT String indexSQL(const String&);
     WEBCORE_EXPORT void clearAllTables();
     WEBCORE_EXPORT int runVacuumCommand();
     WEBCORE_EXPORT int runIncrementalVacuumCommand();
     
     bool transactionInProgress() const { return m_transactionInProgress; }
 
-    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatementSlow(StringView query);
+    WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatementSlow(const String& query);
     WEBCORE_EXPORT Expected<SQLiteStatement, int> prepareStatement(ASCIILiteral query);
-    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatementSlow(StringView query);
+    WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatementSlow(const String& query);
     WEBCORE_EXPORT Expected<UniqueRef<SQLiteStatement>, int> prepareHeapStatement(ASCIILiteral query);
 
     // Aborts the current database operation. This is thread safe.

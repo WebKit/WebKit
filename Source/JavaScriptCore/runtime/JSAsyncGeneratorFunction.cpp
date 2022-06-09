@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSAsyncGeneratorFunction::s_info = { "JSAsyncGeneratorFunction"_s,  &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncGeneratorFunction) };
+const ClassInfo JSAsyncGeneratorFunction::s_info = { "JSAsyncGeneratorFunction",  &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncGeneratorFunction) };
 
 JSAsyncGeneratorFunction::JSAsyncGeneratorFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     : Base(vm, executable, scope, structure)
@@ -43,14 +43,14 @@ JSAsyncGeneratorFunction::JSAsyncGeneratorFunction(VM& vm, FunctionExecutable* e
 JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
     JSAsyncGeneratorFunction* asyncGenerator = new (NotNull, allocateCell<JSAsyncGeneratorFunction>(vm)) JSAsyncGeneratorFunction(vm, executable, scope, structure);
-    ASSERT(asyncGenerator->structure()->globalObject());
+    ASSERT(asyncGenerator->structure(vm)->globalObject());
     asyncGenerator->finishCreation(vm);
     return asyncGenerator;
 }
 
 JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    JSAsyncGeneratorFunction* asyncGenerator = createImpl(vm, executable, scope, scope->globalObject()->asyncGeneratorFunctionStructure());
+    JSAsyncGeneratorFunction* asyncGenerator = createImpl(vm, executable, scope, scope->globalObject(vm)->asyncGeneratorFunctionStructure());
     executable->notifyCreation(vm, asyncGenerator, "Allocating an async generator");
     return asyncGenerator;
 }
@@ -64,7 +64,7 @@ JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::create(VM& vm, FunctionExecu
 
 JSAsyncGeneratorFunction* JSAsyncGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    return createImpl(vm, executable, scope, scope->globalObject()->asyncGeneratorFunctionStructure());
+    return createImpl(vm, executable, scope, scope->globalObject(vm)->asyncGeneratorFunctionStructure());
 }
 
 }

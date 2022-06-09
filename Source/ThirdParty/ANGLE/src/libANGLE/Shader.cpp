@@ -22,7 +22,7 @@
 #include "libANGLE/ResourceManager.h"
 #include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/ShaderImpl.h"
-#include "platform/FrontendFeatures_autogen.h"
+#include "platform/FrontendFeatures.h"
 
 namespace gl
 {
@@ -104,7 +104,7 @@ const char *GetShaderTypeString(ShaderType type)
     }
 }
 
-class ANGLE_NO_DISCARD ScopedExit final : angle::NonCopyable
+class ScopedExit final : angle::NonCopyable
 {
   public:
     ScopedExit(std::function<void()> exit) : mExit(exit) {}
@@ -337,7 +337,7 @@ void Shader::compile(const Context *context)
     mState.mTessGenVertexOrder        = 0;
     mState.mTessGenPointMode          = 0;
     mState.mAdvancedBlendEquations.reset();
-    mState.mEnablesPerSampleShading = false;
+    mState.mEarlyFragmentTestsOptimization = false;
     mState.mSpecConstUsageBits.reset();
 
     mState.mCompileStatus = CompileStatus::COMPILE_REQUESTED;
@@ -535,7 +535,8 @@ void Shader::resolveCompile()
             std::sort(mState.mInputVaryings.begin(), mState.mInputVaryings.end(), CompareShaderVar);
             mState.mActiveOutputVariables =
                 GetActiveShaderVariables(sh::GetOutputVariables(compilerHandle));
-            mState.mEnablesPerSampleShading = sh::EnablesPerSampleShading(compilerHandle);
+            mState.mEarlyFragmentTestsOptimization =
+                sh::HasEarlyFragmentTestsOptimization(compilerHandle);
             mState.mAdvancedBlendEquations =
                 BlendEquationBitSet(sh::GetAdvancedBlendEquations(compilerHandle));
             break;

@@ -475,7 +475,7 @@ static bool receivedStop;
         return;
     }
 
-    if (entry->key == "syncxhr://host/test.dat"_s)
+    if (entry->key == "syncxhr://host/test.dat")
         startedXHR = true;
 
     if (!entry->value.shouldRespond)
@@ -487,7 +487,7 @@ static bool receivedStop;
     [task didReceiveData:[NSData dataWithBytesNoCopy:(void*)entry->value.data length:strlen(entry->value.data) freeWhenDone:NO]];
     [task didFinish];
 
-    if (entry->key == "syncxhr://host/test.dat"_s)
+    if (entry->key == "syncxhr://host/test.dat")
         startedXHR = false;
 }
 
@@ -516,7 +516,7 @@ static bool receivedMessage;
 }
 @end
 
-static const char syncMainBytes[] = R"SYNCRESOURCE(
+static const char* syncMainBytes = R"SYNCRESOURCE(
 <script>
 
 var req = new XMLHttpRequest();
@@ -534,7 +534,7 @@ catch (e)
 </script>
 )SYNCRESOURCE";
 
-static const char syncXHRBytes[] = "My XHR text!";
+static const char* syncXHRBytes = "My XHR text!";
 
 TEST(URLSchemeHandler, SyncXHR)
 {
@@ -543,8 +543,8 @@ TEST(URLSchemeHandler, SyncXHR)
         auto handler = adoptNS([[SyncScheme alloc] init]);
         [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"syncxhr"];
 
-        handler.get()->resources.set("syncxhr://host/main.html"_s, SchemeResourceInfo { @"text/html", syncMainBytes, true });
-        handler.get()->resources.set("syncxhr://host/test.dat"_s, SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
+        handler.get()->resources.set("syncxhr://host/main.html", SchemeResourceInfo { @"text/html", syncMainBytes, true });
+        handler.get()->resources.set("syncxhr://host/test.dat", SchemeResourceInfo { @"text/plain", syncXHRBytes, true });
 
         auto messageHandler = adoptNS([[SyncMessageHandler alloc] init]);
         [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sync"];
@@ -562,7 +562,7 @@ TEST(URLSchemeHandler, SyncXHR)
 
         // Now try again, but hang the WebProcess in the reply to the XHR by telling the scheme handler to never
         // respond to it.
-        handler.get()->resources.find("syncxhr://host/test.dat"_s)->value.shouldRespond = false;
+        handler.get()->resources.find("syncxhr://host/test.dat")->value.shouldRespond = false;
         [webView loadRequest:request];
 
         TestWebKitAPI::Util::run(&startedXHR);
@@ -617,7 +617,7 @@ TEST(URLSchemeHandler, SyncXHRError)
     TestWebKitAPI::Util::run(&done);
 }
 
-static constexpr auto xhrPostDocument = R"XHRPOSTRESOURCE(<html><head><script>
+static const char* xhrPostDocument = R"XHRPOSTRESOURCE(<html><head><script>
 window.onload = function()
 {
     {
@@ -667,7 +667,7 @@ window.onload = function()
 </script></head>
 <body>
 Hello world!
-</body></html>)XHRPOSTRESOURCE"_s;
+</body></html>)XHRPOSTRESOURCE";
 
 
 TEST(URLSchemeHandler, XHRPost)
@@ -841,7 +841,7 @@ TEST(URLSchemeHandler, CORS)
 TEST(URLSchemeHandler, DisableCORS)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{\"testKey\":\"testValue\"}"_s } }
+        { "/subresource", { {{ "Content-Type", "application/json" }, { "headerName", "headerValue" }}, "{\"testKey\":\"testValue\"}" } }
     });
 
     bool corssuccess = false;
@@ -924,7 +924,7 @@ TEST(URLSchemeHandler, DisableCORS)
 TEST(URLSchemeHandler, DisableCORSCredentials)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/subresource"_s, { {{ "Access-Control-Allow-Origin"_s, "*"_s }}, "subresourcecontent"_s } }
+        { "/subresource", { {{ "Access-Control-Allow-Origin", "*" }}, "subresourcecontent" } }
     });
 
     bool corssuccess = false;
@@ -977,7 +977,7 @@ TEST(URLSchemeHandler, DisableCORSCredentials)
 TEST(URLSchemeHandler, DisableCORSScript)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { "fetch('loadSuccess')"_s } }
+        { "/", { "fetch('loadSuccess')" } }
     });
 
     bool loadSuccess = false;
@@ -1103,7 +1103,7 @@ TEST(URLSchemeHandler, LoadsFromNetwork)
 {
     using namespace TestWebKitAPI;
     HTTPServer server({
-        { "/"_s, { {{ "Access-Control-Allow-Origin"_s, "*"_s }}, "test content"_s } }
+        { "/", { {{ "Access-Control-Allow-Origin", "*" }}, "test content" } }
     });
 
     HTTPServer webSocketServer([](Connection connection) {
@@ -1192,12 +1192,12 @@ TEST(URLSchemeHandler, LoadsFromNetwork)
 TEST(URLSchemeHandler, AllowedNetworkHostsRedirect)
 {
     TestWebKitAPI::HTTPServer serverLocalhost({
-        { "/redirectTarget"_s, { {{ "Access-Control-Allow-Origin"_s, "*"_s }}, "test content"_s } }
+        { "/redirectTarget", { {{ "Access-Control-Allow-Origin", "*" }}, "test content" } }
     });
     TestWebKitAPI::HTTPServer server127001({
-        { "/"_s, { 301, {
-            { "Access-Control-Allow-Origin"_s, "*"_s },
-            { "Location"_s, makeString("http://localhost:", serverLocalhost.port(), "/redirectTarget") }
+        { "/", { 301, {
+            { "Access-Control-Allow-Origin", "*" },
+            { "Location", makeString("http://localhost:", serverLocalhost.port(), "/redirectTarget") }
         }}},
     });
 
@@ -1265,14 +1265,14 @@ static void serverLoop(const TestWebKitAPI::Connection& connection, bool& loaded
                 serverLoop(connection, loadedImage, loadedIFrame);
             });
         };
-        if (path == "/main.html"_s)
-            sendReply({ { { "Content-Type"_s, "text/html"_s } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>"_s });
-        else if (path == "/imgsrc"_s) {
+        if (path == "/main.html")
+            sendReply({ { { "Content-Type", "text/html" } }, "<img src='/imgsrc'></img><iframe src='/iframesrc'></iframe>" });
+        else if (path == "/imgsrc") {
             loadedImage = true;
-            sendReply({ "image content"_s });
-        } else if (path == "/iframesrc"_s) {
+            sendReply({ "image content" });
+        } else if (path == "/iframesrc") {
             loadedIFrame = true;
-            sendReply({ "iframe content"_s });
+            sendReply({ "iframe content" });
         } else
             ASSERT_NOT_REACHED();
     });
@@ -1291,7 +1291,7 @@ TEST(WKWebViewConfiguration, LoadsSubresources)
 
     {
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-        [webView loadRequest:server.request("/main.html"_s)];
+        [webView loadRequest:server.request("/main.html")];
         TestWebKitAPI::Util::run(&loadedImage);
         TestWebKitAPI::Util::run(&loadedIFrame);
     }
@@ -1304,7 +1304,7 @@ TEST(WKWebViewConfiguration, LoadsSubresources)
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
         auto delegate = adoptNS([TestNavigationDelegate new]);
         webView.get().navigationDelegate = delegate.get();
-        [webView loadRequest:server.request("/main.html"_s)];
+        [webView loadRequest:server.request("/main.html")];
         [delegate waitForDidFinishNavigation];
         TestWebKitAPI::Util::spinRunLoop(100);
         EXPECT_FALSE(loadedIFrame);

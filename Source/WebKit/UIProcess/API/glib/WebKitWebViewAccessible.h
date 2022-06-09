@@ -19,7 +19,7 @@
 
 #pragma once
 
-#if ENABLE(ACCESSIBILITY) && !USE(GTK4)
+#if ENABLE(ACCESSIBILITY)
 
 #include <atk/atk.h>
 

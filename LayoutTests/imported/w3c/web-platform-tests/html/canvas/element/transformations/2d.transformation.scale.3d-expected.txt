@@ -1,0 +1,6 @@
+2d.transformation.scale.3d
+scale() function with three arguments modifies the underlying matrix appropriately
+Actual output:
+
+PASS scale() function with three arguments modifies the underlying matrix appropriately
+

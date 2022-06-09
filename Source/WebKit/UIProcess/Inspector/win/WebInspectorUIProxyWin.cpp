@@ -197,7 +197,7 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
 {
     ASSERT(inspectedPage());
 
-    auto preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
+    auto preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
@@ -285,6 +285,20 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
     return DebuggableInfoData::empty();
 }
 
+unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
+{
+    RECT rect;
+    ::GetClientRect(m_inspectedViewWindow, &rect);
+    return rect.bottom - rect.top;
+}
+
+unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
+{
+    RECT rect;
+    ::GetClientRect(m_inspectedViewWindow, &rect);
+    return rect.right - rect.left;
+}
+
 void WebInspectorUIProxy::platformAttach()
 {
     static const unsigned defaultAttachedSize = 300;
@@ -298,16 +312,11 @@ void WebInspectorUIProxy::platformAttach()
 
     WebCore::WindowMessageBroadcaster::addListener(m_inspectedViewWindow, this);
 
-    RECT inspectedWindowRect;
-    ::GetClientRect(m_inspectedViewWindow, &inspectedWindowRect);
-
     if (m_attachmentSide == AttachmentSide::Bottom) {
-        unsigned inspectedWindowHeight = inspectedWindowRect.bottom - inspectedWindowRect.top;
-        unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
+        unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
         platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));
     } else {
-        unsigned inspectedWindowWidth = inspectedWindowRect.right - inspectedWindowRect.left;
-        unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
+        unsigned maximumAttachedWidth = platformInspectedWindowWidth() * 3 / 4;
         platformSetAttachedWindowWidth(std::max(minimumAttachedWidth, std::min(defaultAttachedSize, maximumAttachedWidth)));
     }
     ::ShowWindow(m_inspectorViewWindow, SW_SHOW);
@@ -389,11 +398,6 @@ void WebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontend
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String&)
-{
-    notImplemented();
-}
-
 void WebInspectorUIProxy::platformInspectedURLChanged(const String& /* url */)
 {
     notImplemented();
@@ -404,21 +408,14 @@ void WebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */)
+void WebInspectorUIProxy::platformSave(const String&, const String&, bool, bool)
 {
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::platformAppend(const String&, const String&)
 {
     notImplemented();
-    completionHandler(nullString());
-}
-
-void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
-{
-    notImplemented();
-    completionHandler({ });
 }
 
 void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool /* available */)

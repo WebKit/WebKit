@@ -27,12 +27,13 @@
 
 #if PLATFORM(MAC)
 
-#import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <wtf/RetainPtr.h>
+
+static bool didFinishLoad;
 
 @interface MessagePortFrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
 }

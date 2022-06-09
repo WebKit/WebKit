@@ -54,7 +54,7 @@ PDFPluginPasswordField::~PDFPluginPasswordField()
 Ref<Element> PDFPluginPasswordField::createAnnotationElement()
 {
     auto element = PDFPluginTextAnnotation::createAnnotationElement();
-    element->setAttribute(typeAttr, "password"_s);
+    element->setAttribute(typeAttr, "password");
     element->addEventListener(eventNames().keyupEvent, *eventListener(), false);
     return element;
 }
@@ -68,7 +68,7 @@ bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
     if (event.isKeyboardEvent() && event.type() == eventNames().keyupEvent) {
         auto& keyboardEvent = downcast<KeyboardEvent>(event);
 
-        if (keyboardEvent.keyIdentifier() == "Enter"_s) {
+        if (keyboardEvent.keyIdentifier() == "Enter") {
             plugin()->attemptToUnlockPDF(value());
             event.preventDefault();
             return true;

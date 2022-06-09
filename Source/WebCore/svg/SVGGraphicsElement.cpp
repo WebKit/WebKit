@@ -73,15 +73,6 @@ AffineTransform SVGGraphicsElement::getScreenCTM(StyleUpdateStrategy styleUpdate
 
 AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // LBSE handles transforms via RenderLayer, no need to handle CSS transforms here.
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (m_supplementalTransform)
-            return *m_supplementalTransform * transform().concatenate();
-        return transform().concatenate();
-    }
-#endif
-
     AffineTransform matrix;
 
     auto* style = renderer() ? &renderer()->style() : nullptr;
@@ -89,10 +80,12 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 
     // Honor any of the transform-related CSS properties if set.
     if (hasSpecifiedTransform || (style && (style->translate() || style->scale() || style->rotate()))) {
+        auto boundingBox = SVGRenderSupport::transformReferenceBox(*renderer(), *this, *style);
+        
         // Note: objectBoundingBox is an emptyRect for elements like pattern or clipPath.
         // See the "Object bounding box units" section of http://dev.w3.org/csswg/css3-transforms/
         TransformationMatrix transform;
-        style->applyTransform(transform, renderer()->transformReferenceBoxRect());
+        style->applyTransform(transform, boundingBox);
 
         // Flatten any 3D transform.
         matrix = transform.toAffineTransform();
@@ -107,7 +100,8 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
 
     // If we didn't have the CSS "transform" property set, we must account for the "transform" attribute.
     if (!hasSpecifiedTransform && style) {
-        auto t = style->computeTransformOrigin(renderer()->transformReferenceBoxRect()).xy();
+        auto boundingBox = SVGRenderSupport::transformReferenceBox(*renderer(), *this, *style);
+        auto t = floatPointForLengthPoint(style->transformOriginXY(), boundingBox.size()) + boundingBox.location();
         matrix.translate(t);
         matrix *= transform().concatenate();
         matrix.translate(-t.x(), -t.y());
@@ -138,13 +132,12 @@ void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomStr
 
 void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
-        ASSERT(attrName == SVGNames::transformAttr);
+    if (attrName == SVGNames::transformAttr) {
         InstanceInvalidationGuard guard(*this);
 
         if (auto renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
 
         return;
     }

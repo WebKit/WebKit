@@ -33,7 +33,6 @@
 #include "WebProcess.h"
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
-#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/IntRect.h>
@@ -86,7 +85,7 @@ public:
         GUniqueOutPtr<GError> error;
         cairo_surface_t* surface = gtk_print_job_get_surface(m_printJob.get(), &error.outPtr());
         if (!surface) {
-            printDone(printError(frameURL(), String::fromUTF8(error->message)));
+            printDone(printError(frameURL(), error->message));
             return;
         }
 
@@ -154,7 +153,7 @@ public:
 
     static void printJobComplete(GtkPrintJob*, WebPrintOperationGtkUnix* printOperation, const GError* error)
     {
-        printOperation->printDone(error ? printError(printOperation->frameURL(), String::fromUTF8(error->message)) : WebCore::ResourceError());
+        printOperation->printDone(error ? printError(printOperation->frameURL(), error->message) : WebCore::ResourceError());
         printOperation->m_printJob = 0;
     }
 

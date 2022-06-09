@@ -36,7 +36,7 @@ namespace JSC {
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)
-    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createWithoutCopying(s_JSCCombinedCode, s_JSCCombinedCodeLength), { }, String()))
+    , m_combinedSourceProvider(StringSourceProvider::create(StringImpl::createFromLiteral(s_JSCCombinedCode, s_JSCCombinedCodeLength), { }, String()))
 {
 }
 
@@ -106,7 +106,6 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     {
         unsigned i = parametersStart + 1;
         unsigned commas = 0;
-        bool insideCurlyBrackets = false;
         bool sawOneParam = false;
         bool hasRestParam = false;
         while (true) {
@@ -114,13 +113,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             if (characters[i] == ')')
                 break;
 
-            if (characters[i] == '}')
-                insideCurlyBrackets = false;
-            else if (characters[i] == '{' || insideCurlyBrackets) {
-                insideCurlyBrackets = true;
-                ++i;
-                continue;
-            } else if (characters[i] == ',')
+            if (characters[i] == ',')
                 ++commas;
             else if (!Lexer<LChar>::isWhiteSpace(characters[i]))
                 sawOneParam = true;

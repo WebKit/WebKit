@@ -148,7 +148,7 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device, bool filt
     CFStringRef name = nullptr;
     dataSize = sizeof(name);
     AudioObjectGetPropertyData(device.deviceID(), &address, 0, nullptr, &dataSize, &name);
-    bool isNonAggregable = !name || !String(name).startsWith("com.apple.audio.CoreAudio"_s);
+    bool isNonAggregable = !name || !String(name).startsWith("com.apple.audio.CoreAudio");
     if (name)
         CFRelease(name);
     if (isNonAggregable) {
@@ -162,12 +162,12 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device, bool filt
         return false;
     }
 
-    if (device.label().startsWith("VPAUAggregateAudioDevice"_s)) {
+    if (device.label().startsWith("VPAUAggregateAudioDevice")) {
         RELEASE_LOG(WebRTC, "Ignoring output VPAUAggregateAudioDevice device");
         return false;
     }
 
-    if (device.label().contains("WebexMediaAudioDevice"_s)) {
+    if (device.label().contains("WebexMediaAudioDevice")) {
         RELEASE_LOG(WebRTC, "Ignoring webex audio device");
         return false;
     }

@@ -20,11 +20,4 @@ features: [Temporal]
 
 const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC");
 const duration = new Temporal.Duration(0, 0, 0, 1);
-const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
-for (const overflow of badOverflows) {
-  assert.throws(
-    RangeError,
-    () => datetime.add(duration, { overflow }),
-    `invalid overflow ("${overflow}")`
-  );
-}
+assert.throws(RangeError, () => datetime.add(duration, { overflow: "other string" }));

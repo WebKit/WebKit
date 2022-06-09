@@ -61,7 +61,7 @@
 - (void)setMediaText:(NSString *)newMediaText
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setMediaText(newMediaText);
+    raiseOnDOMError(IMPL->setMediaText(newMediaText));
 }
 
 - (unsigned)length

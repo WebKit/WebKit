@@ -9,6 +9,7 @@ function createFormControlDataSet() {
         'HTMLDataListElement',
         'HTMLFieldSetElement',
         'HTMLInputElement',
+        'HTMLKeygenElement',
         'HTMLLabelElement',
         'HTMLLegendElement',
         'HTMLMeterElement',

@@ -52,7 +52,7 @@ bool isRunningTest(const String& bundleID)
 
 Span<const WebCore::RegistrableDomain> appBoundDomainsForTesting(const String& bundleID)
 {
-    if (bundleID == "inAppBrowserPrivacyTestIdentifier"_s) {
+    if (bundleID == "inAppBrowserPrivacyTestIdentifier") {
         static NeverDestroyed domains = std::array {
             WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1"_s),
         };
@@ -71,7 +71,8 @@ static bool isInWebKitChildProcess()
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         isInSubProcess = [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebContent"]
             || [bundleIdentifier hasPrefix:@"com.apple.WebKit.Networking"]
-            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.GPU"];
+            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.GPU"]
+            || [bundleIdentifier hasPrefix:@"com.apple.WebKit.WebAuthn"];
     });
 
     return isInSubProcess;
@@ -124,7 +125,7 @@ void determineITPState()
     if (currentITPState != ITPState::Uninitialized)
         return;
 
-    bool appWasLinkedOnOrAfter = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SessionCleanupByDefault);
+    bool appWasLinkedOnOrAfter = linkedOnOrAfter(SDKVersion::FirstWithSessionCleanupByDefault);
 
     itpQueue() = WorkQueue::create("com.apple.WebKit.itpCheckQueue");
     itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = WebCore::applicationBundleIdentifier().isolatedCopy()] {
@@ -237,7 +238,7 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
             return;
         }
 
-        fullWebBrowser = WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser"_s);
+        fullWebBrowser = WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser");
     });
 
     return fullWebBrowser || isRunningTest(WebCore::applicationBundleIdentifier());
@@ -247,7 +248,7 @@ static bool isFullWebBrowser(const String& bundleIdentifier)
 {
     ASSERT(!isInWebKitChildProcess());
 
-    static bool fullWebBrowser = WTF::processHasEntitlement("com.apple.developer.web-browser"_s);
+    static bool fullWebBrowser = WTF::processHasEntitlement("com.apple.developer.web-browser");
 
     return fullWebBrowser || isRunningTest(bundleIdentifier);
 }

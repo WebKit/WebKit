@@ -37,9 +37,9 @@ typedef HashMap<String, String, ASCIICaseInsensitiveHash> DialogFeaturesMap;
 
 static void setWindowFeature(WindowFeatures&, StringView key, StringView value);
 
-static DialogFeaturesMap parseDialogFeaturesMap(StringView);
-static std::optional<bool> boolFeature(const DialogFeaturesMap&, ASCIILiteral key);
-static std::optional<float> floatFeature(const DialogFeaturesMap&, ASCIILiteral key, float min, float max);
+static DialogFeaturesMap parseDialogFeaturesMap(const String&);
+static std::optional<bool> boolFeature(const DialogFeaturesMap&, const char* key);
+static std::optional<float> floatFeature(const DialogFeaturesMap&, const char* key, float min, float max);
 
 // https://html.spec.whatwg.org/#feature-separator
 static bool isSeparator(UChar character, FeatureMode mode)
@@ -115,12 +115,12 @@ void processFeaturesString(StringView features, FeatureMode mode, const Function
     }
 }
 
-OptionSet<DisabledAdaptations> parseDisabledAdaptations(StringView disabledAdaptationsString)
+OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String& disabledAdaptationsString)
 {
     OptionSet<DisabledAdaptations> disabledAdaptations;
-    for (auto name : disabledAdaptationsString.split(',')) {
-        auto trimmedName = name.stripWhiteSpace();
-        if (equalIgnoringASCIICase(trimmedName, watchAdaptationName()))
+    for (auto& name : disabledAdaptationsString.split(',')) {
+        auto normalizedName = name.stripWhiteSpace().convertToASCIILowercase();
+        if (normalizedName == watchAdaptationName())
             disabledAdaptations.add(DisabledAdaptations::Watch);
     }
     return disabledAdaptations;
@@ -130,7 +130,7 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
 {
     // Listing a key with no value is shorthand for key=yes
     int numericValue;
-    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "yes"_s) || equalLettersIgnoringASCIICase(value, "true"_s))
+    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "yes"))
         numericValue = 1;
     else
         numericValue = parseIntegerAllowingTrailingJunk<int>(value).value_or(0);
@@ -138,35 +138,35 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
     // We treat key of "resizable" here as an additional feature rather than setting resizeable to true.
     // This is consistent with Firefox, but could also be handled at another level.
 
-    if (equalLettersIgnoringASCIICase(key, "left"_s) || equalLettersIgnoringASCIICase(key, "screenx"_s))
+    if (equalLettersIgnoringASCIICase(key, "left") || equalLettersIgnoringASCIICase(key, "screenx"))
         features.x = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "top"_s) || equalLettersIgnoringASCIICase(key, "screeny"_s))
+    else if (equalLettersIgnoringASCIICase(key, "top") || equalLettersIgnoringASCIICase(key, "screeny"))
         features.y = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "width"_s) || equalLettersIgnoringASCIICase(key, "innerwidth"_s))
+    else if (equalLettersIgnoringASCIICase(key, "width") || equalLettersIgnoringASCIICase(key, "innerwidth"))
         features.width = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "height"_s) || equalLettersIgnoringASCIICase(key, "innerheight"_s))
+    else if (equalLettersIgnoringASCIICase(key, "height") || equalLettersIgnoringASCIICase(key, "innerheight"))
         features.height = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "menubar"_s))
+    else if (equalLettersIgnoringASCIICase(key, "menubar"))
         features.menuBarVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "toolbar"_s))
+    else if (equalLettersIgnoringASCIICase(key, "toolbar"))
         features.toolBarVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "location"_s))
+    else if (equalLettersIgnoringASCIICase(key, "location"))
         features.locationBarVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "status"_s))
+    else if (equalLettersIgnoringASCIICase(key, "status"))
         features.statusBarVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "fullscreen"_s))
+    else if (equalLettersIgnoringASCIICase(key, "fullscreen"))
         features.fullscreen = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "scrollbars"_s))
+    else if (equalLettersIgnoringASCIICase(key, "scrollbars"))
         features.scrollbarsVisible = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "noopener"_s))
+    else if (equalLettersIgnoringASCIICase(key, "noopener"))
         features.noopener = numericValue;
-    else if (equalLettersIgnoringASCIICase(key, "noreferrer"_s))
+    else if (equalLettersIgnoringASCIICase(key, "noreferrer"))
         features.noreferrer = numericValue;
     else if (numericValue == 1)
         features.additionalFeatures.append(key.toString());
 }
 
-WindowFeatures parseDialogFeatures(StringView dialogFeaturesString, const FloatRect& screenAvailableRect)
+WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect)
 {
     auto featuresMap = parseDialogFeaturesMap(dialogFeaturesString);
 
@@ -185,30 +185,30 @@ WindowFeatures parseDialogFeatures(StringView dialogFeaturesString, const FloatR
     features.locationBarVisible = false;
     features.dialog = true;
 
-    float width = floatFeature(featuresMap, "dialogwidth"_s, 100, screenAvailableRect.width()).value_or(620); // default here came from frame size of dialog in MacIE
-    float height = floatFeature(featuresMap, "dialogheight"_s, 100, screenAvailableRect.height()).value_or(450); // default here came from frame size of dialog in MacIE
+    float width = floatFeature(featuresMap, "dialogwidth", 100, screenAvailableRect.width()).value_or(620); // default here came from frame size of dialog in MacIE
+    float height = floatFeature(featuresMap, "dialogheight", 100, screenAvailableRect.height()).value_or(450); // default here came from frame size of dialog in MacIE
 
     features.width = width;
     features.height = height;
 
-    features.x = floatFeature(featuresMap, "dialogleft"_s, screenAvailableRect.x(), screenAvailableRect.maxX() - width);
-    features.y = floatFeature(featuresMap, "dialogtop"_s, screenAvailableRect.y(), screenAvailableRect.maxY() - height);
+    features.x = floatFeature(featuresMap, "dialogleft", screenAvailableRect.x(), screenAvailableRect.maxX() - width);
+    features.y = floatFeature(featuresMap, "dialogtop", screenAvailableRect.y(), screenAvailableRect.maxY() - height);
 
-    if (boolFeature(featuresMap, "center"_s).value_or(true)) {
+    if (boolFeature(featuresMap, "center").value_or(true)) {
         if (!features.x)
             features.x = screenAvailableRect.x() + (screenAvailableRect.width() - width) / 2;
         if (!features.y)
             features.y = screenAvailableRect.y() + (screenAvailableRect.height() - height) / 2;
     }
 
-    features.resizable = boolFeature(featuresMap, "resizable"_s).value_or(false);
-    features.scrollbarsVisible = boolFeature(featuresMap, "scroll"_s).value_or(true);
-    features.statusBarVisible = boolFeature(featuresMap, "status"_s).value_or(false);
+    features.resizable = boolFeature(featuresMap, "resizable").value_or(false);
+    features.scrollbarsVisible = boolFeature(featuresMap, "scroll").value_or(true);
+    features.statusBarVisible = boolFeature(featuresMap, "status").value_or(false);
 
     return features;
 }
 
-static std::optional<bool> boolFeature(const DialogFeaturesMap& features, ASCIILiteral key)
+static std::optional<bool> boolFeature(const DialogFeaturesMap& features, const char* key)
 {
     auto it = features.find(key);
     if (it == features.end())
@@ -216,12 +216,12 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap& features, ASCIIL
 
     auto& value = it->value;
     return value.isNull()
-        || value == "1"_s
-        || equalLettersIgnoringASCIICase(value, "yes"_s)
-        || equalLettersIgnoringASCIICase(value, "on"_s);
+        || value == "1"
+        || equalLettersIgnoringASCIICase(value, "yes")
+        || equalLettersIgnoringASCIICase(value, "on");
 }
 
-static std::optional<float> floatFeature(const DialogFeaturesMap& features, ASCIILiteral key, float min, float max)
+static std::optional<float> floatFeature(const DialogFeaturesMap& features, const char* key, float min, float max)
 {
     auto it = features.find(key);
     if (it == features.end())
@@ -242,14 +242,14 @@ static std::optional<float> floatFeature(const DialogFeaturesMap& features, ASCI
     return static_cast<int>(parsedNumber);
 }
 
-static DialogFeaturesMap parseDialogFeaturesMap(StringView string)
+static DialogFeaturesMap parseDialogFeaturesMap(const String& string)
 {
     // FIXME: Not clear why we take such a different approach to parsing dialog features
     // as opposed to window features (using a map, different parsing quirks).
 
     DialogFeaturesMap features;
 
-    for (auto featureString : string.split(';')) {
+    for (auto& featureString : string.split(';')) {
         size_t separatorPosition = featureString.find('=');
         size_t colonPosition = featureString.find(':');
         if (separatorPosition != notFound && colonPosition != notFound)
@@ -257,16 +257,16 @@ static DialogFeaturesMap parseDialogFeaturesMap(StringView string)
         if (separatorPosition == notFound)
             separatorPosition = colonPosition;
 
-        auto key = featureString.left(separatorPosition).stripWhiteSpace().toString();
+        String key = featureString.left(separatorPosition).stripWhiteSpace();
 
         // Null string for value indicates key without value.
         String value;
         if (separatorPosition != notFound) {
-            auto valueView = featureString.substring(separatorPosition + 1).stripWhiteSpace();
-            value = valueView.left(valueView.find(' ')).toString();
+            value = featureString.substring(separatorPosition + 1).stripWhiteSpace();
+            value = value.left(value.find(' '));
         }
 
-        features.set(WTFMove(key), WTFMove(value));
+        features.set(key, value);
     }
 
     return features;

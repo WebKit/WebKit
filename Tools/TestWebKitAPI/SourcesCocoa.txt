@@ -54,11 +54,9 @@ Tests/WebKitCocoa/AudioBufferSize.mm
 Tests/WebKitCocoa/AudioRoutingArbitration.mm
 Tests/WebKitCocoa/AutoFillAvailable.mm
 Tests/WebKitCocoa/AutoLayoutIntegration.mm
-Tests/WebKitCocoa/BundleCSSStyleDeclarationHandle.mm
 Tests/WebKitCocoa/BundleEditingDelegate.mm
 Tests/WebKitCocoa/BundleFormDelegate.mm
 Tests/WebKitCocoa/BundlePageConsoleMessage.mm
-Tests/WebKitCocoa/BundlePageConsoleMessageWithDetails.mm
 Tests/WebKitCocoa/BundleParameters.mm
 Tests/WebKitCocoa/BundleRangeHandle.mm
 Tests/WebKitCocoa/CSSViewportUnits.mm
@@ -71,7 +69,6 @@ Tests/WebKitCocoa/CloseWebViewDuringEnterFullscreen.mm
 Tests/WebKitCocoa/Coding.mm
 Tests/WebKitCocoa/CommandBackForward.mm
 Tests/WebKitCocoa/Configuration.mm
-Tests/WebKitCocoa/ConsoleMessageWithDetails.mm
 Tests/WebKitCocoa/ContentFiltering.mm
 Tests/WebKitCocoa/ContentRuleListNotification.mm
 Tests/WebKitCocoa/ContentSecurityPolicy.mm
@@ -115,11 +112,9 @@ Tests/WebKitCocoa/FullscreenAlert.mm
 Tests/WebKitCocoa/FullscreenDelegate.mm
 Tests/WebKitCocoa/FullscreenLayoutConstraints.mm
 Tests/WebKitCocoa/FullscreenRemoveNodeBeforeEnter.mm
-Tests/WebKitCocoa/FullscreenVideoTextRecognition.mm
 Tests/WebKitCocoa/GPUProcess.mm
 Tests/WebKitCocoa/Geolocation.mm
 Tests/WebKitCocoa/GetDisplayMedia.mm
-Tests/WebKitCocoa/GetDisplayMediaWindowAndScreen.mm
 Tests/WebKitCocoa/GetResourceData.mm
 Tests/WebKitCocoa/HSTS.mm
 Tests/WebKitCocoa/IDBCheckpointWAL.mm
@@ -240,7 +235,6 @@ Tests/WebKitCocoa/TestURLSchemeHandler.mm
 Tests/WebKitCocoa/TextManipulation.mm
 Tests/WebKitCocoa/TextSize.mm
 Tests/WebKitCocoa/TextWidth.mm
-Tests/WebKitCocoa/TimeZoneOverride.mm
 Tests/WebKitCocoa/TopContentInset.mm
 Tests/WebKitCocoa/UIDelegate.mm
 Tests/WebKitCocoa/UploadDirectory.mm
@@ -291,7 +285,6 @@ Tests/WebKitCocoa/WKWebViewFirstResponderTests.mm
 Tests/WebKitCocoa/WKWebViewGetContents.mm
 Tests/WebKitCocoa/WKWebViewLoadAPIs.mm
 Tests/WebKitCocoa/WKWebViewPrintFormatter.mm
-Tests/WebKitCocoa/WKWebViewResize.mm
 Tests/WebKitCocoa/WKWebViewServerTrustKVC.mm
 Tests/WebKitCocoa/WKWebViewSnapshot.mm
 Tests/WebKitCocoa/WKWebViewSuspendAllMediaPlayback.mm

@@ -70,7 +70,7 @@ public:
     template<PtrTag tag> using CodePtr = MacroAssemblerCodePtr<tag>;
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
-    static ASCIILiteral typeName(JITType);
+    static const char* typeName(JITType);
 
     static JITType bottomTierJIT()
     {
@@ -161,6 +161,15 @@ public:
         return jitType == JITType::InterpreterThunk || jitType == JITType::BaselineJIT;
     }
 
+    static bool useDataIC(JITType jitType)
+    {
+        if (JITCode::isBaselineCode(jitType))
+            return true;
+        if (!Options::useDataIC())
+            return false;
+        return Options::useDataICInOptimizingJIT();
+    }
+
     virtual const DOMJIT::Signature* signature() const { return nullptr; }
     
     enum class ShareAttribute : uint8_t {
@@ -178,8 +187,6 @@ public:
     {
         return m_jitType;
     }
-
-    bool isUnlinked() const;
     
     template<typename PointerType>
     static JITType jitTypeFor(PointerType jitCode)
@@ -223,8 +230,6 @@ public:
     virtual PCToCodeOriginMap* pcToCodeOriginMap() { return nullptr; }
 
     const RegisterAtOffsetList* calleeSaveRegisters() const;
-
-    static ptrdiff_t offsetOfJITType() { return OBJECT_OFFSETOF(JITCode, m_jitType); }
 
 private:
     const JITType m_jitType;

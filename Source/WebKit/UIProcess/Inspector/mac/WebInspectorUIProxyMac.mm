@@ -46,15 +46,9 @@
 #import "_WKInspectorWindow.h"
 #import <SecurityInterface/SFCertificatePanel.h>
 #import <SecurityInterface/SFCertificateView.h>
-#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/CertificateInfo.h>
-#import <WebCore/Color.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
-#import <pal/spi/cf/CFUtilitiesSPI.h>
-#import <wtf/BlockPtr.h>
-#import <wtf/CompletionHandler.h>
-#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
 
 static const NSUInteger windowStyleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable | NSWindowStyleMaskFullSizeContentView;
@@ -213,100 +207,6 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 
 @end
 
-@interface WKWebInspectorUISaveController : NSViewController
-
-- (id)initWithSaveDatas:(Vector<WebCore::InspectorFrontendClient::SaveData>&&)saveDatas savePanel:(NSSavePanel *)savePanel;
-
-@property (nonatomic, readonly) NSString *suggestedURL;
-@property (nonatomic, readonly) NSString *content;
-@property (nonatomic, readonly) BOOL base64Encoded;
-
-@end
-
-@implementation WKWebInspectorUISaveController {
-    Vector<WebCore::InspectorFrontendClient::SaveData> _saveDatas;
-
-    RetainPtr<NSSavePanel> _savePanel;
-    RetainPtr<NSPopUpButton> _popUpButton;
-}
-
-- (id)initWithSaveDatas:(Vector<WebCore::InspectorFrontendClient::SaveData>&&)saveDatas savePanel:(NSSavePanel *)savePanel
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _saveDatas = WTFMove(saveDatas);
-
-    _savePanel = savePanel;
-
-    self.view = [[NSView alloc] init];
-
-    NSTextField *label = [NSTextField labelWithString:WEB_UI_STRING("Format:", "Label for the save data format selector when saving data in Web Inspector")];
-    label.textColor = NSColor.secondaryLabelColor;
-    label.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
-    label.alignment = NSTextAlignmentRight;
-
-    _popUpButton = adoptNS([[NSPopUpButton alloc] init]);
-    [_popUpButton setAction:@selector(_popUpButtonAction:)];
-    [_popUpButton setTarget:self];
-    [_popUpButton addItemsWithTitles:createNSArray(_saveDatas, [] (const auto& item) -> NSString * {
-        return item.displayType;
-    }).get()];
-    [_popUpButton selectItemAtIndex:0];
-
-    [self.view addSubview:label];
-    [self.view addSubview:_popUpButton.get()];
-
-    [label setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [_popUpButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [label.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:8.0],
-        [label.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:0.0],
-        [label.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-8.0],
-        [label.widthAnchor constraintEqualToConstant:64.0],
-
-        [[_popUpButton topAnchor] constraintEqualToAnchor:self.view.topAnchor constant:8.0],
-        [[_popUpButton leadingAnchor] constraintEqualToAnchor:label.trailingAnchor constant:8.0],
-        [[_popUpButton bottomAnchor] constraintEqualToAnchor:self.view.bottomAnchor constant:-8.0],
-        [[_popUpButton trailingAnchor] constraintEqualToAnchor:self.view.trailingAnchor constant:-20.0],
-    ]];
-
-    if (_saveDatas.size() > 1)
-        [_savePanel setAccessoryView:self.view];
-
-    [self _updateSavePanel];
-
-    return self;
-}
-
-- (NSString *)content
-{
-    return _saveDatas[[_popUpButton indexOfSelectedItem]].content;
-}
-
-- (BOOL)base64Encoded
-{
-    return _saveDatas[[_popUpButton indexOfSelectedItem]].base64Encoded;
-}
-
-- (void)_updateSavePanel
-{
-    NSString *suggestedURL = _saveDatas[[_popUpButton indexOfSelectedItem]].url;
-
-    if (UTType *type = [UTType typeWithFilenameExtension:suggestedURL.pathExtension])
-        [_savePanel setAllowedContentTypes:@[ type ]];
-    else
-        [_savePanel setAllowedContentTypes:@[ ]];
-}
-
-- (IBAction)_popUpButtonAction:(id)sender
-{
-    [self _updateSavePanel];
-}
-
-@end
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -381,57 +281,6 @@ RetainPtr<NSWindow> WebInspectorUIProxy::createFrontendWindow(NSRect savedWindow
     return window;
 }
 
-void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platformURL, Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs, CompletionHandler<void(NSURL *)>&& completionHandler)
-{
-    ASSERT(platformURL);
-
-    RetainPtr savePanel = [NSSavePanel savePanel];
-    [savePanel setExtensionHidden:NO];
-
-    auto controller = adoptNS([[WKWebInspectorUISaveController alloc] initWithSaveDatas:WTFMove(saveDatas) savePanel:savePanel.get()]);
-
-    auto saveToURL = [controller, completionHandler = WTFMove(completionHandler)] (NSURL *actualURL) mutable {
-        ASSERT(actualURL);
-
-        if ([controller base64Encoded]) {
-            auto decodedData = base64Decode([controller content], Base64DecodeOptions::ValidatePadding);
-            if (!decodedData)
-                return;
-            auto dataContent = adoptNS([[NSData alloc] initWithBytes:decodedData->data() length:decodedData->size()]);
-            [dataContent writeToURL:actualURL atomically:YES];
-        } else
-            [[controller content] writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
-
-        completionHandler(actualURL);
-    };
-
-    if (!forceSaveAs) {
-        saveToURL(platformURL);
-        return;
-    }
-
-    [savePanel setNameFieldStringValue:platformURL.lastPathComponent];
-
-    // If we have a file URL we've already saved this file to a path and
-    // can provide a good directory to show. Otherwise, use the system's
-    // default behavior for the initial directory to show in the dialog.
-    if (platformURL.isFileURL)
-        [savePanel setDirectoryURL:[platformURL URLByDeletingLastPathComponent]];
-
-    auto didShowModal = [savePanel, saveToURL = WTFMove(saveToURL)] (NSInteger result) mutable {
-        if (result == NSModalResponseCancel)
-            return;
-
-        ASSERT(result == NSModalResponseOK);
-        saveToURL([savePanel URL]);
-    };
-
-    if (NSWindow *window = frontendWindow ?: [NSApp keyWindow])
-        [savePanel beginSheetModalForWindow:window completionHandler:makeBlockPtr(WTFMove(didShowModal)).get()];
-    else
-        didShowModal([savePanel runModal]);
-}
-
 WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
 {
     ASSERT(inspectedPage());
@@ -462,11 +311,8 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
 {
     ASSERT(!m_inspectorWindow);
 
-    NSRect savedWindowFrame = NSZeroRect;
-    if (inspectedPage()) {
-        NSString *savedWindowFrameString = inspectedPage()->pageGroup().preferences().inspectorWindowFrame();
-        savedWindowFrame = NSRectFromString(savedWindowFrameString);
-    }
+    NSString *savedWindowFrameString = inspectedPage()->pageGroup().preferences().inspectorWindowFrame();
+    NSRect savedWindowFrame = NSRectFromString(savedWindowFrameString);
 
     m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local);
     [m_inspectorWindow setDelegate:m_objCAdapter.get()];
@@ -543,8 +389,7 @@ void WebInspectorUIProxy::platformHide()
 
 void WebInspectorUIProxy::platformResetState()
 {
-    if (inspectedPage())
-        inspectedPage()->pageGroup().preferences().deleteInspectorWindowFrame();
+    inspectedPage()->pageGroup().preferences().deleteInspectorWindowFrame();
 }
 
 void WebInspectorUIProxy::platformBringToFront()
@@ -552,7 +397,7 @@ void WebInspectorUIProxy::platformBringToFront()
     // If the Web Inspector is no longer in the same window as the inspected view,
     // then we need to reopen the Inspector to get it attached to the right window.
     // This can happen when dragging tabs to another window in Safari.
-    if (m_isAttached && inspectedPage() && [m_inspectorViewController webView].window != inspectedPage()->platformWindow()) {
+    if (m_isAttached && [m_inspectorViewController webView].window != inspectedPage()->platformWindow()) {
         if (m_isOpening) {
             // <rdar://88358696> If we are currently opening an attached inspector, the windows should have already
             // matched, and calling back to `open` isn't going to correct this. As a fail-safe to prevent reentrancy,
@@ -574,8 +419,7 @@ void WebInspectorUIProxy::platformBringToFront()
 
 void WebInspectorUIProxy::platformBringInspectedPageToFront()
 {
-    if (inspectedPage())
-        [inspectedPage()->platformWindow() makeKeyAndOrderFront:nil];
+    [inspectedPage()->platformWindow() makeKeyAndOrderFront:nil];
 }
 
 bool WebInspectorUIProxy::platformIsFront()
@@ -586,9 +430,6 @@ bool WebInspectorUIProxy::platformIsFront()
 
 bool WebInspectorUIProxy::platformCanAttach(bool webProcessCanAttach)
 {
-    if (!inspectedPage())
-        return false;
-
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     if ([WKInspectorViewController viewIsInspectorWebView:inspectedView])
         return webProcessCanAttach;
@@ -654,54 +495,85 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certifi
     [certificateView setDetailsDisclosed:YES];
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String& path)
+void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
-    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[ [NSURL URLWithString:path] ]];
-}
-
-void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
-{
-    RetainPtr<NSString> urlCommonPrefix;
-    for (auto& item : saveDatas) {
-        if (!urlCommonPrefix)
-            urlCommonPrefix = item.url;
-        else
-            urlCommonPrefix = [urlCommonPrefix commonPrefixWithString:item.url options:0];
-    }
-    if ([urlCommonPrefix hasSuffix:@"."])
-        urlCommonPrefix = [urlCommonPrefix substringToIndex:[urlCommonPrefix length] - 1];
-
-    RetainPtr platformURL = m_suggestedToActualURLMap.get(urlCommonPrefix.get());
+    ASSERT(!suggestedURL.isEmpty());
+    
+    NSURL *platformURL = m_suggestedToActualURLMap.get(suggestedURL).get();
     if (!platformURL) {
-        platformURL = [NSURL URLWithString:urlCommonPrefix.get()];
+        platformURL = [NSURL URLWithString:suggestedURL];
         // The user must confirm new filenames before we can save to them.
-        forceSaveAs = true;
+        forceSaveDialog = true;
+    }
+    
+    ASSERT(platformURL);
+    if (!platformURL)
+        return;
+
+    // Necessary for the block below.
+    String suggestedURLCopy = suggestedURL;
+    String contentCopy = content;
+
+    auto saveToURL = ^(NSURL *actualURL) {
+        ASSERT(actualURL);
+
+        m_suggestedToActualURLMap.set(suggestedURLCopy, actualURL);
+
+        if (base64Encoded) {
+            auto decodedData = base64Decode(contentCopy, Base64DecodeOptions::ValidatePadding);
+            if (!decodedData)
+                return;
+            auto dataContent = adoptNS([[NSData alloc] initWithBytes:decodedData->data() length:decodedData->size()]);
+            [dataContent writeToURL:actualURL atomically:YES];
+        } else
+            [contentCopy writeToURL:actualURL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+
+        m_inspectorPage->send(Messages::WebInspectorUI::DidSave([actualURL absoluteString]));
+    };
+
+    if (!forceSaveDialog) {
+        saveToURL(platformURL);
+        return;
     }
 
-    WebInspectorUIProxy::showSavePanel(m_inspectorWindow.get(), platformURL.get(), WTFMove(saveDatas), forceSaveAs, [urlCommonPrefix, protectedThis = Ref { *this }] (NSURL *actualURL) {
-        protectedThis->m_suggestedToActualURLMap.set(urlCommonPrefix.get(), actualURL);
-    });
-}
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.nameFieldStringValue = platformURL.lastPathComponent;
 
-void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
-{
-    if (auto contents = FileSystem::readEntireFile(path))
-        completionHandler(String::adopt(WTFMove(*contents)));
-    else
-        completionHandler(nullString());
-}
+    // If we have a file URL we've already saved this file to a path and
+    // can provide a good directory to show. Otherwise, use the system's
+    // default behavior for the initial directory to show in the dialog.
+    if (platformURL.isFileURL)
+        panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
-void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
-{
-    auto sampler = adoptNS([[NSColorSampler alloc] init]);
-    [sampler.get() showSamplerWithSelectionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSColor *selectedColor) mutable {
-        if (!selectedColor) {
-            completionHandler(std::nullopt);
+    auto completionHandler = ^(NSInteger result) {
+        if (result == NSModalResponseCancel)
             return;
-        }
+        ASSERT(result == NSModalResponseOK);
+        saveToURL(panel.URL);
+    };
 
-        completionHandler(Color::createAndPreserveColorSpace(selectedColor.CGColor));
-    }).get()];
+    NSWindow *window = m_inspectorWindow ? m_inspectorWindow.get() : [NSApp keyWindow];
+    if (window)
+        [panel beginSheetModalForWindow:window completionHandler:completionHandler];
+    else
+        completionHandler([panel runModal]);
+}
+
+void WebInspectorUIProxy::platformAppend(const String& suggestedURL, const String& content)
+{
+    ASSERT(!suggestedURL.isEmpty());
+    
+    RetainPtr<NSURL> actualURL = m_suggestedToActualURLMap.get(suggestedURL);
+    // Do not append unless the user has already confirmed this filename in save().
+    if (!actualURL)
+        return;
+
+    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:actualURL.get() error:NULL];
+    [handle seekToEndOfFile];
+    [handle writeData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+    [handle closeFile];
+
+    m_inspectorPage->send(Messages::WebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
 void WebInspectorUIProxy::windowFrameDidChange()
@@ -710,7 +582,7 @@ void WebInspectorUIProxy::windowFrameDidChange()
     ASSERT(m_isVisible);
     ASSERT(m_inspectorWindow);
 
-    if (m_isAttached || !m_isVisible || !m_inspectorWindow || !inspectedPage())
+    if (m_isAttached || !m_isVisible || !m_inspectorWindow)
         return;
 
     NSString *frameString = NSStringFromRect([m_inspectorWindow frame]);
@@ -816,9 +688,22 @@ void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
     [inspectedView setFrame:inspectedViewFrame];
 }
 
+unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
+{
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
+    NSRect inspectedViewRect = [inspectedView frame];
+    return static_cast<unsigned>(inspectedViewRect.size.height);
+}
+
+unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
+{
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
+    NSRect inspectedViewRect = [inspectedView frame];
+    return static_cast<unsigned>(inspectedViewRect.size.width);
+}
+
 void WebInspectorUIProxy::platformAttach()
 {
-    ASSERT(inspectedPage());
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     WKWebView *inspectorView = [m_inspectorViewController webView];
 
@@ -854,16 +739,17 @@ void WebInspectorUIProxy::platformAttach()
 
 void WebInspectorUIProxy::platformDetach()
 {
-    NSView *inspectedView = inspectedPage() ? inspectedPage()->inspectorAttachmentView() : nil;
+    NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     WKWebView *inspectorView = [m_inspectorViewController webView];
 
     [inspectorView removeFromSuperview];
+
     [inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
     // Make sure that we size the inspected view's frame after detaching so that it takes up the space that the
     // attached inspector used to. Preserve the top position of the inspected view so banners in Safari still work.
-    if (inspectedView)
-        inspectedView.frame = NSMakeRect(0, 0, NSWidth(inspectedView.superview.bounds), NSMaxY(inspectedView.frame));
+
+    inspectedView.frame = NSMakeRect(0, 0, NSWidth(inspectedView.superview.bounds), NSMaxY(inspectedView.frame));
 
     // Return early if we are not visible. This means the inspector was closed while attached
     // and we should not create and show the inspector window.
@@ -912,15 +798,23 @@ String WebInspectorUIProxy::inspectorTestPageURL()
     return [WKInspectorViewController URLForInspectorResource:@"Test.html"].absoluteString;
 }
 
+static NSDictionary *systemVersionPlist()
+{
+    NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES) objectAtIndex:0];
+    NSString *systemVersionPlistPath = [systemLibraryPath stringByAppendingPathComponent:@"CoreServices/SystemVersion.plist"];
+    NSDictionary *systemVersionInfo = [NSDictionary dictionaryWithContentsOfFile:systemVersionPlistPath];
+    return systemVersionInfo;
+}
+
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
 {
-    NSDictionary *plist = adoptCF(_CFCopySystemVersionDictionary()).bridgingAutorelease();
+    NSDictionary *plist = systemVersionPlist();
 
     DebuggableInfoData result;
     result.debuggableType = Inspector::DebuggableType::WebPage;
     result.targetPlatformName = "macOS"_s;
-    result.targetBuildVersion = plist[static_cast<NSString *>(_kCFSystemVersionBuildVersionKey)];
-    result.targetProductVersion = plist[static_cast<NSString *>(_kCFSystemVersionProductUserVisibleVersionKey)];
+    result.targetBuildVersion = plist[@"ProductBuildVersion"];
+    result.targetProductVersion = plist[@"ProductUserVisibleVersion"];
     result.targetIsSimulator = false;
 
     return result;

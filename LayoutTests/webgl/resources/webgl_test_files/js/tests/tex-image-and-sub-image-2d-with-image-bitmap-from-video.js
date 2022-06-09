@@ -71,8 +71,8 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
             document.body.appendChild(video);
             video.type = info.type;
             video.src = info.src;
-            wtu.startPlayingAndWaitForVideo(video, async function() {
-                await runImageBitmapTest(video, 1, internalFormat, pixelFormat, pixelType, gl, tiu, wtu, false);
+            wtu.startPlayingAndWaitForVideo(video, function() {
+                runImageBitmapTest(video, 1, internalFormat, pixelFormat, pixelType, gl, tiu, wtu, false);
                 runNextVideo();
             });
         }

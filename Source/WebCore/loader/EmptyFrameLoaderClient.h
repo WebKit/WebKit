@@ -140,8 +140,8 @@ private:
     bool canHandleRequest(const ResourceRequest&) const final;
     bool canShowMIMEType(const String&) const final;
     bool canShowMIMETypeAsHTML(const String&) const final;
-    bool representationExistsForURLScheme(StringView) const final;
-    String generatedMIMETypeForURLScheme(StringView) const final;
+    bool representationExistsForURLScheme(const String&) const final;
+    String generatedMIMETypeForURLScheme(const String&) const final;
 
     void frameLoadCompleted() final;
     void restoreViewState() final;
@@ -171,8 +171,8 @@ private:
     void didDisplayInsecureContent() final;
     void didRunInsecureContent(SecurityOrigin&, const URL&) final;
     void didDetectXSS(const URL&, bool) final;
-    RefPtr<Frame> createFrame(const AtomString&, HTMLFrameOwnerElement&) final;
-    RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool) final;
+    RefPtr<Frame> createFrame(const String&, HTMLFrameOwnerElement&) final;
+    RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool) final;
 
     ObjectContentType objectContentType(const URL&, const String&) final;
     String overrideMediaType() const final;

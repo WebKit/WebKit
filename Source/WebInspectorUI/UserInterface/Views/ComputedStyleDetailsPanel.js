@@ -147,18 +147,14 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this.element.appendChild(boxModelSection.element);
 
-        let propertyFiltersElement = WI.ImageUtilities.useSVGSymbol("Images/Filter.svg", "filter");
+        let propertyFiltersElement = WI.ImageUtilities.useSVGSymbol("Images/FilterFieldGlyph.svg", "filter");
         WI.addMouseDownContextMenuHandlers(propertyFiltersElement, (contextMenu) => {
             contextMenu.appendCheckboxItem(WI.UIString("Show All"), () => {
                 this._computedStyleShowAllSetting.value = !this._computedStyleShowAllSetting.value;
-
-                propertyFiltersElement.classList.toggle("active", this._computedStyleShowAllSetting.value || this._computedStylePreferShorthandsSetting.value);
             }, this._computedStyleShowAllSetting.value);
 
             contextMenu.appendCheckboxItem(WI.UIString("Prefer Shorthands"), () => {
                 this._computedStylePreferShorthandsSetting.value = !this._computedStylePreferShorthandsSetting.value;
-
-                propertyFiltersElement.classList.toggle("active", this._computedStyleShowAllSetting.value || this._computedStylePreferShorthandsSetting.value);
             }, this._computedStylePreferShorthandsSetting.value);
         });
 
@@ -215,8 +211,13 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
             this.element.appendChild(styleSection.element);
             this.removeSubview(styleSection);
             styleSection.element.remove();
-            this._detailsSectionByStyleSectionMap.delete(styleSection);
+
+            // The top-level details section for variables needs to be preserved because it's the host of nested details sections for variables groups.
+            if (detailsSection === this._variablesSection)
+                continue;
+
             detailsSection.element.remove();
+            this._detailsSectionByStyleSectionMap.delete(styleSection);
         }
 
         this._variablesStyleSectionForGroupTypeMap.clear();
@@ -254,12 +255,19 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this.addSubview(variablesStyleSection);
 
-        let detailsSectionRow = new WI.DetailsSectionRow;
-        let detailsSectionGroup = new WI.DetailsSectionGroup([detailsSectionRow]);
-        let detailsSection = new WI.DetailsSection(`computed-style-variables-group-${groupType}`, label, [detailsSectionGroup]);
-        detailsSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
-        detailsSectionRow.element.appendChild(variablesStyleSection.element);
-        this._variablesRow.element.appendChild(detailsSection.element);
+        let detailsSection;
+        if (!label) {
+            this._variablesRow.element.appendChild(variablesStyleSection.element);
+            detailsSection = this._variablesSection;
+        } else {
+            let detailsSectionRow = new WI.DetailsSectionRow;
+            let detailsSectionGroup = new WI.DetailsSectionGroup([detailsSectionRow]);
+            detailsSection = new WI.DetailsSection(`computed-style-variables-group-${groupType}`, label, [detailsSectionGroup]);
+            detailsSection.addEventListener(WI.DetailsSection.Event.CollapsedStateChanged, this._handleDetailsSectionCollapsedStateChanged, this);
+
+            detailsSectionRow.element.appendChild(variablesStyleSection.element);
+            this._variablesRow.element.appendChild(detailsSection.element);
+        }
 
         this._detailsSectionByStyleSectionMap.set(variablesStyleSection, detailsSection);
         this._variablesStyleSectionForGroupTypeMap.set(groupType, variablesStyleSection);

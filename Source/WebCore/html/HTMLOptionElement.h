@@ -37,15 +37,15 @@ class HTMLOptionElement final : public HTMLElement {
 public:
     static Ref<HTMLOptionElement> create(Document&);
     static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);
-    static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, String&& text, const AtomString& value, bool defaultSelected, bool selected);
+    static ExceptionOr<Ref<HTMLOptionElement>> createForLegacyFactoryFunction(Document&, const String& text, const String& value, bool defaultSelected, bool selected);
 
     WEBCORE_EXPORT String text() const;
-    void setText(String&&);
+    void setText(const String&);
 
     WEBCORE_EXPORT int index() const;
 
     WEBCORE_EXPORT String value() const;
-    WEBCORE_EXPORT void setValue(const AtomString&);
+    WEBCORE_EXPORT void setValue(const String&);
 
     WEBCORE_EXPORT bool selected(AllowStyleInvalidation = AllowStyleInvalidation::Yes) const;
     WEBCORE_EXPORT void setSelected(bool);
@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT String label() const;
     String displayLabel() const;
-    WEBCORE_EXPORT void setLabel(const AtomString&);
+    WEBCORE_EXPORT void setLabel(const String&);
 
     bool ownElementDisabled() const { return m_disabled; }
 
@@ -63,7 +63,6 @@ public:
     String textIndentedToRespectGroupLabel() const;
 
     void setSelectedState(bool, AllowStyleInvalidation = AllowStyleInvalidation::Yes);
-    bool selectedWithoutUpdate() const { return m_isSelected; }
 
 private:
     HTMLOptionElement(const QualifiedName&, Document&);
@@ -74,6 +73,7 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
 
+    InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     bool accessKeyAction(bool) final;
 
     void childrenChanged(const ChildChange&) final;

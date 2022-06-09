@@ -25,7 +25,7 @@
     JSCustomMarkFunction,
     JSGenerateToNativeObject,
 ] interface Range : AbstractRange {
-    [CallWith=CurrentDocument] constructor();
+    [CallWith=Document] constructor();
 
     readonly attribute Node commonAncestorContainer;
 

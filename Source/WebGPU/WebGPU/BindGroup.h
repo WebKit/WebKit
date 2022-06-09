@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,51 +25,31 @@
 
 #pragma once
 
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
-struct WGPUBindGroupImpl {
-};
-
 namespace WebGPU {
 
-class Device;
-
-// https://gpuweb.github.io/gpuweb/#gpubindgroup
-class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup> {
+class BindGroup : public RefCounted<BindGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Device& device)
+    static Ref<BindGroup> create()
     {
-        return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, device));
-    }
-    static Ref<BindGroup> createInvalid(Device& device)
-    {
-        return adoptRef(*new BindGroup(device));
+        return adoptRef(*new BindGroup());
     }
 
     ~BindGroup();
 
-    void setLabel(String&&);
-
-    bool isValid() const { return m_vertexArgumentBuffer || m_fragmentArgumentBuffer || m_computeArgumentBuffer; }
-
-    id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
-    id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
-    id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
-
-    Device& device() const { return m_device; }
+    void setLabel(const char*);
 
 private:
-    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Device&);
-    BindGroup(Device&);
-
-    const id<MTLBuffer> m_vertexArgumentBuffer { nil };
-    const id<MTLBuffer> m_fragmentArgumentBuffer { nil };
-    const id<MTLBuffer> m_computeArgumentBuffer { nil };
-
-    const Ref<Device> m_device;
+    BindGroup();
 };
 
 } // namespace WebGPU
+
+struct WGPUBindGroupImpl {
+    Ref<WebGPU::BindGroup> bindGroup;
+};

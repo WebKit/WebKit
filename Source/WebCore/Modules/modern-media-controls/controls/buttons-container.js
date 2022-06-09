@@ -26,23 +26,15 @@
 class ButtonsContainer extends LayoutNode
 {
 
-    constructor({ children, leftMargin, rightMargin, buttonMargin, cssClassName } = {})
+    constructor({ children = [], leftMargin = 16, rightMargin = 16, buttonMargin = 16, cssClassName = "" } = {})
     {
-        super(`<div class="buttons-container ${cssClassName ?? ""}"></div>`);
+        super(`<div class="buttons-container ${cssClassName}"></div>`);
 
-        this.leftMargin = leftMargin ?? ButtonsContainer.Defaults.LeftMargin;
-        this.rightMargin = rightMargin ?? ButtonsContainer.Defaults.RightMargin;
-        this.buttonMargin = buttonMargin ?? ButtonsContainer.Defaults.ButtonMargin;
-        this.children = children ?? [];
+        this.leftMargin = leftMargin;
+        this.rightMargin = rightMargin;
+        this.buttonMargin = buttonMargin;
+        this.children = children;
     }
-
-    // Static
-
-    static Defaults = {
-        LeftMargin: 16,
-        RightMargin: 16,
-        ButtonMargin: 16,
-    };
 
     // Public
 

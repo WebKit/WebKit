@@ -50,28 +50,26 @@ public:
     explicit FileInputType(HTMLInputElement&);
     virtual ~FileInputType();
 
-    String firstElementPathForInputValue() const; // Checked first, before internal storage or the value attribute.
-    FileList& files() { return m_fileList; }
-    void setFiles(RefPtr<FileList>&&, WasSetByJavaScript);
-
     static Vector<FileChooserFileInfo> filesFromFormControlState(const FormControlState&);
-    bool canSetStringValue() const final;
-    bool valueMissing(const String&) const final;
 
 private:
     const AtomString& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
     bool appendFormData(DOMFormData&) const final;
+    bool valueMissing(const String&) const final;
     String valueMissingText() const final;
     void handleDOMActivateEvent(Event&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;
+    bool canSetStringValue() const final;
+    FileList* files() final;
+    void setFiles(RefPtr<FileList>&&, WasSetByJavaScript) final;
     enum class RequestIcon { Yes, No };
     void setFiles(RefPtr<FileList>&&, RequestIcon, WasSetByJavaScript);
     String displayString() const final;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
-    void showPicker() final;
-    bool allowsShowPickerAcrossFrames() final;
+    bool canSetValue(const String&) final;
+    bool getTypeSpecificValue(String&) final; // Checked first, before internal storage or the value attribute.
+    void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
 
 #if ENABLE(DRAG_SUPPORT)
     bool receiveDroppedFilesWithImageTranscoding(const Vector<String>& paths);
@@ -107,5 +105,3 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(FileInputType, Type::File)

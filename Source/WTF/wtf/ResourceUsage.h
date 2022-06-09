@@ -26,7 +26,6 @@
 #pragma once
 
 #include <array>
-#include <wtf/Forward.h>
 
 namespace WTF {
 
@@ -40,7 +39,7 @@ struct TagInfo {
     size_t reserved { 0 };
 };
 
-WTF_EXPORT_PRIVATE ASCIILiteral displayNameForVMTag(unsigned);
+WTF_EXPORT_PRIVATE const char* displayNameForVMTag(unsigned);
 WTF_EXPORT_PRIVATE size_t vmPageSize();
 WTF_EXPORT_PRIVATE std::array<TagInfo, 256> pagesPerVMTag();
 WTF_EXPORT_PRIVATE void logFootprintComparison(const std::array<TagInfo, 256>&, const std::array<TagInfo, 256>&);

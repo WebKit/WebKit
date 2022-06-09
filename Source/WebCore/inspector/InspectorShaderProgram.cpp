@@ -35,6 +35,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBGL)
+#include "GraphicsContextGL.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLSampler.h"

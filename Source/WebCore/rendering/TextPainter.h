@@ -36,7 +36,6 @@ class FontCascade;
 class RenderCombineText;
 class ShadowData;
 class TextRun;
-class Text;
 
 struct TextPaintStyle;
 
@@ -50,42 +49,34 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 class TextPainter {
 public:
-    TextPainter(GraphicsContext&, const FontCascade&);
+    TextPainter(GraphicsContext&);
 
     void setStyle(const TextPaintStyle& textPaintStyle) { m_style = textPaintStyle; }
     void setShadow(const ShadowData* shadow) { m_shadow = shadow; }
     void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
+    void setFont(const FontCascade& font) { m_font = &font; }
     void setIsHorizontal(bool isHorizontal) { m_textBoxIsHorizontal = isHorizontal; }
     void setEmphasisMark(const AtomString& mark, float offset, const RenderCombineText*);
 
+    void paint(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin);
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
     template<typename LayoutRun>
-    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const TextRun& textRun)
+    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const FontCascade& font, GraphicsContext& context, const TextRun& textRun)
     {
         if (!TextPainter::shouldUseGlyphDisplayList(paintInfo))
             TextPainter::removeGlyphDisplayList(run);
         else
-            m_glyphDisplayList = GlyphDisplayListCache::singleton().get(run, m_font, m_context, textRun);
+            m_glyphDisplayList = GlyphDisplayListCache<LayoutRun>::singleton().get(run, font, context, textRun);
     }
 
     template<typename LayoutRun>
-    static void removeGlyphDisplayList(const LayoutRun& run)
-    {
-        GlyphDisplayListCache::singleton().remove(run);
-    }
+    static void removeGlyphDisplayList(const LayoutRun& run) { GlyphDisplayListCache<LayoutRun>::singleton().remove(run); }
 
+    static void clearGlyphDisplayLists();
     static bool shouldUseGlyphDisplayList(const PaintInfo&);
-    WEBCORE_EXPORT static void setForceUseGlyphDisplayListForTesting(bool);
-    WEBCORE_EXPORT static String cachedGlyphDisplayListsForTextNodeAsText(Text&, OptionSet<DisplayList::AsTextFlag>);
 
 private:
-    template<typename LayoutRun>
-    static DisplayList::DisplayList* glyphDisplayListIfExists(const LayoutRun& run)
-    {
-        return GlyphDisplayListCache::singleton().getIfExists(run);
-    }
-
     void paintTextOrEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& emphasisMark, float emphasisMarkOffset,
         const FloatPoint& textOrigin, unsigned startOffset, unsigned endOffset);
     void paintTextWithShadows(const ShadowData*, const FilterOperations*, const FontCascade&, const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin,
@@ -94,7 +85,7 @@ private:
         const TextPaintStyle&, const ShadowData*, const FilterOperations*);
 
     GraphicsContext& m_context;
-    const FontCascade& m_font;
+    const FontCascade* m_font { nullptr };
     TextPaintStyle m_style;
     AtomString m_emphasisMark;
     const ShadowData* m_shadow { nullptr };

@@ -56,7 +56,7 @@ public:
 
 #define JSC_DEFINE_ISO8601_DURATION_FIELD(name, capitalizedName) \
     double name##s() const { return m_data[static_cast<uint8_t>(TemporalUnit::capitalizedName)]; } \
-    void set##capitalizedName##s(double value) { m_data[static_cast<uint8_t>(TemporalUnit::capitalizedName)] = !value ? 0 : value; }
+    void set##capitalizedName##s(double value) { m_data[static_cast<uint8_t>(TemporalUnit::capitalizedName)] = value; }
     JSC_TEMPORAL_UNITS(JSC_DEFINE_ISO8601_DURATION_FIELD);
 #undef JSC_DEFINE_ISO8601_DURATION_FIELD
 
@@ -71,10 +71,8 @@ public:
     Duration operator-() const
     {
         Duration result(*this);
-        for (auto& value : result.m_data) {
-            if (value)
-                value = -value;
-        }
+        for (auto& value : result.m_data)
+            value = -value;
         return result;
     }
 
@@ -85,16 +83,6 @@ private:
 class ExactTime {
     WTF_MAKE_FAST_ALLOCATED(ExactTime);
 public:
-    static constexpr Int128 dayRangeSeconds { 86400'00000000 }; // 1e8 days
-    static constexpr Int128 nsPerMicrosecond { 1000 };
-    static constexpr Int128 nsPerMillisecond { 1'000'000 };
-    static constexpr Int128 nsPerSecond { 1'000'000'000 };
-    static constexpr Int128 nsPerMinute = nsPerSecond * 60;
-    static constexpr Int128 nsPerHour = nsPerMinute * 60;
-    static constexpr Int128 nsPerDay = nsPerHour * 24;
-    static constexpr Int128 minValue = -dayRangeSeconds * nsPerSecond;
-    static constexpr Int128 maxValue = dayRangeSeconds * nsPerSecond;
-
     constexpr ExactTime() = default;
     constexpr ExactTime(const ExactTime&) = default;
     constexpr explicit ExactTime(Int128 epochNanoseconds) : m_epochNanoseconds(epochNanoseconds) { }
@@ -115,18 +103,22 @@ public:
 
     int64_t epochSeconds() const
     {
+        ASSERT(isValid());
         return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerSecond);
     }
     int64_t epochMilliseconds() const
     {
+        ASSERT(isValid());
         return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMillisecond);
     }
     int64_t epochMicroseconds() const
     {
+        ASSERT(isValid());
         return static_cast<int64_t>(m_epochNanoseconds / ExactTime::nsPerMicrosecond);
     }
     constexpr Int128 epochNanoseconds() const
     {
+        ASSERT(isValid());
         return m_epochNanoseconds;
     }
 
@@ -182,9 +174,16 @@ public:
     Int128 difference(ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
     ExactTime round(unsigned increment, TemporalUnit, RoundingMode) const;
 
-    static ExactTime now();
-
 private:
+    static constexpr Int128 dayRangeSeconds { 86400'00000000 }; // 1e8 days
+    static constexpr Int128 nsPerMicrosecond { 1000 };
+    static constexpr Int128 nsPerMillisecond { 1'000'000 };
+    static constexpr Int128 nsPerSecond { 1'000'000'000 };
+    static constexpr Int128 nsPerMinute = nsPerSecond * 60;
+    static constexpr Int128 nsPerHour = nsPerMinute * 60;
+    static constexpr Int128 minValue = -dayRangeSeconds * nsPerSecond;
+    static constexpr Int128 maxValue = dayRangeSeconds * nsPerSecond;
+
     static void asStringImpl(StringBuilder& builder, Int128 value)
     {
         if (value > 9)
@@ -246,13 +245,7 @@ static_assert(sizeof(PlainTime) <= sizeof(uint64_t));
 class PlainDate {
     WTF_MAKE_FAST_ALLOCATED(PlainDate);
 public:
-    constexpr PlainDate()
-        : m_year(0)
-        , m_month(1)
-        , m_day(1)
-    {
-    }
-
+    constexpr PlainDate() = default;
     constexpr PlainDate(int32_t year, unsigned month, unsigned day)
         : m_year(year)
         , m_month(month)
@@ -265,13 +258,10 @@ public:
     uint8_t day() const { return m_day; }
 
 private:
-    int32_t m_year : 21; // ECMAScript max / min date's year can be represented <= 20 bits.
-    int32_t m_month : 5; // Starts with 1.
-    int32_t m_day : 6; // Starts with 1.
+    int32_t m_year { 0 };
+    uint8_t m_month { 1 };
+    uint8_t m_day { 1 };
 };
-#if COMPILER(GCC_COMPATIBLE)
-static_assert(sizeof(PlainDate) == sizeof(int32_t));
-#endif
 
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 
@@ -283,37 +273,19 @@ struct TimeZoneRecord {
     std::variant<Vector<LChar>, int64_t> m_nameOrOffset;
 };
 
-static constexpr unsigned minCalendarLength = 3;
-static constexpr unsigned maxCalendarLength = 8;
-struct CalendarRecord {
-    Vector<LChar, maxCalendarLength> m_name;
-};
-
 // https://tc39.es/proposal-temporal/#sup-isvalidtimezonename
 std::optional<TimeZoneID> parseTimeZoneName(StringView);
 std::optional<Duration> parseDuration(StringView);
 std::optional<int64_t> parseTimeZoneNumericUTCOffset(StringView);
 enum class ValidateTimeZoneID { Yes, No };
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView);
-std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringView);
 std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>>> parseDateTime(StringView);
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView);
-uint8_t dayOfWeek(PlainDate);
-uint16_t dayOfYear(PlainDate);
-uint8_t weeksInYear(int32_t year);
-uint8_t weekOfYear(PlainDate);
-uint8_t daysInMonth(int32_t year, uint8_t month);
-uint8_t daysInMonth(uint8_t month);
 String formatTimeZoneOffsetString(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned> precision);
-String temporalDateToString(PlainDate);
-String monthCode(uint32_t);
 
 bool isValidDuration(const Duration&);
 
 std::optional<ExactTime> parseInstant(StringView);
-
-bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
 
 } // namespace ISO8601
 } // namespace JSC

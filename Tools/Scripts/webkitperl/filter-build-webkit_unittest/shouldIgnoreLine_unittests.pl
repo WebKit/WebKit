@@ -32,11 +32,12 @@ use English;
 use FindBin;
 use Test::More;
 use lib File::Spec->catdir($FindBin::Bin, "..");
-require "filter-build-webkit";
-
-FilterBuildWebKit->import(qw(shouldIgnoreLine));
+use LoadAsModule qw(FilterBuildWebKit filter-build-webkit);
 
 sub description($);
+
+@FilterBuildWebKit::EXPORT_OK = qw(shouldIgnoreLine);
+FilterBuildWebKit->import(@FilterBuildWebKit::EXPORT_OK);
 
 #
 # Test whitespace

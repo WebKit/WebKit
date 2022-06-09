@@ -29,7 +29,6 @@
 #if ENABLE(JIT)
 
 #include "LinkBuffer.h"
-#include "MaxFrameExtentForSlowPathCall.h"
 #include "ShadowChicken.h"
 
 namespace JSC {
@@ -75,6 +74,11 @@ void CCallHelpers::logShadowChickenTailPacketImpl(GPRReg shadowPacket, JSValueRe
     store32(TrustedImm32(callSiteIndex.bits()), Address(shadowPacket, OBJECT_OFFSETOF(ShadowChicken::Packet, callSiteIndex)));
 }
 
+void CCallHelpers::logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, TrustedImmPtr codeBlock, CallSiteIndex callSiteIndex)
+{
+    logShadowChickenTailPacketImpl(shadowPacket, thisRegs, scope, codeBlock, callSiteIndex);
+}
+
 void CCallHelpers::logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs thisRegs, GPRReg scope, GPRReg codeBlock, CallSiteIndex callSiteIndex)
 {
     logShadowChickenTailPacketImpl(shadowPacket, thisRegs, scope, codeBlock, callSiteIndex);
@@ -88,44 +92,6 @@ void CCallHelpers::emitJITCodeOver(MacroAssemblerCodePtr<JSInternalPtrTag> where
     constexpr bool needsBranchCompaction = false;
     LinkBuffer linkBuffer(jit, where, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
     FINALIZE_CODE(linkBuffer, NoPtrTag, description);
-}
-
-static_assert(!((maxFrameExtentForSlowPathCall + 2 * sizeof(CPURegister)) % 16), "Stack must be aligned after CTI thunk entry");
-
-void CCallHelpers::emitCTIThunkPrologue(bool returnAddressAlreadyTagged)
-{
-    // Stash frame pointer and return address
-    if (!returnAddressAlreadyTagged)
-        tagReturnAddress();
-#if CPU(X86_64)
-    push(X86Registers::ebp); // return address pushed by the call instruction
-#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
-    pushPair(framePointerRegister, linkRegister);
-#elif CPU(MIPS)
-    pushPair(framePointerRegister, returnAddressRegister);
-#else
-#   error "Not implemented on platform"
-#endif
-    // Make enough space on the stack to pass arguments in a call
-    if constexpr (maxFrameExtentForSlowPathCall)
-        subPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
-}
-
-void CCallHelpers::emitCTIThunkEpilogue()
-{
-    // Reset stack
-    if constexpr (maxFrameExtentForSlowPathCall)
-        addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
-    // Restore frame pointer and return address
-#if CPU(X86_64)
-    pop(X86Registers::ebp); // Return address left on stack
-#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
-    popPair(framePointerRegister, linkRegister);
-#elif CPU(MIPS)
-    popPair(framePointerRegister, returnAddressRegister);
-#else
-#   error "Not implemented on platform"
-#endif
 }
 
 } // namespace JSC

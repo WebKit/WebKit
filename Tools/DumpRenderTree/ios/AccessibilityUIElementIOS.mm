@@ -74,7 +74,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIAColumnCount;
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
-- (BOOL)accessibilityARIAIsBusy;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
@@ -93,12 +92,9 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)accessibilityIsInDescriptionListDefinition;
 - (BOOL)accessibilityIsInDescriptionListTerm;
 - (BOOL)_accessibilityIsInTableCell;
-- (BOOL)accessibilityIsAttributeSettable:(NSString *)attributeName;
-- (BOOL)accessibilityIsRequired;
 - (NSString *)_accessibilityPhotoDescription;
 - (BOOL)accessibilityPerformEscape;
 - (NSString *)accessibilityDOMIdentifier;
-- (NSString *)_accessibilityWebRoleAsString;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -750,7 +746,7 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
-    return [m_element accessibilityIsAttributeSettable:[NSString stringWithJSStringRef:attribute]];
+    return false;
 }
 
 bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
@@ -765,7 +761,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
-    return [[m_element _accessibilityWebRoleAsString] createJSStringRef];
+    return WTR::createJSString();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
@@ -834,7 +830,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::helpText() const
 
 double AccessibilityUIElement::intValue() const
 {
-    return [[m_element accessibilityValue] integerValue];
+    return 0.0f;
 }
 
 double AccessibilityUIElement::minValue()
@@ -862,11 +858,6 @@ int AccessibilityUIElement::insertionPointLineNumber()
     return -1;
 }
 
-bool AccessibilityUIElement::isBusy() const
-{
-    return [m_element accessibilityARIAIsBusy];
-}
-
 bool AccessibilityUIElement::isEnabled()
 {
     return false;
@@ -874,7 +865,7 @@ bool AccessibilityUIElement::isEnabled()
 
 bool AccessibilityUIElement::isRequired() const
 {
-    return [m_element accessibilityIsRequired];
+    return false;
 }
 
 bool AccessibilityUIElement::isFocused() const

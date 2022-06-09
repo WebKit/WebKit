@@ -32,6 +32,7 @@
 #import "PaymentAuthorizationPresenter.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIViewController.h>
+#import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebKit {

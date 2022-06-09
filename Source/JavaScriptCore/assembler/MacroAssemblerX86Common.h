@@ -37,8 +37,6 @@ using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerX86Common : public AbstractMacroAssembler<Assembler> {
 public:
-    static constexpr size_t nearJumpRange = 2 * GB;
-
 #if CPU(X86_64)
     // Use this directly only if you're not generating code with it.
     static constexpr X86Registers::RegisterID s_scratchRegister = X86Registers::r11;
@@ -103,9 +101,9 @@ public:
         DoubleLessThanOrUnordered = X86Assembler::ConditionB,
         DoubleLessThanOrEqualOrUnordered = X86Assembler::ConditionBE,
     };
-    static_assert(
+    COMPILE_ASSERT(
         !((X86Assembler::ConditionE | X86Assembler::ConditionNE | X86Assembler::ConditionA | X86Assembler::ConditionAE | X86Assembler::ConditionB | X86Assembler::ConditionBE) & DoubleConditionBits),
-        "DoubleConditionBits should not interfere with X86Assembler Condition codes");
+        DoubleConditionBits_should_not_interfere_with_X86Assembler_Condition_codes);
 
     static constexpr RegisterID stackPointerRegister = X86Registers::esp;
     static constexpr RegisterID framePointerRegister = X86Registers::ebp;
@@ -1237,6 +1235,13 @@ public:
         load16(address, dest);
     }
 
+    template<PtrTag tag>
+    static void repatchCompact(CodeLocationDataLabelCompact<tag> dataLabelCompact, int32_t value)
+    {
+        ASSERT(isCompactPtrAlignedAddressOffset(value));
+        AssemblerType_T::repatchCompact(dataLabelCompact.dataLocation(), value);
+    }
+    
     DataLabelCompact loadCompactWithAddressOffsetPatch(Address address, RegisterID dest)
     {
         padBeforePatch();

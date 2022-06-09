@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-ContentSecurityPolicySource::ContentSecurityPolicySource(const ContentSecurityPolicy& policy, const String& scheme, const String& host, std::optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard, IsSelfSource isSelfSource)
+ContentSecurityPolicySource::ContentSecurityPolicySource(const ContentSecurityPolicy& policy, const String& scheme, const String& host, std::optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard)
     : m_policy(policy)
     , m_scheme(scheme)
     , m_host(host)
@@ -42,13 +42,11 @@ ContentSecurityPolicySource::ContentSecurityPolicySource(const ContentSecurityPo
     , m_port(port)
     , m_hostHasWildcard(hostHasWildcard)
     , m_portHasWildcard(portHasWildcard)
-    , m_isSelfSource(isSelfSource == IsSelfSource::Yes)
 {
 }
 
 bool ContentSecurityPolicySource::matches(const URL& url, bool didReceiveRedirectResponse) const
 {
-    // https://www.w3.org/TR/CSP3/#match-url-to-source-expression.
     if (!schemeMatches(url))
         return false;
     if (isSchemeOnly())
@@ -58,27 +56,11 @@ bool ContentSecurityPolicySource::matches(const URL& url, bool didReceiveRedirec
 
 bool ContentSecurityPolicySource::schemeMatches(const URL& url) const
 {
-    // https://www.w3.org/TR/CSP3/#match-schemes.
-    const auto& scheme = m_scheme.isEmpty() ? m_policy.selfProtocol() : m_scheme;
-    auto urlScheme = url.protocol().convertToASCIILowercase();
-
-    if (scheme == urlScheme)
-        return true;
-
-    // host-sources can do direct-upgrades.
-    if (scheme == "http"_s && urlScheme == "https"_s)
-        return true;
-    if (scheme == "ws"_s && (urlScheme == "wss"_s || urlScheme == "https"_s || urlScheme == "http"_s))
-        return true;
-    if (scheme == "wss"_s && urlScheme == "https"_s)
-        return true;
-
-    // self-sources can always upgrade to secure protocols and side-grade insecure protocols.
-    if ((m_isSelfSource
-        && ((urlScheme == "https"_s || urlScheme == "wss"_s) || (scheme == "http"_s && urlScheme == "ws"_s))))
-        return true;
-
-    return false;
+    if (m_scheme.isEmpty())
+        return m_policy.protocolMatchesSelf(url);
+    if (equalLettersIgnoringASCIICase(m_scheme, "http"))
+        return url.protocolIsInHTTPFamily();
+    return equalIgnoringASCIICase(url.protocol(), m_scheme);
 }
 
 static bool wildcardMatches(StringView host, const String& hostWithWildcard)
@@ -105,7 +87,7 @@ bool ContentSecurityPolicySource::pathMatches(const URL& url) const
 
     auto path = PAL::decodeURLEscapeSequences(url.path());
 
-    if (m_path.endsWith('/'))
+    if (m_path.endsWith("/"))
         return path.startsWith(m_path);
 
     return path == m_path;
@@ -121,12 +103,7 @@ bool ContentSecurityPolicySource::portMatches(const URL& url) const
     if (port == m_port)
         return true;
 
-    // host-source and self-source allows upgrading to a more secure scheme which allows for different ports.
-    auto defaultSecurePort = WTF::defaultPortForProtocol("https"_s).value_or(443);
-    auto defaultInsecurePort = WTF::defaultPortForProtocol("http"_s).value_or(80);
-    bool isUpgradeSecure = (port == defaultSecurePort) || (!port && (url.protocol() == "https"_s || url.protocol() == "wss"_s));
-    bool isCurrentUpgradable = (m_port == defaultInsecurePort) || (m_scheme == "http"_s && (!m_port || m_port == defaultSecurePort));
-    if (isUpgradeSecure && isCurrentUpgradable)
+    if ((m_port && WTF::isDefaultPortForProtocol(m_port.value(), "http")) && ((!port && url.protocolIs("https")) || (port && WTF::isDefaultPortForProtocol(port.value(), "https"))))
         return true;
 
     if (!port)

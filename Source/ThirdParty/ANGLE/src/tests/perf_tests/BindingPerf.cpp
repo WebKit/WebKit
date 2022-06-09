@@ -111,9 +111,10 @@ class BindingsBenchmark : public ANGLERenderTest,
 
 BindingsBenchmark::BindingsBenchmark() : ANGLERenderTest("Bindings", GetParam())
 {
+    // Flaky on OpenGL. http://anglebug.com/6264
     if (GetParam().eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_OPENGL_ANGLE)
     {
-        skipTest("http://anglebug.com/6264 Flaky on OpenGL");
+        mSkipTest = true;
     }
 }
 

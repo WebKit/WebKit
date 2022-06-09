@@ -50,7 +50,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
 
 WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, parameters.sessionID, WTFMove(vm), &thread)
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, WTFMove(vm), &thread)
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
@@ -58,13 +58,12 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::V
 {
     ++gNumberOfWorkletGlobalScopes;
 
-    setStorageBlockingPolicy(parameters.settingsValues.storageBlockingPolicy);
     setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::create(this->url())));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { this->url() }, *this));
 }
 
 WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, *document.sessionID(), WTFMove(vm), nullptr)
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, WTFMove(vm), nullptr)
     , m_document(document)
     , m_topOrigin(SecurityOrigin::createUnique())
     , m_url(code.url())
@@ -76,7 +75,6 @@ WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, Sc
 
     ASSERT(document.page());
 
-    setStorageBlockingPolicy(m_document->settings().storageBlockingPolicy());
     setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::create(this->url())));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { this->url() }, *this));
 }
@@ -107,7 +105,7 @@ void WorkletGlobalScope::prepareForDestruction()
 String WorkletGlobalScope::userAgent(const URL& url) const
 {
     if (!m_document)
-        return emptyString();
+        return "";
     return m_document->userAgent(url);
 }
 

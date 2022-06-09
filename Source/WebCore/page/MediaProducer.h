@@ -50,24 +50,16 @@ enum class MediaProducerMediaState : uint32_t {
     HasInterruptedAudioCaptureDevice = 1 << 15,
     HasInterruptedVideoCaptureDevice = 1 << 16,
     HasUserInteractedWithMediaElement = 1 << 17,
-    HasActiveScreenCaptureDevice = 1 << 18,
-    HasMutedScreenCaptureDevice = 1 << 19,
-    HasInterruptedScreenCaptureDevice = 1 << 20,
-    HasActiveWindowCaptureDevice = 1 << 21,
-    HasMutedWindowCaptureDevice = 1 << 22,
-    HasInterruptedWindowCaptureDevice = 1 << 23,
-    HasActiveSystemAudioCaptureDevice = 1 << 24,
-    HasMutedSystemAudioCaptureDevice = 1 << 25,
-    HasInterruptedSystemAudioCaptureDevice = 1 << 26,
+    HasActiveDisplayCaptureDevice = 1 << 18,
+    HasMutedDisplayCaptureDevice = 1 << 19,
+    HasInterruptedDisplayCaptureDevice = 1 << 20,
 };
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 
 enum class MediaProducerMediaCaptureKind : uint8_t {
-    Microphone,
-    Camera,
-    Display,
-    SystemAudio,
-    EveryKind,
+    Audio,
+    Video,
+    AudioVideo
 };
 
 enum class MediaProducerMutedState : uint8_t {
@@ -75,8 +67,6 @@ enum class MediaProducerMutedState : uint8_t {
     AudioCaptureIsMuted = 1 << 1,
     VideoCaptureIsMuted = 1 << 2,
     ScreenCaptureIsMuted = 1 << 3,
-    WindowCaptureIsMuted = 1 << 4,
-    SystemAudioCaptureIsMuted = 1 << 4,
 };
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
 
@@ -88,46 +78,19 @@ public:
     using MutedStateFlags = MediaProducerMutedStateFlags;
 
     static constexpr MediaStateFlags IsNotPlaying = { };
-    static constexpr MediaStateFlags MicrophoneCaptureMask = { MediaState::HasActiveAudioCaptureDevice, MediaState::HasMutedAudioCaptureDevice, MediaState::HasInterruptedAudioCaptureDevice };
+    static constexpr MediaStateFlags AudioCaptureMask = { MediaState::HasActiveAudioCaptureDevice, MediaState::HasMutedAudioCaptureDevice, MediaState::HasInterruptedAudioCaptureDevice };
     static constexpr MediaStateFlags VideoCaptureMask = { MediaState::HasActiveVideoCaptureDevice, MediaState::HasMutedVideoCaptureDevice, MediaState::HasInterruptedVideoCaptureDevice };
-
-    static constexpr MediaStateFlags ScreenCaptureMask = { MediaState::HasActiveScreenCaptureDevice, MediaState::HasMutedScreenCaptureDevice, MediaState::HasInterruptedScreenCaptureDevice };
-    static constexpr MediaStateFlags WindowCaptureMask = { MediaState::HasActiveWindowCaptureDevice, MediaState::HasMutedWindowCaptureDevice, MediaState::HasInterruptedWindowCaptureDevice };
-    static constexpr MediaStateFlags ActiveDisplayCaptureMask = { MediaState::HasActiveScreenCaptureDevice, MediaState::HasActiveWindowCaptureDevice };
-    static constexpr MediaStateFlags MutedDisplayCaptureMask = { MediaState::HasMutedScreenCaptureDevice, MediaState::HasMutedWindowCaptureDevice };
-    static constexpr MediaStateFlags DisplayCaptureMask = { ActiveDisplayCaptureMask | MutedDisplayCaptureMask };
-
-    static constexpr MediaStateFlags SystemAudioCaptureMask = { MediaState::HasActiveSystemAudioCaptureDevice, MediaState::HasMutedSystemAudioCaptureDevice, MediaState::HasInterruptedSystemAudioCaptureDevice };
-
-    static constexpr MediaStateFlags ActiveCaptureMask = { MediaState::HasActiveAudioCaptureDevice, MediaState::HasActiveVideoCaptureDevice, MediaState::HasActiveScreenCaptureDevice, MediaState::HasActiveWindowCaptureDevice, MediaState::HasActiveSystemAudioCaptureDevice };
-    static constexpr MediaStateFlags MutedCaptureMask = { MediaState::HasMutedAudioCaptureDevice, MediaState::HasMutedVideoCaptureDevice, MediaState::HasMutedScreenCaptureDevice, MediaState::HasMutedWindowCaptureDevice, MediaState::HasMutedSystemAudioCaptureDevice };
-
-    static constexpr MediaStateFlags MediaCaptureMask = {
-        MediaState::HasActiveAudioCaptureDevice,
-        MediaState::HasMutedAudioCaptureDevice,
-        MediaState::HasInterruptedAudioCaptureDevice,
-        MediaState::HasActiveVideoCaptureDevice,
-        MediaState::HasMutedVideoCaptureDevice,
-        MediaState::HasInterruptedVideoCaptureDevice,
-        MediaState::HasActiveScreenCaptureDevice,
-        MediaState::HasMutedScreenCaptureDevice,
-        MediaState::HasInterruptedScreenCaptureDevice,
-        MediaState::HasActiveWindowCaptureDevice,
-        MediaState::HasMutedWindowCaptureDevice,
-        MediaState::HasInterruptedWindowCaptureDevice,
-        MediaState::HasActiveSystemAudioCaptureDevice,
-        MediaState::HasMutedSystemAudioCaptureDevice,
-        MediaState::HasInterruptedSystemAudioCaptureDevice
-    };
-    static constexpr MediaStateFlags IsCapturingAudioMask = { MicrophoneCaptureMask | SystemAudioCaptureMask };
-    static constexpr MediaStateFlags IsCapturingVideoMask = { VideoCaptureMask | DisplayCaptureMask };
+    static constexpr MediaStateFlags DisplayCaptureMask = { MediaState::HasActiveDisplayCaptureDevice, MediaState::HasMutedDisplayCaptureDevice, MediaState::HasInterruptedDisplayCaptureDevice };
+    static constexpr MediaStateFlags ActiveCaptureMask = { MediaState::HasActiveAudioCaptureDevice, MediaState::HasActiveVideoCaptureDevice, MediaState::HasActiveDisplayCaptureDevice };
+    static constexpr MediaStateFlags MutedCaptureMask = { MediaState::HasMutedAudioCaptureDevice, MediaState::HasMutedVideoCaptureDevice, MediaState::HasMutedDisplayCaptureDevice };
+    static constexpr MediaStateFlags MediaCaptureMask = { MediaState::HasActiveAudioCaptureDevice, MediaState::HasMutedAudioCaptureDevice, MediaState::HasInterruptedAudioCaptureDevice, MediaState::HasActiveVideoCaptureDevice, MediaState::HasMutedVideoCaptureDevice, MediaState::HasInterruptedVideoCaptureDevice, MediaState::HasActiveDisplayCaptureDevice, MediaState::HasMutedDisplayCaptureDevice, MediaState::HasInterruptedDisplayCaptureDevice };
 
     static bool isCapturing(MediaStateFlags state) { return state.containsAny(ActiveCaptureMask) || state.containsAny(MutedCaptureMask); }
 
     virtual MediaStateFlags mediaState() const = 0;
 
     static constexpr MutedStateFlags AudioAndVideoCaptureIsMuted = { MutedState::AudioCaptureIsMuted, MutedState::VideoCaptureIsMuted };
-    static constexpr MutedStateFlags MediaStreamCaptureIsMuted = { MutedState::AudioCaptureIsMuted, MutedState::VideoCaptureIsMuted, MutedState::ScreenCaptureIsMuted, MutedState::WindowCaptureIsMuted, MutedState::SystemAudioCaptureIsMuted };
+    static constexpr MutedStateFlags MediaStreamCaptureIsMuted = { MutedState::AudioCaptureIsMuted, MutedState::VideoCaptureIsMuted, MutedState::ScreenCaptureIsMuted };
 
     virtual void pageMutedStateDidChange() = 0;
 
@@ -142,11 +105,9 @@ namespace WTF {
 template<> struct EnumTraits<WebCore::MediaProducerMediaCaptureKind> {
     using values = EnumValues<
         WebCore::MediaProducerMediaCaptureKind,
-        WebCore::MediaProducerMediaCaptureKind::Microphone,
-        WebCore::MediaProducerMediaCaptureKind::Camera,
-        WebCore::MediaProducerMediaCaptureKind::Display,
-        WebCore::MediaProducerMediaCaptureKind::SystemAudio,
-        WebCore::MediaProducerMediaCaptureKind::EveryKind
+        WebCore::MediaProducerMediaCaptureKind::Audio,
+        WebCore::MediaProducerMediaCaptureKind::Video,
+        WebCore::MediaProducerMediaCaptureKind::AudioVideo
     >;
 };
 
@@ -171,15 +132,9 @@ template<> struct EnumTraits<WebCore::MediaProducerMediaState> {
         WebCore::MediaProducerMediaState::HasInterruptedAudioCaptureDevice,
         WebCore::MediaProducerMediaState::HasInterruptedVideoCaptureDevice,
         WebCore::MediaProducerMediaState::HasUserInteractedWithMediaElement,
-        WebCore::MediaProducerMediaState::HasActiveScreenCaptureDevice,
-        WebCore::MediaProducerMediaState::HasMutedScreenCaptureDevice,
-        WebCore::MediaProducerMediaState::HasInterruptedScreenCaptureDevice,
-        WebCore::MediaProducerMediaState::HasActiveWindowCaptureDevice,
-        WebCore::MediaProducerMediaState::HasMutedWindowCaptureDevice,
-        WebCore::MediaProducerMediaState::HasInterruptedWindowCaptureDevice,
-        WebCore::MediaProducerMediaState::HasActiveSystemAudioCaptureDevice,
-        WebCore::MediaProducerMediaState::HasMutedSystemAudioCaptureDevice,
-        WebCore::MediaProducerMediaState::HasInterruptedSystemAudioCaptureDevice
+        WebCore::MediaProducerMediaState::HasActiveDisplayCaptureDevice,
+        WebCore::MediaProducerMediaState::HasMutedDisplayCaptureDevice,
+        WebCore::MediaProducerMediaState::HasInterruptedDisplayCaptureDevice
     >;
 };
 
@@ -189,9 +144,7 @@ template<> struct EnumTraits<WebCore::MediaProducerMutedState> {
         WebCore::MediaProducerMutedState::AudioIsMuted,
         WebCore::MediaProducerMutedState::AudioCaptureIsMuted,
         WebCore::MediaProducerMutedState::VideoCaptureIsMuted,
-        WebCore::MediaProducerMutedState::ScreenCaptureIsMuted,
-        WebCore::MediaProducerMutedState::WindowCaptureIsMuted,
-        WebCore::MediaProducerMutedState::SystemAudioCaptureIsMuted
+        WebCore::MediaProducerMutedState::ScreenCaptureIsMuted
     >;
 };
 

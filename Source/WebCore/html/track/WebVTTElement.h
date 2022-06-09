@@ -63,13 +63,13 @@ public:
 
     static const QualifiedName& voiceAttributeName()
     {
-        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom(), "voice"_s, nullAtom());
+        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom(), "voice", nullAtom());
         return voiceAttr;
     }
     
     static const QualifiedName& langAttributeName()
     {
-        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom(), "lang"_s, nullAtom());
+        static NeverDestroyed<QualifiedName> voiceAttr(nullAtom(), "lang", nullAtom());
         return voiceAttr;
     }
 

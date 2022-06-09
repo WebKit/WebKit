@@ -4,46 +4,18 @@ import os
 import subprocess
 import sys
 
-LOCATION = r'{{ location }}'
+LOCATION = '{{ location }}'
 SPACING = 8
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 
-sys.path.append(SCRIPTS)
-from webkitpy.common.checkout.diff_parser import DiffParser
-
-def message_from_staged_changelogs():
-    try:
-        diff = subprocess.check_output(['git', 'diff', '--staged'])
-    except subprocess.CalledProcessError:
-        return ''
-
-    modified_files = DiffParser(diff.splitlines()).files
-    message = ''
-    for path, parsed_diff in modified_files.items():
-        if not path.endswith('ChangeLog'):
-            continue
-
-        # Ignore first line (date, name, email) and second line (empty).
-        diff_lines = parsed_diff.lines[2:]
-
-        # Get added lines and strip leading 8 characters indentation.
-        lines = [line[2][SPACING:] for line in diff_lines if not line[0]]
-
-        message += '\n'.join(lines)
-
-    return message
 
 def message(source=None, sha=None):
-    msg = message_from_staged_changelogs()
-    if msg:
-        return msg
-
     dirname = None
     commit_message = []
 
     try:
         for line in subprocess.check_output(
-            ['perl', os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters'],
+            [os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters'],
             **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
         ).splitlines():
             if line == '~':
@@ -58,39 +30,25 @@ def message(source=None, sha=None):
                 dirname = line.split(':')[0]
                 continue
 
-        return '''{title}
-{bugs}
+        return '''Need a short description (OOPS!).
+Need the bug URL (OOPS!).
 
 Reviewed by NOBODY (OOPS!).
 
-{content}
-'''.format(
-        title=os.environ.get('COMMIT_MESSAGE_TITLE', '') or 'Need a short description (OOPS!).',
-        bugs=os.environ.get('COMMIT_MESSAGE_BUG', '') or 'Need the bug URL (OOPS!).',
-        content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
-    )
+{}
+'''.format('\n'.join(commit_message))
 
     except subprocess.CalledProcessError:
         return ''
 
 def main(file_name=None, source=None, sha=None):
-    with open(file_name, 'r') as commit_message_file:
-        content = commit_message_file.read()
-
-    if source not in (None, 'commit', 'template', 'merge'):
-        return 0
-    
-    if source == 'merge' and not content.startswith('Revert'):
-        return 0
-
-    if os.environ.get('GIT_EDITOR', '') == ':':
-        # When there's no editor being launched, do nothing.
+    if source and source != 'commit':
         return 0
 
     with open(file_name, 'w') as commit_message_file:
         if sha:
             commit_message_file.write(subprocess.check_output(
-                ['git', 'log', 'HEAD', '-1', '--pretty=format:%B'],
+                ['{{ git }}', 'log', 'HEAD', '-1', '--pretty=format:%B'],
                 **(dict(encoding='utf-8') if sys.version_info > (3, 5) else dict())
             ))
         else:
@@ -106,7 +64,7 @@ def main(file_name=None, source=None, sha=None):
                 commit_message_file.write('# {}\n'.format(line))
             commit_message_file.write('\n')
         for line in subprocess.check_output(
-            ['git', 'status'],
+            ['{{ git }}', 'status'],
             **(dict(encoding='utf-8') if sys.version_info > (3, 5) else dict())
         ).splitlines():
             commit_message_file.write('# {}\n'.format(line))

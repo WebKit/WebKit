@@ -10,5 +10,4 @@ Testing animationFillMode: PASS
 Testing animationPlayState: PASS
 Testing animationIterationCount: PASS
 Testing animationTimingFunction: PASS
-Testing animationComposition: PASS
 

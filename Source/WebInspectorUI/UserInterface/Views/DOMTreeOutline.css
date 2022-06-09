@@ -48,12 +48,13 @@
 }
 
 .tree-outline.dom.non-selectable {
-    user-select: text;
+    -webkit-user-select: text;
 }
 
 .tree-outline.dom li .selection-area {
     position: absolute;
-    inset-inline: 0;
+    left: 0;
+    right: 0;
     height: 15px;
     z-index: -1;
 }

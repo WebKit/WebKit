@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,17 +139,20 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     IntSize backingStoreSize = paintRect.size();
     backingStoreSize.scale(scaleFactor);
 
-    auto snapshot = WebImage::create(backingStoreSize, snapshotOptionsToImageOptions(options | SnapshotOptionsShareable), DestinationColorSpace::SRGB());
-    if (!snapshot)
+    auto backingStore = ShareableBitmap::createShareable(backingStoreSize, { });
+    if (!backingStore)
         return nullptr;
 
-    auto& graphicsContext = snapshot->context();
-    graphicsContext.scale(scaleFactor);
+    auto graphicsContext = backingStore->createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
+
+    graphicsContext->scale(scaleFactor);
 
     paintRect.move(frameView->frameRect().x(), frameView->frameRect().y());
     paintRect.moveBy(-frameView->scrollPosition());
 
-    graphicsContext.translate(-paintRect.location());
+    graphicsContext->translate(-paintRect.location());
 
     OptionSet<PaintBehavior> oldPaintBehavior = frameView->paintBehavior();
     OptionSet<PaintBehavior> paintBehavior = oldPaintBehavior;
@@ -162,12 +165,12 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     frameView->setPaintBehavior(paintBehavior);
     document->updateLayout();
 
-    frameView->paint(graphicsContext, paintRect);
+    frameView->paint(*graphicsContext, paintRect);
     frameView->setPaintBehavior(oldPaintBehavior);
 
     frame->selection().setSelection(oldSelection);
 
-    return snapshot;
+    return WebImage::create(backingStore.releaseNonNull());
 }
 
 String InjectedBundleRangeHandle::text() const

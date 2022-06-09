@@ -1,6 +1,6 @@
 
-PASS value dirty flag behavior after setRangeText on textarea not in body
-PASS value dirty flag behavior after setRangeText on input not in body
+FAIL value dirty flag behavior after setRangeText on textarea not in body assert_equals: Calling setRangeText should set the value dirty flag expected "somexyzing" but got "set range text"
+FAIL value dirty flag behavior after setRangeText on input not in body assert_equals: Calling setRangeText should set the value dirty flag expected "somexyzing" but got "set range text"
 PASS value dirty flag behavior after setRangeText on textarea in body
 PASS value dirty flag behavior after setRangeText on input in body
 PASS value dirty flag behavior after setRangeText on textarea in body with parsed default value
@@ -11,6 +11,6 @@ PASS value dirty flag behavior after setRangeText on focused then blurred textar
 PASS value dirty flag behavior after setRangeText on focused then blurred input
 PASS selection is collapsed to the end after changing values on input
 PASS selection is not collapsed to the end when value is set to its existing value on input
-PASS selection is collapsed to the end after changing values on textarea
+FAIL selection is collapsed to the end after changing values on textarea assert_equals: element.selectionStart should be value.length expected 3 but got 0
 PASS selection is not collapsed to the end when value is set to its existing value on textarea
 

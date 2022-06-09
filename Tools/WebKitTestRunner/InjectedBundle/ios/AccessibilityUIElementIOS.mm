@@ -82,7 +82,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIAColumnCount;
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
-- (BOOL)accessibilityARIAIsBusy;
 - (NSString *)accessibilityInvalidStatus;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
@@ -105,15 +104,12 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (BOOL)accessibilityIsInDescriptionListDefinition;
 - (BOOL)accessibilityIsInDescriptionListTerm;
 - (BOOL)_accessibilityIsInTableCell;
-- (BOOL)accessibilityIsAttributeSettable:(NSString *)attributeName;
-- (BOOL)accessibilityIsRequired;
 - (id)_accessibilityTableAncestor;
 - (id)_accessibilityLandmarkAncestor;
 - (id)_accessibilityListAncestor;
 - (id)_accessibilityPhotoDescription;
 - (NSArray *)accessibilityImageOverlayElements;
 - (NSRange)accessibilityVisibleCharacterRange;
-- (NSString *)_accessibilityWebRoleAsString;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -489,7 +485,7 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 
 bool AccessibilityUIElement::isAttributeSettable(JSStringRef attribute)
 {
-    return [m_element accessibilityIsAttributeSettable:[NSString stringWithJSStringRef:attribute]];
+    return false;
 }
 
 bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
@@ -504,7 +500,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::parameterizedAttributeNames()
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::role()
 {
-    return [[m_element _accessibilityWebRoleAsString] createJSStringRef];
+    return createJSString();
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::subrole()
@@ -593,7 +589,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::lineRectsAndText() const
 
 double AccessibilityUIElement::intValue() const
 {
-    return [[m_element accessibilityValue] integerValue];
+    return 0;
 }
 
 double AccessibilityUIElement::minValue()
@@ -632,11 +628,6 @@ bool AccessibilityUIElement::isDecrementActionSupported()
     return false;
 }
 
-bool AccessibilityUIElement::isBusy() const
-{
-    return [m_element accessibilityARIAIsBusy];
-}
-
 bool AccessibilityUIElement::isEnabled()
 {
     return false;
@@ -644,7 +635,7 @@ bool AccessibilityUIElement::isEnabled()
 
 bool AccessibilityUIElement::isRequired() const
 {
-    return [m_element accessibilityIsRequired];
+    return false;
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const

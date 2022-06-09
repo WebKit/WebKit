@@ -39,18 +39,19 @@ template<typename> class ExceptionOr;
 class CSSMatrixComponent : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSMatrixComponent);
 public:
-    static Ref<CSSTransformComponent> create(Ref<DOMMatrixReadOnly>&&, std::optional<CSSMatrixComponentOptions>&&);
+    static Ref<CSSTransformComponent> create(Ref<DOMMatrixReadOnly>&& matrix, CSSMatrixComponentOptions&& options = CSSMatrixComponentOptions { });
     
     DOMMatrix& matrix();
     void setMatrix(Ref<DOMMatrix>&&);
-
-    void serialize(StringBuilder&) const final;
+    
+    String toString() const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::MatrixComponent; }
 private:
-    CSSMatrixComponent(Ref<DOMMatrixReadOnly>&&, std::optional<CSSMatrixComponentOptions>&&);
+    CSSMatrixComponent(Ref<DOMMatrixReadOnly>&&, CSSMatrixComponentOptions&&);
     Ref<DOMMatrix> m_matrix;
+    CSSMatrixComponentOptions m_options;
 };
 
 } // namespace WebCore

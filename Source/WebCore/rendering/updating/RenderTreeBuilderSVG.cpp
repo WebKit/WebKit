@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RenderTreeBuilderSVG.h"
 
-#include "LegacyRenderSVGContainer.h"
 #include "LegacyRenderSVGRoot.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGInline.h"
@@ -51,16 +50,7 @@ void RenderTreeBuilder::SVG::attach(LegacyRenderSVGRoot& parent, RenderPtr<Rende
     SVGResourcesCache::clientWasAddedToTree(childToAdd);
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 void RenderTreeBuilder::SVG::attach(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    auto& childToAdd = *child;
-    m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(childToAdd);
-}
-#endif
-
-void RenderTreeBuilder::SVG::attach(LegacyRenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     auto& childToAdd = *child;
     m_builder.attachToRenderElement(parent, WTFMove(child), beforeChild);
@@ -127,15 +117,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGInline& parent, 
     return takenChild;
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(RenderSVGContainer& parent, RenderObject& child)
-{
-    SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return m_builder.detachFromRenderElement(parent, child);
-}
-#endif
-
-RenderPtr<RenderObject> RenderTreeBuilder::SVG::detach(LegacyRenderSVGContainer& parent, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
     return m_builder.detachFromRenderElement(parent, child);

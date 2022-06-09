@@ -49,7 +49,7 @@ public:
     bool canBreakBefore(const LazyLineBreakIterator&) const;
    
 private:
-    ASCIILiteral renderName() const override { return "RenderRubyText"_s; }
+    const char* renderName() const override { return "RenderRubyText"; }
     bool isRubyText() const override { return true; }
 
     bool avoidsFloats() const override;

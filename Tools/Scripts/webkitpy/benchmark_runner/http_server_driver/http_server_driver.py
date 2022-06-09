@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from abc import abstractmethod, ABCMeta
 from six import with_metaclass
 
@@ -23,7 +25,4 @@ class HTTPServerDriver(with_metaclass(ABCMeta, object)):
 
     @abstractmethod
     def set_device_id(self, device_id):
-        pass
-
-    def set_http_log(self, log_path):
         pass

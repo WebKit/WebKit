@@ -638,7 +638,7 @@ struct ParsedRange {
         size_t min = 0;
         size_t max = 0;
         ASSERT(string.length() > 6);
-        ASSERT(string.startsWith("bytes="_s));
+        ASSERT(string.startsWith("bytes="));
         for (size_t i = 6; i < string.length(); ++i) {
             if (isASCIIDigit(string[i])) {
                 if (parsingMin)
@@ -927,8 +927,7 @@ TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
 }
 #endif
 
-// FIXME: Re-enable this test once webkit.org/b/230494 is resolved.
-TEST(WebpagePreferences, DISABLED_WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
+TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 #if PLATFORM(IOS_FAMILY)

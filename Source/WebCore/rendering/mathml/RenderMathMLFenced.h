@@ -50,7 +50,7 @@ public:
 
 private:
     bool isRenderMathMLFenced() const final { return true; }
-    ASCIILiteral renderName() const final { return "RenderMathMLFenced"_s; }
+    const char* renderName() const final { return "RenderMathMLFenced"; }
 
     String m_open;
     String m_close;

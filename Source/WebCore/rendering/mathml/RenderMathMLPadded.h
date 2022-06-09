@@ -38,7 +38,7 @@ public:
     RenderMathMLPadded(MathMLPaddedElement&, RenderStyle&&);
 
 private:
-    ASCIILiteral renderName() const final { return "RenderMathMLPadded"_s; }
+    const char* renderName() const final { return "RenderMathMLPadded"; }
     bool isRenderMathMLPadded() const final { return true; }
 
     void computePreferredLogicalWidths() final;

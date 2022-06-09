@@ -32,5 +32,8 @@ messages -> RemoteWebInspectorUI {
     ShowConsole()
     ShowResources()
 
+    DidSave(String url)
+    DidAppend(String url)
+
     SendMessageToFrontend(String message)
 }

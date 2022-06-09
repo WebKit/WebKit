@@ -40,13 +40,13 @@
     position: static !important;
     opacity: 1 !important;
     transform: none !important;
-    mask: none !important;
+    -webkit-mask: none !important;
     clip: none !important;
     filter: none !important;
     transition: none !important;
     -webkit-box-reflect: none !important;
     perspective: none !important;
-    transform-style: flat !important;
+    -webkit-transform-style: flat !important;
     overflow: visible !important;
     contain: none !important;
 }

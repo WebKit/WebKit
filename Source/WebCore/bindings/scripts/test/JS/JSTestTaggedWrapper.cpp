@@ -22,8 +22,7 @@
 #include "JSTestTaggedWrapper.h"
 
 #include "ActiveDOMObject.h"
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
+#include "DOMIsoSubspaces.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMExceptionHandling.h"
@@ -61,7 +60,7 @@ public:
 
     DECLARE_INFO;
     template<typename CellType, JSC::SubspaceAccess>
-    static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)
+    static JSC::IsoSubspace* subspaceFor(JSC::VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestTaggedWrapperPrototype, Base);
         return &vm.plainObjectSpace();
@@ -83,7 +82,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestTaggedWrapperPrototype, JSTestTaggedWr
 
 using JSTestTaggedWrapperDOMConstructor = JSDOMConstructorNotConstructable<JSTestTaggedWrapper>;
 
-template<> const ClassInfo JSTestTaggedWrapperDOMConstructor::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperDOMConstructor) };
+template<> const ClassInfo JSTestTaggedWrapperDOMConstructor::s_info = { "TestTaggedWrapper", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperDOMConstructor) };
 
 template<> JSValue JSTestTaggedWrapperDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -104,10 +103,10 @@ template<> void JSTestTaggedWrapperDOMConstructor::initializeProperties(VM& vm, 
 
 static const HashTableValue JSTestTaggedWrapperPrototypeTableValues[] =
 {
-    { "constructor"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTaggedWrapperConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTaggedWrapperConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestTaggedWrapperPrototype::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperPrototype) };
+const ClassInfo JSTestTaggedWrapperPrototype::s_info = { "TestTaggedWrapper", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperPrototype) };
 
 void JSTestTaggedWrapperPrototype::finishCreation(VM& vm)
 {
@@ -116,7 +115,7 @@ void JSTestTaggedWrapperPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestTaggedWrapper::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapper) };
+const ClassInfo JSTestTaggedWrapper::s_info = { "TestTaggedWrapper", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapper) };
 
 JSTestTaggedWrapper::JSTestTaggedWrapper(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTaggedWrapper>&& impl)
     : JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>>(structure, globalObject, WTFMove(impl))
@@ -126,7 +125,7 @@ JSTestTaggedWrapper::JSTestTaggedWrapper(Structure* structure, JSDOMGlobalObject
 void JSTestTaggedWrapper::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     static_assert(!std::is_base_of<ActiveDOMObject, TestTaggedWrapper>::value, "Interface is not marked as [ActiveDOMObject] even though implementation class subclasses ActiveDOMObject.");
 
@@ -157,20 +156,33 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestTaggedWrapperConstructor, (JSGlobalObject* lexica
 {
     VM& vm = JSC::getVM(lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* prototype = jsDynamicCast<JSTestTaggedWrapperPrototype*>(JSValue::decode(thisValue));
+    auto* prototype = jsDynamicCast<JSTestTaggedWrapperPrototype*>(vm, JSValue::decode(thisValue));
     if (UNLIKELY(!prototype))
         return throwVMTypeError(lexicalGlobalObject, throwScope);
     return JSValue::encode(JSTestTaggedWrapper::getConstructor(JSC::getVM(lexicalGlobalObject), prototype->globalObject()));
 }
 
-JSC::GCClient::IsoSubspace* JSTestTaggedWrapper::subspaceForImpl(JSC::VM& vm)
+JSC::IsoSubspace* JSTestTaggedWrapper::subspaceForImpl(JSC::VM& vm)
 {
-    return WebCore::subspaceForImpl<JSTestTaggedWrapper, UseCustomHeapCellType::No>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForTestTaggedWrapper.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForTestTaggedWrapper = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForTestTaggedWrapper.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForTestTaggedWrapper = WTFMove(space); }
-    );
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    auto& spaces = clientData.subspaces();
+    if (auto* space = spaces.m_subspaceForTestTaggedWrapper.get())
+        return space;
+    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSTestTaggedWrapper> || !JSTestTaggedWrapper::needsDestruction);
+    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSTestTaggedWrapper>)
+        spaces.m_subspaceForTestTaggedWrapper = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSTestTaggedWrapper);
+    else
+        spaces.m_subspaceForTestTaggedWrapper = makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSTestTaggedWrapper);
+    auto* space = spaces.m_subspaceForTestTaggedWrapper.get();
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+    void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSTestTaggedWrapper::visitOutputConstraints;
+    void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+    if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+        clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    return space;
 }
 
 void JSTestTaggedWrapper::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
@@ -233,9 +245,9 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
     return wrap(lexicalGlobalObject, globalObject, impl);
 }
 
-TestTaggedWrapper* JSTestTaggedWrapper::toWrapped(JSC::VM&, JSC::JSValue value)
+TestTaggedWrapper* JSTestTaggedWrapper::toWrapped(JSC::VM& vm, JSC::JSValue value)
 {
-    if (auto* wrapper = jsDynamicCast<JSTestTaggedWrapper*>(value))
+    if (auto* wrapper = jsDynamicCast<JSTestTaggedWrapper*>(vm, value))
         return &wrapper->wrapped();
     return nullptr;
 }

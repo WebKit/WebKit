@@ -25,13 +25,10 @@ import re
 import requests
 import six
 import sys
-import webkitcorepy
 
 from datetime import datetime
 from requests.auth import HTTPBasicAuth
-from webkitbugspy import User
-from webkitbugspy.github import Tracker
-from webkitcorepy import decorators
+from webkitcorepy import credentials, decorators
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
@@ -42,12 +39,9 @@ class GitHub(Scm):
     EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
 
     class PRGenerator(Scm.PRGenerator):
-        SUPPORTS_DRAFTS = True
-
         def PullRequest(self, data):
             if not data:
                 return None
-            issue_ref = data.get('_links', {}).get('issue', {}).get('href')
             return PullRequest(
                 number=data['number'],
                 title=data.get('title'),
@@ -61,10 +55,8 @@ class GitHub(Scm):
                 ).get(data.get('state'), None),
                 generator=self,
                 metadata=dict(
-                    issue=self.repository.tracker.from_string(issue_ref) if issue_ref else None,
-                    full_name=data.get('head', {}).get('repo', {}).get('full_name')
-                ), url='{}/pull/{}'.format(self.repository.url, data['number']),
-                draft=data['draft'],
+                    issue=data.get('_links', {}).get('issue', {}).get('href'),
+                ),
             )
 
         def get(self, number):
@@ -74,79 +66,62 @@ class GitHub(Scm):
             assert opened in (True, False, None)
 
             user, _ = self.repository.credentials()
-            heads = [head]
-            if user and head:
-                heads.insert(0, '{}:{}'.format(user, head))
-            for qhead in heads:
-                data = self.repository.request('pulls', params=dict(
-                    state={
-                        None: 'all',
-                        True: 'open',
-                        False: 'closed',
-                    }.get(opened),
-                    base=base,
-                    head=qhead,
-                ))
-                if not data:
+            data = self.repository.request('pulls', params=dict(
+                state={
+                    None: 'all',
+                    True: 'open',
+                    False: 'closed',
+                }.get(opened),
+                base=base,
+                head='{}:{}'.format(user, head) if user and head else head,
+            ))
+            for datum in data or []:
+                if base and datum['base']['ref'] != base:
                     continue
-                for datum in data or []:
-                    if base and datum['base']['ref'] != base:
-                        continue
-                    if head and not datum['head']['ref'].endswith(head.split(':')[-1]):
-                        continue
-                    if datum.get('head', {}).get('repo', {}).get('owner', {}).get('login', None) not in (user, None):
-                        continue
-                    yield self.PullRequest(datum)
-                break
+                if head and not datum['head']['ref'].endswith(head.split(':')[-1]):
+                    continue
+                yield self.PullRequest(datum)
 
-        def create(self, head, title, body=None, commits=None, base=None, draft=None):
-            draft = False if draft is None else draft
+        def create(self, head, title, body=None, commits=None, base=None):
             for key, value in dict(head=head, title=title).items():
                 if not value:
                     raise ValueError("Must define '{}' when creating pull-request".format(key))
 
             user, _ = self.repository.credentials(required=True)
-            url = '{api_url}/repos/{owner}/{name}/pulls'.format(
-                api_url=self.repository.api_url,
-                owner=self.repository.owner,
-                name=self.repository.name,
-            )
-            response = self.repository.session.post(
-                url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+            response = requests.post(
+                '{api_url}/repos/{owner}/{name}/pulls'.format(
+                    api_url=self.repository.api_url,
+                    owner=self.repository.owner,
+                    name=self.repository.name,
+                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=dict(
                     title=title,
                     body=PullRequest.create_body(body, commits),
                     base=base or self.repository.default_branch,
                     head='{}:{}'.format(user, head),
-                    draft=draft,
                 ),
             )
-            if response.status_code == 422:
-                sys.stderr.write('Validation failed when creating pull request\n')
-                sys.stderr.write('Does a pull request against this branch already exist?\n')
-                return None
             if response.status_code // 100 != 2:
-                sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
-                message = response.json().get('message')
-                if message:
-                    sys.stderr.write('Message: {}\n'.format(message))
-                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
                 return None
             result = self.PullRequest(response.json())
 
+            # FIXME: Move this to bug tracking library
             issue = result._metadata.get('issue')
-            if not issue or not issue.tracker or not issue.assign(issue.tracker.me()):
+            if not issue or requests.post(
+                '{}/assignees'.format(issue),
+                auth=HTTPBasicAuth(*self.repository.credentials()),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(assignees=[user]),
+            ).status_code // 100 != 2:
                 sys.stderr.write("Failed to assign '{}' to '{}'\n".format(result, user))
             return result
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None, draft=None):
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None):
             if not isinstance(pull_request, PullRequest):
                 raise ValueError("Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
             if not any((head, title, body, commits, base)) and opened is None:
                 raise ValueError('No arguments to update pull-request provided')
-            if draft is not None:
-                sys.stderr.write('GitHub does not allow editing draft state via API\n')
 
             user, _ = self.repository.credentials(required=True)
             updates = dict(
@@ -159,14 +134,13 @@ class GitHub(Scm):
                 updates['body'] = PullRequest.create_body(body, commits)
             if opened is not None:
                 updates['state'] = 'open' if opened else 'closed'
-            url = '{api_url}/repos/{owner}/{name}/pulls/{number}'.format(
-                api_url=self.repository.api_url,
-                owner=self.repository.owner,
-                name=self.repository.name,
-                number=pull_request.number,
-            )
-            response = self.repository.session.post(
-                url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+            response = requests.post(
+                '{api_url}/repos/{owner}/{name}/pulls/{number}'.format(
+                    api_url=self.repository.api_url,
+                    owner=self.repository.owner,
+                    name=self.repository.name,
+                    number=pull_request.number,
+                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=updates,
             )
@@ -174,11 +148,6 @@ class GitHub(Scm):
                 pull_request._opened = False
                 return pull_request
             if response.status_code // 100 != 2:
-                sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
-                message = response.json().get('message')
-                if message:
-                    sys.stderr.write('Message: {}\n'.format(message))
-                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
                 return None
             data = response.json()
 
@@ -194,15 +163,20 @@ class GitHub(Scm):
                 closed=False,
             ).get(data.get('state'), None)
             pull_request.generator = self
-            issue_ref = data.get('_links', {}).get('issue', {}).get('href')
             pull_request._metadata = dict(
-                issue=self.repository.tracker.from_string(issue_ref) if issue_ref else None,
+                issue=data.get('_links', {}).get('issue', {}).get('href'),
             )
 
+            # FIXME: Move this to bug tracking library
             assignees = [node.get('login') for node in data.get('assignees', []) if node.get('login')]
             if user not in assignees:
                 issue = pull_request._metadata.get('issue')
-                if not issue or not issue.tracker or not issue.assign(issue.tracker.me()):
+                if not issue or requests.post(
+                        '{}/assignees'.format(issue),
+                        auth=HTTPBasicAuth(*self.repository.credentials()),
+                        headers=dict(Accept='application/vnd.github.v3+json'),
+                        json=dict(assignees=assignees + [user]),
+                ).status_code // 100 != 2:
                     sys.stderr.write("Failed to assign '{}' to '{}'\n".format(pull_request, user))
 
             return pull_request
@@ -212,11 +186,18 @@ class GitHub(Scm):
             if result:
                 return result
 
-            found = self.repository.tracker.user(username=username)
-            if found:
-                result = self.repository.contributors.create(found.name, found.email)
-            else:
-                result = self.repository.contributors.create(username)
+            response = requests.get(
+                '{api_url}/users/{username}'.format(
+                    api_url=self.repository.api_url,
+                    username=username,
+                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+            )
+            if response.status_code // 100 != 2:
+                return Contributor(username)
+
+            data = response.json()
+            result = self.repository.contributors.create(data.get('name', username) or username, data.get('email'))
             result.github = username
             self.repository.contributors[username] = result
             return result
@@ -253,7 +234,14 @@ class GitHub(Scm):
                 issue = pull_request._metadata.get('issue')
             if not issue:
                 raise self.repository.Exception('Failed to find issue underlying pull-request')
-            issue.add_comment(content)
+            response = requests.post(
+                '{}/comments'.format(issue),
+                auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(body=content),
+            )
+            if response.status_code // 100 != 2:
+                sys.stderr.write("Failed to add comment to '{}'\n".format(pull_request))
 
         def comments(self, pull_request):
             issue = pull_request._metadata.get('issue')
@@ -266,11 +254,23 @@ class GitHub(Scm):
                 issue = pull_request._metadata.get('issue')
             if not issue:
                 raise self.repository.Exception('Failed to find issue underlying pull-request')
-            for comment in issue.comments:
+            response = requests.get(
+                '{}/comments'.format(issue),
+                auth=HTTPBasicAuth(*self.repository.credentials()),
+                headers=dict(Accept='application/vnd.github.v3+json'),
+            )
+            for node in response.json() if response.status_code // 100 == 2 else []:
+                user = node.get('user', {}).get('login')
+                if not user:
+                    continue
+                tm = node.get('updated_at', node.get('created_at'))
+                if tm:
+                    tm = int(calendar.timegm(datetime.strptime(tm, '%Y-%m-%dT%H:%M:%SZ').timetuple()))
+
                 yield PullRequest.Comment(
-                    author=self._contributor(comment.user.username),
-                    timestamp=comment.timestamp,
-                    content=comment.content,
+                    author=self._contributor(user),
+                    timestamp=tm,
+                    content=node.get('body'),
                 )
 
 
@@ -278,16 +278,13 @@ class GitHub(Scm):
     def is_webserver(cls, url):
         return True if cls.URL_RE.match(url) else False
 
-    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None, proxies=None):
+    def __init__(self, url, dev_branches=None, prod_branches=None, contributors=None, id=None):
         match = self.URL_RE.match(url)
         if not match:
             raise self.Exception("'{}' is not a valid GitHub project".format(url))
         self.api_url = 'https://api.github.{}'.format(match.group('domain'))
         self.owner = match.group('owner')
         self.name = match.group('repository')
-        self.session = requests.Session()
-        if proxies:
-            self.session.proxies = proxies
         self._hash_link_re = re.compile(r'/{owner}/{name}/[^/]*commit[^/]*/(?P<hash>[0-9a-f]+)'.format(
             owner=self.owner,
             name=self.name,
@@ -302,14 +299,20 @@ class GitHub(Scm):
         )
 
         self.pull_requests = self.PRGenerator(self)
-        users = User.Mapping()
-        for contributor in contributors or []:
-            if contributor.github:
-                users.create(contributor.name, contributor.github, contributor.emails)
-        self.tracker = Tracker(url, users=users, session=self.session)
 
-    def credentials(self, required=True, validate=False, save_in_keyring=None):
-        return self.tracker.credentials(required=required, validate=validate, save_in_keyring=save_in_keyring)
+    def credentials(self, required=True):
+        username, token = credentials(
+            url=self.api_url,
+            required=required,
+            name=self.url.split('/')[2].replace('.', '_').upper(),
+            prompt='''GitHub's API
+Please generate a 'Personal access token' via 'Developer settings' with 'repo' and 'workflow' access
+for your {} user'''.format(self.url.split('/')[2]),
+            key_name='token',
+        )
+        if username:
+            username = username.split('@')[0]
+        return username, token
 
     @property
     def is_git(self):
@@ -336,7 +339,7 @@ class GitHub(Scm):
             name=self.name,
             path='/{}'.format(path) if path else '',
         )
-        response = self.session.get(url, params=params, headers=headers, auth=auth)
+        response = requests.get(url, params=params, headers=headers, auth=auth)
         if authenticated is None and not auth and response.status_code // 100 == 4:
             return self.request(path=path, params=params, headers=headers, authenticated=True, paginate=paginate)
         if response.status_code != 200:
@@ -344,14 +347,12 @@ class GitHub(Scm):
             message = response.json().get('message')
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
-            if auth:
-                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
             return None
         result = response.json()
 
         while paginate and isinstance(response.json(), list) and len(response.json()) == params['per_page']:
             params['page'] += 1
-            response = self.session.get(url, params=params, headers=headers, auth=auth)
+            response = requests.get(url, params=params, headers=headers, auth=auth)
             if response.status_code != 200:
                 raise self.Exception("Failed to assemble pagination requests for '{}', failed on page {}".format(url, params['page']))
             result += response.json()
@@ -362,7 +363,7 @@ class GitHub(Scm):
 
         # We need the number of parents a commit has to construct identifiers, which is not something GitHub's
         # API lets us find, although the UI does have the information
-        response = self.session.get('{}/tree/{}'.format(self.url, ref))
+        response = requests.get('{}/tree/{}'.format(self.url, ref))
         if response.status_code != 200:
             raise self.Exception("Failed to query {}'s UI to find the number of parents {} has".format(self.url, ref))
 
@@ -393,7 +394,7 @@ class GitHub(Scm):
     def _branches_for(self, hash):
         # We need to find the branch that a commit is on. GitHub's UI provides this information, but the only way to
         # retrieve this information via the API would be to check all branches for the commit, so we scrape the UI.
-        response = self.session.get('{}/branch_commits/{}'.format(self.url, hash))
+        response = requests.get('{}/branch_commits/{}'.format(self.url, hash))
         if response.status_code != 200:
             return []
 
@@ -420,6 +421,7 @@ class GitHub(Scm):
             return [self.default_branch]
         return sorted([details.get('name') for details in response if details.get('name')])
 
+    @property
     def tags(self):
         response = self.request('tags')
         if not response:

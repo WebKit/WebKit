@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +25,12 @@
 
 #pragma once
 
+#include "AlphaPremultiplication.h"
+#include "DestinationColorSpace.h"
 #include "IntSize.h"
 #include "PixelBufferFormat.h"
-#include <wtf/RefCounted.h>
+#include "PixelFormat.h"
+#include <JavaScriptCore/Uint8ClampedArray.h>
 
 namespace WTF {
 class TextStream;
@@ -35,39 +38,85 @@ class TextStream;
 
 namespace WebCore {
 
-class PixelBuffer : public RefCounted<PixelBuffer> {
+class PixelBuffer {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
-    WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
+    static bool supportedPixelFormat(PixelFormat);
 
-    WEBCORE_EXPORT virtual ~PixelBuffer();
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
+
+    PixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
+    PixelBuffer(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
+    WEBCORE_EXPORT ~PixelBuffer();
+
+    PixelBuffer(PixelBuffer&&) = default;
+    PixelBuffer& operator=(PixelBuffer&&) = default;
 
     const PixelBufferFormat& format() const { return m_format; }
     const IntSize& size() const { return m_size; }
+    JSC::Uint8ClampedArray& data() const { return m_data.get(); }
 
-    uint8_t* bytes() const { return m_bytes; }
-    size_t sizeInBytes() const { return m_sizeInBytes; }
+    Ref<JSC::Uint8ClampedArray>&& takeData() { return WTFMove(m_data); }
 
-    virtual bool isByteArrayPixelBuffer() const { return false; }
-    virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
+    PixelBuffer deepClone() const;
 
-    bool setRange(const uint8_t* data, size_t dataByteLength, size_t byteOffset);
-    bool zeroRange(size_t byteOffset, size_t rangeByteLength);
-    void zeroFill() { zeroRange(0, sizeInBytes()); }
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<PixelBuffer> decode(Decoder&);
 
-    WEBCORE_EXPORT uint8_t item(size_t index) const;
-    void set(size_t index, double value);
+private:
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
 
-protected:
-    WEBCORE_EXPORT PixelBuffer(const PixelBufferFormat&, const IntSize&, uint8_t* bytes, size_t sizeInBytes);
-    
     WEBCORE_EXPORT static CheckedUint32 computeBufferSize(const PixelBufferFormat&, const IntSize&);
 
     PixelBufferFormat m_format;
     IntSize m_size;
-
-    uint8_t* m_bytes { nullptr };
-    size_t m_sizeInBytes { 0 };
+    Ref<JSC::Uint8ClampedArray> m_data;
 };
 
-} // namespace WebCore
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PixelBuffer&);
+
+template<class Encoder> void PixelBuffer::encode(Encoder& encoder) const
+{
+    ASSERT(m_data->byteLength() == (m_size.area() * 4));
+
+    encoder << m_format;
+    encoder << m_size;
+    encoder.encodeFixedLengthData(m_data->data(), m_data->byteLength(), 1);
+}
+
+template<class Decoder> std::optional<PixelBuffer> PixelBuffer::decode(Decoder& decoder)
+{
+    std::optional<PixelBufferFormat> format;
+    decoder >> format;
+    if (!format)
+        return std::nullopt;
+
+    // FIXME: Support non-8 bit formats.
+    if (!(format->pixelFormat == PixelFormat::RGBA8 || format->pixelFormat == PixelFormat::BGRA8))
+        return std::nullopt;
+
+    std::optional<IntSize> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
+
+    auto computedBufferSize = PixelBuffer::computeBufferSize(*format, *size);
+    if (computedBufferSize.hasOverflowed())
+        return std::nullopt;
+
+    auto bufferSize = computedBufferSize;
+    if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
+        return std::nullopt;
+
+    auto result = PixelBuffer::tryCreateForDecoding(WTFMove(*format), *size, bufferSize);
+    if (!result)
+        return std::nullopt;
+
+    if (!decoder.decodeFixedLengthData(result->m_data->data(), result->m_data->byteLength(), 1))
+        return std::nullopt;
+
+    return result;
+}
+
+}

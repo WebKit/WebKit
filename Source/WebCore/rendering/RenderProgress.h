@@ -42,7 +42,7 @@ public:
     HTMLProgressElement* progressElement() const;
 
 private:
-    ASCIILiteral renderName() const override { return "RenderProgress"_s; }
+    const char* renderName() const override { return "RenderProgress"; }
     bool isProgress() const override { return true; }
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 

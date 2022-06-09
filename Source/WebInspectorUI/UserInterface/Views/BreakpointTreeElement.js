@@ -45,7 +45,6 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
         this.status.className = "status-image";
         this.status.addEventListener("mousedown", this._statusImageElementMouseDown.bind(this));
         this.status.addEventListener("click", this._statusImageElementClicked.bind(this));
-        this.status.addEventListener("dblclick", this._handleStatusImageElementDoubleClicked.bind(this));
 
         this.updateStatus();
 
@@ -84,13 +83,13 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     onenter()
     {
-        this._breakpoint.disabled = !this._breakpoint.disabled;
+        this._breakpoint.cycleToNextMode();
         return true;
     }
 
     onspace()
     {
-        this._breakpoint.disabled = !this._breakpoint.disabled;
+        this._breakpoint.cycleToNextMode();
         return true;
     }
 
@@ -216,12 +215,7 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     _statusImageElementClicked(event)
     {
-        this._breakpoint.disabled = !this._breakpoint.disabled;
-    }
-
-    _handleStatusImageElementDoubleClicked(event)
-    {
-        WI.BreakpointPopover.show(this._breakpoint, this.status);
+        this._breakpoint.cycleToNextMode();
     }
 };
 

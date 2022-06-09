@@ -76,7 +76,7 @@ void WebChromeClient::didFinishContentChangeObserving(WebCore::Frame&, WKContent
 
 void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame&)
 {
-    m_page.didScrollSelection();
+    m_page.didChangeSelection();
 }
 
 bool WebChromeClient::isStopping()
@@ -88,19 +88,17 @@ bool WebChromeClient::isStopping()
 void WebChromeClient::didLayout(LayoutType type)
 {
     if (type == Scroll)
-        m_page.didScrollSelection();
+        m_page.didChangeSelection();
 }
 
 void WebChromeClient::didStartOverflowScroll()
 {
-    // FIXME: This is only relevant for legacy touch-driven overflow in the web process (see ScrollAnimatorIOS::handleTouchEvent), and should be removed.
-    m_page.send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll(0));
+    m_page.send(Messages::WebPageProxy::ScrollingNodeScrollWillStartScroll());
 }
 
 void WebChromeClient::didEndOverflowScroll()
 {
-    // FIXME: This is only relevant for legacy touch-driven overflow in the web process (see ScrollAnimatorIOS::handleTouchEvent), and should be removed.
-    m_page.send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll(0));
+    m_page.send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll());
 }
 
 bool WebChromeClient::hasStablePageScaleFactor() const

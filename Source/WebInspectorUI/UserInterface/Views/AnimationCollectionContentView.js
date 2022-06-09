@@ -96,10 +96,10 @@ WI.AnimationCollectionContentView = class AnimationCollectionContentView extends
             return;
 
         let animation = contentView.representedObject;
-        animation.requestEffectTarget((styleable) => {
-            if (!styleable.node || !styleable.node.ownerDocument)
+        animation.requestEffectTarget((node) => {
+            if (!node || !node.ownerDocument)
                 return;
-            styleable.node.highlight();
+            node.highlight();
         });
     }
 

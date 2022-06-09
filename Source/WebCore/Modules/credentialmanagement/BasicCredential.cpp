@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BasicCredential.h"
 
-#include "AuthenticatorCoordinator.h"
-
 #if ENABLE(WEB_AUTHN)
 
 namespace WebCore {
@@ -50,14 +48,6 @@ String BasicCredential::type() const
 
     ASSERT_NOT_REACHED();
     return emptyString();
-}
-
-void BasicCredential::isConditionalMediationAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
-{
-    if (auto* page = document.page())
-        page->authenticatorCoordinator().isConditionalMediationAvailable(WTFMove(promise));
-    else
-        promise.reject(Exception { InvalidStateError });
 }
 
 } // namespace WebCore

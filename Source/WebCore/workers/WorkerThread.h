@@ -28,15 +28,11 @@
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
 #include "FetchRequestCredentials.h"
-#include "NotificationPermission.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerRegistrationData.h"
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include "WorkerType.h"
 #include <JavaScriptCore/RuntimeFlags.h>
 #include <memory>
-#include <pal/SessionID.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -77,11 +73,6 @@ public:
     FetchRequestCredentials credentials;
     Settings::Values settingsValues;
     WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
-    PAL::SessionID sessionID;
-#if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerData> serviceWorkerData;
-#endif
-    ScriptExecutionContextIdentifier clientIdentifier;
 
     WorkerParameters isolatedCopy() const;
 };
@@ -103,7 +94,6 @@ public:
 #endif
     
     JSC::RuntimeFlags runtimeFlags() const { return m_runtimeFlags; }
-    bool isInStaticScriptEvaluation() const { return m_isInStaticScriptEvaluation; }
 
 protected:
     WorkerThread(const WorkerParameters&, const ScriptBuffer& sourceCode, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const SecurityOrigin& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, JSC::RuntimeFlags);
@@ -140,7 +130,6 @@ private:
 
     RefPtr<IDBClient::IDBConnectionProxy> m_idbConnectionProxy;
     RefPtr<SocketProvider> m_socketProvider;
-    bool m_isInStaticScriptEvaluation { false };
 };
 
 } // namespace WebCore

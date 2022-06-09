@@ -27,7 +27,7 @@
     JSGenerateToJSObject,
     EnabledBySetting=CSSCustomPropertiesAndValuesEnabled
 ] dictionary DOMCSSCustomPropertyDescriptor {
-    required [AtomString] DOMString name;
+    required DOMString name;
              DOMString syntax       = "*";
     required boolean   inherits;
              DOMString initialValue;

@@ -20,12 +20,6 @@
 #include "config.h"
 #include "WebKitMimeInfo.h"
 
-/**
- * WebKitMimeInfo: (ref-func webkit_mime_info_ref) (unref-func webkit_mime_info_unref)
- *
- * Information about a MIME type.
- */
-
 struct _WebKitMimeInfo {
 };
 
@@ -68,9 +62,7 @@ void webkit_mime_info_unref(WebKitMimeInfo*)
  * webkit_mime_info_get_mime_type:
  * @info: a #WebKitMimeInfo
  *
- * Gets the MIME type.
- *
- * Returns: MIME type, as a string.
+ * Returns: the MIME type of @info
  *
  * Deprecated: 2.32
  */
@@ -83,9 +75,7 @@ const char* webkit_mime_info_get_mime_type(WebKitMimeInfo*)
  * webkit_mime_info_get_description:
  * @info: a #WebKitMimeInfo
  *
- * Gets the description of the MIME type.
- *
- * Returns: (nullable): description, as a string.
+ * Returns: the description of the MIME type of @info
  *
  * Deprecated: 2.32
  */
@@ -98,7 +88,8 @@ const char* webkit_mime_info_get_description(WebKitMimeInfo*)
  * webkit_mime_info_get_extensions:
  * @info: a #WebKitMimeInfo
  *
- * Get the list of file extensions associated to the MIME type.
+ * Get the list of file extensions associated to the
+ * MIME type of @info
  *
  * Returns: (array zero-terminated=1) (transfer none): a
  *     %NULL-terminated array of strings

@@ -3,7 +3,7 @@
 // (https://github.com/w3c/webref)
 // Source: Streams Standard (https://streams.spec.whatwg.org/)
 
-[Exposed=*, Transferable]
+[Exposed=(Window,Worker,Worklet), Transferable]
 interface ReadableStream {
   constructor(optional object underlyingSource, optional QueuingStrategy strategy = {});
 
@@ -64,7 +64,7 @@ interface mixin ReadableStreamGenericReader {
   Promise<undefined> cancel(optional any reason);
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface ReadableStreamDefaultReader {
   constructor(ReadableStream stream);
 
@@ -74,11 +74,11 @@ interface ReadableStreamDefaultReader {
 ReadableStreamDefaultReader includes ReadableStreamGenericReader;
 
 dictionary ReadableStreamDefaultReadResult {
-  any value;
-  boolean done;
+ any value;
+ boolean done;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface ReadableStreamBYOBReader {
   constructor(ReadableStream stream);
 
@@ -88,11 +88,11 @@ interface ReadableStreamBYOBReader {
 ReadableStreamBYOBReader includes ReadableStreamGenericReader;
 
 dictionary ReadableStreamBYOBReadResult {
-  (ArrayBufferView or undefined) value;
-  boolean done;
+ ArrayBufferView value;
+ boolean done;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface ReadableStreamDefaultController {
   readonly attribute unrestricted double? desiredSize;
 
@@ -101,7 +101,7 @@ interface ReadableStreamDefaultController {
   undefined error(optional any e);
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface ReadableByteStreamController {
   readonly attribute ReadableStreamBYOBRequest? byobRequest;
   readonly attribute unrestricted double? desiredSize;
@@ -111,7 +111,7 @@ interface ReadableByteStreamController {
   undefined error(optional any e);
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface ReadableStreamBYOBRequest {
   readonly attribute ArrayBufferView? view;
 
@@ -119,7 +119,7 @@ interface ReadableStreamBYOBRequest {
   undefined respondWithNewView(ArrayBufferView view);
 };
 
-[Exposed=*, Transferable]
+[Exposed=(Window,Worker,Worklet), Transferable]
 interface WritableStream {
   constructor(optional object underlyingSink, optional QueuingStrategy strategy = {});
 
@@ -143,7 +143,7 @@ callback UnderlyingSinkWriteCallback = Promise<undefined> (any chunk, WritableSt
 callback UnderlyingSinkCloseCallback = Promise<undefined> ();
 callback UnderlyingSinkAbortCallback = Promise<undefined> (optional any reason);
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface WritableStreamDefaultWriter {
   constructor(WritableStream stream);
 
@@ -157,13 +157,12 @@ interface WritableStreamDefaultWriter {
   Promise<undefined> write(optional any chunk);
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface WritableStreamDefaultController {
-  readonly attribute AbortSignal signal;
   undefined error(optional any e);
 };
 
-[Exposed=*, Transferable]
+[Exposed=(Window,Worker,Worklet), Transferable]
 interface TransformStream {
   constructor(optional object transformer,
               optional QueuingStrategy writableStrategy = {},
@@ -185,7 +184,7 @@ callback TransformerStartCallback = any (TransformStreamDefaultController contro
 callback TransformerFlushCallback = Promise<undefined> (TransformStreamDefaultController controller);
 callback TransformerTransformCallback = Promise<undefined> (any chunk, TransformStreamDefaultController controller);
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface TransformStreamDefaultController {
   readonly attribute unrestricted double? desiredSize;
 
@@ -199,13 +198,13 @@ dictionary QueuingStrategy {
   QueuingStrategySize size;
 };
 
-callback QueuingStrategySize = unrestricted double (any chunk);
+callback QueuingStrategySize = unrestricted double (optional any chunk);
 
 dictionary QueuingStrategyInit {
   required unrestricted double highWaterMark;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface ByteLengthQueuingStrategy {
   constructor(QueuingStrategyInit init);
 
@@ -213,7 +212,7 @@ interface ByteLengthQueuingStrategy {
   readonly attribute Function size;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,Worklet)]
 interface CountQueuingStrategy {
   constructor(QueuingStrategyInit init);
 

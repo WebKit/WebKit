@@ -27,6 +27,6 @@
 
 namespace WebKit {
 
-int WebPushDaemonMain(int, char**);
+int WebPushDaemonMain(int, const char**);
 
 } // namespace WebKit

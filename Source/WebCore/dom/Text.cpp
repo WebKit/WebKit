@@ -44,14 +44,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Text);
 
-Ref<Text> Text::create(Document& document, String&& data)
+Ref<Text> Text::create(Document& document, const String& data)
 {
-    return adoptRef(*new Text(document, WTFMove(data), CreateText));
+    return adoptRef(*new Text(document, data, CreateText));
 }
 
-Ref<Text> Text::createEditingText(Document& document, String&& data)
+Ref<Text> Text::createEditingText(Document& document, const String& data)
 {
-    return adoptRef(*new Text(document, WTFMove(data), CreateEditingText));
+    return adoptRef(*new Text(document, data, CreateEditingText));
 }
 
 Text::~Text() = default;
@@ -64,7 +64,7 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
     EventQueueScope scope;
     auto oldData = data();
     auto newText = virtualCreate(oldData.substring(offset));
-    setDataWithoutUpdate(oldData.left(offset));
+    setDataWithoutUpdate(oldData.substring(0, offset));
 
     dispatchModifiedEvent(oldData);
 
@@ -116,24 +116,27 @@ String Text::wholeText() const
     return result.toString();
 }
 
-void Text::replaceWholeText(const String& newText)
+RefPtr<Text> Text::replaceWholeText(const String& newText)
 {
-    // Protect startText and endText against mutation event handlers removing the last ref
-    RefPtr startText = const_cast<Text*>(earliestLogicallyAdjacentTextNode(this));
-    RefPtr endText = const_cast<Text*>(latestLogicallyAdjacentTextNode(this));
+    // Remove all adjacent text nodes, and replace the contents of this one.
 
-    RefPtr parent = parentNode(); // Protect against mutation handlers moving this node during traversal
-    for (RefPtr<Node> node = WTFMove(startText); is<Text>(node) && node != this && node->parentNode() == parent;) {
-        auto nodeToRemove = node.releaseNonNull();
-        node = nodeToRemove->nextSibling();
+    // Protect startText and endText against mutation event handlers removing the last ref
+    RefPtr<Text> startText = const_cast<Text*>(earliestLogicallyAdjacentTextNode(this));
+    RefPtr<Text> endText = const_cast<Text*>(latestLogicallyAdjacentTextNode(this));
+
+    RefPtr<Text> protectedThis(this); // Mutation event handlers could cause our last ref to go away
+    RefPtr<ContainerNode> parent = parentNode(); // Protect against mutation handlers moving this node during traversal
+    for (RefPtr<Node> n = startText; n && n != this && n->isTextNode() && n->parentNode() == parent;) {
+        Ref<Node> nodeToRemove(n.releaseNonNull());
+        n = nodeToRemove->nextSibling();
         parent->removeChild(nodeToRemove);
     }
 
     if (this != endText) {
-        RefPtr nodePastEndText = endText->nextSibling();
-        for (RefPtr node = nextSibling(); is<Text>(node) && node != nodePastEndText && node->parentNode() == parent;) {
-            auto nodeToRemove = node.releaseNonNull();
-            node = nodeToRemove->nextSibling();
+        Node* onePastEndText = endText->nextSibling();
+        for (RefPtr<Node> n = nextSibling(); n && n != onePastEndText && n->isTextNode() && n->parentNode() == parent;) {
+            Ref<Node> nodeToRemove(n.releaseNonNull());
+            n = nodeToRemove->nextSibling();
             parent->removeChild(nodeToRemove);
         }
     }
@@ -141,10 +144,11 @@ void Text::replaceWholeText(const String& newText)
     if (newText.isEmpty()) {
         if (parent && parentNode() == parent)
             parent->removeChild(*this);
-        return;
+        return nullptr;
     }
 
     setData(newText);
+    return protectedThis;
 }
 
 String Text::nodeName() const
@@ -159,7 +163,7 @@ Node::NodeType Text::nodeType() const
 
 Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
 {
-    return create(targetDocument, String { data() });
+    return create(targetDocument, data());
 }
 
 static bool isSVGShadowText(Text* text)
@@ -191,9 +195,9 @@ bool Text::childTypeAllowed(NodeType) const
     return false;
 }
 
-Ref<Text> Text::virtualCreate(String&& data)
+Ref<Text> Text::virtualCreate(const String& data)
 {
-    return create(document(), WTFMove(data));
+    return create(document(), data);
 }
 
 Ref<Text> Text::createWithLengthLimit(Document& document, const String& data, unsigned start, unsigned lengthLimit)
@@ -201,7 +205,7 @@ Ref<Text> Text::createWithLengthLimit(Document& document, const String& data, un
     unsigned dataLength = data.length();
 
     if (!start && dataLength <= lengthLimit)
-        return create(document, String { data });
+        return create(document, data);
 
     Ref<Text> result = Text::create(document, String());
     result->parserAppendData(data, start, lengthLimit);
@@ -224,14 +228,16 @@ static void appendTextRepresentation(StringBuilder& builder, const Text& text)
     String value = text.data();
     builder.append(" length="_s, value.length());
 
-    value = makeStringByReplacingAll(value, '\\', "\\\\"_s);
-    value = makeStringByReplacingAll(value, '\n', "\\n"_s);
+    value.replaceWithLiteral('\\', "\\\\");
+    value.replaceWithLiteral('\n', "\\n");
     
-    constexpr size_t maxDumpLength = 30;
-    if (value.length() > maxDumpLength)
-        builder.append(" \"", StringView(value).left(maxDumpLength - 10), "...\"");
-    else
-        builder.append(" \"", value, '\"');
+    const size_t maxDumpLength = 30;
+    if (value.length() > maxDumpLength) {
+        value.truncate(maxDumpLength - 10);
+        value.append("..."_s);
+    }
+
+    builder.append(" \"", value, '\"');
 }
 
 String Text::description() const
@@ -263,7 +269,7 @@ void Text::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData
     if (!offsetOfReplacedData) {
         auto* textManipulationController = document().textManipulationControllerIfExists();
         if (UNLIKELY(textManipulationController && oldData != newData))
-            textManipulationController->didUpdateContentForNode(*this);
+            textManipulationController->didUpdateContentForText(*this);
     }
 }
 

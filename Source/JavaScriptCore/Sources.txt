@@ -229,6 +229,7 @@ bytecode/DeleteByStatus.cpp
 bytecode/DeleteByVariant.cpp
 bytecode/DirectEvalCodeCache.cpp
 bytecode/EvalCodeBlock.cpp
+bytecode/ExecutableToCodeBlockEdge.cpp
 bytecode/ExecutionCounter.cpp
 bytecode/ExitFlag.cpp
 bytecode/ExitKind.cpp
@@ -455,28 +456,6 @@ disassembler/X86Disassembler.cpp
 
 disassembler/ARM64/A64DOpcode.cpp
 
-disassembler/zydis/Zydis/Zycore.c
-disassembler/zydis/Zydis/ZycoreAllocator.c
-disassembler/zydis/Zydis/ZycoreBitset.c
-disassembler/zydis/Zydis/ZycoreFormat.c
-disassembler/zydis/Zydis/ZycoreList.c
-disassembler/zydis/Zydis/ZycoreString.c
-disassembler/zydis/Zydis/ZycoreVector.c
-disassembler/zydis/Zydis/Zydis.c
-disassembler/zydis/Zydis/ZydisDecoder.c
-disassembler/zydis/Zydis/ZydisDecoderData.c
-disassembler/zydis/Zydis/ZydisFormatter.c
-disassembler/zydis/Zydis/ZydisFormatterATT.c @no-unify
-disassembler/zydis/Zydis/ZydisFormatterBase.c @no-unify
-disassembler/zydis/Zydis/ZydisFormatterBuffer.c
-disassembler/zydis/Zydis/ZydisFormatterIntel.c @no-unify
-disassembler/zydis/Zydis/ZydisMetaInfo.c
-disassembler/zydis/Zydis/ZydisMnemonic.c
-disassembler/zydis/Zydis/ZydisRegister.c
-disassembler/zydis/Zydis/ZydisSharedData.c
-disassembler/zydis/Zydis/ZydisString.c
-disassembler/zydis/Zydis/ZydisUtils.c
-
 domjit/DOMJITAbstractHeap.cpp
 domjit/DOMJITHeapRange.cpp
 
@@ -552,7 +531,6 @@ heap/IncrementalSweeper.cpp
 heap/IsoAlignedMemoryAllocator.cpp
 heap/IsoCellSet.cpp
 heap/IsoHeapCellType.cpp
-heap/IsoMemoryAllocatorBase.cpp
 heap/IsoSubspace.cpp
 heap/IsoSubspacePerVM.cpp
 heap/JITStubRoutineSet.cpp
@@ -574,7 +552,6 @@ heap/SlotVisitor.cpp
 heap/SpaceTimeMutatorScheduler.cpp
 heap/StochasticSpaceTimeMutatorScheduler.cpp
 heap/StopIfNecessaryTimer.cpp
-heap/StructureAlignedMemoryAllocator.cpp
 heap/Subspace.cpp
 heap/SynchronousStopTheWorldMutatorScheduler.cpp
 heap/Synchronousness.cpp
@@ -696,6 +673,7 @@ jit/ScratchRegisterAllocator.cpp
 jit/SetupVarargsFrame.cpp
 jit/SlowPathCall.cpp
 jit/TagRegistersMode.cpp
+jit/TempRegisterSet.cpp
 jit/ThunkGenerators.cpp
 
 llint/LLIntCLoop.cpp
@@ -922,7 +900,6 @@ runtime/JSPromiseConstructor.cpp
 runtime/JSPromisePrototype.cpp
 runtime/JSPropertyNameEnumerator.cpp
 runtime/JSProxy.cpp
-runtime/JSRemoteFunction.cpp
 runtime/JSRunLoopTimer.cpp
 runtime/JSScope.cpp
 runtime/JSScriptFetcher.cpp
@@ -1022,6 +999,7 @@ runtime/StringRecursionChecker.cpp
 runtime/Structure.cpp
 runtime/StructureCache.cpp
 runtime/StructureChain.cpp
+runtime/StructureIDTable.cpp
 runtime/StructureRareData.cpp
 runtime/Symbol.cpp
 runtime/SymbolConstructor.cpp
@@ -1040,9 +1018,6 @@ runtime/TemporalInstantConstructor.cpp
 runtime/TemporalInstantPrototype.cpp
 runtime/TemporalNow.cpp
 runtime/TemporalObject.cpp
-runtime/TemporalPlainDate.cpp
-runtime/TemporalPlainDateConstructor.cpp
-runtime/TemporalPlainDatePrototype.cpp
 runtime/TemporalPlainTime.cpp
 runtime/TemporalPlainTimeConstructor.cpp
 runtime/TemporalPlainTimePrototype.cpp
@@ -1090,7 +1065,6 @@ wasm/WasmAirIRGenerator.cpp @no-unify
 wasm/WasmB3IRGenerator.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp
-wasm/WasmBranchHintsSectionParser.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCalleeGroup.cpp
 wasm/WasmCalleeRegistry.cpp
@@ -1124,7 +1098,7 @@ wasm/WasmOperations.cpp
 wasm/WasmPageCount.cpp
 wasm/WasmPlan.cpp
 wasm/WasmSectionParser.cpp
-wasm/WasmTypeDefinition.cpp
+wasm/WasmSignature.cpp
 wasm/WasmSlowPaths.cpp
 wasm/WasmStreamingCompiler.cpp
 wasm/WasmStreamingParser.cpp

@@ -55,15 +55,6 @@ inline bool webkitGstCheckVersion(guint major, guint minor, guint micro)
     return true;
 }
 
-// gst_video_format_info_component() is GStreamer 1.18 API, so for older versions we use a local
-// vendored copy of the function.
-#if !GST_CHECK_VERSION(1, 18, 0)
-#define GST_VIDEO_MAX_COMPONENTS 4
-void webkitGstVideoFormatInfoComponent(const GstVideoFormatInfo*, guint, gint components[GST_VIDEO_MAX_COMPONENTS]);
-
-#define gst_video_format_info_component webkitGstVideoFormatInfoComponent
-#endif
-
 #define GST_VIDEO_CAPS_TYPE_PREFIX  "video/"
 #define GST_AUDIO_CAPS_TYPE_PREFIX  "audio/"
 #define GST_TEXT_CAPS_TYPE_PREFIX   "text/"
@@ -307,13 +298,13 @@ private:
 };
 
 
-void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { });
-void disconnectSimpleBusMessageCallback(GstElement*);
+void connectSimpleBusMessageCallback(GstElement* pipeline);
+void disconnectSimpleBusMessageCallback(GstElement* pipeline);
 
 enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };
 
 bool isGStreamerPluginAvailable(const char* name);
-bool gstElementFactoryEquals(GstElement*, ASCIILiteral name);
+bool gstElementFactoryEquals(GstElement*, const char* name);
 
 GstElement* createAutoAudioSink(const String& role);
 GstElement* createPlatformAudioSink(const String& role);
@@ -328,8 +319,6 @@ GstBuffer* gstBufferNewWrappedFast(void* data, size_t length);
 GstElement* makeGStreamerElement(const char* factoryName, const char* name);
 GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
-String gstStructureToJSONString(const GstStructure*);
-
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS
@@ -338,7 +327,7 @@ String gstStructureToJSONString(const GstStructure*);
 
 // In GStreamer 1.20 gst_audio_format_fill_silence() will be deprecated in favor of
 // gst_audio_format_info_fill_silence().
-#if GST_CHECK_VERSION(1, 20, 0)
+#if GST_CHECK_VERSION(1, 19, 0)
 #define webkitGstAudioFormatFillSilence gst_audio_format_info_fill_silence
 #else
 #define webkitGstAudioFormatFillSilence gst_audio_format_fill_silence
@@ -346,7 +335,7 @@ String gstStructureToJSONString(const GstStructure*);
 
 // In GStreamer 1.20 gst_element_get_request_pad() was renamed to gst_element_request_pad_simple(),
 // so create an alias for older versions.
-#if !GST_CHECK_VERSION(1, 20, 0)
+#if !GST_CHECK_VERSION(1, 19, 0)
 #define gst_element_request_pad_simple gst_element_get_request_pad
 #endif
 
@@ -396,11 +385,11 @@ public:
             return *this;
         }
 
-        bool operator==(const iterator& other) const
+        bool operator==(const iterator& other)
         {
             return m_iter == other.m_iter && m_done == other.m_done;
         }
-        bool operator!=(const iterator& other) const { return !(*this == other); }
+        bool operator!=(const iterator& other) { return !(*this == other); }
 
     private:
         GstIterator* m_iter;

@@ -43,7 +43,7 @@ public:
 
     ~GraphicsContextGLCVCocoa() final;
 
-    bool copyVideoSampleToTexture(const VideoFrameCV&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
+    bool copyVideoSampleToTexture(const MediaSampleVideoFrame&, PlatformGLObject outputTexture, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, FlipY) final;
 
     void invalidateKnownTextureContent(GCGLuint texture);
 private:
@@ -51,9 +51,9 @@ private:
 
 
     GraphicsContextGLCocoa& m_owner;
-    GCGLDisplay m_display { nullptr };
-    GCGLContext m_context { nullptr };
-    GCGLConfig m_config { nullptr };
+    PlatformGraphicsContextGLDisplay m_display { nullptr };
+    PlatformGraphicsContextGL m_context { nullptr };
+    PlatformGraphicsContextGLConfig m_config { nullptr };
 
     PlatformGLObject m_framebuffer { 0 };
     PlatformGLObject m_yuvVertexBuffer { 0 };

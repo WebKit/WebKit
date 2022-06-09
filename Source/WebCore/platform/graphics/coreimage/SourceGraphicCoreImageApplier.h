@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,20 @@
 
 #pragma once
 
-#if USE(CORE_IMAGE)
-
 #import "FilterEffectApplier.h"
 
 namespace WebCore {
 
 class SourceGraphic;
 
-class SourceGraphicCoreImageApplier final : public FilterEffectConcreteApplier<SourceGraphic> {
+class SourceGraphicCoreImageApplier : public FilterEffectConcreteApplier<SourceGraphic> {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = FilterEffectConcreteApplier<SourceGraphic>;
 
 public:
     using Base::Base;
 
-private:
-    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
+    bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const override;
 };
 
 } // namespace WebCore
-
-#endif // USE(CORE_IMAGE)

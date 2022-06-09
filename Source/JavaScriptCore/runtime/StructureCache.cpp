@@ -42,8 +42,7 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
 
     // We don't need to lock here because only the main thread can get here, and only the main thread can mutate the cache
-    ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-    PrototypeKey key { makePolyProtoStructure ? nullptr : prototype, executable, inlineCapacity, classInfo };
+    PrototypeKey key { makePolyProtoStructure ? nullptr : prototype, executable, inlineCapacity, classInfo, globalObject };
     if (Structure* structure = m_structures.get(key)) {
         if (makePolyProtoStructure) {
             prototype->didBecomePrototype();
@@ -70,11 +69,11 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
     return structure;
 }
 
-Structure* StructureCache::emptyObjectStructureConcurrently(JSObject* prototype, unsigned inlineCapacity)
+Structure* StructureCache::emptyObjectStructureConcurrently(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity)
 {
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
     
-    PrototypeKey key { prototype, nullptr, inlineCapacity, JSFinalObject::info() };
+    PrototypeKey key { prototype, nullptr, inlineCapacity, JSFinalObject::info(), globalObject };
     Locker locker { m_lock };
     if (Structure* structure = m_structures.get(key)) {
         ASSERT(prototype->mayBePrototype());
@@ -87,10 +86,10 @@ Structure* StructureCache::emptyStructureForPrototypeFromBaseStructure(JSGlobalO
 {
     // We currently do not have inline capacity static analysis for subclasses and all internal function constructors have a default inline capacity of 0.
     IndexingType indexingType = baseStructure->indexingType();
-    if (prototype->anyObjectInChainMayInterceptIndexedAccesses() && hasIndexedProperties(indexingType))
+    if (prototype->anyObjectInChainMayInterceptIndexedAccesses(globalObject->vm()) && hasIndexedProperties(indexingType))
         indexingType = (indexingType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
 
-    return createEmptyStructure(globalObject, prototype, baseStructure->typeInfo(), baseStructure->classInfoForCells(), indexingType, 0, false, nullptr);
+    return createEmptyStructure(globalObject, prototype, baseStructure->typeInfo(), baseStructure->classInfo(), indexingType, 0, false, nullptr);
 }
 
 Structure* StructureCache::emptyObjectStructureForPrototype(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable* executable)

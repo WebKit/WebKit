@@ -44,30 +44,36 @@ namespace WebCore {
 class AXIsolatedObject;
 class AXObjectCache;
 class Page;
-enum class AXStreamOptions : uint8_t;
 
 using AXIsolatedTreeID = unsigned;
 
 enum class AXPropertyName : uint16_t {
+    ARIAControlsElements,
+    ARIADetailsElements,
+    DropEffects,
+    ARIAErrorMessageElements,
     ARIAIsMultiline,
+    ARIAFlowToElements,
     ARIALandmarkRoleDescription,
     ARIATreeItemContent,
     ARIATreeRows,
     ARIARoleAttribute,
+    ARIAOwnsElements,
     AXColumnCount,
     AXColumnIndex,
     AXRowCount,
     AXRowIndex,
     AccessKey,
+    AccessibilityButtonState,
     AccessibilityDescription,
     AccessibilityText,
     ActionVerb,
     AncestorFlags,
     AutoCompleteValue,
     BlockquoteLevel,
+    BoundingBoxRect,
     BrailleLabel,
     BrailleRoleDescription,
-    ButtonState,
     CanHaveSelectedChildren,
     CanSetExpandedAttribute,
     CanSetFocusAttribute,
@@ -102,9 +108,10 @@ enum class AXPropertyName : uint16_t {
     DocumentEncoding,
     DocumentLinks,
     DocumentURI,
-    DropEffects,
     EditableAncestor,
+    ElementRect,
     EmbeddedImageDescription,
+    EstimatedLoadingProgress,
     ExpandedTextValue,
     FileUploadButtonReturnsValueInTitle,
     FocusableAncestor,
@@ -126,6 +133,7 @@ enum class AXPropertyName : uint16_t {
     IncrementButton,
     InnerHTML,
     InvalidStatus,
+    IsAccessibilityIgnored,
     IsActiveDescendantOfFocusedContainer,
     IsAnonymousMathOperator,
     IsGrabbed,
@@ -160,6 +168,7 @@ enum class AXPropertyName : uint16_t {
     IsLinked,
     IsList,
     IsListBox,
+    IsLoaded,
     IsMathElement,
     IsMathFraction,
     IsMathFenced,
@@ -224,7 +233,7 @@ enum class AXPropertyName : uint16_t {
     Language,
     LayoutCount,
     LinkRelValue,
-    LinkedObjects,
+    LinkedUIElements,
     LiveRegionAtomic,
     LiveRegionRelevant,
     LiveRegionStatus,
@@ -246,11 +255,13 @@ enum class AXPropertyName : uint16_t {
     MaxValueForRange,
     MinValueForRange,
     NameAttribute,
+    NextSibling,
     Orientation,
     OuterHTML,
     Path,
     PlaceholderValue,
     PressedIsPresent,
+    PreviousSibling,
     PopupValue,
     PosInSet,
     PreventKeyboardDOMEventDispatch,
@@ -272,7 +283,6 @@ enum class AXPropertyName : uint16_t {
     SpeakAs,
     SpeechHint,
     StringValue,
-    SubrolePlatformString,
     SupportsRowCountChange,
     SupportsDragging,
     SupportsDropping,
@@ -308,7 +318,7 @@ enum class AXPropertyName : uint16_t {
     WebArea,
 };
 
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatRect, PAL::SessionID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>>;
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, PAL::SessionID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>>;
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {
@@ -319,7 +329,6 @@ struct AXPropertyChange {
 class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree); WTF_MAKE_FAST_ALLOCATED;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXIsolatedTree&);
-    friend void streamIsolatedSubtreeOnMainThread(TextStream&, const AXIsolatedTree&, AXID, const OptionSet<AXStreamOptions>&);
 public:
     static Ref<AXIsolatedTree> create(AXObjectCache*);
     virtual ~AXIsolatedTree();
@@ -334,6 +343,7 @@ public:
     RefPtr<AXIsolatedObject> focusedNode();
     RefPtr<AXIsolatedObject> nodeForID(AXID) const;
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
+    Vector<AXID> idsForObjects(const Vector<RefPtr<AXCoreObject>>&) const;
 
     struct NodeChange {
         Ref<AXIsolatedObject> isolatedObject;
@@ -344,31 +354,22 @@ public:
 #endif
     };
 
-    void generateSubtree(AXCoreObject&);
+    void generateSubtree(AXCoreObject&, AXCoreObject*, bool attachWrapper);
     void updateNode(AXCoreObject&);
+    void updateNodeProperty(const AXCoreObject&, AXPropertyName);
+    void updateSubtree(AXCoreObject&);
     void updateChildren(AXCoreObject&);
-    void updateNodeProperty(AXCoreObject&, AXPropertyName);
-    void updateRelatedProperties(AXCoreObject&);
-    void updateTableProperties(AXCoreObject&);
-    void updateTreeItemProperties(AXCoreObject&);
 
-    double loadingProgress() { return m_loadingProgress; }
-    void updateLoadingProgress(double);
-
-    // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
-    void removeNode(const AXCoreObject&);
-    // Removes the given node and all its descendants from m_nodeMap.
-    void removeSubtreeFromNodeMap(AXID axID, AXCoreObject*);
+    // Removes the given node leaving all descendants alone.
+    void removeNode(AXID);
+    // Removes the given node and all its descendants.
+    void removeSubtree(AXID);
 
     // Both setRootNodeID and setFocusedNodeID are called during the generation
     // of the IsolatedTree.
     // Focused node updates in AXObjectCache use setFocusNodeID.
     void setRootNode(AXIsolatedObject*) WTF_REQUIRES_LOCK(m_changeLogLock);
     void setFocusedNodeID(AXID);
-
-    // Relationships between objects.
-    std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
-    void relationsNeedUpdate(bool needUpdate) { m_relationsNeedUpdate = needUpdate; }
 
     // Called on AX thread from WebAccessibilityObjectWrapper methods.
     // During layout tests, it is called on the main thread.
@@ -384,36 +385,17 @@ private:
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache() WTF_REQUIRES_LOCK(s_cacheLock);
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_cacheLock);
 
-    enum class AttachWrapper : bool { OnMainThread, OnAXThread };
-    std::optional<NodeChange> nodeChangeForObject(AXCoreObject&, AttachWrapper = AttachWrapper::OnMainThread);
-    void collectNodeChangesForSubtree(AXCoreObject&);
-    void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void queueRemovals(const Vector<AXID>&);
-    void queueRemovalsLocked(const Vector<AXID>&) WTF_REQUIRES_LOCK(m_changeLogLock);
-    void queueRemovalsAndUnresolvedChanges(const Vector<AXID>&);
+    // Call on main thread
+    Ref<AXIsolatedObject> createSubtree(AXCoreObject&, AXID parentID, bool attachWrapper);
+    // Called on main thread to update both m_nodeMap and m_pendingChildrenUpdates.
+    void updateChildrenIDs(AXID parentID, Vector<AXID>&& childrenIDs) WTF_REQUIRES_LOCK(m_changeLogLock);
 
     AXIsolatedTreeID m_treeID;
     AXObjectCache* m_axObjectCache { nullptr };
     bool m_usedOnAXThread { true };
 
-    // Stores the parent ID and children IDS for a given IsolatedObject.
-    struct ParentChildrenIDs {
-        AXID parentID;
-        Vector<AXID> childrenIDs;
-    };
-    // Only accessed on the main thread.
-    // A representation of the tree's parent-child relationships. Each
-    // IsolatedObject must have one and only one entry in this map, that maps
-    // its ObjectID to its ParentChildrenIDs struct.
-    HashMap<AXID, ParentChildrenIDs> m_nodeMap;
-
-    // Only accessed on the main thread.
-    // The key is the ID of the object that will be resolved into an m_pendingAppends NodeChange.
-    // The value is whether the wrapper should be attached on the main thread or the AX thread.
-    HashMap<AXID, AttachWrapper> m_unresolvedPendingAppends;
-    // Only accessed on the main thread.
-    bool m_isCollectingNodeChanges { false };
-
+    // Only accessed on main thread.
+    HashMap<AXID, Vector<AXID>> m_nodeMap;
     // Only accessed on AX thread requesting data.
     HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
 
@@ -421,19 +403,11 @@ private:
     RefPtr<AXIsolatedObject> m_rootNode WTF_GUARDED_BY_LOCK(m_changeLogLock);
     Vector<NodeChange> m_pendingAppends WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes to be added to the tree and platform-wrapped.
     Vector<AXPropertyChange> m_pendingPropertyChanges WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    Vector<AXID> m_pendingNodeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes to be removed from the tree.
     Vector<AXID> m_pendingSubtreeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes whose subtrees are to be removed from the tree.
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_focusedNodeID;
-    std::atomic<double> m_loadingProgress { 0 };
-
-    // Relationships between objects.
-    // Accessed only on the AX thread.
-    HashMap<AXID, AXRelations> m_relations;
-    // Set to true by the AXObjectCache on the main thread.
-    // Set to false on the AX thread by relatedObjectIDsFor.
-    std::atomic<bool> m_relationsNeedUpdate { true };
-
     Lock m_changeLogLock;
 };
 

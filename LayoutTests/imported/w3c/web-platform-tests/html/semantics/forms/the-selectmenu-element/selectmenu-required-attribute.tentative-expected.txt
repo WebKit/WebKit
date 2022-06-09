@@ -1,3 +1,0 @@
-
-FAIL Test required attribute assert_equals: expected "3px" but got "0px"
-

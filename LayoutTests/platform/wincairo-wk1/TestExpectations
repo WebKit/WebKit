@@ -24,6 +24,7 @@ accessibility/win [ Pass ]
 
 accessibility/aria-liveregions-attributes.html [ Failure ]
 accessibility/aria-liveregion-marquee-default.html [ Failure ]
+accessibility/image-load-on-delay.html [ Failure ]
 accessibility/meter-element.html [ Failure ]
 accessibility/set-selected-editable.html [ Failure ]
 accessibility/set-value-not-work-for-disabled-sliders.html [ Failure ]
@@ -52,6 +53,7 @@ webkit.org/b/149177 accessibility/ax-value-with-search.html [ Skip ]
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
 accessibility/combo-box-collapsed-selection-changed.html [ Skip ]
+accessibility/children-changed-sends-notification.html [ Skip ]
 accessibility/menu-list-sends-change-notification.html [ Skip ]
 accessibility/multiselect-list-reports-active-option.html [ Skip ]
 
@@ -160,6 +162,9 @@ accessibility/scroll-to-make-visible-nested-2.html [ Skip ]
 accessibility/scroll-to-make-visible-nested.html [ Skip ]
 accessibility/scroll-to-make-visible-with-subfocus.html [ Skip ]
 
+# Apparently missing support for roleDescription on Windows.
+accessibility/aria-roledescription.html [ Failure ]
+
 webkit.org/b/140867 accessibility/aria-option-role.html [ Failure ]
 
 # Asserts because it does not have a popup menu:
@@ -198,8 +203,10 @@ accessibility/table-attributes.html [ Failure ]
 accessibility/table-detection.html [ Failure ]
 accessibility/table-one-cell.html [ Failure ]
 accessibility/table-roles-hierarchy.html [ Failure ]
+accessibility/table-sections.html [ Failure ]
 accessibility/table-with-rules.html [ Failure ]
 accessibility/transformed-element.html [ Failure ]
+accessibility/visible-elements.html [ Failure ]
 
 webkit.org/b/146903 accessibility/aria-table-hierarchy.html [ Skip ]
 webkit.org/b/146903 accessibility/roles-table-and-cell.html [ Skip ]
@@ -257,7 +264,7 @@ accessibility/win/text-role.html [ Failure ]
 
 webkit.org/b/181501 accessibility/table-header-calculation-for-header-rows.html [ Failure ]
 
-webkit.org/b/240218 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
+webkit.org/b/182132 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 
 webkit.org/b/183955 accessibility/row-with-aria-role-in-native-table.html [ Failure ]
 
@@ -382,6 +389,9 @@ webkit.org/b/179296 fast/css/object-fit/object-fit-object.html [ ImageOnlyFailur
 webkit.org/b/179296 fast/css/object-position/object-position-embed.html [ ImageOnlyFailure ]
 webkit.org/b/179296 fast/css/object-position/object-position-object.html [ ImageOnlyFailure ]
 
+fast/css/parsing-color-contrast.html [ Failure ]
+fast/css/parsing-color-mix.html [ Failure ]
+fast/css/parsing-relative-color-syntax.html [ Failure ]
 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
 webkit.org/b/140768 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
 
@@ -398,6 +408,7 @@ fast/gradients/conic-gradient-extended-stops.html [ ImageOnlyFailure ]
 fast/gradients/conic-gradient.html [ ImageOnlyFailure ]
 fast/gradients/conic-repeating-last-stop.html [ ImageOnlyFailure ]
 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
+fast/text/whitespace/pre-wrap-long-word-simple-lines.html [ ImageOnlyFailure ]
 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Failure ]
 http/tests/IndexedDB/storage-limit-2.https.html [ Failure ]
 http/tests/cache/loaded-from-cache-after-reload-within-iframe.html [ Failure ]
@@ -452,62 +463,3 @@ accessibility/range-alter-by-step.html [ Skip ] # Timeout
 
 accessibility/aria-roledescription.html [ Timeout ]
 accessibility/visible-elements.html [ Timeout ]
-
-editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ] # This test confuses DRT. See Bug 233463
-
-webkit.org/b/238636 storage/indexeddb/modern/opendatabase-request.html [ Skip ]
-
-# <a download> is not supported in WK1 yet.
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-no-extension.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-redirect.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-load-after-download.html [ Skip ]
-webkit.org/b/156069 http/tests/download/area-download.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-allow-blob.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-allow-data.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-no-value.html [ Skip ]
-webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Skip ]
-webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
-webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.tentative.html [ Skip ]
-webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Skip ]
-
-webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition-no-extension-octet-stream.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition-no-extension-text-plain.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-octet-stream-no-extension.html [ Skip ]
-webkit.org/b/156069 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Skip ]
-
-# TestRunner::addChromeInputField() and focusWebView() not implemented
-fast/forms/focus-option-control-on-page.html [ Skip ]
-
-http/tests/download/basic-ascii.html [ Failure ]
-http/tests/download/convert-cached-load-to-download.html [ Failure ]
-http/tests/download/default-encoding.html [ Failure ]
-http/tests/download/inherited-encoding-form-submission-result.html [ Failure ]
-http/tests/download/inherited-encoding.html [ Failure ]
-http/tests/download/literal-utf-8.html [ Failure ]
-
-fast/text/embed-at-end-of-pre-wrap-line.html [ Failure ]
-fast/text/whitespace/pre-wrap-line-test.html [ Failure ]
-fast/text/whitespace/pre-wrap-spaces-after-newline.html [ Failure ]
-
-webkit.org/b/240820 editing/pasteboard/files-during-page-drags.html [ Skip ] # Crash Pass
-
-animations/3d/full-rotation-animation.html [ ImageOnlyFailure ]
-
-http/tests/websocket/tests/hybi/inspector [ Skip ] # Timeout

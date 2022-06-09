@@ -11,7 +11,6 @@ found in the LICENSE.txt file.
 <link rel="stylesheet" href="../../resources/js-test-style.css"/>
 <script src="../../js/js-test-pre.js"></script>
 <script src="../../js/webgl-test-utils.js"></script>
-<script src="../../js/tests/context-methods.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -21,7 +20,7 @@ found in the LICENSE.txt file.
 "use strict";
 description("This test ensures that the WebGL context has all the methods in the specification.");
 
-const methods = [
+var methods = [
   "getContextAttributes",
   "activeTexture",
   "attachShader",
@@ -250,14 +249,55 @@ const methods = [
   "bindVertexArray",
 ];
 
+// Properties to be ignored because they were added in versions of the
+// spec that are backward-compatible with this version
+var ignoredMethods = [
+  // There is no official spec for the commit API yet, the proposal link is:
+  // https://wiki.whatwg.org/wiki/OffscreenCanvas
+  "commit"
+];
+
+function assertFunction(v, f) {
+  try {
+    if (typeof v[f] != "function") {
+      testFailed("Property either does not exist or is not a function: " + f);
+      return false;
+    } else {
+      return true;
+    }
+  } catch(e) {
+    testFailed("Trying to access the property '" + f + "' threw an error: "+e.toString());
+  }
+}
+
 debug("");
 debug("Canvas.getContext");
 
-const wtu = WebGLTestUtils;
-const canvas = document.getElementById("canvas");
-const gl = wtu.create3DContext(canvas, null, 2);
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("canvas");
+var gl = wtu.create3DContext(canvas, null, 2);
+var passed = true;
+for (var i=0; i<methods.length; i++) {
+  var r = assertFunction(gl, methods[i]);
+  passed = passed && r;
+}
+if (passed) {
+  testPassed("All WebGL methods found.");
+}
+var extended = false;
+for (var i in gl) {
+  if (typeof gl[i] == "function" && methods.indexOf(i) == -1 && ignoredMethods.indexOf(i) == -1) {
+    if (!extended) {
+      extended = true;
+      testFailed("Also found the following extra methods:");
+    }
+    testFailed(i);
+  }
+}
 
-testContextMethods(gl, methods);
+if (!extended) {
+  testPassed("No extra methods found on WebGL context.");
+}
 
 debug("");
 var successfullyParsed = true;

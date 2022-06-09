@@ -46,6 +46,8 @@
 #import "ColorMac.h"
 #import "ContextMenuController.h"
 #import "Editing.h"
+#import "Font.h"
+#import "FontCascade.h"
 #import "FrameSelection.h"
 #import "HTMLNames.h"
 #import "LayoutRect.h"
@@ -279,10 +281,9 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 - (id)initWithAccessibilityObject:(AXCoreObject*)axObject
 {
-    ASSERT(isMainThread());
-
     if (!(self = [super init]))
         return nil;
+
     [self attachAXObject:axObject];
     return self;
 }
@@ -300,9 +301,6 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 {
     ASSERT(isolatedObject && (!_identifier.isValid() || _identifier == isolatedObject->objectID()));
     m_isolatedObject = isolatedObject;
-    if (isMainThread())
-        m_isolatedObjectInitialized = true;
-
     if (!_identifier.isValid())
         _identifier = m_isolatedObject->objectID();
 }
@@ -318,14 +316,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)detachIsolatedObject:(AccessibilityDetachmentType)detachmentType
 {
-    ASSERT_WITH_MESSAGE_UNUSED(
-        detachmentType,
-        detachmentType == AccessibilityDetachmentType::ElementChanged ? _identifier.isValid() && m_axObject : true,
-        "isolated object was detached due to element change, but ID %s was invalid (%d) and/or m_axObject was nullptr (%d)",
-        _identifier.loggingString().utf8().data(),
-        !_identifier.isValid(),
-        !m_axObject
-    );
+    ASSERT_UNUSED(detachmentType, detachmentType == AccessibilityDetachmentType::ElementChanged ? _identifier.isValid() && m_axObject : true);
     m_isolatedObject = nullptr;
 }
 #endif
@@ -373,16 +364,11 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 - (WebCore::AXCoreObject*)axBackingObject
 {
-    if (isMainThread())
-        return m_axObject;
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    ASSERT(AXObjectCache::isIsolatedTreeEnabled());
-    return m_isolatedObject;
-#else
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    if (AXObjectCache::isIsolatedTreeEnabled())
+        return m_isolatedObject;
 #endif
+    return m_axObject;
 }
 
 - (BOOL)isIsolatedObject
@@ -587,59 +573,27 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
         [attrString removeAttribute:UIAccessibilityTokenHeadingLevel range:range];
 }
 
-// When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
-// To protect against such cases, the range should be validated before adding or removing attributes.
-bool AXAttributedStringRangeIsValid(NSAttributedString *attributedString, const NSRange& range)
+static void AXAttributeStringSetFont(NSMutableAttributedString* attrString, CTFontRef font, NSRange range)
 {
-    return NSMaxRange(range) <= [attributedString length];
-}
-
-void AXAttributedStringSetFont(NSMutableAttributedString *attributedString, CTFontRef font, const NSRange& range)
-{
-    if (!AXAttributedStringRangeIsValid(attributedString, range))
+    if (!font)
         return;
 
-    if (!font) {
-#if PLATFORM(MAC)
-        [attributedString removeAttribute:NSAccessibilityFontTextAttribute range:range];
-#endif
-        return;
-    }
+    RetainPtr<CFStringRef> fullName = adoptCF(CTFontCopyFullName(font));
+    RetainPtr<CFStringRef> familyName = adoptCF(CTFontCopyFamilyName(font));
 
-    auto fontAttributes = adoptNS([[NSMutableDictionary alloc] init]);
-    auto familyName = adoptCF(CTFontCopyFamilyName(font));
-    NSNumber *size = [NSNumber numberWithFloat:CTFontGetSize(font)];
-#if PLATFORM(IOS_FAMILY)
-    auto fullName = adoptCF(CTFontCopyFullName(font));
+    NSNumber* size = [NSNumber numberWithFloat:CTFontGetSize(font)];
+    CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(font);
+    NSNumber* bold = [NSNumber numberWithBool:(traits & kCTFontTraitBold)];
     if (fullName)
-        [fontAttributes setValue:bridge_cast(fullName.get()) forKey:UIAccessibilityTokenFontName];
+        [attrString addAttribute:UIAccessibilityTokenFontName value:(NSString*)fullName.get() range:range];
     if (familyName)
-        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:UIAccessibilityTokenFontFamily];
+        [attrString addAttribute:UIAccessibilityTokenFontFamily value:(NSString*)familyName.get() range:range];
     if ([size boolValue])
-        [fontAttributes setValue:size forKey:UIAccessibilityTokenFontSize];
-    auto traits = CTFontGetSymbolicTraits(font);
-    if (traits & kCTFontTraitBold)
-        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenBold];
+        [attrString addAttribute:UIAccessibilityTokenFontSize value:size range:range];
+    if ([bold boolValue] || (traits & kCTFontTraitBold))
+        [attrString addAttribute:UIAccessibilityTokenBold value:@YES range:range];
     if (traits & kCTFontTraitItalic)
-        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenItalic];
-
-    [attributedString addAttributes:fontAttributes.get() range:range];
-#endif
-
-#if PLATFORM(MAC)
-    [fontAttributes setValue:size forKey:NSAccessibilityFontSizeKey];
-
-    if (familyName)
-        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:NSAccessibilityFontFamilyKey];
-    auto postScriptName = adoptCF(CTFontCopyPostScriptName(font));
-    if (postScriptName)
-        [fontAttributes setValue:bridge_cast(postScriptName.get()) forKey:NSAccessibilityFontNameKey];
-    auto displayName = adoptCF(CTFontCopyDisplayName(font));
-    if (displayName)
-        [fontAttributes setValue:bridge_cast(displayName.get()) forKey:NSAccessibilityVisibleNameKey];
-
-    [attributedString addAttribute:NSAccessibilityFontTextAttribute value:fontAttributes.get() range:range];
-#endif
+        [attrString addAttribute:UIAccessibilityTokenItalic value:@YES range:range];
 }
 
 static void AXAttributeStringSetNumber(NSMutableAttributedString* attrString, NSString* attribute, NSNumber* number, NSRange range)
@@ -655,7 +609,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     auto& style = renderer->style();
 
     // set basic font info
-    AXAttributedStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
+    AXAttributeStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
 
     auto decor = style.textDecorationsInEffect();
     if (decor & TextDecorationLine::Underline)
@@ -671,17 +625,17 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
         [attrString addAttribute:UIAccessibilityTextAttributeContext value:UIAccessibilityTextualContextSourceCode range:range];
 }
 
-static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, StringView text)
+static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, NSString *text)
 {
     // skip invisible text
     if (!node->renderer())
         return;
 
     // easier to calculate the range before appending the string
-    NSRange attrStringRange = NSMakeRange([attrString length], text.length());
+    NSRange attrStringRange = NSMakeRange([attrString length], [text length]);
 
     // append the string from this node
-    [[attrString mutableString] appendString:text.createNSStringWithoutCopying().get()];
+    [[attrString mutableString] appendString:text];
 
     // set new attributes
     AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
@@ -757,13 +711,13 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
                 if (addObjectWrapperToArray(headingObject, array.get()))
                     continue;
 
-                StringView listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
                 if (!listMarkerText.isEmpty())
-                    [array addObject:listMarkerText.createNSString().get()];
+                    [array addObject:listMarkerText];
                 // There was not an element representation, so just return the text.
                 [array addObject:it.text().createNSString().get()];
             } else {
-                StringView listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
+                String listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
                 if (!listMarkerText.isEmpty()) {
                     auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
                     AXAttributedStringAppendText(attrString.get(), &node, listMarkerText);
@@ -771,7 +725,7 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
                 }
 
                 auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
-                AXAttributedStringAppendText(attrString.get(), &node, it.text());
+                AXAttributedStringAppendText(attrString.get(), &node, it.text().createNSStringWithoutCopying().get());
                 [array addObject:attrString.get()];
             }
         } else {

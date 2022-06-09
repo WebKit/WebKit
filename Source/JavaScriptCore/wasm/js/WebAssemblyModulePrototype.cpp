@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyModulePrototype::s_info = { "WebAssembly.Module"_s, &Base::s_info, &prototypeTableWebAssemblyModule, nullptr, CREATE_METHOD_TABLE(WebAssemblyModulePrototype) };
+const ClassInfo WebAssemblyModulePrototype::s_info = { "WebAssembly.Module", &Base::s_info, &prototypeTableWebAssemblyModule, nullptr, CREATE_METHOD_TABLE(WebAssemblyModulePrototype) };
 
 /* Source for WebAssemblyModulePrototype.lut.h
  @begin prototypeTableWebAssemblyModule
@@ -57,7 +57,7 @@ Structure* WebAssemblyModulePrototype::createStructure(VM& vm, JSGlobalObject* g
 void WebAssemblyModulePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

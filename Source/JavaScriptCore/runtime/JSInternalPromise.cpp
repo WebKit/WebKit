@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo JSInternalPromise::s_info = { "InternalPromise"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInternalPromise) };
+const ClassInfo JSInternalPromise::s_info = { "InternalPromise", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInternalPromise) };
 
 JSInternalPromise* JSInternalPromise::create(VM& vm, Structure* structure)
 {
@@ -62,7 +62,7 @@ JSInternalPromise* JSInternalPromise::then(JSGlobalObject* globalObject, JSFunct
 
     JSObject* function = getAs<JSObject*>(globalObject, vm.propertyNames->builtinNames().thenPublicName());
     RETURN_IF_EXCEPTION(scope, nullptr);
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(vm, function);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;

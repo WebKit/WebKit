@@ -33,16 +33,15 @@
 #include "AuxiliaryProcessMessages.h"
 #include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcessConnectionInitializationParameters.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "LogInitialization.h"
-#include "RemoteMediaPlayerManagerProxy.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
-#include <WebCore/CommonAtomStrings.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/MemoryRelease.h>
@@ -56,7 +55,6 @@
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
-#include <wtf/Scope.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
 
@@ -74,14 +72,6 @@
 
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
 #include <pal/spi/cg/ImageIOSPI.h>
-#endif
-
-#if HAVE(SCREEN_CAPTURE_KIT)
-#include <WebCore/ScreenCaptureKitCaptureSource.h>
-#endif
-
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-#include <WebCore/ScreenCaptureKitSharingSessionManager.h>
 #endif
 
 namespace WebKit {
@@ -116,32 +106,16 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     didReceiveGPUProcessMessage(connection, decoder);
 }
 
-static IPC::Connection::Identifier asConnectionIdentifier(IPC::Attachment&& connectionHandle)
-{
-#if USE(UNIX_DOMAIN_SOCKETS)
-    return IPC::Connection::Identifier { connectionHandle.release().release() };
-#elif OS(DARWIN)
-    return IPC::Connection::Identifier { connectionHandle.port() };
-#elif OS(WINDOWS)
-    return IPC::Connection::Identifier { connectionHandle.handle() };
-#else
-    notImplemented();
-    return IPC::Connection::Identifier { };
-#endif
-}
-
-void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Attachment&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
+void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Attachment>&&, GPUProcessConnectionInitializationParameters&&)>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
-
-    auto reply = makeScopeExit(WTFMove(completionHandler));
-    auto connectionIdentifier = asConnectionIdentifier(WTFMove(connectionHandle));
-    // If sender exited before we received the identifier, the identifier
-    // may not be valid.
-    if (!IPC::Connection::identifierIsValid(connectionIdentifier))
+    auto ipcConnection = createIPCConnectionPair();
+    if (!ipcConnection) {
+        completionHandler({ }, { });
         return;
+    }
 
-    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, sessionID, WTFMove(connectionIdentifier), WTFMove(parameters));
+    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, ipcConnection->first, sessionID, WTFMove(parameters));
 
 #if ENABLE(MEDIA_STREAM)
     // FIXME: We should refactor code to go from WebProcess -> GPUProcess -> UIProcess when getUserMedia is called instead of going from WebProcess -> UIProcess directly.
@@ -157,6 +131,12 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
 
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
+
+    GPUProcessConnectionInitializationParameters connectionParameters;
+#if ENABLE(VP9)
+    connectionParameters.hasVP9HardwareDecoder = WebCore::vp9HardwareDecoderAvailable();
+#endif
+    completionHandler(WTFMove(ipcConnection->second), WTFMove(connectionParameters));
 }
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)
@@ -226,9 +206,6 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
     RELEASE_LOG(Process, "GPUProcess::lowMemoryHandler: critical=%d, synchronous=%d", critical == Critical::Yes, synchronous == Synchronous::Yes);
     tryExitIfUnused();
 
-    for (auto& connection : m_webProcessConnections.values())
-        connection->lowMemoryHandler(critical, synchronous);
-
     WebCore::releaseGraphicsMemory(critical, synchronous);
 }
 
@@ -237,7 +214,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
     RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();
-    WebCore::initializeCommonAtomStrings();
+    AtomString::init();
 
     auto& memoryPressureHandler = MemoryPressureHandler::singleton();
     memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous synchronous) {
@@ -263,9 +240,8 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.compilerServiceExtensionHandles);
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
+    SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles);
 #endif
-
-    populateMobileGestaltCache(WTFMove(parameters.mobileGestaltExtensionHandle));
 
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
     auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
@@ -284,7 +260,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #endif
 }
 
-void GPUProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime, CompletionHandler<void()>&& completionHandler)
+void GPUProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcess::prepareToSuspend(), isSuspensionImminent: %d", this, isSuspensionImminent);
 
@@ -345,10 +321,6 @@ void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& ext
 {
     for (auto& extension : extensions)
         SandboxExtension::consumePermanently(extension);
-
-#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    sandboxWasUpatedForCapture();
-#endif
 }
 
 void GPUProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)
@@ -375,19 +347,8 @@ void GPUProcess::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool
 {
     MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 }
-#endif // ENABLE(MEDIA_STREAM)
 
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-void GPUProcess::showWindowPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
-{
-    WebCore::ScreenCaptureKitSharingSessionManager::singleton().showWindowPicker(WTFMove(completionHandler));
-}
-
-void GPUProcess::showScreenPicker(CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
-{
-    WebCore::ScreenCaptureKitSharingSessionManager::singleton().showScreenPicker(WTFMove(completionHandler));
-}
-#endif // HAVE(SC_CONTENT_SHARING_SESSION)
+#endif
 
 #if PLATFORM(MAC)
 void GPUProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)
@@ -541,16 +502,6 @@ void GPUProcess::setMediaSourceInlinePaintingEnabled(bool enabled)
 }
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-void GPUProcess::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
-{
-    if (m_sampleBufferContentKeySessionSupportEnabled == enabled)
-        return;
-    m_sampleBufferContentKeySessionSupportEnabled = enabled;
-    MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(enabled);
-}
-#endif
-
 void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
@@ -563,17 +514,6 @@ void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& proc
         connection->processIsStartingToCaptureAudio(process);
 }
 #endif
-
-void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&& completion)
-{
-    auto iterator = m_webProcessConnections.find(processIdentifier);
-    if (iterator == m_webProcessConnections.end()) {
-        completion({ });
-        return;
-    }
-
-    completion(iterator->value->remoteMediaPlayerManagerProxy().bitmapImageForCurrentTime(playerIdentifier));
-}
 
 } // namespace WebKit
 

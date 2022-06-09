@@ -91,7 +91,7 @@ private:
         int m_splitResizeOffset;
     };
 
-    ASCIILiteral renderName() const override { return "RenderFrameSet"_s; }
+    const char* renderName() const override { return "RenderFrameSet"; }
     bool isFrameSet() const override { return true; }
 
     void layout() override;

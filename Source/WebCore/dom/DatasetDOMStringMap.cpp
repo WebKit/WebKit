@@ -38,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DatasetDOMStringMap);
 
 static bool isValidAttributeName(const String& name)
 {
-    if (!name.startsWith("data-"_s))
+    if (!name.startsWith("data-"))
         return false;
 
     unsigned length = name.length();
@@ -73,7 +73,7 @@ static String convertAttributeNameToPropertyName(const String& name)
 
 static bool propertyNameMatchesAttributeName(const String& propertyName, const String& attributeName)
 {
-    if (!attributeName.startsWith("data-"_s))
+    if (!attributeName.startsWith("data-"))
         return false;
 
     unsigned propertyLength = propertyName.length();
@@ -221,7 +221,7 @@ String DatasetDOMStringMap::namedItem(const AtomString& name) const
     return String { };
 }
 
-ExceptionOr<void> DatasetDOMStringMap::setNamedItem(const String& name, const AtomString& value)
+ExceptionOr<void> DatasetDOMStringMap::setNamedItem(const String& name, const String& value)
 {
     if (!isValidPropertyName(name))
         return Exception { SyntaxError };

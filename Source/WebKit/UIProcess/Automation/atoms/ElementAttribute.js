@@ -73,6 +73,7 @@ function(element, attributeName) {
                 "readonly",
                 "required",
             ],
+            keygen: ["autofocus", "disabled"],
             menuitem: ["checked", "default", "disabled"],
             ol: ["reversed"],
             optgroup: ["disabled"],

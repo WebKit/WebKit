@@ -27,7 +27,6 @@
 #include "SharedStringHashStore.h"
 
 #include <algorithm>
-#include <wtf/PageBlock.h>
 
 namespace WebKit {
 
@@ -57,7 +56,7 @@ static unsigned tableSizeForKeyCount(unsigned keyCount)
     unsigned tableSize = nextPowerOf2(keyCount * sharedStringHashTableMaxLoad);
 
     // Ensure that the table size is at least the size of a page.
-    size_t minimumTableSize = pageSize() / sizeof(SharedStringHash);
+    size_t minimumTableSize = SharedMemory::systemPageSize() / sizeof(SharedStringHash);
     if (tableSize < minimumTableSize)
         return minimumTableSize;
 

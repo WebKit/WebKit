@@ -28,7 +28,6 @@
 
 #include "GLContext.h"
 #include "XErrorTrapper.h"
-#include <cstdlib>
 
 #if PLATFORM(X11)
 #include <X11/Xatom.h>
@@ -37,11 +36,6 @@
 #if PLATFORM(GTK)
 #include <X11/Xutil.h>
 #include <X11/extensions/Xdamage.h>
-#if USE(GTK4)
-#include <gdk/x11/gdkx.h>
-#else
-#include <gdk/gdkx.h>
-#endif
 #endif
 
 #if USE(EGL)
@@ -61,69 +55,29 @@ std::unique_ptr<PlatformDisplay> PlatformDisplayX11::create()
     if (!display)
         return nullptr;
 
-    return std::unique_ptr<PlatformDisplayX11>(new PlatformDisplayX11(display));
+    return std::unique_ptr<PlatformDisplayX11>(new PlatformDisplayX11(display, NativeDisplayOwned::Yes));
 }
 
-#if PLATFORM(GTK)
-std::unique_ptr<PlatformDisplay> PlatformDisplayX11::create(GdkDisplay* display)
+std::unique_ptr<PlatformDisplay> PlatformDisplayX11::create(Display* display)
 {
-    return std::unique_ptr<PlatformDisplayX11>(new PlatformDisplayX11(display));
-}
-#endif
-
-static inline void clearSharingGLContextAtExit()
-{
-#if USE(GLX)
-    // In X11 only one PlatformDisplay instance is allowed per process which is the sharedDisplay one.
-    // We install an atexit handler to clear the sharing GL context to ensure it's released before
-    // the constructor is called, because clearing the context in X11 requires to access PlatformDisplay::sharedDisplay()
-    // and calling it from its constructor causes issues in some systems. See https://bugs.webkit.org/show_bug.cgi?id=238494.
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        std::atexit([] {
-            PlatformDisplay::sharedDisplay().clearSharingGLContext();
-        });
-    });
-#endif
+    return std::unique_ptr<PlatformDisplayX11>(new PlatformDisplayX11(display, NativeDisplayOwned::No));
 }
 
-PlatformDisplayX11::PlatformDisplayX11(Display* display)
-    : m_display(display)
+PlatformDisplayX11::PlatformDisplayX11(Display* display, NativeDisplayOwned displayOwned)
+    : PlatformDisplay(displayOwned)
+    , m_display(display)
 {
-    clearSharingGLContextAtExit();
 }
-
-#if PLATFORM(GTK)
-PlatformDisplayX11::PlatformDisplayX11(GdkDisplay* display)
-    : PlatformDisplay(display)
-    , m_display(display ? GDK_DISPLAY_XDISPLAY(display) : nullptr)
-{
-    clearSharingGLContextAtExit();
-}
-#endif
 
 PlatformDisplayX11::~PlatformDisplayX11()
 {
 #if USE(EGL) || USE(GLX)
-    ASSERT(!m_sharingGLContext);
+    // Clear the sharing context before releasing the display.
+    m_sharingGLContext = nullptr;
 #endif
-
-#if PLATFORM(GTK)
-    bool nativeDisplayOwned = !m_sharedDisplay;
-#else
-    bool nativeDisplayOwned = true;
-#endif
-    if (nativeDisplayOwned && m_display)
+    if (m_nativeDisplayOwned == NativeDisplayOwned::Yes)
         XCloseDisplay(m_display);
 }
-
-#if PLATFORM(GTK)
-void PlatformDisplayX11::sharedDisplayDidClose()
-{
-    PlatformDisplay::sharedDisplayDidClose();
-    m_display = nullptr;
-}
-#endif
 
 #if USE(EGL)
 void PlatformDisplayX11::initializeEGLDisplay()

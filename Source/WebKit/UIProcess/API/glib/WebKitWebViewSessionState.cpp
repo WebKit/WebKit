@@ -27,14 +27,6 @@
 
 using namespace WebKit;
 
-/**
- * WebKitWebViewSessionState: (ref-func webkit_web_view_session_state_ref) (unref-func webkit_web_view_session_state_unref)
- *
- * Handles serialization of a web view's browsing state.
- *
- * Since: 2.12
- */
-
 struct _WebKitWebViewSessionState {
     _WebKitWebViewSessionState(SessionState&& state)
         : sessionState(WTFMove(state))
@@ -168,10 +160,10 @@ static inline void encodeFrameState(GVariantBuilder* sessionBuilder, const Frame
     g_variant_builder_add(sessionBuilder, "s", frameState.urlString.utf8().data());
     g_variant_builder_add(sessionBuilder, "s", frameState.originalURLString.utf8().data());
     g_variant_builder_add(sessionBuilder, "s", frameState.referrer.utf8().data());
-    g_variant_builder_add(sessionBuilder, "s", frameState.target.string().utf8().data());
+    g_variant_builder_add(sessionBuilder, "s", frameState.target.utf8().data());
     g_variant_builder_open(sessionBuilder, G_VARIANT_TYPE("as"));
     for (const auto& state : frameState.documentState())
-        g_variant_builder_add(sessionBuilder, "s", state.string().utf8().data());
+        g_variant_builder_add(sessionBuilder, "s", state.utf8().data());
     g_variant_builder_close(sessionBuilder);
     if (!frameState.stateObjectData)
         g_variant_builder_add(sessionBuilder, "may", FALSE);
@@ -311,13 +303,13 @@ static inline void decodeFrameState(GVariant* frameStateVariant, FrameState& fra
     // send an empty Referer header. Bug #159606.
     if (strlen(referrer))
         frameState.referrer = String::fromUTF8(referrer);
-    frameState.target = AtomString::fromUTF8(target);
+    frameState.target = String::fromUTF8(target);
     if (gsize documentStateLength = g_variant_iter_n_children(documentStateIter.get())) {
-        Vector<AtomString> documentState;
+        Vector<String> documentState;
         documentState.reserveInitialCapacity(documentStateLength);
         const char* documentStateString;
         while (g_variant_iter_next(documentStateIter.get(), "&s", &documentStateString))
-            documentState.uncheckedAppend(AtomString::fromUTF8(documentStateString));
+            documentState.uncheckedAppend(String::fromUTF8(documentStateString));
         frameState.setDocumentState(documentState);
     }
     if (stateObjectDataIter) {

@@ -55,7 +55,6 @@ struct DragSourceState {
     String linkTitle;
     URL linkURL;
     bool possiblyNeedsDragPreviewUpdate { true };
-    bool containsSelection { false };
 
     NSInteger itemIdentifier { 0 };
 };
@@ -72,7 +71,7 @@ struct ItemAndPreviewProvider {
 
 class DragDropInteractionState {
 public:
-    bool anyActiveDragSourceContainsSelection() const;
+    bool anyActiveDragSourceIs(WebCore::DragSourceAction) const;
 
     // These helper methods are unique to UIDragInteraction.
     void prepareForDragSession(id <UIDragSession>, dispatch_block_t completionHandler);

@@ -8,8 +8,6 @@ for more details on the presubmit API built into depot_tools.
 
 import os
 
-USE_PYTHON3 = True
-
 
 def _CommonChecks(input_api, output_api):
     d = os.path.dirname
@@ -24,8 +22,7 @@ def _CommonChecks(input_api, output_api):
         input_api.Command(
             name='generate_buildbot_json',
             cmd=[
-                input_api.python3_executable, gen_script, '--check', '--verbose',
-                '--pyl-files-dir',
+                input_api.python_executable, gen_script, '--check', '--verbose', '--pyl-files-dir',
                 input_api.PresubmitLocalPath()
             ],
             kwargs={},
@@ -33,7 +30,7 @@ def _CommonChecks(input_api, output_api):
         input_api.Command(
             name='mb_validate',
             cmd=[
-                input_api.python3_executable,
+                input_api.python_executable,
                 mb_path,
                 'validate',
                 '-f',

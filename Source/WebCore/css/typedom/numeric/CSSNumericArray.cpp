@@ -38,19 +38,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericArray);
 
-Ref<CSSNumericArray> CSSNumericArray::create(FixedVector<CSSNumberish>&& numberishes)
+Ref<CSSNumericArray> CSSNumericArray::create(const FixedVector<CSSNumberish>& numberishes)
 {
-    return adoptRef(*new CSSNumericArray(WTF::map(WTFMove(numberishes), CSSNumericValue::rectifyNumberish)));
+    return adoptRef(*new CSSNumericArray(WTF::map(numberishes, [](auto& numberish) -> Ref<CSSNumericValue> {
+        return CSSNumericValue::rectifyNumberish(const_cast<CSSNumberish&&>(numberish));
+    })));
 }
 
-Ref<CSSNumericArray> CSSNumericArray::create(Vector<Ref<CSSNumericValue>>&& values)
+Ref<CSSNumericArray> CSSNumericArray::create(FixedVector<Ref<CSSNumericValue>>&& values)
 {
     return adoptRef(*new CSSNumericArray(WTFMove(values)));
-}
-
-CSSNumericArray::CSSNumericArray(Vector<Ref<CSSNumericValue>>&& values)
-    : m_array(WTFMove(values))
-{
 }
 
 CSSNumericArray::CSSNumericArray(FixedVector<Ref<CSSNumericValue>>&& values)
@@ -63,12 +60,6 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericArray::item(size_t index)
     if (index >= m_array.size())
         return Exception { RangeError, makeString("Index ", index, " exceeds index range for CSSNumericArray.") };
     return m_array[index].copyRef();
-}
-
-void CSSNumericArray::forEach(Function<void(const CSSNumericValue&, bool first)> function)
-{
-    for (size_t i = 0; i < m_array.size(); ++i)
-        function(m_array[i], !i);
 }
 
 } // namespace WebCore

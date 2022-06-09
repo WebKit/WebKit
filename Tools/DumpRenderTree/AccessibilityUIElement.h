@@ -43,6 +43,10 @@ OBJC_CLASS NSString;
 #include <WebCore/COMPtr.h>
 #include <oleacc.h>
 typedef COMPtr<IAccessible> PlatformUIElement;
+#elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)
+#include "AccessibilityNotificationHandlerAtk.h"
+#include <atk/atk.h>
+typedef AtkObject* PlatformUIElement;
 #else
 typedef void* PlatformUIElement;
 #endif
@@ -145,7 +149,6 @@ public:
     JSRetainPtr<JSStringRef> valueDescription();
     int insertionPointLineNumber();
     JSRetainPtr<JSStringRef> selectedTextRange();
-    bool isBusy() const;
     bool isEnabled();
     bool isRequired() const;
     
@@ -250,6 +253,14 @@ public:
     JSRetainPtr<JSStringRef> attributedStringForElement();
 #endif
 
+#if PLATFORM(GTK)
+    // Text-specific
+    JSRetainPtr<JSStringRef> characterAtOffset(int offset);
+    JSRetainPtr<JSStringRef> wordAtOffset(int offset);
+    JSRetainPtr<JSStringRef> lineAtOffset(int offset);
+    JSRetainPtr<JSStringRef> sentenceAtOffset(int offset);
+#endif
+
     // Table-specific
     AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);
 
@@ -345,5 +356,9 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<id> m_element;
     RetainPtr<id> m_notificationHandler;
+#endif
+
+#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
+    RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
 #endif
 };

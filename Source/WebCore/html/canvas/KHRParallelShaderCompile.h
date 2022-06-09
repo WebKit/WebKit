@@ -33,7 +33,7 @@ class KHRParallelShaderCompile final : public WebGLExtension {
     WTF_MAKE_ISO_ALLOCATED(KHRParallelShaderCompile);
 public:
     explicit KHRParallelShaderCompile(WebGLRenderingContextBase&);
-    virtual ~KHRParallelShaderCompile();
+    ~KHRParallelShaderCompile() override final;
 
     ExtensionName getName() const override;
 

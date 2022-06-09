@@ -51,7 +51,7 @@ public:
         std::array<GLuint, 4> planes;
         std::array<unsigned, 4> yuvPlane;
         std::array<unsigned, 4> yuvPlaneOffset;
-        std::array<GLfloat, 16> yuvToRgbMatrix;
+        std::array<GLfloat, 9> yuvToRgbMatrix;
     };
     struct ExternalOESTexture {
         GLuint id;
@@ -62,7 +62,7 @@ public:
 
     virtual ~TextureMapperPlatformLayerBuffer();
 
-    void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
+    void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) final;
 
     bool canReuseWithoutReset(const IntSize&, GLint internalFormat);
     BitmapTextureGL& textureGL() { return static_cast<BitmapTextureGL&>(*m_texture); }
@@ -86,7 +86,7 @@ public:
     void setUnmanagedBufferDataHolder(std::unique_ptr<UnmanagedBufferDataHolder> holder) { m_unmanagedBufferDataHolder = WTFMove(holder); }
     void setExtraFlags(TextureMapperGL::Flags flags) { m_extraFlags = flags; }
 
-    virtual std::unique_ptr<TextureMapperPlatformLayerBuffer> clone();
+    std::unique_ptr<TextureMapperPlatformLayerBuffer> clone();
 
     class HolePunchClient {
         WTF_MAKE_FAST_ALLOCATED();
@@ -97,16 +97,14 @@ public:
 
     void setHolePunchClient(std::unique_ptr<HolePunchClient>&& client) { m_holePunchClient = WTFMove(client); }
 
-    const TextureVariant& textureVariant() const { return m_variant; }
-    IntSize size() const { return m_size; }
-
-protected:
-    TextureVariant m_variant;
+    const TextureVariant& textureVariant() { return m_variant; }
 
 private:
+
     RefPtr<BitmapTexture> m_texture;
     MonotonicTime m_timeLastUsed;
 
+    TextureVariant m_variant;
     IntSize m_size;
     GLint m_internalFormat;
     TextureMapperGL::Flags m_extraFlags;

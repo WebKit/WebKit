@@ -461,15 +461,6 @@ void DrawingAreaCoordinatedGraphics::updateBackingStoreState(uint64_t stateID, b
         forceRepaint();
 }
 
-void DrawingAreaCoordinatedGraphics::targetRefreshRateDidChange(unsigned rate)
-{
-    UNUSED_PARAM(rate);
-#if !USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
-    if (m_layerTreeHost)
-        m_layerTreeHost->targetRefreshRateDidChange(rate);
-#endif
-}
-
 void DrawingAreaCoordinatedGraphics::didUpdate()
 {
     // We might get didUpdate messages from the UI process even after we've
@@ -829,7 +820,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     IntSize bitmapSize = bounds.size();
     float deviceScaleFactor = m_webPage.corePage()->deviceScaleFactor();
     bitmapSize.scale(deviceScaleFactor);
-    auto bitmap = ShareableBitmap::create(bitmapSize, { });
+    auto bitmap = ShareableBitmap::createShareable(bitmapSize, { });
     if (!bitmap)
         return;
 

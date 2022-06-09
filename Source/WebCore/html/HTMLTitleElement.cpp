@@ -32,7 +32,6 @@
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "Text.h"
-#include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
@@ -90,9 +89,9 @@ StringWithDirection HTMLTitleElement::computedTextWithDirection()
     return { text(), direction };
 }
 
-void HTMLTitleElement::setText(String&& value)
+void HTMLTitleElement::setText(const String& value)
 {
-    setTextContent(WTFMove(value));
+    setTextContent(value);
 }
 
 }

@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-ChangeVersionWrapper::ChangeVersionWrapper(String&& oldVersion, String&& newVersion)
-    : m_oldVersion(WTFMove(oldVersion).isolatedCopy())
-    , m_newVersion(WTFMove(newVersion).isolatedCopy())
+ChangeVersionWrapper::ChangeVersionWrapper(const String& oldVersion, const String& newVersion)
+    : m_oldVersion(oldVersion.isolatedCopy())
+    , m_newVersion(newVersion.isolatedCopy())
 {
 }
 
@@ -53,7 +53,7 @@ bool ChangeVersionWrapper::performPreflight(SQLTransaction& transaction)
     }
 
     if (actualVersion != m_oldVersion) {
-        m_sqlError = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match"_s);
+        m_sqlError = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
         return false;
     }
 

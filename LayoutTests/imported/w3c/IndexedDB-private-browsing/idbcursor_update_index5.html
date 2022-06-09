@@ -35,7 +35,7 @@
 
             var record = cursor.value;
             record.data = document;
-            assert_throws_dom('DataCloneError', function() {
+            assert_throws('DataCloneError', function() {
                 cursor.update(record);
             });
             t.done();

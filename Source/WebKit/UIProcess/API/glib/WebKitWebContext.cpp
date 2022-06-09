@@ -65,7 +65,6 @@
 #include <libintl.h>
 #include <memory>
 #include <pal/HysteresisActivity.h>
-#include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -85,9 +84,9 @@
 using namespace WebKit;
 
 /**
- * WebKitWebContext:
- *
- * Manages aspects common to all #WebKitWebView<!-- -->s
+ * SECTION: WebKitWebContext
+ * @Short_description: Manages aspects common to all #WebKitWebView<!-- -->s
+ * @Title: WebKitWebContext
  *
  * The #WebKitWebContext manages all aspects common to all
  * #WebKitWebView<!-- -->s.
@@ -113,6 +112,7 @@ using namespace WebKit;
  * Alternatively, you can use webkit_web_context_set_tls_errors_policy()
  * to set the policy %WEBKIT_TLS_ERRORS_POLICY_IGNORE; however, this is
  * not appropriate for Internet applications.
+ *
  */
 
 enum {
@@ -128,7 +128,6 @@ enum {
 #endif
 #endif
     PROP_MEMORY_PRESSURE_SETTINGS,
-    PROP_TIME_ZONE_OVERRIDE,
     N_PROPERTIES,
 };
 
@@ -247,8 +246,6 @@ struct _WebKitWebContextPrivate {
     PAL::HysteresisActivity dnsPrefetchHystereris;
 
     WebKitMemoryPressureSettings* memoryPressureSettings;
-
-    CString timeZoneOverride;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -354,9 +351,6 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
         break;
 #endif
 #endif
-    case PROP_TIME_ZONE_OVERRIDE:
-        g_value_set_string(value, webkit_web_context_get_time_zone_override(context));
-        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -392,12 +386,6 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         context->priv->memoryPressureSettings = settings ? webkit_memory_pressure_settings_copy(static_cast<WebKitMemoryPressureSettings*>(settings)) : nullptr;
         break;
     }
-    case PROP_TIME_ZONE_OVERRIDE: {
-        const auto* timeZone = g_value_get_string(value);
-        if (isTimeZoneValid(StringView::fromLatin1(timeZone)))
-            context->priv->timeZoneOverride = timeZone;
-        break;
-    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -426,7 +414,6 @@ static void webkitWebContextConstructed(GObject* object)
         // Once the settings have been passed to the ProcessPoolConfiguration, we don't need them anymore so we can free them.
         g_clear_pointer(&priv->memoryPressureSettings, webkit_memory_pressure_settings_free);
     }
-    configuration.setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.data(), priv->timeZoneOverride.length()));
 
     if (!priv->websiteDataManager)
         priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
@@ -585,28 +572,6 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             _("The WebKitMemoryPressureSettings applied to the web processes created by this context"),
             WEBKIT_TYPE_MEMORY_PRESSURE_SETTINGS,
             static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
-
-    /**
-     * WebKitWebContext:time-zone-override:
-     *
-     * The timezone override for this web context. Setting this property provides a better
-     * alternative to configure the timezone information for all webviews managed by the WebContext.
-     * The other, less optimal, approach is to globally set the TZ environment variable in the
-     * process before creating the context. However this approach might not be very convenient and
-     * can have side-effects in your application.
-     *
-     * The expected values for this property are defined in the IANA timezone database. See this
-     * wikipedia page for instance, https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.
-     *
-     * Since: 2.38
-     */
-    sObjProperties[PROP_TIME_ZONE_OVERRIDE] =
-        g_param_spec_string(
-            "time-zone-override",
-            _("Time Zone Override"),
-            _("The time zone to use instead of the system one"),
-            nullptr,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
@@ -1251,25 +1216,30 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  * when the data of the request is available or
  * webkit_uri_scheme_request_finish_error() in case of error.
  *
- * ```c
+ * <informalexample><programlisting>
  * static void
  * about_uri_scheme_request_cb (WebKitURISchemeRequest *request,
  *                              gpointer                user_data)
  * {
  *     GInputStream *stream;
  *     gsize         stream_length;
- *     const gchar  *path = webkit_uri_scheme_request_get_path (request);
+ *     const gchar  *path;
  *
+ *     path = webkit_uri_scheme_request_get_path (request);
  *     if (!g_strcmp0 (path, "memory")) {
- *         // Create a GInputStream with the contents of memory about page, and set its length to stream_length
+ *         /<!-- -->* Create a GInputStream with the contents of memory about page, and set its length to stream_length *<!-- -->/
  *     } else if (!g_strcmp0 (path, "applications")) {
- *         // Create a GInputStream with the contents of applications about page, and set its length to stream_length
+ *         /<!-- -->* Create a GInputStream with the contents of applications about page, and set its length to stream_length *<!-- -->/
  *     } else if (!g_strcmp0 (path, "example")) {
- *         gchar *contents = g_strdup_printf ("<html><body><p>Example about page</p></body></html>");
+ *         gchar *contents;
+ *
+ *         contents = g_strdup_printf ("&lt;html&gt;&lt;body&gt;&lt;p&gt;Example about page&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;");
  *         stream_length = strlen (contents);
  *         stream = g_memory_input_stream_new_from_data (contents, stream_length, g_free);
  *     } else {
- *         GError *error = g_error_new (ABOUT_HANDLER_ERROR, ABOUT_HANDLER_ERROR_INVALID, "Invalid about:%s page.", path);
+ *         GError *error;
+ *
+ *         error = g_error_new (ABOUT_HANDLER_ERROR, ABOUT_HANDLER_ERROR_INVALID, "Invalid about:%s page.", path);
  *         webkit_uri_scheme_request_finish_error (request, error);
  *         g_error_free (error);
  *         return;
@@ -1277,7 +1247,7 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  *     webkit_uri_scheme_request_finish (request, stream, stream_length, "text/html");
  *     g_object_unref (stream);
  * }
- * ```
+ * </programlisting></informalexample>
  */
 void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const char* scheme, WebKitURISchemeRequestCallback callback, gpointer userData, GDestroyNotify destroyNotify)
 {
@@ -1285,7 +1255,7 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     g_return_if_fail(scheme);
     g_return_if_fail(callback);
 
-    auto canonicalizedScheme = WTF::URLParser::maybeCanonicalizeScheme(StringView::fromLatin1(scheme));
+    auto canonicalizedScheme = WTF::URLParser::maybeCanonicalizeScheme(scheme);
     if (!canonicalizedScheme) {
         g_critical("Cannot register invalid URI scheme %s", scheme);
         return;
@@ -1499,13 +1469,9 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
  * @languages: (allow-none) (array zero-terminated=1) (element-type utf8) (transfer none): a %NULL-terminated list of language identifiers
  *
  * Set the list of preferred languages, sorted from most desirable
- * to least desirable. The list will be used in the following ways:
- *
- * - Determining how to build the `Accept-Language` HTTP header that will be
- *   included in the network requests started by the #WebKitWebContext.
- * - Setting the values of `navigator.language` and `navigator.languages`.
- * - The first item in the list sets the default locale for JavaScript
- *   `Intl` functions.
+ * to least desirable. The list will be used to build the "Accept-Language"
+ * header that will be included in the network requests started by
+ * the #WebKitWebContext.
  */
 void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const gchar* const* languageList)
 {
@@ -1520,7 +1486,7 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
         if (!g_ascii_strcasecmp(languageList[i], "C") || !g_ascii_strcasecmp(languageList[i], "POSIX"))
             languages.append("en-US"_s);
         else
-            languages.append(makeStringByReplacingAll(String::fromUTF8(languageList[i]), '_', '-'));
+            languages.append(String::fromUTF8(languageList[i]).replace("_", "-"));
     }
     context->priv->processPool->setOverrideLanguages(WTFMove(languages));
 }
@@ -1765,7 +1731,7 @@ guint webkit_web_context_get_web_process_count_limit(WebKitWebContext* context)
 static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, bool>* map, bool allowed)
 {
     String string = webkitSecurityOriginGetSecurityOriginData(origin).toString();
-    if (string != "null"_s)
+    if (string != "null")
         map->set(string, allowed);
 }
 
@@ -1870,21 +1836,6 @@ gboolean webkit_web_context_get_use_system_appearance_for_scrollbars(WebKitWebCo
     return context->priv->useSystemAppearanceForScrollbars;
 }
 #endif
-
-/**
- * webkit_web_context_get_time_zone_override:
- * @context: a #WebKitWebContext
- *
- * Get the #WebKitWebContext:time-zone-override property.
- *
- * Since: 2.38
- */
-const gchar* webkit_web_context_get_time_zone_override(WebKitWebContext* context)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
-
-    return context->priv->timeZoneOverride.data();
-}
 
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context)
 {

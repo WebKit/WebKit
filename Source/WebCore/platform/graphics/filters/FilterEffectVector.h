@@ -25,10 +25,11 @@
 
 #pragma once
 
-#include "FilterEffect.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class FilterEffect;
 
 using FilterEffectVector = Vector<Ref<FilterEffect>>;
 

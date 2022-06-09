@@ -40,10 +40,7 @@ GLuint ActiveVariable::activeShaderCount() const
 }
 
 LinkedUniform::LinkedUniform()
-    : typeInfo(nullptr),
-      bufferIndex(-1),
-      blockInfo(sh::kDefaultBlockMemberInfo),
-      outerArrayOffset(0)
+    : typeInfo(nullptr), bufferIndex(-1), blockInfo(sh::kDefaultBlockMemberInfo)
 {}
 
 LinkedUniform::LinkedUniform(GLenum typeIn,
@@ -55,10 +52,7 @@ LinkedUniform::LinkedUniform(GLenum typeIn,
                              const int locationIn,
                              const int bufferIndexIn,
                              const sh::BlockMemberInfo &blockInfoIn)
-    : typeInfo(&GetUniformTypeInfo(typeIn)),
-      bufferIndex(bufferIndexIn),
-      blockInfo(blockInfoIn),
-      outerArrayOffset(0)
+    : typeInfo(&GetUniformTypeInfo(typeIn)), bufferIndex(bufferIndexIn), blockInfo(blockInfoIn)
 {
     type       = typeIn;
     precision  = precisionIn;
@@ -87,8 +81,7 @@ LinkedUniform::LinkedUniform(const LinkedUniform &uniform)
       typeInfo(uniform.typeInfo),
       bufferIndex(uniform.bufferIndex),
       blockInfo(uniform.blockInfo),
-      outerArraySizes(uniform.outerArraySizes),
-      outerArrayOffset(uniform.outerArrayOffset)
+      outerArraySizes(uniform.outerArraySizes)
 {}
 
 LinkedUniform &LinkedUniform::operator=(const LinkedUniform &uniform)
@@ -99,7 +92,6 @@ LinkedUniform &LinkedUniform::operator=(const LinkedUniform &uniform)
     bufferIndex                 = uniform.bufferIndex;
     blockInfo                   = uniform.blockInfo;
     outerArraySizes             = uniform.outerArraySizes;
-    outerArrayOffset            = uniform.outerArrayOffset;
     return *this;
 }
 

@@ -28,7 +28,6 @@
 
 #include "ColorLuminance.h"
 #include "ColorSerialization.h"
-#include <cmath>
 #include <wtf/Assertions.h>
 #include <wtf/text/TextStream.h>
 
@@ -125,20 +124,6 @@ double Color::luminance() const
     });
 }
 
-bool Color::anyComponentIsNone() const
-{
-    return callOnUnderlyingType([&] (const auto& underlyingColor) {
-        using ColorType = std::decay_t<decltype(underlyingColor)>;
-
-        if constexpr (std::is_same_v<ColorType, SRGBA<uint8_t>>) {
-            return false;
-        } else {
-            auto [c1, c2, c3, alpha] = underlyingColor.unresolved();
-            return std::isnan(c1) || std::isnan(c2) || std::isnan(c3) || std::isnan(alpha);
-        }
-    });
-}
-
 Color Color::colorWithAlpha(float alpha) const
 {
     return callOnUnderlyingType([&] (const auto& underlyingColor) -> Color {
@@ -208,17 +193,6 @@ bool Color::isWhiteColor(const Color& color)
     return color.callOnUnderlyingType([] (const auto& underlyingColor) {
         return WebCore::isWhite(underlyingColor);
     });
-}
-
-Color::DebugRGBA Color::debugRGBA() const
-{
-    auto [r, g, b, a] = toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-    return { r, g, b, a };
-}
-
-String Color::debugDescription() const
-{
-    return serializationForRenderTreeAsText(*this);
 }
 
 TextStream& operator<<(TextStream& ts, const Color& color)

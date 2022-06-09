@@ -343,7 +343,7 @@ static Class scrollViewScrollIndicatorClass()
 
 @end
 
-@implementation WKBackdropView
+@implementation WKSimpleBackdropView
 
 + (Class)layerClass
 {
@@ -403,6 +403,20 @@ static Class scrollViewScrollIndicatorClass()
 
     return self;
 }
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
+{
+    return [self _web_findDescendantViewAtPoint:point withEvent:event];
+}
+
+- (NSString *)description
+{
+    return WebKit::RemoteLayerTreeNode::appendLayerDescription(super.description, self.layer);
+}
+
+@end
+
+@implementation WKBackdropView
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event
 {

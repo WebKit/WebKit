@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,8 +47,6 @@ public:
     float shadowOpacity() const { return m_shadowOpacity; }
     void setShadowOpacity(float shadowOpacity) { m_shadowOpacity = shadowOpacity; }
 
-    static IntOutsets calculateOutsets(const FloatSize& offset, const FloatSize& stdDeviation);
-
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<Ref<FEDropShadow>> decode(Decoder&);
 
@@ -57,7 +55,9 @@ private:
 
     FloatRect calculateImageRect(const Filter&, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const override;
 
-    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
+    IntOutsets outsets() const override;
+
+    std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 

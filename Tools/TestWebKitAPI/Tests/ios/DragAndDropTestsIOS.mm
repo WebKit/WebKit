@@ -2153,23 +2153,6 @@ TEST(DragAndDropTests, DropPreviewForImageInEditableArea)
     EXPECT_FALSE(isCompletelyWhite([(UIImageView *)finalPreview.view image]));
 }
 
-TEST(DragAndDropTests, DropUserSelectAllUserDragElementDiv)
-{
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    [webView synchronouslyLoadTestPageNamed:@"contenteditable-user-select-user-drag"];
-
-    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
-    [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 300)];
-
-    NSArray *liftPreviews = [simulator liftPreviews];
-    EXPECT_EQ(1U, liftPreviews.count);
-    EXPECT_EQ(UITargetedDragPreview.class, [liftPreviews.firstObject class]);
-
-    checkCGRectIsEqualToCGRectWithLogging({ { 0, 0 }, { 200, 200 } }, [simulator liftPreviews][0].view.frame);
-
-    EXPECT_WK_STREQ(@"Text", [webView stringByEvaluatingJavaScript:@"document.getElementById(\"editor\").textContent"]);
-}
-
 TEST(DragAndDropTests, SuggestedNameContainsDot)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -2214,7 +2197,7 @@ TEST(DragAndDropTests, CanStartDragOnModel)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"model"];
     
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:@"<model><source src='model://cube.usdz'></model><script>document.querySelector('model').addEventListener('load', event => window.webkit.messageHandlers.modelLoading.postMessage('READY'));</script>"];
+    [webView synchronouslyLoadHTMLString:@"<model><source src='model://cube.usdz'></model><script>document.getElementsByTagName('model')[0].ready.then(() => { window.webkit.messageHandlers.modelLoading.postMessage('READY') });</script>"];
 
     while (![messageHandler didLoadModel])
         Util::spinRunLoop();

@@ -55,7 +55,7 @@ protected:
 
 private:
     bool isRenderMathMLToken() const final { return true; }
-    ASCIILiteral renderName() const override { return "RenderMathMLToken"_s; }
+    const char* renderName() const override { return "RenderMathMLToken"; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return true; };
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     void updateMathVariantGlyph();

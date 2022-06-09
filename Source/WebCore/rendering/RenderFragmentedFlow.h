@@ -186,7 +186,7 @@ protected:
 
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override { return const_cast<RenderFragmentedFlow*>(this); }
 
-    ASCIILiteral renderName() const override = 0;
+    const char* renderName() const override = 0;
 
     // Overridden by columns/pages to set up an initial logical width of the page width even when
     // no fragments have been generated yet.

@@ -40,7 +40,6 @@
 #import <objc/objc-runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/FileSystem.h>
-#import <wtf/LoggerHelper.h>
 #import <wtf/UUID.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -82,18 +81,16 @@
 
 namespace WebCore {
 
-CDMSessionAVStreamSession::CDMSessionAVStreamSession(Vector<int>&& protocolVersions, CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient& client)
+CDMSessionAVStreamSession::CDMSessionAVStreamSession(Vector<int>&& protocolVersions, CDMPrivateMediaSourceAVFObjC& cdm, LegacyCDMSessionClient* client)
     : CDMSessionMediaSourceAVFObjC(cdm, client)
     , m_dataParserObserver(adoptNS([[WebCDMSessionAVStreamSessionObserver alloc] initWithParent:this]))
     , m_protocolVersions(WTFMove(protocolVersions))
     , m_mode(Normal)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
 }
 
 CDMSessionAVStreamSession::~CDMSessionAVStreamSession()
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
     setStreamSession(nullptr);
 
     for (auto& sourceBuffer : m_sourceBuffers)
@@ -106,14 +103,14 @@ RefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyRequest(const String& m
     UNUSED_PARAM(destinationURL);
     ASSERT(initData);
 
-    ALWAYS_LOG(LOGIDENTIFIER);
+    LOG(Media, "CDMSessionAVStreamSession::generateKeyRequest(%p)", this);
 
     errorCode = MediaPlayer::NoError;
     systemCode = 0;
 
     m_initData = initData;
 
-    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease"_s)) {
+    if (equalLettersIgnoringASCIICase(mimeType, "keyrelease")) {
         m_mode = KeyRelease;
         return generateKeyReleaseMessage(errorCode, systemCode);
     }
@@ -132,7 +129,7 @@ void CDMSessionAVStreamSession::releaseKeys()
         for (auto& sourceBuffer : m_sourceBuffers)
             sourceBuffer->flush();
 
-        ALWAYS_LOG(LOGIDENTIFIER, "expiring stream session");
+        LOG(Media, "CDMSessionAVStreamSession::releaseKeys(%p) - expiring stream session", this);
         [m_streamSession expire];
 
         if (!m_certificate)
@@ -153,7 +150,7 @@ void CDMSessionAVStreamSession::releaseKeys()
                 continue;
 
             if (m_sessionId == String(playbackSessionIdValue)) {
-                ALWAYS_LOG(LOGIDENTIFIER, "found session, sending expiration message");
+                LOG(Media, "CDMSessionAVStreamSession::releaseKeys(%p) - found session, sending expiration message");
                 m_expiredSession = expiredSessionData;
                 m_client->sendMessage(Uint8Array::create(static_cast<const uint8_t*>([m_expiredSession bytes]), [m_expiredSession length]).ptr(), emptyString());
                 break;
@@ -182,13 +179,13 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
 {
     bool shouldGenerateKeyRequest = !m_certificate || isEqual2(key, "renew");
     if (!m_certificate) {
-        ALWAYS_LOG(LOGIDENTIFIER, "certificate data");
+        LOG(Media, "CDMSessionAVStreamSession::update(%p) - certificate data", this);
 
         m_certificate = key;
     }
 
     if (isEqual2(key, "acknowledged")) {
-        ALWAYS_LOG(LOGIDENTIFIER, "acknowleding secure stop message");
+        LOG(Media, "CDMSessionAVStreamSession::update(%p) - acknowleding secure stop message", this);
 
         if (!m_expiredSession) {
             errorCode = MediaPlayer::InvalidPlayerState;
@@ -241,29 +238,27 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
         ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (![protectedSourceBuffer->streamDataParser() respondsToSelector:@selector(contentProtectionSessionIdentifier)])
-            m_sessionId = createVersion4UUIDString();
+            m_sessionId = createCanonicalUUIDString();
 
         if (error) {
-            ERROR_LOG(LOGIDENTIFIER, "error generating key request: ", String(error.description));
+            LOG(Media, "CDMSessionAVStreamSession::update(%p) - error:%@", this, [error description]);
             errorCode = MediaPlayer::InvalidPlayerState;
             systemCode = mediaKeyErrorSystemCode(error);
             return false;
         }
 
-        ALWAYS_LOG(LOGIDENTIFIER, "generated key request");
         nextMessage = Uint8Array::create([request length]);
         [request getBytes:nextMessage->data() length:nextMessage->length()];
         return false;
     }
 
     if (!protectedSourceBuffer) {
-        ERROR_LOG(LOGIDENTIFIER, "error: !protectedSourceBuffer");
         errorCode = MediaPlayer::InvalidPlayerState;
         return false;
     }
 
     ASSERT(!m_sourceBuffers.isEmpty());
-    ALWAYS_LOG(LOGIDENTIFIER, "processing key response");
+    LOG(Media, "CDMSessionAVStreamSession::update(%p) - key data", this);
     errorCode = MediaPlayer::NoError;
     systemCode = 0;
     RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->data() length:key->length()]);
@@ -298,14 +293,12 @@ void CDMSessionAVStreamSession::setStreamSession(AVStreamSession *streamSession)
 
 void CDMSessionAVStreamSession::addParser(AVStreamDataParser* parser)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
     if (m_streamSession)
         [m_streamSession addStreamDataParser:parser];
 }
 
 void CDMSessionAVStreamSession::removeParser(AVStreamDataParser* parser)
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
     if (m_streamSession)
         [m_streamSession removeStreamDataParser:parser];
 }
@@ -325,14 +318,14 @@ RefPtr<Uint8Array> CDMSessionAVStreamSession::generateKeyReleaseMessage(unsigned
 
     NSArray* expiredSessions = [PAL::getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]];
     if (![expiredSessions count]) {
-        ALWAYS_LOG("no expired sessions found");
+        LOG(Media, "CDMSessionAVStreamSession::generateKeyReleaseMessage(%p) - no expired sessions found", this);
 
         errorCode = MediaPlayer::KeySystemNotSupported;
         systemCode = '!mor';
         return nullptr;
     }
 
-    ALWAYS_LOG("found ", [expiredSessions count], " expired sessions");
+    LOG(Media, "CDMSessionAVStreamSession::generateKeyReleaseMessage(%p) - found %d expired sessions", this, [expiredSessions count]);
 
     errorCode = 0;
     systemCode = 0;

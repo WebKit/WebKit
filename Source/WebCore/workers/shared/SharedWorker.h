@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,37 +27,39 @@
 
 #include "AbstractWorker.h"
 #include "ActiveDOMObject.h"
-#include "BlobURL.h"
-#include "SharedWorkerKey.h"
-#include "SharedWorkerObjectIdentifier.h"
+#include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 
 class MessagePort;
-class ResourceError;
+class SharedWorkerProxy;
 
 struct WorkerOptions;
 
 class SharedWorker final : public AbstractWorker, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(SharedWorker);
 public:
-    static ExceptionOr<Ref<SharedWorker>> create(Document&, String&& scriptURL, std::optional<std::variant<String, WorkerOptions>>&&);
+    static ExceptionOr<Ref<SharedWorker>> create(Document&, JSC::RuntimeFlags, String&& scriptURL, std::optional<std::variant<String, WorkerOptions>>&&);
     ~SharedWorker();
 
-    static SharedWorker* fromIdentifier(SharedWorkerObjectIdentifier);
-    SharedWorkerObjectIdentifier identifier() const { return m_identifier; }
     MessagePort& port() const { return m_port.get(); }
+    JSC::RuntimeFlags runtimeFlags() { return m_runtimeFlags; }
 
     const String& identifierForInspector() const { return m_identifierForInspector; }
+    MonotonicTime creationTime() const { return m_creationTime; }
 
-    void didFinishLoading(const ResourceError&);
+    SharedWorkerProxy& proxy() { return m_proxy; }
+
+    void setIsLoading(bool isLoading) { m_isLoading = isLoading; }
 
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final;
 
 private:
-    SharedWorker(Document&, const SharedWorkerKey&, Ref<MessagePort>&&);
+    SharedWorker(Document&, Ref<MessagePort>&&, JSC::RuntimeFlags);
+
+    void terminate();
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final;
@@ -66,17 +68,14 @@ private:
     const char* activeDOMObjectName() const final;
     void stop() final;
     bool virtualHasPendingActivity() const final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
 
 
-    SharedWorkerKey m_key;
-    SharedWorkerObjectIdentifier m_identifier;
     Ref<MessagePort> m_port;
     String m_identifierForInspector;
-    BlobURLHandle m_blobURLExtension;
-    bool m_isActive { true };
-    bool m_isSuspendedForBackForwardCache { false };
+    JSC::RuntimeFlags m_runtimeFlags;
+    MonotonicTime m_creationTime;
+    SharedWorkerProxy& m_proxy; // The proxy outlives the worker to perform thread shutdown.
+    bool m_isLoading { false };
 };
 
 } // namespace WebCore

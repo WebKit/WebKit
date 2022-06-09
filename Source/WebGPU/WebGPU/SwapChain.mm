@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,26 +26,18 @@
 #import "config.h"
 #import "SwapChain.h"
 
-#import "APIConversions.h"
-#import "Device.h"
 #import "TextureView.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
-
-Ref<SwapChain> Device::createSwapChain(const Surface& surface, const WGPUSwapChainDescriptor& descriptor)
-{
-    UNUSED_PARAM(surface);
-    UNUSED_PARAM(descriptor);
-    return SwapChain::create();
-}
 
 SwapChain::SwapChain() = default;
 
 SwapChain::~SwapChain() = default;
 
-TextureView* SwapChain::getCurrentTextureView()
+Ref<TextureView> SwapChain::getCurrentTextureView()
 {
-    return nullptr;
+    return TextureView::create();
 }
 
 void SwapChain::present()
@@ -54,19 +46,18 @@ void SwapChain::present()
 
 } // namespace WebGPU
 
-#pragma mark WGPU Stubs
-
 void wgpuSwapChainRelease(WGPUSwapChain swapChain)
 {
-    WebGPU::fromAPI(swapChain).deref();
+    delete swapChain;
 }
 
 WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)
 {
-    return WebGPU::fromAPI(swapChain).getCurrentTextureView();
+    return new WGPUTextureViewImpl { swapChain->swapChain->getCurrentTextureView() };
 }
 
 void wgpuSwapChainPresent(WGPUSwapChain swapChain)
 {
-    WebGPU::fromAPI(swapChain).present();
+    swapChain->swapChain->present();
 }
+

@@ -44,9 +44,6 @@ using namespace JSC;
 
 JSC::JSValue DeferredPromise::promise() const
 {
-    if (isEmpty())
-        return jsUndefined();
-
     ASSERT(deferred());
     return deferred();
 }
@@ -132,7 +129,6 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
     if (shouldIgnoreRequestToFulfill())
         return;
 
-    Ref protectedThis(*this);
     ASSERT(deferred());
     ASSERT(m_globalObject);
     auto& lexicalGlobalObject = *m_globalObject;
@@ -167,7 +163,6 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
     if (shouldIgnoreRequestToFulfill())
         return;
 
-    Ref protectedThis(*this);
     ASSERT(deferred());
     ASSERT(m_globalObject);
     auto& lexicalGlobalObject = *m_globalObject;
@@ -234,7 +229,7 @@ JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexi
     if (cause == RejectedPromiseWithTypeErrorCause::NativeGetter)
         rejectionValue->setNativeGetterTypeError();
 
-    auto callData = JSC::getCallData(rejectFunction);
+    auto callData = getCallData(vm, rejectFunction);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;

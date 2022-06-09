@@ -44,8 +44,9 @@ namespace IDBServer {
 // The IndexedDB spec states the maximum value you can get from the key generator is 2^53.
 constexpr uint64_t maxGeneratedKeyValue = 0x20000000000000;
 
-MemoryIDBBackingStore::MemoryIDBBackingStore(const IDBDatabaseIdentifier& identifier)
+MemoryIDBBackingStore::MemoryIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier)
     : m_identifier(identifier)
+    , m_sessionID(sessionID)
 {
 }
 
@@ -78,7 +79,7 @@ IDBError MemoryIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     LOG(IndexedDB, "MemoryIDBBackingStore::beginTransaction");
 
     if (m_transactions.contains(info.identifier()))
-        return IDBError { InvalidStateError, "Backing store asked to create transaction it already has a record of"_s };
+        return IDBError { InvalidStateError, "Backing store asked to create transaction it already has a record of" };
 
     auto transaction = MemoryBackingStoreTransaction::create(*this, info);
 
@@ -104,7 +105,7 @@ IDBError MemoryIDBBackingStore::abortTransaction(const IDBResourceIdentifier& tr
 
     auto transaction = m_transactions.take(transactionIdentifier);
     if (!transaction)
-        return IDBError { InvalidStateError, "Backing store asked to abort transaction it didn't have record of"_s };
+        return IDBError { InvalidStateError, "Backing store asked to abort transaction it didn't have record of" };
 
     transaction->abort();
 
@@ -117,7 +118,7 @@ IDBError MemoryIDBBackingStore::commitTransaction(const IDBResourceIdentifier& t
 
     auto transaction = m_transactions.take(transactionIdentifier);
     if (!transaction)
-        return IDBError { InvalidStateError, "Backing store asked to commit transaction it didn't have record of"_s };
+        return IDBError { InvalidStateError, "Backing store asked to commit transaction it didn't have record of" };
 
     transaction->commit();
 
@@ -133,7 +134,7 @@ IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
         return IDBError { ConstraintError };
 
     ASSERT(!m_objectStoresByIdentifier.contains(info.identifier()));
-    auto objectStore = MemoryObjectStore::create(info);
+    auto objectStore = MemoryObjectStore::create(m_sessionID, info);
 
     m_databaseInfo->addExistingObjectStore(info);
 
@@ -473,7 +474,7 @@ IDBError MemoryIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
 
     keyNumber = objectStore->currentKeyGeneratorValue();
     if (keyNumber > maxGeneratedKeyValue)
-        return IDBError { ConstraintError, "Cannot generate new key value over 2^53 for object store operation"_s };
+        return IDBError { ConstraintError, "Cannot generate new key value over 2^53 for object store operation" };
 
     objectStore->setKeyGeneratorValue(keyNumber + 1);
 

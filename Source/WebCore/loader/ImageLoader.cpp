@@ -72,7 +72,6 @@ template<> struct ValueCheck<WebCore::ImageLoader*> {
 
 namespace WebCore {
 
-// FIXME: beforeload event no longer exists. Delete this code.
 static ImageEventSender& beforeLoadEventSender()
 {
     static NeverDestroyed<ImageEventSender> sender(eventNames().beforeloadEvent);
@@ -192,7 +191,6 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         options.contentSecurityPolicyImposition = element().isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
         options.loadedFromPluginElement = is<HTMLPlugInElement>(element()) ? LoadedFromPluginElement::Yes : LoadedFromPluginElement::No;
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
-        options.serviceWorkersMode = is<HTMLPlugInElement>(element()) ? ServiceWorkersMode::None : ServiceWorkersMode::All;
         bool isImageElement = is<HTMLImageElement>(element());
         if (isImageElement)
             options.referrerPolicy = downcast<HTMLImageElement>(element()).referrerPolicy();
@@ -283,9 +281,12 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, Cached
         m_imageComplete = !newImage;
 
         if (newImage) {
-            if (!document.isImageDocument())
-                dispatchPendingBeforeLoadEvent();
-            else
+            if (!document.isImageDocument()) {
+                if (!document.hasListenerType(Document::BEFORELOAD_LISTENER))
+                    dispatchPendingBeforeLoadEvent();
+                else
+                    beforeLoadEventSender().dispatchEventSoon(*this);
+            } else
                 updateRenderer();
 
             if (m_lazyImageLoadState == LazyImageLoadState::Deferred) {
@@ -332,7 +333,7 @@ static inline void resolvePromises(Vector<RefPtr<DeferredPromise>>& promises)
         promise->resolve();
 }
 
-static inline void rejectPromises(Vector<RefPtr<DeferredPromise>>& promises, ASCIILiteral message)
+static inline void rejectPromises(Vector<RefPtr<DeferredPromise>>& promises, const char* message)
 {
     ASSERT(!promises.isEmpty());
     auto promisesToBeRejected = std::exchange(promises, { });
@@ -345,7 +346,7 @@ inline void ImageLoader::resolveDecodePromises()
     resolvePromises(m_decodingPromises);
 }
 
-inline void ImageLoader::rejectDecodePromises(ASCIILiteral message)
+inline void ImageLoader::rejectDecodePromises(const char* message)
 {
     rejectPromises(m_decodingPromises, message);
 }
@@ -379,7 +380,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
         element().document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
 
         if (hasPendingDecodePromises())
-            rejectDecodePromises("Access control error."_s);
+            rejectDecodePromises("Access control error.");
         
         ASSERT(!m_hasPendingLoadEvent);
 
@@ -391,7 +392,7 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 
     if (m_image->wasCanceled()) {
         if (hasPendingDecodePromises())
-            rejectDecodePromises("Loading was canceled."_s);
+            rejectDecodePromises("Loading was canceled.");
         m_hasPendingLoadEvent = false;
         // Only consider updating the protection ref-count of the Element immediately before returning
         // from this function as doing so might result in the destruction of this ImageLoader.
@@ -468,13 +469,13 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
     m_decodingPromises.append(WTFMove(promise));
 
     if (!element().document().domWindow()) {
-        rejectDecodePromises("Inactive document."_s);
+        rejectDecodePromises("Inactive document.");
         return;
     }
 
     AtomString attr = element().imageSourceURL();
     if (stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
-        rejectDecodePromises("Missing source URL."_s);
+        rejectDecodePromises("Missing source URL.");
         return;
     }
 
@@ -487,12 +488,12 @@ void ImageLoader::decode()
     ASSERT(hasPendingDecodePromises());
     
     if (!element().document().domWindow()) {
-        rejectDecodePromises("Inactive document."_s);
+        rejectDecodePromises("Inactive document.");
         return;
     }
 
     if (!m_image || !m_image->image() || m_image->errorOccurred()) {
-        rejectDecodePromises("Loading error."_s);
+        rejectDecodePromises("Loading error.");
         return;
     }
 
@@ -534,9 +535,29 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
     if (!element().document().hasLivingRenderTree())
         return;
     m_hasPendingBeforeLoadEvent = false;
-    if (!element().isConnected())
+    Ref<Document> originalDocument = element().document();
+    if (element().dispatchBeforeLoadEvent(m_image->url().string())) {
+        bool didEventListenerDisconnectThisElement = !element().isConnected() || &element().document() != originalDocument.ptr();
+        if (didEventListenerDisconnectThisElement)
+            return;
+        
+        updateRenderer();
         return;
-    updateRenderer();
+    }
+    if (m_image) {
+        m_image->removeClient(*this);
+        m_image = nullptr;
+    }
+
+    loadEventSender().cancelEvent(*this);
+    m_hasPendingLoadEvent = false;
+    
+    if (is<HTMLObjectElement>(element()))
+        downcast<HTMLObjectElement>(element()).renderFallbackContent();
+
+    // Only consider updating the protection ref-count of the Element immediately before returning
+    // from this function as doing so might result in the destruction of this ImageLoader.
+    updatedHasPendingEvent();
 }
 
 void ImageLoader::dispatchPendingLoadEvent()

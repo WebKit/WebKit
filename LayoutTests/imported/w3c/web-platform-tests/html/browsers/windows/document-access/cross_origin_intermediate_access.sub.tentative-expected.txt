@@ -1,0 +1,7 @@
+Blocked access to external URL http://www1.localhost:8800/html/browsers/windows/document-access/resources/cross_origin_intermediate_child.sub.html
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Check that a grandchild can access window.top Test timed out
+

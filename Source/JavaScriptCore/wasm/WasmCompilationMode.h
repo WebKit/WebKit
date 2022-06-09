@@ -50,7 +50,6 @@ constexpr inline bool isOSREntry(CompilationMode compilationMode)
     case CompilationMode::OMGForOSREntryMode:
         return true;
     }
-    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
 }
 
 constexpr inline bool isAnyBBQ(CompilationMode compilationMode)
@@ -65,7 +64,6 @@ constexpr inline bool isAnyBBQ(CompilationMode compilationMode)
     case CompilationMode::EmbedderEntrypointMode:
         return false;
     }
-    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
 }
 
 constexpr inline bool isAnyOMG(CompilationMode compilationMode)
@@ -80,7 +78,6 @@ constexpr inline bool isAnyOMG(CompilationMode compilationMode)
     case CompilationMode::EmbedderEntrypointMode:
         return false;
     }
-    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
 }
 
 } } // namespace JSC::Wasm

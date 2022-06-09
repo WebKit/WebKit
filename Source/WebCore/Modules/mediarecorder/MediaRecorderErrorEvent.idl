@@ -27,11 +27,11 @@ dictionary MediaRecorderErrorEventInit : EventInit {
 };
 
 [
-    Conditional=MEDIA_RECORDER,
+    Conditional=MEDIA_STREAM,
     Exposed=Window,
     EnabledBySetting=MediaRecorderEnabled
 ] interface MediaRecorderErrorEvent : Event {
-    constructor([AtomString] DOMString type, MediaRecorderErrorEventInit eventInitDict);
+    constructor(DOMString type, MediaRecorderErrorEventInit eventInitDict);
 
     [SameObject] readonly attribute DOMException error;
 };

@@ -45,7 +45,7 @@ public:
 
 private:
     struct TermPointerHash {
-        static unsigned hash(const Term* key) { return computeHash(*key); }
+        static unsigned hash(const Term* key) { return key->hash(); }
         static inline bool equal(const Term* a, const Term* b)
         {
             return *a == *b;

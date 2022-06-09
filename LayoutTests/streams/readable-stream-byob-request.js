@@ -56,7 +56,7 @@ test(function() {
     rs.getReader().read();
     const byobReq = controller.byobRequest;
 
-    assert_throws_js(TypeError,
+    assert_throws(new TypeError("Can only call ReadableStreamBYOBRequest.respond on instances of ReadableStreamBYOBRequest"),
         function() { byobReq.respond.apply(rs, 1); });
 
 }, "Calling respond() with a this object different from ReadableStreamBYOBRequest should throw a TypeError");
@@ -75,7 +75,7 @@ test(function() {
     rs.getReader().read();
     const byobReq = controller.byobRequest;
 
-    assert_throws_js(RangeError,
+    assert_throws(new RangeError("bytesWritten has an incorrect value"),
         function() { byobReq.respond(-1); });
 }, "Calling respond() with a negative bytesWritten value should throw a RangeError");
 
@@ -93,7 +93,7 @@ test(function() {
     rs.getReader().read();
     const byobReq = controller.byobRequest;
 
-    assert_throws_js(RangeError,
+    assert_throws(new RangeError("bytesWritten has an incorrect value"),
         function() { byobReq.respond("abc"); });
 }, "Calling respond() with a bytesWritten value which is not a number should throw a RangeError");
 
@@ -111,7 +111,7 @@ test(function() {
     rs.getReader().read();
     const byobReq = controller.byobRequest;
 
-    assert_throws_js(RangeError,
+    assert_throws(new RangeError("bytesWritten has an incorrect value"),
         function() { byobReq.respond(Number.POSITIVE_INFINITY); });
 }, "Calling respond() with a positive infinity bytesWritten value should throw a RangeError");
 
@@ -130,7 +130,7 @@ test(function() {
     const byobReq = controller.byobRequest;
     controller.close();
 
-    assert_throws_js(TypeError,
+    assert_throws(new TypeError("bytesWritten is different from 0 even though stream is closed"),
         function() { byobReq.respond(1); });
 }, "Calling respond() with a bytesWritten value different from 0 when stream is closed should throw a TypeError");
 
@@ -168,7 +168,7 @@ test(function() {
 
     rs.getReader().read();
     const byobReq = controller.byobRequest;
-    assert_throws_js(RangeError,
+    assert_throws(new RangeError("bytesWritten value is too great"),
         function() { byobReq.respond(17); });
 
 }, "Calling respond() with a bytesWritten value greater than autoAllocateChunkSize should fail");
@@ -212,7 +212,7 @@ test(function() {
     rs.getReader().read();
     const byobReq = controller.byobRequest;
 
-    assert_throws_js(TypeError,
+    assert_throws(new TypeError("Can only call ReadableStreamBYOBRequest.respondWithNewView on instances of ReadableStreamBYOBRequest"),
         function() { byobReq.respondWithNewView.apply(rs, new Uint8Array(1)); });
 
 }, "Calling respondWithNewView() with a this object different from ReadableStreamBYOBRequest should throw a TypeError");
@@ -231,7 +231,7 @@ test(function() {
     rs.getReader().read();
     const byobReq = controller.byobRequest;
 
-    assert_throws_js(TypeError,
+    assert_throws(new TypeError("Provided view is not an object"),
         function() { byobReq.respondWithNewView(function() {}); });
 
 }, "Calling respondWithNewView() with an argument that is not an object should throw a TypeError");
@@ -250,7 +250,7 @@ test(function() {
     rs.getReader().read();
     const byobReq = controller.byobRequest;
 
-    assert_throws_js(TypeError,
+    assert_throws(new TypeError("Provided view is not an ArrayBufferView"),
         function() { byobReq.respondWithNewView({}); });
 
 }, "Calling respondWithNewView() with an argument that is not an ArrayBufferView should throw a TypeError");
@@ -287,7 +287,10 @@ promise_test(function(test) {
         },
         type: "bytes"
     });
-    return promise_rejects_js(test, RangeError, rs.getReader().read());
+
+    const error = new RangeError("Invalid value for view.byteLength");
+
+    return promise_rejects(test, error, rs.getReader().read());
 }, "When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteOffset is different from 0");
 
 promise_test(function(test) {
@@ -302,7 +305,10 @@ promise_test(function(test) {
         },
         type: "bytes"
     });
-    return promise_rejects_js(test, RangeError, rs.getReader().read());
+
+    const error = new RangeError("Invalid value for view.byteOffset");
+
+    return promise_rejects(test, error, rs.getReader().read());
 }, "When using autoAllocateChunkSize, calling respondWithNewView() should throw a RangeError if view.byteLength is different from autoAllocateChunkSize");
 
 done();

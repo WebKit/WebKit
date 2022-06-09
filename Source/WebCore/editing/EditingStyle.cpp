@@ -94,7 +94,7 @@ static const CSSPropertyID editingProperties[] = {
 
     // Non-inheritable properties
     CSSPropertyBackgroundColor,
-    CSSPropertyTextDecorationLine,
+    CSSPropertyTextDecoration,
 };
 
 const unsigned numAllEditingProperties = WTF_ARRAY_LENGTH(editingProperties);
@@ -220,7 +220,7 @@ void HTMLElementEquivalent::addToStyle(Element*, EditingStyle* style) const
 class HTMLTextDecorationEquivalent : public HTMLElementEquivalent {
 public:
     HTMLTextDecorationEquivalent(CSSValueID primitiveValue, const QualifiedName& tagName)
-        : HTMLElementEquivalent(CSSPropertyTextDecorationLine, primitiveValue, tagName)
+        : HTMLElementEquivalent(CSSPropertyTextDecoration, primitiveValue, tagName)
         , m_isUnderline(primitiveValue == CSSValueUnderline)
     {
     }
@@ -235,7 +235,7 @@ public:
 
         auto& mutableStyle = *style.m_mutableStyle;
         return mutableStyle.getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect)
-            || mutableStyle.getPropertyCSSValue(CSSPropertyTextDecorationLine);
+            || mutableStyle.getPropertyCSSValue(CSSPropertyTextDecoration);
     }
 
     bool valueIsPresentInStyle(Element& element, const EditingStyle& style) const override
@@ -247,7 +247,7 @@ public:
             return change == TextDecorationChange::Add;
         RefPtr<CSSValue> styleValue = style.m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
         if (!styleValue)
-            styleValue = style.m_mutableStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine);
+            styleValue = style.m_mutableStyle->getPropertyCSSValue(CSSPropertyTextDecoration);
         return is<CSSValueList>(styleValue) && downcast<CSSValueList>(*styleValue).hasValue(m_primitiveValue.get());
     }
 
@@ -439,7 +439,7 @@ static Color cssValueToColor(CSSValue* colorValue)
     if (primitiveColor.isRGBColor())
         return primitiveColor.color();
     
-    return CSSParser::parseColorWithoutContext(colorValue->cssText());
+    return CSSParser::parseColor(colorValue->cssText());
 }
 
 template<typename T>
@@ -510,7 +510,7 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
         if (RefPtr<CSSValue> value = backgroundColorInEffect(node))
             m_mutableStyle->setProperty(CSSPropertyBackgroundColor, value->cssText());
         if (RefPtr<CSSValue> value = computedStyleAtPosition.propertyValue(CSSPropertyWebkitTextDecorationsInEffect)) {
-            m_mutableStyle->setProperty(CSSPropertyTextDecorationLine, value->cssText());
+            m_mutableStyle->setProperty(CSSPropertyTextDecoration, value->cssText());
             m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
         }
     }
@@ -595,9 +595,9 @@ Ref<MutableStyleProperties> EditingStyle::styleWithResolvedTextDecorations() con
         valueList->append(CSSValuePool::singleton().createIdentifierValue(CSSValueLineThrough));
 
     if (valueList->length())
-        style->setProperty(CSSPropertyTextDecorationLine, valueList.ptr());
+        style->setProperty(CSSPropertyTextDecoration, valueList.ptr());
     else
-        style->setProperty(CSSPropertyTextDecorationLine, CSSValuePool::singleton().createIdentifierValue(CSSValueNone));
+        style->setProperty(CSSPropertyTextDecoration, CSSValuePool::singleton().createIdentifierValue(CSSValueNone));
 
     return style;
 }
@@ -779,15 +779,15 @@ void EditingStyle::collapseTextDecorationProperties()
         return;
 
     if (textDecorationsInEffect->isValueList())
-        m_mutableStyle->setProperty(CSSPropertyTextDecorationLine, textDecorationsInEffect->cssText(), m_mutableStyle->propertyIsImportant(CSSPropertyTextDecorationLine));
+        m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->propertyIsImportant(CSSPropertyTextDecoration));
     else
-        m_mutableStyle->removeProperty(CSSPropertyTextDecorationLine);
+        m_mutableStyle->removeProperty(CSSPropertyTextDecoration);
     m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
 }
 
 // CSS properties that create a visual difference only when applied to text.
 static const CSSPropertyID textOnlyProperties[] = {
-    CSSPropertyTextDecorationLine,
+    CSSPropertyTextDecoration,
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyFontStyle,
     CSSPropertyFontWeight,
@@ -852,7 +852,7 @@ TriState EditingStyle::triStateOfStyle(const VisibleSelection& selection) const
 
 static RefPtr<CSSValueList> textDecorationValueList(const StyleProperties& properties)
 {
-    RefPtr<CSSValue> value = properties.getPropertyCSSValue(CSSPropertyTextDecorationLine);
+    RefPtr<CSSValue> value = properties.getPropertyCSSValue(CSSPropertyTextDecoration);
     if (!is<CSSValueList>(value))
         return nullptr;
     return downcast<CSSValueList>(value.get());
@@ -896,13 +896,13 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
             if (extractedValueList->length()) {
                 conflicts = true;
                 if (newValueList->length())
-                    newInlineStyle->setProperty(CSSPropertyTextDecorationLine, WTFMove(newValueList));
+                    newInlineStyle->setProperty(CSSPropertyTextDecoration, WTFMove(newValueList));
                 else
-                    newInlineStyle->removeProperty(CSSPropertyTextDecorationLine);
+                    newInlineStyle->removeProperty(CSSPropertyTextDecoration);
 
                 if (extractedStyle) {
-                    bool isImportant = inlineStyle->propertyIsImportant(CSSPropertyTextDecorationLine);
-                    extractedStyle->setProperty(CSSPropertyTextDecorationLine, extractedValueList->cssText(), isImportant);
+                    bool isImportant = inlineStyle->propertyIsImportant(CSSPropertyTextDecoration);
+                    extractedStyle->setProperty(CSSPropertyTextDecoration, extractedValueList->cssText(), isImportant);
                 }
             }
         }
@@ -916,13 +916,13 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
         if (propertyID == CSSPropertyWhiteSpace && isTabSpanNode(&element))
             continue;
 
-        if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine)) {
+        if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->getPropertyCSSValue(CSSPropertyTextDecoration)) {
             if (!newInlineStyle)
                 return true;
             conflicts = true;
-            newInlineStyle->removeProperty(CSSPropertyTextDecorationLine);
+            newInlineStyle->removeProperty(CSSPropertyTextDecoration);
             if (extractedStyle)
-                extractedStyle->setProperty(CSSPropertyTextDecorationLine, inlineStyle->getPropertyValue(CSSPropertyTextDecorationLine), inlineStyle->propertyIsImportant(CSSPropertyTextDecorationLine));
+                extractedStyle->setProperty(CSSPropertyTextDecoration, inlineStyle->getPropertyValue(CSSPropertyTextDecoration), inlineStyle->propertyIsImportant(CSSPropertyTextDecoration));
         }
 
         if (!inlineStyle->getPropertyCSSValue(propertyID))
@@ -1049,7 +1049,7 @@ bool EditingStyle::styleIsPresentInComputedStyleOfNode(Node& node) const
     if (shouldAddUnderline || shouldAddLineThrough) {
         bool hasUnderline = false;
         bool hasLineThrough = false;
-        if (RefPtr<CSSValue> value = computedStyle.propertyValue(CSSPropertyTextDecorationLine)) {
+        if (RefPtr<CSSValue> value = computedStyle.propertyValue(CSSPropertyTextDecoration)) {
             if (value->isValueList()) {
                 auto& cssValuePool = CSSValuePool::singleton();
                 const CSSValueList& valueList = downcast<CSSValueList>(*value);
@@ -1283,7 +1283,7 @@ void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideM
         RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(property.id());
 
         // text decorations never override values.
-        if ((property.id() == CSSPropertyTextDecorationLine || property.id() == CSSPropertyWebkitTextDecorationsInEffect)
+        if ((property.id() == CSSPropertyTextDecoration || property.id() == CSSPropertyWebkitTextDecorationsInEffect)
             && is<CSSValueList>(*property.value()) && value) {
             if (is<CSSValueList>(*value)) {
                 auto newValue = downcast<CSSValueList>(*value).copy();
@@ -1688,18 +1688,18 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
 static void reconcileTextDecorationProperties(MutableStyleProperties* style)
 {    
     RefPtr<CSSValue> textDecorationsInEffect = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
-    RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecorationLine);
+    RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecoration);
     // We shouldn't have both text-decoration and -webkit-text-decorations-in-effect because that wouldn't make sense.
     ASSERT(!textDecorationsInEffect || !textDecoration);
     if (textDecorationsInEffect) {
-        style->setProperty(CSSPropertyTextDecorationLine, textDecorationsInEffect->cssText());
+        style->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText());
         style->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
         textDecoration = textDecorationsInEffect;
     }
 
     // If text-decoration is set to "none", remove the property because we don't want to add redundant "text-decoration: none".
     if (textDecoration && !textDecoration->isValueList())
-        style->removeProperty(CSSPropertyTextDecorationLine);
+        style->removeProperty(CSSPropertyTextDecoration);
 }
 
 StyleChange::StyleChange(EditingStyle* style, const Position& position)
@@ -1734,7 +1734,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     if (shouldAddUnderline || shouldAddStrikeThrough) {
         RefPtr<CSSValue> value = computedStyle.propertyValue(CSSPropertyWebkitTextDecorationsInEffect);
         if (!is<CSSValueList>(value))
-            value = computedStyle.propertyValue(CSSPropertyTextDecorationLine);
+            value = computedStyle.propertyValue(CSSPropertyTextDecoration);
 
         RefPtr<CSSValueList> valueList;
         if (is<CSSValueList>(value))
@@ -1753,7 +1753,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
                 valueList->append(WTFMove(underline));
             if (shouldAddStrikeThrough && !hasLineThrough)
                 valueList->append(WTFMove(lineThrough));
-            mutableStyle->setProperty(CSSPropertyTextDecorationLine, valueList.get());
+            mutableStyle->setProperty(CSSPropertyTextDecoration, valueList.get());
         } else {
             m_applyUnderline = shouldAddUnderline && !hasUnderline;
             m_applyLineThrough = shouldAddStrikeThrough && !hasLineThrough;
@@ -1815,7 +1815,7 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
 
     // Assuming reconcileTextDecorationProperties has been called, there should not be -webkit-text-decorations-in-effect
     // Furthermore, text-decoration: none has been trimmed so that text-decoration property is always a CSSValueList.
-    RefPtr<CSSValue> textDecoration = style.getPropertyCSSValue(CSSPropertyTextDecorationLine);
+    RefPtr<CSSValue> textDecoration = style.getPropertyCSSValue(CSSPropertyTextDecoration);
     if (is<CSSValueList>(textDecoration)) {
         auto& cssValuePool = CSSValuePool::singleton();
         RefPtr<CSSPrimitiveValue> underline = cssValuePool.createIdentifierValue(CSSValueUnderline);
@@ -1828,7 +1828,7 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
             m_applyLineThrough = true;
 
         // If trimTextDecorations, delete underline and line-through
-        setTextDecorationProperty(style, newTextDecoration.get(), CSSPropertyTextDecorationLine);
+        setTextDecorationProperty(style, newTextDecoration.get(), CSSPropertyTextDecoration);
     }
 
     int verticalAlign = identifierForStyleProperty(style, CSSPropertyVerticalAlign);
@@ -1846,13 +1846,14 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
     if (style.getPropertyCSSValue(CSSPropertyColor)) {
         auto color = textColorFromStyle(style);
         if (color.isOpaque()) {
-            m_applyFontColor = AtomString { serializationForHTML(color) };
+            m_applyFontColor = serializationForHTML(color);
             style.removeProperty(CSSPropertyColor);
         }
     }
 
+    m_applyFontFace = style.getPropertyValue(CSSPropertyFontFamily);
     // Remove quotes for Outlook 2007 compatibility. See https://bugs.webkit.org/show_bug.cgi?id=79448
-    m_applyFontFace = AtomString { makeStringByReplacingAll(style.getPropertyValue(CSSPropertyFontFamily), '\"', ""_s) };
+    m_applyFontFace.replaceWithLiteral('\"', "");
     style.removeProperty(CSSPropertyFontFamily);
 
     if (RefPtr<CSSValue> fontSize = style.getPropertyCSSValue(CSSPropertyFontSize)) {
@@ -1860,7 +1861,7 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
             style.removeProperty(CSSPropertyFontSize); // Can't make sense of the number. Put no font size.
         else if (int legacyFontSize = legacyFontSizeFromCSSValue(document, downcast<CSSPrimitiveValue>(fontSize.get()),
                 shouldUseFixedFontDefaultSize, UseLegacyFontSizeOnlyIfPixelValuesMatch)) {
-            m_applyFontSize = AtomString::number(legacyFontSize);
+            m_applyFontSize = String::number(legacyFontSize);
             style.removeProperty(CSSPropertyFontSize);
         }
     }
@@ -1896,7 +1897,7 @@ static Ref<MutableStyleProperties> extractPropertiesNotIn(StyleProperties& style
     Ref<MutableStyleProperties> mutableStyle = *result->style();
 
     RefPtr<CSSValue> baseTextDecorationsInEffect = extractPropertyValue(baseStyle, CSSPropertyWebkitTextDecorationsInEffect);
-    diffTextDecorations(mutableStyle, CSSPropertyTextDecorationLine, baseTextDecorationsInEffect.get());
+    diffTextDecorations(mutableStyle, CSSPropertyTextDecoration, baseTextDecorationsInEffect.get());
     diffTextDecorations(mutableStyle, CSSPropertyWebkitTextDecorationsInEffect, baseTextDecorationsInEffect.get());
 
     if (extractPropertyValue(baseStyle, CSSPropertyFontWeight) && fontWeightIsBold(mutableStyle) == fontWeightIsBold(baseStyle))

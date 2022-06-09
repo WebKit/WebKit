@@ -46,7 +46,7 @@ private:
     void willBeDestroyed() override;
     static void rendererStyleChangedSlowCase(RenderElement&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     
-    ASCIILiteral renderName() const override;
+    const char* renderName() const override;
     bool isCounter() const override;
     String originalText() const override;
     

@@ -145,7 +145,6 @@ void EditorState::PostLayoutData::encode(IPC::Encoder& encoder) const
     encoder << caretColor;
     encoder << selectionStartIsAtParagraphBoundary;
     encoder << selectionEndIsAtParagraphBoundary;
-    encoder << selectedEditableImage;
 #endif
 #if PLATFORM(MAC)
     encoder << selectionBoundingRect;
@@ -228,8 +227,6 @@ bool EditorState::PostLayoutData::decode(IPC::Decoder& decoder, PostLayoutData& 
     if (!decoder.decode(result.selectionStartIsAtParagraphBoundary))
         return false;
     if (!decoder.decode(result.selectionEndIsAtParagraphBoundary))
-        return false;
-    if (!decoder.decode(result.selectedEditableImage))
         return false;
 #endif
 #if PLATFORM(MAC)

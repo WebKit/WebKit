@@ -38,7 +38,7 @@
 namespace WebCore {
 
 class MediaKeySession;
-class SharedBuffer;
+class FragmentedSharedBuffer;
 
 class MediaKeyStatusMap : public RefCounted<MediaKeyStatusMap> {
 public:

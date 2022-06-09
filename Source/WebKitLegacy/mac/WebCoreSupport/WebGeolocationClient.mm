@@ -83,16 +83,9 @@ void WebGeolocationClient::geolocationDestroyed()
     delete this;
 }
 
-void WebGeolocationClient::startUpdating(const String& authorizationToken, bool enableHighAccuracy)
+void WebGeolocationClient::startUpdating(const String& authorizationToken)
 {
     UNUSED_PARAM(authorizationToken);
-#if PLATFORM(IOS_FAMILY)
-    if (enableHighAccuracy)
-        setEnableHighAccuracy(true);
-#else
-    UNUSED_PARAM(enableHighAccuracy);
-#endif
-
     [[m_webView _geolocationProvider] registerWebView:m_webView];
 }
 

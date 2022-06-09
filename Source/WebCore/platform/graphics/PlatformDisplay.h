@@ -33,12 +33,6 @@
 typedef void *EGLDisplay;
 #endif
 
-#if PLATFORM(GTK)
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GdkDisplay GdkDisplay;
-#endif
-
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 #include "GRefPtrGStreamer.h"
 
@@ -80,17 +74,11 @@ public:
 
 #if USE(EGL) || USE(GLX)
     WEBCORE_EXPORT GLContext* sharingGLContext();
-    void clearSharingGLContext();
 #endif
 
 #if USE(EGL)
     EGLDisplay eglDisplay() const;
     bool eglCheckVersion(int major, int minor) const;
-
-    struct EGLExtensions {
-        bool EXT_image_dma_buf_import_modifiers { false };
-    };
-    const EGLExtensions& eglExtensions() const { return m_eglExtensions; }
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
@@ -108,18 +96,12 @@ public:
 #endif
 
 protected:
-    PlatformDisplay();
-#if PLATFORM(GTK)
-    explicit PlatformDisplay(GdkDisplay*);
-#endif
+    enum class NativeDisplayOwned { No, Yes };
+    explicit PlatformDisplay(NativeDisplayOwned);
 
     static void setSharedDisplayForCompositing(PlatformDisplay&);
 
-#if PLATFORM(GTK)
-    virtual void sharedDisplayDidClose();
-
-    GRefPtr<GdkDisplay> m_sharedDisplay;
-#endif
+    NativeDisplayOwned m_nativeDisplayOwned { NativeDisplayOwned::No };
 
 #if USE(EGL)
     virtual void initializeEGLDisplay();
@@ -150,7 +132,6 @@ private:
     bool m_eglDisplayInitialized { false };
     int m_eglMajorVersion { 0 };
     int m_eglMinorVersion { 0 };
-    EGLExtensions m_eglExtensions;
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)

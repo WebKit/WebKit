@@ -41,11 +41,15 @@ class ImageVk : public ImageImpl
     egl::Error exportVkImage(void *vkImage, void *vkImageCreateInfo) override;
 
     vk::ImageHelper *getImage() const { return mImage; }
-    gl::TextureType getImageTextureType() const;
-    gl::LevelIndex getImageLevel() const;
-    uint32_t getImageLayer() const;
+    gl::TextureType getImageTextureType() const { return mImageTextureType; }
+    gl::LevelIndex getImageLevel() const { return mImageLevel; }
+    uint32_t getImageLayer() const { return mImageLayer; }
 
   private:
+    gl::TextureType mImageTextureType;
+    gl::LevelIndex mImageLevel;
+    uint32_t mImageLayer;
+
     bool mOwnsImage;
     vk::ImageHelper *mImage;
 

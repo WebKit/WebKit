@@ -79,9 +79,8 @@ class ReadPixelsPBONVTest : public ReadPixelsTest
     {
         ANGLE_SKIP_TEST_IF(!hasPBOExts());
 
-        mPBOBufferSize = bufferSize;
         glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
-        glBufferData(GL_PIXEL_PACK_BUFFER, mPBOBufferSize, nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_PIXEL_PACK_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
         glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 
         glDeleteTextures(1, &mTexture);
@@ -111,12 +110,11 @@ class ReadPixelsPBONVTest : public ReadPixelsTest
                IsGLExtensionEnabled("GL_EXT_texture_storage");
     }
 
-    GLuint mPBO           = 0;
-    GLuint mTexture       = 0;
-    GLuint mFBO           = 0;
-    GLuint mFBOWidth      = 0;
-    GLuint mFBOHeight     = 0;
-    GLuint mPBOBufferSize = 0;
+    GLuint mPBO       = 0;
+    GLuint mTexture   = 0;
+    GLuint mFBO       = 0;
+    GLuint mFBOWidth  = 0;
+    GLuint mFBOHeight = 0;
 };
 
 // Test basic usage of PBOs.
@@ -142,7 +140,7 @@ TEST_P(ReadPixelsPBONVTest, Basic)
     glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
     glReadPixels(0, 0, 16, 16, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-    void *mappedPtr = glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
+    void *mappedPtr    = glMapBufferRangeEXT(GL_PIXEL_PACK_BUFFER, 0, 32, GL_MAP_READ_BIT);
     GLColor *dataColor = static_cast<GLColor *>(mappedPtr);
     EXPECT_GL_NO_ERROR();
 
@@ -1043,63 +1041,8 @@ TEST_P(ReadPixelsErrorTest, ReadBufferIsNone)
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glReadBuffer(GL_NONE);
     std::vector<GLubyte> pixels(4);
-    EXPECT_GL_NO_ERROR();
     glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-}
-
-// a test class to be used for error checking of glReadPixels with WebGLCompatibility
-class ReadPixelsWebGLErrorTest : public ReadPixelsTest
-{
-  protected:
-    ReadPixelsWebGLErrorTest() : mTexture(0), mFBO(0) { setWebGLCompatibilityEnabled(true); }
-
-    void testSetUp() override
-    {
-        glGenTextures(1, &mTexture);
-        glBindTexture(GL_TEXTURE_2D, mTexture);
-        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 1);
-
-        glGenFramebuffers(1, &mFBO);
-        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture, 0);
-        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-        ASSERT_GL_NO_ERROR();
-    }
-
-    void testTearDown() override
-    {
-        glDeleteTextures(1, &mTexture);
-        glDeleteFramebuffers(1, &mFBO);
-    }
-
-    GLuint mTexture;
-    GLuint mFBO;
-};
-
-// Test that WebGL context readpixels generates an error when reading GL_UNSIGNED_INT_24_8 type.
-TEST_P(ReadPixelsWebGLErrorTest, TypeIsUnsignedInt24_8)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture, 0);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    std::vector<GLuint> pixels(4);
-    EXPECT_GL_NO_ERROR();
-    glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_INT_24_8, pixels.data());
-    EXPECT_GL_ERROR(GL_INVALID_ENUM);
-}
-
-// Test that WebGL context readpixels generates an error when reading GL_DEPTH_COMPONENT format.
-TEST_P(ReadPixelsWebGLErrorTest, FormatIsDepthComponent)
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture, 0);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    std::vector<GLubyte> pixels(4);
-    EXPECT_GL_NO_ERROR();
-    glReadPixels(0, 0, 1, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, pixels.data());
-    EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
 }  // anonymous namespace
@@ -1113,8 +1056,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsPBOTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsPBOTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsPBODrawTest);
-ANGLE_INSTANTIATE_TEST_ES3_AND(ReadPixelsPBODrawTest,
-                               ES3_VULKAN().enable(Feature::ForceFallbackFormat));
+ANGLE_INSTANTIATE_TEST_ES3_AND(ReadPixelsPBODrawTest, WithForceVulkanFallbackFormat(ES3_VULKAN()));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsMultisampleTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsMultisampleTest);
@@ -1124,6 +1066,3 @@ ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsTextureTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsErrorTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsErrorTest);
-
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsWebGLErrorTest);
-ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsWebGLErrorTest);

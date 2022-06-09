@@ -993,10 +993,10 @@ private:
                 target = handleInternalFieldClass<JSSetIterator>(node, writes);
                 break;
             case JSPromiseType:
-                if (node->structure()->classInfoForCells() == JSInternalPromise::info())
+                if (node->structure()->classInfo() == JSInternalPromise::info())
                     target = handleInternalFieldClass<JSInternalPromise>(node, writes);
                 else {
-                    ASSERT(node->structure()->classInfoForCells() == JSPromise::info());
+                    ASSERT(node->structure()->classInfo() == JSPromise::info());
                     target = handleInternalFieldClass<JSPromise>(node, writes);
                 }
                 break;

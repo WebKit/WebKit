@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,16 +40,13 @@ std::optional<RenderPassDescriptor> ConvertToBackingContext::convertToBacking(co
     if (!base)
         return std::nullopt;
 
-    Vector<std::optional<RenderPassColorAttachment>> colorAttachments;
+    Vector<RenderPassColorAttachment> colorAttachments;
     colorAttachments.reserveInitialCapacity(renderPassDescriptor.colorAttachments.size());
     for (const auto& colorAttachment : renderPassDescriptor.colorAttachments) {
-        if (colorAttachment) {
-            auto backingColorAttachment = convertToBacking(*colorAttachment);
-            if (!backingColorAttachment)
-                return std::nullopt;
-            colorAttachments.uncheckedAppend(WTFMove(*backingColorAttachment));
-        } else
-            colorAttachments.uncheckedAppend(std::nullopt);
+        auto backingColorAttachment = convertToBacking(colorAttachment);
+        if (!backingColorAttachment)
+            return std::nullopt;
+        colorAttachments.uncheckedAppend(WTFMove(*backingColorAttachment));
     }
 
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
@@ -79,16 +76,13 @@ std::optional<PAL::WebGPU::RenderPassDescriptor> ConvertFromBackingContext::conv
     if (!base)
         return std::nullopt;
 
-    Vector<std::optional<PAL::WebGPU::RenderPassColorAttachment>> colorAttachments;
+    Vector<PAL::WebGPU::RenderPassColorAttachment> colorAttachments;
     colorAttachments.reserveInitialCapacity(renderPassDescriptor.colorAttachments.size());
     for (const auto& backingColorAttachment : renderPassDescriptor.colorAttachments) {
-        if (backingColorAttachment) {
-            auto colorAttachment = convertFromBacking(*backingColorAttachment);
-            if (!colorAttachment)
-                return std::nullopt;
-            colorAttachments.uncheckedAppend(WTFMove(*colorAttachment));
-        } else
-            colorAttachments.uncheckedAppend(std::nullopt);
+        auto colorAttachment = convertFromBacking(backingColorAttachment);
+        if (!colorAttachment)
+            return std::nullopt;
+        colorAttachments.uncheckedAppend(WTFMove(*colorAttachment));
     }
 
     auto depthStencilAttachment = ([&] () -> std::optional<PAL::WebGPU::RenderPassDepthStencilAttachment> {

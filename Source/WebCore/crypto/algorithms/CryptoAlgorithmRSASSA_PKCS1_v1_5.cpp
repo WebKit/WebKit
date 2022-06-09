@@ -37,11 +37,11 @@
 namespace WebCore {
 
 namespace CryptoAlgorithmRSASSA_PKCS1_v1_5Internal {
-static constexpr auto ALG1 = "RS1"_s;
-static constexpr auto ALG224 = "RS224"_s;
-static constexpr auto ALG256 = "RS256"_s;
-static constexpr auto ALG384 = "RS384"_s;
-static constexpr auto ALG512 = "RS512"_s;
+static const char* const ALG1 = "RS1";
+static const char* const ALG224 = "RS224";
+static const char* const ALG256 = "RS256";
+static const char* const ALG384 = "RS384";
+static const char* const ALG512 = "RS512";
 }
 
 Ref<CryptoAlgorithm> CryptoAlgorithmRSASSA_PKCS1_v1_5::create()
@@ -115,7 +115,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData
             exceptionCallback(SyntaxError);
             return;
         }
-        if (usages && !key.use.isNull() && key.use != "sig"_s) {
+        if (usages && !key.use.isNull() && key.use != "sig") {
             exceptionCallback(DataError);
             return;
         }

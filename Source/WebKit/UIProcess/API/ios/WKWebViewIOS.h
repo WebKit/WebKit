@@ -25,9 +25,6 @@
 
 #import "WKWebViewInternal.h"
 #import "_WKTapHandlingResult.h"
-#if USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS_FAMILY) && __has_include(<WebKitAdditions/WKWebViewAdditions.h>)
-#import <WebKitAdditions/WKWebViewAdditions.h>
-#endif
 
 @class UIScrollEvent;
 
@@ -52,10 +49,6 @@ enum class TapHandlingResult : uint8_t;
 - (void)_accessibilitySettingsDidChange:(NSNotification *)notification;
 
 - (void)_frameOrBoundsChanged;
-#if HAVE(UIKIT_RESIZABLE_WINDOWS)
-- (void)_invalidateResizeAssertions;
-#endif
-
 - (BOOL)usesStandardContentView;
 
 - (void)_processDidExit;
@@ -85,7 +78,7 @@ enum class TapHandlingResult : uint8_t;
 - (BOOL)_zoomToRect:(WebCore::FloatRect)targetRect withOrigin:(WebCore::FloatPoint)origin fitEntireRect:(BOOL)fitEntireRect minimumScale:(double)minimumScale maximumScale:(double)maximumScale minimumScrollDistance:(float)minimumScrollDistance;
 - (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated;
 - (void)_zoomToInitialScaleWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated;
-- (void)_didFinishScrolling:(UIScrollView *)scrollView;
+- (void)_didFinishScrolling;
 
 - (void)_setHasCustomContentView:(BOOL)hasCustomContentView loadedMIMEType:(const WTF::String&)mimeType;
 - (void)_didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:(const WTF::String&)suggestedFilename data:(NSData *)data;
@@ -133,9 +126,6 @@ enum class TapHandlingResult : uint8_t;
 - (void)find:(id)sender;
 - (void)findNext:(id)sender;
 - (void)findPrevious:(id)sender;
-- (void)findAndReplace:(id)sender;
-
-- (id<UITextSearching>)_searchableObject;
 #endif
 
 - (void)_nextAccessoryTab:(id)sender;
@@ -162,8 +152,6 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 @property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity;
 
-@property (nonatomic, readonly) BOOL _shouldAvoidSecurityHeuristicScoreUpdates;
-
 @property (nonatomic, readonly) BOOL _isBackground;
 @property (nonatomic, readonly) BOOL _allowsDoubleTapGestures;
 @property (nonatomic, readonly) BOOL _haveSetObscuredInsets;
@@ -171,10 +159,6 @@ enum class TapHandlingResult : uint8_t;
 @property (nonatomic, readonly) UIEdgeInsets _computedUnobscuredSafeAreaInset;
 @property (nonatomic, readonly, getter=_isRetainingActiveFocusedState) BOOL _retainingActiveFocusedState;
 @property (nonatomic, readonly) int32_t _deviceOrientation;
-
-#if HAVE(UIKIT_RESIZABLE_WINDOWS)
-@property (nonatomic, readonly) BOOL _isWindowResizingEnabled;
-#endif
 
 @end
 

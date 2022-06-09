@@ -530,7 +530,8 @@ HRESULT DOMHTMLElement::setInnerText(_In_ BSTR text)
 {
     ASSERT(is<HTMLElement>(m_element));
     HTMLElement* htmlElement = downcast<HTMLElement>(m_element);
-    htmlElement->setInnerText(WTF::String(text, SysStringLen(text)));
+    WTF::String textString(text, SysStringLen(text));
+    htmlElement->setInnerText(textString);
     return S_OK;
 }
 
@@ -1184,7 +1185,7 @@ HRESULT DOMHTMLInputElement::setType(_In_ BSTR type)
 {
     ASSERT(is<HTMLInputElement>(m_element));
     HTMLInputElement& inputElement = downcast<HTMLInputElement>(*m_element);
-    WTF::AtomString typeString(type, SysStringLen(type));
+    WTF::String typeString(type, SysStringLen(type));
     inputElement.setType(typeString);
     return S_OK;
 }
@@ -1326,7 +1327,7 @@ HRESULT DOMHTMLInputElement::replaceCharactersInRange(int startTarget, int endTa
 
     String newValue = inputElement.value();
     String webCoreReplacementString(replacementString, SysStringLen(replacementString));
-    newValue = makeStringByReplacing(newValue, startTarget, endTarget - startTarget, webCoreReplacementString);
+    newValue.replace(startTarget, endTarget - startTarget, webCoreReplacementString);
     inputElement.setValue(newValue);
     inputElement.setSelectionRange(index, newValue.length());
 

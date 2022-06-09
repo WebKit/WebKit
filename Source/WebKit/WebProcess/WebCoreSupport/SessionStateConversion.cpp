@@ -74,7 +74,7 @@ static FrameState toFrameState(const HistoryItem& historyItem)
 
     frameState.setDocumentState(historyItem.documentState());
     if (RefPtr<SerializedScriptValue> stateObject = historyItem.stateObject())
-        frameState.stateObjectData = stateObject->wireBytes();
+        frameState.stateObjectData = stateObject->data();
 
     frameState.documentSequenceNumber = historyItem.documentSequenceNumber();
     frameState.itemSequenceNumber = historyItem.itemSequenceNumber();
@@ -99,9 +99,10 @@ static FrameState toFrameState(const HistoryItem& historyItem)
     frameState.obscuredInsets = historyItem.obscuredInsets();
 #endif
 
-    frameState.children = historyItem.children().map([](auto& childHistoryItem) {
-        return toFrameState(childHistoryItem);
-    });
+    for (auto& childHistoryItem : historyItem.children()) {
+        FrameState childFrameState = toFrameState(childHistoryItem);
+        frameState.children.append(WTFMove(childFrameState));
+    }
 
     return frameState;
 }
@@ -133,7 +134,7 @@ static Ref<FormData> toFormData(const HTTPBody& httpBody)
             break;
 
         case HTTPBody::Element::Type::Blob:
-            formData->appendBlob(URL { element.blobURLString });
+            formData->appendBlob(URL(URL(), element.blobURLString));
             break;
         }
     }
@@ -151,7 +152,7 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
 
     if (frameState.stateObjectData) {
         Vector<uint8_t> stateObjectData = frameState.stateObjectData.value();
-        historyItem.setStateObject(SerializedScriptValue::createFromWireBytes(WTFMove(stateObjectData)));
+        historyItem.setStateObject(SerializedScriptValue::adopt(WTFMove(stateObjectData)));
     }
 
     historyItem.setDocumentSequenceNumber(frameState.documentSequenceNumber);

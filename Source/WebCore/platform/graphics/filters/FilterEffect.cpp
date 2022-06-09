@@ -85,13 +85,6 @@ FloatRect FilterEffect::calculateImageRect(const Filter& filter, const FilterIma
     return filter.clipToMaxEffectRect(imageRect, primitiveSubregion);
 }
 
-std::unique_ptr<FilterEffectApplier> FilterEffect::createApplier(const Filter& filter) const
-{
-    if (filter.renderingMode() == RenderingMode::Accelerated)
-        return createAcceleratedApplier();
-    return createSoftwareApplier();
-}
-
 void FilterEffect::transformInputsColorSpace(const FilterImageVector& inputs) const
 {
     for (auto& input : inputs)
@@ -134,7 +127,7 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
     if (!applier)
         return nullptr;
 
-    auto result = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, filter.renderingMode(), imageColorSpace, results.allocator());
+    auto result = FilterImage::create(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, filter.renderingMode(), imageColorSpace);
     if (!result)
         return nullptr;
 
@@ -154,6 +147,12 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
 
     results.setEffectResult(*this, inputs, { *result });
     return result;
+}
+
+FilterEffect& FilterEffect::inputEffect(unsigned number) const
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(number < m_inputEffects.size());
+    return m_inputEffects.at(number);
 }
 
 TextStream& FilterEffect::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

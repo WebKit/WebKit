@@ -25,10 +25,9 @@
 
 typedef (double or CSSNumericValue) CSSNumberish;
 
-// https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue
 [
     InterfaceName=CSSNumericValue,
-    EnabledBySetting=CSSTypedOMEnabled,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     JSGenerateToNativeObject,
     Exposed=(Window,Worker,PaintWorklet)

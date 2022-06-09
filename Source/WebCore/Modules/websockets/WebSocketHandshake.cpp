@@ -76,18 +76,20 @@ static String resourceName(const URL& url)
 
 static String hostName(const URL& url, bool secure)
 {
-    ASSERT(url.protocolIs("wss"_s) == secure);
+    ASSERT(url.protocolIs("wss") == secure);
+    String host = url.host().convertToASCIILowercase();
     if (url.port() && ((!secure && url.port().value() != 80) || (secure && url.port().value() != 443)))
-        return makeString(asASCIILowercase(url.host()), ':', url.port().value());
-    return url.host().convertToASCIILowercase();
+        return makeString(host, ':', url.port().value());
+    return host;
 }
 
-static constexpr size_t maxInputSampleSize = 128;
-static String trimInputSample(const uint8_t* p, size_t length)
+static const size_t maxInputSampleSize = 128;
+static String trimInputSample(const uint8_t* p, size_t len)
 {
-    if (length <= maxInputSampleSize)
-        return String(p, length);
-    return makeString(StringView(p, length).left(maxInputSampleSize), horizontalEllipsis);
+    String s = String(p, std::min<size_t>(len, maxInputSampleSize));
+    if (len > maxInputSampleSize)
+        s.append(horizontalEllipsis);
+    return s;
 }
 
 static String generateSecWebSocketKey()
@@ -113,7 +115,7 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
 WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies, bool isAppInitiated)
     : m_url(url)
     , m_clientProtocol(protocol)
-    , m_secure(m_url.protocolIs("wss"_s))
+    , m_secure(m_url.protocolIs("wss"))
     , m_mode(Incomplete)
     , m_userAgent(userAgent)
     , m_clientOrigin(clientOrigin)
@@ -129,6 +131,11 @@ WebSocketHandshake::~WebSocketHandshake() = default;
 const URL& WebSocketHandshake::url() const
 {
     return m_url;
+}
+
+void WebSocketHandshake::setURL(const URL& url)
+{
+    m_url = url.isolatedCopy();
 }
 
 // FIXME: Return type should just be String, not const String.
@@ -220,7 +227,7 @@ int WebSocketHandshake::readServerHandshake(const uint8_t* header, size_t len)
 {
     m_mode = Incomplete;
     int statusCode;
-    AtomString statusText;
+    String statusText;
     int lineLength = readStatusLine(header, len, statusCode, statusText);
     if (lineLength == -1)
         return -1;
@@ -314,7 +321,7 @@ void WebSocketHandshake::addExtensionProcessor(std::unique_ptr<WebSocketExtensio
 URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 {
     URL url = m_url.isolatedCopy();
-    bool couldSetProtocol = url.setProtocol(m_secure ? "https"_s : "http"_s);
+    bool couldSetProtocol = url.setProtocol(m_secure ? "https" : "http");
     ASSERT_UNUSED(couldSetProtocol, couldSetProtocol);
     return url;
 }
@@ -323,12 +330,12 @@ URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 // "The HTTP version MUST be at least 1.1."
 static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
 {
-    constexpr auto preamble = "HTTP/"_s;
+    constexpr char preamble[] = "HTTP/";
     if (!httpStatusLine.startsWith(preamble))
         return false;
 
     // Check that there is a version number which should be at least three characters after "HTTP/"
-    unsigned preambleLength = preamble.length();
+    unsigned preambleLength = strlen(preamble);
     if (httpStatusLine.length() < preambleLength + 3)
         return false;
 
@@ -356,14 +363,14 @@ static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
 // Returns the header length (including "\r\n"), or -1 if we have not received enough data yet.
 // If the line is malformed or the status code is not a 3-digit number,
 // statusCode and statusText will be set to -1 and a null string, respectively.
-int WebSocketHandshake::readStatusLine(const uint8_t* header, size_t headerLength, int& statusCode, AtomString& statusText)
+int WebSocketHandshake::readStatusLine(const uint8_t* header, size_t headerLength, int& statusCode, String& statusText)
 {
     // Arbitrary size limit to prevent the server from sending an unbounded
     // amount of data with no newlines and forcing us to buffer it all.
     static const int maximumLength = 1024;
 
     statusCode = -1;
-    statusText = nullAtom();
+    statusText = String();
 
     const uint8_t* space1 = nullptr;
     const uint8_t* space2 = nullptr;
@@ -426,7 +433,7 @@ int WebSocketHandshake::readStatusLine(const uint8_t* header, size_t headerLengt
     }
 
     statusCode = parseInteger<int>(statusCodeString).value();
-    statusText = AtomString(space2 + 1, end - space2 - 3); // Exclude "\r\n".
+    statusText = String(space2 + 1, end - space2 - 3); // Exclude "\r\n".
     return lineLength;
 }
 
@@ -451,7 +458,7 @@ const uint8_t* WebSocketHandshake::readHTTPHeaders(const uint8_t* start, const u
         HTTPHeaderName headerName;
         if (!findHTTPHeaderName(name, headerName)) {
             // Evidence in the wild shows that services make use of custom headers in the handshake
-            m_serverHandshakeResponse.addUncommonHTTPHeaderField(name.toString(), value);
+            m_serverHandshakeResponse.addHTTPHeaderField(name.toString(), value);
             continue;
         }
 
@@ -516,11 +523,11 @@ bool WebSocketHandshake::checkResponseHeaders()
         return false;
     }
 
-    if (!equalLettersIgnoringASCIICase(serverUpgrade, "websocket"_s)) {
+    if (!equalLettersIgnoringASCIICase(serverUpgrade, "websocket")) {
         m_failureReason = "Error during WebSocket handshake: 'Upgrade' header value is not 'WebSocket'"_s;
         return false;
     }
-    if (!equalLettersIgnoringASCIICase(serverConnection, "upgrade"_s)) {
+    if (!equalLettersIgnoringASCIICase(serverConnection, "upgrade")) {
         m_failureReason = "Error during WebSocket handshake: 'Connection' header value is not 'Upgrade'"_s;
         return false;
     }
@@ -534,7 +541,7 @@ bool WebSocketHandshake::checkResponseHeaders()
             m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_s;
             return false;
         }
-        Vector<String> result = m_clientProtocol.split(StringView { WebSocket::subprotocolSeparator() });
+        Vector<String> result = m_clientProtocol.split(WebSocket::subprotocolSeparator());
         if (!result.contains(serverWebSocketProtocol)) {
             m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_s;
             return false;

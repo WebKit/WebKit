@@ -33,38 +33,15 @@ enum class JITCompilationMode {
     InvalidCompilation,
     Baseline,
     DFG,
-    UnlinkedDFG,
     FTL,
-    FTLForOSREntry,
+    FTLForOSREntry
 };
-
-inline bool isDFG(JITCompilationMode mode)
-{
-    switch (mode) {
-    case JITCompilationMode::DFG:
-    case JITCompilationMode::UnlinkedDFG:
-        return true;
-    default:
-        return false;
-    }
-}
 
 inline bool isFTL(JITCompilationMode mode)
 {
     switch (mode) {
     case JITCompilationMode::FTL:
     case JITCompilationMode::FTLForOSREntry:
-        return true;
-    default:
-        return false;
-    }
-}
-
-inline bool isUnlinked(JITCompilationMode mode)
-{
-    switch (mode) {
-    case JITCompilationMode::Baseline:
-    case JITCompilationMode::UnlinkedDFG:
         return true;
     default:
         return false;

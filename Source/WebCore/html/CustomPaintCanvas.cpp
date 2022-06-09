@@ -53,15 +53,15 @@ CustomPaintCanvas::~CustomPaintCanvas()
     setImageBuffer(nullptr);
 }
 
-RefPtr<PaintRenderingContext2D> CustomPaintCanvas::getContext()
+ExceptionOr<RefPtr<PaintRenderingContext2D>> CustomPaintCanvas::getContext()
 {
     if (m_context)
-        return &downcast<PaintRenderingContext2D>(*m_context);
+        return { RefPtr<PaintRenderingContext2D> { &downcast<PaintRenderingContext2D>(*m_context) } };
 
     m_context = PaintRenderingContext2D::create(*this);
     downcast<PaintRenderingContext2D>(*m_context).setUsesDisplayListDrawing(true);
 
-    return &downcast<PaintRenderingContext2D>(*m_context);
+    return { RefPtr<PaintRenderingContext2D> { &downcast<PaintRenderingContext2D>(*m_context) } };
 }
 
 void CustomPaintCanvas::replayDisplayList(GraphicsContext* ctx) const
@@ -73,7 +73,7 @@ void CustomPaintCanvas::replayDisplayList(GraphicsContext* ctx) const
     // FIXME: Using an intermediate buffer is not needed if there are no composite operations.
     auto clipBounds = ctx->clipBounds();
 
-    auto image = ctx->createAlignedImageBuffer(clipBounds.size());
+    auto image = ImageBuffer::createCompatibleBuffer(clipBounds.size(), *ctx);
     if (!image)
         return;
 
@@ -92,7 +92,7 @@ Image* CustomPaintCanvas::copiedImage() const
     if (!width() || !height())
         return nullptr;
 
-    m_copiedBuffer = ImageBuffer::create(size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    m_copiedBuffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, nullptr);
     if (!m_copiedBuffer)
         return nullptr;
 

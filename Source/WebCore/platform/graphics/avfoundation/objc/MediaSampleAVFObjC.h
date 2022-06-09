@@ -29,81 +29,71 @@
 #include <JavaScriptCore/Forward.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/Forward.h>
-#include <wtf/TypeCasts.h>
 
 using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore {
 
-class SharedBuffer;
 class PixelBuffer;
-class VideoFrameCV;
 
 class MediaSampleAVFObjC : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, uint64_t trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
+    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoRotation rotation = VideoRotation::None, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, rotation, mirrored)); }
+    static RefPtr<MediaSampleAVFObjC> createImageSample(PixelBuffer&&);
+    WEBCORE_EXPORT static RefPtr<MediaSampleAVFObjC> createImageSample(RetainPtr<CVPixelBufferRef>&&, VideoRotation, bool mirrored);
+
+    WEBCORE_EXPORT static void setAsDisplayImmediately(MediaSample&);
+    static RetainPtr<CMSampleBufferRef> cloneSampleBufferAndSetAsDisplayImmediately(CMSampleBufferRef);
+
+    WEBCORE_EXPORT RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const override;
 
     MediaTime presentationTime() const override;
     MediaTime decodeTime() const override;
     MediaTime duration() const override;
 
     AtomString trackID() const override { return m_id; }
+    void setTrackID(const String& id) override { m_id = id; }
 
     size_t sizeInBytes() const override;
     FloatSize presentationSize() const override;
 
     SampleFlags flags() const override;
-    PlatformSample platformSample() const override;
-    PlatformSample::Type platformSampleType() const override { return PlatformSample::CMSampleBufferType; }
+    PlatformSample platformSample() override;
+    std::optional<ByteRange> byteRange() const override;
+    WEBCORE_EXPORT void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
     WEBCORE_EXPORT bool isDivisable() const override;
     WEBCORE_EXPORT std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime, UseEndTime) override;
     WEBCORE_EXPORT Ref<MediaSample> createNonDisplayingCopy() const override;
 
+    VideoRotation videoRotation() const override { return m_rotation; }
+    bool videoMirrored() const override { return m_mirrored; }
+    WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
+    WEBCORE_EXPORT std::optional<MediaSampleVideoFrame> videoFrame() const final;
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 
     bool isHomogeneous() const;
     Vector<Ref<MediaSampleAVFObjC>> divideIntoHomogeneousSamples();
 
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    using KeyIDs = Vector<Ref<SharedBuffer>>;
-    void setKeyIDs(KeyIDs&& keyIDs) { m_keyIDs = WTFMove(keyIDs); }
-    const KeyIDs& keyIDs() const { return m_keyIDs; }
-    KeyIDs& keyIDs() { return m_keyIDs; }
-#endif
+    void setByteRangeOffset(size_t);
 
 protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&&);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, AtomString trackID);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, uint64_t trackID);
+    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, VideoRotation, bool mirrored);
     WEBCORE_EXPORT virtual ~MediaSampleAVFObjC();
+
+    std::optional<MediaSample::ByteRange> byteRangeForAttachment(CFStringRef key) const;
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomString m_id;
-
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    Vector<Ref<SharedBuffer>> m_keyIDs;
-#endif
+    VideoRotation m_rotation { VideoRotation::None };
+    bool m_mirrored { false };
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<typename Type> struct LogArgument;
-template <>
-struct LogArgument<WebCore::MediaSampleAVFObjC> {
-    static String toString(const WebCore::MediaSampleAVFObjC& sample)
-    {
-        return sample.toJSONString();
-    }
-};
-
-} // namespace WTF
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaSampleAVFObjC)
-static bool isType(const WebCore::MediaSample& sample) { return sample.platformSampleType() == WebCore::PlatformSample::CMSampleBufferType; }
-SPECIALIZE_TYPE_TRAITS_END()

@@ -247,7 +247,7 @@ static const String ObservedDomainsTableSchemaV1Alternate()
 
 static bool needsNewCreateTableSchema(const String& schema)
 {
-    return schema.contains("REFERENCES TopLevelDomains"_s);
+    return schema.contains("REFERENCES TopLevelDomains");
 }
 
 const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& ResourceLoadStatisticsDatabaseStore::expectedTableAndIndexQueries()
@@ -424,8 +424,8 @@ bool ResourceLoadStatisticsDatabaseStore::needsUpdatedSchema()
 
 void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
 {
-    if (!tableExists("UnattributedPrivateClickMeasurement"_s)
-        && !tableExists("AttributedPrivateClickMeasurement"_s))
+    if (!tableExists("UnattributedPrivateClickMeasurement")
+        && !tableExists("AttributedPrivateClickMeasurement"))
         return;
 
     Vector<WebCore::PrivateClickMeasurement> unattributed;
@@ -455,23 +455,23 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
     }
 
     if (!unattributed.isEmpty() || !attributed.isEmpty()) {
-        RunLoop::main().dispatch([store = Ref { store() }, unattributed = crossThreadCopy(WTFMove(unattributed)), attributed = crossThreadCopy(WTFMove(attributed))] () mutable {
+        RunLoop::main().dispatch([store = Ref { store() }, unattributed = unattributed.isolatedCopy(), attributed = attributed.isolatedCopy()] () mutable {
             auto* networkSession = store->networkSession();
             if (!networkSession)
                 return;
 
             auto& manager = networkSession->privateClickMeasurement();
-            for (auto&& pcm : WTFMove(attributed))
+            for (auto& pcm : WTFMove(attributed))
                 manager.migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Attributed);
-            for (auto&& pcm : WTFMove(unattributed))
+            for (auto& pcm : WTFMove(unattributed))
                 manager.migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Unattributed);
         });
 
     }
 
     auto transactionScope = beginTransactionIfNecessary();
-    deleteTable("UnattributedPrivateClickMeasurement"_s);
-    deleteTable("AttributedPrivateClickMeasurement"_s);
+    deleteTable("UnattributedPrivateClickMeasurement");
+    deleteTable("AttributedPrivateClickMeasurement");
 }
 
 void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
@@ -789,7 +789,7 @@ void ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList(const Str
             return;
     }
     
-    if (statement.contains("REPLACE"_s)) {
+    if (statement.contains("REPLACE")) {
         if (insertRelationshipStatement->bindDouble(2, WallTime::now().secondsSinceEpoch().value()) != SQLITE_OK) {
             ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList failed, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
@@ -863,7 +863,7 @@ void ResourceLoadStatisticsDatabaseStore::merge(WebCore::SQLiteStatement* curren
     if (other.dataRecordsRemoved > currentDataRecordsRemoved)
         updateDataRecordsRemoved(other.registrableDomain, other.dataRecordsRemoved);
     if (other.gotLinkDecorationFromPrevalentResource && !currentIsScheduledForAllButCookieDataRemoval)
-        setIsScheduledForAllScriptWrittenStorageRemoval(other.registrableDomain, true);
+        setIsScheduledForAllButCookieDataRemoval(other.registrableDomain, true);
 }
 
 void ResourceLoadStatisticsDatabaseStore::mergeStatistic(const ResourceLoadStatistics& statistic)
@@ -958,11 +958,11 @@ Vector<WebResourceLoadStatisticsStore::ThirdPartyData> ResourceLoadStatisticsDat
     ASSERT(!RunLoop::isMain());
 
     Vector<WebResourceLoadStatisticsStore::ThirdPartyData> thirdPartyDataList;
-    const auto prevalentDomainsBindParameter = thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All ? "%"_s : "1"_s;
+    const auto prevalentDomainsBindParameter = thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::All ? "%" : "1";
     auto sortedStatistics = m_database.prepareStatement(joinSubStatisticsForSorting());
     if (!sortedStatistics
         || sortedStatistics->bindText(1, prevalentDomainsBindParameter)
-        || sortedStatistics->bindText(2, "%"_s) != SQLITE_OK) {
+        || sortedStatistics->bindText(2, "%") != SQLITE_OK) {
         RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return thirdPartyDataList;
@@ -1177,7 +1177,7 @@ bool ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const TopFrameDomain&
     return relationshipExists(scopedStatement, domainID(subFrameDomain), topFrameDomain);
 }
 
-void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
+void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(const SubFrameDomain& subFrameDomain, const TopFrameDomain& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1192,7 +1192,7 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(SubFrameDomain&& subF
         completionHandler(false);
         return;
     case CookieAccess::BasedOnCookiePolicy:
-        RunLoop::main().dispatch([store = Ref { store() }, subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([store = Ref { store() }, subFrameDomain = subFrameDomain.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             store->hasCookies(subFrameDomain, [store, completionHandler = WTFMove(completionHandler)](bool result) mutable {
                 store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
                     completionHandler(result);
@@ -1205,7 +1205,7 @@ void ResourceLoadStatisticsDatabaseStore::hasStorageAccess(SubFrameDomain&& subF
         break;
     };
 
-    RunLoop::main().dispatch([store = Ref { store() }, subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([store = Ref { store() }, subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, completionHandler = WTFMove(completionHandler)]() mutable {
         store->callHasStorageAccessForFrameHandler(subFrameDomain, topFrameDomain, frameID.value(), pageID, [store, completionHandler = WTFMove(completionHandler)](bool result) mutable {
             store->statisticsQueue().dispatch([completionHandler = WTFMove(completionHandler), result] () mutable {
                 completionHandler(result);
@@ -1343,7 +1343,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDom
         setUserInteraction(subFrameDomain, true, WallTime::now());
     }
 
-    RunLoop::main().dispatch([subFrameDomain = WTFMove(subFrameDomain).isolatedCopy(), topFrameDomain = WTFMove(topFrameDomain).isolatedCopy(), frameID, pageID, store = Ref { store() }, scope, completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::main().dispatch([subFrameDomain = subFrameDomain.isolatedCopy(), topFrameDomain = topFrameDomain.isolatedCopy(), frameID, pageID, store = Ref { store() }, scope, completionHandler = WTFMove(completionHandler)]() mutable {
         store->callGrantStorageAccessHandler(subFrameDomain, topFrameDomain, frameID, pageID, scope, [completionHandler = WTFMove(completionHandler), store](StorageAccessWasGranted wasGranted) mutable {
             store->statisticsQueue().dispatch([wasGranted, completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(wasGranted);
@@ -1488,7 +1488,7 @@ void ResourceLoadStatisticsDatabaseStore::logCrossSiteLoadWithLinkDecoration(con
     insertDomainRelationshipList(topFrameLinkDecorationsFromQuery, HashSet<RegistrableDomain>({ fromDomain }), *toDomainResult.second);
     
     if (isPrevalentResource(fromDomain))
-        setIsScheduledForAllScriptWrittenStorageRemoval(toDomain, true);
+        setIsScheduledForAllButCookieDataRemoval(toDomain, true);
 }
 
 void ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
@@ -1664,7 +1664,7 @@ void ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent(StdSet<unsigned>
     }
 }
 
-void ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics(CompletionHandler<void(String&&)>&& completionHandler)
+void ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
     if (dataRecordsBeingRemoved()) {
@@ -1801,7 +1801,7 @@ void ResourceLoadStatisticsDatabaseStore::setGrandfathered(const RegistrableDoma
     }
 }
 
-void ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllScriptWrittenStorageRemoval(const RegistrableDomain& domain, bool value)
+void ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval(const RegistrableDomain& domain, bool value)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1809,16 +1809,16 @@ void ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllScriptWrittenStora
 
     auto result = ensureResourceStatisticsForRegistrableDomain(domain);
     if (!result.second) {
-        ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllScriptWrittenStorageRemoval was not completed due to failed insert attempt", this);
+        ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval was not completed due to failed insert attempt", this);
         return;
     }
     
-    auto scopedStatement = this->scopedStatement(m_updateIsScheduledForAllButCookieDataRemovalStatement, updateIsScheduledForAllButCookieDataRemovalQuery, "setIsScheduledForAllScriptWrittenStorageRemoval"_s);
+    auto scopedStatement = this->scopedStatement(m_updateIsScheduledForAllButCookieDataRemovalStatement, updateIsScheduledForAllButCookieDataRemovalQuery, "setIsScheduledForAllButCookieDataRemoval"_s);
     if (!scopedStatement
         || scopedStatement->bindInt(1, value) != SQLITE_OK
         || scopedStatement->bindText(2, domain.string()) != SQLITE_OK
         || scopedStatement->step() != SQLITE_DONE) {
-        ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllScriptWrittenStorageRemoval failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
+        ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval failed to bind, error message: %" PRIVATE_LOG_STRING, this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
     }
 }
@@ -2036,7 +2036,7 @@ void ResourceLoadStatisticsDatabaseStore::clear(CompletionHandler<void()>&& comp
 
     auto registrableDomainsToBlockAndDeleteCookiesFor = ensurePrevalentResourcesForDebugMode();
     RegistrableDomainsToBlockCookiesFor domainsToBlock { registrableDomainsToBlockAndDeleteCookiesFor, { }, { }, { } };
-    updateCookieBlockingForDomains(WTFMove(domainsToBlock), [callbackAggregator] { });
+    updateCookieBlockingForDomains(domainsToBlock, [callbackAggregator] { });
 }
 
 bool ResourceLoadStatisticsDatabaseStore::areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain& topFrameDomain)
@@ -2175,7 +2175,7 @@ void ResourceLoadStatisticsDatabaseStore::updateCookieBlocking(CompletionHandler
     if (debugLoggingEnabled() && (!domainsToBlockAndDeleteCookiesFor.isEmpty() || !domainsToBlockButKeepCookiesFor.isEmpty()))
         debugLogDomainsInBatches("Applying cross-site tracking restrictions", domainsToBlock);
 
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, store = Ref { store() }, domainsToBlock = crossThreadCopy(WTFMove(domainsToBlock)), completionHandler = WTFMove(completionHandler)] () mutable {
+    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, store = Ref { store() }, domainsToBlock = crossThreadCopy(domainsToBlock), completionHandler = WTFMove(completionHandler)] () mutable {
         store->callUpdatePrevalentDomainsToBlockCookiesForHandler(domainsToBlock, [weakThis = WTFMove(weakThis), store, completionHandler = WTFMove(completionHandler)]() mutable {
             store->statisticsQueue().dispatch([weakThis = WTFMove(weakThis), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler();
@@ -2322,11 +2322,11 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
             oldestUserInteraction = std::min(oldestUserInteraction, *mostRecentUserInteractionTime);
         if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering)) {
             toDeleteOrRestrictFor.domainsToDeleteAllCookiesFor.append(statistic.registrableDomain);
-            toDeleteOrRestrictFor.domainsToDeleteAllScriptWrittenStorageFor.append(statistic.registrableDomain);
+            toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
         } else {
             if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
-                toDeleteOrRestrictFor.domainsToDeleteAllScriptWrittenStorageFor.append(statistic.registrableDomain);
-                setIsScheduledForAllScriptWrittenStorageRemoval(statistic.registrableDomain, false);
+                toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.append(statistic.registrableDomain);
+                setIsScheduledForAllButCookieDataRemoval(statistic.registrableDomain, false);
             }
             if (shouldEnforceSameSiteStrictFor(statistic, shouldCheckForGrandfathering)) {
                 toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
@@ -2343,7 +2343,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
 
     // Give the user enough time to interact with websites until we remove non-cookie website data.
     if (!parameters().isRunningTest && now - oldestUserInteraction < parameters().minimumTimeBetweenDataRecordsRemoval)
-        toDeleteOrRestrictFor.domainsToDeleteAllScriptWrittenStorageFor.clear();
+        toDeleteOrRestrictFor.domainsToDeleteAllNonCookieWebsiteDataFor.clear();
 
     clearGrandfathering(WTFMove(domainIDsToClearGrandfathering));
     
@@ -2503,7 +2503,7 @@ bool ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount(const Regi
     return (subFrameUnderTopFrameCount->columnInt(0) == 1 && subresourceUnderTopFrameCount->columnInt(0) == 1 && subresourceUniqueRedirectsTo->columnInt(0) == 1);
 }
 
-static void appendBoolean(StringBuilder& builder, ASCIILiteral label, bool flag)
+static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
 {
     builder.append("    ", label, ": ", flag ? "Yes" : "No");
 }
@@ -2531,31 +2531,31 @@ String ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID(unsigned
     return result;
 }
 
-ASCIILiteral ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement(ASCIILiteral tableName) const
+ASCIILiteral ResourceLoadStatisticsDatabaseStore::getSubStatisticStatement(const String& tableName) const
 {
-    if (tableName == "StorageAccessUnderTopFrameDomains"_s)
+    if (tableName == "StorageAccessUnderTopFrameDomains")
         return "SELECT topLevelDomainID from StorageAccessUnderTopFrameDomains WHERE domainID = ?"_s;
-    if (tableName == "TopFrameUniqueRedirectsTo"_s)
+    if (tableName == "TopFrameUniqueRedirectsTo")
         return "SELECT toDomainID from TopFrameUniqueRedirectsTo WHERE sourceDomainID = ?"_s;
-    if (tableName == "TopFrameUniqueRedirectsFrom"_s)
+    if (tableName == "TopFrameUniqueRedirectsFrom")
         return "SELECT fromDomainID from TopFrameUniqueRedirectsFrom WHERE targetDomainID = ?"_s;
-    if (tableName == "TopFrameLinkDecorationsFrom"_s)
+    if (tableName == "TopFrameLinkDecorationsFrom")
         return "SELECT fromDomainID from TopFrameLinkDecorationsFrom WHERE toDomainID = ?"_s;
-    if (tableName == "TopFrameLoadedThirdPartyScripts"_s)
+    if (tableName == "TopFrameLoadedThirdPartyScripts")
         return "SELECT subresourceDomainID from TopFrameLoadedThirdPartyScripts WHERE topFrameDomainID = ?"_s;
-    if (tableName == "SubframeUnderTopFrameDomains"_s)
+    if (tableName == "SubframeUnderTopFrameDomains")
         return "SELECT topFrameDomainID from SubframeUnderTopFrameDomains WHERE subFrameDomainID = ?"_s;
-    if (tableName == "SubresourceUnderTopFrameDomains"_s)
+    if (tableName == "SubresourceUnderTopFrameDomains")
         return "SELECT topFrameDomainID from SubresourceUnderTopFrameDomains WHERE subresourceDomainID = ?"_s;
-    if (tableName == "SubresourceUniqueRedirectsTo"_s)
+    if (tableName == "SubresourceUniqueRedirectsTo")
         return "SELECT toDomainID from SubresourceUniqueRedirectsTo WHERE subresourceDomainID = ?"_s;
-    if (tableName == "SubresourceUniqueRedirectsFrom"_s)
+    if (tableName == "SubresourceUniqueRedirectsFrom")
         return "SELECT fromDomainID from SubresourceUniqueRedirectsFrom WHERE subresourceDomainID = ?"_s;
     
     return ""_s;
 }
 
-void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& builder, ASCIILiteral tableName, const String& domain) const
+void ResourceLoadStatisticsDatabaseStore::appendSubStatisticList(StringBuilder& builder, const String& tableName, const String& domain) const
 {
     auto query = getSubStatisticStatement(tableName);
     
@@ -2603,7 +2603,7 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     builder.append("Registrable domain: ", domain, '\n');
     
     // User interaction
-    appendBoolean(builder, "hadUserInteraction"_s, m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
+    appendBoolean(builder, "hadUserInteraction", m_getResourceDataByDomainNameStatement->columnInt(HadUserInteractionIndex));
     builder.append('\n');
     builder.append("    mostRecentUserInteraction: ");
     if (hasHadRecentUserInteraction(Seconds(m_getResourceDataByDomainNameStatement->columnDouble(MostRecentUserInteractionTimeIndex))))
@@ -2611,34 +2611,34 @@ void ResourceLoadStatisticsDatabaseStore::resourceToString(StringBuilder& builde
     else
         builder.append("-1");
     builder.append('\n');
-    appendBoolean(builder, "grandfathered"_s, m_getResourceDataByDomainNameStatement->columnInt(GrandfatheredIndex));
+    appendBoolean(builder, "grandfathered", m_getResourceDataByDomainNameStatement->columnInt(GrandfatheredIndex));
     builder.append('\n');
 
     // Storage access
-    appendSubStatisticList(builder, "StorageAccessUnderTopFrameDomains"_s, domain);
+    appendSubStatisticList(builder, "StorageAccessUnderTopFrameDomains", domain);
 
     // Top frame stats
-    appendSubStatisticList(builder, "TopFrameUniqueRedirectsTo"_s, domain);
-    appendSubStatisticList(builder, "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, domain);
-    appendSubStatisticList(builder, "TopFrameUniqueRedirectsFrom"_s, domain);
-    appendSubStatisticList(builder, "TopFrameLinkDecorationsFrom"_s, domain);
-    appendSubStatisticList(builder, "TopFrameLoadedThirdPartyScripts"_s, domain);
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsTo", domain);
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement", domain);
+    appendSubStatisticList(builder, "TopFrameUniqueRedirectsFrom", domain);
+    appendSubStatisticList(builder, "TopFrameLinkDecorationsFrom", domain);
+    appendSubStatisticList(builder, "TopFrameLoadedThirdPartyScripts", domain);
 
-    appendBoolean(builder, "IsScheduledForAllButCookieDataRemoval"_s, m_getResourceDataByDomainNameStatement->columnInt(IsScheduledForAllButCookieDataRemovalIndex));
+    appendBoolean(builder, "IsScheduledForAllButCookieDataRemoval", m_getResourceDataByDomainNameStatement->columnInt(IsScheduledForAllButCookieDataRemovalIndex));
     builder.append('\n');
 
     // Subframe stats
-    appendSubStatisticList(builder, "SubframeUnderTopFrameDomains"_s, domain);
+    appendSubStatisticList(builder, "SubframeUnderTopFrameDomains", domain);
 
     // Subresource stats
-    appendSubStatisticList(builder, "SubresourceUnderTopFrameDomains"_s, domain);
-    appendSubStatisticList(builder, "SubresourceUniqueRedirectsTo"_s, domain);
-    appendSubStatisticList(builder, "SubresourceUniqueRedirectsFrom"_s, domain);
+    appendSubStatisticList(builder, "SubresourceUnderTopFrameDomains", domain);
+    appendSubStatisticList(builder, "SubresourceUniqueRedirectsTo", domain);
+    appendSubStatisticList(builder, "SubresourceUniqueRedirectsFrom", domain);
 
     // Prevalent Resource
-    appendBoolean(builder, "isPrevalentResource"_s, m_getResourceDataByDomainNameStatement->columnInt(IsPrevalentIndex));
+    appendBoolean(builder, "isPrevalentResource", m_getResourceDataByDomainNameStatement->columnInt(IsPrevalentIndex));
     builder.append('\n');
-    appendBoolean(builder, "isVeryPrevalentResource"_s, m_getResourceDataByDomainNameStatement->columnInt(IsVeryPrevalentIndex));
+    appendBoolean(builder, "isVeryPrevalentResource", m_getResourceDataByDomainNameStatement->columnInt(IsVeryPrevalentIndex));
     builder.append('\n');
     builder.append("    dataRecordsRemoved: ", m_getResourceDataByDomainNameStatement->columnInt(DataRecordsRemovedIndex));
     builder.append('\n');

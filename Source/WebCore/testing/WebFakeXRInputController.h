@@ -37,10 +37,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(WEBXR_HANDS)
-#include "FakeXRJointStateInit.h"
-#endif
-
 namespace WebCore {
 
 class WebFakeXRInputController final : public RefCounted<WebFakeXRInputController> {
@@ -61,10 +57,6 @@ public:
     void setSupportedButtons(const Vector<FakeXRButtonStateInit>&);
     void updateButtonState(const FakeXRButtonStateInit&);
     bool isConnected() const { return m_connected; }
-    
-#if ENABLE(WEBXR_HANDS)
-    void updateHandJoints(const Vector<FakeXRJointStateInit>&);
-#endif
 
     PlatformXR::Device::FrameData::InputSource getFrameData();
 
@@ -88,7 +80,7 @@ private:
     bool m_primarySelected { false };
     bool m_simulateSelect { false };
 #if ENABLE(WEBXR_HANDS)
-    std::optional<PlatformXR::Device::FrameData::HandJointsVector> m_handJoints;
+    bool m_simulateHand { false };
 #endif
 };
 

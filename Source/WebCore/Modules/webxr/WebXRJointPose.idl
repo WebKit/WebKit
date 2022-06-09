@@ -24,12 +24,11 @@
  */
 
 [
-    Conditional=WEBXR_HANDS,
     EnabledBySetting=WebXREnabled&WebXRHandInputModuleEnabled,
-    JSGenerateToJSObject,
-    JSGenerateToNativeObject,
+    Conditional=WEBXR_HANDS,
     SecureContext,
     Exposed=Window,
+    ImplementationLacksVTable,
     InterfaceName=XRJointPose
 ] interface WebXRJointPose : WebXRPose {
     readonly attribute float radius;

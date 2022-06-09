@@ -24,8 +24,9 @@
  */
 
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
+    ImplementationLacksVTable,
     InterfaceName=FakeXRInputController,
     LegacyNoInterfaceObject
 ] interface WebFakeXRInputController {
@@ -73,6 +74,4 @@
     // Used to update the state of a button currently supported by the input source
     // Will not add support for that button if it is not currently supported.
     undefined updateButtonState(FakeXRButtonStateInit buttonState);
-    
-    [Conditional=WEBXR_HANDS] undefined updateHandJoints(sequence<FakeXRJointStateInit> handJoints);
 };

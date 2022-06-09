@@ -27,17 +27,16 @@
 
 #if PLATFORM(COCOA)
 
-#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
 class AudioStreamDescription;
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 
 namespace WebCore {
 
-struct AudioInfo;
-
 WEBCORE_EXPORT bool isVorbisDecoderAvailable();
 WEBCORE_EXPORT bool registerVorbisDecoderIfNeeded();
-RefPtr<AudioInfo> createVorbisAudioInfo(size_t, const void*);
+RetainPtr<CMFormatDescriptionRef> createVorbisAudioFormatDescription(size_t, const void*);
 
 struct OpusCookieContents {
     uint8_t version { 0 };
@@ -56,10 +55,8 @@ struct OpusCookieContents {
 
 WEBCORE_EXPORT bool isOpusDecoderAvailable();
 WEBCORE_EXPORT bool registerOpusDecoderIfNeeded();
-static constexpr size_t kOpusHeaderSize = 19;
-static constexpr size_t kOpusMinimumFrameDataSize = 2;
 bool parseOpusPrivateData(size_t privateDataSize, const void* privateData, size_t frameDataSize, const void* frameData, OpusCookieContents&);
-RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents&);
+RetainPtr<CMFormatDescriptionRef> createOpusAudioFormatDescription(const OpusCookieContents&);
 
 }
 

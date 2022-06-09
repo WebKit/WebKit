@@ -74,7 +74,7 @@ class StartSupport extends MediaControllerSupport
         if (host && host.shouldForceControlsDisplay)
             return true;
 
-        if (this.mediaController.hasPlayed)
+        if (this.mediaController.hasPlayed || media.played.length)
             return false;
 
         if (!media.paused)

@@ -36,6 +36,11 @@ IDBError::IDBError(std::optional<ExceptionCode> code, const String& message)
 {
 }
 
+IDBError IDBError::isolatedCopy() const
+{
+    return IDBError { m_code, m_message.isolatedCopy() };
+}
+
 String IDBError::name() const
 {
     if (!m_code)

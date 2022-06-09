@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "WebGPUObjectDescriptorBase.h"
-#include "WebGPUShaderModuleCompilationHint.h"
 #include <optional>
 #include <wtf/text/WTFString.h>
 
@@ -37,13 +36,11 @@ namespace WebKit::WebGPU {
 struct ShaderModuleDescriptor : public ObjectDescriptorBase {
     String code;
     // FIXME: Hook up the sourceMap.
-    Vector<KeyValuePair<String, ShaderModuleCompilationHint>> hints;
 
     template<class Encoder> void encode(Encoder& encoder) const
     {
         encoder << static_cast<const ObjectDescriptorBase&>(*this);
         encoder << code;
-        encoder << hints;
     }
 
     template<class Decoder> static std::optional<ShaderModuleDescriptor> decode(Decoder& decoder)
@@ -58,12 +55,7 @@ struct ShaderModuleDescriptor : public ObjectDescriptorBase {
         if (!code)
             return std::nullopt;
 
-        std::optional<Vector<KeyValuePair<String, ShaderModuleCompilationHint>>> hints;
-        decoder >> hints;
-        if (!hints)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*code), WTFMove(*hints) } };
+        return { { WTFMove(*objectDescriptorBase), WTFMove(*code) } };
     }
 };
 

@@ -159,11 +159,6 @@ public:
         setHeight(std::max(0.0f, height() - delta));
     }
 
-    void shiftMaxYEdgeBy(float delta)
-    {
-        shiftMaxYEdgeTo(maxY() + delta);
-    }
-
     FloatPoint minXMinYCorner() const { return m_location; } // typically topLeft
     FloatPoint maxXMinYCorner() const { return FloatPoint(m_location.x() + m_size.width(), m_location.y()); } // typically topRight
     FloatPoint minXMaxYCorner() const { return FloatPoint(m_location.x(), m_location.y() + m_size.height()); } // typically bottomLeft
@@ -225,10 +220,6 @@ public:
 #if USE(CAIRO)
     FloatRect(const cairo_rectangle_t&);
     operator cairo_rectangle_t() const;
-#endif
-
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT FloatRect(const RECT&);
 #endif
 
     static FloatRect infiniteRect();
@@ -307,7 +298,6 @@ inline void FloatRect::inflate(float deltaX, float deltaY, float deltaMaxX, floa
 FloatRect normalizeRect(const FloatRect&);
 WEBCORE_EXPORT FloatRect encloseRectToDevicePixels(const FloatRect&, float deviceScaleFactor);
 WEBCORE_EXPORT IntRect enclosingIntRect(const FloatRect&);
-WEBCORE_EXPORT IntRect enclosingIntRectPreservingEmptyRects(const FloatRect&);
 WEBCORE_EXPORT IntRect roundedIntRect(const FloatRect&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatRect&);

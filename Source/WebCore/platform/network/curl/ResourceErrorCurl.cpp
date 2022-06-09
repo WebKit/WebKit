@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-ASCIILiteral ResourceError::curlErrorDomain = "CurlErrorDomain"_s;
+const char* const ResourceError::curlErrorDomain = "CurlErrorDomain";
 
 ResourceError ResourceError::httpError(int errorCode, const URL& failingURL, Type type)
 {

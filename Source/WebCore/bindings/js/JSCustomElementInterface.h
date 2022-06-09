@@ -34,7 +34,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace JSC {
@@ -75,7 +74,7 @@ public:
     bool hasAdoptedCallback() const { return !!m_adoptedCallback; }
     void invokeAdoptedCallback(Element&, Document& oldDocument, Document& newDocument);
 
-    void setAttributeChangedCallback(JSC::JSObject* callback, Vector<AtomString>&& observedAttributes);
+    void setAttributeChangedCallback(JSC::JSObject* callback, const Vector<String>& observedAttributes);
     bool observesAttribute(const AtomString& name) const { return m_observedAttributes.contains(name); }
     void invokeAttributeChangedCallback(Element&, const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
 
@@ -108,7 +107,7 @@ private:
     JSC::Weak<JSC::JSObject> m_attributeChangedCallback;
     Ref<DOMWrapperWorld> m_isolatedWorld;
     Vector<RefPtr<Element>, 1> m_constructionStack;
-    MemoryCompactRobinHoodHashSet<AtomString> m_observedAttributes;
+    HashSet<AtomString> m_observedAttributes;
     bool m_isShadowDisabled : 1;
 };
 

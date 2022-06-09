@@ -42,7 +42,7 @@ public:
 protected:
     JSDestructibleObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
         : JSNonFinalObject(vm, structure, butterfly)
-        , m_classInfo(structure->classInfoForCells())
+        , m_classInfo(structure->classInfo())
     {
         ASSERT(m_classInfo);
     }

@@ -23,7 +23,7 @@
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface HTMLSelectElement : HTMLElement {
-    [CEReactions] attribute [AtomString] DOMString autocomplete;
+    [CEReactions] attribute DOMString autocomplete;
     [CEReactions, Reflect] attribute boolean disabled;
     readonly attribute HTMLFormElement? form;
     [CEReactions] attribute boolean multiple;

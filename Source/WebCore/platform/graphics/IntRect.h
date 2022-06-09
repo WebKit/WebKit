@@ -97,7 +97,6 @@ public:
     void setHeight(int height) { m_size.setHeight(height); }
 
     bool isEmpty() const { return m_size.isEmpty(); }
-    bool isZero() const { return m_size.isZero(); }
 
     // NOTE: The result is rounded to integer values, and thus may be not the exact
     // center point.

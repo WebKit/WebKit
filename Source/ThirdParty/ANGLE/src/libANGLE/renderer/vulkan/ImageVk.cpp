@@ -22,7 +22,7 @@ namespace rx
 {
 
 ImageVk::ImageVk(const egl::ImageState &state, const gl::Context *context)
-    : ImageImpl(state), mOwnsImage(false), mImage(nullptr), mContext(context)
+    : ImageImpl(state), mImageLevel(0), mOwnsImage(false), mImage(nullptr), mContext(context)
 {}
 
 ImageVk::~ImageVk() {}
@@ -64,8 +64,7 @@ egl::Error ImageVk::initialize(const egl::Display *display)
         TextureVk *textureVk = GetImplAs<TextureVk>(GetAs<gl::Texture>(mState.source));
 
         // Make sure the texture uses renderable format
-        TextureUpdateResult updateResult = TextureUpdateResult::ImageUnaffected;
-        ANGLE_TRY(ResultToEGL(textureVk->ensureRenderable(contextVk, &updateResult)));
+        ANGLE_TRY(ResultToEGL(textureVk->ensureRenderable(contextVk)));
 
         // Make sure the texture has created its backing storage
         ANGLE_TRY(ResultToEGL(
@@ -76,6 +75,10 @@ egl::Error ImageVk::initialize(const egl::Display *display)
         // The staging buffer for a texture source should already be initialized
 
         mOwnsImage = false;
+
+        mImageTextureType = mState.imageIndex.getType();
+        mImageLevel       = gl::LevelIndex(mState.imageIndex.getLevelIndex());
+        mImageLayer       = mState.imageIndex.hasLayer() ? mState.imageIndex.getLayerIndex() : 0;
     }
     else
     {
@@ -101,7 +104,10 @@ egl::Error ImageVk::initialize(const egl::Display *display)
             return egl::EglBadAccess();
         }
 
-        mOwnsImage = false;
+        mOwnsImage        = false;
+        mImageTextureType = gl::TextureType::_2D;
+        mImageLevel       = gl::LevelIndex(0);
+        mImageLayer       = 0;
     }
 
     // mContext is no longer needed, make sure it's not used by accident.
@@ -150,21 +156,6 @@ egl::Error ImageVk::exportVkImage(void *vkImage, void *vkImageCreateInfo)
     auto *info = reinterpret_cast<VkImageCreateInfo *>(vkImageCreateInfo);
     *info      = mImage->getVkImageCreateInfo();
     return egl::NoError();
-}
-
-gl::TextureType ImageVk::getImageTextureType() const
-{
-    return mState.imageIndex.getType();
-}
-
-gl::LevelIndex ImageVk::getImageLevel() const
-{
-    return gl::LevelIndex(mState.imageIndex.getLevelIndex());
-}
-
-uint32_t ImageVk::getImageLayer() const
-{
-    return mState.imageIndex.hasLayer() ? mState.imageIndex.getLayerIndex() : 0;
 }
 
 }  // namespace rx

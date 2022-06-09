@@ -46,7 +46,7 @@ public:
         return adoptRef(*new CSSStyleImageValue(WTFMove(cssValue), document));
     }
 
-    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
+    String toString() const final { return m_cssValue->cssText(); }
 
     CachedImage* image() { return m_cssValue->cachedImage(); }
     Document* document() const;

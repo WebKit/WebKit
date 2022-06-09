@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include "MoveOnly.h"
-#include <wtf/CrossThreadCopier.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -116,8 +115,8 @@ TEST(WTF_Vector, ConstructWithFrom)
 
 TEST(WTF_Vector, ConstructWithFromString)
 {
-    String s1 = "s1"_s;
-    String s2 = "s2"_s;
+    String s1 = "s1";
+    String s2 = "s2";
     String s3 = s1;
     auto vector = Vector<String>::from(s1, s2, WTFMove(s3));
     EXPECT_EQ(3U, vector.size());
@@ -129,10 +128,10 @@ TEST(WTF_Vector, ConstructWithFromString)
     EXPECT_TRUE(s3.isNull());
 }
 
-TEST(WTF_Vector, IsolatedCopy)
+TEST(WTF_Vector, IsolateCopy)
 {
-    String s1 = "s1"_s;
-    String s2 = "s2"_s;
+    String s1 = "s1";
+    String s2 = "s2";
 
     auto vector1 = Vector<String>::from(WTFMove(s1), s2);
     EXPECT_EQ(2U, vector1.size());
@@ -141,19 +140,19 @@ TEST(WTF_Vector, IsolatedCopy)
     auto* data1 = vector1[0].impl();
     auto* data2 = vector1[1].impl();
 
-    auto vector2 = crossThreadCopy(vector1);
+    auto vector2 = vector1.isolatedCopy();
 
-    EXPECT_TRUE("s1"_s == vector2[0]);
-    EXPECT_TRUE("s2"_s == vector2[1]);
+    EXPECT_TRUE("s1" == vector2[0]);
+    EXPECT_TRUE("s2" == vector2[1]);
 
     EXPECT_FALSE(data1 == vector2[0].impl());
     EXPECT_FALSE(data2 == vector2[1].impl());
 
-    auto vector3 = crossThreadCopy(WTFMove(vector1));
+    auto vector3 = WTFMove(vector1).isolatedCopy();
     EXPECT_EQ(0U, vector1.size());
 
-    EXPECT_TRUE("s1"_s == vector3[0]);
-    EXPECT_TRUE("s2"_s == vector3[1]);
+    EXPECT_TRUE("s1" == vector3[0]);
+    EXPECT_TRUE("s2" == vector3[1]);
 
     EXPECT_TRUE(data1 == vector3[0].impl());
     EXPECT_FALSE(data2 == vector3[1].impl());
@@ -686,59 +685,19 @@ TEST(WTF_Vector, RemoveAll)
     EXPECT_TRUE(v2 == vExpected);
 }
 
-TEST(WTF_Vector, ClearContainsAndFind)
+TEST(WTF_Vector, FindMatching)
 {
     Vector<int> v;
-    EXPECT_TRUE(v.isEmpty());
-    v.clear();
-    EXPECT_TRUE(v.isEmpty());
-
-    v = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    EXPECT_EQ(10U, v.size());
-    EXPECT_FALSE(v.contains(1));
-    EXPECT_EQ(notFound, v.find(1));
-    v.clear();
-    EXPECT_TRUE(v.isEmpty());
-    EXPECT_FALSE(v.contains(1));
-    EXPECT_EQ(notFound, v.find(1));
-
-    v = { 3, 1, 2, 1, 1, 4, 2, 2, 1, 1, 3, 5 };
-    EXPECT_EQ(12U, v.size());
-    EXPECT_TRUE(v.contains(3));
-    EXPECT_TRUE(v.contains(4));
-    EXPECT_TRUE(v.contains(5));
-    EXPECT_FALSE(v.contains(6));
-    EXPECT_EQ(0U, v.find(3));
-    EXPECT_EQ(5U, v.find(4));
-    EXPECT_EQ(11U, v.find(5));
-    EXPECT_EQ(notFound, v.find(6));
-    EXPECT_TRUE(v == Vector<int>({ 3, 1, 2, 1, 1, 4, 2, 2, 1, 1, 3, 5 }));
-    v.clear();
-    EXPECT_EQ(0U, v.size());
-    EXPECT_FALSE(v.contains(3));
-    EXPECT_FALSE(v.contains(4));
-    EXPECT_FALSE(v.contains(5));
-    EXPECT_FALSE(v.contains(6));
-    EXPECT_EQ(notFound, v.find(3));
-    EXPECT_EQ(notFound, v.find(4));
-    EXPECT_EQ(notFound, v.find(5));
-    EXPECT_EQ(notFound, v.find(6));
-    EXPECT_TRUE(v == Vector<int>({ }));
-}
-
-TEST(WTF_Vector, FindIf)
-{
-    Vector<int> v;
-    EXPECT_TRUE(v.findIf([](int) { return false; }) == notFound);
-    EXPECT_TRUE(v.findIf([](int) { return true; }) == notFound);
+    EXPECT_TRUE(v.findMatching([](int) { return false; }) == notFound);
+    EXPECT_TRUE(v.findMatching([](int) { return true; }) == notFound);
 
     v = {3, 1, 2, 1, 2, 1, 2, 2, 1, 1, 1, 3};
-    EXPECT_TRUE(v.findIf([](int value) { return value > 3; }) == notFound);
-    EXPECT_TRUE(v.findIf([](int) { return false; }) == notFound);
-    EXPECT_EQ(0U, v.findIf([](int) { return true; }));
-    EXPECT_EQ(0U, v.findIf([](int value) { return value <= 3; }));
-    EXPECT_EQ(1U, v.findIf([](int value) { return value < 3; }));
-    EXPECT_EQ(2U, v.findIf([](int value) { return value == 2; }));
+    EXPECT_TRUE(v.findMatching([](int value) { return value > 3; }) == notFound);
+    EXPECT_TRUE(v.findMatching([](int) { return false; }) == notFound);
+    EXPECT_EQ(0U, v.findMatching([](int) { return true; }));
+    EXPECT_EQ(0U, v.findMatching([](int value) { return value <= 3; }));
+    EXPECT_EQ(1U, v.findMatching([](int value) { return value < 3; }));
+    EXPECT_EQ(2U, v.findMatching([](int value) { return value == 2; }));
 }
 
 TEST(WTF_Vector, RemoveFirstMatching)
@@ -895,9 +854,9 @@ TEST(WTF_Vector, MapLambdaMove)
 TEST(WTF_Vector, MapFromHashMap)
 {
     HashMap<String, String> map;
-    map.set("k1"_s, "v1"_s);
-    map.set("k2"_s, "v2"_s);
-    map.set("k3"_s, "v3"_s);
+    map.set(String { "k1" }, String { "v1" });
+    map.set(String { "k2" }, String { "v2" });
+    map.set(String { "k3" }, String { "v3" });
 
     auto mapped = WTF::map(map, [&] (KeyValuePair<String, String>& pair) -> String {
         return pair.value;
@@ -905,9 +864,9 @@ TEST(WTF_Vector, MapFromHashMap)
     std::sort(mapped.begin(), mapped.end(), WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "v1"_s);
-    EXPECT_TRUE(mapped[1] == "v2"_s);
-    EXPECT_TRUE(mapped[2] == "v3"_s);
+    EXPECT_TRUE(mapped[0] == "v1");
+    EXPECT_TRUE(mapped[1] == "v2");
+    EXPECT_TRUE(mapped[2] == "v3");
 
     mapped = WTF::map(map, [&] (const auto& pair) -> String {
         return pair.key;
@@ -915,9 +874,9 @@ TEST(WTF_Vector, MapFromHashMap)
     std::sort(mapped.begin(), mapped.end(), WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "k1"_s);
-    EXPECT_TRUE(mapped[1] == "k2"_s);
-    EXPECT_TRUE(mapped[2] == "k3"_s);
+    EXPECT_TRUE(mapped[0] == "k1");
+    EXPECT_TRUE(mapped[1] == "k2");
+    EXPECT_TRUE(mapped[2] == "k3");
 
     mapped = WTF::map(WTFMove(map), [&] (KeyValuePair<String, String>&& pair) -> String {
         return WTFMove(pair.value);
@@ -925,17 +884,17 @@ TEST(WTF_Vector, MapFromHashMap)
     std::sort(mapped.begin(), mapped.end(), WTF::codePointCompareLessThan);
 
     EXPECT_EQ(3U, mapped.size());
-    EXPECT_TRUE(mapped[0] == "v1"_s);
-    EXPECT_TRUE(mapped[1] == "v2"_s);
-    EXPECT_TRUE(mapped[2] == "v3"_s);
+    EXPECT_TRUE(mapped[0] == "v1");
+    EXPECT_TRUE(mapped[1] == "v2");
+    EXPECT_TRUE(mapped[2] == "v3");
 
-    EXPECT_TRUE(map.contains("k1"_s));
-    EXPECT_TRUE(map.contains("k2"_s));
-    EXPECT_TRUE(map.contains("k3"_s));
+    EXPECT_TRUE(map.contains("k1"));
+    EXPECT_TRUE(map.contains("k2"));
+    EXPECT_TRUE(map.contains("k3"));
 
-    EXPECT_TRUE(map.get("k1"_s).isNull());
-    EXPECT_TRUE(map.get("k2"_s).isNull());
-    EXPECT_TRUE(map.get("k3"_s).isNull());
+    EXPECT_TRUE(map.get("k1").isNull());
+    EXPECT_TRUE(map.get("k2").isNull());
+    EXPECT_TRUE(map.get("k3").isNull());
 
 }
 
@@ -1052,7 +1011,7 @@ TEST(WTF_Vector, CompactMapStaticFunctionReturnOptionalRefPtr)
 
 TEST(WTF_Vector, CompactMapLambdaReturnOptional)
 {
-    Vector<String> vector { "a"_s, "b"_s, "hello"_s, "ciao"_s, "world"_s, "webkit"_s };
+    Vector<String> vector { "a", "b", "hello", "ciao", "world", "webkit" };
 
     auto function = [](const String& value) -> std::optional<String> {
         if (value.length() < 5)
@@ -1285,8 +1244,8 @@ TEST(WTF_Vector, CopyToVectorSizeRangeIterator)
 
 TEST(WTF_Vector, StringComparison)
 {
-    Vector<String> a = {{ "a"_s }};
-    Vector<String> b = {{ "a"_s }};
+    Vector<String> a = {{ "a" }};
+    Vector<String> b = {{ "a" }};
     EXPECT_TRUE(a == b);
 }
 
@@ -1405,8 +1364,8 @@ TEST(WTF_Vector, HashKeyInlineCapacity)
 
 TEST(WTF_Vector, HashKeyString)
 {
-    Vector<String> a = { "a"_s };
-    Vector<String> b = { "a"_s, "b"_s };
+    Vector<String> a = { "a" };
+    Vector<String> b = { "a", "b" };
 
     HashSet<Vector<String>> hash;
 
@@ -1438,46 +1397,46 @@ TEST(WTF_Vector, HashKeyString)
     EXPECT_FALSE(hash.contains(a));
     EXPECT_FALSE(hash.contains(b));
 
-    for (auto i : { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s }) {
-        for (auto j : { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s }) {
+    for (auto i : { "a", "b", "c", "d", "e" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
             hash.add({ i, j });
             hash.add({ i, j, i, j });
         }
     }
 
-    for (auto i : { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s }) {
-        for (auto j : { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s }) {
+    for (auto i : { "a", "b", "c", "d", "e" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
             EXPECT_TRUE(hash.contains({ i, j }));
             EXPECT_TRUE(hash.contains({ i, j, i, j }));
             EXPECT_FALSE(hash.contains({ i, j, i }));
-            EXPECT_FALSE(hash.contains({ "x"_s, j }));
-            EXPECT_FALSE(hash.contains({ i, j, "x"_s, j }));
+            EXPECT_FALSE(hash.contains({ "x", j }));
+            EXPECT_FALSE(hash.contains({ i, j, "x", j }));
         }
     }
 
-    for (auto i : { "d"_s, "e"_s }) {
-        for (auto j : { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s }) {
+    for (auto i : { "d", "e" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
             hash.remove({ i, j });
             hash.remove({ i, j, i, j });
         }
     }
 
-    for (auto i : { "d"_s, "e"_s }) {
-        for (auto j : { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s }) {
+    for (auto i : { "d", "e" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
             EXPECT_FALSE(hash.contains({ i, j }));
             EXPECT_FALSE(hash.contains({ i, j, i, j }));
         }
     }
 
-    for (auto i : { "a"_s, "b"_s, "c"_s }) {
-        for (auto j : { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s }) {
+    for (auto i : { "a", "b", "c" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
             EXPECT_TRUE(hash.contains({ i, j }));
             EXPECT_TRUE(hash.contains({ i, j, i, j }));
         }
     }
 
-    for (auto i : { "a"_s, "b"_s, "c"_s }) {
-        for (auto j : { "a"_s, "b"_s, "c"_s, "d"_s, "e"_s }) {
+    for (auto i : { "a", "b", "c" }) {
+        for (auto j : { "a", "b", "c", "d", "e" }) {
             hash.remove({ i, j });
             hash.remove({ i, j, i, j });
         }
@@ -1510,235 +1469,6 @@ TEST(WTF_Vector, MapCustomReturnType)
     ASSERT_EQ(output.size(), input.size());
     EXPECT_FLOAT_EQ(output[0], 1.0f);
     EXPECT_FLOAT_EQ(output[1], 2.0f);
-}
-
-TEST(WTF_Vector, MoveConstructor)
-{
-    {
-        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        Vector<String> strings2(WTFMove(strings));
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 0U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 5U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 16U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        EXPECT_EQ(strings.capacity(), 10U);
-        Vector<String, 10> strings2(WTFMove(strings));
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 10U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 10U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 10U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String, 2> strings2(WTFMove(strings));
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 2U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 5U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 16U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-}
-
-TEST(WTF_Vector, MoveAssignmentOperator)
-{
-    {
-        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String> strings2;
-        strings2 = WTFMove(strings);
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 0U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 5U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 16U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        Vector<String> strings2({ "foo"_str, "bar"_str });
-        strings2 = WTFMove(strings);
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 0U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 5U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 16U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        EXPECT_EQ(strings.capacity(), 10U);
-        Vector<String, 10> strings2;
-        strings2 = WTFMove(strings);
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 10U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 10U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 10U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        EXPECT_EQ(strings.capacity(), 10U);
-        Vector<String, 10> strings2({ "foo"_str, "bar"_str });
-        strings2 = WTFMove(strings);
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 10U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 10U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 10U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String, 2> strings2;
-        strings2 = WTFMove(strings);
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 2U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 5U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 16U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String, 2> strings2({ "foo"_str, "bar"_str });
-        strings2 = WTFMove(strings);
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 2U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 5U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 16U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
-        EXPECT_EQ(strings.size(), 5U);
-        EXPECT_EQ(strings.capacity(), 5U);
-        Vector<String, 2> strings2({ "foo"_str, "bar"_str, "baz"_str });
-        strings2 = WTFMove(strings);
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 2U);
-        EXPECT_EQ(strings2.size(), 5U);
-        EXPECT_EQ(strings2.capacity(), 5U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-        EXPECT_STREQ(strings2[3].utf8().data(), "d");
-        EXPECT_STREQ(strings2[4].utf8().data(), "e");
-        strings2.append("f"_str);
-        EXPECT_EQ(strings2.size(), 6U);
-        EXPECT_EQ(strings2.capacity(), 16U);
-        EXPECT_STREQ(strings2[5].utf8().data(), "f");
-    }
-
-    {
-        Vector<String, 2> strings({ "a"_str, "b"_str });
-        EXPECT_EQ(strings.size(), 2U);
-        EXPECT_EQ(strings.capacity(), 2U);
-        Vector<String, 2> strings2({ "foo"_str, "bar"_str, "baz"_str });
-        strings2 = WTFMove(strings);
-        EXPECT_EQ(strings.size(), 0U);
-        EXPECT_EQ(strings.capacity(), 2U);
-        EXPECT_EQ(strings2.size(), 2U);
-        EXPECT_EQ(strings2.capacity(), 2U);
-        EXPECT_STREQ(strings2[0].utf8().data(), "a");
-        EXPECT_STREQ(strings2[1].utf8().data(), "b");
-        strings2.append("c"_str);
-        EXPECT_EQ(strings2.size(), 3U);
-        EXPECT_EQ(strings2.capacity(), 16U);
-        EXPECT_STREQ(strings2[2].utf8().data(), "c");
-    }
 }
 
 } // namespace TestWebKitAPI

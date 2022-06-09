@@ -108,9 +108,9 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * WebKitWebView:
- *
- * The central class of the WPE WebKit and WebKitGTK APIs.
+ * SECTION: WebKitWebView
+ * @Short_description: The central class of the WPE WebKit and WebKitGTK APIs
+ * @Title: WebKitWebView
  *
  * #WebKitWebView is the central class of the WPE WebKit and WebKitGTK
  * APIs. It is responsible for managing the drawing of the content and
@@ -364,7 +364,7 @@ void webkitWebViewMediaCaptureStateDidChange(WebKitWebView* webView, WebCore::Me
         g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_MICROPHONE_CAPTURE_STATE]);
         return;
     }
-    if (mediaStateFlags.containsAny(WebCore::MediaProducer::MicrophoneCaptureMask))
+    if (mediaStateFlags.containsAny(WebCore::MediaProducer::AudioCaptureMask))
         g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_MICROPHONE_CAPTURE_STATE]);
     if (mediaStateFlags.containsAny(WebCore::MediaProducer::VideoCaptureMask))
         g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_CAMERA_CAPTURE_STATE]);
@@ -466,7 +466,7 @@ void WebKitWebViewClient::handleDownloadRequest(WKWPE::View&, DownloadProxy& dow
 void WebKitWebViewClient::frameDisplayed(WKWPE::View&)
 {
     {
-        SetForScope inFrameDisplayedGuard(m_webView->priv->inFrameDisplayed, true);
+        SetForScope<bool> inFrameDisplayedGuard(m_webView->priv->inFrameDisplayed, true);
         for (const auto& callback : m_webView->priv->frameDisplayedCallbacks) {
             if (!m_webView->priv->frameDisplayedCallbacksToRemove.contains(callback.id))
                 callback.callback(m_webView, callback.userData);
@@ -1473,34 +1473,34 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * You can handle this signal and use a switch to track any ongoing
      * load operation.
      *
-     * ```c
+     * <informalexample><programlisting>
      * static void web_view_load_changed (WebKitWebView  *web_view,
      *                                    WebKitLoadEvent load_event,
      *                                    gpointer        user_data)
      * {
      *     switch (load_event) {
      *     case WEBKIT_LOAD_STARTED:
-     *         // New load, we have now a provisional URI
+     *         /<!-- -->* New load, we have now a provisional URI *<!-- -->/
      *         provisional_uri = webkit_web_view_get_uri (web_view);
-     *         // Here we could start a spinner or update the
-     *         // location bar with the provisional URI
+     *         /<!-- -->* Here we could start a spinner or update the
+     *          <!-- -->* location bar with the provisional URI *<!-- -->/
      *         break;
      *     case WEBKIT_LOAD_REDIRECTED:
      *         redirected_uri = webkit_web_view_get_uri (web_view);
      *         break;
      *     case WEBKIT_LOAD_COMMITTED:
-     *         // The load is being performed. Current URI is
-     *         // the final one and it won't change unless a new
-     *         // load is requested or a navigation within the
-     *         // same page is performed
+     *         /<!-- -->* The load is being performed. Current URI is
+     *          <!-- -->* the final one and it won't change unless a new
+     *          <!-- -->* load is requested or a navigation within the
+     *          <!-- -->* same page is performed *<!-- -->/
      *         uri = webkit_web_view_get_uri (web_view);
      *         break;
      *     case WEBKIT_LOAD_FINISHED:
-     *         // Load finished, we can now stop the spinner
+     *         /<!-- -->* Load finished, we can now stop the spinner *<!-- -->/
      *         break;
      *     }
      * }
-     * ```
+     * </programlisting></informalexample>
      */
     signals[LOAD_CHANGED] =
         g_signal_new("load-changed",
@@ -1734,7 +1734,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * @decision argument is a generic type, but should be casted to a more
      * specific type when making the decision. For example:
      *
-     * ```c
+     * <informalexample><programlisting>
      * static gboolean
      * decide_policy_cb (WebKitWebView *web_view,
      *                   WebKitPolicyDecision *decision,
@@ -1743,25 +1743,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *     switch (type) {
      *     case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION: {
      *         WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
-     *         // Make a policy decision here
+     *         /<!-- -->* Make a policy decision here. *<!-- -->/
      *         break;
      *     }
      *     case WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION: {
      *         WebKitNavigationPolicyDecision *navigation_decision = WEBKIT_NAVIGATION_POLICY_DECISION (decision);
-     *         // Make a policy decision here
+     *         /<!-- -->* Make a policy decision here. *<!-- -->/
      *         break;
      *     }
      *     case WEBKIT_POLICY_DECISION_TYPE_RESPONSE:
      *         WebKitResponsePolicyDecision *response = WEBKIT_RESPONSE_POLICY_DECISION (decision);
-     *         // Make a policy decision here
+     *         /<!-- -->* Make a policy decision here. *<!-- -->/
      *         break;
      *     default:
-     *         // Making no decision results in webkit_policy_decision_use()
+     *         /<!-- -->* Making no decision results in webkit_policy_decision_use(). *<!-- -->/
      *         return FALSE;
      *     }
      *     return TRUE;
      * }
-     * ```
+     * </programlisting></informalexample>
      *
      * It is possible to make policy decision asynchronously, by simply calling g_object_ref()
      * on the @decision argument and returning %TRUE to block the default signal handler.
@@ -1798,7 +1798,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * A possible way to use this signal could be through a dialog
      * allowing the user decide what to do with the request:
      *
-     * ```c
+     * <informalexample><programlisting>
      * static gboolean permission_request_cb (WebKitWebView *web_view,
      *                                        WebKitPermissionRequest *request,
      *                                        GtkWindow *parent_window)
@@ -1823,7 +1823,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      *     return TRUE;
      * }
-     * ```
+     * </programlisting></informalexample>
      *
      * It is possible to handle permission requests asynchronously, by
      * simply calling g_object_ref() on the @request argument and
@@ -3120,7 +3120,7 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
-    getPage(webView).loadAlternateHTML({ reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }, "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) });
+    getPage(webView).loadAlternateHTML({ reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }, "UTF-8"_s, URL(URL(), String::fromUTF8(baseURI)), URL(URL(), String::fromUTF8(contentURI)));
 }
 
 /**
@@ -3905,7 +3905,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  * This is an example of using webkit_web_view_run_javascript() with a script returning
  * a string:
  *
- * ```c
+ * <informalexample><programlisting>
  * static void
  * web_view_javascript_finished (GObject      *object,
  *                               GAsyncResult *result,
@@ -3924,8 +3924,11 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  *
  *     value = webkit_javascript_result_get_js_value (js_result);
  *     if (jsc_value_is_string (value)) {
- *         gchar        *str_value = jsc_value_to_string (value);
- *         JSCException *exception = jsc_context_get_exception (jsc_value_get_context (value));
+ *         JSCException *exception;
+ *         gchar        *str_value;
+ *
+ *         str_value = jsc_value_to_string (value);
+ *         exception = jsc_context_get_exception (jsc_value_get_context (value));
  *         if (exception)
  *             g_warning ("Error running javascript: %s", jsc_exception_get_message (exception));
  *         else
@@ -3941,11 +3944,13 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
  * web_view_get_link_url (WebKitWebView *web_view,
  *                        const gchar   *link_id)
  * {
- *     gchar *script = g_strdup_printf ("window.document.getElementById('%s').href;", link_id);
+ *     gchar *script;
+ *
+ *     script = g_strdup_printf ("window.document.getElementById('%s').href;", link_id);
  *     webkit_web_view_run_javascript (web_view, script, NULL, web_view_javascript_finished, NULL);
  *     g_free (script);
  * }
- * ```
+ * </programlisting></informalexample>
  *
  * Returns: (transfer full): a #WebKitJavascriptResult with the result of the last executed statement in @script
  *    or %NULL in case of error
@@ -4380,7 +4385,7 @@ void webKitWebViewDidReceiveSnapshot(WebKitWebView* webView, uint64_t callbackID
         return;
     }
 
-    g_task_return_pointer(task.get(), webImage->createCairoSurface().leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
+    g_task_return_pointer(task.get(), webImage->bitmap().createCairoSurface().leakRef(), reinterpret_cast<GDestroyNotify>(cairo_surface_destroy));
 }
 
 static inline unsigned webKitSnapshotOptionsToSnapshotOptions(WebKitSnapshotOptions options)
@@ -4476,7 +4481,7 @@ void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessT
     webkitWebViewSetIsWebProcessResponsive(webView, true);
 }
 
-/**
+/*
  * webkit_web_view_is_editable:
  * @web_view: a #WebKitWebView
  *
@@ -4625,7 +4630,7 @@ void webkit_web_view_remove_frame_displayed_callback(WebKitWebView* webView, uns
     };
 
     if (webView->priv->inFrameDisplayed) {
-        auto index = webView->priv->frameDisplayedCallbacks.findIf(matchFunction);
+        auto index = webView->priv->frameDisplayedCallbacks.findMatching(matchFunction);
         if (index != notFound)
             webView->priv->frameDisplayedCallbacksToRemove.add(id);
     } else
@@ -4787,7 +4792,7 @@ void webkitWebViewSetIsWebProcessResponsive(WebKitWebView* webView, bool isRespo
 }
 
 /**
- * webkit_web_view_get_is_web_process_responsive:
+ * webkit_web_view_is_web_process_responsive:
  * @web_view: a #WebKitWebView
  *
  * Get whether the current web process of a #WebKitWebView is responsive.
@@ -4863,7 +4868,7 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
     getPage(webView).setCORSDisablingPatterns(WTFMove(allowListVector));
 }
 
-static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::MediaProducerMediaCaptureKind captureKind, WebKitMediaCaptureState captureState)
+static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::MediaProducerMediaCaptureKind captureKind, WebKitMediaCaptureState captureState, bool isFromDisplayCapture = false)
 {
     auto& page = getPage(webView);
     auto mutedState = page.mutedStateFlags();
@@ -4872,16 +4877,13 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
     case WEBKIT_MEDIA_CAPTURE_STATE_NONE:
         page.stopMediaCapture(captureKind, [webView, captureKind] {
             switch (captureKind) {
-            case WebCore::MediaProducerMediaCaptureKind::Microphone:
+            case WebCore::MediaProducerMediaCaptureKind::Audio:
                 g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_MICROPHONE_CAPTURE_STATE]);
                 break;
-            case WebCore::MediaProducerMediaCaptureKind::Display:
-                break;
-            case WebCore::MediaProducerMediaCaptureKind::Camera:
+            case WebCore::MediaProducerMediaCaptureKind::Video:
                 g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_CAMERA_CAPTURE_STATE]);
                 break;
-            case WebCore::MediaProducerMediaCaptureKind::SystemAudio:
-            case WebCore::MediaProducerMediaCaptureKind::EveryKind:
+            case WebCore::MediaProducerMediaCaptureKind::AudioVideo:
                 ASSERT_NOT_REACHED();
                 return;
             }
@@ -4889,17 +4891,16 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
         break;
     case WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE:
         switch (captureKind) {
-        case WebCore::MediaProducerMediaCaptureKind::Microphone:
+        case WebCore::MediaProducerMediaCaptureKind::Audio:
             mutedState.remove(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
             break;
-        case WebCore::MediaProducerMediaCaptureKind::Camera:
-            mutedState.remove(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
+        case WebCore::MediaProducerMediaCaptureKind::Video:
+            if (isFromDisplayCapture)
+                mutedState.remove(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
+            else
+                mutedState.remove(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
             break;
-        case WebCore::MediaProducerMediaCaptureKind::Display:
-            mutedState.remove(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
-            break;
-        case WebCore::MediaProducerMediaCaptureKind::SystemAudio:
-        case WebCore::MediaProducerMediaCaptureKind::EveryKind:
+        case WebCore::MediaProducerMediaCaptureKind::AudioVideo:
             ASSERT_NOT_REACHED();
             return;
         }
@@ -4907,17 +4908,16 @@ static void webkitWebViewConfigureMediaCapture(WebKitWebView* webView, WebCore::
         break;
     case WEBKIT_MEDIA_CAPTURE_STATE_MUTED:
         switch (captureKind) {
-        case WebCore::MediaProducerMediaCaptureKind::Microphone:
+        case WebCore::MediaProducerMediaCaptureKind::Audio:
             mutedState.add(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
             break;
-        case WebCore::MediaProducerMediaCaptureKind::Camera:
-            mutedState.add(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
+        case WebCore::MediaProducerMediaCaptureKind::Video:
+            if (isFromDisplayCapture)
+                mutedState.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
+            else
+                mutedState.add(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
             break;
-        case WebCore::MediaProducerMediaCaptureKind::Display:
-            mutedState.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
-            break;
-        case WebCore::MediaProducerMediaCaptureKind::SystemAudio:
-        case WebCore::MediaProducerMediaCaptureKind::EveryKind:
+        case WebCore::MediaProducerMediaCaptureKind::AudioVideo:
             ASSERT_NOT_REACHED();
             return;
         }
@@ -4965,7 +4965,7 @@ void webkit_web_view_set_camera_capture_state(WebKitWebView* webView, WebKitMedi
     if (webkit_web_view_get_camera_capture_state(webView) == WEBKIT_MEDIA_CAPTURE_STATE_NONE)
         return;
 
-    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Camera, state);
+    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Video, state);
 }
 
 /**
@@ -5007,7 +5007,7 @@ void webkit_web_view_set_microphone_capture_state(WebKitWebView* webView, WebKit
     if (webkit_web_view_get_microphone_capture_state(webView) == WEBKIT_MEDIA_CAPTURE_STATE_NONE)
         return;
 
-    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Microphone, state);
+    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Audio, state);
 }
 
 /**
@@ -5024,9 +5024,9 @@ void webkit_web_view_set_microphone_capture_state(WebKitWebView* webView, WebKit
 WebKitMediaCaptureState webkit_web_view_get_display_capture_state(WebKitWebView* webView)
 {
     auto state = getPage(webView).reportedMediaState();
-    if (state & WebCore::MediaProducer::MediaState::HasActiveScreenCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveDisplayCaptureDevice)
         return WEBKIT_MEDIA_CAPTURE_STATE_ACTIVE;
-    if (state & WebCore::MediaProducer::MediaState::HasMutedScreenCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedDisplayCaptureDevice)
         return WEBKIT_MEDIA_CAPTURE_STATE_MUTED;
     return WEBKIT_MEDIA_CAPTURE_STATE_NONE;
 }
@@ -5049,5 +5049,5 @@ void webkit_web_view_set_display_capture_state(WebKitWebView* webView, WebKitMed
     if (webkit_web_view_get_display_capture_state(webView) == WEBKIT_MEDIA_CAPTURE_STATE_NONE)
         return;
 
-    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Display, state);
+    webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Video, state, true);
 }

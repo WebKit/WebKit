@@ -1,3 +1,0 @@
-
-PASS Setting restart='never' prevents animation with begin='click' from restarting
-

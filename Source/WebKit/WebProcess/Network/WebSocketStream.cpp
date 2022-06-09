@@ -58,7 +58,9 @@ void WebSocketStream::networkProcessCrashed()
     Vector<RefPtr<WebSocketStream>> sockets;
     {
         Locker stateLocker { globalWebSocketStreamMapLock };
-        sockets = copyToVectorOf<RefPtr<WebSocketStream>>(globalWebSocketStreamMap().values());
+        sockets.reserveInitialCapacity(globalWebSocketStreamMap().size());
+        for (auto& stream : globalWebSocketStreamMap().values())
+            sockets.uncheckedAppend(stream);
     }
 
     for (auto& stream : sockets) {
@@ -66,7 +68,7 @@ void WebSocketStream::networkProcessCrashed()
             callback(false);
         for (auto& callback : stream->m_sendHandshakeCallbacks.values())
             callback(false, false);
-        stream->m_client.didFailSocketStream(*stream, SocketStreamError(0, { }, "Network process crashed."_s));
+        stream->m_client.didFailSocketStream(*stream, SocketStreamError(0, { }, "Network process crashed."));
         stream = nullptr;
     }
 

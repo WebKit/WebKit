@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,19 +28,14 @@ import sys
 from .blame import Blame
 from .branch import Branch
 from .canonicalize import Canonicalize
-from .clean import Clean, DeletePRBranches
+from .clean import Clean
 from .command import Command
-from .commit import Commit
-from .squash import Squash
 from .checkout import Checkout
-from .credentials import Credentials
 from .find import Find, Info
-from .install_git_lfs import InstallGitLFS
 from .land import Land
 from .log import Log
 from .pull import Pull
 from .pull_request import PullRequest
-from .revert import Revert
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
 
@@ -51,7 +46,7 @@ from webkitscmpy import local, log, remote
 def main(
     args=None, path=None, loggers=None, contributors=None,
     identifier_template=None, subversion=None, additional_setup=None, hooks=None,
-    canonical_svn=None,
+    canonical_svn=False,
 ):
     logging.basicConfig(level=logging.WARNING)
 
@@ -76,12 +71,7 @@ def main(
     )
 
     subparsers = parser.add_subparsers(help='sub-command help')
-    programs = [
-        Blame, Branch, Canonicalize, Checkout,
-        Clean, Find, Info, Land, Log, Pull,
-        PullRequest, Revert, Setup, InstallGitLFS,
-        Credentials, Commit, DeletePRBranches, Squash
-    ]
+    programs = [Blame, Branch, Canonicalize, Checkout, Clean, Find, Info, Land, Log, Pull, PullRequest, Setup]
     if subversion:
         programs.append(SetupGitSvn)
 
@@ -116,20 +106,16 @@ def main(
     if parsed.repository.startswith(('https://', 'http://')):
         repository = remote.Scm.from_url(parsed.repository, contributors=None if callable(contributors) else contributors)
     else:
-        try:
-            repository = local.Scm.from_path(path=parsed.repository, contributors=None if callable(contributors) else contributors)
-        except OSError:
-            log.warning("No repository found at '{}'".format(parsed.repository))
-            repository = None
+        repository = local.Scm.from_path(path=parsed.repository, contributors=None if callable(contributors) else contributors)
 
-    if repository and callable(contributors):
+    if callable(contributors):
         repository.contributors = contributors(repository) or repository.contributors
     if callable(identifier_template):
-        identifier_template = identifier_template(repository) if repository else None
+        identifier_template = identifier_template(repository)
     if callable(subversion):
-        subversion = subversion(repository) if repository else None
+        subversion = subversion(repository)
     if callable(hooks):
-        hooks = hooks(repository) if repository else None
+        hooks = hooks(repository)
 
     if sys.version_info > (3, 0):
         import inspect
@@ -139,7 +125,7 @@ def main(
         additional_setup = additional_setup(repository)
 
     if callable(canonical_svn):
-        canonical_svn = canonical_svn(repository) if repository else repository
+        canonical_svn = canonical_svn(repository)
 
     if not getattr(parsed, 'main', None):
         parser.print_help()

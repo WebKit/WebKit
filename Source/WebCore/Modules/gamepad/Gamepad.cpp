@@ -43,9 +43,8 @@ Gamepad::Gamepad(const PlatformGamepad& platformGamepad)
     , m_axes(platformGamepad.axisValues().size(), 0.0)
 {
     unsigned buttonCount = platformGamepad.buttonValues().size();
-    m_buttons.reserveInitialCapacity(buttonCount);
     for (unsigned i = 0; i < buttonCount; ++i)
-        m_buttons.uncheckedAppend(GamepadButton::create());
+        m_buttons.append(GamepadButton::create());
 }
 
 Gamepad::~Gamepad() = default;

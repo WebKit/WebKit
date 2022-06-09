@@ -63,7 +63,7 @@ AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, CacheableIdentifi
     , m_polyProtoAccessChain(WTFMove(prototypeAccessChain))
     , m_identifier(identifier)
 {
-    m_structureID.setMayBeNull(vm, owner, structure);
+    m_structure.setMayBeNull(vm, owner, structure);
     m_conditionSet = conditionSet;
     RELEASE_ASSERT(m_conditionSet.isValid());
 }
@@ -202,15 +202,15 @@ RefPtr<AccessCase> AccessCase::fromStructureStubInfo(
     switch (stubInfo.cacheType()) {
     case CacheType::GetByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return ProxyableAccessCase::create(vm, owner, Load, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure());
+        return ProxyableAccessCase::create(vm, owner, Load, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure(vm));
 
     case CacheType::PutByIdReplace:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure());
+        return AccessCase::create(vm, owner, Replace, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure(vm));
 
     case CacheType::InByIdSelf:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
-        return AccessCase::create(vm, owner, InHit, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure());
+        return AccessCase::create(vm, owner, InHit, identifier, stubInfo.byIdSelfOffset, stubInfo.inlineAccessBaseStructure(vm));
 
     case CacheType::ArrayLength:
         RELEASE_ASSERT(stubInfo.hasConstantIdentifier);
@@ -536,14 +536,14 @@ bool AccessCase::needsScratchFPR() const
 }
 
 template<typename Functor>
-void AccessCase::forEachDependentCell(VM&, const Functor& functor) const
+void AccessCase::forEachDependentCell(VM& vm, const Functor& functor) const
 {
     m_conditionSet.forEachDependentCell(functor);
-    if (m_structureID)
-        functor(m_structureID.get());
+    if (m_structure)
+        functor(m_structure.get());
     if (m_polyProtoAccessChain) {
         for (StructureID structureID : m_polyProtoAccessChain->chain())
-            functor(structureID.decode());
+            functor(vm.getStructure(structureID));
     }
 
     switch (type()) {
@@ -874,8 +874,8 @@ void AccessCase::dump(PrintStream& out) const
         if (m_type == Transition || m_type == Delete || m_type == SetPrivateBrand)
             out.print("\n", indent, "from structure = ", pointerDump(structure()),
                 "\n", indent, "to structure = ", pointerDump(newStructure()));
-        else if (m_structureID)
-            out.print("\n", indent, "structure = ", pointerDump(m_structureID.get()));
+        else if (m_structure)
+            out.print("\n", indent, "structure = ", pointerDump(m_structure.get()));
     }
 
     if (!m_conditionSet.isEmpty())
@@ -904,19 +904,19 @@ bool AccessCase::visitWeak(VM& vm) const
 template<typename Visitor>
 void AccessCase::propagateTransitions(Visitor& visitor) const
 {
-    if (m_structureID)
-        m_structureID->markIfCheap(visitor);
+    if (m_structure)
+        m_structure->markIfCheap(visitor);
 
     if (m_polyProtoAccessChain) {
         for (StructureID structureID : m_polyProtoAccessChain->chain())
-            structureID.decode()->markIfCheap(visitor);
+            visitor.vm().getStructure(structureID)->markIfCheap(visitor);
     }
 
     switch (m_type) {
     case Transition:
     case Delete:
-        if (visitor.isMarked(m_structureID->previousID()))
-            visitor.appendUnbarriered(m_structureID.get());
+        if (visitor.isMarked(m_structure->previousID()))
+            visitor.appendUnbarriered(m_structure.get());
         break;
     default:
         break;
@@ -955,7 +955,7 @@ void AccessCase::generateWithGuard(
 
     if (requiresIdentifierNameMatch() && !stubInfo.hasConstantIdentifier) {
         RELEASE_ASSERT(m_identifier);
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = state.u.propertyGPR;
         // non-rope string check done inside polymorphic access.
 
         if (uid()->isSymbol())
@@ -1094,7 +1094,7 @@ void AccessCase::generateWithGuard(
     case IndexedScopedArgumentsLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = state.u.propertyGPR;
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(ScopedArgumentsType)));
@@ -1156,7 +1156,7 @@ void AccessCase::generateWithGuard(
     case IndexedDirectArgumentsLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = state.u.propertyGPR;
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(DirectArgumentsType)));
         
@@ -1183,7 +1183,7 @@ void AccessCase::generateWithGuard(
 
         TypedArrayType type = toTypedArrayType(m_type);
 
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = state.u.propertyGPR;
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
@@ -1276,7 +1276,7 @@ void AccessCase::generateWithGuard(
     case IndexedStringLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = state.u.propertyGPR;
 
         fallThrough.append(jit.branchIfNotString(baseGPR));
 
@@ -1328,7 +1328,7 @@ void AccessCase::generateWithGuard(
     case IndexedArrayStorageLoad: {
         ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = state.u.propertyGPR;
 
         // int32 check done in polymorphic access.
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
@@ -1427,7 +1427,7 @@ void AccessCase::generateWithGuard(
     case IndexedContiguousStore:
     case IndexedArrayStorageStore: {
         ASSERT(!viaProxy());
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = state.u.propertyGPR;
 
         // int32 check done in polymorphic access.
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::indexingTypeAndMiscOffset()), scratchGPR);
@@ -1581,7 +1581,7 @@ void AccessCase::generateWithGuard(
 
         TypedArrayType type = toTypedArrayType(m_type);
 
-        GPRReg propertyGPR = state.propertyGPR();
+        GPRReg propertyGPR = state.u.propertyGPR;
 
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
         fallThrough.append(jit.branch32(CCallHelpers::NotEqual, scratchGPR, CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
@@ -1686,13 +1686,13 @@ void AccessCase::generateWithGuard(
         
         fallThrough.append(
             jit.branchPtr(
-                CCallHelpers::NotEqual, state.prototypeGPR(),
+                CCallHelpers::NotEqual, state.u.prototypeGPR,
                 CCallHelpers::TrustedImmPtr(as<InstanceOfAccessCase>().prototype())));
         break;
         
     case InstanceOfGeneric: {
         ASSERT(!viaProxy());
-        GPRReg prototypeGPR = state.prototypeGPR();
+        GPRReg prototypeGPR = state.u.prototypeGPR;
         // Legend: value = `base instanceof prototypeGPR`.
         
         GPRReg valueGPR = valueRegs.payloadGPR();
@@ -1720,7 +1720,7 @@ void AccessCase::generateWithGuard(
         JSValueRegs resultRegs(scratchGPR, scratch2GPR);
 #endif
 
-        jit.emitLoadPrototype(vm, valueGPR, resultRegs, failAndIgnore);
+        jit.emitLoadPrototype(vm, valueGPR, resultRegs, scratchGPR, failAndIgnore);
         jit.move(scratch2GPR, valueGPR);
         
         CCallHelpers::Jump isInstance = jit.branchPtr(CCallHelpers::Equal, valueGPR, prototypeGPR);
@@ -1789,7 +1789,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     StructureStubInfo& stubInfo = *state.stubInfo;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
-    GPRReg thisGPR = stubInfo.thisValueIsInExtraGPR() ? state.thisGPR() : baseGPR;
+    GPRReg thisGPR = stubInfo.thisValueIsInThisGPR() ? state.u.thisGPR : baseGPR;
     GPRReg scratchGPR = state.scratchGPR;
 
     for (const ObjectPropertyCondition& condition : m_conditionSet) {
@@ -1813,7 +1813,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         }
 
         // We will emit code that has a weak reference that isn't otherwise listed anywhere.
-        Structure* structure = condition.object()->structure();
+        Structure* structure = condition.object()->structure(vm);
         state.weakStructures.append(structure->id());
 
         jit.move(CCallHelpers::TrustedImmPtr(condition.object()), scratchGPR);
@@ -1852,7 +1852,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     case CustomAccessorSetter: {
         GPRReg valueRegsPayloadGPR = valueRegs.payloadGPR();
 
-        Structure* currStructure = hasAlternateBase() ? alternateBase()->structure() : structure();
+        Structure* currStructure = hasAlternateBase() ? alternateBase()->structure(vm) : structure();
         if (isValidOffset(m_offset))
             currStructure->startWatchingPropertyForReplacements(vm, offset());
 
@@ -1942,7 +1942,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             // We do not need to emit CheckDOM operation since structure check ensures
             // that the structure of the given base value is structure()! So all we should
             // do is performing the CheckDOM thingy in IC compiling time here.
-            if (!structure()->classInfoForCells()->isSubClassOf(access.domAttribute()->classInfo)) {
+            if (!structure()->classInfo()->isSubClassOf(access.domAttribute()->classInfo)) {
                 state.failAndIgnore.append(jit.jump());
                 return;
             }
@@ -1999,7 +1999,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             state.setSpillStateForJSGetterSetter(spillState);
 
             RELEASE_ASSERT(!access.callLinkInfo());
-            auto* callLinkInfo = state.m_callLinkInfos.add(stubInfo.codeOrigin, codeBlock->useDataIC() ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No);
+            auto* callLinkInfo = state.m_callLinkInfos.add(stubInfo.codeOrigin);
             access.m_callLinkInfo = callLinkInfo;
 
             // FIXME: If we generated a polymorphic call stub that jumped back to the getter
@@ -2074,7 +2074,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                         virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
             }
 
-            auto slowCase = access.callLinkInfo()->emitFastPath(jit, loadedValueGPR, loadedValueGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2);
+            auto slowCase = access.callLinkInfo()->emitFastPath(jit, loadedValueGPR, loadedValueGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2, JITCode::isOptimizingJIT(codeBlock->jitType()) ? CallLinkInfo::UseDataIC::No : CallLinkInfo::UseDataIC::Yes);
             auto doneLocation = jit.label();
 
             if (m_type == Getter)
@@ -2108,7 +2108,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             bool callHasReturnValue = isGetter();
             restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
 
-            jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 this->as<GetterSetterAccessCase>().callLinkInfo()->setCodeLocations(
                     linkBuffer.locationOf<JSInternalPtrTag>(slowPathStart),
                     linkBuffer.locationOf<JSInternalPtrTag>(doneLocation));
@@ -2172,7 +2172,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 operationCall = jit.call(OperationPtrTag);
             else
                 operationCall = jit.call(CustomAccessorPtrTag);
-            jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 if (Options::useJITCage()) {
                     if (m_type == CustomValueGetter || m_type == CustomAccessorGetter)
                         linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryCustomGetter));
@@ -2503,7 +2503,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         if (!hasAlternateBase())
             currStructure = structure();
         else
-            currStructure = alternateBase()->structure();
+            currStructure = alternateBase()->structure(vm);
         currStructure->startWatchingPropertyForReplacements(vm, offset());
         
         this->as<IntrinsicGetterAccessCase>().emitIntrinsicGetter(state);
@@ -2615,7 +2615,7 @@ bool AccessCase::canBeShared(const AccessCase& lhs, const AccessCase& rhs)
         return false;
     if (lhs.m_viaProxy != rhs.m_viaProxy)
         return false;
-    if (lhs.m_structureID.get() != rhs.m_structureID.get())
+    if (lhs.m_structure.get() != rhs.m_structure.get())
         return false;
     if (lhs.m_identifier != rhs.m_identifier)
         return false;

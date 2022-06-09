@@ -53,6 +53,7 @@ public:
     static TextTrack& captionMenuOffItem();
     static TextTrack& captionMenuAutomaticItem();
 
+    static const AtomString& subtitlesKeyword();
     static bool isValidKindKeyword(const AtomString&);
 
     TextTrackList* textTrackList() const;
@@ -66,7 +67,7 @@ public:
     const AtomString& kindKeyword() const;
     void setKindKeywordIgnoringASCIICase(StringView);
 
-    virtual AtomString inBandMetadataTrackDispatchType() const { return emptyAtom(); }
+    virtual AtomString inBandMetadataTrackDispatchType() const { return emptyString(); }
 
     enum class Mode { Disabled, Hidden, Showing };
     Mode mode() const;
@@ -138,8 +139,7 @@ protected:
 
     Document& document() const;
 
-    RefPtr<TextTrackCue> matchCue(TextTrackCue&, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
-    bool hasCue(TextTrackCue& cue, TextTrackCue::CueMatchRules rules = TextTrackCue::MatchAllFields) { return matchCue(cue, rules); }
+    bool hasCue(TextTrackCue&, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
     void setKind(Kind);
 
     void newCuesAvailable(const TextTrackCueList&);

@@ -35,7 +35,7 @@ class CryptoKeyHMAC;
 
 class CryptoAlgorithmHMAC final : public CryptoAlgorithm {
 public:
-    static constexpr ASCIILiteral s_name = "HMAC"_s;
+    static constexpr const char* s_name = "HMAC";
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::HMAC;
     static Ref<CryptoAlgorithm> create();
 

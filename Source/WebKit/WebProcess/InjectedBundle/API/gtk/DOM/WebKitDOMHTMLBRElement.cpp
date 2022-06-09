@@ -166,7 +166,8 @@ void webkit_dom_html_br_element_set_clear(WebKitDOMHTMLBRElement* self, const gc
     g_return_if_fail(WEBKIT_DOM_IS_HTML_BR_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLBRElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::clearAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::clearAttr, convertedValue);
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

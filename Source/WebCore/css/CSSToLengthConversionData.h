@@ -31,27 +31,38 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "Element.h"
 #include <optional>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-class Element;
 class FloatSize;
 class RenderStyle;
 class RenderView;
 
-namespace Style {
-struct BuilderContext;
-};
-
 class CSSToLengthConversionData {
 public:
-    // This is used during style building. The 'zoom' property is taken into account.
-    CSSToLengthConversionData(const RenderStyle&, const Style::BuilderContext&);
-    // This constructor ignores the `zoom` property.
-    CSSToLengthConversionData(const RenderStyle&, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView*);
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, float zoom, std::optional<CSSPropertyID> propertyToCompute = std::nullopt, RenderStyle* viewportDependencyDetectionStyle = nullptr)
+        : m_style(style)
+        , m_rootStyle(rootStyle)
+        , m_parentStyle(parentStyle)
+        , m_viewportDependencyDetectionStyle(viewportDependencyDetectionStyle ? viewportDependencyDetectionStyle : const_cast<RenderStyle*>(style))
+        , m_renderView(renderView)
+        , m_zoom(zoom)
+        , m_propertyToCompute(propertyToCompute)
+    {
+        ASSERT(zoom > 0);
+    }
+
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, std::optional<CSSPropertyID> propertyToCompute = std::nullopt)
+        : m_style(style)
+        , m_rootStyle(rootStyle)
+        , m_parentStyle(parentStyle)
+        , m_viewportDependencyDetectionStyle(const_cast<RenderStyle*>(style))
+        , m_renderView(renderView)
+        , m_propertyToCompute(propertyToCompute)
+    {
+    }
 
     CSSToLengthConversionData() = default;
 
@@ -63,49 +74,30 @@ public:
     bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
     CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
     const RenderView* renderView() const { return m_renderView; }
-    const Element* element() const { return m_element.get(); }
 
     FloatSize defaultViewportFactor() const;
     FloatSize smallViewportFactor() const;
     FloatSize largeViewportFactor() const;
     FloatSize dynamicViewportFactor() const;
 
-    CSSToLengthConversionData copyForFontSizeWithParentStyle() const
+    CSSToLengthConversionData copyWithAdjustedZoom(float newZoom) const
     {
-        CSSToLengthConversionData copy(*this);
-        copy.m_style = parentStyle();
-        copy.m_zoom = 1.f;
-        copy.m_propertyToCompute = CSSPropertyFontSize;
-        return copy;
-    };
-
-    CSSToLengthConversionData copyWithAdjustedZoom(float zoom) const
-    {
-        CSSToLengthConversionData copy(*this);
-        copy.m_zoom = zoom;
-        return copy;
+        return CSSToLengthConversionData(m_style, m_rootStyle, m_parentStyle, m_renderView, newZoom, m_propertyToCompute);
     }
 
-    CSSToLengthConversionData copyForLineHeight(float zoom) const
+    CSSToLengthConversionData copyWithAdjustedZoomAndPropertyToCompute(float zoom, std::optional<CSSPropertyID> propertyToCompute) const
     {
-        CSSToLengthConversionData copy(*this);
-        copy.m_zoom = zoom;
-        copy.m_propertyToCompute = CSSPropertyLineHeight;
-        return copy;
+        return CSSToLengthConversionData(m_style, m_rootStyle, m_parentStyle, m_renderView, zoom, propertyToCompute);
     }
-
-    void setUsesContainerUnits() const;
 
 private:
     const RenderStyle* m_style { nullptr };
     const RenderStyle* m_rootStyle { nullptr };
     const RenderStyle* m_parentStyle { nullptr };
+    RenderStyle* m_viewportDependencyDetectionStyle { nullptr };
     const RenderView* m_renderView { nullptr };
-    RefPtr<const Element> m_element;
     std::optional<float> m_zoom;
     std::optional<CSSPropertyID> m_propertyToCompute;
-    // FIXME: Remove this hack.
-    RenderStyle* m_viewportDependencyDetectionStyle { nullptr };
 };
 
 } // namespace WebCore

@@ -392,9 +392,6 @@ struct Extensions
     // GL_EXT_shader_texture_lod
     bool shaderTextureLodEXT = false;
 
-    // GL_QCOM_shading_rate
-    bool shadingRateQCOM = false;
-
     // GL_EXT_shadow_samplers
     bool shadowSamplersEXT = false;
 
@@ -625,9 +622,6 @@ struct Extensions
 
     // GL_ANGLE_provoking_vertex
     bool provokingVertexANGLE = false;
-
-    // GL_ANGLE_read_only_depth_stencil_feedback_loops
-    bool readOnlyDepthStencilFeedbackLoopsANGLE = false;
 
     // GL_ANGLE_relaxed_vertex_attribute_type
     bool relaxedVertexAttributeTypeANGLE = false;

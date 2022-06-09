@@ -39,7 +39,6 @@
 
 namespace WebCore {
 
-class Color;
 class FloatRect;
 class Frame;
 class InspectorController;
@@ -81,14 +80,9 @@ public:
     WEBCORE_EXPORT void changeAttachedWindowWidth(unsigned) final;
     WEBCORE_EXPORT void changeSheetRect(const FloatRect&) final;
     WEBCORE_EXPORT void openURLExternally(const String& url) final;
-    void revealFileExternally(const String&) override { }
-    bool canSave(InspectorFrontendClient::SaveMode) override { return false; }
-    void save(Vector<InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) override { }
-    bool canLoad()  override { return false; }
-    void load(const String&, CompletionHandler<void(const String&)>&& completionHandler) override { completionHandler(nullString()); }
-
-    bool canPickColorFromScreen() override { return false; }
-    void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler) override { completionHandler({ }); }
+    bool canSave()  override { return false; }
+    void save(const String&, const String&, bool, bool) override { }
+    void append(const String&, const String&) override { }
 
     virtual void attachWindow(DockSide) = 0;
     virtual void detachWindow() = 0;

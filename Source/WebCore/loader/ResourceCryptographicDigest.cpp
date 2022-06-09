@@ -39,11 +39,11 @@ template<typename CharacterType> static std::optional<ResourceCryptographicDiges
     // FIXME: This would be much cleaner with a lookup table of pairs of label / algorithm enum values, but I can't
     // figure out how to keep the labels compiletime strings for skipExactlyIgnoringASCIICase.
 
-    if (skipExactlyIgnoringASCIICase(buffer, "sha256"_s))
+    if (skipExactlyIgnoringASCIICase(buffer, "sha256"))
         return ResourceCryptographicDigest::Algorithm::SHA256;
-    if (skipExactlyIgnoringASCIICase(buffer, "sha384"_s))
+    if (skipExactlyIgnoringASCIICase(buffer, "sha384"))
         return ResourceCryptographicDigest::Algorithm::SHA384;
-    if (skipExactlyIgnoringASCIICase(buffer, "sha512"_s))
+    if (skipExactlyIgnoringASCIICase(buffer, "sha512"))
         return ResourceCryptographicDigest::Algorithm::SHA512;
 
     return std::nullopt;

@@ -44,12 +44,13 @@ Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool ena
     size_t size = submenuItems->size();
 
     Vector<WebContextMenuItemData> submenu;
-    submenu.reserveInitialCapacity(size);
+    submenu.reserveCapacity(size);
+
     for (size_t i = 0; i < size; ++i) {
-        if (auto* item = submenuItems->at<WebContextMenuItem>(i))
-            submenu.uncheckedAppend(item->data());
+        WebContextMenuItem* item = submenuItems->at<WebContextMenuItem>(i);
+        if (item)
+            submenu.append(item->data());
     }
-    submenu.shrinkToFit();
 
     return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemTagNoAction, title, enabled, submenu))).leakRef();
 }
@@ -65,9 +66,12 @@ Ref<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const
     if (m_webContextMenuItemData.type() != WebCore::SubmenuType)
         return API::Array::create();
 
-    auto submenuItems = m_webContextMenuItemData.submenu().map([](auto& item) -> RefPtr<API::Object> {
-        return WebContextMenuItem::create(item);
-    });
+    Vector<RefPtr<API::Object>> submenuItems;
+    submenuItems.reserveInitialCapacity(m_webContextMenuItemData.submenu().size());
+
+    for (const auto& item : m_webContextMenuItemData.submenu())
+        submenuItems.uncheckedAppend(WebContextMenuItem::create(item));
+
     return API::Array::create(WTFMove(submenuItems));
 }
 

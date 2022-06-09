@@ -59,7 +59,7 @@ public:
 
     void setIndex(unsigned index) { m_index =  index; }
 
-    GstStream* stream() const { return m_stream; }
+    GstStream* stream() { return m_stream.get(); }
 
     // Used for MSE, where the initial caps of the pad are relevant for initializing the matching pad in the
     // playback pipeline.
@@ -68,7 +68,7 @@ public:
 
 protected:
     TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
-    TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GstStream*);
+    TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstStream>&&);
 
     void notifyTrackOfTagsChanged();
     void notifyTrackOfStreamChanged();
@@ -86,7 +86,7 @@ protected:
     AtomString m_id;
     GRefPtr<GstPad> m_pad;
     GRefPtr<GstPad> m_bestUpstreamPad;
-    GstStream* m_stream { nullptr };
+    GRefPtr<GstStream> m_stream;
     unsigned long m_eventProbe { 0 };
     GRefPtr<GstCaps> m_initialCaps;
 

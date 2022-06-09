@@ -54,7 +54,6 @@ struct ANGLE_UTIL_EXPORT ConfigParameters
     bool bindGeneratesResource;
     bool clientArraysEnabled;
     bool robustAccess;
-    bool mutableRenderBuffer;
     EGLint samples;
     Optional<bool> contextProgramCacheEnabled;
     EGLenum resetStrategy;
@@ -68,7 +67,6 @@ enum class GLWindowResult
 {
     NoError,
     NoColorspaceSupport,
-    NoMutableRenderBufferSupport,
     Error,
 };
 
@@ -76,13 +74,6 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
 {
   public:
     static void Delete(GLWindowBase **window);
-
-    using Image        = void *;
-    using ClientBuffer = void *;
-    using Enum         = unsigned int;
-    using Attrib       = intptr_t;
-    using AttribKHR    = khronos_int32_t;
-    using Boolean      = unsigned int;
 
     // It should also be possible to set multisample and floating point framebuffers.
     EGLint getClientMajorVersion() const { return mClientMajorVersion; }
@@ -112,16 +103,6 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
     virtual GLWindowContext getCurrentContextGeneric()                  = 0;
     virtual GLWindowContext createContextGeneric(GLWindowContext share) = 0;
     virtual bool makeCurrentGeneric(GLWindowContext context)            = 0;
-    virtual Image createImage(GLWindowContext context,
-                              Enum target,
-                              ClientBuffer buffer,
-                              const Attrib *attrib_list)                = 0;
-    virtual Image createImageKHR(GLWindowContext context,
-                                 Enum target,
-                                 ClientBuffer buffer,
-                                 const AttribKHR *attrib_list)          = 0;
-    virtual EGLBoolean destroyImage(Image image)                        = 0;
-    virtual EGLBoolean destroyImageKHR(Image image)                     = 0;
 
     bool isMultisample() const { return mConfigParams.multisample; }
     bool isDebugEnabled() const { return mConfigParams.debug; }
@@ -196,17 +177,6 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     EGLContext createContext(EGLContext share, EGLint *extraAttributes);
     // Make the EGL context current
     bool makeCurrent(EGLContext context);
-
-    Image createImage(GLWindowContext context,
-                      Enum target,
-                      ClientBuffer buffer,
-                      const Attrib *attrib_list) override;
-    Image createImageKHR(GLWindowContext context,
-                         Enum target,
-                         ClientBuffer buffer,
-                         const AttribKHR *attrib_list) override;
-    EGLBoolean destroyImage(Image image) override;
-    EGLBoolean destroyImageKHR(Image image) override;
 
     // Only initializes the Context.
     bool initializeContext();

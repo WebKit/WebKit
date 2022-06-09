@@ -33,6 +33,5 @@
 WebKit::WebPreferences* webkitSettingsGetPreferences(WebKitSettings*);
 
 WK_EXPORT void webkitSettingsSetMediaCaptureRequiresSecureConnection(WebKitSettings*, bool required);
-WK_EXPORT void webkitSettingsSetGetUserMediaRequiresFocus(WebKitSettings*, bool required);
 
 #endif // WebKitSettingsPrivate_h

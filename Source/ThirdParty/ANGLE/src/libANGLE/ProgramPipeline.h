@@ -141,7 +141,8 @@ class ProgramPipeline final : public RefCountObject<ProgramPipelineID>,
     void updateImageBindings();
     void updateExecutableGeometryProperties();
     void updateExecutableTessellationProperties();
-    void updateFragmentInoutRangeAndEnablesPerSampleShading();
+    void updateFragmentInoutRange();
+    void updateUsesEarlyFragmentTestsOptimization();
     void updateLinkedVaryings();
     void updateExecutable();
 

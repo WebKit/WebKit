@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <oliver@nerget.com>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +21,8 @@
 #include "config.h"
 #include "SVGFEDisplacementMapElement.h"
 
-#include "FEDisplacementMap.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -99,23 +100,32 @@ bool SVGFEDisplacementMapElement::setFilterEffectAttribute(FilterEffect* effect,
 
 void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::xChannelSelectorAttr || attrName == SVGNames::yChannelSelectorAttr || attrName == SVGNames::scaleAttr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr)
-            updateSVGRendererForElementChange();
-        else {
-            ASSERT(attrName == SVGNames::xChannelSelectorAttr || attrName == SVGNames::yChannelSelectorAttr || attrName == SVGNames::scaleAttr);
-            primitiveAttributeChanged(attrName);
-        }
+        primitiveAttributeChanged(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
+        InstanceInvalidationGuard guard(*this);
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEDisplacementMapElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    return FEDisplacementMap::create(xChannelSelector(), yChannelSelector(), scale());
+    auto input1 = filterBuilder.getEffectById(in1());
+    auto input2 = filterBuilder.getEffectById(in2());
+    
+    if (!input1 || !input2)
+        return nullptr;
+
+    auto effect = FEDisplacementMap::create(xChannelSelector(), yChannelSelector(), scale());
+    effect->inputEffects() = { input1.releaseNonNull(), input2.releaseNonNull() };
+    return effect;
 }
 
-} // namespace WebCore
+}

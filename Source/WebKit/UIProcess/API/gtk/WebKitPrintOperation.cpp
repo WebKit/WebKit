@@ -41,14 +41,15 @@
 using namespace WebKit;
 
 /**
- * WebKitPrintOperation:
- *
- * Controls a print operation.
+ * SECTION: WebKitPrintOperation
+ * @Short_description: Controls a print operation
+ * @Title: WebKitPrintOperation
  *
  * A #WebKitPrintOperation controls a print operation in WebKit. With
  * a similar API to #GtkPrintOperation, it lets you set the print
  * settings with webkit_print_operation_set_print_settings() or
  * display the print dialog with webkit_print_operation_run_dialog().
+ *
  */
 
 enum {

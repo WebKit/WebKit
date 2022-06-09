@@ -2071,7 +2071,7 @@ inline Vector<String> matchAll(const CString& source, std::regex regex)
     std::smatch match;
     for (std::string str = source.data(); std::regex_search(str, match, regex); str = match.suffix()) {
         ASSERT(match.size() == 1);
-        matches.append(String::fromLatin1(match[0].str().c_str()));
+        matches.append(match[0].str().c_str());
     }
     return matches;
 }
@@ -2371,8 +2371,7 @@ void testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister()
     BasicBlock* root = code.addBlock();
 
     Vector<StackSlot*> slots;
-    unsigned numberOfSlots = 10000;
-    for (unsigned i = 0; i < numberOfSlots; ++i)
+    for (unsigned i = 0; i < 10000; ++i)
         slots.append(code.addStackSlot(8, StackSlotKind::Spill));
 
     for (auto* slot : slots)
@@ -2389,7 +2388,7 @@ void testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister()
     root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
 
     int32_t result = compileAndRun<int>(proc, 1);
-    CHECK(result == static_cast<int32_t>(numberOfSlots));
+    CHECK(result == 10000);
 }
 
 void testEarlyAndLateUseOfSameTmp()

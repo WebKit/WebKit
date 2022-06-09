@@ -1,3 +1,0 @@
-Test that CSP for manifest V3 extensions allows self for the script-src directive.
-
-PASS

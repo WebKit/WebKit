@@ -42,7 +42,7 @@ struct DirectConverter<IDLDOMString> {
 
 template<>
 struct DirectConverter<IDLAtomStringAdaptor<IDLDOMString>> {
-    static AtomString directConvert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSString* string)
+    static String directConvert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSString* string)
     {
         return string->toAtomString(&lexicalGlobalObject);
     }
@@ -50,7 +50,7 @@ struct DirectConverter<IDLAtomStringAdaptor<IDLDOMString>> {
 
 template<>
 struct DirectConverter<IDLRequiresExistingAtomStringAdaptor<IDLDOMString>> {
-    static AtomString directConvert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSString* string)
+    static String directConvert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSString* string)
     {
         return string->toExistingAtomString(&lexicalGlobalObject);
     }

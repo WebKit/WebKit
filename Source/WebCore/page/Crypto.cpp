@@ -71,7 +71,7 @@ ExceptionOr<void> Crypto::getRandomValues(ArrayBufferView& array)
 
 String Crypto::randomUUID() const
 {
-    return createVersion4UUIDString();
+    return createCanonicalUUIDString();
 }
 
 #if ENABLE(WEB_CRYPTO)

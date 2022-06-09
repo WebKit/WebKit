@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -47,7 +47,7 @@ public:
     static constexpr bool needsDestruction = true;
 
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.regExpSpace();
     }
@@ -104,11 +104,11 @@ public:
         return m_rareData->m_captureGroupNames[i];
     }
 
-    unsigned subpatternForName(StringView groupName)
+    unsigned subpatternForName(String groupName)
     {
         if (!m_rareData)
             return 0;
-        auto it = m_rareData->m_namedGroupToParenIndex.find<StringViewHashTranslator>(groupName);
+        auto it = m_rareData->m_namedGroupToParenIndex.find(groupName);
         if (it == m_rareData->m_namedGroupToParenIndex.end())
             return 0;
         return it->value;

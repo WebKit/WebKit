@@ -75,7 +75,6 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(const void*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const AtomString&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const String&);
-    WTF_EXPORT_PRIVATE TextStream& operator<<(ASCIILiteral);
     WTF_EXPORT_PRIVATE TextStream& operator<<(StringView);
     // Deprecated. Use the NumberRespectingIntegers FormattingFlag instead.
     WTF_EXPORT_PRIVATE TextStream& operator<<(const FormatNumberRespectingIntegers&);
@@ -94,15 +93,6 @@ public:
 
     template<typename T>
     void dumpProperty(const String& name, const T& value)
-    {
-        TextStream& ts = *this;
-        ts.startGroup();
-        ts << name << " " << value;
-        ts.endGroup();
-    }
-
-    template<typename T>
-    void dumpProperty(const char* name, const T& value)
     {
         TextStream& ts = *this;
         ts.startGroup();

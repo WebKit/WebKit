@@ -27,27 +27,27 @@
 #include "config.h"
 #include "IdentifiersFactory.h"
 
-#include <wtf/text/StringConcatenateNumbers.h>
-
 namespace Inspector {
 
 namespace {
-static unsigned long s_lastUsedIdentifier = 0;
+static long s_lastUsedIdentifier = 0;
 }
 
-static String addPrefixToIdentifier(unsigned long identifier)
+static String addPrefixToIdentifier(const String& identifier)
 {
     return makeString("0.", identifier);
 }
 
 String IdentifiersFactory::createIdentifier()
 {
-    return addPrefixToIdentifier(++s_lastUsedIdentifier);
+    return addPrefixToIdentifier(String::number(++s_lastUsedIdentifier));
 }
 
 String IdentifiersFactory::requestId(unsigned long identifier)
 {
-    return identifier ? addPrefixToIdentifier(identifier) : String();
+    if (identifier)
+        return addPrefixToIdentifier(String::number(identifier));
+    return String();
 }
 
 } // namespace Inspector

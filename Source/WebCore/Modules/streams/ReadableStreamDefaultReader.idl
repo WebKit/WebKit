@@ -28,7 +28,7 @@
  */
 
 [
-    Exposed=*,
+    Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier
 ] interface ReadableStreamDefaultReader {

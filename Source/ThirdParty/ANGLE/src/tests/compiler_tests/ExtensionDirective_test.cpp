@@ -92,10 +92,10 @@ class FragmentShaderExtensionDirectiveTest : public ShaderCompileTreeTest
     }
 };
 
-class OESEGLImageExternalExtensionTest : public FragmentShaderExtensionDirectiveTest
+class OESEGLImageExternalTest : public FragmentShaderExtensionDirectiveTest
 {
   public:
-    OESEGLImageExternalExtensionTest() {}
+    OESEGLImageExternalTest() {}
 
   protected:
     void initResources(ShBuiltInResources *resources) override
@@ -105,7 +105,7 @@ class OESEGLImageExternalExtensionTest : public FragmentShaderExtensionDirective
 };
 
 // OES_EGL_image_external needs to be enabled in GLSL to be able to use samplerExternalOES.
-TEST_F(OESEGLImageExternalExtensionTest, SamplerExternalOESUsageNeedsExtensionDirective)
+TEST_F(OESEGLImageExternalTest, SamplerExternalOESUsageNeedsExtensionDirective)
 {
     const std::string &shaderString =
         R"(
@@ -117,10 +117,10 @@ TEST_F(OESEGLImageExternalExtensionTest, SamplerExternalOESUsageNeedsExtensionDi
     testCompileNeedsExtensionDirective(shaderString, "GL_OES_EGL_image_external");
 }
 
-class NVEGLStreamConsumerExternalExtensionTest : public FragmentShaderExtensionDirectiveTest
+class NVEGLStreamConsumerExternalTest : public FragmentShaderExtensionDirectiveTest
 {
   public:
-    NVEGLStreamConsumerExternalExtensionTest() {}
+    NVEGLStreamConsumerExternalTest() {}
 
   protected:
     void initResources(ShBuiltInResources *resources) override
@@ -130,7 +130,7 @@ class NVEGLStreamConsumerExternalExtensionTest : public FragmentShaderExtensionD
 };
 
 // NV_EGL_stream_consumer_external needs to be enabled in GLSL to be able to use samplerExternalOES.
-TEST_F(NVEGLStreamConsumerExternalExtensionTest, SamplerExternalOESUsageNeedsExtensionDirective)
+TEST_F(NVEGLStreamConsumerExternalTest, SamplerExternalOESUsageNeedsExtensionDirective)
 {
     const std::string &shaderString =
         R"(
@@ -142,17 +142,17 @@ TEST_F(NVEGLStreamConsumerExternalExtensionTest, SamplerExternalOESUsageNeedsExt
     testCompileNeedsExtensionDirective(shaderString, "GL_NV_EGL_stream_consumer_external");
 }
 
-class EXTYUVTargetExtensionTest : public FragmentShaderExtensionDirectiveTest
+class EXTYUVTargetTest : public FragmentShaderExtensionDirectiveTest
 {
   public:
-    EXTYUVTargetExtensionTest() {}
+    EXTYUVTargetTest() {}
 
   protected:
     void initResources(ShBuiltInResources *resources) override { resources->EXT_YUV_target = 1; }
 };
 
 // GL_EXT_YUV_target needs to be enabled in GLSL to be able to use samplerExternal2DY2YEXT.
-TEST_F(EXTYUVTargetExtensionTest, SamplerExternal2DY2YEXTUsageNeedsExtensionDirective)
+TEST_F(EXTYUVTargetTest, SamplerExternal2DY2YEXTUsageNeedsExtensionDirective)
 {
     const std::string &shaderString =
         R"(
@@ -165,7 +165,7 @@ TEST_F(EXTYUVTargetExtensionTest, SamplerExternal2DY2YEXTUsageNeedsExtensionDire
 }
 
 // GL_EXT_YUV_target needs to be enabled in GLSL to be able to use samplerExternal2DY2YEXT.
-TEST_F(EXTYUVTargetExtensionTest, YUVLayoutNeedsExtensionDirective)
+TEST_F(EXTYUVTargetTest, YUVLayoutNeedsExtensionDirective)
 {
     const std::string &shaderString =
         R"(

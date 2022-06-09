@@ -29,8 +29,6 @@
 
 #include <system_error>
 
-#include <wtf/Forward.h>
-
 namespace WebCore {
 namespace ContentExtensions {
 
@@ -86,7 +84,7 @@ enum class ContentExtensionError {
     ErrorWritingSerializedNFA,
 };
 
-extern ASCIILiteral WebKitContentBlockerDomain;
+extern const char* WebKitContentBlockerDomain;
     
 WEBCORE_EXPORT const std::error_category& contentExtensionErrorCategory();
 

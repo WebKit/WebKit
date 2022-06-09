@@ -36,8 +36,7 @@ public:
     IndexKey();
     IndexKey(Vector<IDBKeyData>&&);
 
-    IndexKey isolatedCopy() const &;
-    IndexKey isolatedCopy() &&;
+    IndexKey isolatedCopy() const;
 
     IDBKeyData asOneKey() const;
     Vector<IDBKeyData> multiEntry() const;

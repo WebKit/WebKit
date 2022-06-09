@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>WebKitGTK Reference Manual</title>
+    <releaseinfo>for WebKitGTK &version;</releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>Class Overview</title>
+    <xi:include href="xml/WebKitWebContext.xml"/>
+    <xi:include href="xml/WebKitWebView.xml"/>
+    <xi:include href="xml/WebKitAuthenticationRequest.xml"/>
+    <xi:include href="xml/WebKitBackForwardList.xml"/>
+    <xi:include href="xml/WebKitBackForwardListItem.xml"/>
+    <xi:include href="xml/WebKitSettings.xml"/>
+    <xi:include href="xml/WebKitURIRequest.xml"/>
+    <xi:include href="xml/WebKitURIResponse.xml"/>
+    <xi:include href="xml/WebKitWindowProperties.xml"/>
+    <xi:include href="xml/WebKitDownload.xml"/>
+    <xi:include href="xml/WebKitPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitGeolocationPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitInstallMissingMediaPluginsPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitMediaKeySystemPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitNavigationAction.xml"/>
+    <xi:include href="xml/WebKitUserMediaPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitDeviceInfoPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitPolicyDecision.xml"/>
+    <xi:include href="xml/WebKitNavigationPolicyDecision.xml"/>
+    <xi:include href="xml/WebKitResponsePolicyDecision.xml"/>
+    <xi:include href="xml/WebKitHitTestResult.xml"/>
+    <xi:include href="xml/WebKitEditorState.xml"/>
+    <xi:include href="xml/WebKitPrintCustomWidget.xml"/>
+    <xi:include href="xml/WebKitPrintOperation.xml"/>
+    <xi:include href="xml/WebKitWebResource.xml"/>
+    <xi:include href="xml/WebKitError.xml"/>
+    <xi:include href="xml/WebKitFaviconDatabase.xml"/>
+    <xi:include href="xml/WebKitColorChooserRequest.xml"/>
+    <xi:include href="xml/WebKitFileChooserRequest.xml"/>
+    <xi:include href="xml/WebKitFindController.xml"/>
+    <xi:include href="xml/WebKitCookieManager.xml"/>
+    <xi:include href="xml/WebKitPlugin.xml"/>
+    <xi:include href="xml/WebKitWebInspector.xml"/>
+    <xi:include href="xml/WebKitURISchemeRequest.xml"/>
+    <xi:include href="xml/WebKitURISchemeResponse.xml"/>
+    <xi:include href="xml/WebKitVersion.xml"/>
+    <xi:include href="xml/WebKitContextMenu.xml"/>
+    <xi:include href="xml/WebKitContextMenuItem.xml"/>
+    <xi:include href="xml/WebKitOptionMenu.xml"/>
+    <xi:include href="xml/WebKitOptionMenuItem.xml"/>
+    <xi:include href="xml/WebKitFormSubmissionRequest.xml"/>
+    <xi:include href="xml/WebKitSecurityManager.xml"/>
+    <xi:include href="xml/WebKitUserContentFilterStore.xml"/>
+    <xi:include href="xml/WebKitUserContentManager.xml"/>
+    <xi:include href="xml/WebKitUserContent.xml"/>
+    <xi:include href="xml/WebKitNotification.xml"/>
+    <xi:include href="xml/WebKitNotificationPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitSecurityOrigin.xml"/>
+    <xi:include href="xml/WebKitWebsiteDataManager.xml"/>
+    <xi:include href="xml/WebKitWebsiteData.xml"/>
+    <xi:include href="xml/WebKitNetworkProxySettings.xml"/>
+    <xi:include href="xml/WebKitAutomationSession.xml"/>
+    <xi:include href="xml/WebKitApplicationInfo.xml"/>
+    <xi:include href="xml/WebKitGeolocationManager.xml"/>
+    <xi:include href="xml/WebKitUserMessage.xml"/>
+    <xi:include href="xml/WebKitPointerLockPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitInputMethodContext.xml"/>
+    <xi:include href="xml/WebKitWebsiteDataAccessPermissionRequest.xml"/>
+  </chapter>
+
+  <chapter>
+    <title>Web Extensions</title>
+    <xi:include href="xml/WebKitWebExtension.xml"/>
+    <xi:include href="xml/WebKitWebPage.xml"/>
+    <xi:include href="xml/WebKitFrame.xml"/>
+    <xi:include href="xml/WebKitScriptWorld.xml"/>
+    <xi:include href="xml/WebKitWebHitTestResult.xml"/>
+    <xi:include href="xml/WebKitWebEditor.xml"/>
+    <xi:include href="xml/WebKitConsoleMessage.xml"/>
+  </chapter>
+
+  <chapter>
+    <title>Utilities</title>
+    <xi:include href="xml/WebKitURIUtilities.xml"/>
+  </chapter>
+
+  <index id="index-all">
+    <title>Index</title>
+  </index>
+
+  <index id="api-index-deprecated" role="deprecated">
+    <title>Index of deprecated symbols</title>
+    <xi:include href="xml/api-index-deprecated.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-2" role="2.2">
+    <title>Index of new symbols in 2.2</title>
+    <xi:include href="xml/api-index-2.2.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-4" role="2.4">
+    <title>Index of new symbols in 2.4</title>
+    <xi:include href="xml/api-index-2.4.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-6" role="2.6">
+    <title>Index of new symbols in 2.6</title>
+    <xi:include href="xml/api-index-2.6.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-8" role="2.8">
+    <title>Index of new symbols in 2.8</title>
+    <xi:include href="xml/api-index-2.8.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-10" role="2.10">
+    <title>Index of new symbols in 2.10</title>
+    <xi:include href="xml/api-index-2.10.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-12" role="2.12">
+    <title>Index of new symbols in 2.12</title>
+    <xi:include href="xml/api-index-2.12.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-14" role="2.14">
+    <title>Index of new symbols in 2.14</title>
+    <xi:include href="xml/api-index-2.14.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-16" role="2.16">
+    <title>Index of new symbols in 2.16</title>
+    <xi:include href="xml/api-index-2.16.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-18" role="2.18">
+    <title>Index of new symbols in 2.18</title>
+    <xi:include href="xml/api-index-2.18.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-20" role="2.20">
+    <title>Index of new symbols in 2.20</title>
+    <xi:include href="xml/api-index-2.20.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-22" role="2.22">
+    <title>Index of new symbols in 2.22</title>
+    <xi:include href="xml/api-index-2.22.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-24" role="2.24">
+    <title>Index of new symbols in 2.24</title>
+    <xi:include href="xml/api-index-2.24.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-26" role="2.26">
+    <title>Index of new symbols in 2.26</title>
+    <xi:include href="xml/api-index-2.26.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-28" role="2.28">
+    <title>Index of new symbols in 2.28</title>
+    <xi:include href="xml/api-index-2.28.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-30" role="2.30">
+    <title>Index of new symbols in 2.30</title>
+    <xi:include href="xml/api-index-2.30.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-36" role="2.36">
+    <title>Index of new symbols in 2.36</title>
+    <xi:include href="xml/api-index-2.36.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
+</book>

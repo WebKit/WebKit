@@ -15,6 +15,7 @@
 
 namespace angle
 {
+struct CompilerWorkaroundsD3D;
 struct FeaturesD3D;
 }  // namespace angle
 
@@ -28,18 +29,6 @@ namespace rx
 class DynamicHLSL;
 class RendererD3D;
 struct D3DUniform;
-
-// Workarounds attached to each shader. Do not need to expose information about these workarounds so
-// a simple bool struct suffices.
-struct CompilerWorkaroundsD3D
-{
-    bool skipOptimization = false;
-
-    bool useMaxOptimization = false;
-
-    // IEEE strictness needs to be enabled for NANs to work.
-    bool enableIEEEStrictness = false;
-};
 
 class ShaderD3D : public ShaderImpl
 {
@@ -73,7 +62,7 @@ class ShaderD3D : public ShaderImpl
     const std::set<std::string> &getSlowCompilingUniformBlockSet() const;
     void appendDebugInfo(const std::string &info) const { mDebugInfo += info; }
 
-    void generateWorkarounds(CompilerWorkaroundsD3D *workarounds) const;
+    void generateWorkarounds(angle::CompilerWorkaroundsD3D *workarounds) const;
 
     bool usesMultipleRenderTargets() const { return mUsesMultipleRenderTargets; }
     bool usesFragColor() const { return mUsesFragColor; }

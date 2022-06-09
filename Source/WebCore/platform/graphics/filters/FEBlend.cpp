@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,7 +52,7 @@ bool FEBlend::setBlendMode(BlendMode mode)
     return true;
 }
 
-std::unique_ptr<FilterEffectApplier> FEBlend::createSoftwareApplier() const
+std::unique_ptr<FilterEffectApplier> FEBlend::createApplier(const Filter&) const
 {
     return FilterEffectApplier::create<FEBlendSoftwareApplier>(*this);
 }
@@ -62,7 +62,7 @@ TextStream& FEBlend::externalRepresentation(TextStream& ts, FilterRepresentation
     ts << indent << "[feBlend";
     FilterEffect::externalRepresentation(ts, representation);
 
-    ts << " mode=\"" << (m_mode == BlendMode::Normal ? "normal"_s : compositeOperatorName(CompositeOperator::SourceOver, m_mode));
+    ts << " mode=\"" << (m_mode == BlendMode::Normal ? "normal" : compositeOperatorName(CompositeOperator::SourceOver, m_mode));
 
     ts << "\"]\n";
     return ts;

@@ -30,193 +30,68 @@
 #include "config.h"
 #include "CSSNumericValue.h"
 
-#if ENABLE(CSS_TYPED_OM)
-
-#include "CSSMathInvert.h"
-#include "CSSMathMax.h"
-#include "CSSMathMin.h"
-#include "CSSMathNegate.h"
-#include "CSSMathProduct.h"
 #include "CSSMathSum.h"
-#include "CSSNumericArray.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericType.h"
 #include "CSSUnitValue.h"
 #include "ExceptionOr.h"
-#include <wtf/Algorithms.h>
+
+#if ENABLE(CSS_TYPED_OM)
+
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericValue);
 
-static Ref<CSSNumericValue> negate(Ref<CSSNumericValue>&& value)
+Ref<CSSNumericValue> CSSNumericValue::add(FixedVector<CSSNumberish>&& values)
 {
-    // https://drafts.css-houdini.org/css-typed-om/#cssmath-negate-a-cssnumericvalue
-    if (auto* mathNegate = dynamicDowncast<CSSMathNegate>(value.get()))
-        return mathNegate->value();
-    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get()))
-        return CSSUnitValue::create(-unitValue->value(), unitValue->unitEnum());
-    return CSSMathNegate::create(WTFMove(value));
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
 }
 
-static ExceptionOr<Ref<CSSNumericValue>> invert(Ref<CSSNumericValue>&& value)
+Ref<CSSNumericValue> CSSNumericValue::sub(FixedVector<CSSNumberish>&& values)
 {
-    // https://drafts.css-houdini.org/css-typed-om/#cssmath-invert-a-cssnumericvalue
-    if (auto* mathInvert = dynamicDowncast<CSSMathInvert>(value.get()))
-        return Ref { mathInvert->value() };
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
 
-    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get())) {
-        if (unitValue->unitEnum() == CSSUnitType::CSS_NUMBER) {
-            if (unitValue->value() == 0.0 || unitValue->value() == -0.0)
-                return Exception { RangeError };
-            return Ref<CSSNumericValue> { CSSUnitValue::create(1.0 / unitValue->value(), unitValue->unitEnum()) };
-        }
-    }
-
-    return Ref<CSSNumericValue> { CSSMathInvert::create(WTFMove(value)) };
+    return *this;
 }
 
-template<typename T>
-static RefPtr<CSSNumericValue> operationOnValuesOfSameUnit(T&& operation, const Vector<Ref<CSSNumericValue>>& values)
+Ref<CSSNumericValue> CSSNumericValue::mul(FixedVector<CSSNumberish>&& values)
 {
-    bool allValuesHaveSameUnit = values.size() && WTF::allOf(values, [&] (const Ref<CSSNumericValue>& value) {
-        auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get());
-        return unitValue ? unitValue->unitEnum() == downcast<CSSUnitValue>(values[0].get()).unitEnum() : false;
-    });
-    if (allValuesHaveSameUnit) {
-        auto& firstUnitValue = downcast<CSSUnitValue>(values[0].get());
-        auto unit = firstUnitValue.unitEnum();
-        double result = firstUnitValue.value();
-        for (size_t i = 1; i < values.size(); ++i)
-            result = operation(result, downcast<CSSUnitValue>(values[i].get()).value());
-        return CSSUnitValue::create(result, unit);
-    }
-    return nullptr;
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
 }
 
-template<typename T> Vector<Ref<CSSNumericValue>> CSSNumericValue::prependItemsOfTypeOrThis(Vector<Ref<CSSNumericValue>>&& numericValues)
+Ref<CSSNumericValue> CSSNumericValue::div(FixedVector<CSSNumberish>&& values)
 {
-    Vector<Ref<CSSNumericValue>> values;
-    if (T* t = dynamicDowncast<T>(*this))
-        values.appendVector(t->values().array());
-    else
-        values.append(*this);
-    values.appendVector(numericValues);
-    return values;
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
+
+    return *this;
 }
-
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::addInternal(Vector<Ref<CSSNumericValue>>&& numericValues)
+Ref<CSSNumericValue> CSSNumericValue::min(FixedVector<CSSNumberish>&& values)
 {
-    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-add
-    auto values = prependItemsOfTypeOrThis<CSSMathSum>(WTFMove(numericValues));
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
 
-    if (auto result = operationOnValuesOfSameUnit(std::plus<double>(), values))
-        return { *result };
-
-    auto sum = CSSMathSum::create(WTFMove(values));
-    if (sum.hasException())
-        return sum.releaseException();
-    return Ref<CSSNumericValue> { sum.releaseReturnValue() };
+    return *this;
 }
-
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::add(FixedVector<CSSNumberish>&& values)
+Ref<CSSNumericValue> CSSNumericValue::max(FixedVector<CSSNumberish>&& values)
 {
-    return addInternal(WTF::map(WTFMove(values), rectifyNumberish));
-}
+    UNUSED_PARAM(values);
+    // FIXME: add impl.
 
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::sub(FixedVector<CSSNumberish>&& values)
-{
-    return addInternal(WTF::map(WTFMove(values), [] (CSSNumberish&& numberish) {
-        return negate(rectifyNumberish(WTFMove(numberish)));
-    }));
-}
-
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::multiplyInternal(Vector<Ref<CSSNumericValue>>&& numericValues)
-{
-    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-mul
-    auto values = prependItemsOfTypeOrThis<CSSMathProduct>(WTFMove(numericValues));
-
-    bool allUnitValues = WTF::allOf(values, [&] (const Ref<CSSNumericValue>& value) {
-        return is<CSSUnitValue>(value.get());
-    });
-    if (allUnitValues) {
-        bool multipleUnitsFound { false };
-        std::optional<size_t> nonNumberUnitIndex;
-        for (size_t i = 0; i < values.size(); ++i) {
-            auto unit = downcast<CSSUnitValue>(values[i].get()).unitEnum();
-            if (unit == CSSUnitType::CSS_NUMBER)
-                continue;
-            if (nonNumberUnitIndex) {
-                multipleUnitsFound = true;
-                break;
-            }
-            nonNumberUnitIndex = i;
-        }
-        if (!multipleUnitsFound) {
-            double product = 1;
-            for (const Ref<CSSNumericValue>& value : values)
-                product *= downcast<CSSUnitValue>(value.get()).value();
-            auto unit = nonNumberUnitIndex ? downcast<CSSUnitValue>(values[*nonNumberUnitIndex].get()).unitEnum() : CSSUnitType::CSS_NUMBER;
-            return { CSSUnitValue::create(product, unit) };
-        }
-    }
-
-    auto product = CSSMathProduct::create(WTFMove(values));
-    if (product.hasException())
-        return product.releaseException();
-    return Ref<CSSNumericValue> { product.releaseReturnValue() };
-}
-
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::mul(FixedVector<CSSNumberish>&& values)
-{
-    return multiplyInternal(WTF::map(WTFMove(values), rectifyNumberish));
-}
-
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::div(FixedVector<CSSNumberish>&& values)
-{
-    Vector<Ref<CSSNumericValue>> invertedValues;
-    invertedValues.reserveInitialCapacity(values.size());
-    for (auto&& value : WTFMove(values)) {
-        auto inverted = invert(rectifyNumberish(WTFMove(value)));
-        if (inverted.hasException())
-            return inverted.releaseException();
-        invertedValues.uncheckedAppend(inverted.releaseReturnValue());
-    }
-    return multiplyInternal(WTFMove(invertedValues));
-}
-
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::min(FixedVector<CSSNumberish>&& numberishes)
-{
-    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-min
-    auto values = prependItemsOfTypeOrThis<CSSMathMin>(WTF::map(WTFMove(numberishes), rectifyNumberish));
-    
-    if (auto result = operationOnValuesOfSameUnit<const double&(*)(const double&, const double&)>(std::min<double>, values))
-        return { *result };
-
-    auto result = CSSMathMin::create(WTFMove(values));
-    if (result.hasException())
-        return result.releaseException();
-    return { result.releaseReturnValue() };
-}
-
-ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::max(FixedVector<CSSNumberish>&& numberishes)
-{
-    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-max
-    auto values = prependItemsOfTypeOrThis<CSSMathMax>(WTF::map(WTFMove(numberishes), rectifyNumberish));
-    
-    if (auto result = operationOnValuesOfSameUnit<const double&(*)(const double&, const double&)>(std::max<double>, values))
-        return { *result };
-
-    auto result = CSSMathMax::create(WTFMove(values));
-    if (result.hasException())
-        return result.releaseException();
-    return { result.releaseReturnValue() };
+    return *this;
 }
 
 Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)
 {
-    // https://drafts.css-houdini.org/css-typed-om/#rectify-a-numberish-value
     return WTF::switchOn(numberish, [](RefPtr<CSSNumericValue>& value) {
         RELEASE_ASSERT(!!value);
         return Ref<CSSNumericValue> { *value };
@@ -233,49 +108,27 @@ bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& value)
     return false;
 }
 
-ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(String&& unit)
+Ref<CSSUnitValue> CSSNumericValue::to(String&& unit)
 {
-    return to(CSSUnitValue::parseUnit(unit));
-}
-
-ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(CSSUnitType unit)
-{
+    UNUSED_PARAM(unit);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-to
-    auto type = CSSNumericType::create(unit);
-    if (!type)
-        return Exception { SyntaxError };
-
-    auto sumValue = toSumValue();
-    if (!sumValue || sumValue->size() != 1)
-        return Exception { TypeError };
-
-    auto& addend = (*sumValue)[0];
-    auto unconverted = [] (const auto& addend) -> RefPtr<CSSUnitValue> {
-        switch (addend.units.size()) {
-        case 0:
-            return CSSUnitValue::create(addend.value, CSSUnitType::CSS_NUMBER);
-        case 1:
-            return CSSUnitValue::create(addend.value, addend.units.begin()->key);
-        default:
-            break;
-        }
-        return nullptr;
-    } (addend);
-    if (!unconverted)
-        return Exception { TypeError };
-
-    auto converted = unconverted->convertTo(unit);
-    if (!converted)
-        return Exception { TypeError };
-    return converted.releaseNonNull();
+    // FIXME: add impl.
+    return CSSUnitValue::create(1.0, "number");
 }
 
-ExceptionOr<Ref<CSSMathSum>> CSSNumericValue::toSum(FixedVector<String>&& units)
+Ref<CSSMathSum> CSSNumericValue::toSum(FixedVector<String>&& units)
 {
     UNUSED_PARAM(units);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-tosum
     // FIXME: add impl.
-    return CSSMathSum::create(FixedVector<CSSNumberish> { 1.0 });
+    return CSSMathSum::create({ 1.0 });
+}
+
+CSSNumericType CSSNumericValue::type()
+{
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
+    // FIXME: add impl.
+    return CSSNumericType { };
 }
 
 ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
@@ -283,7 +136,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
     UNUSED_PARAM(cssText);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-parse
     // FIXME: add impl.
-    return Exception { NotSupportedError, "Not implemented Error"_s };
+    return Exception { NotSupportedError, "Not implemented Error" };
 }
 
 } // namespace WebCore

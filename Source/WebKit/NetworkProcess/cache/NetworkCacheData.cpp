@@ -51,7 +51,7 @@ Data Data::mapToFile(const String& path) const
     return Data::adoptMap(WTFMove(mappedFile), handle);
 }
 
-Data mapFile(const String& path)
+Data mapFile(const char* path)
 {
     auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
     if (!FileSystem::isHandleValid(file))
@@ -62,6 +62,11 @@ Data mapFile(const String& path)
         return { };
     }
     return adoptAndMapFile(file, 0, *size);
+}
+
+Data mapFile(const String& path)
+{
+    return mapFile(FileSystem::fileSystemRepresentation(path).data());
 }
 
 Data adoptAndMapFile(FileSystem::PlatformFileHandle handle, size_t offset, size_t size)

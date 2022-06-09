@@ -32,8 +32,6 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "CSSUnitValue.h"
-#include "CSSUnits.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -42,97 +40,33 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSRotate);
 
-ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSNumberish x, CSSNumberish y, CSSNumberish z, Ref<CSSNumericValue> angle)
+Ref<CSSRotate> CSSRotate::create(CSSNumberish&& x, CSSNumberish&& y, CSSNumberish&& z, Ref<CSSNumericValue>&& angle)
 {
-    if (!angle->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
-
-    auto rectifiedX = CSSNumericValue::rectifyNumberish(WTFMove(x));
-    auto rectifiedY = CSSNumericValue::rectifyNumberish(WTFMove(y));
-    auto rectifiedZ = CSSNumericValue::rectifyNumberish(WTFMove(z));
-
-    if (!rectifiedX->type().matchesNumber()
-        || !rectifiedY->type().matchesNumber()
-        || !rectifiedZ->type().matchesNumber())
-        return Exception { TypeError };
-
-    return adoptRef(*new CSSRotate(Is2D::No, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ), WTFMove(angle)));
+    return adoptRef(*new CSSRotate(WTFMove(x), WTFMove(y), WTFMove(z), WTFMove(angle)));
 }
 
-ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<CSSNumericValue> angle)
+Ref<CSSRotate> CSSRotate::create(Ref<CSSNumericValue>&& angle)
 {
-    if (!angle->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
-    return adoptRef(*new CSSRotate(Is2D::Yes,
-        CSSUnitValue::create(0.0, CSSUnitType::CSS_NUMBER),
-        CSSUnitValue::create(0.0, CSSUnitType::CSS_NUMBER),
-        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER),
-        WTFMove(angle)));
+    return adoptRef(*new CSSRotate(0.0, 0.0, 0.0, WTFMove(angle)));
 }
 
-CSSRotate::CSSRotate(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, Ref<CSSNumericValue> z, Ref<CSSNumericValue> angle)
-    : CSSTransformComponent(is2D)
-    , m_x(WTFMove(x))
+CSSRotate::CSSRotate(CSSNumberish&& x, CSSNumberish&& y, CSSNumberish&& z, Ref<CSSNumericValue>&& angle)
+    : m_x(WTFMove(x))
     , m_y(WTFMove(y))
     , m_z(WTFMove(z))
     , m_angle(WTFMove(angle))
 {
 }
 
-ExceptionOr<void> CSSRotate::setX(CSSNumberish x)
-{
-    auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(x));
-    if (!rectified->type().matchesNumber())
-        return Exception { TypeError };
-    m_x = WTFMove(rectified);
-    return { };
-}
+// FIXME: Fix all the following virtual functions
 
-ExceptionOr<void> CSSRotate::setY(CSSNumberish y)
+String CSSRotate::toString() const
 {
-    auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(y));
-    if (!rectified->type().matchesNumber())
-        return Exception { TypeError };
-    m_y = WTFMove(rectified);
-    return { };
-}
-
-ExceptionOr<void> CSSRotate::setZ(CSSNumberish z)
-{
-    auto rectified = CSSNumericValue::rectifyNumberish(WTFMove(z));
-    if (!rectified->type().matchesNumber())
-        return Exception { TypeError };
-    m_z = WTFMove(rectified);
-    return { };
-}
-
-ExceptionOr<void> CSSRotate::setAngle(Ref<CSSNumericValue> angle)
-{
-    if (!angle->type().matches<CSSNumericBaseType::Angle>())
-        return Exception { TypeError };
-    m_angle = WTFMove(angle);
-    return { };
-}
-
-void CSSRotate::serialize(StringBuilder& builder) const
-{
-    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssrotate
-    builder.append(is2D() ? "rotate(" : "rotate3d(");
-    if (!is2D()) {
-        m_x->serialize(builder);
-        builder.append(", ");
-        m_y->serialize(builder);
-        builder.append(", ");
-        m_z->serialize(builder);
-        builder.append(", ");
-    }
-    m_angle->serialize(builder);
-    builder.append(')');
+    return emptyString();
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
 {
-    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

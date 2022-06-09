@@ -26,10 +26,11 @@
 // https://immersive-web.github.io/webxr/#xrinputsource
 [
     GenerateIsReachable=ImplWebXRSessionRoot,
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
+    ImplementationLacksVTable,
     InterfaceName=XRInputSource
 ] interface WebXRInputSource {
     readonly attribute XRHandedness handedness;

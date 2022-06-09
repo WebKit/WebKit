@@ -256,7 +256,7 @@ void BackForwardList::removeItem(HistoryItem& item)
     }
 }
 
-bool BackForwardList::containsItem(const HistoryItem& entry) const
+bool BackForwardList::containsItem(HistoryItem& entry)
 {
-    return m_entryHash.contains(const_cast<HistoryItem*>(&entry));
+    return m_entryHash.contains(&entry);
 }

@@ -371,50 +371,50 @@ public:
         Builder(Ref</*TypeNeedingCast*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            static_assert(STATE == NoFieldsSet, "builder created in non init state");
+            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
         friend class TypeNeedingCast;
     public:
 
         Builder<STATE | StringSet>& setString(const String& in_string)
         {
-            static_assert(!(STATE & StringSet), "property string already set");
+            COMPILE_ASSERT(!(STATE & StringSet), property_string_already_set);
             m_result->setString("string"_s, in_string);
             return castState<StringSet>();
         }
 
         Builder<STATE | NumberSet>& setNumber(int in_number)
         {
-            static_assert(!(STATE & NumberSet), "property number already set");
+            COMPILE_ASSERT(!(STATE & NumberSet), property_number_already_set);
             m_result->setInteger("number"_s, in_number);
             return castState<NumberSet>();
         }
 
         Builder<STATE | AnimalsSet>& setAnimals(Protocol::Test::CastedAnimals in_animals)
         {
-            static_assert(!(STATE & AnimalsSet), "property animals already set");
+            COMPILE_ASSERT(!(STATE & AnimalsSet), property_animals_already_set);
             m_result->setString("animals"_s, Protocol::TestHelpers::getEnumConstantValue(in_animals));
             return castState<AnimalsSet>();
         }
 
         Builder<STATE | IdSet>& setId(int in_id)
         {
-            static_assert(!(STATE & IdSet), "property id already set");
+            COMPILE_ASSERT(!(STATE & IdSet), property_id_already_set);
             m_result->setInteger("id"_s, in_id);
             return castState<IdSet>();
         }
 
         Builder<STATE | TreeSet>& setTree(Ref<Protocol::Test::RecursiveObject1>&& in_tree)
         {
-            static_assert(!(STATE & TreeSet), "property tree already set");
+            COMPILE_ASSERT(!(STATE & TreeSet), property_tree_already_set);
             m_result->setObject("tree"_s, WTFMove(in_tree));
             return castState<TreeSet>();
         }
 
         Ref<TypeNeedingCast> release()
         {
-            static_assert(STATE == AllFieldsSet, "result is not ready");
-            static_assert(sizeof(TypeNeedingCast) == sizeof(JSON::Object), "cannot cast");
+            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
+            COMPILE_ASSERT(sizeof(TypeNeedingCast) == sizeof(JSON::Object), cannot_cast);
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<TypeNeedingCast>*>(&jsonResult));
@@ -472,15 +472,15 @@ public:
         Builder(Ref</*RecursiveObject1*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            static_assert(STATE == NoFieldsSet, "builder created in non init state");
+            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
         friend class RecursiveObject1;
     public:
 
         Ref<RecursiveObject1> release()
         {
-            static_assert(STATE == AllFieldsSet, "result is not ready");
-            static_assert(sizeof(RecursiveObject1) == sizeof(JSON::Object), "cannot cast");
+            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
+            COMPILE_ASSERT(sizeof(RecursiveObject1) == sizeof(JSON::Object), cannot_cast);
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<RecursiveObject1>*>(&jsonResult));
@@ -524,15 +524,15 @@ public:
         Builder(Ref</*RecursiveObject2*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            static_assert(STATE == NoFieldsSet, "builder created in non init state");
+            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
         }
         friend class RecursiveObject2;
     public:
 
         Ref<RecursiveObject2> release()
         {
-            static_assert(STATE == AllFieldsSet, "result is not ready");
-            static_assert(sizeof(RecursiveObject2) == sizeof(JSON::Object), "cannot cast");
+            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
+            COMPILE_ASSERT(sizeof(RecursiveObject2) == sizeof(JSON::Object), cannot_cast);
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<RecursiveObject2>*>(&jsonResult));
@@ -699,7 +699,7 @@ void BindingTraits<Protocol::Test::CastedAnimals>::assertValueHasExpectedType(JS
 #if ASSERT_ENABLED
     auto result = value->asString();
     ASSERT(result);
-    ASSERT(result == "Ducks"_s || result == "Hens"_s || result == "Crows"_s || result == "Flamingos"_s);
+    ASSERT(result == "Ducks" || result == "Hens" || result == "Crows" || result == "Flamingos");
 #endif
 }
 
@@ -745,7 +745,7 @@ Ref<Protocol::Test::TypeNeedingCast> BindingTraits<Protocol::Test::TypeNeedingCa
 {
     auto result = value->asObject();
     BindingTraits<Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(result.get());
-    static_assert(sizeof(Protocol::Test::TypeNeedingCast) == sizeof(JSON::ObjectBase), "type cast problem");
+    COMPILE_ASSERT(sizeof(Protocol::Test::TypeNeedingCast) == sizeof(JSON::ObjectBase), type_cast_problem);
     return static_reference_cast<Protocol::Test::TypeNeedingCast>(static_reference_cast<JSON::ObjectBase>(result.releaseNonNull()));
 }
 
@@ -1181,7 +1181,6 @@ __attribute__((visibility ("default")))
 
 #import "TestProtocol.h"
 #import <WebInspector/RWIProtocolArrayConversions.h>
-#import <wtf/SortedArrayMap.h>
 
 namespace Inspector {
 
@@ -1205,15 +1204,14 @@ inline String toProtocolString(TestProtocolTestUncastedAnimals value)
 template<>
 inline std::optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestUncastedAnimals> mappings[] = {
-        { "Cats", TestProtocolTestUncastedAnimalsCats },
-        { "Cows", TestProtocolTestUncastedAnimalsCows },
-        { "Hens", TestProtocolTestUncastedAnimalsHens },
-        { "Pigs", TestProtocolTestUncastedAnimalsPigs },
-    };
-    static constexpr SortedArrayMap map { mappings };
-    if (auto* result = map.tryGet(value))
-        return *result;
+    if (value == "Pigs")
+        return TestProtocolTestUncastedAnimalsPigs;
+    if (value == "Cows")
+        return TestProtocolTestUncastedAnimalsCows;
+    if (value == "Cats")
+        return TestProtocolTestUncastedAnimalsCats;
+    if (value == "Hens")
+        return TestProtocolTestUncastedAnimalsHens;
     return std::nullopt;
 }
 
@@ -1234,15 +1232,14 @@ inline String toProtocolString(TestProtocolTestCastedAnimals value)
 template<>
 inline std::optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& value)
 {
-    static constexpr std::pair<ComparableASCIILiteral, TestProtocolTestCastedAnimals> mappings[] = {
-        { "Crows", TestProtocolTestCastedAnimalsCrows },
-        { "Ducks", TestProtocolTestCastedAnimalsDucks },
-        { "Flamingos", TestProtocolTestCastedAnimalsFlamingos },
-        { "Hens", TestProtocolTestCastedAnimalsHens },
-    };
-    static constexpr SortedArrayMap map { mappings };
-    if (auto* result = map.tryGet(value))
-        return *result;
+    if (value == "Ducks")
+        return TestProtocolTestCastedAnimalsDucks;
+    if (value == "Hens")
+        return TestProtocolTestCastedAnimalsHens;
+    if (value == "Crows")
+        return TestProtocolTestCastedAnimalsCrows;
+    if (value == "Flamingos")
+        return TestProtocolTestCastedAnimalsFlamingos;
     return std::nullopt;
 }
 

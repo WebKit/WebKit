@@ -28,14 +28,9 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ImageBufferShareableAllocator.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FilterResults.h>
-
-#if USE(SYSTEM_PREVIEW)
-#include <WebCore/ARKitBadgeSystemImage.h>
-#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -55,7 +50,7 @@ RemoteResourceCache& RemoteDisplayListRecorder::resourceCache()
 
 GraphicsContext& RemoteDisplayListRecorder::drawingContext()
 {
-    return m_imageBuffer->context();
+    return m_maskImageBuffer ? m_maskImageBuffer->context() : m_imageBuffer->context();
 }
 
 void RemoteDisplayListRecorder::startListeningForIPC()
@@ -126,25 +121,24 @@ void RemoteDisplayListRecorder::setStrokeThickness(float thickness)
 
 void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
 {
-    auto fixPatternTileImage = [&](Pattern* pattern) -> bool {
-        if (!pattern)
-            return true;
-        auto sourceImage = resourceCache().cachedSourceImage({ pattern->tileImage().imageIdentifier(), m_webProcessIdentifier });
-        if (!sourceImage) {
-            ASSERT_NOT_REACHED();
-            return false;
-        }
-        pattern->setTileImage(WTFMove(*sourceImage));
-        return true;
-    };
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    auto strokePatternImageIdentifier = item.strokePatternImageIdentifier();
+    auto fillPatternImageIdentifier = item.fillPatternImageIdentifier();
+    setStateWithQualifiedIdentifiers(WTFMove(item), { strokePatternImageIdentifier, m_webProcessIdentifier }, { fillPatternImageIdentifier, m_webProcessIdentifier });
+}
 
-    if (!fixPatternTileImage(item.state().fillBrush().pattern()))
-        return;
+void RemoteDisplayListRecorder::setStateWithQualifiedIdentifiers(DisplayList::SetState&& item, QualifiedRenderingResourceIdentifier strokePatternImageIdentifier, QualifiedRenderingResourceIdentifier fillPatternImageIdentifier)
+{
+    RefPtr<NativeImage> strokePatternImage;
+    if (strokePatternImageIdentifier)
+        strokePatternImage = resourceCache().cachedNativeImage(strokePatternImageIdentifier);
 
-    if (!fixPatternTileImage(item.state().strokeBrush().pattern()))
-        return;
+    RefPtr<NativeImage> fillPatternImage;
+    if (fillPatternImageIdentifier)
+        fillPatternImage = resourceCache().cachedNativeImage(fillPatternImageIdentifier);
 
-    handleItem(WTFMove(item));
+    handleItem(WTFMove(item), strokePatternImage.get(), fillPatternImage.get());
 }
 
 void RemoteDisplayListRecorder::setLineCap(LineCap lineCap)
@@ -210,6 +204,22 @@ void RemoteDisplayListRecorder::clipPath(const Path& path, WindRule rule)
     handleItem(DisplayList::ClipPath(path, rule));
 }
 
+void RemoteDisplayListRecorder::beginClipToDrawingCommands(const FloatRect& destination, const DestinationColorSpace& colorSpace)
+{
+    m_maskImageBuffer = ImageBuffer::createCompatibleBuffer(destination.size(), colorSpace, drawingContext());
+}
+
+void RemoteDisplayListRecorder::endClipToDrawingCommands(const FloatRect& destination)
+{
+    auto maskImageBuffer = std::exchange(m_maskImageBuffer, { });
+    if (!maskImageBuffer) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    drawingContext().clipToImageBuffer(*maskImageBuffer, destination);
+}
+
 void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, IPC::FilterReference filterReference)
 {
     RefPtr<ImageBuffer> sourceImage;
@@ -227,16 +237,24 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
     for (auto& effect : filter->effectsOfType(FilterEffect::Type::FEImage)) {
         auto& feImage = downcast<FEImage>(effect.get());
 
-        auto sourceImage = resourceCache().cachedSourceImage({ feImage.sourceImage().imageIdentifier(), m_webProcessIdentifier });
-        if (!sourceImage) {
+        const auto* resourceIdentifier = std::get_if<RenderingResourceIdentifier>(&feImage.sourceImage());
+        if (!resourceIdentifier) {
             ASSERT_NOT_REACHED();
             return;
         }
 
-        feImage.setImageSource(WTFMove(*sourceImage));
+        if (auto nativeImage = resourceCache().cachedNativeImage({ *resourceIdentifier, m_webProcessIdentifier })) {
+            feImage.setImageSource(Ref<Image> { BitmapImage::create(Ref<NativeImage> { *nativeImage }) });
+            continue;
+        }
+
+        if (auto imageBuffer = resourceCache().cachedImageBuffer({ *resourceIdentifier, m_webProcessIdentifier })) {
+            feImage.setImageSource({ *imageBuffer });
+            continue;
+        }
     }
 
-    FilterResults results(makeUnique<ImageBufferShareableAllocator>());
+    FilterResults results;
     handleItem(DisplayList::DrawFilteredImageBuffer(sourceImageIdentifier, sourceImageRect, WTFMove(filter)), sourceImage.get(), results);
 }
 
@@ -255,30 +273,6 @@ void RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier(DisplayList::D
     }
 
     handleItem(WTFMove(item), *font);
-}
-
-void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier fontIdentifier, RenderingResourceIdentifier decomposedGlyphsIdentifier, const FloatRect& bounds)
-{
-    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
-    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    drawDecomposedGlyphsWithQualifiedIdentifiers({ fontIdentifier, m_webProcessIdentifier }, { decomposedGlyphsIdentifier, m_webProcessIdentifier }, bounds);
-}
-
-void RemoteDisplayListRecorder::drawDecomposedGlyphsWithQualifiedIdentifiers(QualifiedRenderingResourceIdentifier fontIdentifier, QualifiedRenderingResourceIdentifier decomposedGlyphsIdentifier, const FloatRect& bounds)
-{
-    RefPtr font = resourceCache().cachedFont(fontIdentifier);
-    if (!font) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr decomposedGlyphs = resourceCache().cachedDecomposedGlyphs(decomposedGlyphsIdentifier);
-    if (!decomposedGlyphsIdentifier) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    handleItem(DisplayList::DrawDecomposedGlyphs(fontIdentifier.object(), decomposedGlyphsIdentifier.object(), bounds), *font, *decomposedGlyphs);
 }
 
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -317,38 +311,22 @@ void RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier(Qualified
     handleItem(DisplayList::DrawNativeImage(imageIdentifier.object(), imageSize, destRect, srcRect, options), *image);
 }
 
-void RemoteDisplayListRecorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
-{
-#if USE(SYSTEM_PREVIEW)
-    if (is<ARKitBadgeSystemImage>(systemImage)) {
-        ARKitBadgeSystemImage& badge = downcast<ARKitBadgeSystemImage>(systemImage);
-        RefPtr nativeImage = resourceCache().cachedNativeImage({ badge.imageIdentifier(), m_webProcessIdentifier });
-        if (!nativeImage) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        badge.setImage(BitmapImage::create(nativeImage.releaseNonNull()));
-    }
-#endif
-    handleItem(DisplayList::DrawSystemImage(systemImage, destinationRect));
-}
-
-void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    drawPatternWithQualifiedIdentifier({ imageIdentifier, m_webProcessIdentifier }, destRect, tileRect, transform, phase, spacing, options);
+    drawPatternWithQualifiedIdentifier({ imageIdentifier, m_webProcessIdentifier }, imageSize, destRect, tileRect, transform, phase, spacing, options);
 }
 
-void RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
+void RemoteDisplayListRecorder::drawPatternWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    auto sourceImage = resourceCache().cachedSourceImage(imageIdentifier);
-    if (!sourceImage) {
+    RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
+    if (!image) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    handleItem(DisplayList::DrawPattern(imageIdentifier.object(), destRect, tileRect, transform, phase, spacing, options), *sourceImage);
+    handleItem(DisplayList::DrawPattern(imageIdentifier.object(), imageSize, destRect, tileRect, transform, phase, spacing, options), *image);
 }
 
 void RemoteDisplayListRecorder::beginTransparencyLayer(float opacity)
@@ -465,14 +443,14 @@ void RemoteDisplayListRecorder::fillEllipse(const FloatRect& rect)
     handleItem(DisplayList::FillEllipse(rect));
 }
 
-void RemoteDisplayListRecorder::convertToLuminanceMask()
+void RemoteDisplayListRecorder::getPixelBuffer(const IntRect& srcRect, const PixelBufferFormat& outputFormat)
 {
-    m_imageBuffer->convertToLuminanceMask();
+    m_renderingBackend->populateGetPixelBufferSharedMemory(m_imageBuffer->getPixelBuffer(outputFormat, srcRect));
 }
 
-void RemoteDisplayListRecorder::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
+void RemoteDisplayListRecorder::putPixelBuffer(const IntRect& srcRect, const IntPoint& destPoint, const PixelBuffer& pixelBuffer, AlphaPremultiplication destFormat)
 {
-    m_imageBuffer->transformToColorSpace(colorSpace);
+    m_imageBuffer->putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat);
 }
 
 void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)

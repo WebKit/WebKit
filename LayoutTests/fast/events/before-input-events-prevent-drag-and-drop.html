@@ -28,8 +28,10 @@
     <p>HTML content:</p>
     <div id="result"></div>
     <script type="text/javascript">
-        if (window.internals && window.testRunner)
+        if (window.internals && window.testRunner) {
+            internals.settings.setInputEventsEnabled(true);
             testRunner.dumpAsText();
+        }
 
         source.focus();
         document.execCommand("selectAll");

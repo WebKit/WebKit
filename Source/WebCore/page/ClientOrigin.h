@@ -28,7 +28,6 @@
 #include "RegistrableDomain.h"
 #include "SecurityOriginData.h"
 #include <wtf/HashTraits.h>
-#include <wtf/Hasher.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -36,32 +35,39 @@ namespace WebCore {
 struct ClientOrigin {
     static ClientOrigin emptyKey() { return { }; }
 
+    unsigned hash() const;
     bool operator==(const ClientOrigin&) const;
     bool operator!=(const ClientOrigin& other) const { return !(*this == other); }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ClientOrigin> decode(Decoder&);
 
-    ClientOrigin isolatedCopy() const & { return { topOrigin.isolatedCopy(), clientOrigin.isolatedCopy() }; }
-    ClientOrigin isolatedCopy() && { return { WTFMove(topOrigin).isolatedCopy(), WTFMove(clientOrigin).isolatedCopy() }; }
+    ClientOrigin isolatedCopy() const;
     bool isRelated(const SecurityOriginData& other) const { return topOrigin == other || clientOrigin == other; }
 
     RegistrableDomain clientRegistrableDomain() const { return RegistrableDomain::uncheckedCreateFromHost(clientOrigin.host); }
 
     SecurityOriginData topOrigin;
     SecurityOriginData clientOrigin;
-
-    String loggingString() const { return makeString(topOrigin.toString(), "-", clientOrigin.toString()); }
 };
 
-inline void add(Hasher& hasher, const ClientOrigin& origin)
+inline unsigned ClientOrigin::hash() const
 {
-    add(hasher, origin.topOrigin, origin.clientOrigin);
+    unsigned hashes[2];
+    hashes[0] = SecurityOriginDataHash::hash(topOrigin);
+    hashes[1] = SecurityOriginDataHash::hash(clientOrigin);
+
+    return StringHasher::hashMemory(hashes, sizeof(hashes));
 }
 
 inline bool ClientOrigin::operator==(const ClientOrigin& other) const
 {
     return topOrigin == other.topOrigin && clientOrigin == other.clientOrigin;
+}
+
+inline ClientOrigin ClientOrigin::isolatedCopy() const
+{
+    return { topOrigin.isolatedCopy(), clientOrigin.isolatedCopy() };
 }
 
 template<class Encoder> inline void ClientOrigin::encode(Encoder& encoder) const
@@ -89,7 +95,7 @@ template<class Decoder> inline std::optional<ClientOrigin> ClientOrigin::decode(
 namespace WTF {
 
 struct ClientOriginKeyHash {
-    static unsigned hash(const WebCore::ClientOrigin& key) { return computeHash(key); }
+    static unsigned hash(const WebCore::ClientOrigin& key) { return key.hash(); }
     static bool equal(const WebCore::ClientOrigin& a, const WebCore::ClientOrigin& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };

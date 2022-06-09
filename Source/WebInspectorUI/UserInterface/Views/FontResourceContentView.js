@@ -120,8 +120,9 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
         if (existingOverrides.length > 1)
             return false;
 
+        // Request overrides cannot be created/updated from a file as files don't have network info.
         let localResourceOverride = this.resource.localResourceOverride || existingOverrides[0];
-        if (localResourceOverride && !localResourceOverride.canMapToFile)
+        if (localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.Request)
             return false;
 
         return event.dataTransfer.types.includes("Files");
@@ -157,7 +158,7 @@ WI.FontResourceContentView = class FontResourceContentView extends WI.ResourceCo
             revision.updateRevisionContent(content, {base64Encoded, mimeType});
 
             if (!this.resource.localResourceOverride)
-                WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: this.resource});
+                WI.showLocalResourceOverride(localResourceOverride);
         });
     }
 

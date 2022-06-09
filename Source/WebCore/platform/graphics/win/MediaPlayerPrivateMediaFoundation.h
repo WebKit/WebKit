@@ -102,17 +102,6 @@ public:
 
     DestinationColorSpace colorSpace() final;
 
-protected:
-    void onCreatedMediaSource(COMPtr<IMFMediaSource>&&, bool loadingProgress);
-    void onNetworkStateChanged(MediaPlayer::NetworkState);
-    void onTopologySet();
-    void onBufferingStarted();
-    void onBufferingStopped();
-    void onSessionStarted();
-    void onSessionEnded();
-
-    friend HRESULT beginGetEvent(WeakPtr<MediaPlayerPrivateMediaFoundation>, COMPtr<IMFMediaSession>);
-
 private:
     float maxTimeLoaded() const { return m_maxTimeLoaded; }
 
@@ -149,6 +138,8 @@ private:
     bool startSession();
     bool endSession();
     bool startCreateMediaSource(const String& url);
+    bool endCreatedMediaSource(IMFAsyncResult*);
+    bool endGetEvent(IMFAsyncResult*);
     bool createTopologyFromSource();
     bool addBranchToPartialTopology(int stream);
     bool createOutputNode(COMPtr<IMFStreamDescriptor> sourceSD, COMPtr<IMFTopologyNode>&);
@@ -158,8 +149,15 @@ private:
 
     COMPtr<IMFVideoDisplayControl> videoDisplay();
 
+    void onCreatedMediaSource();
+    void onTopologySet();
+    void onBufferingStarted();
+    void onBufferingStopped();
+    void onSessionStarted();
+    void onSessionEnded();
+
     HWND hostWindow();
-    void invalidateVideoArea();
+    void invalidateFrameView();
 
     void addListener(MediaPlayerListener*);
     void removeListener(MediaPlayerListener*);
@@ -176,7 +174,27 @@ private:
         virtual void onMediaPlayerDeleted() { }
     };
 
-    class AsyncCallback;
+    class AsyncCallback : public IMFAsyncCallback, public MediaPlayerListener {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        AsyncCallback(MediaPlayerPrivateMediaFoundation*, bool event);
+        ~AsyncCallback();
+
+        HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) override;
+        ULONG STDMETHODCALLTYPE AddRef() override;
+        ULONG STDMETHODCALLTYPE Release() override;
+
+        HRESULT STDMETHODCALLTYPE GetParameters(__RPC__out DWORD *pdwFlags, __RPC__out DWORD *pdwQueue) override;
+        HRESULT STDMETHODCALLTYPE Invoke(__RPC__in_opt IMFAsyncResult *pAsyncResult) override;
+
+        void onMediaPlayerDeleted() override;
+
+    private:
+        ULONG m_refCount;
+        MediaPlayerPrivateMediaFoundation* m_mediaPlayer;
+        bool m_event;
+        Lock m_mutex;
+    };
 
     typedef Deque<COMPtr<IMFSample>> VideoSampleList;
 

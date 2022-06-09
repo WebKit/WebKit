@@ -61,27 +61,27 @@ private:
 
 // HTMLCollection subclasses NodeList to maintain legacy ObjC API compatibility.
 class HTMLCollection : public NodeList {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(HTMLCollection, WEBCORE_EXPORT);
+    WTF_MAKE_ISO_ALLOCATED(HTMLCollection);
 public:
-    WEBCORE_EXPORT virtual ~HTMLCollection();
+    virtual ~HTMLCollection();
 
     // DOM API
     Element* item(unsigned index) const override = 0; // Tighten return type from NodeList::item().
     virtual Element* namedItem(const AtomString& name) const = 0;
     const Vector<AtomString>& supportedPropertyNames();
-    bool isSupportedPropertyName(const AtomString& name);
+    bool isSupportedPropertyName(const String& name);
 
     // Non-DOM API
     Vector<Ref<Element>> namedItems(const AtomString& name) const;
     size_t memoryCost() const override;
 
-    bool isRootedAtTreeScope() const;
+    bool isRootedAtDocument() const;
     NodeListInvalidationType invalidationType() const;
     CollectionType type() const;
     ContainerNode& ownerNode() const;
     ContainerNode& rootNode() const;
     void invalidateCacheForAttribute(const QualifiedName& attributeName);
-    WEBCORE_EXPORT virtual void invalidateCacheForDocument(Document&);
+    virtual void invalidateCacheForDocument(Document&);
     void invalidateCache() { invalidateCacheForDocument(document()); }
 
     bool hasNamedElementCache() const;
@@ -89,7 +89,7 @@ public:
 protected:
     HTMLCollection(ContainerNode& base, CollectionType);
 
-    WEBCORE_EXPORT virtual void updateNamedElementCache() const;
+    virtual void updateNamedElementCache() const;
     WEBCORE_EXPORT Element* namedItemSlow(const AtomString& name) const;
 
     void setNamedItemCache(std::unique_ptr<CollectionNamedElementCache>) const;
@@ -99,7 +99,7 @@ protected:
 
     void invalidateNamedElementCache(Document&) const;
 
-    enum RootType { IsRootedAtNode, IsRootedAtTreeScope };
+    enum RootType { IsRootedAtNode, IsRootedAtDocument };
     static RootType rootTypeFromCollectionType(CollectionType);
 
     mutable Lock m_namedElementCacheAssignmentLock;
@@ -115,8 +115,9 @@ protected:
 
 inline ContainerNode& HTMLCollection::rootNode() const
 {
-    if (isRootedAtTreeScope() && ownerNode().isInTreeScope())
-        return ownerNode().treeScope().rootNode();
+    if (isRootedAtDocument() && ownerNode().isConnected())
+        return ownerNode().document();
+
     return ownerNode();
 }
 
@@ -178,9 +179,9 @@ inline size_t HTMLCollection::memoryCost() const
     return m_namedElementCache ? m_namedElementCache->memoryCost() : 0;
 }
 
-inline bool HTMLCollection::isRootedAtTreeScope() const
+inline bool HTMLCollection::isRootedAtDocument() const
 {
-    return m_rootType == IsRootedAtTreeScope;
+    return m_rootType == IsRootedAtDocument;
 }
 
 inline NodeListInvalidationType HTMLCollection::invalidationType() const

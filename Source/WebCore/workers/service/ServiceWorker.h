@@ -70,8 +70,6 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    const ServiceWorkerData& data() const { return m_data; }
-
 private:
     ServiceWorker(ScriptExecutionContext&, ServiceWorkerData&&);
     void updatePendingActivityForEventDispatch();

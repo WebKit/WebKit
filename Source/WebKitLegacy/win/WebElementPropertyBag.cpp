@@ -46,13 +46,13 @@ WebElementPropertyBag::WebElementPropertyBag(const HitTestResult& result)
     : m_result(makeUnique<HitTestResult>(result))
 {
     gClassCount++;
-    gClassNameCount().add("WebElementPropertyBag"_s);
+    gClassNameCount().add("WebElementPropertyBag");
 }
 
 WebElementPropertyBag::~WebElementPropertyBag()
 {
     gClassCount--;
-    gClassNameCount().remove("WebElementPropertyBag"_s);
+    gClassNameCount().remove("WebElementPropertyBag");
 }
 
 WebElementPropertyBag* WebElementPropertyBag::createInstance(const HitTestResult& result)

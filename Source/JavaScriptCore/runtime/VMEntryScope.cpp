@@ -43,27 +43,24 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     if (!vm.entryScope) {
         vm.entryScope = this;
 
-        auto& thread = Thread::current();
-        if (UNLIKELY(!thread.isJSThread())) {
-            Thread::registerJSThread(thread);
-
 #if ENABLE(WEBASSEMBLY)
-                if (Wasm::isSupported())
-                    Wasm::startTrackingCurrentThread();
+        if (Wasm::isSupported())
+            Wasm::startTrackingCurrentThread();
 #endif
 
 #if HAVE(MACH_EXCEPTIONS)
-                registerThreadForMachExceptionHandling(thread);
+        registerThreadForMachExceptionHandling(Thread::current());
 #endif
-        }
 
         vm.firePrimitiveGigacageEnabledIfNecessary();
 
         // Reset the date cache between JS invocations to force the VM to
         // observe time zone changes.
-        vm.resetDateCacheIfNecessary();
+        // FIXME: We should clear it only when we know the timezone has been changed.
+        // https://bugs.webkit.org/show_bug.cgi?id=218365
+        vm.resetDateCache();
 
-        if (UNLIKELY(vm.watchdog()))
+        if (vm.watchdog())
             vm.watchdog()->enteredVM();
 
 #if ENABLE(SAMPLING_PROFILER)
@@ -92,10 +89,10 @@ VMEntryScope::~VMEntryScope()
 
     ASSERT_WITH_MESSAGE(!m_vm.hasCheckpointOSRSideState(), "Exitting the VM but pending checkpoint side state still available");
 
-    if (UNLIKELY(Options::useTracePoints()))
+    if (Options::useTracePoints())
         tracePoint(VMEntryScopeEnd);
     
-    if (UNLIKELY(m_vm.watchdog()))
+    if (m_vm.watchdog())
         m_vm.watchdog()->exitedVM();
 
     m_vm.entryScope = nullptr;

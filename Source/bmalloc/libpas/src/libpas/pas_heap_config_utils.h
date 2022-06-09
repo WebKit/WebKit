@@ -92,7 +92,6 @@ typedef struct {
     bool use_marge_bitfit;
     uint8_t marge_bitfit_min_align_shift;
     size_t marge_bitfit_page_size;
-    bool pgm_enabled;
 } pas_basic_heap_config_arguments;
 
 #define PAS_BASIC_HEAP_CONFIG_SEGREGATED_HEAP_FIELDS(name, ...) \
@@ -333,7 +332,6 @@ typedef struct {
         .aligned_allocator = name ## _aligned_allocator, \
         .aligned_allocator_talks_to_sharing_pool = true, \
         .deallocator = NULL, \
-        .mmap_capability = pas_may_mmap, \
         .root_data = &name ## _root_data, \
         .prepare_to_enumerate = name ## _prepare_to_enumerate, \
         .for_each_shared_page_directory = \
@@ -341,8 +339,7 @@ typedef struct {
         .for_each_shared_page_directory_remote = \
             pas_heap_config_utils_for_each_shared_page_directory_remote, \
         .dump_shared_page_directory_arg = pas_shared_page_directory_by_size_dump_directory_arg, \
-        PAS_HEAP_CONFIG_SPECIALIZATIONS(name ## _heap_config), \
-        .pgm_enabled = false \
+        PAS_HEAP_CONFIG_SPECIALIZATIONS(name ## _heap_config) \
     })
 
 #define PAS_BASIC_HEAP_CONFIG_SEGREGATED_HEAP_DECLARATIONS(name, upcase_name) \

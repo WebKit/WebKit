@@ -10,9 +10,9 @@ def web_socket_transfer_data(request):
     if line is None:
         return
     if line == '-':
-        data = b''
+        data = ''
     elif line == '--':
-        data = b'X'
+        data = 'X'
     else:
         code, reason = line.split(' ', 1)
         data = struct.pack('!H', int(code)) + reason.encode('utf-8')

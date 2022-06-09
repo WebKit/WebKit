@@ -34,7 +34,6 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptFetcher.h"
 #include <JavaScriptCore/ScriptCallStack.h>
-#include <wtf/SetForScope.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -62,12 +61,7 @@ WorkerParameters WorkerParameters::isolatedCopy() const
         workerType,
         credentials,
         settingsValues.isolatedCopy(),
-        workerThreadMode,
-        sessionID,
-#if ENABLE(SERVICE_WORKER)
-        crossThreadCopy(serviceWorkerData),
-#endif
-        clientIdentifier
+        workerThreadMode
     };
 }
 
@@ -139,8 +133,6 @@ bool WorkerThread::shouldWaitForWebInspectorOnStartup() const
 
 void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
 {
-    SetForScope isInStaticScriptEvaluation(m_isInStaticScriptEvaluation, true);
-
     // We are currently holding only the initial script code. If the WorkerType is Module, we should fetch the entire graph before executing the rest of this.
     // We invoke module loader as if we are executing inline module script tag in Document.
 

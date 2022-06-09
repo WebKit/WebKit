@@ -61,7 +61,7 @@ static const String platformVersionForUAString()
 {
 #if OS(UNIX)
     if (chassisType() == WTF::ChassisType::Mobile)
-        return "like Android 4.4"_s;
+        return "like Android 4.4";
 
     struct utsname name;
     uname(&name);
@@ -136,7 +136,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     } else {
         String finalApplicationVersion = applicationVersion;
         if (finalApplicationVersion.isEmpty())
-            finalApplicationVersion = "605.1.15"_s;
+            finalApplicationVersion = "605.1.15";
         userAgent = standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
     }
 

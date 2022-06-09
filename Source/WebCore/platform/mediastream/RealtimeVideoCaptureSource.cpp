@@ -31,17 +31,30 @@
 #include "Logging.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSettings.h"
+#include "RemoteVideoSample.h"
 #include <wtf/JSONValues.h>
 
 namespace WebCore {
 
-RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(AtomString&& name, String&& id, String&& hashSalt, PageIdentifier pageIdentifier)
-    : RealtimeMediaSource(Type::Video, WTFMove(name), WTFMove(id), WTFMove(hashSalt), pageIdentifier)
+RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt)
+    : RealtimeMediaSource(Type::Video, WTFMove(name), WTFMove(id), WTFMove(hashSalt))
 {
 }
 
 RealtimeVideoCaptureSource::~RealtimeVideoCaptureSource()
 {
+#if PLATFORM(IOS_FAMILY)
+    RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
+#endif
+}
+
+void RealtimeVideoCaptureSource::prepareToProduceData()
+{
+    ASSERT(frameRate());
+
+#if PLATFORM(IOS_FAMILY)
+    RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(*this);
+#endif
 }
 
 const Vector<Ref<VideoPreset>>& RealtimeVideoCaptureSource::presets()
@@ -62,9 +75,11 @@ Vector<VideoPresetData> RealtimeVideoCaptureSource::presetsData()
 
 void RealtimeVideoCaptureSource::setSupportedPresets(Vector<VideoPresetData>&& presetData)
 {
-    auto presets = WTF::map(WTFMove(presetData), [](auto&& data) {
-        return VideoPreset::create(WTFMove(data));
-    });
+    Vector<Ref<VideoPreset>> presets;
+
+    for (auto& data : presetData)
+        presets.append(VideoPreset::create(WTFMove(data)));
+
     setSupportedPresets(WTFMove(presets));
 }
 
@@ -357,7 +372,6 @@ void RealtimeVideoCaptureSource::setSizeAndFrameRate(std::optional<int> width, s
             return;
     }
 
-    m_currentPreset = match->encodingPreset;
     setFrameRateWithPreset(match->requestedFrameRate, match->encodingPreset);
 
     if (!match->requestedSize.isEmpty())
@@ -365,9 +379,9 @@ void RealtimeVideoCaptureSource::setSizeAndFrameRate(std::optional<int> width, s
     setFrameRate(match->requestedFrameRate);
 }
 
-void RealtimeVideoCaptureSource::dispatchVideoFrameToObservers(VideoFrame& videoFrame, WebCore::VideoFrameTimeMetadata metadata)
+void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample, WebCore::VideoSampleMetadata metadata)
 {
-    MediaTime sampleTime = videoFrame.presentationTime();
+    MediaTime sampleTime = sample.presentationTime();
 
     auto frameTime = sampleTime.toDouble();
     m_observedFrameTimeStamps.append(frameTime);
@@ -379,7 +393,7 @@ void RealtimeVideoCaptureSource::dispatchVideoFrameToObservers(VideoFrame& video
     if (interval > 1)
         m_observedFrameRate = (m_observedFrameTimeStamps.size() / interval);
 
-    videoFrameAvailable(videoFrame, metadata);
+    videoSampleAvailable(sample, metadata);
 }
 
 void RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
@@ -401,7 +415,6 @@ void RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate(std::optional<int
     if (!match)
         return;
 
-    m_currentPreset = match->encodingPreset;
     setFrameRateWithPreset(match->requestedFrameRate, match->encodingPreset);
     setSize(match->encodingPreset->size);
     setFrameRate(match->requestedFrameRate);

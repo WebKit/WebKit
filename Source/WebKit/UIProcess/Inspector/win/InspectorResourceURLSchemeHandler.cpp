@@ -44,8 +44,8 @@ void InspectorResourceURLSchemeHandler::platformStartTask(WebPageProxy&, WebURLS
 #if USE(CF) && USE(CURL)
     auto requestURL = task.request().url();
     auto requestPath = requestURL.fileSystemPath();
-    if (requestPath.startsWith("\\"_s))
-        requestPath = requestPath.substring(1);
+    if (requestPath.startsWith("\\"))
+        requestPath.remove(0);
     auto path = URL(adoptCF(CFBundleCopyBundleURL(WebCore::webKitBundle())).get()).fileSystemPath();
     path = FileSystem::pathByAppendingComponent(path, "WebInspectorUI"_s);
     path = FileSystem::pathByAppendingComponent(path, requestPath);

@@ -33,6 +33,7 @@
 [
     Conditional=WEB_RTC,
     EnabledBySetting=PeerConnectionEnabled,
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface RTCIceCandidate {
     constructor(RTCIceCandidateInit candidateInitDict);

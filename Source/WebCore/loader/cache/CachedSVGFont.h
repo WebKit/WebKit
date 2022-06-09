@@ -45,7 +45,7 @@ public:
 private:
     FontPlatformData platformDataFromCustomData(const FontDescription&, bool bold, bool italic, const FontCreationContext&);
 
-    SVGFontElement* getSVGFontById(const AtomString&) const;
+    SVGFontElement* getSVGFontById(const String&) const;
 
     SVGFontElement* maybeInitializeExternalSVGFontElement(const AtomString& remoteURI);
     SVGFontFaceElement* firstFontFace(const AtomString& remoteURI);

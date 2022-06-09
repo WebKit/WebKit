@@ -182,12 +182,12 @@ body.window-inactive .timeline-ruler > .header > .divider {
 }
 
 .timeline-ruler:not(.disabled, .resizing-selection) > .selection-drag {
-    cursor: grab;
+    cursor: -webkit-grab;
     pointer-events: all;
 }
 
 .timeline-ruler:not(.disabled, .resizing-selection) > .selection-drag:active {
-    cursor: grabbing;
+    cursor: -webkit-grabbing;
 }
 
 .timeline-ruler > .selection-handle {

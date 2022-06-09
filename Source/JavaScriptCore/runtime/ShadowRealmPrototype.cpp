@@ -32,7 +32,6 @@
 #include "JSGlobalObject.h"
 #include "JSInternalPromise.h"
 #include "JSModuleLoader.h"
-#include "JSObjectInlines.h"
 #include "ShadowRealmObject.h"
 #include "StructureInlines.h"
 
@@ -47,7 +46,7 @@ namespace JSC {
 @end
 */
 
-const ClassInfo ShadowRealmPrototype::s_info = { "ShadowRealm"_s, &Base::s_info, &shadowRealmPrototypeTable, nullptr, CREATE_METHOD_TABLE(ShadowRealmPrototype) };
+const ClassInfo ShadowRealmPrototype::s_info = { "ShadowRealm", &Base::s_info, &shadowRealmPrototypeTable, nullptr, CREATE_METHOD_TABLE(ShadowRealmPrototype) };
 
 ShadowRealmPrototype::ShadowRealmPrototype(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
@@ -57,7 +56,7 @@ ShadowRealmPrototype::ShadowRealmPrototype(VM& vm, Structure* structure)
 void ShadowRealmPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -67,7 +66,7 @@ JSC_DEFINE_HOST_FUNCTION(importInRealm, (JSGlobalObject* globalObject, CallFrame
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->uncheckedArgument(0);
-    ShadowRealmObject* thisRealm = jsDynamicCast<ShadowRealmObject*>(thisValue);
+    ShadowRealmObject* thisRealm = jsDynamicCast<ShadowRealmObject*>(vm, thisValue);
     ASSERT(thisRealm);
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
@@ -91,7 +90,7 @@ JSC_DEFINE_HOST_FUNCTION(evalInRealm, (JSGlobalObject* globalObject, CallFrame* 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->argument(0);
-    ShadowRealmObject* thisRealm = jsDynamicCast<ShadowRealmObject*>(thisValue);
+    ShadowRealmObject* thisRealm = jsDynamicCast<ShadowRealmObject*>(vm, thisValue);
     ASSERT(thisRealm);
     JSGlobalObject* realmGlobalObject = thisRealm->globalObject();
 
@@ -104,7 +103,7 @@ JSC_DEFINE_HOST_FUNCTION(evalInRealm, (JSGlobalObject* globalObject, CallFrame* 
     SourceCode source = makeSource(script, callFrame->callerSourceOrigin(vm));
     EvalExecutable* eval = IndirectEvalExecutable::create(realmGlobalObject, source, DerivedContextType::None, false, EvalContextType::None, executableError);
     if (executableError) {
-        ErrorInstance* error = jsDynamicCast<ErrorInstance*>(JSValue(executableError.get()));
+        ErrorInstance* error = jsDynamicCast<ErrorInstance*>(vm, JSValue(executableError.get()));
         if (error != nullptr && error->errorType() == ErrorType::SyntaxError) {
             scope.clearException();
             const String syntaxErrorMessage = error->sanitizedMessageString(globalObject);
@@ -131,9 +130,9 @@ JSC_DEFINE_HOST_FUNCTION(moveFunctionToRealm, (JSGlobalObject* globalObject, Cal
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue wrappedFnArg = callFrame->argument(0);
-    JSFunction* wrappedFn = jsDynamicCast<JSFunction*>(wrappedFnArg);
+    JSFunction* wrappedFn = jsDynamicCast<JSFunction*>(vm, wrappedFnArg);
     JSValue targetRealmArg = callFrame->argument(1);
-    ShadowRealmObject* targetRealm = jsDynamicCast<ShadowRealmObject*>(targetRealmArg);
+    ShadowRealmObject* targetRealm = jsDynamicCast<ShadowRealmObject*>(vm, targetRealmArg);
     ASSERT(targetRealm);
     RETURN_IF_EXCEPTION(scope, { });
 

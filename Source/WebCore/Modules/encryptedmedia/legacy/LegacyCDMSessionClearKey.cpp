@@ -30,7 +30,6 @@
 #include "Logging.h"
 #include <pal/text/TextEncoding.h>
 #include "WebKitMediaKeyError.h"
-#include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSONObject.h>
@@ -50,9 +49,9 @@ static VM& clearKeyVM()
     return vm;
 }
 
-CDMSessionClearKey::CDMSessionClearKey(LegacyCDMSessionClient& client)
+CDMSessionClearKey::CDMSessionClearKey(LegacyCDMSessionClient* client)
     : m_client(client)
-    , m_sessionId(createVersion4UUIDString())
+    , m_sessionId(createCanonicalUUIDString())
 {
 }
 
@@ -110,7 +109,7 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
             break;
         }
 
-        auto keysArrayValue = asObject(keysDataValue)->get(&lexicalGlobalObject, vm.propertyNames->builtinNames().keysPublicName());
+        auto keysArrayValue = asObject(keysDataValue)->get(&lexicalGlobalObject, Identifier::fromString(vm, "keys"));
         if (scope.exception() || !isJSArray(keysArrayValue)) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
             break;
@@ -134,7 +133,7 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
 
             auto keyObject = asObject(keyValue);
 
-            auto getStringProperty = [&scope, &lexicalGlobalObject, &keyObject, &vm](ASCIILiteral name) -> String {
+            auto getStringProperty = [&scope, &lexicalGlobalObject, &keyObject, &vm](const char* name) -> String {
                 auto value = keyObject->get(&lexicalGlobalObject, Identifier::fromString(vm, name));
                 if (scope.exception() || !value.isString())
                     return { };
@@ -146,25 +145,25 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
                 return string;
             };
 
-            auto algorithm = getStringProperty("alg"_s);
-            if (!equalLettersIgnoringASCIICase(algorithm, "a128kw"_s)) {
+            auto algorithm = getStringProperty("alg");
+            if (!equalLettersIgnoringASCIICase(algorithm, "a128kw")) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: algorithm unsupported", this);
                 continue;
             }
 
-            auto keyType = getStringProperty("kty"_s);
-            if (!equalLettersIgnoringASCIICase(keyType, "oct"_s)) {
+            auto keyType = getStringProperty("kty");
+            if (!equalLettersIgnoringASCIICase(keyType, "oct")) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: keyType unsupported", this);
                 continue;
             }
 
-            auto keyId = getStringProperty("kid"_s);
+            auto keyId = getStringProperty("kid");
             if (keyId.isEmpty()) {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: keyId missing or empty", this);
                 continue;
             }
 
-            auto rawKeyData = getStringProperty("k"_s);
+            auto rawKeyData = getStringProperty("k");
             if (rawKeyData.isEmpty())  {
                 LOG(Media, "CDMSessionClearKey::update(%p) - failed: key missing or empty", this);
                 continue;

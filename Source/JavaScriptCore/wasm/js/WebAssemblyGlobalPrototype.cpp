@@ -45,7 +45,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyGlobalProtoFuncType);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyGlobalPrototype::s_info = { "WebAssembly.Global"_s, &Base::s_info, &prototypeGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalPrototype) };
+const ClassInfo WebAssemblyGlobalPrototype::s_info = { "WebAssembly.Global", &Base::s_info, &prototypeGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalPrototype) };
 
 /* Source for WebAssemblyGlobalPrototype.lut.h
  @begin prototypeGlobalWebAssemblyGlobal
@@ -58,13 +58,13 @@ const ClassInfo WebAssemblyGlobalPrototype::s_info = { "WebAssembly.Global"_s, &
 static ALWAYS_INLINE JSWebAssemblyGlobal* getGlobal(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSWebAssemblyGlobal* result = jsDynamicCast<JSWebAssemblyGlobal*>(v);
+    JSWebAssemblyGlobal* result = jsDynamicCast<JSWebAssemblyGlobal*>(vm, v);
     if (!result) {
         throwException(globalObject, throwScope,
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Global"_s));
         return nullptr;
     }
-    Integrity::auditStructureID(result->structureID());
+    Integrity::auditStructureID(vm, result->structureID());
     return result;
 }
 
@@ -111,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyGlobalProtoSetterFuncValue, (JSGlobalObject*
     JSWebAssemblyGlobal* global = getGlobal(globalObject, vm, callFrame->thisValue());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
-    if (global->global()->mutability() == Wasm::Mutability::Immutable)
+    if (global->global()->mutability() == Wasm::GlobalInformation::Mutability::Immutable)
         return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global.prototype.value attempts to modify immutable global value"_s)));
 
     global->global()->set(globalObject, callFrame->argument(0));
@@ -134,7 +134,7 @@ Structure* WebAssemblyGlobalPrototype::createStructure(VM& vm, JSGlobalObject* g
 void WebAssemblyGlobalPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     JSFunction* valueGetterFunction = JSFunction::create(vm, globalObject, 0, "get value"_s, webAssemblyGlobalProtoGetterFuncValue, NoIntrinsic);
     JSFunction* valueSetterFunction = JSFunction::create(vm, globalObject, 1, "set value"_s, webAssemblyGlobalProtoSetterFuncValue, NoIntrinsic);

@@ -174,6 +174,9 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     set viewMode(x)
     {
+        if (this._editingInstruments)
+            return;
+
         if (this._viewMode === x)
             return;
 
@@ -821,8 +824,6 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
     _viewModeDidChange()
     {
-        this._stopEditingInstruments();
-
         let startTime = 0;
         let isRenderingFramesMode = this._viewMode === WI.TimelineOverview.ViewMode.RenderingFrames;
         if (isRenderingFramesMode) {

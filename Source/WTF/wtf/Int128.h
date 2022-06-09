@@ -55,7 +55,6 @@
 namespace WTF {
 
 class Int128Impl;
-class PrintStream;
 
 // UInt128Impl
 //
@@ -1263,9 +1262,6 @@ using Int128 = __int128_t;
 using UInt128 = UInt128Impl;
 using Int128 = Int128Impl;
 #endif
-
-WTF_EXPORT_PRIVATE void printInternal(PrintStream&, UInt128);
-WTF_EXPORT_PRIVATE void printInternal(PrintStream&, Int128);
 
 }  // namespace WTF
 

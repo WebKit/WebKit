@@ -53,7 +53,7 @@ public:
 
     static RefPtr<MIMEHeader> parseHeader(SharedBufferChunkReader& crLFLineReader);
 
-    bool isMultipart() const { return m_contentType.startsWith("multipart/"_s); }
+    bool isMultipart() const { return m_contentType.startsWith("multipart/"); }
 
     String contentType() const { return m_contentType; }
     String charset() const { return m_charset; }
@@ -68,7 +68,7 @@ public:
 private:
     MIMEHeader();
 
-    static Encoding parseContentTransferEncoding(StringView);
+    static Encoding parseContentTransferEncoding(const String&);
 
     String m_contentType;
     String m_charset;

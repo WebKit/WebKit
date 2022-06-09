@@ -116,7 +116,6 @@ public:
         ContextMenuListener,
         CustomHeaderFields,
         InternalDebugFeature,
-        DataTask,
         DebuggableInfo,
         Download,
         ExperimentalFeature,
@@ -188,7 +187,6 @@ public:
 #endif
 
         MediaKeySystemPermissionCallback,
-        QueryPermissionResultCallback,
 
         // Bundle types
         Bundle,
@@ -365,7 +363,6 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::ContextMenuListener,
         API::Object::Type::CustomHeaderFields,
         API::Object::Type::InternalDebugFeature,
-        API::Object::Type::DataTask,
         API::Object::Type::DebuggableInfo,
         API::Object::Type::Download,
         API::Object::Type::ExperimentalFeature,

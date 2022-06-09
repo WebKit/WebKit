@@ -294,7 +294,7 @@ String ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events e
 }
 
 
-void ViewGestureController::SnapshotRemovalTracker::log(StringView log) const
+void ViewGestureController::SnapshotRemovalTracker::log(const String& log) const
 {
     RELEASE_LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", (MonotonicTime::now() - m_startTime).milliseconds(), log.utf8().data());
 }
@@ -302,7 +302,7 @@ void ViewGestureController::SnapshotRemovalTracker::log(StringView log) const
 void ViewGestureController::SnapshotRemovalTracker::resume()
 {
     if (isPaused() && m_outstandingEvents)
-        log("resume"_s);
+        log("resume");
     m_paused = false;
 }
 
@@ -312,7 +312,7 @@ void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, 
     m_removalCallback = WTFMove(removalCallback);
     m_startTime = MonotonicTime::now();
 
-    log("start"_s);
+    log("start");
 
     startWatchdog(swipeSnapshotRemovalWatchdogDuration);
 
@@ -324,13 +324,13 @@ void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, 
 void ViewGestureController::SnapshotRemovalTracker::reset()
 {
     if (m_outstandingEvents)
-        log(makeString("reset; had outstanding events: ", eventsDescription(m_outstandingEvents)));
+        log("reset; had outstanding events: " + eventsDescription(m_outstandingEvents));
     m_outstandingEvents = 0;
     m_watchdogTimer.stop();
     m_removalCallback = nullptr;
 }
 
-bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events event, ASCIILiteral logReason, ShouldIgnoreEventIfPaused shouldIgnoreEventIfPaused)
+bool ViewGestureController::SnapshotRemovalTracker:: stopWaitingForEvent(Events event, const String& logReason, ShouldIgnoreEventIfPaused shouldIgnoreEventIfPaused)
 {
     ASSERT(hasOneBitSet(event));
 
@@ -338,11 +338,11 @@ bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events e
         return false;
 
     if (shouldIgnoreEventIfPaused == ShouldIgnoreEventIfPaused::Yes && isPaused()) {
-        log(makeString("is paused; ignoring event: ", eventsDescription(event)));
+        log("is paused; ignoring event: " + eventsDescription(event));
         return false;
     }
 
-    log(makeString(logReason, eventsDescription(event)));
+    log(logReason + eventsDescription(event));
 
     m_outstandingEvents &= ~event;
 
@@ -352,12 +352,12 @@ bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events e
 
 bool ViewGestureController::SnapshotRemovalTracker::eventOccurred(Events event, ShouldIgnoreEventIfPaused shouldIgnoreEventIfPaused)
 {
-    return stopWaitingForEvent(event, "outstanding event occurred: "_s, shouldIgnoreEventIfPaused);
+    return stopWaitingForEvent(event, "outstanding event occurred: ", shouldIgnoreEventIfPaused);
 }
 
 bool ViewGestureController::SnapshotRemovalTracker::cancelOutstandingEvent(Events event)
 {
-    return stopWaitingForEvent(event, "wait for event cancelled: "_s);
+    return stopWaitingForEvent(event, "wait for event cancelled: ");
 }
 
 bool ViewGestureController::SnapshotRemovalTracker::hasOutstandingEvent(Event event)
@@ -368,7 +368,7 @@ bool ViewGestureController::SnapshotRemovalTracker::hasOutstandingEvent(Event ev
 void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackIfPossible()
 {
     if (m_outstandingEvents) {
-        log(makeString("deferring removal; had outstanding events: ", eventsDescription(m_outstandingEvents)));
+        log("deferring removal; had outstanding events: " + eventsDescription(m_outstandingEvents));
         return;
     }
 
@@ -381,7 +381,7 @@ void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackImmediate
 
     auto removalCallback = WTFMove(m_removalCallback);
     if (removalCallback) {
-        log("removing snapshot"_s);
+        log("removing snapshot");
         reset();
         removalCallback();
     }
@@ -389,7 +389,7 @@ void ViewGestureController::SnapshotRemovalTracker::fireRemovalCallbackImmediate
 
 void ViewGestureController::SnapshotRemovalTracker::watchdogTimerFired()
 {
-    log("watchdog timer fired"_s);
+    log("watchdog timer fired");
     fireRemovalCallbackImmediately();
 }
 

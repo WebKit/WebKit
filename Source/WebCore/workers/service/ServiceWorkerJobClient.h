@@ -36,24 +36,21 @@ class ContentSecurityPolicyResponseHeaders;
 class Exception;
 class ResourceError;
 class ScriptBuffer;
-class ScriptExecutionContext;
 class ServiceWorkerJob;
 struct CrossOriginEmbedderPolicy;
 struct ServiceWorkerRegistrationData;
-struct WorkerFetchResult;
 
 class ServiceWorkerJobClient {
 public:
     virtual ~ServiceWorkerJobClient() = default;
 
-    virtual ScriptExecutionContext* context() = 0;
     virtual ServiceWorkerOrClientIdentifier contextIdentifier() = 0;
 
     virtual void jobFailedWithException(ServiceWorkerJob&, const Exception&) = 0;
     virtual void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved) = 0;
     virtual void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) = 0;
     virtual void startScriptFetchForJob(ServiceWorkerJob&, FetchOptions::Cache) = 0;
-    virtual void jobFinishedLoadingScript(ServiceWorkerJob&, WorkerFetchResult&&) = 0;
+    virtual void jobFinishedLoadingScript(ServiceWorkerJob&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, const String& referrerPolicy) = 0;
     virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, Exception&&) = 0;
 };
 

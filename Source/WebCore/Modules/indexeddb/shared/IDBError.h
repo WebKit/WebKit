@@ -52,10 +52,8 @@ public:
     String message() const;
 
     bool isNull() const { return !m_code; }
-    operator bool() const { return !isNull(); }
 
-    IDBError isolatedCopy() const & { return IDBError { m_code, m_message.isolatedCopy() }; }
-    IDBError isolatedCopy() && { return IDBError { m_code, WTFMove(m_message).isolatedCopy() }; }
+    WEBCORE_EXPORT IDBError isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBError&);

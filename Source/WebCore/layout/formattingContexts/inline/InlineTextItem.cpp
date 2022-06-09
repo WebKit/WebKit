@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-static_assert(sizeof(InlineItem) == sizeof(InlineTextItem));
+static_assert(sizeof(InlineItem) == sizeof(InlineTextItem), "");
 
 InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, UBiDiLevel bidiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType textItemType)
     : InlineItem(inlineTextBox, Type::Text, bidiLevel)
@@ -86,14 +86,6 @@ bool InlineTextItem::isZeroWidthSpaceSeparator() const
 {
     // FIXME: We should check for more zero width content and not just U+200B.
     return !m_length || (m_length == 1 && inlineTextBox().content()[start()] == zeroWidthSpace); 
-}
-
-bool InlineTextItem::isCollapsibleNonBreakingSpace() const
-{
-    if (style().nbspMode() != NBSPMode::Space)
-        return false;
-    // Note that this text item may be longer than just one character.
-    return m_length && inlineTextBox().content()[start()] == noBreakSpace;
 }
 
 bool InlineTextItem::shouldPreserveSpacesAndTabs(const InlineTextItem& inlineTextItem)

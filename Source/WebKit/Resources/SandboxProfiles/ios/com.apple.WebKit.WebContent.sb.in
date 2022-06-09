@@ -27,10 +27,6 @@
 (deny system-privilege)
 (allow system-audit file-read-metadata)
 
-;; We can remove the catch once we no longer need to support iOS 15 (or earlier))
-(catch (lambda)
-    (import "dyld-support.sb"))
-
 ;; Silence spurious logging due to rdar://20117923 and rdar://72366475
 (deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
 
@@ -220,12 +216,78 @@
     (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
-            (iokit-connection "IOGPU")))
+            (iokit-connection "IOGPU")
+        )
+        (when (defined? 'iokit-external-method)
+            (apply-message-filter
+                (deny (with telemetry)
+                    iokit-external-trap)
+                (allow (with telemetry) (with message "IOGPU")
+                    iokit-async-external-method
+                    iokit-external-method)
+            )
+        )
+    )
 
     (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "AGXDeviceUserClient"))) ;; Used by WebGL
+            (iokit-user-client-class "AGXDeviceUserClient") ;; Used by WebGL
+        )
+        (when (defined? 'iokit-external-method)
+            (apply-message-filter
+                (deny (with telemetry)
+                    iokit-external-trap)
+                (deny (with telemetry) (with message "AGXDeviceUserClient")
+                    iokit-async-external-method
+                    iokit-external-method
+                )
+                (allow iokit-async-external-method
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000
+                    (iokit-method-number
+                        43
+                        44
+                    )
+#endif
+                )
+                (allow iokit-external-method
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000
+                    (iokit-method-number
+                        0
+                        2
+                        4
+                        5
+                        6
+                        7
+                        8
+                        9
+                        10
+                        11
+                        12
+                        13
+                        14
+                        15
+                        16
+                        25
+                        26
+                        27
+                        36
+                        37
+                        38
+                        39
+                        40
+                        41
+                        42
+                        43
+                        44
+                        45
+                    )
+#endif
+                )
+
+            )
+        )
+    )
 
     (allow iokit-get-properties
         (iokit-property "IOGLBundleName")
@@ -315,7 +377,7 @@
           (literal "/dev/random")
           (literal "/dev/urandom"))
 
-    (allow file-read* file-write-data (with telemetry)
+    (allow file-read* file-write-data file-ioctl
            (literal "/dev/aes_0")))
 
 (define required-etc-files
@@ -340,6 +402,52 @@
     (allow file-read*
         (home-subpath "/Library/VoiceServices/Assets")
         (home-subpath "/Library/Assets/com_apple_MobileAsset_VoiceServicesVocalizerVoice"))
+)
+
+(define (IOSurfaceRootUserClientMethodFilter)
+    (when (defined? 'iokit-external-method)
+        (apply-message-filter
+            (deny (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap)
+            (allow iokit-async-external-method
+                    (iokit-method-number
+                        40
+                    )
+            )
+            (deny (with telemetry) (with message "IOSurfaceRootUserClient")
+                iokit-external-method)
+            (allow iokit-external-method
+                (iokit-method-number
+                    0
+                    1
+                    2
+                    3
+                    5
+                    9
+                    10
+                    11
+                    12
+                    13
+                    14
+                    15
+                    20
+                    21
+                    23
+                    27
+                    31
+                    32
+                    34
+                    35
+                    36
+                    38
+                    39
+                    40
+                    41
+                )
+            )
+        )
+    )
 )
 
 ;; Things required by UIKit
@@ -390,7 +498,10 @@
     (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "IOSurfaceRootUserClient"))) ;; Needed by Tiled Grid code.
+            (iokit-user-client-class "IOSurfaceRootUserClient") ;; Needed by Tiled Grid code.
+        )
+        (IOSurfaceRootUserClientMethodFilter)
+    )
 
     ;; Silence sandbox violations from apps trying to create the empty plist if it doesn't exist.
     ;; <rdar://problem/13796537>
@@ -521,6 +632,9 @@
 (deny mach-lookup (with telemetry)
     (global-name "com.apple.distributed_notifications@1v3"))
 
+(allow ipc-posix-shm-read*
+       (ipc-posix-name-prefix "apple.cfprefs."))
+ 
 (deny mach-lookup (with no-report)
     (global-name "com.apple.lsd.mapdb")) 
 
@@ -809,6 +923,7 @@
     (iokit-property "IOGVAEncoderRestricted")
     (iokit-property "IOGVAScaler")
     (iokit-property "IOClassNameOverride")
+    (iokit-property "IOPlatformUUID")
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
     (iokit-property "LGHSupported")
     (iokit-property "Protocol Characteristics")
@@ -905,10 +1020,8 @@
 ;; Allow loading injected bundles.
 (allow file-map-executable)
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 ;; Allow ManagedPreference access
 (allow file-read* (literal "/private/var/Managed Preferences/mobile/com.apple.webcontentfilter.plist"))
-#endif
 
 (allow file-read-data
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
@@ -919,7 +1032,7 @@
     (home-subpath "/Library/Preferences/")
     (with no-log))
 
-(deny mach-lookup (with no-log) (with telemetry)
+(deny mach-lookup (with telemetry)
     (global-name "com.apple.containermanagerd")
 )
 
@@ -931,10 +1044,15 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
-(allow iokit-open (with telemetry-backtrace)
+(allow iokit-open (with telemetry)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
-        (iokit-user-client-class "IOSurfaceRootUserClient")))
+        (iokit-user-client-class
+            "IOSurfaceRootUserClient"
+        )
+    )
+    (IOSurfaceRootUserClientMethodFilter)
+)
 
 (deny iokit-open (with telemetry)
     (require-all
@@ -951,33 +1069,12 @@
     )
 )
 
-(allow iokit-open (with report) (with telemetry-backtrace)
+(allow iokit-open (with report) (with telemetry)
     (require-all
         (require-not (extension "com.apple.webkit.extension.iokit"))
         (iokit-connection "IOGPU")
     )
 )
-
-#if HAVE(SANDBOX_STATE_FLAGS)
-;; This rule enables the WebContent process to enable the "BlockIOKitInWebContentSandbox" sandbox variable
-;; by reading a preference from the domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox".
-(deny user-preference-read (with enable-state-flag "BlockIOKitInWebContentSandbox")
-    (preference-domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox"))
-
-(with-filter (state-flag "BlockIOKitInWebContentSandbox")
-    (deny iokit-open (with telemetry-backtrace)
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-user-client-class "IOSurfaceRootUserClient")))
-    (deny iokit-open (with telemetry-backtrace)
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.iokit"))
-            (iokit-connection "IOGPU")))
-    (deny mach-lookup (with telemetry-backtrace)
-        (require-all
-            (require-not (extension "com.apple.webkit.extension.mach"))
-            (xpc-service-name "com.apple.MTLCompilerService"))))
-#endif
 
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
@@ -988,17 +1085,31 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
+            "com.apple.cfprefsd.agent"
+            "com.apple.cfprefsd.daemon"
             "com.apple.frontboard.systemappservices"
             "com.apple.iphone.axserver-systemwide"
             "com.apple.mobileassetd.v2"
             "com.apple.mobilegestalt.xpc"
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
             "com.apple.nehelper"
             "com.apple.nesessionmanager.content-filter"
-            "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"
-#endif
             "com.apple.tccd"
+            "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"
             "com.apple.webinspector"
+
+            ;;; FIXME(207716): The following should be removed when the GPU process is complete
+            "com.apple.airplay.apsynccontroller.xpc" "com.apple.audio.AURemoteIOServer" "com.apple.audio.AudioComponentPrefs" "com.apple.audio.AudioComponentRegistrar"
+            "com.apple.audio.AudioQueueServer" "com.apple.audio.AudioSession" "com.apple.coremedia.admin" "com.apple.coremedia.asset.xpc"
+            "com.apple.coremedia.assetimagegenerator.xpc" "com.apple.coremedia.audiodeviceclock.xpc" "com.apple.coremedia.audioprocessingtap.xpc"
+            "com.apple.coremedia.capturesession" "com.apple.coremedia.capturesource" "com.apple.coremedia.compressionsession" "com.apple.coremedia.cpe.xpc"
+            "com.apple.coremedia.cpeprotector.xpc" "com.apple.coremedia.customurlloader.xpc" "com.apple.coremedia.decompressionsession"
+            "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.figcontentkeysession.xpc" "com.apple.coremedia.figcpecryptor"
+            "com.apple.coremedia.formatreader.xpc" "com.apple.coremedia.player.xpc" "com.apple.coremedia.remaker" "com.apple.coremedia.remotequeue"
+            "com.apple.coremedia.routediscoverer.xpc" "com.apple.coremedia.routingcontext.xpc" "com.apple.coremedia.routingsessionmanager.xpc"
+            "com.apple.coremedia.samplebufferaudiorenderer.xpc" "com.apple.coremedia.samplebufferrendersynchronizer.xpc" "com.apple.coremedia.sandboxserver.xpc"
+            "com.apple.coremedia.sts" "com.apple.coremedia.systemcontroller.xpc" "com.apple.coremedia.videoqueue" "com.apple.coremedia.volumecontroller.xpc"
+            "com.apple.coremedia.visualcontext.xpc" "com.apple.mediaremoted.xpc" "com.apple.accessibility.mediaaccessibilityd"
+            ;;; FIXME(207716): End services to remove.
 )))
 
 ;; Silence warnings about these connections if we have decided not to extend access to them:
@@ -1015,7 +1126,22 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
-            "com.apple.iconservices")))
+            "com.apple.iconservices"
+            "com.apple.lsd.open"
+        )
+    )
+)
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (xpc-service-name
+            ;;; FIXME(207716): The following should be removed when the GPU process is complete
+            "com.apple.MediaPlayer.RemotePlayerService"
+            ;;; FIXME(207716): End services to remove.
+        )
+    )
+)
 
 (allow iokit-open
     (require-all
@@ -1062,13 +1188,24 @@
         SYS_bsdthread_register
         SYS_chdir
         SYS_connect
+        SYS_csops ;; used by Corefoundation initialization
         SYS_dup2
+        SYS_fileport_makefd
         SYS_fsgetpath
+        SYS_getegid
         SYS_getpid
+        SYS_getrlimit
+        SYS_gettid
+        SYS_getuid
+        SYS_ioctl ;; needed by tcgetattr (TIOCGETA - debugging
         SYS_kdebug_trace_string
+        SYS_kdebug_typefilter
         SYS_objc_bp_assist_cfg_np
+        SYS_os_fault_with_payload
         SYS_shared_region_check_np
+        SYS_shm_open
         SYS_sigaction
+        SYS_sysctl
         SYS_workq_open
         SYS_writev))
 
@@ -1084,14 +1221,12 @@
         SYS_change_fdguard_np
         SYS_close
         SYS_close_nocancel
-        SYS_csops ;; used by Corefoundation initialization
         SYS_csops_audittoken ;; used by WK to get entitlments
         SYS_exit
         SYS_faccessat ;; <rdar://problem/56998930>
         SYS_fcntl
         SYS_fcntl_nocancel
         SYS_fgetattrlist ;; <rdar://problem/50266257>
-        SYS_fileport_makefd
         SYS_flock
         SYS_fsetattrlist ;; MTLCompilerFSCache::openSync
         SYS_fsetxattr ;; <rdar://problem/49795964>
@@ -1101,23 +1236,17 @@
         SYS_ftruncate
         SYS_getattrlist ;; xpc_realpath and directory enumeration
         SYS_getdirentries64
-        SYS_getegid
         SYS_getentropy
         SYS_geteuid
         SYS_getfsstat64
-        SYS_getrlimit
         SYS_getrusage
-        SYS_gettid
         SYS_gettimeofday
-        SYS_getuid
         SYS_guarded_close_np
         SYS_guarded_open_dprotected_np ; <rdar://problem/48166729>
         SYS_guarded_open_np
         SYS_guarded_pwrite_np
-        SYS_ioctl ;; needed by tcgetattr (TIOCGETA - debugging
         SYS_issetugid
         SYS_kdebug_trace64
-        SYS_kdebug_typefilter
         SYS_kevent_id
         SYS_kevent_qos
         SYS_kqueue ;; <rdar://problem/49609201>
@@ -1135,7 +1264,6 @@
         SYS_open
         SYS_open_nocancel
         SYS_openat
-        SYS_os_fault_with_payload
         SYS_pathconf
         SYS_pread
         SYS_proc_info
@@ -1154,10 +1282,8 @@
         SYS_sem_close
         SYS_sem_open
         SYS_shared_region_map_and_slide_2_np ;; <rdar://problem/60294880>
-        SYS_shm_open
         SYS_stat64
         SYS_statfs64
-        SYS_sysctl
         SYS_sysctlbyname
         SYS_thread_selfid
         SYS_ulock_wait
@@ -1175,6 +1301,8 @@
         SYS_getgid
         SYS_getxattr
         SYS_mkdirat
+        SYS_necp_client_action
+        SYS_necp_open
         SYS_openat_nocancel
         SYS_pread_nocancel
         SYS_rmdir
@@ -1185,6 +1313,7 @@
 #if PLATFORM(WATCHOS)
         SYS_sigreturn
 #endif
+        SYS_socket
         SYS_thread_selfusage
         SYS_unlink
         SYS_write
@@ -1197,11 +1326,8 @@
         SYS___semwait_signal
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
         SYS_iopolicysys
-        SYS_necp_client_action
-        SYS_necp_open
         SYS_open_dprotected_np
         SYS_psynch_rw_wrlock
-        SYS_socket
         SYS_umask
         SYS_work_interval_ctl))
 
@@ -1216,7 +1342,8 @@
         (allow syscall-unix
             (syscall-unix-only-in-use-during-launch)))
     (with-filter (state-flag "WebContentProcessLaunched")
-        (deny syscall-unix
+        (allow syscall-unix
+            (with report)
             (with telemetry)
             (with message "Unix syscall used after launch")
             (syscall-unix-only-in-use-during-launch)))
@@ -1229,8 +1356,8 @@
         (syscall-unix-rarely-in-use-need-backtrace))
 )
 
-(when (defined? 'SYS_map_with_linking_np)
-    (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
+(when (defined? 'SYS__map_with_linking_np)
+    (allow syscall-unix (syscall-number SYS__map_with_linking_np)))
 
 (with-filter (system-attribute apple-internal)
     (when (defined? 'syscall-unix)
@@ -1239,8 +1366,10 @@
 
 (deny file-ioctl (with telemetry))
 
-(deny file-ioctl (with telemetry)
-    (literal "/dev/aes_0"))
+;; restrict to the two ioctl's /dev/aes_0 needs
+(allow file-ioctl (with telemetry)
+   (ioctl-command (_IO "T" 101)) ;; IOAES_GET_INFO
+   (ioctl-command (_IO "T" 102))) ;; IOAES_ENCRYPT_DECRYPT
 
 (deny socket-ioctl (with telemetry))
 
@@ -1248,28 +1377,29 @@
     (deny system-fcntl (with telemetry))
     (allow system-fcntl
         (fcntl-command
-            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
+            F_GETPATH)) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
+    (allow system-fcntl
+        (fcntl-command
             F_BARRIERFSYNC
-            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
             F_GETCONFINED
-            F_GETFD ;; libwebrtc.dylib (no backtrace)
             F_GETFL ;; LibJPEGReadPlugin::copyImageBlockSetStandard
-            F_GETPATH ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
             F_GETSIGSINFO
+            F_NOCACHE
             F_RDADVISE
             F_SETCONFINED
+            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
+            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
+            F_SPECULATIVE_READ ;; ImageLoaderMachO::mapSegments
             F_SETFD ;; libwebrtc.dylib (no backtrace)
+            F_GETFD ;; libwebrtc.dylib (no backtrace)
             F_SETFL ;; CMCapture uses when camera is enabled
             F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
 
-    (allow system-fcntl (with telemetry-backtrace)
-        (fcntl-command
-            F_GETLK
-            F_OFD_SETLK))
-
     (define (appcache-fcntl-commands)
         (fcntl-command
+            F_GETLK
             F_OFD_GETLK
+            F_OFD_SETLK
             F_OFD_SETLKWTIMEOUT))
             
 #if HAVE(SANDBOX_STATE_FLAGS)
@@ -1281,7 +1411,7 @@
     (with-filter (require-not (state-flag "AppCacheDisabled"))
         (allow system-fcntl (appcache-fcntl-commands)))
     (with-filter (state-flag "AppCacheDisabled")
-        (deny system-fcntl (with telemetry-backtrace) (appcache-fcntl-commands)))
+        (allow system-fcntl (with report) (with telemetry) (appcache-fcntl-commands)))
 #else
     (allow system-fcntl (appcache-fcntl-commands))
 #endif
@@ -1312,6 +1442,10 @@
 (when (defined? 'socket-option-get)
     ;; getsockopt
     (deny socket-option-get (with telemetry))
+    (allow socket-option-get
+        (require-all
+            (socket-option-level SOL_SOCKET)
+            (socket-option-name SO_ERROR))) ;; libwebrtc; physical_socket_server.cc, ProcessEvents.  Called with fd=-1, so it fails.  Not technically needed, but the code needs changing
 )
 
 (when (defined? 'socket-option-set)
@@ -1320,31 +1454,39 @@
 )
 
 (define-once (mach-bootstrap-message-numbers)
-    (message-number 206 207 711 712 718 800 802 803 804 805 904))
+    (message-number
+        206
+        207
+        711
+        712
+        718
+        800
+        802
+        803
+        804
+        805
+    )
+)
 
-(define (allow-mach-bootstrap-with-filter)
+(if (defined? '*sbpl-version*)
     (allow mach-bootstrap
         (apply-message-filter
             (deny mach-message-send (with telemetry))
             (allow mach-message-send
-                (mach-bootstrap-message-numbers)))))
-
-#if HAVE(SANDBOX_STATE_FLAGS)
-(if (require-ancestor-with-entitlement "com.apple.private.security.enable-state-flags")
+                (mach-bootstrap-message-numbers)
+            )
+        )
+    )
+;; else
     (allow mach-bootstrap
         (apply-message-filter
-            (allow mach-message-send (with telemetry-backtrace))))
-;; else
-    (allow-mach-bootstrap-with-filter))
-
-(with-filter
-    (require-any
-        (require-not (state-flag "WebContentProcessLaunched"))
-        (state-flag "EnableMachBootstrap"))
-    (allow-mach-bootstrap-with-filter))
-#else
-(allow-mach-bootstrap-with-filter)
-#endif
+            (deny xpc-message-send (with telemetry))
+            (allow xpc-message-send
+                (mach-bootstrap-message-numbers)
+            )
+        )
+    )
+)
 
 (define (syscall-mach-only-in-use-during-launch)
     (machtrap-number
@@ -1409,7 +1551,8 @@
         (allow syscall-mach
             (syscall-mach-only-in-use-during-launch)))
     (with-filter (state-flag "WebContentProcessLaunched")
-        (deny syscall-mach
+        (allow syscall-mach
+            (with report)
             (with telemetry)
             (with message "Mach syscall used after launch")
             (syscall-mach-only-in-use-during-launch)))
@@ -1426,6 +1569,7 @@
 
 (define (kernel-mig-routine-only-in-use-during-launch)
     (kernel-mig-routine
+        host_get_clock_service
         host_get_special_port
         host_info
         io_server_version
@@ -1436,7 +1580,6 @@
 (define (kernel-mig-routine-in-use)
     (kernel-mig-routine
         (when (defined? '_mach_make_memory_entry) _mach_make_memory_entry)
-        host_get_clock_service ;; After <rdar://85931614> has been fixed, we should evaluate if this is only used on launch.
         host_get_io_master
         io_connect_async_method
         io_connect_map_memory_into_task ;; <rdar://88300200>
@@ -1504,14 +1647,16 @@
 #endif
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-                (allow mach-message-send
-                    (kernel-mig-routine-only-in-use-during-launch)))
-            (with-filter (state-flag "WebContentProcessLaunched")
-                (deny mach-message-send
-                    (with telemetry)
-                    (with message "kernel mig routine used after launch")
-                    (kernel-mig-routine-only-in-use-during-launch)))
+;; FIXME: enable this when rdar://85931614 is fixed
+;;            (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+;;                (allow mach-message-send
+;;                    (kernel-mig-routine-only-in-use-during-launch)))
+;;            (with-filter (state-flag "WebContentProcessLaunched")
+;;                (allow mach-message-send
+;;                    (with report)
+;;                    (with telemetry)
+;;                    (with message "kernel mig routine used after launch")
+;;                    (kernel-mig-routine-only-in-use-during-launch)))
 #endif
 
             (when (defined? 'mach_port_is_connection_for_service)
@@ -1521,7 +1666,7 @@
     )
 )
 
-(deny darwin-notification-post (with no-log) (with telemetry))
+(deny darwin-notification-post (with telemetry))
 (allow darwin-notification-post
     (notification-name
         "_AXNotification_AXSClassicInvertColorsPreference"
@@ -1540,23 +1685,3 @@
         "com.apple.accessibility.wob.status"
         "com.apple.automation.stringlookupinfoenabled"
         "com.apple.webinspectord.availability_check"))
-
-#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
-#include <WebKitAdditions/SystemContentSandbox-ios.defs>
-
-(allow file-read* file-test-existence
-    (apply subpath file-read-existence-secondary-paths))
-
-(allow file-map-executable
-    (apply subpath secondary-framework-and-dylib-paths))
-
-(allow-read-and-issue-generic-extensions
-    (apply subpath issue-extension-secondary-paths))
-    
-(allow file-issue-extension
-    (require-all
-        (extension-class "com.apple.mediaserverd.read")
-        (require-any
-            (apply subpath issue-extension-secondary-paths)
-        )))
-#endif

@@ -1,2 +1,0 @@
-ALERT: PASS
-Tests that CSP for extensions allows unsafe-eval. This test passes if it alerts.

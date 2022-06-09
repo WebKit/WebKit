@@ -101,7 +101,8 @@ bool AVStreamDataParserMIMETypeCache::canDecodeExtendedType(const ContentType& t
     if (!assetCache.isAvailable() || assetCache.supportedTypes().isEmpty())
         return false;
 
-    String replacementType = makeStringByReplacingAll(type.raw(), type.containerType(), *assetCache.supportedTypes().begin());
+    String replacementType { type.raw() };
+    replacementType.replace(type.containerType(), *assetCache.supportedTypes().begin());
     return assetCache.canDecodeType(replacementType) == MediaPlayerEnums::SupportsType::IsSupported;
 #endif
 

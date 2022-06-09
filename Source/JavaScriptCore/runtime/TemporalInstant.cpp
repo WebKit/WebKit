@@ -42,7 +42,7 @@
 
 namespace JSC {
 
-const ClassInfo TemporalInstant::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalInstant) };
+const ClassInfo TemporalInstant::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalInstant) };
 
 Structure* TemporalInstant::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
@@ -141,11 +141,11 @@ TemporalInstant* TemporalInstant::toInstant(JSGlobalObject* globalObject, JSValu
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (itemValue.inherits<TemporalInstant>())
+    if (itemValue.inherits<TemporalInstant>(vm))
         return jsCast<TemporalInstant*>(itemValue);
 
     // FIXME: when Temporal.ZonedDateTime lands
-    // if (itemValue.inherits<TemporalZonedDateTime>())
+    // if (itemValue.inherits<TemporalZonedDateTime>(vm))
     //    return TemporalInstant::create(vm, globalObject->instantStructure(), jsCast<TemporalZonedDateTime*>(itemValue)->epochTime());
 
     String string = itemValue.toWTFString(globalObject);
@@ -166,7 +166,7 @@ TemporalInstant* TemporalInstant::from(JSGlobalObject* globalObject, JSValue ite
 {
     VM& vm = globalObject->vm();
 
-    if (itemValue.inherits<TemporalInstant>()) {
+    if (itemValue.inherits<TemporalInstant>(vm)) {
         ISO8601::ExactTime exactTime = jsCast<TemporalInstant*>(itemValue)->exactTime();
         return TemporalInstant::create(vm, globalObject->instantStructure(), exactTime);
     }
@@ -295,20 +295,18 @@ JSValue TemporalInstant::compare(JSGlobalObject* globalObject, JSValue oneValue,
 
 ISO8601::Duration TemporalInstant::difference(JSGlobalObject* globalObject, TemporalInstant* other, JSValue optionsValue) const
 {
-    // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.since
-    // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.until
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto smallest = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
+    auto smallest = temporalSmallestUnit(globalObject, options, { });
     RETURN_IF_EXCEPTION(scope, { });
     TemporalUnit smallestUnit = smallest.value_or(TemporalUnit::Nanosecond);
 
     TemporalUnit defaultLargestUnit = std::min(smallestUnit, TemporalUnit::Second);
-    auto largest = temporalLargestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day }, defaultLargestUnit);
+    auto largest = temporalLargestUnit(globalObject, options, { }, defaultLargestUnit);
     RETURN_IF_EXCEPTION(scope, { });
     TemporalUnit largestUnit = largest.value_or(defaultLargestUnit);
 
@@ -362,35 +360,17 @@ ISO8601::ExactTime TemporalInstant::round(JSGlobalObject* globalObject, JSValue 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSObject* options = nullptr;
-    std::optional<TemporalUnit> smallest;
-    if (optionsValue.isString()) {
-        auto string = optionsValue.toWTFString(globalObject);
-        RETURN_IF_EXCEPTION(scope, { });
+    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, { });
 
-        smallest = temporalUnitType(string);
-        if (!smallest) {
-            throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
-            return { };
-        }
+    auto smallest = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
+    RETURN_IF_EXCEPTION(scope, { });
 
-        if (smallest.value() <= TemporalUnit::Day) {
-            throwRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_s);
-            return { };
-        }
-    } else {
-        options = intlGetOptionsObject(globalObject, optionsValue);
-        RETURN_IF_EXCEPTION(scope, { });
-
-        smallest = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
-        RETURN_IF_EXCEPTION(scope, { });
-
-        if (!smallest) {
-            throwRangeError(globalObject, scope, "Cannot round without a smallestUnit option"_s);
-            return { };
-        }
+    if (!smallest) {
+        throwRangeError(globalObject, scope, "Cannot round without a smallestUnit option"_s);
+        return { };
     }
-    TemporalUnit smallestUnit = smallest.value();
+    TemporalUnit smallestUnit = smallest.value_or(TemporalUnit::Nanosecond);
 
     RoundingMode roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
     RETURN_IF_EXCEPTION(scope, { });
@@ -457,10 +437,10 @@ String TemporalInstant::toString(ISO8601::ExactTime exactTime, JSObject* timeZon
     GregorianDateTime gregorianDateTime { static_cast<double>(exactTime.epochMilliseconds()), LocalTimeOffset { } };
     StringBuilder builder;
 
-    // If the year is outside the bounds of 0 and 9999 inclusive we want to
+    // If the year is outside the bounds of 1000 and 9999 inclusive we want to
     // use the extended year format (PadISOYear).
     unsigned yearLength = 4;
-    if (gregorianDateTime.year() > 9999 || gregorianDateTime.year() < 0) {
+    if (gregorianDateTime.year() > 9999 || gregorianDateTime.year() < 1000) {
         builder.append(gregorianDateTime.year() < 0 ? '-' : '+');
         yearLength = 6;
     }

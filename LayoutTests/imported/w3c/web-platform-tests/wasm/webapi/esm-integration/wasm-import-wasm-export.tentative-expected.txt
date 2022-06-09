@@ -1,3 +1,0 @@
-
-PASS Check import and export between WebAssembly modules
-

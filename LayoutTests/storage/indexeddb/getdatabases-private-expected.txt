@@ -10,8 +10,8 @@ PASS databases.length is 1
 PASS databases[0].version is 1
 PASS databases[0].name is "getdatabase-first"
 PASS databases.length is 2
-PASS databases[0].version is 2
-PASS databases[0].name is "getdatabase-second"
+PASS databases[1].version is 2
+PASS databases[1].name is "getdatabase-second"
 PASS successfullyParsed is true
 
 TEST COMPLETE

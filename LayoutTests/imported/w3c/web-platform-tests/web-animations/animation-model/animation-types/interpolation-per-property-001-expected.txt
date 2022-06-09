@@ -27,10 +27,6 @@ PASS background-color supports animating as color of hsl()
 PASS background-color supports animating as color of #RGBa
 PASS background-color supports animating as color of rgba()
 PASS background-color supports animating as color of hsla()
-PASS background-blend-mode (type: discrete) has testInterpolation function
-PASS background-blend-mode uses discrete animation when animating between "multiply" and "screen" with linear easing
-PASS background-blend-mode uses discrete animation when animating between "multiply" and "screen" with effect easing
-PASS background-blend-mode uses discrete animation when animating between "multiply" and "screen" with keyframe easing
 PASS background-clip (type: discrete) has testInterpolation function
 PASS background-clip uses discrete animation when animating between "padding-box" and "content-box" with linear easing
 PASS background-clip uses discrete animation when animating between "padding-box" and "content-box" with effect easing
@@ -154,10 +150,6 @@ PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px,
 PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with linear easing
 PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with effect easing
 PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with keyframe easing
-PASS clip-rule (type: discrete) has testInterpolation function
-PASS clip-rule uses discrete animation when animating between "evenodd" and "nonzero" with linear easing
-PASS clip-rule uses discrete animation when animating between "evenodd" and "nonzero" with effect easing
-PASS clip-rule uses discrete animation when animating between "evenodd" and "nonzero" with keyframe easing
 PASS color (type: color) has testInterpolation function
 PASS color supports animating as color of rgb()
 PASS color supports animating as color of #RGB
@@ -165,14 +157,6 @@ PASS color supports animating as color of hsl()
 PASS color supports animating as color of #RGBa
 PASS color supports animating as color of rgba()
 PASS color supports animating as color of hsla()
-PASS color-interpolation (type: discrete) has testInterpolation function
-PASS color-interpolation uses discrete animation when animating between "linearrgb" and "auto" with linear easing
-PASS color-interpolation uses discrete animation when animating between "linearrgb" and "auto" with effect easing
-PASS color-interpolation uses discrete animation when animating between "linearrgb" and "auto" with keyframe easing
-PASS color-interpolation-filters (type: discrete) has testInterpolation function
-PASS color-interpolation-filters uses discrete animation when animating between "srgb" and "linearrgb" with linear easing
-PASS color-interpolation-filters uses discrete animation when animating between "srgb" and "linearrgb" with effect easing
-PASS color-interpolation-filters uses discrete animation when animating between "srgb" and "linearrgb" with keyframe easing
 PASS column-count (type: positiveInteger) has testInterpolation function
 PASS column-count supports animating as a positive integer
 PASS column-count (type: discrete) has testInterpolation function
@@ -211,44 +195,28 @@ PASS column-width (type: discrete) has testInterpolation function
 PASS column-width uses discrete animation when animating between "auto" and "1px" with linear easing
 PASS column-width uses discrete animation when animating between "auto" and "1px" with effect easing
 PASS column-width uses discrete animation when animating between "auto" and "1px" with keyframe easing
-PASS counter-increment (type: discrete) has testInterpolation function
-PASS counter-increment uses discrete animation when animating between "ident-1 1" and "ident-2 2" with linear easing
-PASS counter-increment uses discrete animation when animating between "ident-1 1" and "ident-2 2" with effect easing
-PASS counter-increment uses discrete animation when animating between "ident-1 1" and "ident-2 2" with keyframe easing
-PASS counter-reset (type: discrete) has testInterpolation function
-PASS counter-reset uses discrete animation when animating between "ident-1 1" and "ident-2 2" with linear easing
-PASS counter-reset uses discrete animation when animating between "ident-1 1" and "ident-2 2" with effect easing
-PASS counter-reset uses discrete animation when animating between "ident-1 1" and "ident-2 2" with keyframe easing
 PASS cursor (type: discrete) has testInterpolation function
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with linear easing
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with effect easing
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with keyframe easing
-PASS dominant-baseline (type: discrete) has testInterpolation function
-PASS dominant-baseline uses discrete animation when animating between "ideographic" and "alphabetic" with linear easing
-PASS dominant-baseline uses discrete animation when animating between "ideographic" and "alphabetic" with effect easing
-PASS dominant-baseline uses discrete animation when animating between "ideographic" and "alphabetic" with keyframe easing
 PASS empty-cells (type: discrete) has testInterpolation function
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with linear easing
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with effect easing
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with keyframe easing
 PASS fill-opacity (type: opacity) has testInterpolation function
-PASS fill-opacity supports animating as a [0, 1] number
-PASS fill-rule (type: discrete) has testInterpolation function
-PASS fill-rule uses discrete animation when animating between "evenodd" and "nonzero" with linear easing
-PASS fill-rule uses discrete animation when animating between "evenodd" and "nonzero" with effect easing
-PASS fill-rule uses discrete animation when animating between "evenodd" and "nonzero" with keyframe easing
+FAIL fill-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
 PASS filter (type: filterList) has testInterpolation function
 PASS filter: blur function
 PASS filter: hue-rotate function with same unit(deg)
-FAIL filter: hue-rotate function with different unit(deg -> rad) assert_equals: The value should be hue-rotate(2869.79deg) at 500ms expected "hue-rotate(2869.79deg)" but got "hue-rotate(2869.788976deg)"
+FAIL filter: hue-rotate function with different unit(deg -> rad) assert_equals: The value should be hue-rotate(2869.79deg) at 500ms expected "hue-rotate(2869.79deg)" but got "hue-rotate(2869.7889756541163deg)"
 PASS filter: drop-shadow function
-PASS filter: percentage or numeric-specifiable functions (number value)
-PASS filter: percentage or numeric-specifiable functions (percentage value)
+FAIL filter: percentage or numeric-specifiable functions (number value) assert_equals: The value should be brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3) at 500ms expected "brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3)" but got "brightness(0.30000000000000004) contrast(0.30000000000000004) grayscale(0.30000000000000004) invert(0.30000000000000004) opacity(0.30000000000000004) saturate(0.30000000000000004) sepia(0.30000000000000004)"
+FAIL filter: percentage or numeric-specifiable functions (percentage value) assert_equals: The value should be brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3) at 500ms expected "brightness(0.3) contrast(0.3) grayscale(0.3) invert(0.3) opacity(0.3) saturate(0.3) sepia(0.3)" but got "brightness(0.30000000000000004) contrast(0.30000000000000004) grayscale(0.30000000000000004) invert(0.30000000000000004) opacity(0.30000000000000004) saturate(0.30000000000000004) sepia(0.30000000000000004)"
 FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 1 assert_equals: The value should be grayscale(0.5) brightness(0.5) contrast(0.5) opacity(0.5) saturate(0.5) at 500ms expected "grayscale(0.5) brightness(0.5) contrast(0.5) opacity(0.5) saturate(0.5)" but got "grayscale(1) brightness(0) contrast(0) opacity(0) saturate(0)"
 FAIL filter: interpolate different length of filter-function-list with function which lacuna value is 0 assert_equals: The value should be opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px) at 500ms expected "opacity(0.5) grayscale(0.5) invert(0.5) sepia(0.5) blur(5px)" but got "opacity(0) grayscale(1) invert(1) sepia(1) blur(10px)"
 FAIL filter: interpolate different length of filter-function-list with drop-shadow function assert_equals: The value should be blur(5px) drop-shadow(rgba(0, 0, 255, 0.4) 5px 5px 5px) at 500ms expected "blur(5px) drop-shadow(rgba(0, 0, 255, 0.4) 5px 5px 5px)" but got "blur(10px) drop-shadow(rgba(0, 0, 255, 0.8) 10px 10px 10px)"
 PASS filter: interpolate from none
-FAIL filter: url function (interpoalte as discrete) assert_equals: The value should be blur(0px) url("#f1") at 499ms expected "blur(0px) url(\"#f1\")" but got "blur(4.99px) url(\"#f1\")"
+FAIL filter: url function (interpoalte as discrete) assert_equals: The value should be blur(0px) url("#f1") at 499ms expected "blur(0px) url(\"#f1\")" but got "blur(4.989999771118164px) url(\"#f1\")"
 PASS flex-basis (type: lengthPercentageOrCalc) has testInterpolation function
 PASS flex-basis supports animating as a length
 PASS flex-basis supports animating as a length of rem
@@ -267,9 +235,9 @@ PASS flex-direction uses discrete animation when animating between "row" and "ro
 PASS flex-direction uses discrete animation when animating between "row" and "row-reverse" with effect easing
 PASS flex-direction uses discrete animation when animating between "row" and "row-reverse" with keyframe easing
 PASS flex-grow (type: positiveNumber) has testInterpolation function
-PASS flex-grow supports animating as a positive number
+FAIL flex-grow supports animating as a positive number assert_equals: The value should be 1.3 at 500ms expected "1.3" but got "1.2999999523162842"
 PASS flex-shrink (type: positiveNumber) has testInterpolation function
-PASS flex-shrink supports animating as a positive number
+FAIL flex-shrink supports animating as a positive number assert_equals: The value should be 1.3 at 500ms expected "1.3" but got "1.2999999523162842"
 PASS flex-wrap (type: discrete) has testInterpolation function
 PASS flex-wrap uses discrete animation when animating between "nowrap" and "wrap" with linear easing
 PASS flex-wrap uses discrete animation when animating between "nowrap" and "wrap" with effect easing
@@ -282,7 +250,7 @@ PASS flood-color supports animating as color of #RGBa
 PASS flood-color supports animating as color of rgba()
 PASS flood-color supports animating as color of hsla()
 PASS flood-opacity (type: opacity) has testInterpolation function
-PASS flood-opacity supports animating as a [0, 1] number
+FAIL flood-opacity supports animating as a [0, 1] number assert_equals: The value should be 0.55 at 500ms expected "0.55" but got "0.550000011920929"
 PASS font-stretch (type: percentage) has testInterpolation function
 PASS font-stretch supports animating as a percentage
 PASS font-style (type: discrete) has testInterpolation function
@@ -293,46 +261,6 @@ PASS float (type: discrete) has testInterpolation function
 PASS float uses discrete animation when animating between "left" and "right" with linear easing
 PASS float uses discrete animation when animating between "left" and "right" with effect easing
 PASS float uses discrete animation when animating between "left" and "right" with keyframe easing
-PASS font-family (type: discrete) has testInterpolation function
-PASS font-family uses discrete animation when animating between "helvetica" and "verdana" with linear easing
-PASS font-family uses discrete animation when animating between "helvetica" and "verdana" with effect easing
-PASS font-family uses discrete animation when animating between "helvetica" and "verdana" with keyframe easing
-PASS font-feature-settings (type: discrete) has testInterpolation function
-PASS font-feature-settings uses discrete animation when animating between ""liga" 5" and "normal" with linear easing
-PASS font-feature-settings uses discrete animation when animating between ""liga" 5" and "normal" with effect easing
-PASS font-feature-settings uses discrete animation when animating between ""liga" 5" and "normal" with keyframe easing
-PASS font-kerning (type: discrete) has testInterpolation function
-PASS font-kerning uses discrete animation when animating between "auto" and "normal" with linear easing
-PASS font-kerning uses discrete animation when animating between "auto" and "normal" with effect easing
-PASS font-kerning uses discrete animation when animating between "auto" and "normal" with keyframe easing
-PASS font-synthesis (type: discrete) has testInterpolation function
-PASS font-synthesis uses discrete animation when animating between "none" and "weight style" with linear easing
-PASS font-synthesis uses discrete animation when animating between "none" and "weight style" with effect easing
-PASS font-synthesis uses discrete animation when animating between "none" and "weight style" with keyframe easing
-PASS font-variant-alternates (type: discrete) has testInterpolation function
-FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with linear easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
-FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with effect easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
-FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with keyframe easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
-PASS font-variant-caps (type: discrete) has testInterpolation function
-PASS font-variant-caps uses discrete animation when animating between "small-caps" and "unicase" with linear easing
-PASS font-variant-caps uses discrete animation when animating between "small-caps" and "unicase" with effect easing
-PASS font-variant-caps uses discrete animation when animating between "small-caps" and "unicase" with keyframe easing
-PASS font-variant-east-asian (type: discrete) has testInterpolation function
-PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with linear easing
-PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with effect easing
-PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with keyframe easing
-PASS font-variant-ligatures (type: discrete) has testInterpolation function
-PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with linear easing
-PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with effect easing
-PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with keyframe easing
-PASS font-variant-numeric (type: discrete) has testInterpolation function
-PASS font-variant-numeric uses discrete animation when animating between "lining-nums" and "oldstyle-nums" with linear easing
-PASS font-variant-numeric uses discrete animation when animating between "lining-nums" and "oldstyle-nums" with effect easing
-PASS font-variant-numeric uses discrete animation when animating between "lining-nums" and "oldstyle-nums" with keyframe easing
-PASS font-variant-position (type: discrete) has testInterpolation function
-PASS font-variant-position uses discrete animation when animating between "sub" and "super" with linear easing
-PASS font-variant-position uses discrete animation when animating between "sub" and "super" with effect easing
-PASS font-variant-position uses discrete animation when animating between "sub" and "super" with keyframe easing
 PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function
 PASS font-variation-settings supports animation as float
 PASS font-variation-settings supports animation as float with multiple tags
@@ -372,10 +300,6 @@ PASS grid-row-start (type: discrete) has testInterpolation function
 PASS grid-row-start uses discrete animation when animating between "1" and "5" with linear easing
 PASS grid-row-start uses discrete animation when animating between "1" and "5" with effect easing
 PASS grid-row-start uses discrete animation when animating between "1" and "5" with keyframe easing
-PASS grid-template-areas (type: discrete) has testInterpolation function
-FAIL grid-template-areas uses discrete animation when animating between "". . a b" ". .a b"" and "none" with linear easing assert_equals: The value should be ". . a b" ". .a b" at 0ms expected "\". . a b\" \". .a b\"" but got "\". . a b\" \". . a b\""
-FAIL grid-template-areas uses discrete animation when animating between "". . a b" ". .a b"" and "none" with effect easing assert_equals: The value should be ". . a b" ". .a b" at 0ms expected "\". . a b\" \". .a b\"" but got "\". . a b\" \". . a b\""
-FAIL grid-template-areas uses discrete animation when animating between "". . a b" ". .a b"" and "none" with keyframe easing assert_equals: The value should be ". . a b" ". .a b" at 0ms expected "\". . a b\" \". .a b\"" but got "\". . a b\" \". . a b\""
 PASS image-orientation (type: discrete) has testInterpolation function
 PASS image-orientation uses discrete animation when animating between "none" and "from-image" with linear easing
 PASS image-orientation uses discrete animation when animating between "none" and "from-image" with effect easing

@@ -1,3 +1,0 @@
-
-PASS EventSource: onopen (announcing the connection)
-

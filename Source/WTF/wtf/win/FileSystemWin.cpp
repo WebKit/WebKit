@@ -169,7 +169,7 @@ static String storageDirectory(DWORD pathIdentifier)
     buffer.shrink(wcslen(wcharFrom(buffer.data())));
     String directory = String::adopt(WTFMove(buffer));
 
-    directory = pathByAppendingComponent(directory, makeString("Apple Computer\\", bundleName()));
+    directory = pathByAppendingComponent(directory, "Apple Computer\\" + bundleName());
     if (!makeAllDirectories(directory))
         return String();
 
@@ -211,7 +211,7 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
 
         ASSERT(wcslen(tempFile) == WTF_ARRAY_LENGTH(tempFile) - 1);
 
-        proposedPath = pathByAppendingComponent(String(tempPath), String(tempFile));
+        proposedPath = pathByAppendingComponent(tempPath, tempFile);
         if (proposedPath.isEmpty())
             break;
     } while (!action(proposedPath));
@@ -219,7 +219,7 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
     return proposedPath;
 }
 
-String openTemporaryFile(StringView, PlatformFileHandle& handle, StringView suffix)
+String openTemporaryFile(const String&, PlatformFileHandle& handle, const String& suffix)
 {
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
@@ -345,9 +345,9 @@ String roamingUserSpecificStorageDirectory()
     return cachedStorageDirectory(CSIDL_APPDATA);
 }
 
-std::optional<int32_t> getFileDeviceId(const String& fsFile)
+std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
-    auto handle = openFile(fsFile, FileOpenMode::Read);
+    auto handle = openFile(fsFile.data(), FileOpenMode::Read);
     if (!isHandleValid(handle))
         return std::nullopt;
 

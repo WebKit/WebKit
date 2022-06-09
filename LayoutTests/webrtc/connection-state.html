@@ -7,7 +7,6 @@
         <script src="../resources/testharnessreport.js"></script>
     </head>
     <body>
-        <video id="video" muted playsinline></video>
         <script src ="routines.js"></script>
         <script>
 promise_test((test) => {
@@ -34,8 +33,7 @@ promise_test((test) => {
                     localGatheringStates.push(firstConnection.iceGatheringState);
                 }
                 firstConnection.oniceconnectionstatechange = () => {
-                    if (firstConnection.iceConnectionState !== 'completed')
-                        localIceConnectionStates.push(firstConnection.iceConnectionState);
+                    localIceConnectionStates.push(firstConnection.iceConnectionState);
                 }
             }, (connection) => {
                 secondConnection = connection;
@@ -47,8 +45,7 @@ promise_test((test) => {
                     remoteGatheringStates.push(secondConnection.iceGatheringState);
                 }
                 secondConnection.oniceconnectionstatechange = () => {
-                    if (secondConnection.iceConnectionState !== 'completed')
-                        remoteIceConnectionStates.push(secondConnection.iceConnectionState);
+                    remoteIceConnectionStates.push(secondConnection.iceConnectionState);
                 }
                 secondConnection.ontrack = (trackEvent) => {
                     resolve(trackEvent.streams[0]);
@@ -57,14 +54,13 @@ promise_test((test) => {
             setTimeout(() => reject("Test timed out"), 5000);
         });
     }).then((stream) => {
-        video.srcObject = stream;
-        return video.play();
+        return waitFor(500);
     }).then(() => {
         assert_array_equals(localConnectionStates, ["new", "connecting", "connected"]);
         assert_array_equals(remoteConnectionStates, ["new", "connecting", "connected"]);
         assert_array_equals(localGatheringStates, ["new", "gathering", "complete"]);
         assert_array_equals(remoteGatheringStates, ["new", "gathering", "complete"]);
-        assert_array_equals(localIceConnectionStates, ["new", "checking", "connected"]);
+        assert_array_equals(localIceConnectionStates, ["new", "checking", "connected", "completed"]);
         assert_array_equals(remoteIceConnectionStates, ["new", "checking", "connected"]);
     });
 }, "Checking various connection state for video exchange");

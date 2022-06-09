@@ -290,14 +290,17 @@ static Vector<FloatPointGraph::Polygon> polygonsForRect(const Vector<FloatRect>&
 
 Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius)
 {
+    Vector<Path> paths;
+
     if (rects.isEmpty())
-        return { };
+        return paths;
 
     if (rects.size() > 20) {
         Path path;
         for (const auto& rect : rects)
             path.addRoundedRect(rect, FloatSize(radius, radius));
-        return { WTFMove(path) };
+        paths.append(path);
+        return paths;
     }
 
     FloatPointGraph graph;
@@ -306,11 +309,10 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
         Path path;
         for (const auto& rect : rects)
             path.addRoundedRect(rect, FloatSize(radius, radius));
-        return { WTFMove(path) };
+        paths.append(path);
+        return paths;
     }
 
-    Vector<Path> paths;
-    paths.reserveInitialCapacity(polys.size());
     for (auto& poly : polys) {
         Path path;
         for (unsigned i = 0; i < poly.size(); ++i) {
@@ -342,7 +344,7 @@ Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>&
             path.addArcTo(*fromEdge.second, *toEdge.first + toOffset, clampedRadius);
         }
         path.closeSubpath();
-        paths.uncheckedAppend(WTFMove(path));
+        paths.append(path);
     }
     return paths;
 }
@@ -541,14 +543,13 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
     bottomLeftRadius = firstLineRadii.bottomLeft();
     topRightRadius = lastLineRadii.topRight();
     bottomRightRadius = lastLineRadii.bottomRight();
+    Vector<FloatPoint> corners;
     // physical topLeft/topRight/bottomRight/bottomLeft
     auto isHorizontal = isHorizontalWritingMode(writingMode);
-    auto corners = Vector<FloatPoint>::from(
-        firstLineRect.minXMinYCorner(),
-        isHorizontal ? lastLineRect.maxXMinYCorner() : firstLineRect.maxXMinYCorner(),
-        lastLineRect.maxXMaxYCorner(),
-        isHorizontal ? firstLineRect.minXMaxYCorner() : lastLineRect.minXMaxYCorner()
-    );
+    corners.append(firstLineRect.minXMinYCorner());
+    corners.append(isHorizontal ? lastLineRect.maxXMinYCorner() : firstLineRect.maxXMinYCorner());
+    corners.append(lastLineRect.maxXMaxYCorner());
+    corners.append(isHorizontal ? firstLineRect.minXMaxYCorner() : lastLineRect.minXMaxYCorner());
 
     for (unsigned i = 0; i < poly.size(); ++i) {
         auto moveOrAddLineTo = [i, &path] (const FloatPoint& startPoint)

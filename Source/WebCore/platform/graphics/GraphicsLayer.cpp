@@ -143,7 +143,6 @@ GraphicsLayer::GraphicsLayer(Type type, GraphicsLayerClient& layerClient)
     , m_contentsRectClipsDescendants(false)
     , m_acceleratesDrawing(false)
     , m_usesDisplayListDrawing(false)
-    , m_allowsTiling(true)
     , m_appliesPageScale(false)
     , m_showDebugBorder(false)
     , m_showRepaintCounter(false)
@@ -533,13 +532,11 @@ void GraphicsLayer::setPaintingPhase(OptionSet<GraphicsLayerPaintingPhase> phase
 
 void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
-    auto offset = offsetFromRenderer() - toFloatSize(scrollOffset());
-    auto clipRect = clip;
+    FloatSize offset = offsetFromRenderer() - toFloatSize(scrollOffset());
+    context.translate(-offset);
 
-    if (!offset.isZero()) {
-        context.translate(-offset);
-        clipRect.move(offset);
-    }
+    FloatRect clipRect(clip);
+    clipRect.move(offset);
 
     client().paintContents(this, context, clipRect, layerPaintBehavior);
 }
@@ -713,6 +710,81 @@ int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
     return firstIndex;
 }
 
+// An "invalid" list is one whose functions don't match, and therefore has to be animated as a Matrix
+// The hasBigRotation flag will always return false if isValid is false. Otherwise hasBigRotation is 
+// true if the rotation between any two keyframes is >= 180 degrees.
+
+static inline const TransformOperations& operationsAt(const KeyframeValueList& valueList, size_t index)
+{
+    return static_cast<const TransformAnimationValue&>(valueList.at(index)).value();
+}
+
+int GraphicsLayer::validateTransformOperations(const KeyframeValueList& valueList, bool& hasBigRotation)
+{
+    ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
+
+    hasBigRotation = false;
+    
+    if (valueList.size() < 2)
+        return -1;
+    
+    // Empty transforms match anything, so find the first non-empty entry as the reference.
+    size_t firstIndex = 0;
+    for ( ; firstIndex < valueList.size(); ++firstIndex) {
+        if (!operationsAt(valueList, firstIndex).operations().isEmpty())
+            break;
+    }
+    
+    if (firstIndex >= valueList.size())
+        return -1;
+        
+    const TransformOperations& firstVal = operationsAt(valueList, firstIndex);
+    
+    // See if the keyframes are valid.
+    for (size_t i = firstIndex + 1; i < valueList.size(); ++i) {
+        const TransformOperations& val = operationsAt(valueList, i);
+        
+        // An empty transform list matches anything.
+        if (val.operations().isEmpty())
+            continue;
+            
+        if (!firstVal.operationsMatch(val))
+            return -1;
+    }
+
+    // Keyframes are valid, check for big rotations.    
+    double lastRotationAngle = 0.0;
+    double maxRotationAngle = -1.0;
+        
+    for (size_t j = 0; j < firstVal.operations().size(); ++j) {
+        TransformOperation::OperationType type = firstVal.operations().at(j)->type();
+        
+        // if this is a rotation entry, we need to see if any angle differences are >= 180 deg
+        if (type == TransformOperation::ROTATE_X ||
+            type == TransformOperation::ROTATE_Y ||
+            type == TransformOperation::ROTATE_Z ||
+            type == TransformOperation::ROTATE_3D) {
+            lastRotationAngle = downcast<RotateTransformOperation>(*firstVal.operations().at(j)).angle();
+            
+            if (maxRotationAngle < 0)
+                maxRotationAngle = fabs(lastRotationAngle);
+            
+            for (size_t i = firstIndex + 1; i < valueList.size(); ++i) {
+                const TransformOperations& val = operationsAt(valueList, i);
+                double rotationAngle = val.operations().isEmpty() ? 0 : downcast<RotateTransformOperation>(*val.operations().at(j)).angle();
+                double diffAngle = fabs(rotationAngle - lastRotationAngle);
+                if (diffAngle > maxRotationAngle)
+                    maxRotationAngle = diffAngle;
+                lastRotationAngle = rotationAngle;
+            }
+        }
+    }
+    
+    hasBigRotation = maxRotationAngle >= 180.0;
+    
+    return firstIndex;
+}
+
 double GraphicsLayer::backingStoreMemoryEstimate() const
 {
     if (!drawsContent())
@@ -735,9 +807,11 @@ void GraphicsLayer::addRepaintRect(const FloatRect& repaintRect)
     FloatRect largestRepaintRect(FloatPoint(), m_size);
     largestRepaintRect.intersect(repaintRect);
     RepaintMap::iterator repaintIt = repaintRectMap().find(this);
-    if (repaintIt == repaintRectMap().end())
-        repaintRectMap().set(this, Vector { WTFMove(largestRepaintRect) });
-    else {
+    if (repaintIt == repaintRectMap().end()) {
+        Vector<FloatRect> repaintRects;
+        repaintRects.append(largestRepaintRect);
+        repaintRectMap().set(this, repaintRects);
+    } else {
         Vector<FloatRect>& repaintRects = repaintIt->value;
         repaintRects.append(largestRepaintRect);
     }
@@ -983,6 +1057,8 @@ TextStream& operator<<(TextStream& ts, const GraphicsLayer::CustomAppearance& cu
     case GraphicsLayer::CustomAppearance::None: ts << "none"; break;
     case GraphicsLayer::CustomAppearance::ScrollingOverhang: ts << "scrolling-overhang"; break;
     case GraphicsLayer::CustomAppearance::ScrollingShadow: ts << "scrolling-shadow"; break;
+    case GraphicsLayer::CustomAppearance::LightBackdrop: ts << "light-backdrop"; break;
+    case GraphicsLayer::CustomAppearance::DarkBackdrop: ts << "dark-backdrop"; break;
     }
     return ts;
 }

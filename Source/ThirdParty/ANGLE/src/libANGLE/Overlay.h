@@ -87,10 +87,7 @@ class Overlay : angle::NonCopyable
 
     rx::OverlayImpl *getImplementation() const { return mImplementation.get(); }
 
-    bool isEnabled() const
-    {
-        return mImplementation != nullptr && mState.getEnabledWidgetCount() > 0;
-    }
+    bool isEnabled() const { return mImplementation != nullptr; }
 
   private:
     template <typename Widget, WidgetType Type>

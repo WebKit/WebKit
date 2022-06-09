@@ -26,7 +26,6 @@
 #include "CSSStyleSheet.h"
 #include "CachePolicy.h"
 #include "CachedCSSStyleSheet.h"
-#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -164,6 +163,9 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
         m_namespaceRules.append(&namespaceRule);
         return;
     }
+
+    if (is<StyleRuleMedia>(rule))
+        reportMediaQueryWarningIfNeeded(singleOwnerDocument(), &downcast<StyleRuleMedia>(rule.get()).mediaQueries());
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
     // If we're adding a rule with a huge number of selectors, split it up into multiple rules
@@ -388,14 +390,14 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
         return false;
     }
 
-    CSSParser(parserContext()).parseSheet(*this, sheetText);
+    CSSParser(parserContext()).parseSheet(*this, sheetText, CSSParser::RuleParsing::Deferred);
     return true;
 }
 
 bool StyleSheetContents::parseString(const String& sheetText)
 {
     CSSParser p(parserContext());
-    p.parseSheet(*this, sheetText);
+    p.parseSheet(*this, sheetText, parserContext().mode != UASheetMode ? CSSParser::RuleParsing::Deferred : CSSParser::RuleParsing::Normal);
     return true;
 }
 
@@ -473,7 +475,8 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
             return true;
         if (!rule->isGroupRule())
             continue;
-        if (traverseRulesInVector(downcast<StyleRuleGroup>(*rule).childRules(), handler))
+        auto* childRules = downcast<StyleRuleGroup>(*rule).childRulesWithoutDeferredParsing();
+        if (childRules && traverseRulesInVector(*childRules, handler))
             return true;
     }
     return false;
@@ -495,8 +498,10 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
 {
     return traverseRules([&] (const StyleRuleBase& rule) {
         switch (rule.type()) {
-        case StyleRuleType::Style:
-            return downcast<StyleRule>(rule).properties().traverseSubresources(handler);
+        case StyleRuleType::Style: {
+            auto* properties = downcast<StyleRule>(rule).propertiesWithoutDeferredParsing();
+            return properties && properties->traverseSubresources(handler);
+        }
         case StyleRuleType::FontFace:
             return downcast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::Import:

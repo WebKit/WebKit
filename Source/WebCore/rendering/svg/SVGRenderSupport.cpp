@@ -30,7 +30,6 @@
 #include "ElementAncestorIterator.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
-#include "LegacyRenderSVGTransformableContainer.h"
 #include "NodeRenderStyle.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
@@ -43,8 +42,8 @@
 #include "RenderSVGResourceMarker.h"
 #include "RenderSVGResourceMasker.h"
 #include "RenderSVGRoot.h"
-#include "RenderSVGShape.h"
 #include "RenderSVGText.h"
+#include "RenderSVGTransformableContainer.h"
 #include "RenderSVGViewportContainer.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGeometryElement.h"
@@ -127,13 +126,13 @@ bool SVGRenderSupport::checkForSVGRepaintDuringLayout(const RenderElement& rende
     // When a parent container is transformed in SVG, all children will be painted automatically
     // so we are able to skip redundant repaint checks.
     auto parent = renderer.parent();
-    return !(is<LegacyRenderSVGContainer>(parent) && downcast<LegacyRenderSVGContainer>(*parent).didTransformToRootUpdate());
+    return !(is<RenderSVGContainer>(parent) && downcast<RenderSVGContainer>(*parent).didTransformToRootUpdate());
 }
 
 // Update a bounding box taking into account the validity of the other bounding box.
 static inline void updateObjectBoundingBox(FloatRect& objectBoundingBox, bool& objectBoundingBoxValid, const RenderObject* other, FloatRect otherBoundingBox)
 {
-    bool otherValid = is<LegacyRenderSVGContainer>(*other) ? downcast<LegacyRenderSVGContainer>(*other).isObjectBoundingBoxValid() : true;
+    bool otherValid = is<RenderSVGContainer>(*other) ? downcast<RenderSVGContainer>(*other).isObjectBoundingBoxValid() : true;
     if (!otherValid)
         return;
 
@@ -224,8 +223,8 @@ static inline bool layoutSizeOfNearestViewportChanged(const RenderElement& rende
 bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
 {
     while (ancestor && !ancestor->isSVGRootOrLegacySVGRoot()) {
-        if (is<LegacyRenderSVGTransformableContainer>(*ancestor))
-            return downcast<LegacyRenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
+        if (is<RenderSVGTransformableContainer>(*ancestor))
+            return downcast<RenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
         if (is<RenderSVGViewportContainer>(*ancestor))
             return downcast<RenderSVGViewportContainer>(*ancestor).didTransformToRootUpdate();
         ancestor = ancestor->parent();
@@ -343,6 +342,26 @@ bool SVGRenderSupport::filtersForceContainerLayout(const RenderElement& renderer
     return true;
 }
 
+FloatRect SVGRenderSupport::transformReferenceBox(const RenderElement& renderer, const SVGElement& element, const RenderStyle& style)
+{
+    switch (style.transformBox()) {
+    case TransformBox::BorderBox:
+        // For SVG elements without an associated CSS layout box, the used value for border-box is stroke-box.
+    case TransformBox::StrokeBox:
+        return renderer.strokeBoundingBox();
+    case TransformBox::ContentBox:
+        // For SVG elements without an associated CSS layout box, the used value for content-box is fill-box.
+    case TransformBox::FillBox:
+        return renderer.objectBoundingBox();
+    case TransformBox::ViewBox: {
+        FloatSize viewportSize;
+        SVGLengthContext(&element).determineViewport(viewportSize);
+        return FloatRect { { }, viewportSize };
+        }
+    }
+    return { };
+}
+
 inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType boxType)
 {
     FloatRect referenceBox;
@@ -355,9 +374,9 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
         break;
     case CSSBoxType::ViewBox:
         if (renderer.element()) {
-            auto viewportSize = SVGLengthContext(downcast<SVGElement>(renderer.element())).viewportSize();
-            if (viewportSize)
-                referenceBox.setSize(*viewportSize);
+            FloatSize viewportSize;
+            SVGLengthContext(downcast<SVGElement>(renderer.element())).determineViewport(viewportSize);
+            referenceBox.setSize(viewportSize);
             break;
         }
         FALLTHROUGH;
@@ -467,10 +486,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
             if (float pathLength = downcast<SVGGeometryElement>(element)->pathLength()) {
                 if (is<LegacyRenderSVGShape>(renderer))
                     scaleFactor = downcast<LegacyRenderSVGShape>(renderer).getTotalLength() / pathLength;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-                else if (is<RenderSVGShape>(renderer))
-                    scaleFactor = downcast<RenderSVGShape>(renderer).getTotalLength() / pathLength;
-#endif
+                // FIXME: [LBSE] Upstream RenderSVGShape
             }
         }
         

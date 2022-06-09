@@ -46,20 +46,15 @@ class Logger;
 
 namespace WebCore {
 
+class FragmentedSharedBuffer;
 class CDMInstanceSession;
 struct CDMKeySystemConfiguration;
-class SharedBuffer;
 
 class CDMInstanceClient : public CanMakeWeakPtr<CDMInstanceClient> {
 public:
     virtual ~CDMInstanceClient() = default;
 
-    virtual void unrequestedInitializationDataReceived(const String&, Ref<SharedBuffer>&&) = 0;
-
-#if !RELEASE_LOG_DISABLED
-    virtual const Logger& logger() const = 0;
-    virtual const void* logIdentifier() const = 0;
-#endif
+    virtual void unrequestedInitializationDataReceived(const String&, Ref<FragmentedSharedBuffer>&&) = 0;
 };
 
 // JavaScript's handle to a CDMInstance, must be used from the
@@ -72,7 +67,7 @@ public:
     virtual void clearClient() { }
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogIdentifier(const void*) { }
+    virtual void setLogger(Logger&, const void*) { }
 #endif
 
     enum class ImplementationType {
@@ -103,7 +98,7 @@ public:
     };
 
     virtual void initializeWithConfiguration(const CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, SuccessCallback&&) = 0;
-    virtual void setServerCertificate(Ref<SharedBuffer>&&, SuccessCallback&&) = 0;
+    virtual void setServerCertificate(Ref<FragmentedSharedBuffer>&&, SuccessCallback&&) = 0;
     virtual void setStorageDirectory(const String&) = 0;
     virtual const String& keySystem() const = 0;
     virtual RefPtr<CDMInstanceSession> createSession() = 0;

@@ -56,7 +56,6 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << adjustedPointForNodeRespondingToClickEvents;
     encoder << url;
     encoder << imageURL;
-    encoder << imageMIMEType;
     encoder << title;
     encoder << idAttribute;
     encoder << bounds;
@@ -83,7 +82,6 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
 #if ENABLE(DATALIST_ELEMENT)
     encoder << preventTextInteraction;
 #endif
-    encoder << elementContainsImageOverlay;
     encoder << shouldNotUseIBeamInEditableContent;
     encoder << isImageOverlayText;
     encoder << isVerticalWritingMode;
@@ -150,9 +148,6 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.imageURL))
         return false;
 
-    if (!decoder.decode(result.imageMIMEType))
-        return false;
-
     if (!decoder.decode(result.title))
         return false;
 
@@ -216,9 +211,6 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.preventTextInteraction))
         return false;
 #endif
-
-    if (!decoder.decode(result.elementContainsImageOverlay))
-        return false;
 
     if (!decoder.decode(result.shouldNotUseIBeamInEditableContent))
         return false;

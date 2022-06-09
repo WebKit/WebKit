@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "FrameRateAligner.h"
 #include "ReducedResolutionSeconds.h"
 #include "Timer.h"
 #include <wtf/CancellableTask.h>
@@ -52,8 +51,6 @@ public:
     void updateAnimationsAndSendEvents(ReducedResolutionSeconds);
 
     std::optional<Seconds> currentTime();
-    std::optional<FramesPerSecond> maximumAnimationFrameRate() const { return m_frameRateAligner.maximumFrameRate(); }
-    std::optional<Seconds> timeUntilNextTickForAnimationsWithFrameRate(FramesPerSecond) const;
 
     WEBCORE_EXPORT void suspendAnimations();
     WEBCORE_EXPORT void resumeAnimations();
@@ -69,11 +66,9 @@ private:
     void cacheCurrentTime(ReducedResolutionSeconds);
     void maybeClearCachedCurrentTime();
 
-    HashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
     WeakHashSet<DocumentTimeline> m_timelines;
     TaskCancellationGroup m_currentTimeClearingTaskCancellationGroup;
     Document& m_document;
-    FrameRateAligner m_frameRateAligner;
     Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     bool m_isSuspended { false };
     bool m_waitingOnVMIdle { false };

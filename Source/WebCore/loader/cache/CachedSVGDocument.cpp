@@ -30,7 +30,7 @@ namespace WebCore {
 
 CachedSVGDocument::CachedSVGDocument(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar, const Settings& settings)
     : CachedResource(WTFMove(request), Type::SVGDocumentResource, sessionID, cookieJar)
-    , m_decoder(TextResourceDecoder::create("application/xml"_s))
+    , m_decoder(TextResourceDecoder::create("application/xml"))
     , m_settings(settings)
 {
 }
@@ -49,7 +49,7 @@ void CachedSVGDocument::setEncoding(const String& chs)
 
 String CachedSVGDocument::encoding() const
 {
-    return String::fromLatin1(m_decoder->encoding().name());
+    return m_decoder->encoding().name();
 }
 
 void CachedSVGDocument::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

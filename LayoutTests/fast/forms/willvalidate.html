@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ KeygenElementEnabled=true ] -->
 <html>
 <head>
 <script src="../../resources/js-test-pre.js"></script>
@@ -24,10 +24,8 @@ parent.innerHTML = '<form>'
     + '<keygen name="victim">'
     + '</form>';
 var controls = document.getElementsByName('victim');
-for (var i = 0; i < controls.length; i++) {
-    if (controls[i].localName != 'keygen')
+    for (var i = 0; i < controls.length; i++)
         shouldBe('typeof controls[i].willValidate', '"boolean"');
-}
 
 debug('');
 debug('Form association');
@@ -92,7 +90,7 @@ shouldBeFalse('document.getElementsByTagName("object")[0].willValidate');
 debug('');
 debug('Keygen element');
 parent.innerHTML = '<form><keygen></form>';
-shouldBeUndefined('document.getElementsByTagName("keygen")[0].willValidate');
+shouldBeFalse('document.getElementsByTagName("keygen")[0].willValidate');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

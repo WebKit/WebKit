@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Copyright (C) 2013 Danilo Cesar Lemes de Paula <danilo.eu@gmail.com>
 # Copyright (C) 2014 ChangSeok Oh <shivamidow@gmail.com>
 #

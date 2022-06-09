@@ -31,7 +31,6 @@
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/FetchLoader.h>
 #include <WebCore/FetchLoaderClient.h>
-#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ServiceWorkerFetch.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/SharedBuffer.h>
@@ -54,12 +53,11 @@ private:
     void didReceiveData(const WebCore::SharedBuffer&) final;
     void didReceiveFormDataAndFinish(Ref<WebCore::FormData>&&) final;
     void didFail(const WebCore::ResourceError&) final;
-    void didFinish(const WebCore::NetworkLoadMetrics&) final;
+    void didFinish() final;
     void didNotHandle() final;
     void cancel() final;
     void continueDidReceiveResponse() final;
     void convertFetchToDownload() final;
-    void setCancelledCallback(Function<void()>&&) final;
 
     void cleanup();
 
@@ -73,7 +71,7 @@ private:
         void didReceiveResponse(const WebCore::ResourceResponse&) final { }
         void didReceiveData(const WebCore::SharedBuffer& data) final { client->didReceiveBlobChunk(data); }
         void didFail(const WebCore::ResourceError& error) final { client->didFail(error); }
-        void didSucceed(const WebCore::NetworkLoadMetrics&) final { client->didFinishBlobLoading(); }
+        void didSucceed() final { client->didFinishBlobLoading(); }
 
         Ref<WebServiceWorkerFetchTaskClient> client;
         std::unique_ptr<WebCore::FetchLoader> loader;
@@ -87,10 +85,8 @@ private:
     bool m_needsContinueDidReceiveResponseMessage { false };
     bool m_waitingForContinueDidReceiveResponseMessage { false };
     std::variant<std::nullptr_t, WebCore::SharedBufferBuilder, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;
-    WebCore::NetworkLoadMetrics m_networkLoadMetrics;
     bool m_didFinish { false };
     bool m_isDownload { false };
-    Function<void()> m_cancelledCallback;
 };
 
 } // namespace WebKit

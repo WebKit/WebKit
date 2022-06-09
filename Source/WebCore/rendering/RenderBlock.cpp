@@ -28,7 +28,6 @@
 #include "DocumentInlines.h"
 #include "Editor.h"
 #include "Element.h"
-#include "ElementInlines.h"
 #include "EventRegion.h"
 #include "FloatQuad.h"
 #include "Frame.h"
@@ -92,10 +91,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBlock);
 struct SameSizeAsRenderBlock : public RenderBox {
 };
 
-static_assert(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), "RenderBlock should stay small");
+COMPILE_ASSERT(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), RenderBlock_should_stay_small);
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>> TrackedDescendantsMap;
-typedef HashMap<const RenderBox*, HashSet<const RenderBlock*>> TrackedContainerMap;
+typedef HashMap<const RenderBox*, std::unique_ptr<HashSet<const RenderBlock*>>> TrackedContainerMap;
 
 static TrackedDescendantsMap* percentHeightDescendantsMap;
 static TrackedContainerMap* percentHeightContainerMap;
@@ -113,17 +112,17 @@ static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBo
 
     bool added = descendantSet->add(&descendant).isNewEntry;
     if (!added) {
-#if ASSERT_ENABLED
-        auto it = percentHeightContainerMap->find(&descendant);
-        ASSERT(it != percentHeightContainerMap->end());
-        ASSERT(it->value.contains(&container));
-#endif
+        ASSERT(percentHeightContainerMap->get(&descendant));
+        ASSERT(percentHeightContainerMap->get(&descendant)->contains(&container));
         return;
     }
     
-    auto& containerSet = percentHeightContainerMap->add(&descendant, HashSet<const RenderBlock*>()).iterator->value;
-    ASSERT(!containerSet.contains(&container));
-    containerSet.add(&container);
+    auto& containerSet = percentHeightContainerMap->ensure(&descendant, [] {
+        return makeUnique<HashSet<const RenderBlock*>>();
+    }).iterator->value;
+
+    ASSERT(!containerSet->contains(&container));
+    containerSet->add(&container);
 }
 
 static void removeFromTrackedRendererMaps(RenderBox& descendant)
@@ -131,8 +130,11 @@ static void removeFromTrackedRendererMaps(RenderBox& descendant)
     if (!percentHeightDescendantsMap)
         return;
     
-    HashSet<const RenderBlock*> containerSet = percentHeightContainerMap->take(&descendant);
-    for (auto* container : containerSet) {
+    std::unique_ptr<HashSet<const RenderBlock*>> containerSet = percentHeightContainerMap->take(&descendant);
+    if (!containerSet)
+        return;
+    
+    for (auto* container : *containerSet) {
         // FIXME: Disabling this assert temporarily until we fix the layout
         // bugs associated with positioned objects not properly cleared from
         // their ancestor chain before being moved. See webkit bug 93766.
@@ -151,7 +153,8 @@ static void removeFromTrackedRendererMaps(RenderBox& descendant)
 
 class PositionedDescendantsMap {
 public:
-    void addDescendant(const RenderBlock& containingBlock, RenderBox& positionedDescendant)
+    enum class MoveDescendantToEnd { No, Yes };
+    void addDescendant(const RenderBlock& containingBlock, RenderBox& positionedDescendant, MoveDescendantToEnd moveDescendantToEnd)
     {
         // Protect against double insert where a descendant would end up with multiple containing blocks.
         auto* previousContainingBlock = m_containerMap.get(&positionedDescendant);
@@ -164,28 +167,8 @@ public:
             return makeUnique<TrackedRendererListHashSet>();
         }).iterator->value;
 
-        auto isNewEntry = false;
-        if (!is<RenderView>(containingBlock) || descendants->isEmpty())
-            isNewEntry = descendants->add(&positionedDescendant).isNewEntry;
-        else if (positionedDescendant.isFixedPositioned() || isInTopLayerOrBackdrop(positionedDescendant.style(), positionedDescendant.element()))
-            isNewEntry = descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry;
-        else {
-            auto ensureLayoutDepentBoxPosition = [&] {
-                // RenderView is a special containing block as it may hold both absolute and fixed positioned containing blocks.
-                // When a fixed positioned box is also a descendant of an absolute positioned box anchored to the RenderView,
-                // we have to make sure that the absolute positioned box is inserted before the fixed box to follow
-                // block layout dependency.
-                for (auto it = descendants->begin(); it != descendants->end(); ++it) {
-                    if ((*it)->isFixedPositioned()) {
-                        isNewEntry = descendants->insertBefore(it, &positionedDescendant).isNewEntry;
-                        return;
-                    }
-                }
-                isNewEntry = descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry;
-            };
-            ensureLayoutDepentBoxPosition();
-        }
-
+        bool isNewEntry = moveDescendantToEnd == MoveDescendantToEnd::Yes ? descendants->appendOrMoveToLast(&positionedDescendant).isNewEntry
+            : descendants->add(&positionedDescendant).isNewEntry;
         if (!isNewEntry) {
             ASSERT(m_containerMap.contains(&positionedDescendant));
             return;
@@ -346,10 +329,10 @@ static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock* blo
         ASSERT(it != percentHeightContainerMap->end());
         if (it == percentHeightContainerMap->end())
             continue;
-        auto& containerSet = it->value;
-        ASSERT(containerSet.contains(block));
-        containerSet.remove(block);
-        if (containerSet.isEmpty())
+        auto* containerSet = it->value.get();
+        ASSERT(containerSet->contains(block));
+        containerSet->remove(block);
+        if (containerSet->isEmpty())
             percentHeightContainerMap->remove(it);
     }
 }
@@ -393,15 +376,11 @@ void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, c
 {
     bool hadTransform = oldStyle.hasTransformRelatedProperty();
     bool willHaveTransform = newStyle.hasTransformRelatedProperty();
-    bool hadLayoutContainment = oldStyle.containsLayout();
-    bool willHaveLayoutContainment = newStyle.containsLayout();
-    if (oldStyle.position() == newStyle.position() && hadTransform == willHaveTransform && hadLayoutContainment == willHaveLayoutContainment)
+    if (oldStyle.position() == newStyle.position() && hadTransform == willHaveTransform)
         return;
 
     // We are no longer the containing block for out-of-flow descendants.
     bool outOfFlowDescendantsHaveNewContainingBlock = (hadTransform && !willHaveTransform) || (newStyle.position() == PositionType::Static && !willHaveTransform);
-    if (hadLayoutContainment != willHaveLayoutContainment)
-        outOfFlowDescendantsHaveNewContainingBlock = hadLayoutContainment && !willHaveLayoutContainment;
     if (outOfFlowDescendantsHaveNewContainingBlock) {
         // Our out-of-flow descendants will be inserted into a new containing block's positioned objects list during the next layout.
         removePositionedObjects(nullptr, NewContainingBlock);
@@ -414,8 +393,8 @@ void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, c
         // They will be inserted into our positioned objects list during layout.
         auto* containingBlock = parent();
         while (containingBlock && !is<RenderView>(*containingBlock)
-            && (containingBlock->style().position() == PositionType::Static || (containingBlock->isInline() && !containingBlock->isReplacedOrInlineBlock()))) {
-            if (containingBlock->style().position() == PositionType::Relative && containingBlock->isInline() && !containingBlock->isReplacedOrInlineBlock()) {
+            && (containingBlock->style().position() == PositionType::Static || (containingBlock->isInline() && !containingBlock->isReplaced()))) {
+            if (containingBlock->style().position() == PositionType::Relative && containingBlock->isInline() && !containingBlock->isReplaced()) {
                 containingBlock = containingBlock->containingBlock();
                 break;
             }
@@ -429,8 +408,7 @@ void RenderBlock::removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, c
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     const RenderStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    // FIXME: Should change the expression below to newStyle.display() == DisplayType::InlineBlock.
-    setReplacedOrInlineBlock(newStyle.isDisplayInlineType());
+    setReplaced(newStyle.isDisplayInlineType());
     if (oldStyle)
         removePositionedObjectsIfNeeded(*oldStyle, newStyle);
     RenderBox::styleWillChange(diff, newStyle);
@@ -453,10 +431,11 @@ static bool borderOrPaddingLogicalWidthChanged(const RenderStyle& oldStyle, cons
 
 void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
+    bool hadTransform = hasTransform();
     RenderBox::styleDidChange(diff, oldStyle);
 
-    if (oldStyle)
-        adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded(*oldStyle, style());
+    if (hadTransform != hasTransform())
+        adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded();
 
     propagateStyleToAnonymousChildren(PropagateToBlockChildrenOnly);
 
@@ -897,7 +876,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
         ListHashSet<LegacyRootInlineBox*> lineBoxes;
         for (InlineWalker walker(downcast<RenderBlockFlow>(*this)); !walker.atEnd(); walker.advance()) {
             RenderObject& renderer = *walker.current();
-            if (!renderer.isOutOfFlowPositioned() && (renderer.isReplacedOrInlineBlock() || renderer.isFloating())) {
+            if (!renderer.isOutOfFlowPositioned() && (renderer.isReplaced() || renderer.isFloating())) {
                 RenderBox& box = downcast<RenderBox>(renderer);
                 box.layoutIfNeeded();
                 if (box.inlineBoxWrapper())
@@ -1201,7 +1180,7 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
         return false;
     }
 
-    if (!child.isFloating() && child.isReplacedOrInlineBlock() && usePrintRect && child.height() <= view().printRect().height()) {
+    if (!child.isFloating() && child.isReplaced() && usePrintRect && child.height() <= view().printRect().height()) {
         // Paginate block-level replaced elements.
         if (absoluteChildY + child.height() > view().printRect().maxY()) {
             if (absoluteChildY < view().truncatedAt())
@@ -1212,7 +1191,7 @@ bool RenderBlock::paintChild(RenderBox& child, PaintInfo& paintInfo, const Layou
         }
     }
 
-    LayoutPoint childPoint = flipForWritingModeForChild(child, paintOffset);
+    LayoutPoint childPoint = flipForWritingModeForChild(&child, paintOffset);
     if (!child.hasSelfPaintingLayer() && !child.isFloating()) {
         if (paintType == PaintAsInlineBlock)
             child.paintAsInlineBlock(paintInfoForChild, childPoint);
@@ -1313,11 +1292,6 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             LOG_WITH_STREAM(EventRegions, stream << "  needs editable event region: " << (document().mayHaveEditableElements() && page().shouldBuildEditableRegion()));
         }
 #endif
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        needsTraverseDescendants |= page().shouldBuildInteractionRegions();
-#endif
-
         if (!needsTraverseDescendants)
             return;
     }
@@ -1450,6 +1424,9 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
 
 bool RenderBlock::shouldPaintSelectionGaps() const
 {
+    if (settings().selectionPaintingWithoutSelectionGapsEnabled())
+        return false;
+
     return selectionState() != HighlightState::None && style().visibility() == Visibility::Visible && isSelectionRoot();
 }
 
@@ -1810,7 +1787,8 @@ void RenderBlock::insertPositionedObject(RenderBox& positioned)
         ASSERT(posChildNeedsLayout() || view().frameView().layoutContext().isInLayout());
         setPosChildNeedsLayoutBit(true);
     }
-    positionedDescendantsMap().addDescendant(*this, positioned);
+    positionedDescendantsMap().addDescendant(*this, positioned, isRenderView() ? PositionedDescendantsMap::MoveDescendantToEnd::Yes
+        : PositionedDescendantsMap::MoveDescendantToEnd::No);
 }
 
 void RenderBlock::removePositionedObject(const RenderBox& rendererToRemove)
@@ -2120,7 +2098,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
     if (hitTestAction == HitTestChildBlockBackgrounds)
         childHitTest = HitTestChildBlockBackground;
     for (auto* child = lastChildBox(); child; child = child->previousSiblingBox()) {
-        LayoutPoint childPoint = flipForWritingModeForChild(*child, accumulatedOffset);
+        LayoutPoint childPoint = flipForWritingModeForChild(child, accumulatedOffset);
         if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest))
             return true;
     }
@@ -2198,7 +2176,7 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
     if (isTable())
         return RenderBox::positionForPoint(point, fragment);
 
-    if (isReplacedOrInlineBlock()) {
+    if (isReplaced()) {
         // FIXME: This seems wrong when the object's writing-mode doesn't match the line's writing-mode.
         LayoutUnit pointLogicalLeft = isHorizontalWritingMode() ? point.x() : point.y();
         LayoutUnit pointLogicalTop = isHorizontalWritingMode() ? point.y() : point.x();
@@ -2260,8 +2238,7 @@ void RenderBlock::offsetForContents(LayoutPoint& offset) const
 void RenderBlock::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     ASSERT(!childrenInline());
-    auto shouldIgnoreDescendantContentForLogicalWidth = shouldApplySizeOrStyleContainment({ Containment::Size, Containment::InlineSize });
-    if (!shouldIgnoreDescendantContentForLogicalWidth)
+    if (!shouldApplySizeContainment(*this))
         computeBlockPreferredLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
     maxLogicalWidth = std::max(minLogicalWidth, maxLogicalWidth);
@@ -2295,8 +2272,6 @@ void RenderBlock::computePreferredLogicalWidths()
 
 void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    ASSERT(!shouldApplyInlineSizeContainment());
-
     const RenderStyle& styleToUse = style();
     bool nowrap = styleToUse.whiteSpace() == WhiteSpace::NoWrap;
 
@@ -2454,11 +2429,16 @@ LayoutUnit RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, 
     // the base class.  If we're being queried as though we're the root line
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
-    if (isReplacedOrInlineBlock() && linePositionMode == PositionOnContainingLine)
+    if (isReplaced() && linePositionMode == PositionOnContainingLine)
         return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 
-    auto& lineStyle = firstLine ? firstLineStyle() : style();
-    return lineStyle.computedLineHeight();
+    if (firstLine && view().usesFirstLineRules()) {
+        auto& s = firstLineStyle();
+        if (&s != &style())
+            return s.computedLineHeight();
+    }
+    
+    return style().computedLineHeight();
 }
 
 LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
@@ -2467,7 +2447,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
     // the base class.  If we're being queried as though we're the root line
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
-    if (isReplacedOrInlineBlock() && linePositionMode == PositionOnContainingLine) {
+    if (isReplaced() && linePositionMode == PositionOnContainingLine) {
         // For "leaf" theme objects, let the theme decide what the baseline position is.
         // FIXME: Might be better to have a custom CSS property instead, so that if the theme
         // is turned off, checkboxes/radios will still have decent baselines.
@@ -2515,7 +2495,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
     }
 
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
-    const FontMetrics& fontMetrics = style.metricsOfPrimaryFont();
+    const FontMetrics& fontMetrics = style.fontMetrics();
     return LayoutUnit { fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2 }.toInt();
 }
 
@@ -2533,7 +2513,7 @@ LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, Layou
 
 std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 {
-    if (shouldApplyLayoutContainment())
+    if (shouldApplyLayoutContainment(*this))
         return std::nullopt;
 
     if (isWritingModeRoot() && !isRubyRun())
@@ -2551,7 +2531,7 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 
 std::optional<LayoutUnit> RenderBlock::inlineBlockBaseline(LineDirectionMode lineDirection) const
 {
-    if (shouldApplyLayoutContainment())
+    if (shouldApplyLayoutContainment(*this))
         return synthesizedBaselineFromBorderBox(*this, lineDirection) + (lineDirection == HorizontalLine ? marginBottom() : marginLeft());
 
     if (isWritingModeRoot() && !isRubyRun())
@@ -2567,7 +2547,7 @@ std::optional<LayoutUnit> RenderBlock::inlineBlockBaseline(LineDirectionMode lin
     }
 
     if (!haveNormalFlowChild && hasLineIfEmpty()) {
-        auto& fontMetrics = firstLineStyle().metricsOfPrimaryFont();
+        auto& fontMetrics = firstLineStyle().fontMetrics();
         return LayoutUnit { LayoutUnit(fontMetrics.ascent()
             + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
             + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight())).toInt() };
@@ -2587,6 +2567,27 @@ static inline bool isRenderBlockFlowOrRenderButton(RenderElement& renderElement)
     return renderElement.isRenderBlockFlow() || renderElement.isRenderButton();
 }
 
+RenderBlock* RenderBlock::firstLineBlock() const
+{
+    RenderBlock* firstLineBlock = const_cast<RenderBlock*>(this);
+    bool hasPseudo = false;
+    while (true) {
+        hasPseudo = firstLineBlock->style().hasPseudoStyle(PseudoId::FirstLine);
+        if (hasPseudo)
+            break;
+        RenderElement* parentBlock = firstLineBlock->parent();
+        if (firstLineBlock->isReplaced() || firstLineBlock->isFloating()
+            || !parentBlock || parentBlock->firstChild() != firstLineBlock || !isRenderBlockFlowOrRenderButton(*parentBlock))
+            break;
+        firstLineBlock = downcast<RenderBlock>(parentBlock);
+    } 
+    
+    if (!hasPseudo)
+        return nullptr;
+    
+    return firstLineBlock;
+}
+
 static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
 {
     RenderBlock* firstLetterBlock = start;
@@ -2598,7 +2599,7 @@ static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
             return firstLetterBlock;
 
         RenderElement* parentBlock = firstLetterBlock->parent();
-        if (firstLetterBlock->isReplacedOrInlineBlock() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
+        if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock
             || !isRenderBlockFlowOrRenderButton(*parentBlock))
             return nullptr;
         firstLetterBlock = downcast<RenderBlock>(parentBlock);
@@ -2611,6 +2612,9 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
 {
     firstLetter = nullptr;
     firstLetterContainer = nullptr;
+
+    if (!view().usesFirstLetterRules())
+        return;
 
     // Don't recur
     if (style().styleType() == PseudoId::FirstLetter)
@@ -2643,7 +2647,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
                 break;
             }
             firstLetter = current.nextSibling();
-        } else if (current.isReplacedOrInlineBlock() || is<RenderButton>(current) || is<RenderMenuList>(current))
+        } else if (current.isReplaced() || is<RenderButton>(current) || is<RenderMenuList>(current))
             break;
         else if (current.isFlexibleBoxIncludingDeprecated() || current.isRenderGrid())
             firstLetter = current.nextSibling();
@@ -3059,28 +3063,28 @@ bool RenderBlock::hasMarginAfterQuirk(const RenderBox& child) const
     return false;
 }
 
-ASCIILiteral RenderBlock::renderName() const
+const char* RenderBlock::renderName() const
 {
     if (isBody())
-        return "RenderBody"_s; // FIXME: Temporary hack until we know that the regression tests pass.
+        return "RenderBody"; // FIXME: Temporary hack until we know that the regression tests pass.
     if (isFieldset())
-        return "RenderFieldSet"_s; // FIXME: Remove eventually, but done to keep tests from breaking.
+        return "RenderFieldSet"; // FIXME: Remove eventually, but done to keep tests from breaking.
     if (isFloating())
-        return "RenderBlock (floating)"_s;
+        return "RenderBlock (floating)";
     if (isOutOfFlowPositioned())
-        return "RenderBlock (positioned)"_s;
+        return "RenderBlock (positioned)";
     if (isAnonymousBlock())
-        return "RenderBlock (anonymous)"_s;
+        return "RenderBlock (anonymous)";
     // FIXME: Temporary hack while the new generated content system is being implemented.
     if (isPseudoElement())
-        return "RenderBlock (generated)"_s;
+        return "RenderBlock (generated)";
     if (isAnonymous())
-        return "RenderBlock (generated)"_s;
+        return "RenderBlock (generated)";
     if (isRelativelyPositioned())
-        return "RenderBlock (relative positioned)"_s;
+        return "RenderBlock (relative positioned)";
     if (isStickilyPositioned())
-        return "RenderBlock (sticky positioned)"_s;
-    return "RenderBlock"_s;
+        return "RenderBlock (sticky positioned)";
+    return "RenderBlock";
 }
 
 TextRun RenderBlock::constructTextRun(StringView stringView, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)
@@ -3450,13 +3454,6 @@ LayoutUnit RenderBlock::adjustContentBoxLogicalHeightForBoxSizing(std::optional<
     return std::max(0_lu, result);
 }
 
-LayoutUnit RenderBlock::adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const
-{
-    if (style().boxSizing() == BoxSizing::BorderBox)
-        return height + borderAndPaddingLogicalHeight();
-    return height + intrinsicBorderForFieldset();
-}
-
 void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!isFieldset())
@@ -3466,7 +3463,7 @@ void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const Layo
     if (!box || !box->isExcludedFromNormalLayout() || box->hasSelfPaintingLayer())
         return;
     
-    LayoutPoint childPoint = flipForWritingModeForChild(*box, paintOffset);
+    LayoutPoint childPoint = flipForWritingModeForChild(box, paintOffset);
     box->paintAsInlineBlock(paintInfo, childPoint);
 }
 
@@ -3482,7 +3479,7 @@ bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request,
     HitTestAction childHitTest = hitTestAction;
     if (hitTestAction == HitTestChildBlockBackgrounds)
         childHitTest = HitTestChildBlockBackground;
-    LayoutPoint childPoint = flipForWritingModeForChild(*legend, accumulatedOffset);
+    LayoutPoint childPoint = flipForWritingModeForChild(legend, accumulatedOffset);
     return legend->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest);
 }
 
@@ -3507,7 +3504,7 @@ String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, Strin
     constexpr UChar discCharacterToReplace = bullet;
 #endif
 
-    return makeStringByReplacingAll(string, discCharacterToReplace, textSecurityDiscPUACodePoint);
+    return string.replace(discCharacterToReplace, textSecurityDiscPUACodePoint);
 #endif
 }
     

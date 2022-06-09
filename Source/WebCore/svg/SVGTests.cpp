@@ -118,10 +118,8 @@ bool SVGTests::isValid() const
         if (feature.isEmpty() || !supportedSVGFeatureSet.contains(feature))
             return false;
     }
-    String defaultLanguage = WTF::defaultLanguage();
-    auto genericDefaultLanguage = StringView(defaultLanguage).left(2);
     for (auto& language : m_systemLanguage->items()) {
-        if (language != genericDefaultLanguage)
+        if (language != defaultLanguage().substring(0, 2))
             return false;
     }
     for (auto& extension : m_requiredExtensions->items()) {
@@ -165,15 +163,15 @@ bool SVGTests::hasFeatureForLegacyBindings(const String& feature, const String& 
     // This is what the DOMImplementation function now does in JavaScript as is now suggested in the DOM specification.
     // The behavior implemented below is quirky, but preserves what WebKit has done for at least the last few years.
 
-    bool hasSVG10FeaturePrefix = startsWithLettersIgnoringASCIICase(feature, "org.w3c.dom.svg"_s) || startsWithLettersIgnoringASCIICase(feature, "org.w3c.svg"_s);
-    bool hasSVG11FeaturePrefix = startsWithLettersIgnoringASCIICase(feature, "http://www.w3.org/tr/svg"_s);
+    bool hasSVG10FeaturePrefix = startsWithLettersIgnoringASCIICase(feature, "org.w3c.dom.svg") || startsWithLettersIgnoringASCIICase(feature, "org.w3c.svg");
+    bool hasSVG11FeaturePrefix = startsWithLettersIgnoringASCIICase(feature, "http://www.w3.org/tr/svg");
 
     // We don't even try to handle feature names that don't look like the SVG ones, so just return true for all of those.
     if (!(hasSVG10FeaturePrefix || hasSVG11FeaturePrefix))
         return true;
 
     // If the version number matches the style of the feature name, then use the set to see if the feature is supported.
-    if (version.isEmpty() || (hasSVG10FeaturePrefix && version == "1.0"_s) || (hasSVG11FeaturePrefix && version == "1.1"_s))
+    if (version.isEmpty() || (hasSVG10FeaturePrefix && version == "1.0") || (hasSVG11FeaturePrefix && version == "1.1"))
         return supportedSVGFeatureSet.contains(feature);
 
     return false;

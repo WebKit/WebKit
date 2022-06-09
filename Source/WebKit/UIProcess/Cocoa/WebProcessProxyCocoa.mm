@@ -28,12 +28,11 @@
 
 #import "AccessibilitySupportSPI.h"
 #import "CodeSigning.h"
-#import "DefaultWebBrowserChecks.h"
 #import "HighPerformanceGPUManager.h"
 #import "Logging.h"
 #import "ObjCObjectGraph.h"
 #import "SandboxUtilities.h"
-#import "SharedBufferReference.h"
+#import "SharedBufferCopy.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
@@ -170,7 +169,7 @@ void WebProcessProxy::cacheMediaMIMETypes(const Vector<String>& types)
 
     mediaTypeCache() = types;
     for (auto& process : processPool().processes()) {
-        if (process.ptr() != this)
+        if (process != *this)
             cacheMediaMIMETypesInternal(types);
     }
 }
@@ -248,13 +247,31 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
 
     Vector<SandboxExtension::Handle> handleArray;
 #if PLATFORM(IOS_FAMILY)
-    handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.iphone.axserver-systemwide"_s, "com.apple.frontboard.systemappservices"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
+    handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.iphone.axserver-systemwide"_s, "com.apple.frontboard.systemappservices"_s }, connection() ? connection()->getAuditToken() : std::nullopt);
     ASSERT(handleArray.size() == 2);
 #endif
 
     send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(handleArray), 0);
     m_hasSentMessageToUnblockAccessibilityServer = true;
 }
+
+#if ENABLE(CFPREFS_DIRECT_MODE)
+void WebProcessProxy::unblockPreferenceServiceIfNeeded()
+{
+    if (m_hasSentMessageToUnblockPreferenceService)
+        return;
+    if (!processIdentifier())
+        return;
+    if (!canSendMessage())
+        return;
+
+    auto handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.cfprefsd.agent"_s, "com.apple.cfprefsd.daemon"_s }, connection() ? connection()->getAuditToken() : std::nullopt);
+    ASSERT(handleArray.size() == 2);
+    
+    send(Messages::WebProcess::UnblockPreferenceService(WTFMove(handleArray)), 0);
+    m_hasSentMessageToUnblockPreferenceService = true;
+}
+#endif
 
 Vector<String> WebProcessProxy::platformOverrideLanguages() const
 {
@@ -290,7 +307,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
                 return;
 
             auto registrationData = WebCore::SharedBuffer::create(registrations.get());
-            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrationData))), 0);
+            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferCopy(WTFMove(registrationData))), 0);
         });
     });
 }
@@ -316,26 +333,13 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
     // Confirm that the connection is from a WebContent process:
     auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection()->xpcConnection());
 
-    if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent"_s)) {
+    if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent")) {
         RELEASE_LOG_ERROR(Process, "Process is not an entitled WebContent process.");
         return false;
     }
 #endif
 
     return true;
-}
-
-std::optional<audit_token_t> WebProcessProxy::auditToken() const
-{
-    if (!hasConnection())
-        return std::nullopt;
-    
-    return connection()->getAuditToken();
-}
-
-SandboxExtension::Handle WebProcessProxy::fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions machBootstrapOptions) const
-{
-    return SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, auditToken(), machBootstrapOptions).value_or(SandboxExtension::Handle { });
 }
 
 }

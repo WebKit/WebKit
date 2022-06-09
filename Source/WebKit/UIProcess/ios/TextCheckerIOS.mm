@@ -31,11 +31,9 @@
 #import "TextCheckerState.h"
 #import "UIKitSPI.h"
 #import <WebCore/NotImplemented.h>
-#import <pal/spi/cocoa/FoundationSPI.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringView.h>
 
 namespace WebKit {
@@ -46,11 +44,7 @@ static TextCheckerState& mutableState()
     static NeverDestroyed state = [] {
         TextCheckerState initialState;
         initialState.isContinuousSpellCheckingEnabled = TextChecker::isContinuousSpellCheckingAllowed();
-#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
-        initialState.isGrammarCheckingEnabled = [UITextChecker respondsToSelector:@selector(grammarCheckingEnabled)] && [UITextChecker grammarCheckingEnabled];
-#else
         initialState.isGrammarCheckingEnabled = false;
-#endif
         return initialState;
     }();
     return state;
@@ -79,16 +73,9 @@ bool TextChecker::setContinuousSpellCheckingEnabled(bool enabled)
     return true;
 }
 
-void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
+void TextChecker::setGrammarCheckingEnabled(bool)
 {
-#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
-    if (state().isGrammarCheckingEnabled == isGrammarCheckingEnabled)
-        return;
-
-    mutableState().isGrammarCheckingEnabled = isGrammarCheckingEnabled;
-#else
-    UNUSED_PARAM(isGrammarCheckingEnabled);
-#endif
+    notImplemented();
 }
 
 void TextChecker::setAutomaticSpellingCorrectionEnabled(bool)
@@ -202,7 +189,7 @@ static RetainPtr<UITextChecker> textCheckerFor(SpellDocumentTag spellDocumentTag
     return addResult.iterator->value;
 }
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag spellDocumentTag, StringView text, int32_t insertionPoint, OptionSet<TextCheckingType> checkingTypes, bool /* initialCapitalizationEnabled */)
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag spellDocumentTag, StringView text, int32_t /* insertionPoint */, OptionSet<TextCheckingType> checkingTypes, bool /* initialCapitalizationEnabled */)
 {
     Vector<TextCheckingResult> results;
     if (!checkingTypes.contains(TextCheckingType::Spelling))
@@ -221,97 +208,19 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
 
     auto stringToCheck = text.createNSStringWithoutCopying();
     auto range = NSMakeRange(0, [stringToCheck length]);
+    NSUInteger offsetSoFar = 0;
+    do {
+        auto misspelledRange = [textChecker rangeOfMisspelledWordInString:stringToCheck.get() range:range startingAt:offsetSoFar wrap:NO languages:keyboardLanguages];
+        if (misspelledRange.location == NSNotFound)
+            break;
 
-#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
-    if ([textChecker respondsToSelector:@selector(checkString:range:types:languages:options:)]) {
-        NSTextCheckingTypes types = 0;
-        if (checkingTypes.contains(TextCheckingType::Spelling))
-            types |= NSTextCheckingTypeSpelling;
-        if (checkingTypes.contains(TextCheckingType::Grammar))
-            types |= NSTextCheckingTypeGrammar;
-        if (checkingTypes.contains(TextCheckingType::Correction))
-            types |= NSTextCheckingTypeCorrection;
-        NSDictionary *options = @{
-            @"InsertionPoint" : @(insertionPoint)
-        };
-        NSArray *incomingResults = [textChecker checkString:stringToCheck.get() range:range types:types languages:keyboardLanguages options:options];
-        for (NSTextCheckingResult *incomingResult in incomingResults) {
-            NSTextCheckingType resultType = [incomingResult resultType];
-            ASSERT(incomingResult.range.location != NSNotFound);
-            ASSERT(incomingResult.range.length > 0);
-            auto resultRange = incomingResult.range;
-            if (resultType == NSTextCheckingTypeSpelling && checkingTypes.contains(TextCheckingType::Spelling)) {
-                TextCheckingResult result;
-                result.type = TextCheckingType::Spelling;
-                result.range = resultRange;
-                results.append(WTFMove(result));
-            } else if (resultType == NSTextCheckingTypeGrammar && checkingTypes.contains(TextCheckingType::Grammar)) {
-                TextCheckingResult result;
-                NSArray *details = [incomingResult grammarDetails];
-                result.type = TextCheckingType::Grammar;
-                result.range = resultRange;
-                result.details.reserveInitialCapacity(details.count);
-                for (NSDictionary *incomingDetail in details) {
-                    ASSERT(incomingDetail);
-                    GrammarDetail detail;
-                    
-                    NSValue *detailRangeAsNSValue = [incomingDetail objectForKey:@"NSGrammarRange"];
-                    ASSERT(detailRangeAsNSValue);
-                    
-                    NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
-                    ASSERT(detailNSRange.location != NSNotFound);
-                    ASSERT(detailNSRange.length > 0);
-                    
-                    detail.range = detailNSRange;
-                    detail.userDescription = [incomingDetail objectForKey:@"NSGrammarUserDescription"];
-                    detail.guesses = makeVector<String>([incomingDetail objectForKey:@"NSGrammarCorrections"]);
-                    result.details.uncheckedAppend(WTFMove(detail));
-                }
-                results.append(WTFMove(result));
-            } else if (resultType == NSTextCheckingTypeCorrection && checkingTypes.contains(TextCheckingType::Correction)) {
-                TextCheckingResult result;
-                result.type = TextCheckingType::Correction;
-                result.range = resultRange;
-                result.replacement = [incomingResult replacementString];
-                if ([incomingResult respondsToSelector:@selector(detail)]) {
-                    NSDictionary *incomingDetail = [incomingResult detail];
-                    if (incomingDetail) {
-                        result.details.reserveInitialCapacity(1);
-                        GrammarDetail detail;
+        TextCheckingResult result;
+        result.type = TextCheckingType::Spelling;
+        result.range = misspelledRange;
+        results.append(WTFMove(result));
 
-                        NSValue *detailRangeAsNSValue = [incomingDetail objectForKey:@"NSGrammarRange"];
-                        ASSERT(detailRangeAsNSValue);
-
-                        NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
-                        ASSERT(detailNSRange.location != NSNotFound);
-                        ASSERT(detailNSRange.length > 0);
-
-                        detail.range = detailNSRange;
-                        detail.userDescription = [incomingDetail objectForKey:@"NSGrammarUserDescription"];
-                        detail.guesses = makeVector<String>([incomingDetail objectForKey:@"NSGrammarCorrections"]);
-                        result.details.uncheckedAppend(WTFMove(detail));
-                    }
-                }
-                results.append(WTFMove(result));
-            }
-        }
-    } else
-#endif
-    {
-        NSUInteger offsetSoFar = 0;
-        do {
-            auto misspelledRange = [textChecker rangeOfMisspelledWordInString:stringToCheck.get() range:range startingAt:offsetSoFar wrap:NO languages:keyboardLanguages];
-            if (misspelledRange.location == NSNotFound)
-                break;
-
-            TextCheckingResult result;
-            result.type = TextCheckingType::Spelling;
-            result.range = misspelledRange;
-            results.append(WTFMove(result));
-
-            offsetSoFar = misspelledRange.location + misspelledRange.length;
-        } while (offsetSoFar < [stringToCheck length]);
-    }
+        offsetSoFar = misspelledRange.location + misspelledRange.length;
+    } while (offsetSoFar < [stringToCheck length]);
     return results;
 }
 

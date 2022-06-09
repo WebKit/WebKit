@@ -66,8 +66,6 @@ TestRunner::~TestRunner()
     COMPtr<IWebViewEditing> viewEditing;
     if (FAILED(webView->QueryInterface(&viewEditing)))
         return;
-    viewEditing->setEditable(FALSE);
-
     COMPtr<IWebEditingDelegate> delegate;
     if (FAILED(viewEditing->editingDelegate(&delegate)))
         return;
@@ -1100,6 +1098,19 @@ void TestRunner::apiTestGoToCurrentBackForwardItem()
 
     BOOL success;
     webView->goToBackForwardItem(item.get(), &success);
+}
+
+void TestRunner::setWebViewEditable(bool editable)
+{
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewEditing> viewEditing;
+    if (FAILED(webView->QueryInterface(&viewEditing)))
+        return;
+
+    viewEditing->setEditable(editable);
 }
 
 void TestRunner::authenticateSession(JSStringRef, JSStringRef, JSStringRef)

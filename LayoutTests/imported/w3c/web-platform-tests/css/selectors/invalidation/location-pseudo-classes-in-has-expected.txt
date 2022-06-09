@@ -1,4 +1,0 @@
-parent color must be blue with visited link
-
-PASS CSS Selectors Invalidation: location pseudo classes in :has() argument
-

@@ -80,11 +80,11 @@ Property MathMLOperatorElement::computeDictionaryProperty()
     // We first determine the form attribute and use the default spacing and properties.
     const auto& value = attributeWithoutSynchronization(formAttr);
     bool explicitForm = true;
-    if (value == "prefix"_s)
+    if (value == "prefix")
         dictionaryProperty.form = Prefix;
-    else if (value == "infix"_s)
+    else if (value == "infix")
         dictionaryProperty.form = Infix;
-    else if (value == "postfix"_s)
+    else if (value == "postfix")
         dictionaryProperty.form = Postfix;
     else {
         // FIXME: We should use more advanced heuristics indicated in the specification to determine the operator form (https://bugs.webkit.org/show_bug.cgi?id=124829).

@@ -51,8 +51,6 @@ class BitBucket(Scm):
                 base=data['toRef']['displayId'],
                 opened=True if data.get('open') else (False if data.get('closed') else None),
                 generator=self,
-                url='{}/pull-requests/{}/overview'.format(self.repository.url, data['id']),
-                draft=False,
             )
 
             result._reviewers = []
@@ -107,10 +105,7 @@ class BitBucket(Scm):
                         continue
                     yield self.PullRequest(datum)
 
-        def create(self, head, title, body=None, commits=None, base=None, draft=None):
-            if draft:
-                sys.stderr.write('Bitbucket does not support the concept of a "draft" pull request\n')
-
+        def create(self, head, title, body=None, commits=None, base=None):
             for key, value in dict(head=head, title=title).items():
                 if not value:
                     raise ValueError("Must define '{}' when creating pull-request".format(key))
@@ -147,12 +142,9 @@ class BitBucket(Scm):
                 return None
             return self.PullRequest(response.json())
 
-        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None, draft=None):
+        def update(self, pull_request, head=None, title=None, body=None, commits=None, base=None, opened=None):
             if not isinstance(pull_request, PullRequest):
                 raise ValueError("Expected 'pull_request' to be of type '{}' not '{}'".format(PullRequest, type(pull_request)))
-
-            if draft:
-                sys.stderr.write('Bitbucket does not support the concept of a "draft" pull request\n')
 
             pr_url = 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests/{id}'.format(
                 domain=self.repository.domain,
@@ -284,9 +276,6 @@ class BitBucket(Scm):
 
         self.pull_requests = self.PRGenerator(self)
 
-    def credentials(self):
-        return None, None
-
     @property
     def is_git(self):
         return True
@@ -369,6 +358,7 @@ class BitBucket(Scm):
             return [self.default_branch]
         return sorted([details.get('displayId') for details in response if details.get('displayId')])
 
+    @property
     def tags(self):
         response = self.request('tags')
         if not response:

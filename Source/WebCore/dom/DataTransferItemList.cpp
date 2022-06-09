@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,7 +103,7 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
 
     auto& items = ensureItems();
     if (items.size() <= index)
-        return { };
+        return Exception { IndexSizeError }; // Matches Gecko. See https://github.com/whatwg/html/issues/2925
 
     // FIXME: Remove the file from the pasteboard object once we add support for it.
     Ref<DataTransferItem> removedItem = items[index].copyRef();
@@ -155,7 +155,7 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
 
 static void removeStringItemOfLowercasedType(Vector<Ref<DataTransferItem>>& items, const String& lowercasedType)
 {
-    auto index = items.findIf([lowercasedType](auto& item) {
+    auto index = items.findMatching([lowercasedType](auto& item) {
         return !item->isFile() && item->type() == lowercasedType;
     });
     if (index == notFound)

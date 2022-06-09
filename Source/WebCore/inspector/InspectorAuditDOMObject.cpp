@@ -27,10 +27,7 @@
 #include "config.h"
 #include "InspectorAuditDOMObject.h"
 
-#include "Document.h"
 #include "Node.h"
-#include "UserGestureEmulationScope.h"
-#include "VoidCallback.h"
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +39,7 @@ using namespace Inspector;
     if (!m_auditAgent.hasActiveAudit()) \
         return Exception { NotAllowedError, "Cannot be called outside of a Web Inspector Audit"_s };
 
-InspectorAuditDOMObject::InspectorAuditDOMObject(PageAuditAgent& auditAgent)
+InspectorAuditDOMObject::InspectorAuditDOMObject(InspectorAuditAgent& auditAgent)
     : m_auditAgent(auditAgent)
 {
 }
@@ -67,16 +64,6 @@ ExceptionOr<bool> InspectorAuditDOMObject::hasEventListeners(Node& node, const S
     }
 
     return false;
-}
-
-ExceptionOr<void> InspectorAuditDOMObject::simulateUserInteraction(Document& document, Ref<VoidCallback>&& callback)
-{
-    ERROR_IF_NO_ACTIVE_AUDIT();
-
-    UserGestureEmulationScope userGestureScope(m_auditAgent.inspectedPage(), true, &document);
-    callback->handleEvent();
-
-    return { };
 }
 
 } // namespace WebCore

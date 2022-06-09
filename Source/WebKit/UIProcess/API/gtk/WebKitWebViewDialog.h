@@ -41,7 +41,6 @@ struct _WebKitWebViewDialog {
     GtkEventBox parent;
 #endif
 
-    /*< private >*/
     WebKitWebViewDialogPrivate* priv;
 };
 

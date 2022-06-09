@@ -51,7 +51,6 @@ class TestUser(unittest.TestCase):
         self.assertEqual(User('Tim Contributor', 'tcontributor'), User(username='tcontributor'))
         self.assertEqual(User('Tim Contributor', emails=['tcontributor@webkit.org']), User('Tim Contributor'))
         self.assertNotEqual(User('Tim Contributor', 'tcontributor'), User('Tim Contributor'))
-        self.assertNotEqual(User('Tim Contributor'), None)
 
     def test_json(self):
         self.assertEqual(

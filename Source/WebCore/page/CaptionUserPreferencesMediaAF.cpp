@@ -30,7 +30,6 @@
 
 #include "AudioTrackList.h"
 #include "ColorSerialization.h"
-#include "CommonAtomStrings.h"
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
 #include "LocalizedStrings.h"
@@ -478,7 +477,7 @@ String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
         appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleDropShadow.get(), " black"), important);
 
     if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow || textEdgeStyle == kMACaptionAppearanceTextEdgeStyleUniform) {
-        appendCSS(builder, CSSPropertyStrokeColor, "black"_s, important);
+        appendCSS(builder, CSSPropertyStrokeColor, "black", important);
         appendCSS(builder, CSSPropertyPaintOrder, getValueName(CSSValueStroke), important);
         appendCSS(builder, CSSPropertyStrokeLinejoin, getValueName(CSSValueRound), important);
         appendCSS(builder, CSSPropertyStrokeLinecap, getValueName(CSSValueRound), important);
@@ -617,9 +616,9 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() co
         return CaptionUserPreferences::preferredAudioCharacteristics();
 
     Vector<String> userPreferredAudioCharacteristics;
-    userPreferredAudioCharacteristics.reserveInitialCapacity(characteristicCount);
+    userPreferredAudioCharacteristics.reserveCapacity(characteristicCount);
     for (CFIndex i = 0; i < characteristicCount; i++)
-        userPreferredAudioCharacteristics.uncheckedAppend(static_cast<CFStringRef>(CFArrayGetValueAtIndex(characteristics.get(), i)));
+        userPreferredAudioCharacteristics.append(static_cast<CFStringRef>(CFArrayGetValueAtIndex(characteristics.get(), i)));
 
     return userPreferredAudioCharacteristics;
 }
@@ -659,12 +658,11 @@ static String languageIdentifier(const String& languageCode)
     if (languageCode.isEmpty())
         return languageCode;
 
-    String lowercaseLanguageCode;
+    String lowercaseLanguageCode = languageCode.convertToASCIILowercase();
+
     // Need 2U here to disambiguate String::operator[] from operator(NSString*, int)[] in a production build.
-    if (languageCode.length() >= 3 && (languageCode[2U] == '_' || languageCode[2U] == '-'))
-        lowercaseLanguageCode = StringView(languageCode).left(2).convertToASCIILowercase();
-    else
-        lowercaseLanguageCode = languageCode.convertToASCIILowercase();
+    if (lowercaseLanguageCode.length() >= 3 && (lowercaseLanguageCode[2U] == '_' || lowercaseLanguageCode[2U] == '-'))
+        lowercaseLanguageCode.truncate(2);
 
     return lowercaseLanguageCode;
 }
@@ -732,7 +730,7 @@ static String addAudioTrackKindDisplayNameIfNeeded(const AudioTrack& track, cons
     if ((track.kind() == AudioTrack::descriptionKeyword() || track.kind() == AudioTrack::mainDescKeyword()) && !text.contains(audioTrackKindDescriptionsDisplayName()))
         return addAudioTrackKindDescriptionsSuffix(text);
 
-    if (track.kind() == commentaryAtom() && !text.contains(audioTrackKindCommentaryDisplayName()))
+    if (track.kind() == AudioTrack::commentaryKeyword() && !text.contains(audioTrackKindCommentaryDisplayName()))
         return addAudioTrackKindCommentarySuffix(text);
 
     return text;

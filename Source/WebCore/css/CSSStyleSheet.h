@@ -21,7 +21,6 @@
 #pragma once
 
 #include "CSSRuleList.h"
-#include "CommonAtomStrings.h"
 #include "ExceptionOr.h"
 #include "StyleSheet.h"
 #include <memory>
@@ -140,7 +139,7 @@ private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, Node& ownerNode, const TextPosition& startPosition, bool isInlineStylesheet, const std::optional<bool>&);
 
     bool isCSSStyleSheet() const final { return true; }
-    String type() const final { return cssContentTypeAtom(); }
+    String type() const final { return "text/css"_s; }
 
     Ref<StyleSheetContents> m_contents;
     bool m_isInlineStylesheet { false };

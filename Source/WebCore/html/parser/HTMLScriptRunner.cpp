@@ -32,7 +32,6 @@
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "HTMLInputStream.h"
 #include "HTMLNames.h"
 #include "HTMLScriptRunnerHost.h"

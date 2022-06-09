@@ -27,8 +27,9 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledBySetting=PushAPIEnabled,
+    EnabledAtRuntime=PushAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
+    ImplementationLacksVTable,
     SecureContext,
     Exposed=(Window,Worker),
 ] interface PushSubscription {
@@ -36,7 +37,7 @@
     readonly attribute EpochTimeStamp? expirationTime;
     [SameObject] readonly attribute PushSubscriptionOptions options;
     ArrayBuffer? getKey(PushEncryptionKeyName name);
-    [CallWith=CurrentScriptExecutionContext] Promise<boolean> unsubscribe();
+    [CallWith=ScriptExecutionContext] Promise<boolean> unsubscribe();
 
     PushSubscriptionJSON toJSON();
 };

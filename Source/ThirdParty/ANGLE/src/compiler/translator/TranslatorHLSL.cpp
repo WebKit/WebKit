@@ -12,8 +12,6 @@
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
 #include "compiler/translator/tree_ops/d3d/AddDefaultReturnStatements.h"
-#include "compiler/translator/tree_ops/d3d/AggregateAssignArraysInSSBOs.h"
-#include "compiler/translator/tree_ops/d3d/AggregateAssignStructsInSSBOs.h"
 #include "compiler/translator/tree_ops/d3d/ArrayReturnValueToOutParameter.h"
 #include "compiler/translator/tree_ops/d3d/BreakVariableAliasingInInnerLoops.h"
 #include "compiler/translator/tree_ops/d3d/ExpandIntegerPowExpressions.h"
@@ -98,24 +96,6 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
     if (!SeparateArrayConstructorStatements(this, root))
     {
         return false;
-    }
-
-    if (getShaderVersion() >= 310)
-    {
-        // Do element-by-element assignments of arrays in SSBOs. This allows the D3D backend to use
-        // RWByteAddressBuffer.Load() and .Store(), which only operate on values up to 16 bytes in
-        // size. Note that this must be done before SeparateExpressionsReturningArrays.
-        if (!sh::AggregateAssignArraysInSSBOs(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-        // Do field-by-field assignment of structs in SSBOs. This allows the D3D backend to use
-        // RWByteAddressBuffer.Load() and .Store(), which only operate on values up to 16 bytes in
-        // size.
-        if (!sh::AggregateAssignStructsInSSBOs(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
     }
 
     if (!SeparateExpressionsReturningArrays(this, root, &getSymbolTable()))

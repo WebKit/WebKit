@@ -28,7 +28,6 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-#include "AttachmentElementClient.h"
 #include "DOMURL.h"
 #include "Document.h"
 #include "Editor.h"
@@ -39,16 +38,11 @@
 #include "HTMLNames.h"
 #include "MIMETypeRegistry.h"
 #include "RenderAttachment.h"
-#include "ShadowRoot.h"
 #include "SharedBuffer.h"
 #include <pal/FileSizeFormatter.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/URLParser.h>
-
-#if ENABLE(SERVICE_CONTROLS)
-#include "ImageControlsMac.h"
-#endif
 
 #if PLATFORM(COCOA)
 #include "UTIUtilities.h"
@@ -87,7 +81,7 @@ const String& HTMLAttachmentElement::getAttachmentIdentifier(HTMLImageElement& i
     auto attachment = create(HTMLNames::attachmentTag, document);
     auto& identifier = attachment->ensureUniqueIdentifier();
 
-    document.registerAttachmentIdentifier(identifier, image);
+    document.registerAttachmentIdentifier(identifier);
     image.setAttachmentElement(WTFMove(attachment));
 
     return identifier;
@@ -122,9 +116,9 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
 
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
-            setAttributeWithoutSynchronization(HTMLNames::titleAttr, AtomString { m_file->name() });
+            setAttributeWithoutSynchronization(HTMLNames::titleAttr, m_file->name());
             setAttributeWithoutSynchronization(HTMLNames::subtitleAttr, PAL::fileSizeDescription(m_file->size()));
-            setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { m_file->type() });
+            setAttributeWithoutSynchronization(HTMLNames::typeAttr, m_file->type());
         } else {
             removeAttribute(HTMLNames::titleAttr);
             removeAttribute(HTMLNames::subtitleAttr);
@@ -154,7 +148,7 @@ void HTMLAttachmentElement::removedFromAncestor(RemovalType type, ContainerNode&
 const String& HTMLAttachmentElement::ensureUniqueIdentifier()
 {
     if (m_uniqueIdentifier.isEmpty())
-        m_uniqueIdentifier = createVersion4UUIDString();
+        m_uniqueIdentifier = createCanonicalUUIDString();
     return m_uniqueIdentifier;
 }
 
@@ -174,13 +168,6 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
     }
 
     HTMLElement::parseAttribute(name, value);
-
-#if ENABLE(SERVICE_CONTROLS)
-    if (name == typeAttr && attachmentType() == "application/pdf"_s) {
-        setImageMenuEnabled(true);
-        ImageControlsMac::updateImageControls(*this);
-    }
-#endif
 }
 
 String HTMLAttachmentElement::attachmentTitle() const
@@ -217,7 +204,7 @@ String HTMLAttachmentElement::attachmentPath() const
     return attributeWithoutSynchronization(webkitattachmentpathAttr);
 }
 
-void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, const AtomString& newContentType, const AtomString& newFilename)
+void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSize, const String& newContentType, const String& newFilename)
 {
     if (!newFilename.isNull()) {
         if (auto enclosingImage = enclosingImageElement())
@@ -266,40 +253,16 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
     if (!mimeTypeIsSuitableForInlineImageAttachment(mimeType))
         return;
 
-    enclosingImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)) });
+    enclosingImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)));
 }
 
 void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)
 {
     m_thumbnail = thumbnail;
-    removeAttribute(HTMLNames::progressAttr);
+    
     if (auto* renderer = this->renderer())
         renderer->invalidate();
 }
-
-void HTMLAttachmentElement::updateIcon(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
-{
-    m_icon = icon;
-    m_iconSize = iconSize;
-
-    if (auto* renderer = this->renderer())
-        renderer->invalidate();
-}
-
-void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size) const
-{
-    if (!document().page() || !document().page()->attachmentElementClient())
-        return;
-
-    document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), size);
-}
-
-#if ENABLE(SERVICE_CONTROLS)
-bool HTMLAttachmentElement::childShouldCreateRenderer(const Node& child) const
-{
-    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
-}
-#endif
 
 } // namespace WebCore
 

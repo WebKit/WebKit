@@ -60,7 +60,7 @@ void removeValuesEndingWith(const char* environmentVariable, const char* searchV
     if (!before)
         return;
 
-    auto after = stripEntriesEndingWith(StringView::fromLatin1(before), StringView::fromLatin1(searchValue));
+    auto after = stripEntriesEndingWith(before, searchValue);
     if (after.isEmpty()) {
         unsetenv(environmentVariable);
         return;

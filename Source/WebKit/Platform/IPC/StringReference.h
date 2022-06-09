@@ -29,7 +29,6 @@
 #include <string.h>
 #include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
-#include <wtf/Hasher.h>
 
 namespace IPC {
 
@@ -79,11 +78,6 @@ private:
     const char* m_data;
     size_t m_size;
 };
-
-inline void add(Hasher& hasher, const StringReference& string)
-{
-    add(hasher, Span { string.data(), string.size() });
-}
 
 inline bool operator==(const StringReference& a, const StringReference& b)
 {

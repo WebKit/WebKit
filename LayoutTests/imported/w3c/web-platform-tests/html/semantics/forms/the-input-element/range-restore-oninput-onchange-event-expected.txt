@@ -1,4 +1,0 @@
-
-PASS Verifies that form restoration does not fire input or change events for <input type=range>.
-PASS Verifies that form restoration does not fire input or change events for <input type=text>.
-

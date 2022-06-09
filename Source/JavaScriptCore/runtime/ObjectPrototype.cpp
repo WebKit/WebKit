@@ -46,7 +46,7 @@ static JSC_DECLARE_HOST_FUNCTION(objectProtoFuncToLocaleString);
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ObjectPrototype);
 
-const ClassInfo ObjectPrototype::s_info = { "Object"_s, &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjectPrototype) };
+const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjectPrototype) };
 
 ObjectPrototype::ObjectPrototype(VM& vm, Structure* stucture)
     : JSNonFinalObject(vm, stucture)
@@ -56,7 +56,7 @@ ObjectPrototype::ObjectPrototype(VM& vm, Structure* stucture)
 void ObjectPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     
     putDirectWithoutTransition(vm, vm.propertyNames->toString, globalObject->objectProtoToStringFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toLocaleString, objectProtoFuncToLocaleString, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
@@ -85,7 +85,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncValueOf, (JSGlobalObject* globalObject, 
     JSObject* valueObj = thisValue.toObject(globalObject);
     if (UNLIKELY(!valueObj))
         return encodedJSValue();
-    Integrity::auditStructureID(valueObj->structureID());
+    Integrity::auditStructureID(globalObject->vm(), valueObj->structureID());
     return JSValue::encode(valueObj);
 }
 
@@ -93,7 +93,7 @@ bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisO
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Structure* structure = thisObject->structure();
+    Structure* structure = thisObject->structure(vm);
     HasOwnPropertyCache* hasOwnPropertyCache = vm.ensureHasOwnPropertyCache();
     if (std::optional<bool> result = hasOwnPropertyCache->get(structure, propertyName)) {
         ASSERT(*result == thisObject->hasOwnProperty(globalObject, propertyName) || vm.hasPendingTerminationException());
@@ -105,7 +105,7 @@ bool objectPrototypeHasOwnProperty(JSGlobalObject* globalObject, JSObject* thisO
     bool result = thisObject->hasOwnProperty(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, false);
 
-    hasOwnPropertyCache->tryAdd(slot, thisObject, propertyName, result);
+    hasOwnPropertyCache->tryAdd(vm, slot, thisObject, propertyName, result);
     return result;
 }
 
@@ -158,7 +158,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncDefineGetter, (JSGlobalObject* globalObj
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue get = callFrame->argument(1);
-    if (!get.isCallable())
+    if (!get.isCallable(vm))
         return throwVMTypeError(globalObject, scope, "invalid getter usage"_s);
 
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
@@ -171,7 +171,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncDefineGetter, (JSGlobalObject* globalObj
 
     bool shouldThrow = true;
     scope.release();
-    thisObject->methodTable()->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
+    thisObject->methodTable(vm)->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
 }
@@ -185,7 +185,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncDefineSetter, (JSGlobalObject* globalObj
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue set = callFrame->argument(1);
-    if (!set.isCallable())
+    if (!set.isCallable(vm))
         return throwVMTypeError(globalObject, scope, "invalid setter usage"_s);
 
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
@@ -198,7 +198,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncDefineSetter, (JSGlobalObject* globalObj
 
     bool shouldThrow = true;
     scope.release();
-    thisObject->methodTable()->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
+    thisObject->methodTable(vm)->defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
 
     return JSValue::encode(jsUndefined());
 }
@@ -303,7 +303,7 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncToLocaleString, (JSGlobalObject* globalO
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // If IsCallable(toString) is false, throw a TypeError exception.
-    auto callData = JSC::getCallData(toString);
+    auto callData = getCallData(vm, toString);
     if (callData.type == CallData::Type::None)
         return throwVMTypeError(globalObject, scope);
 
@@ -317,25 +317,25 @@ inline static bool isPokerBros()
     auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
     return bundleID
         && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
-        && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoPokerBrosBuiltInTagQuirk);
+        && !linkedOnOrAfter(SDKVersion::FirstWithoutPokerBrosBuiltInTagQuirk);
 }
 #endif
 
-inline ASCIILiteral inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
+inline const char* inferBuiltinTag(JSGlobalObject* globalObject, JSObject* object)
 {
     VM& vm = globalObject->vm();
 #if PLATFORM(IOS)
     static bool needsOldBuiltinTag = isPokerBros();
     if (UNLIKELY(needsOldBuiltinTag))
-        return object->className();
+        return object->className(vm);
 #endif
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool objectIsArray = isArray(globalObject, object);
-    RETURN_IF_EXCEPTION(scope, { });
+    RETURN_IF_EXCEPTION(scope, nullptr);
     if (objectIsArray)
-        return "Array"_s;
-    if (object->isCallable())
-        return "Function"_s;
+        return "Array";
+    if (object->isCallable(vm))
+        return "Function";
     JSType type = object->type();
     if (TypeInfo::isArgumentsType(type)
         || type == ErrorInstanceType
@@ -345,8 +345,8 @@ inline ASCIILiteral inferBuiltinTag(JSGlobalObject* globalObject, JSObject* obje
         || type == DerivedStringObjectType
         || type == JSDateType
         || type == RegExpObjectType)
-        return object->className();
-    return "Object"_s;
+        return object->className(vm);
+    return "Object";
 }
 
 JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValue)
@@ -361,12 +361,12 @@ JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValu
     JSObject* thisObject = thisValue.toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    Integrity::auditStructureID(thisObject->structureID());
-    auto result = thisObject->structure()->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag);
+    Integrity::auditStructureID(vm, thisObject->structureID());
+    auto result = thisObject->structure(vm)->cachedSpecialProperty(CachedSpecialPropertyKey::ToStringTag);
     if (result)
         return asString(result);
 
-    ASCIILiteral tag = inferBuiltinTag(globalObject, thisObject);
+    const char* tag = inferBuiltinTag(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
     JSString* jsTag = nullptr;
 
@@ -381,11 +381,11 @@ JSString* objectPrototypeToString(JSGlobalObject* globalObject, JSValue thisValu
     }
 
     if (!jsTag)
-        jsTag = jsString(vm, AtomStringImpl::add(tag));
+        jsTag = jsString(vm, AtomStringImpl::add(tag).releaseNonNull());
 
     JSString* jsResult = jsString(globalObject, vm.smallStrings.objectStringStart(), jsTag, vm.smallStrings.singleCharacterString(']'));
     RETURN_IF_EXCEPTION(scope, nullptr);
-    thisObject->structure()->cacheSpecialProperty(globalObject, vm, jsResult, CachedSpecialPropertyKey::ToStringTag, slot);
+    thisObject->structure(vm)->cacheSpecialProperty(globalObject, vm, jsResult, CachedSpecialPropertyKey::ToStringTag, slot);
     return jsResult;
 }
 

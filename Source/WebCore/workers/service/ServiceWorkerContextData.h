@@ -35,7 +35,7 @@
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
 #include "WorkerType.h"
-#include <wtf/RobinHoodHashMap.h>
+#include <wtf/HashMap.h>
 #include <wtf/URLHash.h>
 
 #if ENABLE(SERVICE_WORKER)
@@ -79,8 +79,7 @@ struct ServiceWorkerContextData {
             }};
         }
 
-        ImportedScript isolatedCopy() const & { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
-        ImportedScript isolatedCopy() && { return { WTFMove(script).isolatedCopy(), WTFMove(responseURL).isolatedCopy(), WTFMove(mimeType).isolatedCopy() }; }
+        ImportedScript isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
     };
 
     std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
@@ -95,15 +94,15 @@ struct ServiceWorkerContextData {
     WorkerType workerType;
     bool loadedFromDisk;
     std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
-    MemoryCompactRobinHoodHashMap<URL, ImportedScript> scriptResourceMap;
+    HashMap<URL, ImportedScript> scriptResourceMap;
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
     NavigationPreloadState navigationPreloadState;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
 
-    WEBCORE_EXPORT ServiceWorkerContextData isolatedCopy() const &;
-    WEBCORE_EXPORT ServiceWorkerContextData isolatedCopy() &&;
+    ServiceWorkerContextData isolatedCopy() const &;
+    ServiceWorkerContextData isolatedCopy() &&;
 };
 
 template<class Encoder>
@@ -164,7 +163,7 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!decoder.decode(lastNavigationWasAppInitiated))
         return std::nullopt;
 
-    MemoryCompactRobinHoodHashMap<URL, ImportedScript> scriptResourceMap;
+    HashMap<URL, ImportedScript> scriptResourceMap;
     if (!decoder.decode(scriptResourceMap))
         return std::nullopt;
 

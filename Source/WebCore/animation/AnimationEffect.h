@@ -63,6 +63,7 @@ public:
     ExceptionOr<void> updateTiming(std::optional<OptionalEffectTiming>);
 
     virtual void animationDidTick() { };
+    virtual void animationDidPlay() { };
     virtual void animationDidChangeTimingProperties() { };
     virtual void animationWasCanceled() { };
     virtual void animationSuspensionStateDidChange(bool) { };

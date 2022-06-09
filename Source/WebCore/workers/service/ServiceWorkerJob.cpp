@@ -37,7 +37,6 @@
 #include "SecurityOrigin.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
-#include "WorkerFetchResult.h"
 #include "WorkerRunLoop.h"
 
 namespace WebCore {
@@ -95,100 +94,25 @@ void ServiceWorkerJob::startScriptFetch(FetchOptions::Cache cachePolicy)
     m_client.startScriptFetchForJob(*this, cachePolicy);
 }
 
-static ResourceRequest scriptResourceRequest(ScriptExecutionContext& context, const URL& url)
-{
-    ResourceRequest request { url };
-    request.setInitiatorIdentifier(context.resourceRequestIdentifier());
-    return request;
-}
-
-static FetchOptions scriptFetchOptions(FetchOptions::Cache cachePolicy, FetchOptions::Destination destination)
-{
-    FetchOptions options;
-    options.mode = FetchOptions::Mode::SameOrigin;
-    options.cache = cachePolicy;
-    options.redirect = FetchOptions::Redirect::Error;
-    options.destination = destination;
-    options.credentials = FetchOptions::Credentials::SameOrigin;
-    return options;
-}
-
-ServiceWorkerJob::ImportedScriptsLoader::ImportedScriptsLoader(RefreshImportedScriptsCallback&& callback)
-    : m_callback(WTFMove(callback))
-{
-}
-
-ServiceWorkerJob::ImportedScriptsLoader::~ImportedScriptsLoader()
-{
-    if (m_callback)
-        m_callback({ });
-}
-
-void ServiceWorkerJob::ImportedScriptsLoader::load(ScriptExecutionContext& context, const Vector<URL>& urls, FetchOptions::Cache cachePolicy)
-{
-    m_loaders.reserveCapacity(urls.size());
-    for (auto& url : urls) {
-        auto scriptLoader = WorkerScriptLoader::create();
-        scriptLoader->loadAsynchronously(context, scriptResourceRequest(context, url), WorkerScriptLoader::Source::ClassicWorkerScript, scriptFetchOptions(cachePolicy, FetchOptions::Destination::Script), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
-        if (scriptLoader->failed())
-            continue;
-        m_loaders.uncheckedAppend(WTFMove(scriptLoader));
-    }
-    m_remainingLoads = m_loaders.size();
-}
-
-void ServiceWorkerJob::ImportedScriptsLoader::cancel()
-{
-    auto loaders = WTFMove(m_loaders);
-    for (auto loader : loaders)
-        loader->cancel();
-}
-
-void ServiceWorkerJob::ImportedScriptsLoader::notifyFinished()
-{
-    if (--m_remainingLoads)
-        return;
-
-    Vector<std::pair<URL, ScriptBuffer>> results;
-    results.reserveInitialCapacity(m_loaders.size());
-
-    auto loaders = WTFMove(m_loaders);
-    for (auto loader : loaders) {
-        if (!loader->failed())
-            results.uncheckedAppend(std::make_pair(loader->url(), loader->script()));
-    }
-
-    m_callback(WTFMove(results));
-}
-
-
-void ServiceWorkerJob::refreshImportedScripts(const Vector<URL>& urls, FetchOptions::Cache cachePolicy, RefreshImportedScriptsCallback&& callback)
-{
-    ASSERT(m_creationThread.ptr() == &Thread::current());
-    ASSERT(!m_completed);
-
-    auto* context = m_client.context();
-    if (!context) {
-        callback({ });
-        return;
-    }
-
-    m_importedScriptsLoader = makeUnique<ImportedScriptsLoader>(WTFMove(callback));
-    m_importedScriptsLoader->load(*context, urls, cachePolicy);
-}
-
 void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context, FetchOptions::Cache cachePolicy)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(!m_completed);
 
-    auto source = m_jobData.workerType == WorkerType::Module ? WorkerScriptLoader::Source::ModuleScript : WorkerScriptLoader::Source::ClassicWorkerScript;
-
+    // FIXME: WorkerScriptLoader is the wrong loader class to use here, but there's nothing else better right now.
     m_scriptLoader = WorkerScriptLoader::create();
-    auto request = scriptResourceRequest(context, m_jobData.scriptURL);
-    request.addHTTPHeaderField(HTTPHeaderName::ServiceWorker, "script"_s);
 
-    m_scriptLoader->loadAsynchronously(context, WTFMove(request), source, scriptFetchOptions(cachePolicy, FetchOptions::Destination::Serviceworker), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
+    ResourceRequest request { m_jobData.scriptURL };
+    request.setInitiatorIdentifier(context.resourceRequestIdentifier());
+    request.addHTTPHeaderField("Service-Worker"_s, "script"_s);
+
+    FetchOptions options;
+    options.mode = FetchOptions::Mode::SameOrigin;
+    options.cache = cachePolicy;
+    options.redirect = FetchOptions::Redirect::Error;
+    options.destination = FetchOptions::Destination::Serviceworker;
+    options.credentials = FetchOptions::Credentials::SameOrigin;
+    m_scriptLoader->loadAsynchronously(context, WTFMove(request), WTFMove(options), ContentSecurityPolicyEnforcement::DoNotEnforce, ServiceWorkersMode::None, *this, WorkerRunLoop::defaultMode());
 }
 
 ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorkerJobData& jobData, const ResourceResponse& response)
@@ -202,7 +126,7 @@ ResourceError ServiceWorkerJob::validateServiceWorkerResponse(const ServiceWorke
     if (serviceWorkerAllowed.isNull()) {
         auto path = jobData.scriptURL.path();
         // Last part of the path is the script's filename.
-        maxScopeString = path.left(path.reverseFind('/') + 1).toString();
+        maxScopeString = path.substring(0, path.reverseFind('/') + 1).toString();
     } else {
         auto maxScope = URL(jobData.scriptURL, serviceWorkerAllowed);
         if (SecurityOrigin::create(maxScope)->isSameOriginAs(SecurityOrigin::create(jobData.scriptURL)))
@@ -241,7 +165,7 @@ void ServiceWorkerJob::notifyFinished()
     auto scriptLoader = WTFMove(m_scriptLoader);
 
     if (!scriptLoader->failed()) {
-        m_client.jobFinishedLoadingScript(*this, scriptLoader->fetchResult());
+        m_client.jobFinishedLoadingScript(*this, scriptLoader->script(), scriptLoader->certificateInfo(), scriptLoader->contentSecurityPolicy(), scriptLoader->crossOriginEmbedderPolicy(), scriptLoader->referrerPolicy());
         return;
     }
 
@@ -253,14 +177,12 @@ void ServiceWorkerJob::notifyFinished()
 
 bool ServiceWorkerJob::cancelPendingLoad()
 {
-    if (auto importedScriptsLoader = WTFMove(m_importedScriptsLoader))
-        importedScriptsLoader->cancel();
+    if (!m_scriptLoader)
+        return false;
 
-    if (auto loader = WTFMove(m_scriptLoader)) {
-        m_scriptLoader->cancel();
-        return true;
-    }
-    return false;
+    m_scriptLoader->cancel();
+    m_scriptLoader = nullptr;
+    return true;
 }
 
 } // namespace WebCore

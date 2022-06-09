@@ -1,7 +1,3 @@
-list(APPEND WTF_PUBLIC_HEADERS
-    unix/UnixFileDescriptor.h
-)
-
 list(APPEND WTF_SOURCES
     generic/MainThreadGeneric.cpp
     generic/MemoryFootprintGeneric.cpp
@@ -28,7 +24,7 @@ list(APPEND WTF_LIBRARIES
     Threads::Threads
 )
 
-PLAYSTATION_COPY_MODULES(WTF
-    TARGETS
-        ICU
+PLAYSTATION_COPY_REQUIREMENTS(WTF_CopySharedLibs
+    FILES
+        ${ICU_LIBRARIES}
 )

@@ -51,12 +51,5 @@ void SourceProvider::getID()
     }
 }
 
-#if ENABLE(WEBASSEMBLY)
-BaseWebAssemblySourceProvider::BaseWebAssemblySourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL)
-    : SourceProvider(sourceOrigin, WTFMove(sourceURL), TextPosition(), SourceProviderSourceType::WebAssembly)
-{
-}
-#endif
-
 } // namespace JSC
 

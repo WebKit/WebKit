@@ -62,47 +62,27 @@ JSC::JSGlobalObject* ScriptArguments::globalObject() const
     return m_globalObject.get();
 }
 
-std::optional<String> ScriptArguments::getArgumentAtIndexAsString(size_t argumentIndex) const
+bool ScriptArguments::getFirstArgumentAsString(String& result) const
 {
-    if (argumentIndex >= argumentCount())
-        return std::nullopt;
+    if (!argumentCount())
+        return false;
 
     auto* globalObject = this->globalObject();
     if (!globalObject) {
         ASSERT_NOT_REACHED();
-        return std::nullopt;
+        return false;
     }
 
-    auto value = argumentAt(argumentIndex);
-    if (JSC::jsDynamicCast<JSC::ProxyObject*>(value))
-        return "[object Proxy]"_s;
+    auto value = argumentAt(0);
+    if (JSC::jsDynamicCast<JSC::ProxyObject*>(globalObject->vm(), value)) {
+        result = "[object Proxy]"_s;
+        return true;
+    }
 
-    String result;
     auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
     result = value.toWTFString(globalObject);
     scope.clearException();
-    return result;
-}
-
-bool ScriptArguments::getFirstArgumentAsString(String& result) const
-{
-    auto argument = getArgumentAtIndexAsString(0);
-    if (!argument)
-        return false;
-
-    result = *argument;
     return true;
-}
-
-Vector<String> ScriptArguments::getArgumentsAsStrings() const
-{
-    Vector<String> result;
-    result.reserveInitialCapacity(argumentCount());
-    for (size_t i = 0; i < argumentCount(); ++i) {
-        if (auto currentArgumentString = getArgumentAtIndexAsString(i))
-            result.uncheckedAppend(WTFMove(*currentArgumentString));
-    }
-    return result;
 }
 
 bool ScriptArguments::isEqual(const ScriptArguments& other) const

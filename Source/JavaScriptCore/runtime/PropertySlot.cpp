@@ -36,10 +36,10 @@ JSValue PropertySlot::functionGetter(JSGlobalObject* globalObject) const
 JSValue PropertySlot::customGetter(VM& vm, PropertyName propertyName) const
 {
     ASSERT(m_slotBase);
-    JSGlobalObject* globalObject = m_slotBase->globalObject();
+    JSGlobalObject* globalObject = m_slotBase->globalObject(vm);
     JSValue thisValue = m_attributes & PropertyAttribute::CustomAccessor ? m_thisValue : JSValue(slotBase());
     if (auto domAttribute = this->domAttribute()) {
-        if (!thisValue.inherits(domAttribute->classInfo)) {
+        if (!thisValue.inherits(vm, domAttribute->classInfo)) {
             auto scope = DECLARE_THROW_SCOPE(vm);
             return throwDOMAttributeGetterTypeError(globalObject, scope, domAttribute->classInfo, propertyName);
         }

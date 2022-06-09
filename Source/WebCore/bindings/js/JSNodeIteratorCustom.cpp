@@ -21,7 +21,6 @@
 #include "JSNodeIterator.h"
 
 #include "Node.h"
-#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/SlotVisitorInlines.h>
 
 namespace WebCore {
@@ -29,8 +28,8 @@ namespace WebCore {
 template<typename Visitor>
 void JSNodeIterator::visitAdditionalChildren(Visitor& visitor)
 {
-    if (auto* filter = wrapped().filter())
-        addWebCoreOpaqueRoot(visitor, *filter);
+    if (NodeFilter* filter = wrapped().filter())
+        visitor.addOpaqueRoot(filter);
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSNodeIterator);

@@ -50,13 +50,13 @@ WebApplicationCache::WebApplicationCache()
     : m_refCount(0)
 {
     gClassCount++;
-    gClassNameCount().add("WebApplicationCache"_s);
+    gClassNameCount().add("WebApplicationCache");
 }
 
 WebApplicationCache::~WebApplicationCache()
 {
     gClassCount--;
-    gClassNameCount().remove("WebApplicationCache"_s);
+    gClassNameCount().remove("WebApplicationCache");
 }
 
 WebApplicationCache* WebApplicationCache::createInstance()
@@ -81,7 +81,7 @@ static String applicationCachePath()
 
 WebCore::ApplicationCacheStorage& WebApplicationCache::storage()
 {
-    static ApplicationCacheStorage& storage = ApplicationCacheStorage::create(applicationCachePath(), "ApplicationCache"_s).leakRef();
+    static ApplicationCacheStorage& storage = ApplicationCacheStorage::create(applicationCachePath(), "ApplicationCache").leakRef();
 
     return storage;
 }

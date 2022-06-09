@@ -63,7 +63,7 @@ void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDe
         return;
 
 #if ENABLE(GEOLOCATION)
-    String authorizationToken = allowed ? createVersion4UUIDString() : String();
+    String authorizationToken = allowed ? createCanonicalUUIDString() : String();
     if (!authorizationToken.isNull())
         m_validAuthorizationTokens.add(authorizationToken);
     m_page.send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, authorizationToken));

@@ -31,6 +31,7 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "Page.h"
+#include "PluginViewBase.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
@@ -158,7 +159,7 @@ private:
 
 bool NestedTimersMap::isTrackingNestedTimers = false;
 
-DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds interval, bool oneShot)
+DOMTimer::DOMTimer(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds interval, bool oneShot)
     : SuspendableTimerBase(&context)
     , m_nestingLevel(context.timerNestingLevel())
     , m_action(WTFMove(action))
@@ -177,14 +178,6 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
 DOMTimer::~DOMTimer() = default;
 
 int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, bool oneShot)
-{
-    auto actionFunction = [action = WTFMove(action)](ScriptExecutionContext& context) mutable {
-        action->execute(context);
-    };
-    return DOMTimer::install(context, WTFMove(actionFunction), timeout, oneShot);
-}
-
-int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds timeout, bool oneShot)
 {
     Ref<DOMTimer> timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, oneShot));
     timer->suspendIfNeeded();
@@ -274,12 +267,15 @@ void DOMTimer::updateThrottlingStateIfNecessary(const DOMTimerFireState& fireSta
     }
 }
 
-void DOMTimer::scriptDidInteractWithPlugin()
+void DOMTimer::scriptDidInteractWithPlugin(HTMLPlugInElement& pluginElement)
 {
     if (!DOMTimerFireState::current)
         return;
 
-    DOMTimerFireState::current->setScriptMadeUserObservableChanges();
+    if (pluginElement.isUserObservable())
+        DOMTimerFireState::current->setScriptMadeUserObservableChanges();
+    else
+        DOMTimerFireState::current->setScriptMadeNonUserObservableChanges();
 }
 
 void DOMTimer::fired()
@@ -323,7 +319,7 @@ void DOMTimer::fired()
             updateTimerIntervalIfNecessary();
         }
 
-        m_action(context);
+        m_action->execute(context);
 
         InspectorInstrumentation::didFireTimer(context, m_timeoutId, m_oneShot);
 
@@ -339,9 +335,9 @@ void DOMTimer::fired()
         nestedTimers->startTracking();
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
-    ContentChangeObserver::DOMTimerScope observingScope(dynamicDowncast<Document>(context), *this);
+    ContentChangeObserver::DOMTimerScope observingScope(is<Document>(context) ? &downcast<Document>(context) : nullptr, *this);
 #endif
-    m_action(context);
+    m_action->execute(context);
 
     InspectorInstrumentation::didFireTimer(context, m_timeoutId, m_oneShot);
 

@@ -1,3 +1,0 @@
-
-PASS Basic test for container query evaluation stability
-

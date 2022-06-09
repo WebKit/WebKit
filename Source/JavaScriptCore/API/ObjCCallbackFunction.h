@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ JSObjectRef objCCallbackFunctionForMethod(JSContext *, Class, Protocol *, BOOL i
 JSObjectRef objCCallbackFunctionForBlock(JSContext *, id);
 JSObjectRef objCCallbackFunctionForInit(JSContext *, Class, Protocol *, SEL, const char* types);
 
-id tryUnwrapConstructor(JSObjectRef);
+id tryUnwrapConstructor(JSC::VM*, JSObjectRef);
 #endif
 
 namespace JSC {
@@ -49,7 +49,7 @@ public:
     typedef InternalFunction Base;
 
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.objCCallbackFunctionSpace<mode>();
     }

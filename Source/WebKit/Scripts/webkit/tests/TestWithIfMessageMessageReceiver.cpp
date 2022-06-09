@@ -35,10 +35,6 @@
 #include <wtf/text/WTFString.h>
 #endif
 
-#if ENABLE(IPC_TESTING_API)
-#include "JSIPCBinding.h"
-#endif
-
 namespace WebKit {
 
 void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -62,25 +58,3 @@ void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 }
 
 } // namespace WebKit
-
-#if ENABLE(IPC_TESTING_API)
-
-namespace IPC {
-
-#if PLATFORM(COCOA)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
-}
-#endif
-#if PLATFORM(GTK)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
-}
-#endif
-
-}
-
-#endif
-

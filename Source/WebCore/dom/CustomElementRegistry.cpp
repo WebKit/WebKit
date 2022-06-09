@@ -29,7 +29,6 @@
 #include "CustomElementReactionQueue.h"
 #include "DOMWindow.h"
 #include "Document.h"
-#include "ElementRareData.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MathMLNames.h"

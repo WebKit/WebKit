@@ -1,7 +1,4 @@
-//@ requireOptions("-e", "let iterations=50") if ["mips"].include?($architecture)
-//@ if $buildType == "debug" or not $jitTests then skip else runTypeProfiler end
-
-iterations = typeof(iterations) === 'undefined' ? 150 : iterations;
+//@ if $buildType == "debug" or not $jitTests or $architecture == "mips" then skip else runTypeProfiler end
 
 // Copyright 2006-2008 the V8 project authors. All rights reserved.
 // Copyright 2014 Apple Inc.
@@ -594,5 +591,5 @@ Packet.prototype.toString = function () {
   return "Packet";
 };
 
-for (var i = 0; i < iterations; ++i)
+for (var i = 0; i < 150; ++i)
   runRichards();

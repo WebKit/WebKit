@@ -3,7 +3,7 @@
 // (https://github.com/w3c/webref)
 // Source: DOM Standard (https://dom.spec.whatwg.org/)
 
-[Exposed=*]
+[Exposed=(Window,Worker,AudioWorklet)]
 interface Event {
   constructor(DOMString type, optional EventInit eventInitDict = {});
 
@@ -46,7 +46,7 @@ partial interface Window {
   [Replaceable] readonly attribute (Event or undefined) event; // legacy
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker)]
 interface CustomEvent : Event {
   constructor(DOMString type, optional CustomEventInit eventInitDict = {});
 
@@ -59,7 +59,7 @@ dictionary CustomEventInit : EventInit {
   any detail = null;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker,AudioWorklet)]
 interface EventTarget {
   constructor();
 
@@ -82,23 +82,20 @@ dictionary AddEventListenerOptions : EventListenerOptions {
   AbortSignal signal;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker)]
 interface AbortController {
   constructor();
 
   [SameObject] readonly attribute AbortSignal signal;
 
-  undefined abort(optional any reason);
+  undefined abort();
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker)]
 interface AbortSignal : EventTarget {
-  [NewObject] static AbortSignal abort(optional any reason);
-  [Exposed=(Window,Worker), NewObject] static AbortSignal timeout([EnforceRange] unsigned long long milliseconds);
+  [NewObject] static AbortSignal abort();
 
   readonly attribute boolean aborted;
-  readonly attribute any reason;
-  undefined throwIfAborted();
 
   attribute EventHandler onabort;
 };

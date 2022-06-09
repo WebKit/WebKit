@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,36 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import re
 import unittest
 
-from webkitbugspy import Tracker, User, bugzilla, mocks
-from webkitcorepy import OutputCapture, mocks as wkmocks
+from webkitbugspy import Issue, User, bugzilla, mocks
 
 
 class TestBugzilla(unittest.TestCase):
     URL = 'https://bugs.example.com'
-
-    def test_encoding(self):
-        self.assertEqual(
-            bugzilla.Tracker.Encoder().default(bugzilla.Tracker(
-                self.URL,
-                res=[re.compile(r'\Aexample.com/b/(?P<id>\d+)\Z')],
-            )), dict(
-                type='bugzilla',
-                url='https://bugs.example.com',
-                res=['\\Aexample.com/b/(?P<id>\\d+)\\Z']
-            ),
-        )
-
-    def test_decoding(self):
-        decoded = Tracker.from_json(json.dumps(bugzilla.Tracker(
-            self.URL,
-            res=[re.compile(r'\Aexample.com/b/(?P<id>\d+)\Z')],
-        ), cls=Tracker.Encoder))
-        self.assertIsInstance(decoded, bugzilla.Tracker)
-        self.assertEqual(decoded.url, 'https://bugs.example.com')
-        self.assertEqual(decoded.from_string('example.com/b/1234').id, 1234)
 
     def test_no_users(self):
         with mocks.Bugzilla(self.URL.split('://')[1]):
@@ -153,264 +130,13 @@ class TestBugzilla(unittest.TestCase):
             self.assertEqual(tracker.issue(3).references, [tracker.issue(2)])
 
     def test_reference_parse(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            BUGS_EXAMPLE_COM_USERNAME='wwatcher@example.com',
-            BUGS_EXAMPLE_COM_PASSWORD='password',
-        )):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES) as mock:
             tracker = bugzilla.Tracker(self.URL)
-            tracker.issue(1).add_comment('Is this related to {}/show_bug.cgi?id=2?'.format(self.URL))
+            mock.issues[1]['comments'].append(
+                Issue.Comment(
+                    user=mocks.USERS['Wilma Watcher'],
+                    timestamp=1639539630,
+                    content='Is this related to {}/show_bug.cgi?id=2?'.format(self.URL),
+                ),
+            )
             self.assertEqual(tracker.issue(1).references, [tracker.issue(2)])
-
-    def test_me(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-            BUGS_EXAMPLE_COM_PASSWORD='password',
-        )):
-            self.assertEqual(
-                User.Encoder().default(bugzilla.Tracker(self.URL).me()),
-                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
-            )
-
-    def test_add_comment(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-            BUGS_EXAMPLE_COM_PASSWORD='password',
-        )):
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertEqual(len(issue.comments), 2)
-
-            comment = issue.add_comment('Automated comment')
-            self.assertEqual(comment.content, 'Automated comment')
-            self.assertEqual(
-                User.Encoder().default(comment.user),
-                User.Encoder().default(bugzilla.Tracker(self.URL).me()),
-            )
-
-            self.assertEqual(len(issue.comments), 3)
-            self.assertEqual(len(bugzilla.Tracker(self.URL).issue(1).comments), 3)
-
-    def test_assign(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            BUGS_EXAMPLE_COM_USERNAME='ffiler@example.com',
-            BUGS_EXAMPLE_COM_PASSWORD='password',
-        )):
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
-            )
-            issue.assign(bugzilla.Tracker(self.URL).me())
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Felix Filer', username='ffiler@example.com', emails=['ffiler@example.com']),
-            )
-
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Felix Filer', username='ffiler@example.com', emails=['ffiler@example.com']),
-            )
-
-    def test_assign_why(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            BUGS_EXAMPLE_COM_USERNAME='ffiler@example.com',
-            BUGS_EXAMPLE_COM_PASSWORD='password',
-        )):
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
-            )
-            issue.assign(bugzilla.Tracker(self.URL).me(), why='Let me provide a better reproduction')
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Felix Filer', username='ffiler@example.com', emails=['ffiler@example.com']),
-            )
-            self.assertEqual(issue.comments[-1].content, 'Let me provide a better reproduction')
-
-    def test_state(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-            BUGS_EXAMPLE_COM_PASSWORD='password',
-        )):
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertTrue(issue.opened)
-            self.assertFalse(issue.open())
-            self.assertTrue(issue.close())
-            self.assertFalse(issue.opened)
-
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertFalse(issue.opened)
-            self.assertFalse(issue.close())
-            self.assertTrue(issue.open())
-            self.assertTrue(issue.opened)
-
-    def test_state_why(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-            BUGS_EXAMPLE_COM_PASSWORD='password',
-        )):
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertTrue(issue.opened)
-            self.assertTrue(issue.close(why='Fixed in 1234@main'))
-            self.assertFalse(issue.opened)
-            self.assertEqual(issue.comments[-1].content, 'Fixed in 1234@main')
-
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertFalse(issue.opened)
-            self.assertTrue(issue.open(why='Need to revert, fix broke the build'))
-            self.assertTrue(issue.opened)
-            self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
-
-    def test_projects(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], projects=mocks.PROJECTS):
-            self.assertDictEqual(
-                dict(
-                    CFNetwork=dict(
-                        description='Darwin networking framework',
-                        versions=['All'],
-                        components=dict(
-                            IPv4=dict(description='Bugs involving IPv4 networking'),
-                            IPv6=dict(description='Bugs involving IPv6 networking'),
-                        ),
-                    ), WebKit=dict(
-                        description='The WebKit browser engine',
-                        versions=['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
-                        components=dict(
-                            Scrolling=dict(description='Bugs related to main thread and off-main thread scrolling'),
-                            SVG=dict(description='For bugs in the SVG implementation.'),
-                            Tables=dict(description='For bugs specific to tables (both the DOM and rendering issues).'),
-                            Text=dict(description='For bugs in text layout and rendering, including international text support.'),
-                        ),
-                    ),
-                ), bugzilla.Tracker(self.URL).projects,
-            )
-
-    def test_create(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
-                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-                BUGS_EXAMPLE_COM_PASSWORD='password',
-        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
-            created = bugzilla.Tracker(self.URL).create(
-                'New bug', 'Creating new bug',
-                project='WebKit', component='Tables', version='Other',
-            )
-            self.assertEqual(created.id, 4)
-            self.assertEqual(created.title, 'New bug')
-            self.assertEqual(created.description, 'Creating new bug')
-            self.assertTrue(created.opened)
-            self.assertEqual(
-                User.Encoder().default(created.creator),
-                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
-            )
-            self.assertEqual(
-                User.Encoder().default(created.assignee),
-                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
-            )
-
-            self.assertEqual(created.project, 'WebKit')
-            self.assertEqual(created.component, 'Tables')
-            self.assertEqual(created.version, 'Other')
-
-    def test_create_prompt(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
-                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-                BUGS_EXAMPLE_COM_PASSWORD='password',
-        ), projects=mocks.PROJECTS, issues=mocks.ISSUES), wkmocks.Terminal.input('2', '1', '2'), OutputCapture() as captured:
-            created = bugzilla.Tracker(self.URL).create('New bug', 'Creating new bug')
-            self.assertEqual(created.id, 4)
-            self.assertEqual(created.title, 'New bug')
-            self.assertEqual(created.description, 'Creating new bug')
-            self.assertTrue(created.opened)
-            self.assertEqual(
-                User.Encoder().default(created.creator),
-                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
-            )
-            self.assertEqual(
-                User.Encoder().default(created.assignee),
-                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
-            )
-
-            self.assertEqual(created.project, 'WebKit')
-            self.assertEqual(created.component, 'SVG')
-            self.assertEqual(created.version, 'Safari 15')
-
-        self.assertEqual(
-            captured.stdout.getvalue(),
-            '''What project should the bug be associated with?:
-    1) CFNetwork
-    2) WebKit
-: 
-What component in 'WebKit' should the bug be associated with?:
-    1) SVG
-    2) Scrolling
-    3) Tables
-    4) Text
-: 
-What version of 'WebKit' should the bug be associated with?:
-    1) Other
-    2) Safari 15
-    3) Safari Technology Preview
-    4) WebKit Local Build
-: 
-''',
-        )
-
-    def test_get_component(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertEqual(issue.project, 'WebKit')
-            self.assertEqual(issue.component, 'Text')
-            self.assertEqual(issue.version, 'Other')
-
-    def test_set_component(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
-                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-                BUGS_EXAMPLE_COM_PASSWORD='password',
-        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
-            bugzilla.Tracker(self.URL).issue(1).set_component(project='WebKit', component='Tables', version='Safari 15')
-
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertEqual(issue.project, 'WebKit')
-            self.assertEqual(issue.component, 'Tables')
-            self.assertEqual(issue.version, 'Safari 15')
-
-    def test_labels(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
-            issue = bugzilla.Tracker(self.URL).issue(1)
-            self.assertEqual(issue.labels, [])
-
-    def test_exhausted_logins(self):
-        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
-            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-            BUGS_EXAMPLE_COM_PASSWORD='password',
-        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
-            tracker = bugzilla.Tracker(self.URL)
-            tracker._logins_left = 0
-
-            with OutputCapture() as captured:
-                self.assertFalse(tracker.issue(1).close())
-            self.assertEqual(
-                captured.stderr.getvalue(),
-                'Exhausted login attempts\n'
-                "Failed to modify 'https://bugs.example.com/show_bug.cgi?id=1 Example issue 1'\n",
-            )
-
-            with OutputCapture() as captured:
-                self.assertIsNone(tracker.issue(1).add_comment('Failed comment'))
-            self.assertEqual(
-                captured.stderr.getvalue(),
-                'Exhausted login attempts\n'
-                "Failed to add comment to 'https://bugs.example.com/show_bug.cgi?id=1 Example issue 1'\n",
-            )
-
-            with OutputCapture() as captured:
-                self.assertIsNone(tracker.create(
-                    'New bug', 'Creating new bug',
-                    project='WebKit', component='Tables', version='Other',
-                ))
-            self.assertEqual(
-                captured.stderr.getvalue(),
-                'Exhausted login attempts\n'
-                'Failed to create bug: Login attempts exhausted\n',
-            )

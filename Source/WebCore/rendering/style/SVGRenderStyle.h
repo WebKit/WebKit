@@ -282,9 +282,8 @@ inline void SVGRenderStyle::setY(const Length& length)
 
 inline void SVGRenderStyle::setFillOpacity(float opacity)
 {
-    auto clampedOpacity = clampTo<float>(opacity, 0.f, 1.f);
-    if (!(m_fillData->opacity == clampedOpacity))
-        m_fillData.access().opacity = clampedOpacity;
+    if (!(m_fillData->opacity == opacity))
+        m_fillData.access().opacity = opacity;
 }
 
 inline void SVGRenderStyle::setFillPaint(SVGPaintType type, const Color& color, const String& uri, bool applyToRegularStyle, bool applyToVisitedLinkStyle)
@@ -309,9 +308,8 @@ inline void SVGRenderStyle::setFillPaint(SVGPaintType type, const Color& color, 
 
 inline void SVGRenderStyle::setStrokeOpacity(float opacity)
 {
-    auto clampedOpacity = clampTo<float>(opacity, 0.f, 1.f);
-    if (!(m_strokeData->opacity == clampedOpacity))
-        m_strokeData.access().opacity = clampedOpacity;
+    if (!(m_strokeData->opacity == opacity))
+        m_strokeData.access().opacity = opacity;
 }
 
 inline void SVGRenderStyle::setStrokePaint(SVGPaintType type, const Color& color, const String& uri, bool applyToRegularStyle, bool applyToVisitedLinkStyle)
@@ -354,9 +352,8 @@ inline void SVGRenderStyle::setKerning(const SVGLengthValue& kerning)
 
 inline void SVGRenderStyle::setStopOpacity(float opacity)
 {
-    auto clampedOpacity = clampTo<float>(opacity, 0.f, 1.f);
-    if (!(m_stopData->opacity == clampedOpacity))
-        m_stopData.access().opacity = clampedOpacity;
+    if (!(m_stopData->opacity == opacity))
+        m_stopData.access().opacity = opacity;
 }
 
 inline void SVGRenderStyle::setStopColor(const Color& color)
@@ -367,9 +364,8 @@ inline void SVGRenderStyle::setStopColor(const Color& color)
 
 inline void SVGRenderStyle::setFloodOpacity(float opacity)
 {
-    auto clampedOpacity = clampTo<float>(opacity, 0.f, 1.f);
-    if (!(m_miscData->floodOpacity == clampedOpacity))
-        m_miscData.access().floodOpacity = clampedOpacity;
+    if (!(m_miscData->floodOpacity == opacity))
+        m_miscData.access().floodOpacity = opacity;
 }
 
 inline void SVGRenderStyle::setFloodColor(const Color& color)

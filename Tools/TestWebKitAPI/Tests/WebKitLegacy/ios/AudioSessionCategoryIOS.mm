@@ -80,12 +80,7 @@ static AVAudioSessionRouteSharingPolicy routeSharingPolicyLongFormAudio()
 #endif
 }
 
-// FIXME Re-enable when https://bugs.webkit.org/show_bug.cgi?id=237125 is resovled 
-#if PLATFORM(IOS)
-TEST(WebKitLegacy, DISABLED_AudioSessionCategoryIOS)
-#else
 TEST(WebKitLegacy, AudioSessionCategoryIOS)
-#endif
 {
     WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
     RetainPtr<UIWindow> uiWindow = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

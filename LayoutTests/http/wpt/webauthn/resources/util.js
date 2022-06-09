@@ -355,7 +355,7 @@ function checkPublicKey(publicKey)
     return true;
 }
 
-function checkCtapMakeCredentialResult(credential, isNoneAttestation = true, transports = null)
+function checkCtapMakeCredentialResult(credential, isNoneAttestation = true)
 {
     // Check response
     assert_array_equals(Base64URL.parse(credential.id), Base64URL.parse(testHidCredentialIdBase64));
@@ -388,8 +388,6 @@ function checkCtapMakeCredentialResult(credential, isNoneAttestation = true, tra
         assert_equals(attestationObject.attStmt.alg, -7);
         assert_equals(attestationObject.attStmt.x5c.length, 1);
     }
-    if (transports)
-        assert_array_equals(transports, credential.response.getTransports());
 }
 
 function checkU2fMakeCredentialResult(credential, isNoneAttestation = true)

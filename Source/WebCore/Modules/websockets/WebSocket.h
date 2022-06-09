@@ -51,7 +51,7 @@ class ThreadableWebSocketChannel;
 class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, private WebSocketChannelClient {
     WTF_MAKE_ISO_ALLOCATED(WebSocket);
 public:
-    static ASCIILiteral subprotocolSeparator();
+    static const char* subprotocolSeparator();
 
     static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url);
     static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url, const String& protocol);
@@ -113,9 +113,9 @@ private:
     void derefEventTarget() final { deref(); }
 
     void didConnect() final;
-    void didReceiveMessage(String&& message) final;
+    void didReceiveMessage(const String& message) final;
     void didReceiveBinaryData(Vector<uint8_t>&&) final;
-    void didReceiveMessageError(String&& reason) final;
+    void didReceiveMessageError(const String& reason) final;
     void didUpdateBufferedAmount(unsigned bufferedAmount) final;
     void didStartClosingHandshake() final;
     void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;

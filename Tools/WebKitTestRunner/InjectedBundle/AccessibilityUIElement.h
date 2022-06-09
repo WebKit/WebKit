@@ -34,7 +34,6 @@
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit/WKBundleFrame.h>
-#include <WebKit/WKBundlePage.h>
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
@@ -43,7 +42,12 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSString;
 #include <wtf/RetainPtr.h>
 using PlatformUIElement = id;
-#elif USE(ATSPI)
+#elif HAVE(ACCESSIBILITY) && USE(ATK)
+#include "AccessibilityNotificationHandlerAtk.h"
+#include <atk/atk.h>
+#include <wtf/glib/GRefPtr.h>
+typedef GRefPtr<AtkObject> PlatformUIElement;
+#elif HAVE(ACCESSIBILITY) && USE(ATSPI)
 namespace WebCore {
 class AccessibilityObjectAtspi;
 }
@@ -74,7 +78,7 @@ public:
 
 #if PLATFORM(COCOA)
     id platformUIElement() { return m_element.get(); }
-#elif USE(ATSPI)
+#elif HAVE(ACCESSIBILITY) && USE(ATSPI)
     PlatformUIElement platformUIElement() { return m_element.get(); }
 #else
     PlatformUIElement platformUIElement() { return m_element; }
@@ -131,10 +135,11 @@ public:
     RefPtr<AccessibilityUIElement> uiElementAttributeValue(JSStringRef attribute) const;
     bool boolAttributeValue(JSStringRef attribute);
 #if PLATFORM(MAC)
+    bool boolAttributeValue(NSString *attribute) const;
+    JSRetainPtr<JSStringRef> stringAttributeValue(NSString *attribute) const;
+    double numberAttributeValue(NSString *attribute) const;
     RetainPtr<id> attributeValue(NSString *) const;
     void attributeValueAsync(JSStringRef attribute, JSValueRef callback);
-    NSArray *actionNames() const;
-    void performAction(NSString *) const;
 #else
     void attributeValueAsync(JSStringRef attribute, JSValueRef callback) { }
 #endif
@@ -168,7 +173,6 @@ public:
     JSRetainPtr<JSStringRef> valueDescription();
     int insertionPointLineNumber();
     JSRetainPtr<JSStringRef> selectedTextRange();
-    bool isBusy() const;
     bool isEnabled();
     bool isRequired() const;
 
@@ -245,7 +249,7 @@ public:
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
-#if PLATFORM(COCOA) || USE(ATSPI)
+#if PLATFORM(COCOA) || USE(ATK)
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
 #else
@@ -253,7 +257,7 @@ public:
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned) { return nullptr; }
 #endif
 
-#if USE(ATSPI)
+#if USE(ATK)
     RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaOwnsReferencingElementAtIndex(unsigned);
@@ -404,12 +408,7 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<id> attributeValueForParameter(NSString *, id) const;
-    unsigned arrayAttributeCount(NSString *) const;
     RetainPtr<NSString> descriptionOfValue(id valueObject) const;
-    bool boolAttributeValue(NSString *attribute) const;
-    JSRetainPtr<JSStringRef> stringAttributeValue(NSString *attribute) const;
-    double numberAttributeValue(NSString *attribute) const;
-    bool isAttributeSettable(NSString *) const;
 #endif
 
 #if !PLATFORM(COCOA) && !USE(ATSPI)
@@ -417,7 +416,7 @@ private:
 #endif
 
     // A retained, platform specific object used to help manage notifications for this object.
-#if ENABLE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY)
 #if PLATFORM(COCOA)
     RetainPtr<id> m_element;
     RetainPtr<id> m_notificationHandler;
@@ -434,7 +433,9 @@ private:
     void getChildren(Vector<RefPtr<AccessibilityUIElement> >&);
     void getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >&, unsigned location, unsigned length);
 
-#if USE(ATSPI)
+#if USE(ATK)
+    RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
+#elif USE(ATSPI)
     static RefPtr<AccessibilityController> s_controller;
     RefPtr<WebCore::AccessibilityObjectAtspi> m_element;
     std::unique_ptr<AccessibilityNotificationHandler> m_notificationHandler;

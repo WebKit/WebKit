@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,77 +25,50 @@
 
 #pragma once
 
-#import "CommandsMixin.h"
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
-
-struct WGPUCommandEncoderImpl {
-};
 
 namespace WebGPU {
 
 class Buffer;
 class CommandBuffer;
 class ComputePassEncoder;
-class Device;
 class QuerySet;
 class RenderPassEncoder;
 
-// https://gpuweb.github.io/gpuweb/#gpucommandencoder
-class CommandEncoder : public WGPUCommandEncoderImpl, public RefCounted<CommandEncoder>, public CommandsMixin {
+class CommandEncoder : public RefCounted<CommandEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer, Device& device)
+    static Ref<CommandEncoder> create()
     {
-        return adoptRef(*new CommandEncoder(commandBuffer, device));
-    }
-    static Ref<CommandEncoder> createInvalid(Device& device)
-    {
-        return adoptRef(*new CommandEncoder(device));
+        return adoptRef(*new CommandEncoder());
     }
 
     ~CommandEncoder();
 
-    Ref<ComputePassEncoder> beginComputePass(const WGPUComputePassDescriptor&);
-    Ref<RenderPassEncoder> beginRenderPass(const WGPURenderPassDescriptor&);
+    Ref<ComputePassEncoder> beginComputePass(const WGPUComputePassDescriptor*);
+    Ref<RenderPassEncoder> beginRenderPass(const WGPURenderPassDescriptor*);
     void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
-    void copyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize);
-    void copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize);
-    void copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize);
-    void clearBuffer(const Buffer&, uint64_t offset, uint64_t size);
-    Ref<CommandBuffer> finish(const WGPUCommandBufferDescriptor&);
-    void insertDebugMarker(String&& markerLabel);
+    void copyBufferToTexture(const WGPUImageCopyBuffer* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
+    void copyTextureToBuffer(const WGPUImageCopyTexture* source, const WGPUImageCopyBuffer* destination, const WGPUExtent3D* copySize);
+    void copyTextureToTexture(const WGPUImageCopyTexture* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
+    void fillBuffer(const Buffer& destination, uint64_t destinationOffset, uint64_t size);
+    Ref<CommandBuffer> finish(const WGPUCommandBufferDescriptor*);
+    void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(const char* groupLabel);
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(const QuerySet&, uint32_t queryIndex);
-    void setLabel(String&&);
-
-    Device& device() const { return m_device; }
-
-    bool isValid() const { return m_commandBuffer; }
+    void setLabel(const char*);
 
 private:
-    CommandEncoder(id<MTLCommandBuffer>, Device&);
-    CommandEncoder(Device&);
-
-    bool validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
-    bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
-    bool validateFinish() const;
-    bool validatePopDebugGroup() const;
-
-    void makeInvalid() { m_commandBuffer = nil; }
-
-    void ensureBlitCommandEncoder();
-    void finalizeBlitCommandEncoder();
-
-    id<MTLCommandBuffer> m_commandBuffer { nil };
-    id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
-
-    uint64_t m_debugGroupStackSize { 0 };
-
-    const Ref<Device> m_device;
+    CommandEncoder();
 };
 
 } // namespace WebGPU
+
+struct WGPUCommandEncoderImpl {
+    Ref<WebGPU::CommandEncoder> commandEncoder;
+};

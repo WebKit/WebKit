@@ -19,7 +19,7 @@
             var i = document.createElement('iframe');
             i.src = "../../resources/frame-ancestors-and-x-frame-options.pl?policy=other-origin.com&xfo=SAMEORIGIN";
             i.onload = t.step_func_done(function () {
-                assert_throws_dom(
+                assert_throws(
                     "SecurityError",
                     function () { i.contentWindow.origin },
                     "The same-origin page was blocked and sandboxed.");

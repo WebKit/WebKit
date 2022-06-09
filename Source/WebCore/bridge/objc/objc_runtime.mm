@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,7 +176,7 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     }
 
     if (index > [_array count]) {
-        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."_s));
+        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."));
         return false;
     }
     
@@ -188,7 +188,7 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
         [_array insertObject:(__bridge id)oValue.objectValue atIndex:index];
         return true;
     } @catch(NSException* localException) {
-        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_s));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."));
         return false;
     }
 }
@@ -199,13 +199,13 @@ JSValue ObjcArray::valueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (index > [_array count])
-        return throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."_s));
+        return throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."));
     @try {
         id obj = [_array objectAtIndex:index];
         if (obj)
             return convertObjcValueToValue (lexicalGlobalObject, &obj, ObjcObjectType, m_rootObject.get());
     } @catch(NSException* localException) {
-        return throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_s));
+        return throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."));
     }
     return jsUndefined();
 }
@@ -215,7 +215,7 @@ unsigned int ObjcArray::getLength() const
     return [_array count];
 }
 
-const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
+const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ObjcFallbackObjectImp) };
 
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const String& propertyName)
     : JSDestructibleObject(globalObject->vm(), structure)
@@ -233,7 +233,7 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
         JSFunction::create(vm, globalObject, 0, "[Symbol.toPrimitive]"_s, convertObjCFallbackObjectToPrimitive),
         static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -262,7 +262,7 @@ JSC_DEFINE_HOST_FUNCTION(callObjCFallbackObject, (JSGlobalObject* lexicalGlobalO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    if (!thisValue.inherits<ObjCRuntimeObject>())
+    if (!thisValue.inherits<ObjCRuntimeObject>(vm))
         return throwVMTypeError(lexicalGlobalObject, scope);
 
     JSValue result = jsUndefined();
@@ -314,7 +314,7 @@ JSC_DEFINE_HOST_FUNCTION(convertObjCFallbackObjectToPrimitive, (JSGlobalObject* 
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* thisObject = jsDynamicCast<ObjcFallbackObjectImp*>(callFrame->thisValue());
+    auto* thisObject = jsDynamicCast<ObjcFallbackObjectImp*>(vm, callFrame->thisValue());
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope, "ObjcFallbackObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
 
@@ -332,13 +332,13 @@ bool ObjcFallbackObjectImp::toBoolean(JSGlobalObject*) const
     return false;
 }
 
-JSC::GCClient::IsoSubspace* ObjcFallbackObjectImp::subspaceForImpl(JSC::VM& vm)
+JSC::IsoSubspace* ObjcFallbackObjectImp::subspaceForImpl(JSC::VM& vm)
 {
-    static NeverDestroyed<JSC::IsoSubspacePerVM> perVM([] (JSC::Heap& heap) {
-        return ISO_SUBSPACE_PARAMETERS(heap.destructibleObjectHeapCellType, ObjcFallbackObjectImp);
+    static NeverDestroyed<JSC::IsoSubspacePerVM> perVM([] (JSC::VM& vm) {
+        return ISO_SUBSPACE_PARAMETERS(vm.destructibleObjectHeapCellType(), ObjcFallbackObjectImp);
     });
-    return &perVM.get().clientIsoSubspaceforVM(vm);
+    return &perVM.get().forVM(vm);
 }
 
-} // namespace Bindings
-} // namespace JSC
+}
+}

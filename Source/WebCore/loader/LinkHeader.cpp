@@ -135,30 +135,28 @@ template<typename CharacterType> static bool parseParameterDelimiter(StringParsi
 
 static LinkHeader::LinkParameterName paramterNameFromString(StringView name)
 {
-    if (equalLettersIgnoringASCIICase(name, "rel"_s))
+    if (equalLettersIgnoringASCIICase(name, "rel"))
         return LinkHeader::LinkParameterRel;
-    if (equalLettersIgnoringASCIICase(name, "anchor"_s))
+    if (equalLettersIgnoringASCIICase(name, "anchor"))
         return LinkHeader::LinkParameterAnchor;
-    if (equalLettersIgnoringASCIICase(name, "crossorigin"_s))
+    if (equalLettersIgnoringASCIICase(name, "crossorigin"))
         return LinkHeader::LinkParameterCrossOrigin;
-    if (equalLettersIgnoringASCIICase(name, "title"_s))
+    if (equalLettersIgnoringASCIICase(name, "title"))
         return LinkHeader::LinkParameterTitle;
-    if (equalLettersIgnoringASCIICase(name, "media"_s))
+    if (equalLettersIgnoringASCIICase(name, "media"))
         return LinkHeader::LinkParameterMedia;
-    if (equalLettersIgnoringASCIICase(name, "type"_s))
+    if (equalLettersIgnoringASCIICase(name, "type"))
         return LinkHeader::LinkParameterType;
-    if (equalLettersIgnoringASCIICase(name, "rev"_s))
+    if (equalLettersIgnoringASCIICase(name, "rev"))
         return LinkHeader::LinkParameterRev;
-    if (equalLettersIgnoringASCIICase(name, "hreflang"_s))
+    if (equalLettersIgnoringASCIICase(name, "hreflang"))
         return LinkHeader::LinkParameterHreflang;
-    if (equalLettersIgnoringASCIICase(name, "as"_s))
+    if (equalLettersIgnoringASCIICase(name, "as"))
         return LinkHeader::LinkParameterAs;
-    if (equalLettersIgnoringASCIICase(name, "imagesrcset"_s))
+    if (equalLettersIgnoringASCIICase(name, "imagesrcset"))
         return LinkHeader::LinkParameterImageSrcSet;
-    if (equalLettersIgnoringASCIICase(name, "imagesizes"_s))
+    if (equalLettersIgnoringASCIICase(name, "imagesizes"))
         return LinkHeader::LinkParameterImageSizes;
-    if (equalLettersIgnoringASCIICase(name, "nonce"_s))
-        return LinkHeader::LinkParameterNonce;
     return LinkHeader::LinkParameterUnknown;
 }
 
@@ -281,9 +279,6 @@ void LinkHeader::setValue(LinkParameterName name, String&& value)
         break;
     case LinkParameterImageSizes:
         m_imageSizes = WTFMove(value);
-        break;
-    case LinkParameterNonce:
-        m_nonce = WTFMove(value);
         break;
     case LinkParameterTitle:
     case LinkParameterRev:

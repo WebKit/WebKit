@@ -38,7 +38,6 @@
 #include "HTMLSpanElement.h"
 #include "InlineIteratorTextBox.h"
 #include "LegacyInlineTextBox.h"
-#include "LegacyRenderSVGContainer.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "Logging.h"
@@ -130,9 +129,9 @@ static void printBorderStyle(TextStream& ts, const BorderStyle borderStyle)
 static String getTagName(Node* n)
 {
     if (n->isDocumentNode())
-        return ""_s;
+        return "";
     if (n->nodeType() == Node::COMMENT_NODE)
-        return "COMMENT"_s;
+        return "COMMENT";
     return n->nodeName();
 }
 
@@ -142,7 +141,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
         return false;
 
     const HTMLElement& element = downcast<HTMLSpanElement>(*node);
-    if (element.getAttribute(classAttr) != "Apple-style-span"_s)
+    if (element.getAttribute(classAttr) != "Apple-style-span")
         return false;
 
     if (!node->hasChildNodes())
@@ -214,7 +213,7 @@ static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
 
 void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
 {
-    ts << o.renderName().characters();
+    ts << o.renderName();
 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
         ts << " " << &o;
@@ -330,7 +329,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         LayoutUnit borderRight = box.borderRight();
         LayoutUnit borderBottom = box.borderBottom();
         LayoutUnit borderLeft = box.borderLeft();
-        bool overridden = o.style().borderImage().overridesBorderWidths();
         if (box.isFieldset()) {
             const auto& block = downcast<RenderBlock>(box);
             if (o.style().writingMode() == WritingMode::TopToBottom)
@@ -358,7 +356,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 ts << serializationForRenderTreeAsText(color) << ")";
             }
 
-            if (o.style().borderRight() != prevBorder || (overridden && borderRight != borderTop)) {
+            if (o.style().borderRight() != prevBorder) {
                 prevBorder = o.style().borderRight();
                 if (!borderRight)
                     ts << " none";
@@ -372,7 +370,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 }
             }
 
-            if (o.style().borderBottom() != prevBorder || (overridden && borderBottom != borderRight)) {
+            if (o.style().borderBottom() != prevBorder) {
                 prevBorder = box.style().borderBottom();
                 if (!borderBottom)
                     ts << " none";
@@ -386,7 +384,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 }
             }
 
-            if (o.style().borderLeft() != prevBorder || (overridden && borderLeft != borderBottom)) {
+            if (o.style().borderLeft() != prevBorder) {
                 prevBorder = o.style().borderLeft();
                 if (!borderLeft)
                     ts << " none";
@@ -452,13 +450,13 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             else {
                 switch (text[0]) {
                     case bullet:
-                        text = "bullet"_s;
+                        text = "bullet";
                         break;
                     case blackSquare:
-                        text = "black square"_s;
+                        text = "black square";
                         break;
                     case whiteBullet:
-                        text = "white bullet"_s;
+                        text = "white bullet";
                         break;
                     default:
                         text = quoteAndEscapeNonPrintables(text);
@@ -474,7 +472,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 void writeDebugInfo(TextStream& ts, const RenderObject& object, OptionSet<RenderAsTextFlag> behavior)
 {
     if (behavior.contains(RenderAsTextFlag::ShowIDAndClass)) {
-        if (auto* element = dynamicDowncast<Element>(object.node())) {
+        if (Element* element = is<Element>(object.node()) ? downcast<Element>(object.node()) : nullptr) {
             if (element->hasID())
                 ts << " id=\"" << element->getIdAttribute() << "\"";
 
@@ -543,7 +541,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
 {
     auto writeTextRun = [&](auto& textRenderer, auto& textRun)
     {
-        auto rect = textRun.visualRectIgnoringBlockDirection();
+        auto rect = textRun.rect();
         int x = rect.x();
         int y = rect.y();
         // FIXME: Use non-logical width. webkit.org/b/206809.
@@ -580,14 +578,8 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
         writeSVGResourceContainer(ts, downcast<RenderSVGResourceContainer>(o), behavior);
         return;
     }
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGContainer>(o)) {
         writeSVGContainer(ts, downcast<RenderSVGContainer>(o), behavior);
-        return;
-    }
-#endif
-    if (is<LegacyRenderSVGContainer>(o)) {
-        writeSVGContainer(ts, downcast<LegacyRenderSVGContainer>(o), behavior);
         return;
     }
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

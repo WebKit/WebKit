@@ -169,7 +169,7 @@ ALWAYS_INLINE bool containslanguageSubtagMatchingRange(StringView language, Stri
 {
     unsigned languageSubtagsStartIndex = position;
     unsigned languageSubtagsEndIndex = languageLength;
-    bool isAsteriskRange = range == "*"_s;
+    bool isAsteriskRange = range == "*";
     do {
         if (languageSubtagsStartIndex > 0)
             languageSubtagsStartIndex += 1;
@@ -216,7 +216,7 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const Vector<A
         if (range.isEmpty())
             continue;
 
-        if (range == "*"_s)
+        if (range == "*")
             return true;
 
         StringView rangeStringView = range.string();

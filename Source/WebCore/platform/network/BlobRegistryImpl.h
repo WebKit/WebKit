@@ -34,7 +34,7 @@
 #include "BlobData.h"
 #include "BlobRegistry.h"
 #include <wtf/HashCountedSet.h>
-#include <wtf/RobinHoodHashMap.h>
+#include <wtf/HashMap.h>
 #include <wtf/URLHash.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -86,7 +86,7 @@ private:
     void addBlobData(const String& url, RefPtr<BlobData>&&);
 
     HashCountedSet<String> m_blobReferences;
-    MemoryCompactRobinHoodHashMap<String, RefPtr<BlobData>> m_blobs;
+    HashMap<String, RefPtr<BlobData>> m_blobs;
 };
 
 } // namespace WebCore

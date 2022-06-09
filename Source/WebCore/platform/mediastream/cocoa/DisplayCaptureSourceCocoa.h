@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
-#include "RealtimeMediaSourceSettings.h"
 #include <wtf/Observer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -37,10 +36,10 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
-using CGImageRef = CGImage*;
-using CVPixelBufferRef = struct __CVBuffer*;
-using IOSurfaceRef = struct __IOSurface*;
-using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
+
+typedef struct CGImage *CGImageRef;
+typedef struct __CVBuffer *CVPixelBufferRef;
+typedef struct __IOSurface *IOSurfaceRef;
 
 namespace WTF {
 class MediaTime;
@@ -52,25 +51,13 @@ class CaptureDeviceInfo;
 class ImageTransferSessionVT;
 class PixelBufferConformerCV;
 
-class CapturerObserver : public CanMakeWeakPtr<CapturerObserver> {
-public:
-    virtual ~CapturerObserver() = default;
-
-    virtual void capturerIsRunningChanged(bool) { }
-    virtual void capturerFailed() { };
-    virtual void capturerConfigurationChanged() { };
-};
-
-class DisplayCaptureSourceCocoa final
-    : public RealtimeMediaSource
-    , public CapturerObserver {
+class DisplayCaptureSourceCocoa final : public RealtimeMediaSource, public CanMakeWeakPtr<DisplayCaptureSourceCocoa> {
 public:
     using DisplayFrameType = std::variant<RefPtr<NativeImage>, RetainPtr<IOSurfaceRef>, RetainPtr<CMSampleBufferRef>>;
 
     class Capturer : public LoggerHelper {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-
         virtual ~Capturer() = default;
 
         virtual bool start() = 0;
@@ -87,40 +74,27 @@ public:
         const void* logIdentifier() const final { return m_logIdentifier; }
         WTFLogChannel& logChannel() const final;
 
-        void setObserver(CapturerObserver*);
+        using IsRunningObserver = WTF::Observer<void(bool)>;
+        void setIsRunningObserver(IsRunningObserver* observer) { m_observer = observer; };
 
     protected:
         Capturer() = default;
-        void isRunningChanged(bool running)
-        {
-            if (m_observer)
-                m_observer->capturerIsRunningChanged(running);
-        }
-        void captureFailed()
-        {
-            if (m_observer)
-                m_observer->capturerFailed();
-        }
-        void configurationChanged()
-        {
-            if (m_observer)
-                m_observer->capturerConfigurationChanged();
-        }
+        void capturerIsRunningChanged(bool);
 
     private:
-        WeakPtr<CapturerObserver> m_observer;
+        WeakPtr<IsRunningObserver> m_observer;
         RefPtr<const Logger> m_logger;
         const void* m_logIdentifier;
     };
 
-    static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier);
-    static CaptureSourceOrError create(Expected<UniqueRef<Capturer>, String>&&, const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier);
+    static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*);
+    static CaptureSourceOrError create(Expected<UniqueRef<Capturer>, String>&&, const CaptureDevice&, String&&, const MediaConstraints*);
 
     Seconds elapsedTime();
     void updateFrameSize();
 
 private:
-    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, AtomString&& name, String&& deviceID, String&& hashSalt, PageIdentifier);
+    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, String&& name, String&& deviceID, String&& hashSalt);
     virtual ~DisplayCaptureSourceCocoa();
 
     // RealtimeMediaSource
@@ -136,11 +110,6 @@ private:
     const char* logClassName() const final { return "DisplayCaptureSourceCocoa"; }
     void setLogger(const Logger&, const void*) final;
 
-    // CapturerObserver
-    void capturerIsRunningChanged(bool isRunning) final { notifyMutedChange(!isRunning); }
-    void capturerFailed() final { captureFailed(); }
-    void capturerConfigurationChanged() final;
-
     void emitFrame();
 
     UniqueRef<Capturer> m_capturer;
@@ -154,6 +123,7 @@ private:
     RunLoop::Timer<DisplayCaptureSourceCocoa> m_timer;
 
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
+    WTF::Observer<void(bool)> m_capturerIsRunningObserver;
 };
 
 } // namespace WebCore

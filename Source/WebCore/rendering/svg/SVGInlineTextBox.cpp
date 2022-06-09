@@ -52,7 +52,7 @@ struct ExpectedSVGInlineTextBoxSize : public LegacyInlineTextBox {
     Vector<SVGTextFragment> vector;
 };
 
-static_assert(sizeof(SVGInlineTextBox) == sizeof(ExpectedSVGInlineTextBoxSize), "SVGInlineTextBox is not of expected size");
+COMPILE_ASSERT(sizeof(SVGInlineTextBox) == sizeof(ExpectedSVGInlineTextBoxSize), SVGInlineTextBox_is_not_of_expected_size);
 
 SVGInlineTextBox::SVGInlineTextBox(RenderSVGInlineText& renderer)
     : LegacyInlineTextBox(renderer)
@@ -104,7 +104,7 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     ASSERT(scalingFactor);
 
     const FontCascade& scaledFont = renderer().scaledFont();
-    const FontMetrics& scaledFontMetrics = scaledFont.metricsOfPrimaryFont();
+    const FontMetrics& scaledFontMetrics = scaledFont.fontMetrics();
     FloatPoint textOrigin(fragment.x, fragment.y);
     if (scalingFactor != 1)
         textOrigin.scale(scalingFactor);
@@ -382,12 +382,12 @@ void SVGInlineTextBox::restoreGraphicsContextAfterTextPainting(GraphicsContext*&
 
 TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTextFragment& fragment) const
 {
-    TextRun run(StringView(renderer().text()).substring(fragment.characterOffset, fragment.length),
-        0, /* xPos, only relevant with allowTabs=true */
-        0, /* padding, only relevant for justified text, not relevant for SVG */
-        ExpansionBehavior::allowRightOnly(),
-        direction(),
-        style.rtlOrdering() == Order::Visual /* directionalOverride */);
+    TextRun run(StringView(renderer().text()).substring(fragment.characterOffset, fragment.length)
+                , 0 /* xPos, only relevant with allowTabs=true */
+                , 0 /* padding, only relevant for justified text, not relevant for SVG */
+                , AllowRightExpansion
+                , direction()
+                , style.rtlOrdering() == Order::Visual /* directionalOverride */);
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
@@ -453,7 +453,7 @@ static inline RenderBoxModelObject& findRendererDefininingTextDecoration(LegacyI
     while (parentBox) {
         renderer = &parentBox->renderer();
 
-        if (!renderer->style().textDecorationLine().isEmpty())
+        if (!renderer->style().textDecoration().isEmpty())
             break;
 
         parentBox = parentBox->parent();
@@ -511,7 +511,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext& context, Option
 
     FloatPoint decorationOrigin(fragment.x, fragment.y);
     float width = fragment.width;
-    const FontMetrics& scaledFontMetrics = scaledFont.metricsOfPrimaryFont();
+    const FontMetrics& scaledFontMetrics = scaledFont.fontMetrics();
 
     GraphicsContextStateSaver stateSaver(context);
     if (scalingFactor != 1) {
@@ -546,7 +546,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext& context, const Rend
         textSize.scale(scalingFactor);
     }
 
-    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.metricsOfPrimaryFont().floatAscent()), textSize);
+    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - scaledFont.fontMetrics().floatAscent()), textSize);
 
     GraphicsContext* usedContext = &context;
     do {
@@ -613,7 +613,7 @@ FloatRect SVGInlineTextBox::calculateBoundaries() const
     float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);
 
-    float baseline = renderer().scaledFont().metricsOfPrimaryFont().floatAscent() / scalingFactor;
+    float baseline = renderer().scaledFont().fontMetrics().floatAscent() / scalingFactor;
 
     AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();
@@ -648,7 +648,7 @@ bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult&
                 float scalingFactor = renderer().scalingFactor();
                 ASSERT(scalingFactor);
                 
-                float baseline = renderer().scaledFont().metricsOfPrimaryFont().floatAscent() / scalingFactor;
+                float baseline = renderer().scaledFont().fontMetrics().floatAscent() / scalingFactor;
 
                 AffineTransform fragmentTransform;
                 for (auto& fragment : m_textFragments) {

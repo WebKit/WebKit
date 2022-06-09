@@ -19,7 +19,7 @@
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
-#include "platform/FeaturesGL_autogen.h"
+#include "platform/FeaturesGL.h"
 
 namespace rx
 {
@@ -121,7 +121,6 @@ GLuint RenderbufferGL::getRenderbufferID() const
 }
 
 angle::Result RenderbufferGL::initializeContents(const gl::Context *context,
-                                                 GLenum binding,
                                                  const gl::ImageIndex &imageIndex)
 {
     BlitGL *blitter = GetBlitGL(context);

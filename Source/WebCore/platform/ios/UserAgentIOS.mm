@@ -54,27 +54,27 @@ static inline bool isClassicPhone()
     return isClassic() && [PAL::getUIApplicationClass() _classicMode] != UIApplicationSceneClassicModeOriginalPad;
 }
 
-ASCIILiteral osNameForUserAgent()
+String osNameForUserAgent()
 {
     if (deviceHasIPadCapability() && !isClassicPhone())
-        return "OS"_s;
-    return "iPhone OS"_s;
+        return "OS";
+    return "iPhone OS";
 }
 
 static StringView deviceNameForUserAgent()
 {
     if (isClassic()) {
         if (isClassicPad())
-            return "iPad"_s;
-        return "iPhone"_s;
+            return "iPad";
+        return "iPhone";
     }
 
     static NeverDestroyed<String> name = [] {
         auto name = deviceName();
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
-        size_t location = name.find(" Simulator"_s);
+        size_t location = name.find(" Simulator");
         if (location != notFound)
-            return name.left(location);
+            return name.substring(0, location);
 #endif
         return name;
     }();
@@ -85,7 +85,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
 {
     auto separator = applicationName.isEmpty() ? "" : " ";
     if (type == UserAgentType::Desktop)
-        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)", separator, applicationName);
+        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko)", separator, applicationName);
 
     // FIXME: We should deprecate and remove this override; see https://bugs.webkit.org/show_bug.cgi?id=217927 for details.
     if (auto override = dynamic_cf_cast<CFStringRef>(adoptCF(CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation")))))

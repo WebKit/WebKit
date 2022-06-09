@@ -83,17 +83,14 @@ void SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
     if (!m_gpuProcessConnection)
         return;
 
+    auto sharedData = SharedMemory::copyBuffer(data);
     SharedMemory::Handle handle;
-    {
-        auto sharedData = SharedMemory::copyBuffer(data);
-        if (!sharedData)
-            return;
-        sharedData->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    }
+    sharedData->createHandle(handle, SharedMemory::Protection::ReadOnly);
+
     // Take ownership of shared memory and mark it as media-related memory.
     handle.takeOwnershipOfMemory(MemoryLedger::Media);
 
-    m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Append(SharedMemory::IPCHandle { WTFMove(handle), data->size() }), m_remoteSourceBufferIdentifier);
+    m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::Append(SharedMemory::IPCHandle { WTFMove(handle), sharedData->size() }), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::abort()
@@ -341,11 +338,16 @@ void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<AtomString, Atom
     if (!m_gpuProcessConnection)
         return;
 
-    auto identifierPairs = trackIdPairs.map([this](auto& trackIdPair) {
+    Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>> identifierPairs;
+
+    for (auto& trackIdPair : trackIdPairs) {
         ASSERT(m_prevTrackIdentifierMap.contains(trackIdPair.first));
         ASSERT(m_trackIdentifierMap.contains(trackIdPair.second));
-        return std::pair { m_prevTrackIdentifierMap.take(trackIdPair.first), m_trackIdentifierMap.get(trackIdPair.second) };
-    });
+
+        auto oldIdentifier = m_prevTrackIdentifierMap.take(trackIdPair.first);
+        auto newIdentifier = m_trackIdentifierMap.get(trackIdPair.second);
+        identifierPairs.append(std::make_pair(oldIdentifier, newIdentifier));
+    }
 
     m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::UpdateTrackIds(identifierPairs), m_remoteSourceBufferIdentifier);
 }
@@ -381,30 +383,27 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
     segment.duration = segmentInfo.duration;
 
     m_prevTrackIdentifierMap.swap(m_trackIdentifierMap);
-    segment.audioTracks.reserveInitialCapacity(segmentInfo.audioTracks.size());
     for (auto& audioTrack : segmentInfo.audioTracks) {
         SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
         info.track = m_mediaPlayerPrivate->audioTrackPrivateRemote(audioTrack.identifier);
         info.description = RemoteMediaDescription::create(audioTrack.description);
-        segment.audioTracks.uncheckedAppend(info);
+        segment.audioTracks.append(info);
         m_trackIdentifierMap.add(info.track->id(), audioTrack.identifier);
     }
 
-    segment.videoTracks.reserveInitialCapacity(segmentInfo.videoTracks.size());
     for (auto& videoTrack : segmentInfo.videoTracks) {
         SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
         info.track = m_mediaPlayerPrivate->videoTrackPrivateRemote(videoTrack.identifier);
         info.description = RemoteMediaDescription::create(videoTrack.description);
-        segment.videoTracks.uncheckedAppend(info);
+        segment.videoTracks.append(info);
         m_trackIdentifierMap.add(info.track->id(), videoTrack.identifier);
     }
 
-    segment.textTracks.reserveInitialCapacity(segmentInfo.textTracks.size());
     for (auto& textTrack : segmentInfo.textTracks) {
         SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info;
         info.track = m_mediaPlayerPrivate->textTrackPrivateRemote(textTrack.identifier);
         info.description = RemoteMediaDescription::create(textTrack.description);
-        segment.textTracks.uncheckedAppend(info);
+        segment.textTracks.append(info);
         m_trackIdentifierMap.add(info.track->id(), textTrack.identifier);
     }
 

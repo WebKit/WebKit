@@ -201,7 +201,7 @@ static void collectCPUUsage(float period)
 
     struct dirent* dp;
     while ((dp = readdir(dir))) {
-        auto id = parseInteger<pid_t>(StringView::fromLatin1(dp->d_name));
+        auto id = parseInteger<pid_t>(dp->d_name);
         if (!id)
             continue;
 
@@ -268,7 +268,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
             return true;
 
         // The bmalloc scavenger thread is below WTF. Detect it by its name.
-        if (name == "BMScavenger"_s)
+        if (name == "BMScavenger")
             return true;
 
         return false;

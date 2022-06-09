@@ -30,7 +30,6 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/NotFound.h>
 #include <wtf/UnalignedAccess.h>
-#include <wtf/text/ASCIILiteral.h>
 
 namespace WTF {
 
@@ -48,12 +47,12 @@ template<typename CharacterTypeA, typename CharacterTypeB> bool equalIgnoringASC
 template<typename StringClassA, typename StringClassB> bool equalIgnoringASCIICaseCommon(const StringClassA&, const StringClassB&);
 
 template<typename CharacterType> bool equalLettersIgnoringASCIICase(const CharacterType*, const char* lowercaseLetters, unsigned length);
-template<typename CharacterType> bool equalLettersIgnoringASCIICase(const CharacterType*, unsigned charactersLength, ASCIILiteral);
+template<typename CharacterType, unsigned lowercaseLettersLength> bool equalLettersIgnoringASCIICase(const CharacterType*, unsigned charactersLength, const char (&lowercaseLetters)[lowercaseLettersLength]);
 
-template<typename StringClass> bool equalLettersIgnoringASCIICaseCommon(const StringClass&, ASCIILiteral);
+template<typename StringClass, unsigned length> bool equalLettersIgnoringASCIICaseCommon(const StringClass&, const char (&lowercaseLetters)[length]);
 
 bool equalIgnoringASCIICase(const char*, const char*);
-bool equalLettersIgnoringASCIICase(const char*, ASCIILiteral);
+template<unsigned lowercaseLettersLength> bool equalLettersIgnoringASCIICase(const char*, const char (&lowercaseLetters)[lowercaseLettersLength]);
 
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
 #if (CPU(X86_64) || CPU(ARM64)) && !ASAN_ENABLED
@@ -382,6 +381,80 @@ template<typename StringClassA> bool equalIgnoringASCIICaseCommon(const StringCl
     return equalIgnoringASCIICase(a.characters16(), b, length);
 }
 
+template<typename StringClassA, typename StringClassB>
+bool startsWith(const StringClassA& reference, const StringClassB& prefix)
+{
+    unsigned prefixLength = prefix.length();
+    if (prefixLength > reference.length())
+        return false;
+
+    if (reference.is8Bit()) {
+        if (prefix.is8Bit())
+            return equal(reference.characters8(), prefix.characters8(), prefixLength);
+        return equal(reference.characters8(), prefix.characters16(), prefixLength);
+    }
+    if (prefix.is8Bit())
+        return equal(reference.characters16(), prefix.characters8(), prefixLength);
+    return equal(reference.characters16(), prefix.characters16(), prefixLength);
+}
+
+template<typename StringClassA, typename StringClassB>
+bool startsWithIgnoringASCIICase(const StringClassA& reference, const StringClassB& prefix)
+{
+    unsigned prefixLength = prefix.length();
+    if (prefixLength > reference.length())
+        return false;
+
+    if (reference.is8Bit()) {
+        if (prefix.is8Bit())
+            return equalIgnoringASCIICase(reference.characters8(), prefix.characters8(), prefixLength);
+        return equalIgnoringASCIICase(reference.characters8(), prefix.characters16(), prefixLength);
+    }
+    if (prefix.is8Bit())
+        return equalIgnoringASCIICase(reference.characters16(), prefix.characters8(), prefixLength);
+    return equalIgnoringASCIICase(reference.characters16(), prefix.characters16(), prefixLength);
+}
+
+template<typename StringClassA, typename StringClassB>
+bool endsWith(const StringClassA& reference, const StringClassB& suffix)
+{
+    unsigned suffixLength = suffix.length();
+    unsigned referenceLength = reference.length();
+    if (suffixLength > referenceLength)
+        return false;
+
+    unsigned startOffset = referenceLength - suffixLength;
+
+    if (reference.is8Bit()) {
+        if (suffix.is8Bit())
+            return equal(reference.characters8() + startOffset, suffix.characters8(), suffixLength);
+        return equal(reference.characters8() + startOffset, suffix.characters16(), suffixLength);
+    }
+    if (suffix.is8Bit())
+        return equal(reference.characters16() + startOffset, suffix.characters8(), suffixLength);
+    return equal(reference.characters16() + startOffset, suffix.characters16(), suffixLength);
+}
+
+template<typename StringClassA, typename StringClassB>
+bool endsWithIgnoringASCIICase(const StringClassA& reference, const StringClassB& suffix)
+{
+    unsigned suffixLength = suffix.length();
+    unsigned referenceLength = reference.length();
+    if (suffixLength > referenceLength)
+        return false;
+
+    unsigned startOffset = referenceLength - suffixLength;
+
+    if (reference.is8Bit()) {
+        if (suffix.is8Bit())
+            return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.characters8(), suffixLength);
+        return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.characters16(), suffixLength);
+    }
+    if (suffix.is8Bit())
+        return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.characters8(), suffixLength);
+    return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.characters16(), suffixLength);
+}
+
 template <typename SearchCharacterType, typename MatchCharacterType>
 size_t findIgnoringASCIICase(const SearchCharacterType* source, const MatchCharacterType* matchCharacters, unsigned startOffset, unsigned searchLength, unsigned matchLength)
 {
@@ -405,6 +478,33 @@ inline size_t findIgnoringASCIICaseWithoutLength(const char* source, const char*
     unsigned matchLength = strlen(matchCharacters);
 
     return matchLength < searchLength ? findIgnoringASCIICase(source, matchCharacters, 0, searchLength, matchLength) : notFound;
+}
+
+template<typename StringClassA, typename StringClassB>
+size_t findIgnoringASCIICase(const StringClassA& source, const StringClassB& stringToFind, unsigned startOffset)
+{
+    unsigned sourceStringLength = source.length();
+    unsigned matchLength = stringToFind.length();
+    if (!matchLength)
+        return std::min(startOffset, sourceStringLength);
+
+    // Check startOffset & matchLength are in range.
+    if (startOffset > sourceStringLength)
+        return notFound;
+    unsigned searchLength = sourceStringLength - startOffset;
+    if (matchLength > searchLength)
+        return notFound;
+
+    if (source.is8Bit()) {
+        if (stringToFind.is8Bit())
+            return findIgnoringASCIICase(source.characters8(), stringToFind.characters8(), startOffset, searchLength, matchLength);
+        return findIgnoringASCIICase(source.characters8(), stringToFind.characters16(), startOffset, searchLength, matchLength);
+    }
+
+    if (stringToFind.is8Bit())
+        return findIgnoringASCIICase(source.characters16(), stringToFind.characters8(), startOffset, searchLength, matchLength);
+
+    return findIgnoringASCIICase(source.characters16(), stringToFind.characters16(), startOffset, searchLength, matchLength);
 }
 
 template <typename SearchCharacterType, typename MatchCharacterType>
@@ -459,31 +559,37 @@ inline size_t find(const LChar* characters, unsigned length, UChar matchCharacte
     return find(characters, length, static_cast<LChar>(matchCharacter), index);
 }
 
-template <typename SearchCharacterType, typename MatchCharacterType>
-ALWAYS_INLINE static size_t reverseFindInner(const SearchCharacterType* searchCharacters, const MatchCharacterType* matchCharacters, unsigned start, unsigned length, unsigned matchLength)
+template<typename StringClass>
+size_t findCommon(const StringClass& haystack, const StringClass& needle, unsigned start)
 {
-    // Optimization: keep a running hash of the strings,
-    // only call equal if the hashes match.
+    unsigned needleLength = needle.length();
 
-    // delta is the number of additional times to test; delta == 0 means test only once.
-    unsigned delta = std::min(start, length - matchLength);
-
-    unsigned searchHash = 0;
-    unsigned matchHash = 0;
-    for (unsigned i = 0; i < matchLength; ++i) {
-        searchHash += searchCharacters[delta + i];
-        matchHash += matchCharacters[i];
+    if (needleLength == 1) {
+        if (haystack.is8Bit())
+            return WTF::find(haystack.characters8(), haystack.length(), needle[0], start);
+        return WTF::find(haystack.characters16(), haystack.length(), needle[0], start);
     }
 
-    // keep looping until we match
-    while (searchHash != matchHash || !equal(searchCharacters + delta, matchCharacters, matchLength)) {
-        if (!delta)
-            return notFound;
-        --delta;
-        searchHash -= searchCharacters[delta + matchLength];
-        searchHash += searchCharacters[delta];
+    if (start > haystack.length())
+        return notFound;
+
+    if (!needleLength)
+        return start;
+
+    unsigned searchLength = haystack.length() - start;
+    if (needleLength > searchLength)
+        return notFound;
+
+    if (haystack.is8Bit()) {
+        if (needle.is8Bit())
+            return findInner(haystack.characters8() + start, needle.characters8(), start, searchLength, needleLength);
+        return findInner(haystack.characters8() + start, needle.characters16(), start, searchLength, needleLength);
     }
-    return delta;
+
+    if (needle.is8Bit())
+        return findInner(haystack.characters16() + start, needle.characters8(), start, searchLength, needleLength);
+
+    return findInner(haystack.characters16() + start, needle.characters16(), start, searchLength, needleLength);
 }
 
 // This is marked inline since it's mostly used in non-inline functions for each string type.
@@ -497,10 +603,11 @@ template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(const
     return true;
 }
 
-template<typename CharacterType> inline bool equalLettersIgnoringASCIICase(const CharacterType* characters, unsigned charactersLength, ASCIILiteral literal)
+template<typename CharacterType, unsigned lowercaseLettersLength> inline bool equalLettersIgnoringASCIICase(const CharacterType* characters, unsigned charactersLength, const char (&lowercaseLetters)[lowercaseLettersLength])
 {
-    unsigned literalLength = literal.length();
-    return charactersLength == literalLength && equalLettersIgnoringASCIICase(characters, literal.characters(), literalLength);
+    ASSERT(strlen(lowercaseLetters) == lowercaseLettersLength - 1);
+    unsigned lowercaseLettersStringLength = lowercaseLettersLength - 1;
+    return charactersLength == lowercaseLettersStringLength && equalLettersIgnoringASCIICase(characters, lowercaseLetters, lowercaseLettersStringLength);
 }
 
 template<typename StringClass> bool inline hasPrefixWithLettersIgnoringASCIICaseCommon(const StringClass& string, const char* lowercaseLetters, unsigned length)
@@ -518,31 +625,36 @@ template<typename StringClass> bool inline hasPrefixWithLettersIgnoringASCIICase
 }
 
 // This is intentionally not marked inline because it's used often and is not speed-critical enough to want it inlined everywhere.
-template<typename StringClass> bool equalLettersIgnoringASCIICaseCommon(const StringClass& string, const char* literal, unsigned literalLength)
+template<typename StringClass> bool equalLettersIgnoringASCIICaseCommonWithoutLength(const StringClass& string, const char* lowercaseLetters)
 {
     unsigned length = string.length();
-    if (length != literalLength)
+    if (length != strlen(lowercaseLetters))
         return false;
-    return hasPrefixWithLettersIgnoringASCIICaseCommon(string, literal, length);
+    return hasPrefixWithLettersIgnoringASCIICaseCommon(string, lowercaseLetters, length);
 }
 
-template<typename StringClass> bool startsWithLettersIgnoringASCIICaseCommon(const StringClass& string, const char* prefix, unsigned prefixLength)
+template<typename StringClass> bool startsWithLettersIgnoringASCIICaseCommonWithoutLength(const StringClass& string, const char* lowercaseLetters)
 {
+    size_t prefixLength = strlen(lowercaseLetters);
     if (!prefixLength)
         return true;
     if (string.length() < prefixLength)
         return false;
-    return hasPrefixWithLettersIgnoringASCIICaseCommon(string, prefix, prefixLength);
+    return hasPrefixWithLettersIgnoringASCIICaseCommon(string, lowercaseLetters, prefixLength);
 }
 
-template<typename StringClass> inline bool equalLettersIgnoringASCIICaseCommon(const StringClass& string, ASCIILiteral literal)
+template<typename StringClass, unsigned length> inline bool equalLettersIgnoringASCIICaseCommon(const StringClass& string, const char (&lowercaseLetters)[length])
 {
-    return equalLettersIgnoringASCIICaseCommon(string, literal.characters(), literal.length());
+    // Don't actually use the length; we are choosing code size over speed.
+    ASSERT(strlen(lowercaseLetters) == length - 1);
+    const char* pointer = lowercaseLetters;
+    return equalLettersIgnoringASCIICaseCommonWithoutLength(string, pointer);
 }
 
-template<typename StringClass> inline bool startsWithLettersIgnoringASCIICaseCommon(const StringClass& string, ASCIILiteral literal)
+template<typename StringClass, unsigned length> inline bool startsWithLettersIgnoringASCIICaseCommon(const StringClass& string, const char (&lowercaseLetters)[length])
 {
-    return startsWithLettersIgnoringASCIICaseCommon(string, literal.characters(), literal.length());
+    const char* pointer = lowercaseLetters;
+    return startsWithLettersIgnoringASCIICaseCommonWithoutLength(string, pointer);
 }
 
 inline bool equalIgnoringASCIICase(const char* a, const char* b)
@@ -551,27 +663,10 @@ inline bool equalIgnoringASCIICase(const char* a, const char* b)
     return length == strlen(b) && equalIgnoringASCIICase(a, b, length);
 }
 
-inline bool equalLettersIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
+template<unsigned lowercaseLettersLength> inline bool equalLettersIgnoringASCIICase(const char* string, const char (&lowercaseLetters)[lowercaseLettersLength])
 {
-    auto bLength = b.length();
-    return a.length() == bLength && equalLettersIgnoringASCIICase(a.characters(), b.characters(), bLength);
-}
-
-inline bool equalLettersIgnoringASCIICase(const char* string, ASCIILiteral literal)
-{
-    auto literalLength = literal.length();
-    return strlen(string) == literalLength && equalLettersIgnoringASCIICase(string, literal.characters(), literalLength);
-}
-
-inline bool equalIgnoringASCIICase(const char* string, ASCIILiteral literal)
-{
-    auto literalLength = literal.length();
-    return strlen(string) == literal.length() && equalIgnoringASCIICase(string, literal.characters(), literalLength);
-}
-
-inline bool equalIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
-{
-    return equalIgnoringASCIICase(a.characters(), a.length(), b.characters(), b.length());
+    auto length = strlen(lowercaseLetters);
+    return strlen(string) == length && equalLettersIgnoringASCIICase(string, lowercaseLetters, length);
 }
 
 }

@@ -180,9 +180,10 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
                 value: this._action.data || "",
             });
 
-            this._codeMirrorClientHeight = NaN;
+            this._codeMirror.on("viewportChange", this._codeMirrorViewportChanged.bind(this));
+            this._codeMirror.on("change", this._handleJavaScriptCodeMirrorChange.bind(this));
 
-            this._codeMirror.on("changes", this._handleJavaScriptCodeMirrorChanges.bind(this));
+            this._codeMirrorViewport = {from: null, to: null};
 
             var completionController = new WI.CodeMirrorCompletionController(this._delegate.breakpointActionViewCodeMirrorCompletionControllerMode(this, this._codeMirror), this._codeMirror);
             completionController.addExtendedCompletionProvider("javascript", WI.javaScriptRuntimeCompletionProvider);
@@ -215,17 +216,20 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
         this._action.data = event.target.value;
     }
 
-    _handleJavaScriptCodeMirrorChanges(codeMirror, changes)
+    _handleJavaScriptCodeMirrorChange(event)
     {
         // Throw away the expression if it's just whitespace.
         this._action.data = this._codeMirror.getValue().trim();
+    }
 
-        let {clientHeight} = this._codeMirror.getScrollInfo();
-        if (clientHeight !== this._codeMirrorClientHeight) {
-            this._codeMirrorClientHeight = clientHeight;
+    _codeMirrorViewportChanged(event, from, to)
+    {
+        if (this._codeMirrorViewport.from === from && this._codeMirrorViewport.to === to)
+            return;
 
-            this._delegate.breakpointActionViewResized(this);
-        }
+        this._codeMirrorViewport.from = from;
+        this._codeMirrorViewport.to = to;
+        this._delegate.breakpointActionViewResized(this);
     }
 
     _handleEmulateUserGestureCheckboxChange(event)

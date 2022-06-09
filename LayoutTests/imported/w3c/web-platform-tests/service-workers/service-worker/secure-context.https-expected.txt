@@ -1,3 +1,0 @@
-
-PASS Ensure service worker is bypassed in insecure contexts
-

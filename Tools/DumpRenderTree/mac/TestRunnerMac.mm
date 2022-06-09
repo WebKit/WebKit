@@ -85,10 +85,6 @@
 #import <WebKit/WebDOMOperationsPrivate.h>
 #endif
 
-#if PLATFORM(MAC)
-#import "WebHTMLViewForTestingMac.h"
-#endif
-
 #if !PLATFORM(IOS_FAMILY)
 
 @interface CommandValidationTarget : NSObject <NSValidatedUserInterfaceItem>
@@ -962,6 +958,12 @@ void TestRunner::apiTestGoToCurrentBackForwardItem()
     [view goToBackForwardItem:[[view backForwardList] currentItem]];
 }
 
+void TestRunner::setWebViewEditable(bool editable)
+{
+    WebView *view = [mainFrame webView];
+    [view setEditable:editable];
+}
+
 static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoaderRunLoopMode";
 
 @interface SynchronousLoader : NSObject <NSURLConnectionDelegate>
@@ -1201,12 +1203,3 @@ unsigned TestRunner::imageCountInGeneralPasteboard() const
     
     return imagesArray.count;
 }
-
-#if PLATFORM(MAC)
-
-bool TestRunner::isSecureEventInputEnabled() const
-{
-    return dynamic_objc_cast<WebHTMLView>(mainFrame.frameView.documentView)._secureEventInputEnabledForTesting;
-}
-
-#endif // PLATFORM(MAC)

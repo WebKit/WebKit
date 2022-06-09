@@ -135,7 +135,7 @@ static bool canCacheFrame(Frame& frame, DiagnosticLoggingClient& diagnosticLoggi
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::isErrorPageKey());
         isCacheable = false;
     }
-    if (frame.isMainFrame() && frame.document() && frame.document()->url().protocolIs("https"_s) && documentLoader->response().cacheControlContainsNoStore()) {
+    if (frame.isMainFrame() && frame.document() && frame.document()->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore()) {
         PCLOG("   -Frame is HTTPS, and cache control prohibits storing");
         logBackForwardCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::httpsNoStoreKey());
         isCacheable = false;
@@ -285,7 +285,7 @@ BackForwardCache::BackForwardCache()
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.showBackForwardCache"_s, [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.showBackForwardCache", [] {
             BackForwardCache::singleton().dump();
         });
     });
@@ -317,7 +317,7 @@ bool BackForwardCache::canCache(Page& page) const
 
 void BackForwardCache::pruneToSizeNow(unsigned size, PruningReason pruningReason)
 {
-    SetForScope change(m_maxSize, size);
+    SetForScope<unsigned> change(m_maxSize, size);
     prune(pruningReason);
 }
 
@@ -520,7 +520,7 @@ void BackForwardCache::removeAllItemsForPage(Page& page)
 {
 #if ASSERT_ENABLED
     ASSERT_WITH_MESSAGE(!m_isInRemoveAllItemsForPage, "We should not reenter this method");
-    SetForScope inRemoveAllItemsForPageScope { m_isInRemoveAllItemsForPage, true };
+    SetForScope<bool> inRemoveAllItemsForPageScope { m_isInRemoveAllItemsForPage, true };
 #endif
 
     for (auto it = m_items.begin(); it != m_items.end();) {

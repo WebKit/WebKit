@@ -209,7 +209,13 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomString
 
 bool HTMLLinkElement::shouldLoadLink()
 {
-    return isConnected();
+    Ref<Document> originalDocument = document();
+    if (!dispatchBeforeLoadEvent(getNonEmptyURLAttribute(hrefAttr).string()))
+        return false;
+    // A beforeload handler might have removed us from the document or changed the document.
+    if (!isConnected() || &document() != originalDocument.ptr())
+        return false;
+    return true;
 }
 
 void HTMLLinkElement::setCrossOrigin(const AtomString& value)
@@ -230,13 +236,13 @@ void HTMLLinkElement::setAs(const AtomString& value)
 String HTMLLinkElement::as() const
 {
     String as = attributeWithoutSynchronization(asAttr);
-    if (equalLettersIgnoringASCIICase(as, "fetch"_s)
-        || equalLettersIgnoringASCIICase(as, "image"_s)
-        || equalLettersIgnoringASCIICase(as, "script"_s)
-        || equalLettersIgnoringASCIICase(as, "style"_s)
-        || (document().settings().mediaPreloadingEnabled() && (equalLettersIgnoringASCIICase(as, "video"_s) || equalLettersIgnoringASCIICase(as, "audio"_s)))
-        || equalLettersIgnoringASCIICase(as, "track"_s)
-        || equalLettersIgnoringASCIICase(as, "font"_s))
+    if (equalLettersIgnoringASCIICase(as, "fetch")
+        || equalLettersIgnoringASCIICase(as, "image")
+        || equalLettersIgnoringASCIICase(as, "script")
+        || equalLettersIgnoringASCIICase(as, "style")
+        || (document().settings().mediaPreloadingEnabled() && (equalLettersIgnoringASCIICase(as, "video") || equalLettersIgnoringASCIICase(as, "audio")))
+        || equalLettersIgnoringASCIICase(as, "track")
+        || equalLettersIgnoringASCIICase(as, "font"))
         return as.convertToASCIILowercase();
     return String();
 }
@@ -263,7 +269,6 @@ void HTMLLinkElement::process()
         attributeWithoutSynchronization(crossoriginAttr),
         attributeWithoutSynchronization(imagesrcsetAttr),
         attributeWithoutSynchronization(imagesizesAttr),
-        nonce(),
         referrerPolicy(),
     };
 
@@ -274,10 +279,10 @@ void HTMLLinkElement::process()
         if (m_type.isNull())
             treatAsStyleSheet = true;
         else if (auto parsedContentType = ParsedContentType::create(m_type))
-            treatAsStyleSheet = equalLettersIgnoringASCIICase(parsedContentType->mimeType(), "text/css"_s);
+            treatAsStyleSheet = equalLettersIgnoringASCIICase(parsedContentType->mimeType(), "text/css");
     }
     if (!treatAsStyleSheet)
-        treatAsStyleSheet = document().settings().treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css"_s);
+        treatAsStyleSheet = document().settings().treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css");
 
     LOG_WITH_STREAM(StyleSheets, stream << "HTMLLinkElement " << this << " process() - treatAsStyleSheet " << treatAsStyleSheet);
 
@@ -312,7 +317,8 @@ void HTMLLinkElement::process()
         if (!isActive)
             priority = DefaultResourceLoadPriority::inactiveStyleSheet;
 
-        m_integrityMetadataForPendingSheetRequest = attributeWithoutSynchronization(HTMLNames::integrityAttr);
+        if (document().settings().subresourceIntegrityEnabled())
+            m_integrityMetadataForPendingSheetRequest = attributeWithoutSynchronization(HTMLNames::integrityAttr);
 
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.nonce = nonce();
@@ -588,7 +594,7 @@ const AtomString& HTMLLinkElement::rel() const
     return attributeWithoutSynchronization(relAttr);
 }
 
-AtomString HTMLLinkElement::target() const
+String HTMLLinkElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }

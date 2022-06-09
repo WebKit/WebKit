@@ -59,7 +59,9 @@ inline bool RadioButtonGroup::isValid() const
 
 Vector<Ref<HTMLInputElement>> RadioButtonGroup::members() const
 {
-    auto sortedMembers = copyToVectorOf<Ref<HTMLInputElement>>(m_members);
+    Vector<Ref<HTMLInputElement>> sortedMembers;
+    for (auto& member : m_members)
+        sortedMembers.append(member);
     std::sort(sortedMembers.begin(), sortedMembers.end(), [](auto& a, auto& b) {
         return is_lt(treeOrder<ComposedTree>(a, b));
     });

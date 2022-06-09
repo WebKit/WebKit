@@ -31,7 +31,6 @@
 #include "WebContextMenuItemData.h"
 #include "WebHitTestResultData.h"
 #include <WebCore/ContextMenuContext.h>
-#include <WebCore/ElementContext.h>
 #include <wtf/EnumTraits.h>
 
 namespace IPC {
@@ -64,18 +63,8 @@ public:
         , m_selectionIsEditable(isEditable)
     {
     }
-
-    ContextMenuContextData(const WebCore::IntPoint& menuLocation, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, const String& sourceImageMIMEType)
-        : m_type(Type::ServicesMenu)
-        , m_menuLocation(menuLocation)
-        , m_selectionIsEditable(isEditable)
-        , m_controlledImageBounds(imageRect)
-        , m_controlledImageAttachmentID(attachmentID)
-        , m_controlledImageMIMEType(sourceImageMIMEType)
-    {
-    }
-
-    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<WebCore::ElementContext>&&, const String& sourceImageMIMEType);
+    
+    ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image&, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID);
 
     ShareableBitmap* controlledImage() const { return m_controlledImage.get(); }
     const Vector<uint8_t>& controlledSelectionData() const { return m_controlledSelectionData; }
@@ -85,9 +74,7 @@ public:
     bool controlledDataIsEditable() const;
     WebCore::IntRect controlledImageBounds() const { return m_controlledImageBounds; };
     String controlledImageAttachmentID() const { return m_controlledImageAttachmentID; };
-    std::optional<WebCore::ElementContext> controlledImageElementContext() const { return m_controlledImageElementContext; }
-    String controlledImageMIMEType() const { return m_controlledImageMIMEType; }
-#endif // ENABLE(SERVICE_CONTROLS)
+#endif
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, ContextMenuContextData&);
@@ -110,8 +97,6 @@ private:
     bool m_selectionIsEditable;
     WebCore::IntRect m_controlledImageBounds;
     String m_controlledImageAttachmentID;
-    std::optional<WebCore::ElementContext> m_controlledImageElementContext;
-    String m_controlledImageMIMEType;
 #endif
 };
 

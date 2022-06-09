@@ -31,7 +31,8 @@
 
 namespace JSC {
 
-const ClassInfo JSDataView::s_info = { "DataView"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDataView) };
+const ClassInfo JSDataView::s_info = {
+    "DataView", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDataView)};
 
 JSDataView::JSDataView(VM& vm, ConstructionContext& context, ArrayBuffer* buffer)
     : Base(vm, context)

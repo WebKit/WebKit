@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSFileSystemDirectoryHandleIterator.h"
 
-#include "ExtendedDOMClientIsoSubspaces.h"
-#include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMOperation.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
@@ -43,21 +41,33 @@ static JSC_DECLARE_HOST_FUNCTION(jsFileSystemDirectoryHandleIterator_onPromiseRe
 JSC_ANNOTATE_HOST_FUNCTION(JSFileSystemDirectoryHandleIteratorPrototypeNext, JSFileSystemDirectoryHandleIteratorPrototype::next);
 
 template<>
-const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorBase::s_info = { "Directory Handle Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorBase) };
-const JSC::ClassInfo JSFileSystemDirectoryHandleIterator::s_info = { "Directory Handle Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIterator) };
+const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorBase::s_info = { "Directory Handle Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorBase) };
+const JSC::ClassInfo JSFileSystemDirectoryHandleIterator::s_info = { "Directory Handle Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIterator) };
 
 template<>
-const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorPrototype::s_info = { "Directory Handle Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorPrototype) };
+const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorPrototype::s_info = { "Directory Handle Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorPrototype) };
 
-GCClient::IsoSubspace* JSFileSystemDirectoryHandleIterator::subspaceForImpl(VM& vm)
+IsoSubspace* JSFileSystemDirectoryHandleIterator::subspaceForImpl(VM& vm)
 {
-    JSLockHolder apiLocker(vm);
-    return WebCore::subspaceForImpl<JSFileSystemDirectoryHandleIterator, UseCustomHeapCellType::No>(vm,
-        [] (auto& spaces) { return spaces.m_clientSubspaceForFileSystemDirectoryHandleIterator.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_clientSubspaceForFileSystemDirectoryHandleIterator = WTFMove(space); },
-        [] (auto& spaces) { return spaces.m_subspaceForFileSystemDirectoryHandleIterator.get(); },
-        [] (auto& spaces, auto&& space) { spaces.m_subspaceForFileSystemDirectoryHandleIterator = WTFMove(space); }
-    );
+    JSC::JSLockHolder apiLocker(vm);
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+    if (auto* space = clientData.fileSystemDirectoryHandleIteratorSpace())
+        return space;
+    static_assert(std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator> || !JSFileSystemDirectoryHandleIterator::needsDestruction);
+    if constexpr (std::is_base_of_v<JSC::JSDestructibleObject, JSFileSystemDirectoryHandleIterator>)
+        clientData.setFileSystemDirectoryHandleIteratorSpace(makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType(), JSFileSystemDirectoryHandleIterator));
+    else
+        clientData.setFileSystemDirectoryHandleIteratorSpace(makeUnique<IsoSubspace> ISO_SUBSPACE_INIT(vm.heap, vm.cellHeapCellType(), JSFileSystemDirectoryHandleIterator));
+    auto* space = clientData.fileSystemDirectoryHandleIteratorSpace();
+IGNORE_WARNINGS_BEGIN("unreachable-code")
+IGNORE_WARNINGS_BEGIN("tautological-compare")
+    void (*myVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSFileSystemDirectoryHandleIterator::visitOutputConstraints;
+    void (*jsCellVisitOutputConstraint)(JSC::JSCell*, JSC::SlotVisitor&) = JSC::JSCell::visitOutputConstraints;
+    if (myVisitOutputConstraint != jsCellVisitOutputConstraint)
+        clientData.outputConstraintSpaces().append(space);
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
+    return space;
 }
 
 inline JSC::EncodedJSValue jsFileSystemDirectoryHandleIterator_onPromiseSettledBody(JSGlobalObject* globalObject, JSC::CallFrame*, JSFileSystemDirectoryHandleIterator* castedThis)

@@ -24,7 +24,6 @@
 #include "CSSParser.h"
 #include "Color.h"
 #include "ColorSerialization.h"
-#include "CommonAtomStrings.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "QualifiedName.h"
@@ -38,18 +37,18 @@ struct SVGPropertyTraits { };
 template<>
 struct SVGPropertyTraits<bool> {
     static bool initialValue() { return false; }
-    static bool fromString(const String& string) { return string == "true"_s; }
+    static bool fromString(const String& string) { return string == "true"; }
     static std::optional<bool> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
-    static String toString(bool type) { return type ? trueAtom() : falseAtom(); }
+    static String toString(bool type) { return type ? "true" : "false"; }
 };
 
 template<>
 struct SVGPropertyTraits<Color> {
     static Color initialValue() { return Color(); }
-    static Color fromString(const String& string) { return CSSParser::parseColorWithoutContext(string.stripWhiteSpace()); }
+    static Color fromString(const String& string) { return CSSParser::parseColor(string.stripWhiteSpace()); }
     static std::optional<Color> parse(const QualifiedName&, const String& string)
     {
-        Color color = CSSParser::parseColorWithoutContext(string.stripWhiteSpace());
+        Color color = CSSParser::parseColor(string.stripWhiteSpace());
         if (!color.isValid())
             return std::nullopt;
         return color;

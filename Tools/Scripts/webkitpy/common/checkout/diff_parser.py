@@ -1,5 +1,4 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (c) 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -140,8 +139,6 @@ class DiffParser(object):
     a DiffFile object.
     """
 
-    VERSION_RE = re.compile(r'^\d+.\d+.\d+ \(\S+ Git-\d+\)$')
-
     def __init__(self, diff_input):
         """Parses a diff.
 
@@ -191,7 +188,7 @@ class DiffParser(object):
                     current_file.add_unchanged_line(old_diff_line, new_diff_line, line[1:])
                     old_diff_line += 1
                     new_diff_line += 1
-                elif line == '\\ No newline at end of file' or not line or self.VERSION_RE.match(line):
+                elif line == '\\ No newline at end of file':
                     # Nothing to do.  We may still have some added lines.
                     pass
                 else:

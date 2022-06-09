@@ -27,9 +27,8 @@
 #import "ImageRotationSessionVT.h"
 
 #import "AffineTransform.h"
-#import "CVUtilities.h"
 #import "Logging.h"
-#import "VideoFrame.h"
+#import "MediaSample.h"
 
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
@@ -60,14 +59,13 @@ static ImageRotationSessionVT::RotationProperties transformToRotationProperties(
     return rotation;
 }
 
-ImageRotationSessionVT::ImageRotationSessionVT(AffineTransform&& transform, FloatSize size, IsCGImageCompatible isCGImageCompatible, ShouldUseIOSurface shouldUseIOSurface)
-    : ImageRotationSessionVT(transformToRotationProperties(transform), size, isCGImageCompatible, shouldUseIOSurface)
+ImageRotationSessionVT::ImageRotationSessionVT(AffineTransform&& transform, FloatSize size, IsCGImageCompatible isCGImageCompatible)
+    : ImageRotationSessionVT(transformToRotationProperties(transform), size, isCGImageCompatible)
 {
     m_transform = WTFMove(transform);
 }
 
-ImageRotationSessionVT::ImageRotationSessionVT(const RotationProperties& rotation, FloatSize size, IsCGImageCompatible isCGImageCompatible, ShouldUseIOSurface shouldUseIOSurface)
-    : m_shouldUseIOSurface(shouldUseIOSurface == ShouldUseIOSurface::Yes)
+ImageRotationSessionVT::ImageRotationSessionVT(const RotationProperties& rotation, FloatSize size, IsCGImageCompatible isCGImageCompatible)
 {
     initialize(rotation, size, isCGImageCompatible);
 }
@@ -99,14 +97,21 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
     auto pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
     if (pixelFormat != m_pixelFormat || !m_rotationPool) {
         m_pixelFormat = pixelFormat;
-        auto bufferPool = createCVPixelBufferPool(m_rotatedSize.width(), m_rotatedSize.height(), m_pixelFormat, 0u, m_isCGImageCompatible == IsCGImageCompatible::Yes, m_shouldUseIOSurface);
+        auto pixelAttributes = @{
+            (__bridge NSString *)kCVPixelBufferWidthKey: @(m_rotatedSize.width()),
+            (__bridge NSString *)kCVPixelBufferHeightKey: @(m_rotatedSize.height()),
+            (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(m_pixelFormat),
+            (__bridge NSString *)kCVPixelBufferCGImageCompatibilityKey: (m_isCGImageCompatible == IsCGImageCompatible::Yes ? @YES : @NO),
+            (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey : @{ }
+        };
 
-        if (!bufferPool) {
-            RELEASE_LOG_ERROR(WebRTC, "ImageRotationSessionVT failed creating buffer pool with error %d", (int)bufferPool.error());
+        CVPixelBufferPoolRef rawPool = nullptr;
+        if (auto err = CVPixelBufferPoolCreate(kCFAllocatorDefault, nullptr, (__bridge CFDictionaryRef)pixelAttributes, &rawPool); err != noErr) {
+            RELEASE_LOG_ERROR(WebRTC, "ImageRotationSessionVT failed creating buffer pool with error %d", err);
             return nullptr;
         }
 
-        m_rotationPool = WTFMove(*bufferPool);
+        m_rotationPool = adoptCF(rawPool);
     }
 
     RetainPtr<CVPixelBufferRef> result;
@@ -127,9 +132,9 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
     return result;
 }
 
-RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(VideoFrame& videoFrame, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
+RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(MediaSample& sample, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
 {
-    auto pixelBuffer = videoFrame.pixelBuffer();
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sample.platformSample().sample.cmSampleBuffer));
     ASSERT(pixelBuffer);
     if (!pixelBuffer)
         return nullptr;

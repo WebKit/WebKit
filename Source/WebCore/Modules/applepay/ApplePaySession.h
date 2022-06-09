@@ -28,7 +28,6 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ActiveDOMObject.h"
-#include "ApplePayPaymentAuthorizationResult.h"
 #include "ApplePayPaymentRequest.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
@@ -50,10 +49,12 @@ class Payment;
 class PaymentContact;
 class PaymentCoordinator;
 class PaymentMethod;
+enum class PaymentAuthorizationStatus;
 struct ApplePayCouponCodeUpdate;
 struct ApplePayLineItem;
 struct ApplePayPaymentRequest;
 struct ApplePayShippingMethod;
+struct ApplePayPaymentAuthorizationResult;
 struct ApplePayPaymentMethodUpdate;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
@@ -64,14 +65,14 @@ public:
     static ExceptionOr<Ref<ApplePaySession>> create(Document&, unsigned version, ApplePayPaymentRequest&&);
     virtual ~ApplePaySession();
 
-    static constexpr auto STATUS_SUCCESS = ApplePayPaymentAuthorizationResult::Success;
-    static constexpr auto STATUS_FAILURE = ApplePayPaymentAuthorizationResult::Failure;
-    static constexpr auto STATUS_INVALID_BILLING_POSTAL_ADDRESS = ApplePayPaymentAuthorizationResult::InvalidBillingPostalAddress;
-    static constexpr auto STATUS_INVALID_SHIPPING_POSTAL_ADDRESS = ApplePayPaymentAuthorizationResult::InvalidShippingPostalAddress;
-    static constexpr auto STATUS_INVALID_SHIPPING_CONTACT = ApplePayPaymentAuthorizationResult::InvalidShippingContact;
-    static constexpr auto STATUS_PIN_REQUIRED = ApplePayPaymentAuthorizationResult::PINRequired;
-    static constexpr auto STATUS_PIN_INCORRECT = ApplePayPaymentAuthorizationResult::PINIncorrect;
-    static constexpr auto STATUS_PIN_LOCKOUT = ApplePayPaymentAuthorizationResult::PINLockout;
+    static const unsigned short STATUS_SUCCESS = 0;
+    static const unsigned short STATUS_FAILURE = 1;
+    static const unsigned short STATUS_INVALID_BILLING_POSTAL_ADDRESS = 2;
+    static const unsigned short STATUS_INVALID_SHIPPING_POSTAL_ADDRESS = 3;
+    static const unsigned short STATUS_INVALID_SHIPPING_CONTACT = 4;
+    static const unsigned short STATUS_PIN_REQUIRED = 5;
+    static const unsigned short STATUS_PIN_INCORRECT = 6;
+    static const unsigned short STATUS_PIN_LOCKOUT = 7;
 
     static ExceptionOr<bool> supportsVersion(Document&, unsigned version);
     static ExceptionOr<bool> canMakePayments(Document&);

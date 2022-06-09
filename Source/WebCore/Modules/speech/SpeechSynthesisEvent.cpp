@@ -34,18 +34,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SpeechSynthesisEvent);
 
-Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomString& type, const SpeechSynthesisEventInit& initializer)
+Ref<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomString& type, unsigned charIndex, float elapsedTime, const String& name)
 {
-    return adoptRef(*new SpeechSynthesisEvent(type, initializer));
+    return adoptRef(*new SpeechSynthesisEvent(type, charIndex, elapsedTime, name));
 }
 
-SpeechSynthesisEvent::SpeechSynthesisEvent(const AtomString& type, const SpeechSynthesisEventInit& initializer)
+SpeechSynthesisEvent::SpeechSynthesisEvent(const AtomString& type, unsigned charIndex, float elapsedTime, const String& name)
     : Event(type, CanBubble::No, IsCancelable::No)
-    , m_utterance(initializer.utterance)
-    , m_charIndex(initializer.charIndex)
-    , m_charLength(initializer.charLength)
-    , m_elapsedTime(initializer.elapsedTime)
-    , m_name(initializer.name)
+    , m_charIndex(charIndex)
+    , m_elapsedTime(elapsedTime)
+    , m_name(name)
 {
 }
     

@@ -91,7 +91,7 @@ public:
 
     void setSurface(std::unique_ptr<WebCore::IOSurface>);
 
-    WebCore::SetNonVolatileResult setVolatile(bool);
+    WebCore::VolatilityState setVolatile(bool);
 #endif
 
 #if PLATFORM(GTK)

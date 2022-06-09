@@ -58,15 +58,13 @@ private:
 
     void didAttachRenderers() final;
 
-    void updateDeterminateState();
     void didElementStateChange();
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
-    bool isDeterminate() const { return m_isDeterminate; };
+    bool isDeterminate() const;
 
     bool canContainRangeEndPoint() const final { return false; }
 
     ProgressValueElement* m_value;
-    bool m_isDeterminate { false };
 };
 
 } // namespace

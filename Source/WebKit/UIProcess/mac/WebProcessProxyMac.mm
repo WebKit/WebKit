@@ -56,7 +56,7 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
         return false;
 
     const String& path = m_processPool->configuration().injectedBundlePath();
-    return !path.isEmpty() && !path.startsWith("/System/"_s);
+    return !path.isEmpty() && !path.startsWith("/System/");
 }
 
 void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
@@ -80,12 +80,20 @@ void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserver
 
 void WebProcessProxy::platformSuspendProcess()
 {
-    // FIXME: Adopt RunningBoard on macOS to support process suspension.
+    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformSuspendProcess", this, processIdentifier());
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (auto* connection = this->connection())
+        xpc_connection_kill(connection->xpcConnection(), SIGSTOP);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void WebProcessProxy::platformResumeProcess()
 {
-    // FIXME: Adopt RunningBoard on macOS to support process suspension.
+    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformResumeProcess", this, processIdentifier());
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (auto* connection = this->connection())
+        xpc_connection_kill(connection->xpcConnection(), SIGCONT);
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 } // namespace WebKit

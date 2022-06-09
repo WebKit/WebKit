@@ -32,15 +32,24 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include <wtf/text/StringBuilder.h>
+#include "DOMMatrix.h"
+#include "ExceptionOr.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransformComponent);
+
+// FIXME: Fix all the following virtual functions
+
 String CSSTransformComponent::toString() const
 {
-    StringBuilder builder;
-    serialize(builder);
-    return builder.toString();
+    return emptyString();
+}
+
+ExceptionOr<Ref<DOMMatrix>> CSSTransformComponent::toMatrix()
+{
+    return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 
 } // namespace WebCore

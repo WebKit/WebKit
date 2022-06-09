@@ -30,8 +30,6 @@
 
 #pragma once
 
-#include <wtf/Hasher.h>
-#include <wtf/HexNumber.h>
 #include <wtf/Int128.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,75 +40,55 @@ class StringView;
 class UUID {
 WTF_MAKE_FAST_ALLOCATED;
 public:
-    static constexpr UInt128 emptyValue = 0;
-    static constexpr UInt128 deletedValue = 1;
-
-    static UUID createVersion4()
+    static UUID create()
     {
         return UUID { };
     }
-
-    static UUID createVersion4Weak()
-    {
-        return UUID { generateWeakRandomUUIDVersion4() };
-    }
-
-    static std::optional<UUID> parse(StringView);
-    WTF_EXPORT_PRIVATE static std::optional<UUID> parseVersion4(StringView);
 
     explicit UUID(Span<const uint8_t, 16> span)
     {
         memcpy(&m_data, span.data(), 16);
     }
 
-    explicit constexpr UUID(UInt128 data)
+    explicit UUID(UInt128Impl&& data)
         : m_data(data)
     {
     }
+
+    UUID(const UUID&) = default;
 
     Span<const uint8_t, 16> toSpan() const
     {
         return Span<const uint8_t, 16> { reinterpret_cast<const uint8_t*>(&m_data), 16 };
     }
 
+    UUID& operator=(const UUID&) = default;
     bool operator==(const UUID& other) const { return m_data == other.m_data; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<UUID> decode(Decoder&);
 
-    explicit constexpr UUID(HashTableDeletedValueType)
-        : m_data(deletedValue)
+    explicit UUID(HashTableDeletedValueType)
+        : m_data(1)
     {
     }
 
-    explicit constexpr UUID(HashTableEmptyValueType)
-        : m_data(emptyValue)
+    explicit UUID(HashTableEmptyValueType)
+        : m_data(0)
     {
     }
 
-    bool isHashTableDeletedValue() const { return m_data == deletedValue; }
-    WTF_EXPORT_PRIVATE String toString() const;
-
-    operator bool() const { return !!m_data; }
-
-    UInt128 data() const { return m_data; }
+    bool isHashTableDeletedValue() const { return m_data == 1; }
+    WTF_EXPORT_PRIVATE unsigned hash() const;
 
 private:
     WTF_EXPORT_PRIVATE UUID();
-    friend void add(Hasher&, UUID);
 
-    WTF_EXPORT_PRIVATE static UInt128 generateWeakRandomUUIDVersion4();
-
-    UInt128 m_data;
+    UInt128Impl m_data;
 };
 
-inline void add(Hasher& hasher, UUID uuid)
-{
-    add(hasher, uuid.m_data);
-}
-
 struct UUIDHash {
-    static unsigned hash(const UUID& key) { return computeHash(key); }
+    static unsigned hash(const UUID& key) { return key.hash(); }
     static bool equal(const UUID& a, const UUID& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
@@ -125,7 +103,7 @@ template<> struct DefaultHash<UUID> : UUIDHash { };
 template<class Encoder>
 void UUID::encode(Encoder& encoder) const
 {
-    encoder << static_cast<uint64_t>(m_data >> 64) << static_cast<uint64_t>(m_data);
+    encoder << UInt128High64(m_data) << UInt128Low64(m_data);
 }
 
 template<class Decoder>
@@ -141,11 +119,9 @@ std::optional<UUID> UUID::decode(Decoder& decoder)
     if (!low)
         return std::nullopt;
 
-    auto result = (static_cast<UInt128>(*high) << 64) | *low;
-    if (result == deletedValue)
-        return { };
-
-    return UUID { result };
+    return { UUID {
+        MakeUInt128(*high, *low),
+    } };
 }
 
 // Creates a UUID that consists of 32 hexadecimal digits and returns its canonical form.
@@ -157,63 +133,15 @@ std::optional<UUID> UUID::decode(Decoder& decoder)
 // data source. Version 4 UUIDs have the form xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx with hexadecimal digits for x and one of 8,
 // 9, A, or B for y.
 
-WTF_EXPORT_PRIVATE String createVersion4UUIDString();
+WTF_EXPORT_PRIVATE String createCanonicalUUIDString();
+WTF_EXPORT_PRIVATE String createVersion4UUIDStringWeak();
 
 WTF_EXPORT_PRIVATE String bootSessionUUIDString();
 WTF_EXPORT_PRIVATE bool isVersion4UUID(StringView);
 
-template<>
-class StringTypeAdapter<UUID> {
-public:
-    StringTypeAdapter(UUID uuid)
-        : m_uuid { uuid }
-    {
-    }
-
-    template<typename Func>
-    auto handle(Func&& func) const -> decltype(auto)
-    {
-        UInt128 data = m_uuid.data();
-        auto high = static_cast<uint64_t>(data >> 64);
-        auto low = static_cast<uint64_t>(data);
-        return handleWithAdapters(std::forward<Func>(func),
-            hex(high >> 32, 8, Lowercase),
-            '-',
-            hex((high >> 16) & 0xffff, 4, Lowercase),
-            '-',
-            hex(high & 0xffff, 4, Lowercase),
-            '-',
-            hex(low >> 48, 4, Lowercase),
-            '-',
-            hex(low & 0xffffffffffff, 12, Lowercase));
-    }
-
-    unsigned length() const
-    {
-        return handle([](auto&&... adapters) -> unsigned {
-            auto sum = checkedSum<int32_t>(adapters.length()...);
-            if (sum.hasOverflowed())
-                return UINT_MAX;
-            return sum;
-        });
-    }
-
-    bool is8Bit() const { return true; }
-
-    template<typename CharacterType>
-    void writeTo(CharacterType* destination) const
-    {
-        handle([&](auto&&... adapters) {
-            stringTypeAdapterAccumulator(destination, std::forward<decltype(adapters)>(adapters)...);
-        });
-    }
-
-private:
-    UUID m_uuid;
-};
-
 }
 
 using WTF::UUID;
-using WTF::createVersion4UUIDString;
+using WTF::createCanonicalUUIDString;
+using WTF::createVersion4UUIDStringWeak;
 using WTF::bootSessionUUIDString;

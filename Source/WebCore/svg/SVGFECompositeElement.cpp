@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,8 @@
 #include "config.h"
 #include "SVGFECompositeElement.h"
 
-#include "FEComposite.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -115,23 +116,32 @@ bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect* effect, const
 
 void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::operatorAttr || attrName == SVGNames::k1Attr || attrName == SVGNames::k2Attr || attrName == SVGNames::k3Attr || attrName == SVGNames::k4Attr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr)
-            updateSVGRendererForElementChange();
-        else {
-            ASSERT(attrName == SVGNames::k1Attr || attrName == SVGNames::k2Attr || attrName == SVGNames::k3Attr || attrName == SVGNames::k4Attr || attrName == SVGNames::operatorAttr);
-            primitiveAttributeChanged(attrName);
-        }
+        primitiveAttributeChanged(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
+        InstanceInvalidationGuard guard(*this);
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFECompositeElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFECompositeElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    return FEComposite::create(svgOperator(), k1(), k2(), k3(), k4());
+    auto input1 = filterBuilder.getEffectById(in1());
+    auto input2 = filterBuilder.getEffectById(in2());
+    
+    if (!input1 || !input2)
+        return nullptr;
+
+    auto effect = FEComposite::create(svgOperator(), k1(), k2(), k3(), k4());
+    effect->inputEffects() = { input1.releaseNonNull(), input2.releaseNonNull() };
+    return effect;
 }
 
-} // namespace WebCore
+}

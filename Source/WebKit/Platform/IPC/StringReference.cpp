@@ -57,9 +57,9 @@ bool StringReference::decode(Decoder& decoder, StringReference& result)
     return true;
 }
 
-unsigned StringReference::Hash::hash(const StringReference& string)
+unsigned StringReference::Hash::hash(const StringReference& a)
 {
-    return computeHash(string);
+    return StringHasher::computeHash(reinterpret_cast<const unsigned char*>(a.data()), a.size());
 }
 
 } // namespace IPC

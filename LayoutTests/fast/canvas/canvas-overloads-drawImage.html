@@ -19,7 +19,6 @@ shouldThrow("ctx.drawImage(imageElement, 0)", "TypeErrorNotEnoughArguments");
 shouldBe("ctx.drawImage(imageElement, 0, 0)", "undefined");
 shouldThrow("ctx.drawImage(imageElement, 0, 0, 0)", "TypeError");
 shouldBe("ctx.drawImage(imageElement, 0, 0, 0, 0)", "undefined");
-shouldBe("ctx.drawImage(imageElement, 0, 0, 700, 677)", "undefined");
 shouldThrow("ctx.drawImage(imageElement, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
@@ -36,9 +35,9 @@ shouldBe("ctx.drawImage(canvasElement, 0, 0, 0, 0)", "undefined");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
-shouldBe("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
-shouldBe("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
-shouldBe("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
+shouldThrowErrorName("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0)", "IndexSizeError");
+shouldThrowErrorName("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "IndexSizeError");
+shouldThrowErrorName("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "IndexSizeError");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

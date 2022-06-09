@@ -108,12 +108,7 @@ CBORValue::CBORValue(const WebCore::BufferSource& bufferSource)
 }
 
 CBORValue::CBORValue(const char* inString)
-    : CBORValue(String::fromLatin1(inString))
-{
-}
-
-CBORValue::CBORValue(ASCIILiteral inString)
-    : CBORValue(String { inString })
+    : CBORValue(String(inString))
 {
 }
 
@@ -131,8 +126,11 @@ CBORValue::CBORValue(const String& inString)
 
 CBORValue::CBORValue(const ArrayValue& inArray)
     : m_type(Type::Array)
-    , m_arrayValue(inArray.map([](auto& value) { return value.clone(); }))
+    , m_arrayValue()
 {
+    m_arrayValue.reserveCapacity(inArray.size());
+    for (const auto& val : inArray)
+        m_arrayValue.append(val.clone());
 }
 
 CBORValue::CBORValue(ArrayValue&& inArray)

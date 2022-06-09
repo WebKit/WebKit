@@ -42,7 +42,6 @@ namespace WebCore {
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(AbortSignal) \
     macro(AbstractRange) \
-    macro(AnalyserNode) \
     macro(Animation) \
     macro(AnimationEffect) \
     macro(AnimationPlaybackEvent) \
@@ -50,54 +49,37 @@ namespace WebCore {
     macro(ApplePaySession) \
     macro(ApplePaySetup) \
     macro(ApplePaySetupFeature) \
-    macro(ApplicationCache) \
     macro(AttachmentElement) \
     macro(Audio) \
-    macro(AudioBuffer) \
     macro(AudioBufferSourceNode) \
     macro(AudioContext) \
-    macro(AudioDestinationNode) \
     macro(AudioListener) \
-    macro(AudioNode) \
-    macro(AudioParam) \
     macro(AudioParamMap) \
-    macro(AudioProcessingEvent) \
-    macro(AudioScheduledSourceNode) \
     macro(AudioWorklet) \
     macro(AudioWorkletGlobalScope) \
     macro(AudioWorkletNode) \
-    macro(AudioWorkletProcessor) \
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \
     macro(AuthenticatorResponse) \
     macro(BaseAudioContext) \
-    macro(BiquadFilterNode) \
+    macro(BeforeLoadEvent) \
     macro(BlobEvent) \
     macro(BroadcastChannel) \
     macro(Cache) \
     macro(CacheStorage) \
-    macro(ChannelMergerNode) \
-    macro(ChannelSplitterNode) \
     macro(Client) \
     macro(Clients) \
     macro(Clipboard) \
     macro(ClipboardItem) \
     macro(ConstantSourceNode) \
     macro(ContactsManager) \
-    macro(ConvolverNode) \
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CryptoKey) \
     macro(CSSAnimation) \
     macro(CSSCounterStyleRule) \
-    macro(CSSColor) \
-    macro(CSSColorValue) \
-    macro(CSSHSL) \
-    macro(CSSHWB) \
     macro(CSSImageValue) \
     macro(CSSKeywordValue) \
-    macro(CSSLCH) \
-    macro(CSSLab) \
     macro(CSSMathInvert) \
     macro(CSSMathMax) \
     macro(CSSMathMin) \
@@ -108,11 +90,8 @@ namespace WebCore {
     macro(CSSMatrixComponent) \
     macro(CSSNumericArray) \
     macro(CSSNumericValue) \
-    macro(CSSOKLCH) \
-    macro(CSSOKLab) \
     macro(CSSPaintSize) \
     macro(CSSPerspective) \
-    macro(CSSRGB) \
     macro(CSSRotate) \
     macro(CSSScale) \
     macro(CSSSkew) \
@@ -131,9 +110,8 @@ namespace WebCore {
     macro(Database) \
     macro(DataTransferItem) \
     macro(DataTransferItemList) \
-    macro(DelayNode) \
     macro(DocumentTimeline) \
-    macro(DynamicsCompressorNode) \
+    macro(EnterPictureInPictureEvent) \
     macro(ExtendableEvent) \
     macro(ExtendableMessageEvent) \
     macro(FakeXRDevice) \
@@ -149,7 +127,6 @@ namespace WebCore {
     macro(FileSystemFileHandle) \
     macro(FileSystemHandle) \
     macro(FileSystemSyncAccessHandle) \
-    macro(GainNode) \
     macro(GPU) \
     macro(GPUAdapter) \
     macro(GPUBindGroup) \
@@ -197,6 +174,8 @@ namespace WebCore {
     macro(HTMLDataListElement) \
     macro(HTMLMenuItemElement) \
     macro(HTMLModelElement) \
+    macro(HTMLKeygenElement) \
+    macro(HTMLSlotElement) \
     macro(Headers) \
     macro(IDBCursor) \
     macro(IDBCursorWithValue) \
@@ -224,7 +203,6 @@ namespace WebCore {
     macro(MediaCapabilities) \
     macro(MediaCapabilitiesInfo) \
     macro(MediaDevices) \
-    macro(MediaElementAudioSourceNode) \
     macro(MediaEncryptedEvent) \
     macro(MediaKeyMessageEvent) \
     macro(MediaKeySession) \
@@ -237,8 +215,6 @@ namespace WebCore {
     macro(MediaSessionCoordinator) \
     macro(MediaSource) \
     macro(MediaStream) \
-    macro(MediaStreamAudioDestinationNode) \
-    macro(MediaStreamAudioSourceNode) \
     macro(MediaStreamTrack) \
     macro(MerchantValidationEvent) \
     macro(MockRTCRtpTransform) \
@@ -249,7 +225,6 @@ namespace WebCore {
     macro(NavigatorUserMedia) \
     macro(Notification) \
     macro(NotificationEvent) \
-    macro(OfflineAudioCompletionEvent) \
     macro(OfflineAudioContext) \
     macro(OffscreenCanvas) \
     macro(OffscreenCanvasRenderingContext2D) \
@@ -262,7 +237,6 @@ namespace WebCore {
     macro(PaymentRequestUpdateEvent) \
     macro(PaymentResponse) \
     macro(PerformanceNavigationTiming) \
-    macro(PictureInPictureEvent) \
     macro(PictureInPictureWindow) \
     macro(PaintWorkletGlobalScope) \
     macro(PerformanceEntry) \
@@ -274,7 +248,6 @@ namespace WebCore {
     macro(PerformancePaintTiming) \
     macro(PerformanceResourceTiming) \
     macro(PerformanceServerTiming) \
-    macro(PeriodicWave) \
     macro(PermissionDescriptor) \
     macro(PermissionStatus) \
     macro(Permissions) \
@@ -364,24 +337,9 @@ namespace WebCore {
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VisualViewport) \
-    macro(WaveShaperNode) \
     macro(WebGL2RenderingContext) \
-    macro(WebGLActiveInfo) \
-    macro(WebGLBuffer) \
-    macro(WebGLContextEvent) \
-    macro(WebGLFramebuffer) \
-    macro(WebGLProgram) \
-    macro(WebGLQuery) \
-    macro(WebGLRenderbuffer) \
-    macro(WebGLRenderingContext) \
-    macro(WebGLSampler) \
-    macro(WebGLShader) \
-    macro(WebGLShaderPrecisionFormat) \
-    macro(WebGLSync) \
-    macro(WebGLTexture) \
-    macro(WebGLTransformFeedback) \
-    macro(WebGLUniformLocation) \
     macro(WebGLVertexArrayObject) \
+    macro(WebGLTransformFeedback) \
     macro(WebKitMediaKeyError) \
     macro(WebKitMediaKeyMessageEvent) \
     macro(WebKitMediaKeyNeededEvent) \
@@ -422,7 +380,6 @@ namespace WebCore {
     macro(abortAlgorithm) \
     macro(abortSteps) \
     macro(appendFromJS) \
-    macro(applicationCache) \
     macro(associatedReadableByteStreamController) \
     macro(autoAllocateChunkSize) \
     macro(backingMap) \
@@ -432,7 +389,6 @@ namespace WebCore {
     macro(blur) \
     macro(body) \
     macro(byobRequest) \
-    macro(cachedAttrAssociatedElements) \
     macro(caches) \
     macro(cancel) \
     macro(cancelAlgorithm) \
@@ -476,7 +432,6 @@ namespace WebCore {
     macro(getTracks) \
     macro(getUserMedia) \
     macro(gpu) \
-    macro(handleEvent) \
     macro(header) \
     macro(highWaterMark) \
     macro(href) \

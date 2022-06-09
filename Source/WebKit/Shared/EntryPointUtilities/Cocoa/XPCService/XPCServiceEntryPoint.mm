@@ -29,7 +29,6 @@
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/ProcessIdentifier.h>
-#import <signal.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -45,7 +44,7 @@ bool XPCServiceInitializerDelegate::checkEntitlements()
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (isClientSandboxed()) {
         // FIXME(<rdar://problem/54178641>): Remove this check once WebKit can work without network access.
-        if (hasEntitlement("com.apple.security.network.client"_s))
+        if (hasEntitlement("com.apple.security.network.client"))
             return true;
 
         audit_token_t auditToken = { };
@@ -72,31 +71,36 @@ bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Ide
 
 bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier)
 {
-    clientIdentifier = String::fromUTF8(xpc_dictionary_get_string(m_initializerMessage, "client-identifier"));
+    clientIdentifier = xpc_dictionary_get_string(m_initializerMessage, "client-identifier");
     return !clientIdentifier.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBundleIdentifier)
 {
-    clientBundleIdentifier = String::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "client-bundle-identifier"));
+    clientBundleIdentifier = xpc_dictionary_get_string(m_initializerMessage, "client-bundle-identifier");
     return !clientBundleIdentifier.isEmpty();
 }
 
-bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehaviors& behaviors)
+bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersion)
 {
-    size_t length = 0;
-    auto behaviorData = xpc_dictionary_get_data(m_initializerMessage, "client-sdk-aligned-behaviors", &length);
-    if (!length || !behaviorData)
-        return false;
-    RELEASE_ASSERT(length == behaviors.storageLengthInBytes());
-    memcpy(behaviors.storage(), behaviorData, length);
+    auto version = parseInteger<uint32_t>(xpc_dictionary_get_string(m_initializerMessage, "client-sdk-version"));
+    clientSDKVersion = version.value_or(0);
+    return version.has_value();
+}
 
+bool XPCServiceInitializerDelegate::getLinkedOnOrAfterOverride(std::optional<LinkedOnOrAfterOverride>& linkedOnOrAfterOverride)
+{
+    auto linkedOnOrAfterOverrideValue = xpc_dictionary_get_value(m_initializerMessage, "client-linked-on-or-after-override");
+    if (linkedOnOrAfterOverrideValue)
+        linkedOnOrAfterOverride = xpc_bool_get_value(linkedOnOrAfterOverrideValue) ? LinkedOnOrAfterOverride::AfterEverything : LinkedOnOrAfterOverride::BeforeEverything;
+    else
+        linkedOnOrAfterOverride = std::nullopt;
     return true;
 }
 
 bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentifier& identifier)
 {
-    auto parsedIdentifier = parseInteger<uint64_t>(StringView::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "process-identifier")));
+    auto parsedIdentifier = parseInteger<uint64_t>(xpc_dictionary_get_string(m_initializerMessage, "process-identifier"));
     if (!parsedIdentifier)
         return false;
 
@@ -106,7 +110,7 @@ bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentif
 
 bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
 {
-    clientProcessName = String::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "ui-process-name"));
+    clientProcessName = xpc_dictionary_get_string(m_initializerMessage, "ui-process-name");
     return !clientProcessName.isEmpty();
 }
 
@@ -114,37 +118,37 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 {
     xpc_object_t extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage, "extra-initialization-data");
 
-    auto inspectorProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "inspector-process"));
+    String inspectorProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "inspector-process");
     if (!inspectorProcess.isEmpty())
         extraInitializationData.add("inspector-process"_s, inspectorProcess);
 
 #if ENABLE(SERVICE_WORKER)
-    auto serviceWorkerProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process"));
+    String serviceWorkerProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process");
     if (!serviceWorkerProcess.isEmpty())
         extraInitializationData.add("service-worker-process"_s, WTFMove(serviceWorkerProcess));
-    auto registrableDomain = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "registrable-domain"));
+    String registrableDomain = xpc_dictionary_get_string(extraDataInitializationDataObject, "registrable-domain");
     if (!registrableDomain.isEmpty())
         extraInitializationData.add("registrable-domain"_s, WTFMove(registrableDomain));
 #endif
 
-    auto isPrewarmedProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed"));
+    String isPrewarmedProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed");
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
 
     if (!isClientSandboxed()) {
-        auto userDirectorySuffix = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix"));
+        String userDirectorySuffix = xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix");
         if (!userDirectorySuffix.isEmpty())
             extraInitializationData.add("user-directory-suffix"_s, userDirectorySuffix);
     }
 
-    auto alwaysRunsAtBackgroundPriority = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "always-runs-at-background-priority"));
+    String alwaysRunsAtBackgroundPriority = xpc_dictionary_get_string(extraDataInitializationDataObject, "always-runs-at-background-priority");
     if (!alwaysRunsAtBackgroundPriority.isEmpty())
         extraInitializationData.add("always-runs-at-background-priority"_s, alwaysRunsAtBackgroundPriority);
 
     return true;
 }
 
-bool XPCServiceInitializerDelegate::hasEntitlement(ASCIILiteral entitlement)
+bool XPCServiceInitializerDelegate::hasEntitlement(const char* entitlement)
 {
     return WTF::hasEntitlement(m_connection.get(), entitlement);
 }
@@ -155,26 +159,10 @@ bool XPCServiceInitializerDelegate::isClientSandboxed()
 }
 
 #if PLATFORM(MAC)
-void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
+OSObjectPtr<os_transaction_t>& osTransaction()
 {
-    static NeverDestroyed<OSObjectPtr<os_transaction_t>> globalTransaction;
-
-    // Because we don't use RunningBoard on macOS, we leak an OS transaction to control the lifetime of our XPC
-    // services ourselves. However, one of the side effects of leaking this transaction is that the default SIGTERM
-    // handler doesn't cleanly exit our XPC services when logging out or rebooting. This led to crashes with
-    // XPC_EXIT_REASON_SIGTERM_TIMEOUT as termination reason (rdar://88940229). To address the issue, we now set our
-    // own SIGTERM handler that calls exit(0). In the future, we should likely adopt RunningBoard on macOS and
-    // control our lifetime via process assertions instead of leaking this OS transaction.
-    static dispatch_once_t flag;
-    dispatch_once(&flag, ^{
-        auto sigTermSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue());
-        dispatch_source_set_event_handler(sigTermSource, ^{
-            exit(0);
-        });
-        dispatch_resume(sigTermSource);
-    });
-
-    globalTransaction.get() = WTFMove(transaction);
+    static NeverDestroyed<OSObjectPtr<os_transaction_t>> transaction;
+    return transaction.get();
 }
 #endif
 
@@ -184,7 +172,7 @@ void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage)
     priorityBoostMessage = nullptr;
 
 #if PLATFORM(MAC)
-    setOSTransaction(nullptr);
+    osTransaction() = nullptr;
 #endif
 
     xpc_transaction_exit_clean();

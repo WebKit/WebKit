@@ -58,23 +58,23 @@ void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomString
         m_href->setBaseValInternal(value);
 }
 
-AtomString SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)
+String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)
 {
     size_t start = url.find('#');
     if (start == notFound)
-        return emptyAtom();
+        return emptyString();
 
     if (!start)
-        return StringView(url).substring(1).toAtomString();
+        return url.substring(1);
 
-    URL base = URL(document.baseURL(), url.left(start));
+    URL base = URL(document.baseURL(), url.substring(0, start));
     String fragmentIdentifier = url.substring(start);
-    URL urlWithFragment(base, fragmentIdentifier);
-    if (equalIgnoringFragmentIdentifier(urlWithFragment, document.url()))
-        return StringView(fragmentIdentifier).substring(1).toAtomString();
+    URL kurl(base, fragmentIdentifier);
+    if (equalIgnoringFragmentIdentifier(kurl, document.url()))
+        return fragmentIdentifier.substring(1);
 
     // The url doesn't have any fragment identifier.
-    return emptyAtom();
+    return emptyString();
 }
 
 auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeScope& treeScope, RefPtr<Document> externalDocument) -> TargetElementResult
@@ -85,7 +85,7 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
         return { };
 
     // Exclude the '#' character when determining the fragmentIdentifier.
-    auto id = StringView(iri).substring(startOfFragmentIdentifier + 1).toAtomString();
+    auto id = iri.substring(startOfFragmentIdentifier + 1);
     if (id.isEmpty())
         return { };
 

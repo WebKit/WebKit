@@ -52,24 +52,24 @@ namespace TestWebKitAPI {
 
 TEST(StringWithDirection, TruncateAtEndWithLeftToRightString)
 {
-    StringWithDirection string { "Cappuccino"_s, TextDirection::LTR };
+    StringWithDirection string { "Cappuccino", TextDirection::LTR };
     StringWithDirection result;
 
     result = truncateFromEnd(string, 0);
     EXPECT_EQ(TextDirection::LTR, result.direction);
-    EXPECT_EQ(""_s, result.string);
+    EXPECT_EQ("", result.string);
 
     result = truncateFromEnd(string, 1);
     EXPECT_EQ(TextDirection::LTR, result.direction);
-    EXPECT_EQ("C"_s, result.string);
+    EXPECT_EQ("C", result.string);
 
     result = truncateFromEnd(string, 2);
     EXPECT_EQ(TextDirection::LTR, result.direction);
-    EXPECT_EQ("Ca"_s, result.string);
+    EXPECT_EQ("Ca", result.string);
 
     result = truncateFromEnd(string, 1000);
     EXPECT_EQ(TextDirection::LTR, result.direction);
-    EXPECT_EQ("Cappuccino"_s, result.string);
+    EXPECT_EQ("Cappuccino", result.string);
 }
 
 TEST(StringWithDirection, TruncateAtEndWithRightToLeftString)
@@ -79,7 +79,7 @@ TEST(StringWithDirection, TruncateAtEndWithRightToLeftString)
 
     result = truncateFromEnd(string, 0);
     EXPECT_EQ(TextDirection::RTL, result.direction);
-    EXPECT_EQ(""_s, result.string);
+    EXPECT_EQ("", result.string);
 
     result = truncateFromEnd(string, 1);
     EXPECT_EQ(TextDirection::RTL, result.direction);

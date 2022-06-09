@@ -6,6 +6,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     platform/graphics/nicosia/NicosiaAnimation.cpp
 
+    platform/graphics/texmap/ANGLEContext.cpp
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
     platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp
@@ -21,10 +22,10 @@ list(APPEND WebCore_SOURCES
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/nicosia/NicosiaAnimation.h
 
+    platform/graphics/texmap/ANGLEContext.h
     platform/graphics/texmap/BitmapTexture.h
     platform/graphics/texmap/ClipStack.h
     platform/graphics/texmap/GraphicsContextGLTextureMapper.h
-    platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h
     platform/graphics/texmap/GraphicsLayerTextureMapper.h
     platform/graphics/texmap/TextureMapper.h
     platform/graphics/texmap/TextureMapperBackingStore.h
@@ -35,7 +36,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxy.h
-    platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxyProvider.h
     platform/graphics/texmap/TextureMapperSolidColorLayer.h
     platform/graphics/texmap/TextureMapperTile.h
@@ -52,16 +52,6 @@ if (USE_TEXTURE_MAPPER_GL)
     )
 endif ()
 
-if (USE_TEXTURE_MAPPER_DMABUF)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp
-    )
-
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.h
-    )
-endif ()
-
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/page/scrolling/nicosia"
@@ -69,9 +59,7 @@ if (USE_COORDINATED_GRAPHICS)
     )
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/TextureMapperPlatformLayerBuffer.cpp
-        platform/graphics/texmap/TextureMapperPlatformLayerDmabuf.cpp
         platform/graphics/texmap/TextureMapperPlatformLayerProxy.cpp
-        platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.cpp
 
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
@@ -139,28 +127,5 @@ endif ()
 if (USE_ANGLE_WEBGL)
     list(APPEND WebCore_SOURCES
         platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.cpp
-    )
-endif ()
-
-if (USE_GRAPHICS_LAYER_WC)
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/TextureMapperSparseBackingStore.cpp
-    )
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/texmap/TextureMapperSparseBackingStore.h
-    )
-endif ()
-
-if (USE_LIBGBM)
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/gbm/DMABufColorSpace.h
-        platform/graphics/gbm/DMABufEGLUtilities.h
-        platform/graphics/gbm/DMABufFormat.h
-        platform/graphics/gbm/DMABufObject.h
-        platform/graphics/gbm/DMABufReleaseFlag.h
-        platform/graphics/gbm/GBMBufferSwapchain.h
-        platform/graphics/gbm/GBMDevice.h
-        platform/graphics/gbm/GraphicsContextGLGBM.h
-        platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.h
     )
 endif ()

@@ -42,46 +42,46 @@ void AXObjectCache::attachWrapper(AXCoreObject* obj)
     obj->setWrapper(wrapper.get());
 }
 
-ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification)
+String AXObjectCache::notificationPlatformName(AXNotification notification)
 {
-    ASCIILiteral name;
+    String name;
 
     switch (notification) {
     case AXActiveDescendantChanged:
     case AXFocusedUIElementChanged:
-        name = "AXFocusChanged"_s;
+        name = "AXFocusChanged";
         break;
     case AXImageOverlayChanged:
-        name = "AXImageOverlayChanged"_s;
+        name = "AXImageOverlayChanged";
         break;
     case AXPageScrolled:
-        name = "AXPageScrolled"_s;
+        name = "AXPageScrolled";
         break;
     case AXSelectedStateChanged:
-        name = "AXSelectedCellsChanged"_s;
+        name = "AXSelectedCellsChanged";
         break;
     case AXSelectedTextChanged:
-        name = "AXSelectedTextChanged"_s;
+        name = "AXSelectedTextChanged";
         break;
     case AXLiveRegionChanged:
     case AXLiveRegionCreated:
-        name = "AXLiveRegionChanged"_s;
+        name = "AXLiveRegionChanged";
         break;
     case AXInvalidStatusChanged:
-        name = "AXInvalidStatusChanged"_s;
+        name = "AXInvalidStatusChanged";
         break;
     case AXCheckedStateChanged:
     case AXValueChanged:
-        name = "AXValueChanged"_s;
+        name = "AXValueChanged";
         break;
     case AXExpandedChanged:
-        name = "AXExpandedChanged"_s;
+        name = "AXExpandedChanged";
         break;
     case AXCurrentStateChanged:
-        name = "AXCurrentStateChanged"_s;
+        name = "AXCurrentStateChanged";
         break;
     case AXSortDirectionChanged:
-        name = "AXSortDirectionChanged"_s;
+        name = "AXSortDirectionChanged";
         break;
     default:
         break;
@@ -98,16 +98,15 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
     // iOS notifications must ultimately call UIKit UIAccessibilityPostNotification.
     // But WebCore is not linked with UIKit. So a workaround is to override the wrapper's
     // postNotification method in the system WebKitAccessibility bundle that does link UIKit.
-    auto notificationName = notificationPlatformName(notification);
-    if (notificationName.isNull())
+    String notificationName = notificationPlatformName(notification);
+    if (notificationName.isEmpty())
         return;
 
-    auto nsNotificationName = notificationName.createNSString();
-    [object->wrapper() postNotification:nsNotificationName.get()];
+    [object->wrapper() postNotification:notificationName];
 
     // To simulate AX notifications for LayoutTests on the simulator, call
     // the wrapper's accessibilityPostedNotification.
-    [object->wrapper() accessibilityPostedNotification:nsNotificationName.get()];
+    [object->wrapper() accessibilityPostedNotification:notificationName];
 }
 
 void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object, const AXTextStateChangeIntent&, const VisibleSelection&)

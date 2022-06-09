@@ -1,4 +1,0 @@
-Green
-
-PASS @container: invalidation of container size after load event
-

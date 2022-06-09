@@ -42,7 +42,6 @@
 #include "MediaDocument.h"
 #include "MediaList.h"
 #include "MediaPlayer.h"
-#include "PDFDocument.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"
@@ -74,7 +73,7 @@ DOMImplementation::DOMImplementation(Document& document)
 {
 }
 
-ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const AtomString& qualifiedName, const String& publicId, const String& systemId)
+ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId)
 {
     auto parseResult = Document::parseQualifiedName(qualifiedName);
     if (parseResult.hasException())
@@ -91,7 +90,7 @@ static inline Ref<XMLDocument> createXMLDocument(const String& namespaceURI, con
     return XMLDocument::create(nullptr, settings, URL());
 }
 
-ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString& namespaceURI, const AtomString& qualifiedName, DocumentType* documentType)
+ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType* documentType)
 {
     auto document = createXMLDocument(namespaceURI, m_document.settings());
     document->setContextDocument(m_document.contextDocument());
@@ -123,14 +122,14 @@ Ref<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const S
     return sheet;
 }
 
-Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
+Ref<HTMLDocument> DOMImplementation::createHTMLDocument(const String& title)
 {
-    auto document = HTMLDocument::create(nullptr, m_document.settings(), URL(), { });
+    auto document = HTMLDocument::create(nullptr, m_document.settings(), URL());
     document->open();
     document->write(nullptr, { "<!doctype html><html><head></head><body></body></html>"_s });
     if (!title.isNull()) {
         auto titleElement = HTMLTitleElement::create(titleTag, document);
-        titleElement->appendChild(document->createTextNode(WTFMove(title)));
+        titleElement->appendChild(document->createTextNode(title));
         ASSERT(document->head());
         document->head()->appendChild(titleElement);
     }
@@ -139,25 +138,19 @@ Ref<HTMLDocument> DOMImplementation::createHTMLDocument(String&& title)
     return document;
 }
 
-Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier documentIdentifier)
+Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame* frame, const Settings& settings, const URL& url)
 {
     // FIXME: Inelegant to have this here just because this is the home of DOM APIs for creating documents.
     // This is internal, not a DOM API. Maybe we should put it in a new class called DocumentFactory,
     // because of the analogy with HTMLElementFactory.
 
     // Plug-ins cannot take over for HTML, XHTML, plain text, or non-PDF images.
-    if (equalLettersIgnoringASCIICase(contentType, "text/html"_s))
-        return HTMLDocument::create(frame, settings, url, documentIdentifier);
-    if (equalLettersIgnoringASCIICase(contentType, "application/xhtml+xml"_s))
+    if (equalLettersIgnoringASCIICase(contentType, "text/html"))
+        return HTMLDocument::create(frame, settings, url);
+    if (equalLettersIgnoringASCIICase(contentType, "application/xhtml+xml"))
         return XMLDocument::createXHTML(frame, settings, url);
-    if (equalLettersIgnoringASCIICase(contentType, "text/plain"_s))
-        return TextDocument::create(frame, settings, url, documentIdentifier);
-
-#if ENABLE(PDFJS)
-    if (frame && settings.pdfJSViewerEnabled() && MIMETypeRegistry::isPDFMIMEType(contentType))
-        return PDFDocument::create(*frame, url);
-#endif
-
+    if (equalLettersIgnoringASCIICase(contentType, "text/plain"))
+        return TextDocument::create(frame, settings, url);
     bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(contentType);
     if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType))
         return ImageDocument::create(*frame, url);
@@ -180,7 +173,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
 #endif
 
 #if ENABLE(FTPDIR)
-    if (equalLettersIgnoringASCIICase(contentType, "application/x-ftp-directory"_s))
+    if (equalLettersIgnoringASCIICase(contentType, "application/x-ftp-directory"))
         return FTPDirectoryDocument::create(frame, settings, url);
 #endif
 
@@ -200,16 +193,15 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
     if (frame && isImage)
         return ImageDocument::create(*frame, url);
     if (MIMETypeRegistry::isTextMIMEType(contentType))
-        return TextDocument::create(frame, settings, url, documentIdentifier);
-    if (equalLettersIgnoringASCIICase(contentType, "image/svg+xml"_s))
+        return TextDocument::create(frame, settings, url);
+    if (equalLettersIgnoringASCIICase(contentType, "image/svg+xml"))
         return SVGDocument::create(frame, settings, url);
     if (MIMETypeRegistry::isXMLMIMEType(contentType)) {
         auto document = XMLDocument::create(frame, settings, url);
         document->overrideMIMEType(contentType);
         return document;
     }
-
-    return HTMLDocument::create(frame, settings, url, documentIdentifier);
+    return HTMLDocument::create(frame, settings, url);
 }
 
 }

@@ -30,9 +30,6 @@
 
 #import "FilterImage.h"
 #import "PlatformImageBuffer.h"
-#import <CoreImage/CIContext.h>
-#import <CoreImage/CIFilter.h>
-#import <CoreImage/CoreImage.h>
 
 namespace WebCore {
 

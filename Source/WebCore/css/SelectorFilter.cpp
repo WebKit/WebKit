@@ -30,7 +30,6 @@
 #include "SelectorFilter.h"
 
 #include "CSSSelector.h"
-#include "CommonAtomStrings.h"
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "ShadowRoot.h"
@@ -46,17 +45,9 @@ static bool isExcludedAttribute(const AtomString& name)
     return name == HTMLNames::classAttr->localName() || name == HTMLNames::idAttr->localName() || name == HTMLNames::styleAttr->localName();
 }
 
-static inline bool localNameIsKnownToBeLowercase(const Element& element)
-{
-    // Known HTML element always return a localName() that is defined inside HTMLNames.h. All known HTML
-    // tags are lowercase.
-    return element.isHTMLElement() && !element.isUnknownElement();
-}
-
 void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vector<unsigned, 4>& identifierHashes)
 {
-    AtomString tagLowercaseLocalName = LIKELY(localNameIsKnownToBeLowercase(element)) ? element.localName() : element.localName().convertToASCIILowercase();
-    ASSERT(tagLowercaseLocalName == tagLowercaseLocalName.convertToASCIILowercase());
+    AtomString tagLowercaseLocalName = element.localName().convertToASCIILowercase();
     identifierHashes.append(tagLowercaseLocalName.impl()->existingHash() * TagNameSalt);
 
     auto& id = element.idForStyleResolution();

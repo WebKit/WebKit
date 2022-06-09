@@ -32,11 +32,11 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
-#include "LegacyRenderSVGTransformableContainer.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGText.h"
+#include "RenderSVGTransformableContainer.h"
 #include "ResourceRequest.h"
 #include "SVGElementInlines.h"
 #include "SVGElementTypeHelpers.h"
@@ -110,7 +110,7 @@ RenderPtr<RenderElement> SVGAElement::createElementRenderer(RenderStyle&& style,
 {
     if (is<SVGElement>(parentNode()) && downcast<SVGElement>(*parentNode()).isTextContent())
         return createRenderer<RenderSVGInline>(*this, WTFMove(style));
-    return createRenderer<LegacyRenderSVGTransformableContainer>(*this, WTFMove(style));
+    return createRenderer<RenderSVGTransformableContainer>(*this, WTFMove(style));
 }
 
 void SVGAElement::defaultEventHandler(Event& event)
@@ -134,8 +134,8 @@ void SVGAElement::defaultEventHandler(Event& event)
                 }
             }
 
-            auto target = this->target();
-            if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new"_s)
+            String target = this->target();
+            if (target.isEmpty() && attributeWithoutSynchronization(XLinkNames::showAttr) == "new")
                 target = blankTargetFrameName();
             event.setDefaultHandled();
 
@@ -210,9 +210,9 @@ bool SVGAElement::childShouldCreateRenderer(const Node& child) const
     return SVGElement::childShouldCreateRenderer(child);
 }
 
-bool SVGAElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
+bool SVGAElement::willRespondToMouseClickEvents()
 { 
-    return isLink() || SVGGraphicsElement::willRespondToMouseClickEventsWithEditability(editability); 
+    return isLink() || SVGGraphicsElement::willRespondToMouseClickEvents(); 
 }
 
 SharedStringHash SVGAElement::visitedLinkHash() const
@@ -228,10 +228,10 @@ DOMTokenList& SVGAElement::relList()
     if (!m_relList) {
         m_relList = makeUnique<DOMTokenList>(*this, SVGNames::relAttr, [](Document&, StringView token) {
 #if USE(SYSTEM_PREVIEW)
-            if (equalLettersIgnoringASCIICase(token, "ar"_s))
+            if (equalIgnoringASCIICase(token, "ar"))
                 return true;
 #endif
-            return equalLettersIgnoringASCIICase(token, "noreferrer"_s) || equalLettersIgnoringASCIICase(token, "noopener"_s);
+            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener");
         });
     }
     return *m_relList;

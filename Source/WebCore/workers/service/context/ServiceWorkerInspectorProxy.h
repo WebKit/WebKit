@@ -52,8 +52,8 @@ public:
 
     void connectToWorker(Inspector::FrontendChannel&);
     void disconnectFromWorker(Inspector::FrontendChannel&);
-    void sendMessageToWorker(String&&);
-    void sendMessageFromWorkerToFrontend(String&&);
+    void sendMessageToWorker(const String&);
+    void sendMessageFromWorkerToFrontend(const String&);
 
 private:
     ServiceWorkerThreadProxy& m_serviceWorkerThreadProxy;

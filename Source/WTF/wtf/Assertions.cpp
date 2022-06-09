@@ -466,7 +466,7 @@ static void WTFLogVaList(WTFLogChannel* channel, const char* format, va_list arg
     ALLOW_NONLITERAL_FORMAT_END
 
     if (!loggingString.endsWith('\n'))
-        loggingString = makeString(loggingString, '\n');
+        loggingString.append('\n');
 
     loggingAccumulator().accumulate(loggingString);
 
@@ -548,13 +548,9 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
     }
 #endif
 
-    for (auto logLevelComponent : StringView::fromLatin1(logLevel).split(',')) {
-        auto componentInfo = logLevelComponent.split('=');
-        auto it = componentInfo.begin();
-        if (it == componentInfo.end())
-            continue;
-
-        auto component = (*it).stripWhiteSpace();
+    for (auto& logLevelComponent : String(logLevel).split(',')) {
+        Vector<String> componentInfo = logLevelComponent.split('=');
+        String component = componentInfo[0].stripWhiteSpace();
 
         WTFLogChannelState logChannelState = WTFLogChannelState::On;
         if (component.startsWith('-')) {
@@ -562,21 +558,21 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
             component = component.substring(1);
         }
 
-        if (equalLettersIgnoringASCIICase(component, "all"_s)) {
+        if (equalLettersIgnoringASCIICase(component, "all")) {
             setStateOfAllChannels(channels, count, logChannelState);
             continue;
         }
 
         WTFLogLevel logChannelLevel = WTFLogLevel::Error;
-        if (++it != componentInfo.end()) {
-            auto level = (*it).stripWhiteSpace();
-            if (equalLettersIgnoringASCIICase(level, "error"_s))
+        if (componentInfo.size() > 1) {
+            String level = componentInfo[1].stripWhiteSpace();
+            if (equalLettersIgnoringASCIICase(level, "error"))
                 logChannelLevel = WTFLogLevel::Error;
-            else if (equalLettersIgnoringASCIICase(level, "warning"_s))
+            else if (equalLettersIgnoringASCIICase(level, "warning"))
                 logChannelLevel = WTFLogLevel::Warning;
-            else if (equalLettersIgnoringASCIICase(level, "info"_s))
+            else if (equalLettersIgnoringASCIICase(level, "info"))
                 logChannelLevel = WTFLogLevel::Info;
-            else if (equalLettersIgnoringASCIICase(level, "debug"_s))
+            else if (equalLettersIgnoringASCIICase(level, "debug"))
                 logChannelLevel = WTFLogLevel::Debug;
             else
                 WTFLogAlways("Unknown logging level: %s", level.utf8().data());

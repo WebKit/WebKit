@@ -37,8 +37,7 @@ struct WebLockManagerSnapshot {
         WebLockMode mode { WebLockMode::Exclusive };
         String clientId;
 
-        Info isolatedCopy() const & { return { name.isolatedCopy(), mode, clientId.isolatedCopy() }; }
-        Info isolatedCopy() && { return { WTFMove(name).isolatedCopy(), mode, WTFMove(clientId).isolatedCopy() }; }
+        Info isolatedCopy() const { return { name.isolatedCopy(), mode, clientId.isolatedCopy() }; }
 
         template<class Encoder> void encode(Encoder& encoder) const { encoder << name << mode << clientId; }
         template<class Decoder> static std::optional<Info> decode(Decoder&);
@@ -47,8 +46,7 @@ struct WebLockManagerSnapshot {
     Vector<Info> held;
     Vector<Info> pending;
 
-    WebLockManagerSnapshot isolatedCopy() const & { return { crossThreadCopy(held), crossThreadCopy(pending) }; }
-    WebLockManagerSnapshot isolatedCopy() && { return { crossThreadCopy(WTFMove(held)), crossThreadCopy(WTFMove(pending)) }; }
+    WebLockManagerSnapshot isolatedCopy() const { return { crossThreadCopy(held), crossThreadCopy(pending) }; }
 
     template<class Encoder> void encode(Encoder& encoder) const { encoder << held << pending; }
     template<class Decoder> static std::optional<WebLockManagerSnapshot> decode(Decoder&);

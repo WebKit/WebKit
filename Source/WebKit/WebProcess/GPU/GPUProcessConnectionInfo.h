@@ -27,47 +27,65 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "ArgumentCoders.h"
-#include <optional>
+#include "GPUProcessConnectionInitializationParameters.h"
 
 namespace WebKit {
 
 struct GPUProcessConnectionInfo {
+    IPC::Attachment connection;
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> auditToken;
 #endif
-#if ENABLE(VP9)
-    bool hasVP9HardwareDecoder { false };
-#endif
+    GPUProcessConnectionInitializationParameters parameters;
 
-    void encode(IPC::Encoder& encoder) const
+    IPC::Connection::Identifier identifier() const
     {
-#if HAVE(AUDIT_TOKEN)
-        encoder << auditToken;
-#endif
-#if ENABLE(VP9)
-        encoder << hasVP9HardwareDecoder;
+#if USE(UNIX_DOMAIN_SOCKETS)
+        return IPC::Connection::Identifier(connection.fileDescriptor());
+#elif OS(DARWIN)
+        return IPC::Connection::Identifier(connection.port());
+#elif OS(WINDOWS)
+        return IPC::Connection::Identifier(connection.handle());
+#else
+        ASSERT_NOT_REACHED();
+        return IPC::Connection::Identifier();
 #endif
     }
 
-    static WARN_UNUSED_RETURN std::optional<GPUProcessConnectionInfo> decode(IPC::Decoder& decoder)
+    IPC::Connection::Identifier releaseIdentifier()
     {
+#if USE(UNIX_DOMAIN_SOCKETS)
+        auto returnValue = IPC::Connection::Identifier(connection.releaseFileDescriptor());
+#else
+        auto returnValue = identifier();
+#endif
+        connection = { };
+        return returnValue;
+    }
+
+    void encode(IPC::Encoder& encoder) const
+    {
+        encoder << connection;
 #if HAVE(AUDIT_TOKEN)
-        auto auditToken = decoder.decode<std::optional<audit_token_t>>();
+        encoder << auditToken;
 #endif
-#if ENABLE(VP9)
-        auto hasVP9HardwareDecoder = decoder.decode<bool>();
-#endif
-        if (!decoder.isValid())
-            return std::nullopt;
-        return GPUProcessConnectionInfo {
+        encoder << parameters;
+    }
+    
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder& decoder, GPUProcessConnectionInfo& info)
+    {
+        if (!decoder.decode(info.connection))
+            return false;
 #if HAVE(AUDIT_TOKEN)
-            *auditToken,
+        if (!decoder.decode(info.auditToken))
+            return false;
 #endif
-#if ENABLE(VP9)
-            *hasVP9HardwareDecoder,
-#endif
-        };
+        std::optional<GPUProcessConnectionInitializationParameters> parameters;
+        decoder >> parameters;
+        if (!parameters)
+            return false;
+        info.parameters = WTFMove(*parameters);
+        return true;
     }
 };
 

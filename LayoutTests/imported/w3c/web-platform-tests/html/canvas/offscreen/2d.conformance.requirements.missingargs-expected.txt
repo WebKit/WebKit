@@ -1,7 +1,0 @@
-2d.conformance.requirements.missingargs
-
-Missing arguments cause TypeError
-
-
-PASS Missing arguments cause TypeError
-

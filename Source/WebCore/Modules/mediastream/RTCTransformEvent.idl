@@ -28,7 +28,7 @@
     Exposed=Worker,
     InterfaceName=RTCTransformEvent,
 ] interface RTCTransformEvent : Event {
-    constructor([AtomString] DOMString type, RTCRtpScriptTransformer transformer);
+    constructor(DOMString type, RTCRtpScriptTransformer transformer);
 
     readonly attribute RTCRtpScriptTransformer transformer;
 };

@@ -50,12 +50,12 @@
 
 namespace WebCore {
 
-const ASCIILiteral WebArchivePboardType = "Apple Web Archive pasteboard type"_s;
-const ASCIILiteral WebURLNamePboardType = "public.url-name"_s;
-const ASCIILiteral WebURLsWithTitlesPboardType = "WebURLsWithTitlesPboardType"_s;
+const char* const WebArchivePboardType = "Apple Web Archive pasteboard type";
+const char* const WebURLNamePboardType = "public.url-name";
+const char* const WebURLsWithTitlesPboardType = "WebURLsWithTitlesPboardType";
 
-const ASCIILiteral WebSmartPastePboardType = "NeXT smart paste pasteboard type"_s;
-const ASCIILiteral WebURLPboardType = "public.url"_s;
+const char WebSmartPastePboardType[] = "NeXT smart paste pasteboard type";
+const char WebURLPboardType[] = "public.url";
 
 static const Vector<String> writableTypesForURL()
 {
@@ -438,27 +438,13 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allow
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, std::optional<size_t> itemIndex)
 {
     auto& strategy = *platformStrategies()->pasteboardStrategy();
-    auto platformTypesFromItems = [](const Vector<PasteboardItemInfo>& items) {
-        HashSet<String> types;
-        for (auto& item : items) {
-            for (auto& type : item.platformTypesByFidelity)
-                types.add(type);
-        }
-        return types;
-    };
 
-    HashSet<String> nonTranscodedTypes;
     Vector<String> types;
     if (itemIndex) {
-        if (auto itemInfo = strategy.informationForItemAtIndex(*itemIndex, m_pasteboardName, m_changeCount, context())) {
+        if (auto itemInfo = strategy.informationForItemAtIndex(*itemIndex, m_pasteboardName, m_changeCount, context()))
             types = itemInfo->platformTypesByFidelity;
-            nonTranscodedTypes = platformTypesFromItems({ *itemInfo });
-        }
-    } else {
+    } else
         strategy.getTypes(types, m_pasteboardName, context());
-        if (auto allItems = strategy.allPasteboardItemInfo(m_pasteboardName, m_changeCount, context()))
-            nonTranscodedTypes = platformTypesFromItems(*allItems);
-    }
 
     reader.contentOrigin = readOrigin();
 
@@ -533,46 +519,51 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (policy == WebContentReadingPolicy::OnlyRichTextTypes)
         return;
 
-    using ImageReadingInfo = std::tuple<String, ASCIILiteral>;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    const std::array<ImageReadingInfo, 6> imageTypesToRead { {
-        { String(legacyTIFFPasteboardType()), "image/tiff"_s },
-        { String(NSPasteboardTypeTIFF), "image/tiff"_s },
-        { String(legacyPDFPasteboardType()), "application/pdf"_s },
-        { String(NSPasteboardTypePDF), "application/pdf"_s },
-        { String(kUTTypePNG), "image/png"_s },
-        { String(kUTTypeJPEG), "image/jpeg"_s }
-    } };
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
-    auto tryToReadImage = [&] (const String& pasteboardType, ASCIILiteral mimeType) {
-        if (!types.contains(pasteboardType))
-            return false;
-
-        auto buffer = readBufferAtPreferredItemIndex(pasteboardType, itemIndex, strategy, m_pasteboardName, context());
-        if (m_changeCount != changeCount())
-            return true;
-
-        if (!buffer)
-            return false;
-
-        return reader.readImage(buffer.releaseNonNull(), mimeType);
-    };
-
-    Vector<ImageReadingInfo, 6> transcodedImageTypesToRead;
-    for (auto& [pasteboardType, mimeType] : imageTypesToRead) {
-        if (!nonTranscodedTypes.contains(pasteboardType)) {
-            transcodedImageTypesToRead.append({ pasteboardType, mimeType });
-            continue;
+    if (types.contains(String(legacyTIFFPasteboardType()))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(legacyTIFFPasteboardType(), itemIndex, strategy, m_pasteboardName, context())) {
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/tiff"_s))
+                return;
         }
-        if (tryToReadImage(pasteboardType, mimeType))
-            return;
     }
 
-    for (auto& [pasteboardType, mimeType] : transcodedImageTypesToRead) {
-        if (tryToReadImage(pasteboardType, mimeType))
-            return;
+    if (types.contains(String(NSPasteboardTypeTIFF))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypeTIFF, itemIndex, strategy, m_pasteboardName, context())) {
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/tiff"_s))
+                return;
+        }
     }
+
+    if (types.contains(String(legacyPDFPasteboardType()))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(legacyPDFPasteboardType(), itemIndex, strategy, m_pasteboardName, context())) {
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "application/pdf"_s))
+                return;
+        }
+    }
+
+    if (types.contains(String(NSPasteboardTypePDF))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(NSPasteboardTypePDF, itemIndex, strategy, m_pasteboardName, context())) {
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "application/pdf"_s))
+                return;
+        }
+    }
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (types.contains(String(kUTTypePNG))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(kUTTypePNG, itemIndex, strategy, m_pasteboardName, context())) {
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/png"_s))
+                return;
+        }
+    }
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (types.contains(String(kUTTypeJPEG))) {
+        if (auto buffer = readBufferAtPreferredItemIndex(kUTTypeJPEG, itemIndex, strategy, m_pasteboardName, context())) {
+            if (m_changeCount != changeCount() || reader.readImage(buffer.releaseNonNull(), "image/jpeg"_s))
+                return;
+        }
+    }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (types.contains(String(legacyURLPasteboardType()))) {
         URL url = strategy.url(m_pasteboardName, context());
@@ -611,7 +602,7 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
     }
 
     // Reject types that might contain subframe information.
-    if (type == "text/rtf"_s || type == "public.rtf"_s || type == "com.apple.traditional-mac-plain-text"_s)
+    if (type == "text/rtf" || type == "public.rtf" || type == "com.apple.traditional-mac-plain-text")
         return String();
 
     auto utiType = UTIFromMIMEType(type);
@@ -669,7 +660,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType)
 {
-    if (cocoaType == "NeXT plain ascii pasteboard type"_s)
+    if (cocoaType == "NeXT plain ascii pasteboard type")
         return; // Skip this ancient type that gets auto-supplied by some system conversion.
 
     // UTI may not do these right, so make sure we get the right, predictable result
@@ -702,7 +693,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         NSURL *url = [NSURL URLWithString:cocoaData];
         if ([url isFileURL])
             return;
-        platformStrategies()->pasteboardStrategy()->setTypes({ cocoaType }, m_pasteboardName, context());
+
+        Vector<String> types;
+        types.append(cocoaType);
+        platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName, context());
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName, context());
 
         return;
@@ -711,7 +705,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (!cocoaType.isEmpty()) {
         // everything else we know of goes on the pboard as a string
-        platformStrategies()->pasteboardStrategy()->addTypes({ cocoaType }, m_pasteboardName, context());
+        Vector<String> types;
+        types.append(cocoaType);
+        platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName, context());
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName, context());
     }
 }

@@ -27,7 +27,6 @@
 #import "LaunchServicesDatabaseManager.h"
 
 #import "LaunchServicesDatabaseXPCConstants.h"
-#import "Logging.h"
 #import "XPCEndpoint.h"
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -44,15 +43,19 @@ LaunchServicesDatabaseManager& LaunchServicesDatabaseManager::singleton()
 
 void LaunchServicesDatabaseManager::handleEvent(xpc_object_t message)
 {
-    auto* messageName = xpc_dictionary_get_string(message, XPCEndpoint::xpcMessageNameKey);
-    if (LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName == messageName) {
+    String messageName = xpc_dictionary_get_string(message, XPCEndpoint::xpcMessageNameKey);
+    if (messageName.isEmpty())
+        return;
+    if (messageName == LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName) {
 #if HAVE(LSDATABASECONTEXT)
         auto database = xpc_dictionary_get_value(message, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey);
 
-        RELEASE_LOG(Loading, "Received Launch Services database %p", database);
-
-        if (database)
-            [LSDatabaseContext.sharedDatabaseContext observeDatabaseChange4WebKit:database];
+        if (database) {
+            auto context = [NSClassFromString(@"LSDatabaseContext") sharedDatabaseContext];
+            if (![context respondsToSelector:@selector(observeDatabaseChange4WebKit:)])
+                return;
+            [context observeDatabaseChange4WebKit:database];
+        }
 #endif
         m_semaphore.signal();
         m_hasReceivedLaunchServicesDatabase = true;
@@ -76,18 +79,6 @@ bool LaunchServicesDatabaseManager::waitForDatabaseUpdate(Seconds timeout)
     if (m_hasReceivedLaunchServicesDatabase)
         return true;
     return m_semaphore.waitFor(timeout);
-}
-
-void LaunchServicesDatabaseManager::waitForDatabaseUpdate()
-{
-    auto startTime = MonotonicTime::now();
-    bool databaseUpdated = waitForDatabaseUpdate(5_s);
-    auto elapsedTime = MonotonicTime::now() - startTime;
-    if (elapsedTime > 0.5_s)
-        RELEASE_LOG_ERROR(Loading, "Waiting for Launch Services database update took %f seconds", elapsedTime.value());
-    ASSERT_UNUSED(databaseUpdated, databaseUpdated);
-    if (!databaseUpdated)
-        RELEASE_LOG_ERROR(Loading, "Timed out waiting for Launch Services database update.");
 }
 
 }

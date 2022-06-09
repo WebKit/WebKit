@@ -42,7 +42,7 @@ struct MIMETypeRegistryThreadGlobalData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MIMETypeRegistryThreadGlobalData(HashSet<String, ASCIICaseInsensitiveHash>&& supportedImageMIMETypesForEncoding)
-        : m_supportedImageMIMETypesForEncoding(WTFMove(supportedImageMIMETypesForEncoding))
+        : m_supportedImageMIMETypesForEncoding(supportedImageMIMETypesForEncoding)
     { }
 
     const HashSet<String, ASCIICaseInsensitiveHash>& supportedImageMIMETypesForEncoding() const { return m_supportedImageMIMETypesForEncoding; }
@@ -53,12 +53,12 @@ private:
 
 class MIMETypeRegistry {
 public:
-    WEBCORE_EXPORT static String mimeTypeForExtension(StringView);
+    WEBCORE_EXPORT static String mimeTypeForExtension(const String& extension);
     WEBCORE_EXPORT static Vector<String> extensionsForMIMEType(const String& type);
     WEBCORE_EXPORT static String preferredExtensionForMIMEType(const String& type);
-    WEBCORE_EXPORT static String mediaMIMETypeForExtension(StringView extension);
+    WEBCORE_EXPORT static String mediaMIMETypeForExtension(const String& extension);
 
-    WEBCORE_EXPORT static String mimeTypeForPath(StringView);
+    WEBCORE_EXPORT static String mimeTypeForPath(const String& path);
 
     static std::unique_ptr<MIMETypeRegistryThreadGlobalData> createMIMETypeRegistryThreadGlobalData();
 
@@ -75,9 +75,6 @@ public:
     // Check to see if a MIME type is suitable for being loaded as a JavaScript or JSON resource.
     WEBCORE_EXPORT static bool isSupportedJavaScriptMIMEType(const String& mimeType);
     WEBCORE_EXPORT static bool isSupportedJSONMIMEType(const String& mimeType);
-
-    // Check to see if a MIME type is suitable for being loaded as a WebAssembly module.
-    WEBCORE_EXPORT static bool isSupportedWebAssemblyMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a style sheet.
     static bool isSupportedStyleSheetMIMEType(const String& mimeType);
@@ -105,7 +102,7 @@ public:
     static bool isApplicationPluginMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is one of the common PDF/PS types.
-    WEBCORE_EXPORT static bool isPDFMIMEType(const String& mimeType);
+    static bool isPDFMIMEType(const String& mimeType);
     static bool isPostScriptMIMEType(const String& mimeType);
     WEBCORE_EXPORT static bool isPDFOrPostScriptMIMEType(const String& mimeType);
 
@@ -132,13 +129,13 @@ public:
     // makes this test is after many other tests are done on the MIME type.
     WEBCORE_EXPORT static bool isTextMIMEType(const String& mimeType);
 
-    WEBCORE_EXPORT static FixedVector<ASCIILiteral> supportedImageMIMETypes();
+    WEBCORE_EXPORT static FixedVector<const char*> supportedImageMIMETypes();
     static HashSet<String, ASCIICaseInsensitiveHash>& additionalSupportedImageMIMETypes();
     WEBCORE_EXPORT static HashSet<String, ASCIICaseInsensitiveHash>& supportedNonImageMIMETypes();
     WEBCORE_EXPORT static const HashSet<String, ASCIICaseInsensitiveHash>& supportedMediaMIMETypes();
-    WEBCORE_EXPORT static FixedVector<ASCIILiteral> pdfMIMETypes();
-    WEBCORE_EXPORT static FixedVector<ASCIILiteral> unsupportedTextMIMETypes();
-    WEBCORE_EXPORT static FixedVector<ASCIILiteral> usdMIMETypes();
+    WEBCORE_EXPORT static FixedVector<const char*> pdfMIMETypes();
+    WEBCORE_EXPORT static FixedVector<const char*> unsupportedTextMIMETypes();
+    WEBCORE_EXPORT static FixedVector<const char*> usdMIMETypes();
 
     WEBCORE_EXPORT static String appendFileExtensionIfNecessary(const String& filename, const String& mimeType);
 

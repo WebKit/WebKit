@@ -148,31 +148,6 @@ Object.defineProperty(Map.prototype, "getOrInitialize",
         if (value)
             return value;
 
-        if (typeof initialValue === "function")
-            initialValue = initialValue();
-
-        console.assert(initialValue !== undefined, "getOrInitialize should not be used with undefined.");
-
-        this.set(key, initialValue);
-        return initialValue;
-    }
-});
-
-Object.defineProperty(WeakMap.prototype, "getOrInitialize",
-{
-    value(key, initialValue)
-    {
-        console.assert(initialValue !== undefined, "getOrInitialize should not be used with undefined.");
-
-        let value = this.get(key);
-        if (value)
-            return value;
-
-        if (typeof initialValue === "function")
-            initialValue = initialValue();
-
-        console.assert(initialValue !== undefined, "getOrInitialize should not be used with undefined.");
-
         this.set(key, initialValue);
         return initialValue;
     }
@@ -511,15 +486,6 @@ Object.defineProperty(Element.prototype, "recalculateStyles",
     {
         this.ownerDocument.defaultView.getComputedStyle(this);
     }
-});
-
-Object.defineProperty(Element.prototype, "getComputedCSSPropertyNumberValue", {
-    value(property) {
-        let result = undefined;
-        result ??= this.computedStyleMap?.().get(property)?.value;
-        result ??= window.getComputedStyle(this).getPropertyCSSValue(property)?.getFloatValue(CSSPrimitiveValue.CSS_PX);
-        return result;
-    },
 });
 
 Object.defineProperty(DocumentFragment.prototype, "createChild",
@@ -1159,7 +1125,6 @@ Object.defineProperty(String, "format",
         var result = initialValue;
         var tokens = String.tokenizeFormatString(format);
         var usedSubstitutionIndexes = {};
-        let ignoredUnknownSpecifierCount = 0;
 
         for (var i = 0; i < tokens.length; ++i) {
             var token = tokens[i];
@@ -1174,24 +1139,24 @@ Object.defineProperty(String, "format",
                 continue;
             }
 
-            let substitutionIndex = token.substitutionIndex - ignoredUnknownSpecifierCount;
-            if (substitutionIndex >= substitutions.length) {
+            if (token.substitutionIndex >= substitutions.length) {
                 // If there are not enough substitutions for the current substitutionIndex
                 // just output the format specifier literally and move on.
-                error("not enough substitution arguments. Had " + substitutions.length + " but needed " + (substitutionIndex + 1) + ", so substitution was skipped.");
+                error("not enough substitution arguments. Had " + substitutions.length + " but needed " + (token.substitutionIndex + 1) + ", so substitution was skipped.");
                 result = append(result, "%" + (token.precision > -1 ? token.precision : "") + token.specifier);
                 continue;
             }
 
+            usedSubstitutionIndexes[token.substitutionIndex] = true;
+
             if (!(token.specifier in formatters)) {
-                warn(`Unsupported format specifier "%${token.specifier}" will be ignored.`);
-                result = append(result, "%" + token.specifier);
-                ++ignoredUnknownSpecifierCount;
+                // Encountered an unsupported format character, treat as a string.
+                warn("unsupported format character \u201C" + token.specifier + "\u201D. Treating as a string.");
+                result = append(result, substitutions[token.substitutionIndex]);
                 continue;
             }
 
-            usedSubstitutionIndexes[substitutionIndex] = true;
-            result = append(result, formatters[token.specifier](substitutions[substitutionIndex], token));
+            result = append(result, formatters[token.specifier](substitutions[token.substitutionIndex], token));
         }
 
         var unusedSubstitutions = [];
@@ -1591,25 +1556,6 @@ function simpleGlobStringToRegExp(globString, regExpFlags)
 
     return new RegExp(regexString, regExpFlags);
 }
-
-Object.defineProperty(Array.prototype, "minIndex",
-{
-    value(comparator)
-    {
-        function defaultComparator(a, b)
-        {
-            return a - b;
-        }
-        comparator = comparator || defaultComparator;
-
-        let minIndex = 0;
-        for (let i = 1; i < this.length; ++i) {
-            if (comparator(this[minIndex], this[i]) > 0)
-                minIndex = i;
-        }
-        return minIndex;
-    },
-});
 
 Object.defineProperty(Array.prototype, "lowerBound",
 {

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+#if !HAVE(ARM_NEON_INTRINSICS)
 bool FEBlendSoftwareApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
@@ -55,5 +56,6 @@ bool FEBlendSoftwareApplier::apply(const Filter&, const FilterImageVector& input
     filterContext.drawImageBuffer(*inputImage, inputImageRect, { { }, inputImage->logicalSize() }, { CompositeOperator::SourceOver, m_effect.blendMode() });
     return true;
 }
+#endif
 
 } // namespace WebCore

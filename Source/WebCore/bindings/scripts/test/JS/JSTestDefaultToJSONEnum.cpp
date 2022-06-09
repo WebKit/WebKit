@@ -24,7 +24,6 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSString.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/SortedArrayMap.h>
 
 
 namespace WebCore {
@@ -50,13 +49,10 @@ template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject,
 template<> std::optional<TestDefaultToJSONEnum> parseEnumeration<TestDefaultToJSONEnum>(JSGlobalObject& lexicalGlobalObject, JSValue value)
 {
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
-    static constexpr std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> mappings[] = {
-        { "EnumValue1", TestDefaultToJSONEnum::EnumValue1 },
-        { "EnumValue2", TestDefaultToJSONEnum::EnumValue2 },
-    };
-    static constexpr SortedArrayMap enumerationMapping { mappings };
-    if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))
-        return *enumerationValue;
+    if (stringValue == "EnumValue1")
+        return TestDefaultToJSONEnum::EnumValue1;
+    if (stringValue == "EnumValue2")
+        return TestDefaultToJSONEnum::EnumValue2;
     return std::nullopt;
 }
 

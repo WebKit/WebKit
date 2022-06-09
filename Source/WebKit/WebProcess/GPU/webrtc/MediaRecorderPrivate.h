@@ -29,9 +29,9 @@
 
 #include "MediaRecorderIdentifier.h"
 #include "SharedRingBufferStorage.h"
-#include "SharedVideoFrame.h"
 
 #include <WebCore/MediaRecorderPrivate.h>
+#include <WebCore/PixelBufferConformerCV.h>
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -48,7 +48,7 @@ namespace WebKit {
 
 class MediaRecorderPrivate final
     : public WebCore::MediaRecorderPrivate
-    , public GPUProcessConnection::Client {
+    , public CanMakeWeakPtr<MediaRecorderPrivate> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaRecorderPrivate(WebCore::MediaStreamPrivate&, const WebCore::MediaRecorderPrivateOptions&);
@@ -56,7 +56,7 @@ public:
 
 private:
     // WebCore::MediaRecorderPrivate
-    void videoFrameAvailable(WebCore::VideoFrame&, WebCore::VideoFrameTimeMetadata) final;
+    void videoSampleAvailable(WebCore::MediaSample&, WebCore::VideoSampleMetadata) final;
     void fetchData(CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& mimeType, double)>&&) final;
     void stopRecording(CompletionHandler<void()>&&) final;
     void startRecording(StartRecordingCallback&&) final;
@@ -65,15 +65,14 @@ private:
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
 
-    // GPUProcessConnection::Client
-    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
-
     void storageChanged(SharedMemory*, const WebCore::CAAudioStreamDescription& format, size_t frameCount);
+    RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
     MediaRecorderIdentifier m_identifier;
     Ref<WebCore::MediaStreamPrivate> m_stream;
     Ref<IPC::Connection> m_connection;
 
+    RetainPtr<CVPixelBufferRef> m_blackFrame;
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     WebCore::CAAudioStreamDescription m_description { };
     std::unique_ptr<WebCore::WebAudioBufferList> m_silenceAudioBuffer;
@@ -81,9 +80,8 @@ private:
     WebCore::MediaRecorderPrivateOptions m_options;
     bool m_hasVideo { false };
     bool m_isStopped { false };
-    std::optional<WebCore::IntSize> m_blackFrameSize;
 
-    SharedVideoFrameWriter m_sharedVideoFrameWriter;
+    std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
 };
 
 }

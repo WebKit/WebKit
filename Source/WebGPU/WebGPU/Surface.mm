@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #import "config.h"
 #import "Surface.h"
 
-#import "APIConversions.h"
 #import "Adapter.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
@@ -43,14 +43,13 @@ WGPUTextureFormat Surface::getPreferredFormat(const Adapter& adapter)
 
 } // namespace WebGPU
 
-#pragma mark WGPU Stubs
-
 void wgpuSurfaceRelease(WGPUSurface surface)
 {
-    WebGPU::fromAPI(surface).deref();
+    delete surface;
 }
 
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)
 {
-    return WebGPU::fromAPI(surface).getPreferredFormat(WebGPU::fromAPI(adapter));
+    return surface->surface->getPreferredFormat(adapter->adapter);
 }
+

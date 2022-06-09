@@ -26,7 +26,7 @@
 [
     Exposed=Window
 ] interface HTMLOutputElement : HTMLElement {
-    [CallWith=CurrentDocument, HTMLConstructor] constructor();
+    [CallWith=Document, HTMLConstructor] constructor();
 
     [SameObject, PutForwards=value] readonly attribute DOMTokenList htmlFor;
     readonly attribute HTMLFormElement? form;

@@ -29,9 +29,46 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         super("layout-details", WI.UIString("Layout", "Layout @ Styles Sidebar", "Title of the CSS style panel."));
 
-        this._flexNodeSet = null;
-        this._gridNodeSet = null;
+        this._gridNodeSet = new Set;
+        this._nodeStyles = null;
         this.element.classList.add("layout-panel");
+    }
+
+    // Public
+
+    inspect(objects)
+    {
+        // Layout panel doesn't show when hasDOMNode is false.
+        let hasDOMNode = super.inspect(objects);
+        if (!hasDOMNode)
+            return false;
+
+        let stylesForNode = WI.cssManager.stylesForNode(this.domNode);
+        stylesForNode.refreshIfNeeded().then((nodeStyles) => {
+            if (nodeStyles === this._nodeStyles)
+                return;
+
+            if (this._nodeStyles) {
+                this._nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.Refreshed, this._nodeStylesRefreshed, this);
+                this._nodeStyles.removeEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._nodeStylesNeedsRefreshed, this);
+            }
+
+            this._nodeStyles = nodeStyles;
+
+            if (this._nodeStyles) {
+                this._nodeStyles.addEventListener(WI.DOMNodeStyles.Event.Refreshed, this._nodeStylesRefreshed, this);
+                this._nodeStyles.addEventListener(WI.DOMNodeStyles.Event.NeedsRefresh, this._nodeStylesNeedsRefreshed, this);
+            }
+
+            this.needsLayout();
+        });
+
+        return hasDOMNode;
+    }
+
+    supportsDOMNode(nodeToInspect)
+    {
+        return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 
     // Protected
@@ -40,23 +77,17 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
     {
         super.attached();
 
-        WI.domManager.addEventListener(WI.DOMManager.Event.NodeInserted, this._handleNodeInserted, this);
-        WI.domManager.addEventListener(WI.DOMManager.Event.NodeRemoved, this._handleNodeRemoved, this);
-
         WI.DOMNode.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.All;
 
-        this._invalidateNodeSets();
+        this._refreshGridNodeSet();
     }
 
     detached()
     {
         WI.cssManager.layoutContextTypeChangedMode = WI.CSSManager.LayoutContextTypeChangedMode.Observed;
-
-        WI.domManager.removeEventListener(WI.DOMManager.Event.NodeInserted, this._handleNodeInserted, this);
-        WI.domManager.removeEventListener(WI.DOMManager.Event.NodeRemoved, this._handleNodeRemoved, this);
 
         WI.DOMNode.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
@@ -66,80 +97,44 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
     initialLayout()
     {
-        this._gridDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Grid Containers", "No CSS Grid Containers @ Layout Details Sidebar Panel", "Message shown when there are no CSS Grid containers on the inspected page."));
+        this._gridDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Grid Contexts", "No CSS Grid Contexts @ Layout Details Sidebar Panel", "Message shown when there are no CSS Grid contexts on the inspected page."));
         let gridGroup = new WI.DetailsSectionGroup([this._gridDetailsSectionRow]);
         let gridDetailsSection = new WI.DetailsSection("layout-css-grid", WI.UIString("Grid", "Grid @ Elements details sidebar", "CSS Grid layout section name"), [gridGroup]);
         this.contentView.element.appendChild(gridDetailsSection.element);
 
-        this._gridSection = new WI.CSSGridNodeOverlayListSection;
-
-        this._flexDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Flex Containers", "No CSS Flex Containers @ Layout Details Sidebar Panel", "Message shown when there are no CSS Flex containers on the inspected page."));
-        let flexDetailsSection = new WI.DetailsSection("layout-css-flexbox", WI.UIString("Flexbox", "Flexbox @ Elements details sidebar", "Flexbox layout section name"), [new WI.DetailsSectionGroup([this._flexDetailsSectionRow])]);
-        this.contentView.element.appendChild(flexDetailsSection.element);
-
-        this._flexSection = new WI.CSSFlexNodeOverlayListSection;
+        this._gridSection = new WI.CSSGridSection;
     }
 
     layout()
     {
         super.layout();
 
-        if (!this._gridNodeSet || !this._flexNodeSet)
-            this._refreshNodeSets();
+        if (!this._gridNodeSet.size) {
+            this._gridDetailsSectionRow.showEmptyMessage();
 
-        if (this._gridNodeSet.size) {
+            if (this._gridSection.isAttached)
+                this.removeSubview(this._gridSection);
+
+        } else {
             this._gridDetailsSectionRow.hideEmptyMessage();
             this._gridDetailsSectionRow.element.appendChild(this._gridSection.element);
 
             if (!this._gridSection.isAttached)
                 this.addSubview(this._gridSection);
 
-            this._gridSection.nodeSet = this._gridNodeSet;
-        } else {
-            this._gridDetailsSectionRow.showEmptyMessage();
-
-            if (this._gridSection.isAttached)
-                this.removeSubview(this._gridSection);
-        }
-
-        if (this._flexNodeSet.size) {
-            this._flexDetailsSectionRow.hideEmptyMessage();
-            this._flexDetailsSectionRow.element.appendChild(this._flexSection.element);
-
-            if (!this._flexSection.isAttached)
-                this.addSubview(this._flexSection);
-
-            this._flexSection.nodeSet = this._flexNodeSet;
-        } else {
-            this._flexDetailsSectionRow.showEmptyMessage();
-
-            if (this._flexSection.isAttached)
-                this.removeSubview(this._flexSection);
+            this._gridSection.gridNodeSet = this._gridNodeSet;
         }
     }
 
     // Private
 
-    _handleNodeInserted(event)
-    {
-        this._invalidateNodeSets();
-        this.needsLayout();
-    }
-
-    _handleNodeRemoved(event)
-    {
-        let domNode = event.target.node;
-        this._removeNodeFromNodeSets(domNode);
-        this.needsLayout();
-    }
-
     _handleLayoutContextTypeChanged(event)
     {
         let domNode = event.target;
-        if (domNode.layoutContextType)
-            this._invalidateNodeSets();
+        if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid)
+            this._gridNodeSet.add(domNode);
         else
-            this._removeNodeFromNodeSets(domNode);
+            this._gridNodeSet.delete(domNode);
 
         this.needsLayout();
     }
@@ -152,37 +147,20 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
         this.needsLayout();
     }
 
-    _removeNodeFromNodeSets(domNode)
+    _nodeStylesRefreshed()
     {
-        this._flexNodeSet?.delete(domNode);
-        this._gridNodeSet?.delete(domNode);
+        if (this.isAttached)
+            this.needsLayout();
     }
 
-    _invalidateNodeSets()
+    _nodeStylesNeedsRefreshed()
     {
-        this._flexNodeSet = null;
-        this._gridNodeSet = null;
+        if (this.isAttached)
+            this._nodeStyles?.refresh();
     }
 
-    _refreshNodeSets()
+    _refreshGridNodeSet()
     {
-        this._gridNodeSet = new Set;
-        this._flexNodeSet = new Set;
-
-        for (let node of WI.domManager.attachedNodes({filter: (node) => node.layoutContextType})) {
-            switch (node.layoutContextType) {
-            case WI.DOMNode.LayoutContextType.Grid:
-                this._gridNodeSet.add(node);
-                break;
-
-            case WI.DOMNode.LayoutContextType.Flex:
-                this._flexNodeSet.add(node);
-                break;
-
-            default:
-                console.assert(false, "Unknown layout context type.", node, node.type);
-                break;
-            }
-        }
+        this._gridNodeSet = new Set(WI.domManager.nodesWithLayoutContextType(WI.DOMNode.LayoutContextType.Grid));
     }
 };

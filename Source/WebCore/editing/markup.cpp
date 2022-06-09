@@ -37,7 +37,6 @@
 #include "CacheStorageProvider.h"
 #include "ChildListMutationScope.h"
 #include "Comment.h"
-#include "CommonAtomStrings.h"
 #include "ComposedTreeIterator.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -46,7 +45,6 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "ElementIterator.h"
-#include "ElementRareData.h"
 #include "EmptyClients.h"
 #include "File.h"
 #include "Frame.h"
@@ -102,7 +100,7 @@ public:
     {
     }
 
-    AttributeChange(Element* element, const QualifiedName& name, const AtomString& value)
+    AttributeChange(Element* element, const QualifiedName& name, const String& value)
         : m_element(element), m_name(name), m_value(value)
     {
     }
@@ -115,7 +113,7 @@ public:
 private:
     RefPtr<Element> m_element;
     QualifiedName m_name;
-    AtomString m_value;
+    String m_value;
 };
 
 static void completeURLs(DocumentFragment* fragment, const String& baseURL)
@@ -129,7 +127,7 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
             continue;
         for (const Attribute& attribute : element.attributesIterator()) {
             if (element.attributeContainsURL(attribute) && !attribute.value().isEmpty())
-                changes.append(AttributeChange(&element, attribute.name(), AtomString { element.completeURLsInAttributeValue(parsedBaseURL, attribute) }));
+                changes.append(AttributeChange(&element, attribute.name(), element.completeURLsInAttributeValue(parsedBaseURL, attribute)));
         }
     }
 
@@ -148,7 +146,7 @@ void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, HashMap<AtomString
             if (element.attributeContainsURL(attribute) && !attribute.value().isEmpty()) {
                 auto replacement = replacementMap.get(attribute.value());
                 if (!replacement.isNull())
-                    changes.append({ &element, attribute.name(), WTFMove(replacement) });
+                    changes.append({ &element, attribute.name(), replacement });
             }
         }
     }
@@ -198,12 +196,12 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     frame.init();
 
     FrameLoader& loader = frame.loader();
-    static constexpr ASCIILiteral markup = "<!DOCTYPE html><html><body></body></html>"_s;
+    static char markup[] = "<!DOCTYPE html><html><body></body></html>";
     ASSERT(loader.activeDocumentLoader());
     auto& writer = loader.activeDocumentLoader()->writer();
-    writer.setMIMEType("text/html"_s);
+    writer.setMIMEType("text/html");
     writer.begin();
-    writer.insertDataSynchronously(markup);
+    writer.insertDataSynchronously(String(markup));
     writer.end();
     RELEASE_ASSERT(page->mainFrame().document()->body());
 
@@ -422,7 +420,7 @@ String StyledMarkupAccumulator::takeResults()
         result.append(string);
     result.append(takeMarkup());
     // Remove '\0' characters because they are not visibly rendered to the user.
-    return makeStringByReplacingAll(result.toString(), '\0', ""_s);
+    return result.toString().replaceWithLiteral('\0', "");
 }
 
 void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
@@ -495,16 +493,16 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
     
     if (is<HTMLAttachmentElement>(element)) {
         auto& attachment = downcast<HTMLAttachmentElement>(element);
-        appendAttribute(out, element, { webkitattachmentidAttr, AtomString { attachment.uniqueIdentifier() } }, namespaces);
+        appendAttribute(out, element, { webkitattachmentidAttr, attachment.uniqueIdentifier() }, namespaces);
         if (auto* file = attachment.file()) {
             // These attributes are only intended for File deserialization, and are removed from the generated attachment
             // element after we've deserialized and set its backing File, in restoreAttachmentElementsInFragment.
-            appendAttribute(out, element, { webkitattachmentpathAttr, AtomString { file->path() } }, namespaces);
-            appendAttribute(out, element, { webkitattachmentbloburlAttr, AtomString { file->url().string() } }, namespaces);
+            appendAttribute(out, element, { webkitattachmentpathAttr, file->path() }, namespaces);
+            appendAttribute(out, element, { webkitattachmentbloburlAttr, file->url().string() }, namespaces);
         }
     } else if (is<HTMLImageElement>(element)) {
         if (auto attachment = downcast<HTMLImageElement>(element).attachmentElement())
-            appendAttribute(out, element, { webkitattachmentidAttr, AtomString { attachment->uniqueIdentifier() } }, namespaces);
+            appendAttribute(out, element, { webkitattachmentidAttr, attachment->uniqueIdentifier() }, namespaces);
     }
 #else
     UNUSED_PARAM(out);
@@ -519,7 +517,7 @@ bool StyledMarkupAccumulator::shouldPreserveMSOListStyleForElement(const Element
         return true;
     if (m_shouldPreserveMSOList) {
         auto style = element.getAttribute(styleAttr);
-        return style.startsWith("mso-list:"_s) || style.contains(";mso-list:"_s) || style.contains("\nmso-list:"_s);
+        return style.startsWith("mso-list:") || style.contains(";mso-list:") || style.contains("\nmso-list:");
     }
     return false;
 }
@@ -740,9 +738,9 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
 {
     if (is<Comment>(node)) {
         auto& commentNode = downcast<Comment>(node);
-        if (!m_inMSOList && commentNode.data() == "[if !supportLists]"_s)
+        if (!m_inMSOList && commentNode.data() == "[if !supportLists]")
             m_inMSOList = true;
-        else if (m_inMSOList && commentNode.data() == "[endif]"_s)
+        else if (m_inMSOList && commentNode.data() == "[endif]")
             m_inMSOList = false;
         else
             return false;
@@ -757,18 +755,18 @@ bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
         auto& textChild = downcast<Text>(*firstChild);
         auto& styleContent = textChild.data();
 
-        const auto msoStyleDefinitionsStart = styleContent.find("/* Style Definitions */"_s);
-        const auto msoListDefinitionsStart = styleContent.find("/* List Definitions */"_s);
-        const auto lastListItem = styleContent.reverseFind("\n@list"_s);
+        const auto msoStyleDefinitionsStart = styleContent.find("/* Style Definitions */");
+        const auto msoListDefinitionsStart = styleContent.find("/* List Definitions */");
+        const auto lastListItem = styleContent.reverseFind("\n@list");
         if (msoListDefinitionsStart == notFound || lastListItem == notFound)
             return false;
         const auto start = msoStyleDefinitionsStart != notFound && msoStyleDefinitionsStart < msoListDefinitionsStart ? msoStyleDefinitionsStart : msoListDefinitionsStart;
 
-        const auto msoListDefinitionsEnd = styleContent.find(";}\n"_s, lastListItem);
+        const auto msoListDefinitionsEnd = styleContent.find(";}\n", lastListItem);
         if (msoListDefinitionsEnd == notFound || start >= msoListDefinitionsEnd)
             return false;
 
-        append("<head><style class=\"", WebKitMSOListQuirksStyle, "\">\n<!--\n",
+        append("<head><style class=\"" WebKitMSOListQuirksStyle "\">\n<!--\n",
             StringView(textChild.data()).substring(start, msoListDefinitionsEnd - start + 3),
             "\n-->\n</style></head>");
 
@@ -937,8 +935,8 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
                     // Reset the CSS properties to avoid an assertion error in addStyleMarkup().
                     // This assertion is caused at least when we select all text of a <body> element whose
                     // 'text-decoration' property is "inherit", and copy it.
-                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyTextDecorationLine))
-                        fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecorationLine, CSSValueNone);
+                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyTextDecoration))
+                        fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecoration, CSSValueNone);
                     if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyWebkitTextDecorationsInEffect))
                         fullySelectedRootStyle->style()->setProperty(CSSPropertyWebkitTextDecorationsInEffect, CSSValueNone);
                     accumulator.wrapWithStyleNode(fullySelectedRootStyle->style(), document, true);
@@ -992,14 +990,14 @@ String serializePreservingVisualAppearance(const VisibleSelection& selection, Re
 
 static bool shouldPreserveMSOLists(StringView markup)
 {
-    if (!markup.startsWith("<html xmlns:"_s))
+    if (!markup.startsWith("<html xmlns:"))
         return false;
     auto tagClose = markup.find('>');
     if (tagClose == notFound)
         return false;
-    auto tag = markup.left(tagClose);
-    return tag.contains("xmlns:o=\"urn:schemas-microsoft-com:office:office\""_s)
-        && tag.contains("xmlns:w=\"urn:schemas-microsoft-com:office:word\""_s);
+    auto tag = markup.substring(0, tagClose);
+    return tag.contains("xmlns:o=\"urn:schemas-microsoft-com:office:office\"")
+        && tag.contains("xmlns:w=\"urn:schemas-microsoft-com:office:word\"");
 }
 
 String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Document& document, MSOListQuirks msoListQuirks, const String& originalMarkup)
@@ -1105,7 +1103,7 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
     ASSERT(string.find('\n') == notFound);
 
     Vector<String> tabList = string.splitAllowingEmptyEntries('\t');
-    StringBuilder tabText;
+    String tabText = emptyString();
     bool first = true;
     size_t numEntries = tabList.size();
     for (size_t i = 0; i < numEntries; ++i) {
@@ -1114,8 +1112,8 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
         // append the non-tab textual part
         if (!s.isEmpty()) {
             if (!tabText.isEmpty()) {
-                paragraph.appendChild(createTabSpanElement(document, tabText.toString()));
-                tabText.clear();
+                paragraph.appendChild(createTabSpanElement(document, tabText));
+                tabText = emptyString();
             }
             Ref<Node> textNode = document.createTextNode(stringWithRebalancedWhitespace(s, first, i + 1 == numEntries));
             paragraph.appendChild(textNode);
@@ -1126,7 +1124,7 @@ static void fillContainerFromString(ContainerNode& paragraph, const String& stri
         if (i + 1 != numEntries)
             tabText.append('\t');
         else if (!tabText.isEmpty())
-            paragraph.appendChild(createTabSpanElement(document, tabText.toString()));
+            paragraph.appendChild(createTabSpanElement(document, tabText));
 
         first = false;
     }
@@ -1170,18 +1168,19 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
     if (text.isEmpty())
         return fragment;
 
-    String string = makeStringBySimplifyingNewLines(text);
+    String string = text;
+    string.replace("\r\n", "\n");
+    string.replace('\r', '\n');
 
     auto createHTMLBRElement = [&document]() {
         auto element = HTMLBRElement::create(document);
-        element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline ""_s);
+        element->setAttributeWithoutSynchronization(classAttr, AppleInterchangeNewline);
         return element;
     };
 
     if (contextPreservesNewline(context)) {
-        bool endsWithNewLine = string.endsWith('\n');
-        fragment->appendChild(document.createTextNode(WTFMove(string)));
-        if (endsWithNewLine) {
+        fragment->appendChild(document.createTextNode(string));
+        if (string.endsWith('\n')) {
             fragment->appendChild(createHTMLBRElement());
         }
         return fragment;
@@ -1273,21 +1272,21 @@ ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element& cont
     return createFragmentForMarkup(contextElement, markup, DocumentFragmentMode::ReuseForInnerOuterHTML, parserContentPolicy);
 }
 
-RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDoc, String&& sourceString, const String& sourceMIMEType)
+RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDoc, const String& sourceString, const String& sourceMIMEType)
 {
     RefPtr<DocumentFragment> fragment = outputDoc.createDocumentFragment();
     
-    if (sourceMIMEType == "text/html"_s) {
+    if (sourceMIMEType == "text/html") {
         // As far as I can tell, there isn't a spec for how transformToFragment is supposed to work.
         // Based on the documentation I can find, it looks like we want to start parsing the fragment in the InBody insertion mode.
         // Unfortunately, that's an implementation detail of the parser.
         // We achieve that effect here by passing in a fake body element as context for the fragment.
         auto fakeBody = HTMLBodyElement::create(outputDoc);
-        fragment->parseHTML(WTFMove(sourceString), fakeBody.ptr());
-    } else if (sourceMIMEType == textPlainContentTypeAtom())
-        fragment->parserAppendChild(Text::create(outputDoc, WTFMove(sourceString)));
+        fragment->parseHTML(sourceString, fakeBody.ptr());
+    } else if (sourceMIMEType == "text/plain")
+        fragment->parserAppendChild(Text::create(outputDoc, sourceString));
     else {
-        bool successfulParse = fragment->parseXML(WTFMove(sourceString), 0);
+        bool successfulParse = fragment->parseXML(sourceString, 0);
         if (!successfulParse)
             return nullptr;
     }
@@ -1300,7 +1299,7 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
 Ref<DocumentFragment> createFragmentForImageAndURL(Document& document, const String& url, PresentationSize preferredSize)
 {
     auto imageElement = HTMLImageElement::create(document);
-    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { url });
+    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, url);
     if (preferredSize.width)
         imageElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString::number(*preferredSize.width));
     if (preferredSize.height)

@@ -299,7 +299,6 @@ namespace WebCore {
     macro(validatemerchant) \
     macro(versionchange) \
     macro(visibilitychange) \
-    macro(voiceschanged) \
     macro(volumechange) \
     macro(waiting) \
     macro(waitingforkey) \
@@ -365,7 +364,7 @@ public:
     // We should choose one term and stick to it.
     bool isWheelEventType(const AtomString& eventType) const;
     bool isGestureEventType(const AtomString& eventType) const;
-    bool isTouchRelatedEventType(const AtomString& eventType, const EventTarget&) const;
+    bool isTouchRelatedEventType(const AtomString& eventType, EventTarget&) const;
     bool isTouchScrollBlockingEventType(const AtomString& eventType) const;
 #if ENABLE(GAMEPAD)
     bool isGamepadEventType(const AtomString& eventType) const;
@@ -400,7 +399,7 @@ inline bool EventNames::isTouchScrollBlockingEventType(const AtomString& eventTy
         || eventType == touchmoveEvent;
 }
 
-inline bool EventNames::isTouchRelatedEventType(const AtomString& eventType, const EventTarget& target) const
+inline bool EventNames::isTouchRelatedEventType(const AtomString& eventType, EventTarget& target) const
 {
 #if ENABLE(TOUCH_EVENTS)
     if (is<Node>(target) && downcast<Node>(target).document().quirks().shouldDispatchSimulatedMouseEvents(&target)) {

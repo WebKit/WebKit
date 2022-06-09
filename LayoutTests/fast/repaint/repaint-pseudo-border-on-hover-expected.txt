@@ -1,4 +1,0 @@
-(repaint rects
-(rect 148 8 100 100)
-)
-

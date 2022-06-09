@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,17 +33,10 @@ template<typename T>
 class FixedVector {
 public:
     using Storage = EmbeddedFixedVector<T>;
-    using value_type = typename Storage::value_type;
-    using pointer = typename Storage::pointer;
-    using reference = typename Storage::reference;
-    using const_reference = typename Storage::const_reference;
-    using const_pointer = typename Storage::const_pointer;
-    using size_type = typename Storage::size_type;
-    using difference_type = typename Storage::difference_type;
-    using iterator = typename Storage::iterator;
-    using const_iterator = typename Storage::const_iterator;
-    using reverse_iterator = typename Storage::reverse_iterator;
-    using const_reverse_iterator = typename Storage::const_reverse_iterator;
+    using iterator = T*;
+    using const_iterator = const T*;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     FixedVector() = default;
     FixedVector(const FixedVector& other)
@@ -106,18 +99,6 @@ public:
         return *this;
     }
 
-private:
-    FixedVector(std::unique_ptr<Storage>&& storage)
-        :  m_storage { WTFMove(storage) }
-    { }
-
-public:
-    template<typename... Args>
-    static FixedVector createWithSizeAndConstructorArguments(size_t size, Args&&... args)
-    {
-        return FixedVector<T> { size ? Storage::createWithSizeAndConstructorArguments(size, std::forward<Args>(args)...).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
-    }
-
     size_t size() const { return m_storage ? m_storage->size() : 0; }
     bool isEmpty() const { return m_storage ? m_storage->isEmpty() : true; }
     size_t byteSize() const { return m_storage ? m_storage->byteSize() : 0; }
@@ -146,8 +127,6 @@ public:
     T& last() { return (*this)[size() - 1]; }
     const T& last() const { return (*this)[size() - 1]; }
 
-    void clear() { m_storage = nullptr; }
-
     void fill(const T& val)
     {
         if (!m_storage)
@@ -172,10 +151,6 @@ public:
         return *m_storage == *other.m_storage;
     }
 
-    template<typename U> bool contains(const U&) const;
-    template<typename U> size_t find(const U&) const;
-    template<typename MatchFunction> size_t findIf(const MatchFunction&) const;
-
     void swap(FixedVector<T>& other)
     {
         using std::swap;
@@ -192,33 +167,6 @@ private:
     std::unique_ptr<Storage> m_storage;
 };
 static_assert(sizeof(FixedVector<int>) == sizeof(int*));
-
-template<typename T>
-template<typename U>
-bool FixedVector<T>::contains(const U& value) const
-{
-    return find(value) != notFound;
-}
-
-template<typename T>
-template<typename MatchFunction>
-size_t FixedVector<T>::findIf(const MatchFunction& matches) const
-{
-    for (size_t i = 0; i < size(); ++i) {
-        if (matches(at(i)))
-            return i;
-    }
-    return notFound;
-}
-
-template<typename T>
-template<typename U>
-size_t FixedVector<T>::find(const U& value) const
-{
-    return findIf([&](auto& item) {
-        return item == value;
-    });
-}
 
 template<typename T>
 inline void swap(FixedVector<T>& a, FixedVector<T>& b)

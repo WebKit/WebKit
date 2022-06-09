@@ -7,41 +7,15 @@ description: Valid units for the smallestUnit option
 features: [Temporal]
 ---*/
 
-const datetime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 123, 456, 789);
+const datetime = new Temporal.PlainDateTime(2000, 5, 2, 12, 34, 56, 789, 999, 999);
 
-function test(instance, expectations, description) {
-  for (const [smallestUnit, expectedResult] of expectations) {
-    assert.sameValue(instance.toString({ smallestUnit }), expectedResult,
-      `${description} with smallestUnit "${smallestUnit}"`);
-  }
-}
-
-test(
-  datetime,
-  [
-    ["minute", "2000-05-02T12:34"],
-    ["second", "2000-05-02T12:34:56"],
-    ["millisecond", "2000-05-02T12:34:56.123"],
-    ["microsecond", "2000-05-02T12:34:56.123456"],
-    ["nanosecond", "2000-05-02T12:34:56.123456789"],
-  ],
-  "subseconds toString"
-);
-
-test(
-  new Temporal.PlainDateTime(2000, 5, 2, 12, 34),
-  [
-    ["minute", "2000-05-02T12:34"],
-    ["second", "2000-05-02T12:34:00"],
-    ["millisecond", "2000-05-02T12:34:00.000"],
-    ["microsecond", "2000-05-02T12:34:00.000000"],
-    ["nanosecond", "2000-05-02T12:34:00.000000000"],
-  ],
-  "whole minutes toString"
-);
+assert.sameValue(datetime.toString({ smallestUnit: "minute" }), "2000-05-02T12:34");
+assert.sameValue(datetime.toString({ smallestUnit: "second" }), "2000-05-02T12:34:56");
+assert.sameValue(datetime.toString({ smallestUnit: "millisecond" }), "2000-05-02T12:34:56.789");
+assert.sameValue(datetime.toString({ smallestUnit: "microsecond" }), "2000-05-02T12:34:56.789999");
+assert.sameValue(datetime.toString({ smallestUnit: "nanosecond" }), "2000-05-02T12:34:56.789999999");
 
 const notValid = [
-  "era",
   "year",
   "month",
   "week",
@@ -50,6 +24,5 @@ const notValid = [
 ];
 
 notValid.forEach((smallestUnit) => {
-  assert.throws(RangeError, () => datetime.toString({ smallestUnit }),
-    `"${smallestUnit}" is not a valid unit for the smallestUnit option`);
+  assert.throws(RangeError, () => datetime.toString({ smallestUnit }), smallestUnit);
 });

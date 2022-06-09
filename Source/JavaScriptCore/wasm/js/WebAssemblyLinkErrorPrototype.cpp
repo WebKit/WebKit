@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyLinkErrorPrototype::s_info = { "WebAssembly.LinkError"_s, &Base::s_info, &prototypeTableWebAssemblyLinkError, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorPrototype) };
+const ClassInfo WebAssemblyLinkErrorPrototype::s_info = { "WebAssembly.LinkError", &Base::s_info, &prototypeTableWebAssemblyLinkError, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorPrototype) };
 
 /* Source for WebAssemblyLinkErrorPrototype.lut.h
  @begin prototypeTableWebAssemblyLinkError
@@ -57,7 +57,7 @@ Structure* WebAssemblyLinkErrorPrototype::createStructure(VM& vm, JSGlobalObject
 void WebAssemblyLinkErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->name, jsNontrivialString(vm, "LinkError"_s), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

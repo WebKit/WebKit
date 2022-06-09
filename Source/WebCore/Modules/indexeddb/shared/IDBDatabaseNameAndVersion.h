@@ -36,8 +36,7 @@ struct IDBDatabaseNameAndVersion {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<IDBDatabaseNameAndVersion> decode(Decoder&);
 
-    IDBDatabaseNameAndVersion isolatedCopy() const & { return { name.isolatedCopy(), version }; }
-    IDBDatabaseNameAndVersion isolatedCopy() && { return { WTFMove(name).isolatedCopy(), version }; }
+    IDBDatabaseNameAndVersion isolatedCopy() const;
 };
 
 template<class Encoder>
@@ -58,6 +57,11 @@ std::optional<IDBDatabaseNameAndVersion> IDBDatabaseNameAndVersion::decode(Decod
         return std::nullopt;
 
     return info;
+}
+
+inline IDBDatabaseNameAndVersion IDBDatabaseNameAndVersion::isolatedCopy() const
+{
+    return { name.isolatedCopy(), version };
 }
 
 } // namespace WebCore

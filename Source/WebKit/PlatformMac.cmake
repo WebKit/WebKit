@@ -1,4 +1,4 @@
-add_definitions("-ObjC++ -std=c++2a -D__STDC_WANT_LIB_EXT1__")
+add_definitions("-ObjC++ -std=c++17 -D__STDC_WANT_LIB_EXT1__")
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(CARBON_LIBRARY Carbon)
 find_library(CORESERVICES_LIBRARY CoreServices)
@@ -154,14 +154,12 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/Cocoa"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/mac"
     "${WEBKIT_DIR}/WebProcess/MediaSession"
-    "${WEBKIT_DIR}/WebProcess/Model/mac"
     "${WEBKIT_DIR}/WebProcess/Plugins/PDF"
     "${WEBKIT_DIR}/WebProcess/Plugins/Netscape/mac"
     "${WEBKIT_DIR}/WebProcess/WebPage/Cocoa"
     "${WEBKIT_DIR}/WebProcess/WebPage/RemoteLayerTree"
     "${WEBKIT_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/mac"
-    "${WEBKIT_DIR}/webpushd"
     "${WEBKITLEGACY_DIR}"
     "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}"
 )
@@ -217,8 +215,6 @@ set(WebKit_FORWARDING_HEADERS_FILES
 list(APPEND WebKit_MESSAGES_IN_FILES
     GPUProcess/media/RemoteImageDecoderAVFProxy
 
-    GPUProcess/media/ios/RemoteMediaSessionHelperProxy
-
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager
 
     Shared/API/Cocoa/RemoteObjectRegistry
@@ -240,6 +236,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy
 
     UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy
+    UIProcess/WebAuthentication/WebAuthnProcessProxy
 
     UIProcess/mac/SecItemShimProxy
 
@@ -249,8 +246,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/ApplePay/WebPaymentCoordinator
 
     WebProcess/GPU/media/RemoteImageDecoderAVFManager
-
-    WebProcess/GPU/media/ios/RemoteMediaSessionHelper
 
     WebProcess/Inspector/WebInspectorUIExtensionController
 
@@ -465,7 +460,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.h
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.h
     UIProcess/API/Cocoa/_WKSessionState.h
-    UIProcess/API/Cocoa/_WKSystemPreferences.h
     UIProcess/API/Cocoa/_WKTapHandlingResult.h
     UIProcess/API/Cocoa/_WKTextInputContext.h
     UIProcess/API/Cocoa/_WKTextManipulationConfiguration.h
@@ -496,7 +490,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/Cocoa/WKShareSheet.h
 
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.h
-    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h
     WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h
@@ -843,12 +836,6 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             grep -o "^[^;]*" ${WEBKIT_DIR}/WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.WebAuthnProcess.sb
             VERBATIM)
         list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.WebAuthnProcess.sb)
-    endif ()
-    if (ENABLE_BUILT_IN_NOTIFICATIONS)
-        add_custom_command(OUTPUT ${WebKit_RESOURCES_DIR}/com.apple.WebKit.webpushd.sb COMMAND
-            grep -o "^[^;]*" ${WEBKIT_DIR}/webpushd/mac/com.apple.WebKit.webpushd.sb.in | clang -E -P -w -include wtf/Platform.h -I ${WTF_FRAMEWORK_HEADERS_DIR} -I ${bmalloc_FRAMEWORK_HEADERS_DIR} -I ${WEBKIT_DIR} - > ${WebKit_RESOURCES_DIR}/com.apple.WebKit.webpushd.sb
-            VERBATIM)
-        list(APPEND WebKit_SB_FILES ${WebKit_RESOURCES_DIR}/com.apple.WebKit.webpushd.sb)
     endif ()
     add_custom_target(WebKitSandboxProfiles ALL DEPENDS ${WebKit_SB_FILES})
     add_dependencies(WebKit WebKitSandboxProfiles)

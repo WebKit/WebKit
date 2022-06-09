@@ -1565,11 +1565,6 @@ bool Framebuffer::partialClearNeedsInit(const Context *context,
         return false;
     }
 
-    if (depth && context->getFrontendFeatures().forceDepthAttachmentInitOnClear.enabled)
-    {
-        return true;
-    }
-
     // Scissors can affect clearing.
     // TODO(jmadill): Check for complete scissor overlap.
     if (glState.isScissorTestEnabled())

@@ -51,7 +51,7 @@ void CSSPreloadScanner::reset()
 void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestStream& requests)
 {
     ASSERT(!m_requests);
-    SetForScope change(m_requests, &requests);
+    SetForScope<PreloadRequestStream*> change(m_requests, &requests);
 
     for (UChar c : data) {
         if (m_state == DoneParsingImportRules)
@@ -215,24 +215,24 @@ static bool hasValidImportConditions(StringView conditions)
 
     auto end = conditions.find(')');
     if (end != notFound)
-        return end == conditions.length() - 1 && conditions.startsWith("layer("_s);
+        return end == conditions.length() - 1 && conditions.startsWith("layer(");
 
-    return conditions == "layer"_s;
+    return conditions == "layer";
 }
 
 void CSSPreloadScanner::emitRule()
 {
     StringView rule(m_rule.data(), m_rule.size());
-    if (equalLettersIgnoringASCIICase(rule, "import"_s)) {
+    if (equalLettersIgnoringASCIICase(rule, "import")) {
         String url = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
         StringView conditions(m_ruleConditions.data(), m_ruleConditions.size());
         if (!url.isEmpty() && hasValidImportConditions(conditions)) {
             URL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScanner via scan(): without it we will get relative URLs wrong.
             // FIXME: Should this be including the charset in the preload request?
-            m_requests->append(makeUnique<PreloadRequest>("css"_s, url, baseElementURL, CachedResource::Type::CSSStyleSheet, String(), PreloadRequest::ModuleScript::No, ReferrerPolicy::EmptyString));
+            m_requests->append(makeUnique<PreloadRequest>("css", url, baseElementURL, CachedResource::Type::CSSStyleSheet, String(), PreloadRequest::ModuleScript::No, ReferrerPolicy::EmptyString));
         }
         m_state = Initial;
-    } else if (equalLettersIgnoringASCIICase(rule, "charset"_s))
+    } else if (equalLettersIgnoringASCIICase(rule, "charset"))
         m_state = Initial;
     else
         m_state = DoneParsingImportRules;

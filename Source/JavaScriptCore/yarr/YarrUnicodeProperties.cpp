@@ -57,7 +57,7 @@ struct HashTable {
             return -1;
 
         while (true) {
-            if (WTF::equal(key, StringView::fromLatin1(values[valueIndex].key)))
+            if (WTF::equal(key, values[valueIndex].key))
                 return values[valueIndex].index;
 
             indexEntry = index[indexEntry].next;
@@ -75,11 +75,11 @@ std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String uni
 {
     int propertyIndex = -1;
 
-    if (unicodePropertyName == "Script"_s || unicodePropertyName == "sc"_s)
+    if (unicodePropertyName == "Script" || unicodePropertyName == "sc")
         propertyIndex = scriptHashTable.entry(unicodePropertyValue);
-    else if (unicodePropertyName == "Script_Extensions"_s || unicodePropertyName == "scx"_s)
+    else if (unicodePropertyName == "Script_Extensions" || unicodePropertyName == "scx")
         propertyIndex = scriptExtensionHashTable.entry(unicodePropertyValue);
-    else if (unicodePropertyName == "General_Category"_s || unicodePropertyName == "gc"_s)
+    else if (unicodePropertyName == "General_Category" || unicodePropertyName == "gc")
         propertyIndex = generalCategoryHashTable.entry(unicodePropertyValue);
 
     if (propertyIndex == -1)

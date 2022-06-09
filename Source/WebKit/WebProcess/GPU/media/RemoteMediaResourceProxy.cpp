@@ -74,13 +74,12 @@ void RemoteMediaResourceProxy::dataSent(WebCore::PlatformMediaResource&, unsigne
 
 void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, const WebCore::SharedBuffer& buffer)
 {
+    auto sharedMemory = SharedMemory::copyBuffer(buffer);
+    if (!sharedMemory)
+        return;
+
     SharedMemory::Handle handle;
-    {
-        auto sharedMemory = SharedMemory::copyBuffer(buffer);
-        if (!sharedMemory)
-            return;
-        sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    }
+    sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
     // Take ownership of shared memory and mark it as media-related memory.
     handle.takeOwnershipOfMemory(MemoryLedger::Media);
     m_connection->send(Messages::RemoteMediaResourceManager::DataReceived(m_id, SharedMemory::IPCHandle { WTFMove(handle), buffer.size() }), 0);

@@ -10,7 +10,7 @@ acronym interfaceName=HTMLElement
 address interfaceName=HTMLElement
 applet interfaceName=HTMLUnknownElement
 area
-article interfaceName=HTMLArticleElement, JSInterfaceName=HTMLElement
+article interfaceName=HTMLElement
 aside interfaceName=HTMLElement
 attachment conditional=ATTACHMENT_ELEMENT, runtimeEnabled=attachmentElement
 audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, customTypeHelper
@@ -72,7 +72,7 @@ img interfaceName=HTMLImageElement, constructorNeedsFormElement
 input constructorNeedsFormElement, constructorNeedsCreatedByParser
 ins interfaceName=HTMLModElement
 kbd interfaceName=HTMLElement
-keygen interfaceName=HTMLUnknownElement
+keygen constructorNeedsFormElement, runtimeEnabled=keygenElement
 label
 layer interfaceName=HTMLElement
 legend

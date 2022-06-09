@@ -42,7 +42,7 @@ namespace WebCore {
 
 bool CSSFontFaceSrcValue::isSVGFontFaceSrc() const
 {
-    return equalLettersIgnoringASCIICase(m_format, "svg"_s);
+    return equalLettersIgnoringASCIICase(m_format, "svg");
 }
 
 bool CSSFontFaceSrcValue::isSVGFontTarget() const
@@ -56,7 +56,7 @@ bool CSSFontFaceSrcValue::isSupportedFormat() const
     // we will also check to see if the URL ends with .eot. If so, we'll assume that we shouldn't load it.
     if (m_format.isEmpty()) {
         // Check for .eot.
-        if (!protocolIs(m_resource, "data"_s) && m_resource.endsWithIgnoringASCIICase(".eot"_s))
+        if (!protocolIs(m_resource, "data") && m_resource.endsWithIgnoringASCIICase(".eot"))
             return false;
         return true;
     }

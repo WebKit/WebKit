@@ -105,25 +105,25 @@ void MockMediaSessionCoordinator::setTrack(const String&, CompletionHandler<void
 void MockMediaSessionCoordinator::positionStateChanged(const std::optional<MediaPositionState>&)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "positionStateChanged"_s);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "positionStateChanged");
 }
 
 void MockMediaSessionCoordinator::readyStateChanged(MediaSessionReadyState state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "readyStateChanged"_s);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "readyStateChanged");
 }
 
 void MockMediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "playbackStateChanged"_s);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "playbackStateChanged");
 }
 
 void MockMediaSessionCoordinator::trackIdentifierChanged(const String& identifier)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, identifier);
-    m_stateChangeListener->scheduleCallback(m_context.get(), "trackIdentifierChanged"_s);
+    m_stateChangeListener->scheduleCallback(m_context.get(), "trackIdentifierChanged");
 }
 
 WTFLogChannel& MockMediaSessionCoordinator::logChannel() const

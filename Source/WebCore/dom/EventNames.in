@@ -7,7 +7,7 @@ Events interfaceName=Event
 HTMLEvents interfaceName=Event
 AnimationEvent
 AnimationPlaybackEvent
-BeforeLoadEvent interfaceName=Event
+BeforeLoadEvent
 BeforeUnloadEvent
 ClipboardEvent
 CloseEvent
@@ -43,6 +43,8 @@ TextEvent
 TransitionEvent
 UIEvent
 UIEvents interfaceName=UIEvent
+WebKitAnimationEvent
+WebKitTransitionEvent
 WheelEvent
 XMLHttpRequestProgressEvent
 ApplePayCancelEvent conditional=APPLE_PAY
@@ -53,9 +55,9 @@ ApplePayShippingContactSelectedEvent conditional=APPLE_PAY
 ApplePayShippingMethodSelectedEvent conditional=APPLE_PAY
 ApplePayValidateMerchantEvent conditional=APPLE_PAY
 AudioProcessingEvent conditional=WEB_AUDIO
-BlobEvent conditional=MEDIA_RECORDER
+BlobEvent conditional=MEDIA_STREAM
 OfflineAudioCompletionEvent conditional=WEB_AUDIO
-MediaRecorderErrorEvent conditional=MEDIA_RECORDER
+MediaRecorderErrorEvent conditional=MEDIA_STREAM
 MediaStreamTrackEvent conditional=MEDIA_STREAM
 MerchantValidationEvent conditional=PAYMENT_REQUEST
 PaymentMethodChangeEvent conditional=PAYMENT_REQUEST
@@ -70,7 +72,6 @@ RTCTrackEvent conditional=WEB_RTC
 RTCTransformEvent conditional=WEB_RTC
 SpeechRecognitionErrorEvent
 SpeechRecognitionEvent
-SpeechSynthesisErrorEvent conditional=SPEECH_SYNTHESIS
 SpeechSynthesisEvent conditional=SPEECH_SYNTHESIS
 WebGLContextEvent conditional=WEBGL
 StorageEvent
@@ -93,7 +94,7 @@ OverconstrainedErrorEvent conditional=MEDIA_STREAM
 MediaEncryptedEvent conditional=ENCRYPTED_MEDIA
 MediaKeyMessageEvent conditional=ENCRYPTED_MEDIA
 PointerEvent
-PictureInPictureEvent conditional=PICTURE_IN_PICTURE_API
+EnterPictureInPictureEvent conditional=PICTURE_IN_PICTURE_API
 XRInputSourceEvent conditional=WEBXR
 XRInputSourcesChangeEvent conditional=WEBXR
 XRReferenceSpaceEvent conditional=WEBXR

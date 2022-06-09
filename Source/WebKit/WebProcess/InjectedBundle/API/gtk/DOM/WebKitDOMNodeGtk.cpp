@@ -438,7 +438,8 @@ gchar* webkit_dom_node_lookup_prefix(WebKitDOMNode* self, const gchar* namespace
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), 0);
     g_return_val_if_fail(namespaceURI, 0);
     WebCore::Node* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->lookupPrefix(WTF::AtomString::fromUTF8(namespaceURI)));
+    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
+    gchar* result = convertToUTF8String(item->lookupPrefix(convertedNamespaceURI));
     return result;
 }
 
@@ -448,7 +449,8 @@ gchar* webkit_dom_node_lookup_namespace_uri(WebKitDOMNode* self, const gchar* pr
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), 0);
     g_return_val_if_fail(prefix, 0);
     WebCore::Node* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->lookupNamespaceURI(WTF::AtomString::fromUTF8(prefix)));
+    WTF::String convertedPrefix = WTF::String::fromUTF8(prefix);
+    gchar* result = convertToUTF8String(item->lookupNamespaceURI(convertedPrefix));
     return result;
 }
 
@@ -458,7 +460,8 @@ gboolean webkit_dom_node_is_default_namespace(WebKitDOMNode* self, const gchar* 
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(self), FALSE);
     g_return_val_if_fail(namespaceURI, FALSE);
     WebCore::Node* item = WebKit::core(self);
-    gboolean result = item->isDefaultNamespace(WTF::AtomString::fromUTF8(namespaceURI));
+    WTF::String convertedNamespaceURI = WTF::String::fromUTF8(namespaceURI);
+    gboolean result = item->isDefaultNamespace(convertedNamespaceURI);
     return result;
 }
 
@@ -510,7 +513,11 @@ void webkit_dom_node_set_node_value(WebKitDOMNode* self, const gchar* value, GEr
     g_return_if_fail(!error || !*error);
     WebCore::Node* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setNodeValue(convertedValue);
+    auto result = item->setNodeValue(convertedValue);
+    if (result.hasException()) {
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+    }
 }
 
 gushort webkit_dom_node_get_node_type(WebKitDOMNode* self)
@@ -610,7 +617,12 @@ void webkit_dom_node_set_text_content(WebKitDOMNode* self, const gchar* value, G
     g_return_if_fail(value);
     g_return_if_fail(!error || !*error);
     WebCore::Node* item = WebKit::core(self);
-    item->setTextContent(WTF::String::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    auto result = item->setTextContent(convertedValue);
+    if (result.hasException()) {
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
+    }
 }
 
 WebKitDOMElement* webkit_dom_node_get_parent_element(WebKitDOMNode* self)

@@ -50,7 +50,7 @@ void CachedScript::setEncoding(const String& chs)
 
 String CachedScript::encoding() const
 {
-    return String::fromLatin1(m_decoder->encoding().name());
+    return m_decoder->encoding().name();
 }
 
 StringView CachedScript::script()

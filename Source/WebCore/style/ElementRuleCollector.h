@@ -80,9 +80,9 @@ public:
 
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
     void setPseudoElementRequest(const PseudoElementRequest& request) { m_pseudoElementRequest = request; }
-    void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"_s); }
+    void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"); }
 
-    bool hasAnyMatchingRules(const RuleSet&);
+    bool hasAnyMatchingRules(const RuleSet*);
 
     const MatchResult& matchResult() const;
     const Vector<RefPtr<const StyleRule>>& matchedRuleList() const;
@@ -93,10 +93,8 @@ public:
     const Relations& styleRelations() const { return m_styleRelations; }
     bool didMatchUncommonAttributeSelector() const { return m_didMatchUncommonAttributeSelector; }
 
-    void addAuthorKeyframeRules(const StyleRuleKeyframe&);
-
 private:
-    void addElementStyleProperties(const StyleProperties*, CascadeLayerPriority, bool isCacheable = true, FromStyleAttribute = FromStyleAttribute::No);
+    void addElementStyleProperties(const StyleProperties*, bool isCacheable = true, FromStyleAttribute = FromStyleAttribute::No);
 
     void matchUARules(const RuleSet&);
 
@@ -114,7 +112,6 @@ private:
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal);
-    bool containerQueriesMatch(const RuleData&, const MatchRequest&);
 
     void sortMatchedRules();
 

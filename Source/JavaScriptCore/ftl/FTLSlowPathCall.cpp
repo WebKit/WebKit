@@ -116,18 +116,12 @@ SlowPathCallContext::~SlowPathCallContext()
 
 SlowPathCallKey SlowPathCallContext::keyWithTarget(FunctionPtr<CFunctionPtrTag> callTarget) const
 {
-    uint8_t numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled = 0;
-    if (UNLIKELY(Options::clobberAllRegsInFTLICSlowPath()))
-        numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled = std::min(NUMBER_OF_ARGUMENT_REGISTERS, m_numArgs);
-    return SlowPathCallKey(m_thunkSaveSet, callTarget, numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled, m_offset, 0);
+    return SlowPathCallKey(m_thunkSaveSet, callTarget, m_argumentRegisters, m_offset, 0);
 }
 
 SlowPathCallKey SlowPathCallContext::keyWithTarget(CCallHelpers::Address address) const
 {
-    uint8_t numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled = 0;
-    if (UNLIKELY(Options::clobberAllRegsInFTLICSlowPath()))
-        numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled = std::min(NUMBER_OF_ARGUMENT_REGISTERS, m_numArgs);
-    return SlowPathCallKey(m_thunkSaveSet, nullptr, numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled, m_offset, address.offset);
+    return SlowPathCallKey(m_thunkSaveSet, nullptr, m_argumentRegisters, m_offset, address.offset);
 }
 
 SlowPathCall SlowPathCallContext::makeCall(VM& vm, FunctionPtr<CFunctionPtrTag> callTarget)

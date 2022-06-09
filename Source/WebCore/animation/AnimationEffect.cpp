@@ -27,7 +27,6 @@
 #include "AnimationEffect.h"
 
 #include "CSSAnimation.h"
-#include "CommonAtomStrings.h"
 #include "FillMode.h"
 #include "JSComputedEffectTiming.h"
 #include "WebAnimation.h"
@@ -70,7 +69,7 @@ EffectTiming AnimationEffect::getTiming() const
     timing.iterationStart = m_iterationStart;
     timing.iterations = m_iterations;
     if (m_iterationDuration == 0_s)
-        timing.duration = autoAtom();
+        timing.duration = "auto";
     else
         timing.duration = secondsToWebAnimationsAPITime(m_iterationDuration);
     timing.direction = m_direction;
@@ -400,7 +399,7 @@ ExceptionOr<void> AnimationEffect::updateTiming(std::optional<OptionalEffectTimi
             if (durationAsDouble < 0 || std::isnan(durationAsDouble))
                 return Exception { TypeError };
         } else {
-            if (std::get<String>(timing->duration.value()) != autoAtom())
+            if (std::get<String>(timing->duration.value()) != "auto")
                 return Exception { TypeError };
         }
     }

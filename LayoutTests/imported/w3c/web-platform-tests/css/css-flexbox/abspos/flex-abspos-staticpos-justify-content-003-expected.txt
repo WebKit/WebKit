@@ -8,7 +8,9 @@
 
 
 PASS .container > div 1
-PASS .container > div 2
+FAIL .container > div 2 assert_equals:
+<div class="container" style="justify-content: space-between"><div data-offset-x="2" data-offset-y="1"></div></div>
+offsetLeft expected 2 but got 10
 PASS .container > div 3
 PASS .container > div 4
 PASS .container > div 5
@@ -20,7 +22,9 @@ PASS .container > div 10
 PASS .container > div 11
 PASS .container > div 12
 PASS .container > div 13
-PASS .container > div 14
+FAIL .container > div 14 assert_equals:
+<div class="container" style="justify-content: space-between"><div data-offset-x="2" data-offset-y="1"></div></div>
+offsetLeft expected 2 but got -2
 PASS .container > div 15
 PASS .container > div 16
 PASS .container > div 17

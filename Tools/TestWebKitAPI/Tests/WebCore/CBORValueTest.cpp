@@ -55,25 +55,26 @@ TEST(CBORValueTest, ConstructNegative)
 
 TEST(CBORValueTest, ConstructStringFromConstCharPtr)
 {
-    CBORValue value("foobar"_s);
+    const char* str = "foobar";
+    CBORValue value(str);
     ASSERT_TRUE(CBORValue::Type::String == value.type());
-    EXPECT_TRUE("foobar"_s == value.getString());
+    EXPECT_TRUE("foobar" == value.getString());
 }
 
 TEST(CBORValueTest, ConstructStringFromWTFStringConstRef)
 {
-    String str = "foobar"_s;
+    String str = "foobar";
     CBORValue value(str);
     ASSERT_TRUE(CBORValue::Type::String == value.type());
-    EXPECT_TRUE("foobar"_s == value.getString());
+    EXPECT_TRUE("foobar" == value.getString());
 }
 
 TEST(CBORValueTest, ConstructStringFromWTFStringRefRef)
 {
-    String str = "foobar"_s;
+    String str = "foobar";
     CBORValue value(WTFMove(str));
     ASSERT_TRUE(CBORValue::Type::String == value.type());
-    EXPECT_TRUE("foobar"_s == value.getString());
+    EXPECT_TRUE("foobar" == value.getString());
 }
 
 TEST(CBORValueTest, ConstructBytestring)
@@ -92,7 +93,7 @@ TEST(CBORValueTest, ConstructArray)
         ASSERT_TRUE(CBORValue::Type::Array == value.type());
         ASSERT_EQ(1u, value.getArray().size());
         ASSERT_TRUE(CBORValue::Type::String == value.getArray()[0].type());
-        EXPECT_TRUE("foo"_s == value.getArray()[0].getString());
+        EXPECT_TRUE("foo" == value.getArray()[0].getString());
     }
 
     array.last() = CBORValue("bar");
@@ -101,7 +102,7 @@ TEST(CBORValueTest, ConstructArray)
         ASSERT_TRUE(CBORValue::Type::Array == value.type());
         ASSERT_EQ(1u, value.getArray().size());
         ASSERT_TRUE(CBORValue::Type::String == value.getArray()[0].type());
-        EXPECT_TRUE("bar"_s == value.getArray()[0].getString());
+        EXPECT_TRUE("bar" == value.getArray()[0].getString());
     }
 }
 
@@ -115,7 +116,7 @@ TEST(CBORValueTest, ConstructMap)
         ASSERT_TRUE(CBORValue::Type::Map == value.type());
         ASSERT_EQ(value.getMap().count(keyFoo), 1u);
         ASSERT_TRUE(CBORValue::Type::String == value.getMap().find(keyFoo)->second.type());
-        EXPECT_TRUE("bar"_s == value.getMap().find(keyFoo)->second.getString());
+        EXPECT_TRUE("bar" == value.getMap().find(keyFoo)->second.getString());
     }
 
     map[CBORValue("foo")] = CBORValue("baz");
@@ -124,7 +125,7 @@ TEST(CBORValueTest, ConstructMap)
         ASSERT_TRUE(CBORValue::Type::Map == value.type());
         ASSERT_EQ(value.getMap().count(keyFoo), 1u);
         ASSERT_TRUE(CBORValue::Type::String == value.getMap().find(keyFoo)->second.type());
-        EXPECT_TRUE("baz"_s == value.getMap().find(keyFoo)->second.getString());
+        EXPECT_TRUE("baz" == value.getMap().find(keyFoo)->second.getString());
     }
 }
 
@@ -301,13 +302,13 @@ TEST(CBORValueTest, MoveString)
     CBORValue value("foobar");
     CBORValue moved_value(WTFMove(value));
     EXPECT_TRUE(CBORValue::Type::String == moved_value.type());
-    EXPECT_TRUE("foobar"_s == moved_value.getString());
+    EXPECT_TRUE("foobar" == moved_value.getString());
 
     CBORValue blank;
 
     blank = CBORValue("foobar");
     EXPECT_TRUE(CBORValue::Type::String == blank.type());
-    EXPECT_TRUE("foobar"_s == blank.getString());
+    EXPECT_TRUE("foobar" == blank.getString());
 }
 
 TEST(CBORValueTest, MoveBytestring)

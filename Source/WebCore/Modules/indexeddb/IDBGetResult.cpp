@@ -26,7 +26,6 @@
 #include "config.h"
 #include "IDBGetResult.h"
 
-#include <wtf/CrossThreadCopier.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -48,9 +47,9 @@ void IDBGetResult::isolatedCopy(const IDBGetResult& source, IDBGetResult& destin
     destination.m_value = source.m_value.isolatedCopy();
     destination.m_keyData = source.m_keyData.isolatedCopy();
     destination.m_primaryKeyData = source.m_primaryKeyData.isolatedCopy();
-    destination.m_keyPath = crossThreadCopy(source.m_keyPath);
+    destination.m_keyPath = WebCore::isolatedCopy(source.m_keyPath);
     destination.m_isDefined = source.m_isDefined;
-    destination.m_prefetchedRecords = crossThreadCopy(source.m_prefetchedRecords);
+    destination.m_prefetchedRecords = source.m_prefetchedRecords.isolatedCopy();
 }
 
 void IDBGetResult::setValue(IDBValue&& value)

@@ -25,15 +25,12 @@
 
 #pragma once
 
-#include "AnimationFrameRate.h"
-#include "AnimationFrameRatePreset.h"
 #include "EffectTiming.h"
 
 namespace WebCore {
 
 struct CustomAnimationOptions : EffectTiming {
     String id;
-    std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate;
 };
 
 } // namespace WebCore

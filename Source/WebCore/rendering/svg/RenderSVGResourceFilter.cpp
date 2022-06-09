@@ -4,7 +4,6 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -126,11 +125,11 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     ImageBuffer::sizeNeedsClamping(filterData->drawingRegion.size(), filterScale);
 
     // Set the rendering mode from the page's settings.
-    auto renderingMode = renderer.page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    auto renderingMode = renderer.settings().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 
     // Create the SVGFilter object.
     filterData->builder = makeUnique<SVGFilterBuilder>();
-    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, Filter::ClipOperation::Intersect, filterData->boundaries, targetBoundingBox, *context);
+    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, filterData->boundaries, targetBoundingBox);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -147,21 +146,23 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
         return false;
     }
 
+    // Change the coordinate transformation applied to the filtered element to reflect the resolution of the filter.
+    auto effectiveTransform = AffineTransform(filterScale.width(), 0, 0, filterScale.height(), 0, 0);
+
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
     auto colorSpace = DestinationColorSpace::LinearSRGB();
 #else
     auto colorSpace = DestinationColorSpace::SRGB();
 #endif
-
-    auto sourceGraphic = context->createScaledImageBuffer(filterData->drawingRegion, filterScale, colorSpace, filterData->filter->renderingMode());
+    auto sourceGraphic = SVGRenderingContext::createImageBuffer(filterData->drawingRegion, effectiveTransform, colorSpace, filterData->filter->renderingMode(), renderer.hostWindow());
     if (!sourceGraphic) {
         ASSERT(m_rendererFilterDataMap.contains(&renderer));
         filterData->savedContext = context;
         return false;
     }
-
+    
     auto& sourceGraphicContext = sourceGraphic->context();
-
+  
     filterData->sourceGraphicBuffer = WTFMove(sourceGraphic);
     filterData->savedContext = context;
 

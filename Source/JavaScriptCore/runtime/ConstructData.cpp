@@ -33,17 +33,17 @@
 
 namespace JSC {
 
-JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, const ArgList& args, ASCIILiteral errorMessage)
+JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, const ArgList& args, const char* errorMessage)
 {
     return construct(globalObject, constructorObject, constructorObject, args, errorMessage);
 }
 
-JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, JSValue newTarget, const ArgList& args, ASCIILiteral errorMessage)
+JSObject* construct(JSGlobalObject* globalObject, JSValue constructorObject, JSValue newTarget, const ArgList& args, const char* errorMessage)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto constructData = JSC::getConstructData(constructorObject);
+    auto constructData = getConstructData(vm, constructorObject);
     if (UNLIKELY(constructData.type == CallData::Type::None)) {
         throwTypeError(globalObject, scope, errorMessage);
         return nullptr;

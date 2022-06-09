@@ -33,6 +33,7 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "MediaPlayer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -44,18 +45,22 @@
 #endif
 #endif
 
+typedef void* PlatformGraphicsContextGL;
+typedef void* PlatformGraphicsContextGLDisplay;
+typedef void* PlatformGraphicsContextGLSurface;
+typedef void* PlatformGraphicsContextGLConfig;
+
 namespace WebCore {
+class ExtensionsGL;
+class HostWindow;
 class ImageBuffer;
 class PixelBuffer;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 class GraphicsContextGLCV;
 #endif
-#if ENABLE(VIDEO)
-class MediaPlayer;
-#endif
 #if ENABLE(MEDIA_STREAM)
-class VideoFrame;
+class MediaSample;
 #endif
 
 // Base class for graphics context for implementing WebGL rendering model.
@@ -756,12 +761,6 @@ public:
     static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR = 0x93DC;
     static constexpr GCGLenum COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR = 0x93DD;
 
-    // GL_EXT_texture_compression_bptc
-    static constexpr GCGLenum COMPRESSED_RGBA_BPTC_UNORM_EXT = 0x8E8C;
-    static constexpr GCGLenum COMPRESSED_SRGB_ALPHA_BPTC_UNORM_EXT = 0x8E8D;
-    static constexpr GCGLenum COMPRESSED_RGB_BPTC_SIGNED_FLOAT_EXT = 0x8E8E;
-    static constexpr GCGLenum COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_EXT = 0x8E8F;
-
     // GL_EXT_texture_compression_rgtc
     static constexpr GCGLenum COMPRESSED_RED_RGTC1_EXT = 0x8DBB;
     static constexpr GCGLenum COMPRESSED_SIGNED_RED_RGTC1_EXT = 0x8DBC;
@@ -771,16 +770,6 @@ public:
     // GL_EXT_texture_filter_anisotropic
     static constexpr GCGLenum TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE;
     static constexpr GCGLenum MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
-
-    // GL_EXT_texture_norm16
-    static constexpr GCGLenum R16_EXT = 0x822A;
-    static constexpr GCGLenum RG16_EXT = 0x822C;
-    static constexpr GCGLenum RGB16_EXT = 0x8054;
-    static constexpr GCGLenum RGBA16_EXT = 0x805B;
-    static constexpr GCGLenum R16_SNORM_EXT = 0x8F98;
-    static constexpr GCGLenum RG16_SNORM_EXT = 0x8F99;
-    static constexpr GCGLenum RGB16_SNORM_EXT = 0x8F9A;
-    static constexpr GCGLenum RGBA16_SNORM_EXT = 0x8F9B;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     static constexpr GCGLenum MAX_DRAW_BUFFERS_EXT = 0x8824;
@@ -1051,6 +1040,7 @@ public:
         WEBCORE_EXPORT virtual ~Client();
         virtual void didComposite() = 0;
         virtual void forceContextLost() = 0;
+        virtual void recycleContext() = 0;
         virtual void dispatchContextChangedNotification() = 0;
     };
 
@@ -1063,7 +1053,8 @@ public:
     WEBCORE_EXPORT GraphicsContextGL(GraphicsContextGLAttributes);
     WEBCORE_EXPORT virtual ~GraphicsContextGL();
 
-    void setClient(Client* client) { m_client = client; }
+    void addClient(Client& client) { m_clients.add(&client); }
+    void removeClient(Client& client) { m_clients.remove(&client); }
 
     // ========== WebGL 1 entry points.
     virtual void activeTexture(GCGLenum texture) = 0;
@@ -1136,7 +1127,6 @@ public:
     virtual String getString(GCGLenum name) = 0;
     virtual void getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value) = 0;
     virtual void getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value) = 0;
-    virtual void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) = 0; // NOLINT
     virtual GCGLint64 getInteger64(GCGLenum pname) = 0;
     virtual GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) = 0;
     virtual GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) = 0;
@@ -1377,10 +1367,10 @@ public:
     // ========== Extension related entry points.
 
     // GL_ANGLE_multi_draw
-    virtual void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) = 0;
-    virtual void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) = 0;
-    virtual void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLint> countsAndOffsets, GCGLenum type) = 0;
-    virtual void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLint, const GCGLsizei> countsOffsetsAndInstanceCounts, GCGLenum type) = 0;
+    virtual void multiDrawArraysANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLsizei drawcount) = 0;
+    virtual void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) = 0;
+    virtual void multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount) = 0;
+    virtual void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) = 0;
 
     virtual bool supportsExtension(const String&) = 0;
 
@@ -1392,26 +1382,25 @@ public:
     // Has no other side-effects.
     virtual bool isExtensionEnabled(const String&) = 0;
 
+    // GL_ARB_robustness
+    // Note: This method's behavior differs from the GL_ARB_robustness
+    // specification in the following way:
+    // The implementation must not reset the error state during this call.
+    // If getGraphicsResetStatusARB returns an error, it should continue
+    // returning the same error. Restoring the GraphicsContextGLOpenGL is handled
+    // externally.
+    virtual GCGLint getGraphicsResetStatusARB() = 0;
+
     // GL_ANGLE_translated_shader_source
     virtual String getTranslatedShaderSourceANGLE(PlatformGLObject) = 0;
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
 
-    // GL_OES_draw_buffers_indexed
-    virtual void enableiOES(GCGLenum target, GCGLuint index) = 0;
-    virtual void disableiOES(GCGLenum target, GCGLuint index) = 0;
-    virtual void blendEquationiOES(GCGLuint buf, GCGLenum mode) = 0;
-    virtual void blendEquationSeparateiOES(GCGLuint buf, GCGLenum modeRGB, GCGLenum modeAlpha) = 0;
-    virtual void blendFunciOES(GCGLuint buf, GCGLenum src, GCGLenum dst) = 0;
-    virtual void blendFuncSeparateiOES(GCGLuint buf, GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha) = 0;
-    virtual void colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha) = 0;
-
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);
     GCGLboolean getBoolean(GCGLenum pname);
     GCGLint getInteger(GCGLenum pname);
-    GCGLint getIntegeri(GCGLenum pname, GCGLuint index);
     GCGLint getActiveUniformBlocki(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname);
     GCGLint getInternalformati(GCGLenum target, GCGLenum internalformat, GCGLenum pname);
 
@@ -1454,10 +1443,10 @@ public:
     // display buffer abstractions that the caller should hold separate to
     // the context.
     virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
-    virtual RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
+    virtual std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
     virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
 #if ENABLE(MEDIA_STREAM)
-    virtual RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() = 0;
+    virtual RefPtr<MediaSample> paintCompositedResultsToMediaSample() = 0;
 #endif
 
     // FIXME: this should be removed. The layer should be marked composited by
@@ -1521,14 +1510,11 @@ public:
     // Returns true upon success.
     static bool packImageData(Image*, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
 
-    WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, Ref<PixelBuffer>&&, const IntSize& canvasSize, GraphicsContext&);
+    WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
 protected:
-    WEBCORE_EXPORT void forceContextLost();
-    WEBCORE_EXPORT void dispatchContextChangedNotification();
-
     int m_currentWidth { 0 };
     int m_currentHeight { 0 };
-    Client* m_client { nullptr };
+    HashSet<Client*> m_clients;
     // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,
     // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
     // auto-cleared.
@@ -1559,13 +1545,6 @@ inline GCGLint GraphicsContextGL::getInteger(GCGLenum pname)
 {
     GCGLint value[1] { };
     getIntegerv(pname, value);
-    return value[0];
-}
-
-inline GCGLint GraphicsContextGL::getIntegeri(GCGLenum pname, GCGLuint index)
-{
-    GCGLint value[4] { };
-    getIntegeri_v(pname, index, value);
     return value[0];
 }
 

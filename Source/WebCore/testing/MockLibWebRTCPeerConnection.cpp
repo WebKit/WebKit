@@ -218,22 +218,22 @@ MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(const Str
 
 static rtc::scoped_refptr<webrtc::PeerConnectionInterface> createConnection(const String& testCase, webrtc::PeerConnectionObserver& observer)
 {
-    if (testCase == "ICECandidates"_s)
+    if (testCase == "ICECandidates")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(observer);
 
-    if (testCase == "MDNSICECandidatesWithDelay"_s)
+    if (testCase == "MDNSICECandidatesWithDelay")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(observer, 1000);
 
-    if (testCase == "ICEConnectionState"_s)
+    if (testCase == "ICEConnectionState")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceConnectionState>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileCreatingOffer"_s)
+    if (testCase == "LibWebRTCReleasingWhileCreatingOffer")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileCreatingOffer>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileGettingStats"_s)
+    if (testCase == "LibWebRTCReleasingWhileGettingStats")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileGettingStats>(observer);
 
-    if (testCase == "LibWebRTCReleasingWhileSettingDescription"_s)
+    if (testCase == "LibWebRTCReleasingWhileSettingDescription")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionReleasedInNetworkThreadWhileSettingDescription>(observer);
 
     return new rtc::RefCountedObject<MockLibWebRTCPeerConnection>(observer);
@@ -346,8 +346,8 @@ void MockLibWebRTCPeerConnection::SetRemoteDescription(std::unique_ptr<webrtc::S
         sessionDescription->ToString(&sdp);
 
         m_isInitiator = false;
-        m_isReceivingAudio = sdp.find("m=audio"_s) != std::string::npos;
-        m_isReceivingVideo = sdp.find("m=video"_s) != std::string::npos;
+        m_isReceivingAudio = sdp.find("m=audio") != std::string::npos;
+        m_isReceivingVideo = sdp.find("m=video") != std::string::npos;
     }
 }
 

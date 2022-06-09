@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo ErrorInstance::s_info = { "Error"_s, &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ErrorInstance) };
+const ClassInfo ErrorInstance::s_info = { "Error", &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ErrorInstance) };
 
 ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
     : Base(vm, structure)
@@ -97,7 +97,7 @@ static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* ex
         return message;
     
     if (expressionStart < expressionStop)
-        return appender(message, codeBlock->source().provider()->getRange(expressionStart, expressionStop), type, ErrorInstance::FoundExactSource);
+        return appender(message, codeBlock->source().provider()->getRange(expressionStart, expressionStop).toString(), type, ErrorInstance::FoundExactSource);
 
     // No range information, so give a few characters of context.
     int dataLength = sourceString.length();
@@ -113,13 +113,13 @@ static String appendSourceToErrorMessage(CallFrame* callFrame, ErrorInstance* ex
         stop++;
     while (stop > expressionStart && isStrWhiteSpace(sourceString[stop - 1]))
         stop--;
-    return appender(message, codeBlock->source().provider()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
+    return appender(message, codeBlock->source().provider()->getRange(start, stop).toString(), type, ErrorInstance::FoundApproximateSource);
 }
 
 void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     m_sourceAppender = appender;
     m_runtimeTypeForCause = type;
@@ -141,7 +141,7 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     }
 
     if (!messageWithSource.isNull())
-        putDirect(vm, vm.propertyNames->message, jsString(vm, WTFMove(messageWithSource)), static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirect(vm, vm.propertyNames->message, jsString(vm, messageWithSource), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     if (!cause.isEmpty())
         putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -154,7 +154,7 @@ String ErrorInstance::sanitizedMessageString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(structureID());
+    Integrity::auditStructureID(vm, structureID());
 
     JSValue messageValue;
     auto messagePropertName = vm.propertyNames->message;
@@ -163,9 +163,8 @@ String ErrorInstance::sanitizedMessageString(JSGlobalObject* globalObject)
         messageValue = messageSlot.getValue(globalObject, messagePropertName);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (!messageValue || !messageValue.isPrimitive())
+    if (!messageValue)
         return { };
-
     RELEASE_AND_RETURN(scope, messageValue.toWTFString(globalObject));
 }
 
@@ -173,7 +172,7 @@ String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(structureID());
+    Integrity::auditStructureID(vm, structureID());
 
     JSValue nameValue;
     auto namePropertName = vm.propertyNames->name;
@@ -191,11 +190,11 @@ String ErrorInstance::sanitizedNameString(JSGlobalObject* globalObject)
             nameValue = nameSlot.getValue(globalObject, namePropertName);
             break;
         }
-        currentObj = obj->getPrototypeDirect();
+        currentObj = obj->getPrototypeDirect(vm);
     }
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (!nameValue || !nameValue.isPrimitive())
+    if (!nameValue)
         return "Error"_s;
     RELEASE_AND_RETURN(scope, nameValue.toWTFString(globalObject));
 }
@@ -204,7 +203,7 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    Integrity::auditStructureID(structureID());
+    Integrity::auditStructureID(vm, structureID());
 
     String nameString = sanitizedNameString(globalObject);
     RETURN_IF_EXCEPTION(scope, String());

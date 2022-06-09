@@ -1,3 +1,0 @@
-
-PASS Replacing a <style> element with a new <style> element while both containing the different @keyframes rule with the same name dynamically updates running animations.
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,16 @@
 
 #pragma once
 
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
-
-struct WGPUSwapChainImpl {
-};
 
 namespace WebGPU {
 
 class TextureView;
 
-class SwapChain : public WGPUSwapChainImpl, public RefCounted<SwapChain> {
+class SwapChain : public RefCounted<SwapChain> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<SwapChain> create()
@@ -46,7 +44,7 @@ public:
 
     ~SwapChain();
 
-    TextureView* getCurrentTextureView();
+    Ref<TextureView> getCurrentTextureView();
     void present();
 
 private:
@@ -54,3 +52,7 @@ private:
 };
 
 } // namespace WebGPU
+
+struct WGPUSwapChainImpl {
+    Ref<WebGPU::SwapChain> swapChain;
+};

@@ -30,7 +30,7 @@
             assert_true(cursor instanceof IDBCursor, "cursor exist");
 
             cursor.continue();
-            assert_throws_dom("InvalidStateError", function() {
+            assert_throws("InvalidStateError", function() {
                 cursor.delete();
             });
 

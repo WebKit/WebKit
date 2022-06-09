@@ -103,7 +103,7 @@ public:
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
         if (event.type() != eventNames().successEvent) {
-            m_executableWithDatabase->requestCallback().sendFailure("Unexpected event type."_s);
+            m_executableWithDatabase->requestCallback().sendFailure("Unexpected event type.");
             return;
         }
 
@@ -111,13 +111,13 @@ public:
 
         auto result = request.result();
         if (result.hasException()) {
-            m_executableWithDatabase->requestCallback().sendFailure("Could not get result in callback."_s);
+            m_executableWithDatabase->requestCallback().sendFailure("Could not get result in callback.");
             return;
         }
 
         auto resultValue = result.releaseReturnValue();
         if (!std::holds_alternative<RefPtr<IDBDatabase>>(resultValue)) {
-            m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type."_s);
+            m_executableWithDatabase->requestCallback().sendFailure("Unexpected result type.");
             return;
         }
 
@@ -136,13 +136,13 @@ private:
 void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, const String& databaseName)
 {
     if (!context()) {
-        requestCallback().sendFailure("Could not open database."_s);
+        requestCallback().sendFailure("Could not open database.");
         return;
     }
 
     auto result = idbFactory->open(*context(), databaseName, std::nullopt);
     if (result.hasException()) {
-        requestCallback().sendFailure("Could not open database."_s);
+        requestCallback().sendFailure("Could not open database.");
         return;
     }
 
@@ -349,7 +349,7 @@ public:
     void handleEvent(ScriptExecutionContext& context, Event& event) override
     {
         if (event.type() != eventNames().successEvent) {
-            m_requestCallback->sendFailure("Unexpected event type."_s);
+            m_requestCallback->sendFailure("Unexpected event type.");
             return;
         }
 
@@ -357,7 +357,7 @@ public:
 
         auto result = request.result();
         if (result.hasException()) {
-            m_requestCallback->sendFailure("Could not get result in callback."_s);
+            m_requestCallback->sendFailure("Could not get result in callback.");
             return;
         }
         
@@ -371,7 +371,7 @@ public:
 
         if (m_skipCount) {
             if (cursor->advance(m_skipCount).hasException())
-                m_requestCallback->sendFailure("Could not advance cursor."_s);
+                m_requestCallback->sendFailure("Could not advance cursor.");
             m_skipCount = 0;
             return;
         }
@@ -383,7 +383,7 @@ public:
 
         // Continue cursor before making injected script calls, otherwise transaction might be finished.
         if (cursor->continueFunction(nullptr).hasException()) {
-            m_requestCallback->sendFailure("Could not continue cursor."_s);
+            m_requestCallback->sendFailure("Could not continue cursor.");
             return;
         }
 
@@ -449,13 +449,13 @@ public:
 
         auto idbTransaction = transactionForDatabase(&database, m_objectStoreName);
         if (!idbTransaction) {
-            m_requestCallback->sendFailure("Could not get transaction"_s);
+            m_requestCallback->sendFailure("Could not get transaction");
             return;
         }
 
         auto idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
         if (!idbObjectStore) {
-            m_requestCallback->sendFailure("Could not get object store"_s);
+            m_requestCallback->sendFailure("Could not get object store");
             return;
         }
 
@@ -464,7 +464,7 @@ public:
         if (!m_indexName.isEmpty()) {
             auto idbIndex = indexForObjectStore(idbObjectStore.get(), m_indexName);
             if (!idbIndex) {
-                m_requestCallback->sendFailure("Could not get index"_s);
+                m_requestCallback->sendFailure("Could not get index");
                 return;
             }
 
@@ -478,7 +478,7 @@ public:
         }
 
         if (!idbRequest) {
-            m_requestCallback->sendFailure("Could not open cursor to populate database data"_s);
+            m_requestCallback->sendFailure("Could not open cursor to populate database data");
             return;
         }
 
@@ -653,7 +653,7 @@ public:
         if (!m_requestCallback->isActive())
             return;
         if (event.type() != eventNames().completeEvent) {
-            m_requestCallback->sendFailure("Unexpected event type."_s);
+            m_requestCallback->sendFailure("Unexpected event type.");
             return;
         }
 
@@ -690,13 +690,13 @@ public:
 
         auto idbTransaction = transactionForDatabase(&database, m_objectStoreName, IDBTransactionMode::Readwrite);
         if (!idbTransaction) {
-            m_requestCallback->sendFailure("Could not get transaction"_s);
+            m_requestCallback->sendFailure("Could not get transaction");
             return;
         }
 
         auto idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
         if (!idbObjectStore) {
-            m_requestCallback->sendFailure("Could not get object store"_s);
+            m_requestCallback->sendFailure("Could not get object store");
             return;
         }
 

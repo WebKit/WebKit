@@ -30,7 +30,6 @@
 
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesKeys.h"
-#include <wtf/ExperimentalFeatureNames.h>
 
 namespace WebKit {
 
@@ -41,7 +40,7 @@ const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        API::ExperimentalFeature::create(<%= @pref.humanReadableName %>""_s, "<%= @pref.name %>"_s, <%= @pref.humanReadableDescription %>""_s, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
+        API::ExperimentalFeature::create(<%= @pref.humanReadableName %>, "<%= @pref.name %>", <%= @pref.humanReadableDescription %>, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.hidden %>),
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
@@ -54,7 +53,7 @@ const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()
 bool WebPreferences::isFeatureEnabled(const API::ExperimentalFeature& feature) const
 {
     struct FeatureGetterMapping {
-        ASCIILiteral name;
+        const char* name;
         bool (WebPreferences::*function) () const;
     };
 
@@ -63,7 +62,7 @@ bool WebPreferences::isFeatureEnabled(const API::ExperimentalFeature& feature) c
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        { "<%= @pref.name %>"_s, &WebPreferences::<%= @pref.nameLower %> },
+        { "<%= @pref.name %>", &WebPreferences::<%= @pref.nameLower %> },
 <%- if @pref.condition -%>
 #endif
 <%- end -%>
@@ -88,7 +87,7 @@ void WebPreferences::setFeatureEnabled(const API::ExperimentalFeature& feature, 
 void WebPreferences::setExperimentalFeatureEnabledForKey(const String& key, bool value)
 {
     struct FeatureSetterMapping {
-        ASCIILiteral name;
+        const char* name;
         void (WebPreferences::*function) (const bool&);
     };
 
@@ -97,7 +96,7 @@ void WebPreferences::setExperimentalFeatureEnabledForKey(const String& key, bool
 <%- if @pref.condition -%>
 #if <%= @pref.condition %>
 <%- end -%>
-        { "<%= @pref.name %>"_s, &WebPreferences::set<%= @pref.name %> },
+        { "<%= @pref.name %>", &WebPreferences::set<%= @pref.name %> },
 <%- if @pref.condition -%>
 #endif
 <%- end -%>

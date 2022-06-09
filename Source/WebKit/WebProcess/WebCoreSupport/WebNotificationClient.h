@@ -38,21 +38,21 @@ namespace WebKit {
 
 class WebPage;
 
-class WebNotificationClient final : public WebCore::NotificationClient {
+class WebNotificationClient : public WebCore::NotificationClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WebNotificationClient(WebPage*);
     virtual ~WebNotificationClient();
 
 private:
-    bool show(WebCore::Notification&, CompletionHandler<void()>&&) final;
-    void cancel(WebCore::Notification&) final;
-    void notificationObjectDestroyed(WebCore::Notification&) final;
-    void notificationControllerDestroyed() final;
-    void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&&) final;
-    WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) final;
+    bool show(WebCore::Notification&) override;
+    void cancel(WebCore::Notification&) override;
+    void notificationObjectDestroyed(WebCore::Notification&) override;
+    void notificationControllerDestroyed() override;
+    void requestPermission(WebCore::ScriptExecutionContext&, PermissionHandler&&) override;
+    WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) override;
     
-    WebPage* m_page { nullptr };
+    WebPage* m_page;
 };
 
 } // namespace WebKit

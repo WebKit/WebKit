@@ -55,12 +55,11 @@ void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomString&
 
 void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
-        ASSERT(attrName == SVGNames::pointsAttr);
+    if (attrName == SVGNames::pointsAttr) {
         InstanceInvalidationGuard guard(*this);
         if (auto* renderer = this->renderer())
             static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

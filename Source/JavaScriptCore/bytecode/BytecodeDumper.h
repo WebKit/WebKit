@@ -26,11 +26,9 @@
 
 #pragma once
 
-#include "BytecodeBasicBlock.h"
 #include "BytecodeGeneratorBase.h"
 #include "CallLinkInfo.h"
 #include "ICStatusMap.h"
-#include "Instruction.h"
 #include "InstructionStream.h"
 #include "StructureStubInfo.h"
 #include "WasmOps.h"
@@ -39,14 +37,15 @@ namespace JSC {
 
 class BytecodeGraph;
 
-template<typename InstructionStreamType>
+struct Instruction;
+
 class BytecodeDumperBase {
 public:
     virtual ~BytecodeDumperBase()
     {
     }
 
-    void printLocationAndOp(typename InstructionStreamType::Offset location, const char* op);
+    void printLocationAndOp(InstructionStream::Offset location, const char* op);
 
     template<typename T>
     void dumpOperand(const char* operandName, T operand, bool isFirst = false)
@@ -68,7 +67,7 @@ public:
 
 protected:
     virtual CString registerName(VirtualRegister) const = 0;
-    virtual int outOfLineJumpOffset(typename InstructionStreamType::Offset) const = 0;
+    virtual int outOfLineJumpOffset(InstructionStream::Offset) const = 0;
 
     BytecodeDumperBase(PrintStream& out)
         : m_out(out)
@@ -76,13 +75,13 @@ protected:
     }
 
     PrintStream& m_out;
-    typename InstructionStreamType::Offset m_currentLocation { 0 };
+    InstructionStream::Offset m_currentLocation { 0 };
 };
 
 template<class Block>
-class BytecodeDumper : public BytecodeDumperBase<JSInstructionStream> {
+class BytecodeDumper : public BytecodeDumperBase {
 public:
-    static void dumpBytecode(Block*, PrintStream& out, const JSInstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
+    static void dumpBytecode(Block*, PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
 
     BytecodeDumper(Block* block, PrintStream& out)
         : BytecodeDumperBase(out)
@@ -95,10 +94,10 @@ public:
 protected:
     Block* block() const { return m_block; }
 
-    void dumpBytecode(const JSInstructionStream::Ref& it, const ICStatusMap&);
+    void dumpBytecode(const InstructionStream::Ref& it, const ICStatusMap&);
 
     CString registerName(VirtualRegister) const override;
-    int outOfLineJumpOffset(JSInstructionStream::Offset) const override;
+    int outOfLineJumpOffset(InstructionStream::Offset offset) const override;
 
 private:
     virtual CString constantName(VirtualRegister) const;
@@ -109,8 +108,8 @@ private:
 template<class Block>
 class CodeBlockBytecodeDumper final : public BytecodeDumper<Block> {
 public:
-    static void dumpBlock(Block*, const JSInstructionStream&, PrintStream& out, const ICStatusMap& = ICStatusMap());
-    static void dumpGraph(Block*, const JSInstructionStream&, BytecodeGraph&, PrintStream& out = WTF::dataFile(), const ICStatusMap& = ICStatusMap());
+    static void dumpBlock(Block*, const InstructionStream&, PrintStream& out, const ICStatusMap& = ICStatusMap());
+    static void dumpGraph(Block*, const InstructionStream&, BytecodeGraph&, PrintStream& out = WTF::dataFile(), const ICStatusMap& = ICStatusMap());
 
     void dumpIdentifiers();
     void dumpConstants();
@@ -133,29 +132,16 @@ namespace Wasm {
 class FunctionCodeBlockGenerator;
 struct ModuleInformation;
 
-class BytecodeDumper final : public JSC::BytecodeDumperBase<WasmInstructionStream> {
+class BytecodeDumper final : public JSC::BytecodeDumper<FunctionCodeBlockGenerator> {
 public:
     static void dumpBlock(FunctionCodeBlockGenerator*, const ModuleInformation&, PrintStream& out);
 
-    BytecodeDumper(FunctionCodeBlockGenerator* block, PrintStream& out)
-        : BytecodeDumperBase(out)
-        , m_block(block)
-    {
-    }
-
-    ~BytecodeDumper() override { }
-
-    FunctionCodeBlockGenerator* block() const { return m_block; }
-
-    CString registerName(VirtualRegister) const override;
-    int outOfLineJumpOffset(WasmInstructionStream::Offset) const override;
-
 private:
-    void dumpConstants();
-    CString constantName(VirtualRegister index) const;
-    CString formatConstant(Type, uint64_t) const;
+    using JSC::BytecodeDumper<FunctionCodeBlockGenerator>::BytecodeDumper;
 
-    FunctionCodeBlockGenerator* m_block;
+    void dumpConstants();
+    CString constantName(VirtualRegister index) const final;
+    CString formatConstant(Type, uint64_t) const;
 };
 
 } // namespace Wasm

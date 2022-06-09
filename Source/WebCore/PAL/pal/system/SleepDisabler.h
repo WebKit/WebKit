@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 namespace PAL {
 
 class SleepDisabler {
@@ -35,13 +33,13 @@ public:
         System,
         Display,
     };
-    static std::unique_ptr<SleepDisabler> create(const String&, Type);
+    static std::unique_ptr<SleepDisabler> create(const char*, Type);
     PAL_EXPORT virtual ~SleepDisabler();
 
     Type type() const { return m_type; }
 
 protected:
-    PAL_EXPORT SleepDisabler(const String&, Type);
+    PAL_EXPORT SleepDisabler(const char*, Type);
     Type m_type;
 };
 

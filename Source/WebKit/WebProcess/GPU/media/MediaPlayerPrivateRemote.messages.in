@@ -68,9 +68,9 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     UpdateGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
     RemoveGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
 
-    RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options)
+    RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options) -> () Async
     RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
-    SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result)
+    SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result) Async
     ResourceNotSupported()
 
     ActiveSourceBuffersChanged()
@@ -89,11 +89,11 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    GetRawCookies(URL url) -> (Vector<WebCore::Cookie> result)
+    GetRawCookies(URL url) -> (Vector<WebCore::Cookie> result) Async
 #endif
 
 #if PLATFORM(COCOA)
-    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, WebKit::RemoteVideoFrameProxy::Properties frameProperties);
+    PushVideoFrameMetadata(struct WebCore::VideoFrameMetadata metadata, RetainPtr<CVPixelBufferRef> buffer);
 #endif
 }
 

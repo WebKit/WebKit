@@ -24,9 +24,10 @@
  */
 
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
     InterfaceName=FakeXRDevice,
+    ImplementationLacksVTable,
     LegacyNoInterfaceObject,
 ] interface WebFakeXRDevice {
   // Sets the values to be used for subsequent

@@ -48,9 +48,7 @@ enum class HTTPCookieAcceptPolicy : uint8_t;
 namespace WebKit {
 
 class WebIDBConnectionToServer;
-class WebSharedWorkerObjectConnection;
 class WebSWClientConnection;
-class WebSharedWorkerObjectConnection;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
@@ -72,7 +70,6 @@ public:
 #if ENABLE(SERVICE_WORKER)
     WebSWClientConnection& serviceWorkerConnection();
 #endif
-    WebSharedWorkerObjectConnection& sharedWorkerConnection();
 
 #if HAVE(AUDIT_TOKEN)
     void setNetworkProcessAuditToken(std::optional<audit_token_t> auditToken) { m_networkProcessAuditToken = auditToken; }
@@ -126,7 +123,6 @@ private:
 #if ENABLE(SERVICE_WORKER)
     RefPtr<WebSWClientConnection> m_swConnection;
 #endif
-    RefPtr<WebSharedWorkerObjectConnection> m_sharedWorkerConnection;
     WebCore::HTTPCookieAcceptPolicy m_cookieAcceptPolicy;
 };
 

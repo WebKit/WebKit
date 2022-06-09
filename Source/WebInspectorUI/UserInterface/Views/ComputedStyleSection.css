@@ -24,11 +24,9 @@
  */
 
 .computed-style-section {
-    padding-bottom: var(--computed-style-section-vertical-padding);
+    padding-bottom: 3px;
     color: var(--text-color-tertiary);
-    user-select: text;
-
-    --computed-style-section-vertical-padding: 3px;
+    -webkit-user-select: text;
 }
 
 .computed-style-section .computed-property-item {
@@ -69,7 +67,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 13px 13px;
-    appearance: none;
+    -webkit-appearance: none;
 }
 
 .computed-style-section .computed-property-item .property-traces {

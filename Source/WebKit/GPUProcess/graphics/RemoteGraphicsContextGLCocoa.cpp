@@ -29,51 +29,11 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(COCOA)
 
 #include "GPUConnectionToWebProcess.h"
-#include "IPCTester.h"
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
-
-#if ENABLE(VIDEO)
-#include "RemoteVideoFrameObjectHeap.h"
-#include <WebCore/GraphicsContextGLCV.h>
-#include <WebCore/MediaSampleAVFObjC.h>
-#include <WebCore/VideoFrameCV.h>
-#endif
-
 namespace WebKit {
-
-#if ENABLE(VIDEO)
-void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrameReadReference read, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
-{
-    assertIsCurrent(workQueue());
-    UNUSED_VARIABLE(premultiplyAlpha);
-    ASSERT_UNUSED(target, target == WebCore::GraphicsContextGL::TEXTURE_2D);
-
-    auto videoFrame = m_videoFrameObjectHeap->get(WTFMove(read));
-    if (!videoFrame) {
-        ASSERT_IS_TESTING_IPC();
-        completionHandler(false);
-        return;
-    }
-
-    auto videoFrameCV = videoFrame->asVideoFrameCV();
-    if (!videoFrameCV) {
-        ASSERT_NOT_REACHED(); // Programming error, not a IPC attack.
-        completionHandler(false);
-        return;
-    }
-
-    auto contextCV = m_context->asCV();
-    if (!contextCV) {
-        ASSERT_NOT_REACHED();
-        completionHandler(false);
-        return;
-    }
-
-    completionHandler(contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY)));
-}
-#endif
+using namespace WebCore;
 
 namespace {
 
@@ -86,12 +46,12 @@ public:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
 private:
-    const WebCore::ProcessIdentity m_resourceOwner;
+    const ProcessIdentity m_resourceOwner;
 };
 
 }
 
-Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
+Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
     auto instance = adoptRef(*new RemoteGraphicsContextGLCocoa(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream)));
     instance->initialize(WTFMove(attributes));
@@ -102,20 +62,21 @@ RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebPro
     : RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream))
     , m_resourceOwner(gpuConnectionToWebProcess.webProcessIdentity())
 {
+
 }
 
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    assertIsCurrent(workQueue());
-    m_context = WebCore::GraphicsContextGLCocoa::create(WTFMove(attributes), WebCore::ProcessIdentity { m_resourceOwner });
+    assertIsCurrent(m_streamThread);
+    m_context = GraphicsContextGLCocoa::create(WTFMove(attributes), ProcessIdentity { m_resourceOwner });
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
 {
-    assertIsCurrent(workQueue());
+    assertIsCurrent(m_streamThread);
     m_context->prepareForDisplay();
     MachSendRight sendRight;
-    WebCore::IOSurface* displayBuffer = m_context->displayBuffer();
+    IOSurface* displayBuffer = m_context->displayBuffer();
     if (displayBuffer) {
         m_context->markDisplayBufferInUse();
         sendRight = displayBuffer->createSendRight();

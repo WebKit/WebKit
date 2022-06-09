@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyCompileErrorPrototype::s_info = { "WebAssembly.CompileError"_s, &Base::s_info, &prototypeTableWebAssemblyCompileError, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorPrototype) };
+const ClassInfo WebAssemblyCompileErrorPrototype::s_info = { "WebAssembly.CompileError", &Base::s_info, &prototypeTableWebAssemblyCompileError, nullptr, CREATE_METHOD_TABLE(WebAssemblyCompileErrorPrototype) };
 
 /* Source for WebAssemblyCompileErrorPrototype.lut.h
  @begin prototypeTableWebAssemblyCompileError
@@ -57,7 +57,7 @@ Structure* WebAssemblyCompileErrorPrototype::createStructure(VM& vm, JSGlobalObj
 void WebAssemblyCompileErrorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->name, jsNontrivialString(vm, "CompileError"_s), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }

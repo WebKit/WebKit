@@ -181,7 +181,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     IntRect marginRect = snappedIntRect(marginR);
     auto intervals = makeUnique<RasterShapeIntervals>(marginRect.height(), -marginRect.y());
     // FIXME (149420): This buffer should not be unconditionally unaccelerated.
-    auto imageBuffer = ImageBuffer::create(imageRect.size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
 
     auto createShape = [&]() {
         auto rasterShape = makeUnique<RasterShape>(WTFMove(intervals), marginRect.size());
@@ -200,12 +200,13 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { IntPoint(), imageRect.size() });
     
-    // We could get to a value where PixelBuffer could be nullptr because ImageRect.size()
-    // is huge and the data size overflows. Refer rdar://problem/61793884.
+    // We could get to a value where PixelBuffer could be nullopt. A case where ImageRect.size() is huge, PixelBuffer::tryCreate
+    // can return a nullopt because data size has overflowed. Refer rdar://problem/61793884
     if (!pixelBuffer)
         return createShape();
 
-    unsigned pixelArrayLength = pixelBuffer->sizeInBytes();
+    auto& pixelArray = pixelBuffer->data();
+    unsigned pixelArrayLength = pixelArray.length();
     unsigned pixelArrayOffset = 3; // Each pixel is four bytes: RGBA.
     uint8_t alphaPixelThreshold = static_cast<uint8_t>(lroundf(clampTo<float>(threshold, 0, 1) * 255.0f));
 
@@ -216,7 +217,7 @@ std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, c
         for (int y = minBufferY; y < maxBufferY; ++y) {
             int startX = -1;
             for (int x = 0; x < imageRect.width(); ++x, pixelArrayOffset += 4) {
-                uint8_t alpha = pixelBuffer->item(pixelArrayOffset);
+                uint8_t alpha = pixelArray.item(pixelArrayOffset);
                 bool alphaAboveThreshold = alpha > alphaPixelThreshold;
                 if (startX == -1 && alphaAboveThreshold) {
                     startX = x;

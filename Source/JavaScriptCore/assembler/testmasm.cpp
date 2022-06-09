@@ -74,7 +74,7 @@ static Vector<double> doubleOperands()
 }
 
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
 static Vector<float> floatOperands()
 {
     return Vector<float> {
@@ -220,9 +220,6 @@ bool isSpecialGPR(MacroAssembler::RegisterID id)
 #elif CPU(MIPS)
     if (id == MIPSRegisters::zero || id == MIPSRegisters::k0 || id == MIPSRegisters::k1)
         return true;
-#elif CPU(RISCV64)
-    if (id == RISCV64Registers::zero || id == RISCV64Registers::ra || id == RISCV64Registers::gp || id == RISCV64Registers::tp)
-        return true;
 #endif
     return false;
 }
@@ -240,24 +237,6 @@ T invoke(const MacroAssemblerCodeRef<JSEntryPtrTag>& code, Arguments... argument
 {
     void* executableAddress = untagCFunctionPtr<JSEntryPtrTag>(code.code().executableAddress());
     T (*function)(Arguments...) = bitwise_cast<T(*)(Arguments...)>(executableAddress);
-
-#if CPU(RISCV64)
-    // RV64 calling convention requires all 32-bit values to be sign-extended into the whole register.
-    // JSC JIT is tailored for other ISAs that pass these values in 32-bit-wide registers, which RISC-V
-    // doesn't support, so any 32-bit value passed in return-value registers has to be manually sign-extended.
-    // This mirrors sign-extension of 32-bit values in argument registers on RV64 in CCallHelpers.h.
-    if constexpr (std::is_integral_v<T>) {
-        T returnValue = function(arguments...);
-        if constexpr (sizeof(T) == 4) {
-            asm volatile(
-                "sext.w %[out_value], %[in_value]\n\t"
-                : [out_value] "=r" (returnValue)
-                : [in_value] "r" (returnValue));
-        }
-        return returnValue;
-    }
-#endif
-
     return function(arguments...);
 }
 
@@ -2968,7 +2947,7 @@ void testOrUnsignedRightShift64()
 }
 #endif
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
 void testCompareFloat(MacroAssembler::DoubleCondition condition)
 {
     float arg1 = 0;
@@ -3011,7 +2990,7 @@ void testCompareFloat(MacroAssembler::DoubleCondition condition)
 }
 #endif // CPU(X86) || CPU(X86_64) || CPU(ARM64)
 
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64)
 
 template<typename T, typename SelectionType>
 void testMoveConditionallyFloatingPoint(MacroAssembler::DoubleCondition condition, const MacroAssemblerCodeRef<JSEntryPtrTag>& testCode, T& arg1, T& arg2, const Vector<T> operands, SelectionType selectionA, SelectionType selectionB)
@@ -3772,7 +3751,7 @@ void testMoveDoubleConditionallyFloatSameArg(MacroAssembler::DoubleCondition con
     testMoveConditionallyFloatingPointSameArg(condition, testCode, arg1, floatOperands(), selectionA, selectionB);
 }
 
-#endif // CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#endif // CPU(X86_64) || CPU(ARM64)
 
 #if CPU(ARM64E)
 
@@ -4705,12 +4684,11 @@ void testProbePreservesGPRS()
                     continue;
                 CHECK_EQ(cpu.gpr(id), testWord(id));
             }
-            for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id)) {
+            for (auto id = CCallHelpers::firstFPRegister(); id <= CCallHelpers::lastFPRegister(); id = nextID(id))
 #if CPU(MIPS)
                 if (!(id & 1))
 #endif
                 CHECK_EQ(cpu.fpr<uint64_t>(id), testWord64(id));
-            }
         });
 
         // Restore the original state.
@@ -4754,7 +4732,7 @@ void testProbeModifiesStackPointer(WTF::Function<void*(Probe::Context&)> compute
     CPUState originalState;
     void* originalSP { nullptr };
     void* modifiedSP { nullptr };
-#if !(CPU(MIPS) || CPU(RISCV64))
+#if !(CPU(MIPS))
     uintptr_t modifiedFlags { 0 };
 #endif
     
@@ -4935,7 +4913,7 @@ void testProbeModifiesStackValues()
     CPUState originalState;
     void* originalSP { nullptr };
     void* newSP { nullptr };
-#if !(CPU(MIPS) || CPU(RISCV64))
+#if !CPU(MIPS)
     uintptr_t modifiedFlags { 0 };
 #endif
     size_t numberOfExtraEntriesToWrite { 10 }; // ARM64 requires that this be 2 word aligned.
@@ -5248,7 +5226,7 @@ void testMoveDoubleConditionally64()
 
 void testLoadBaseIndex()
 {
-#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(X86_64)
     // load64
     {
         auto test = compile([=](CCallHelpers& jit) {
@@ -5429,7 +5407,7 @@ void testLoadBaseIndex()
 
 void testStoreBaseIndex()
 {
-#if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
+#if CPU(ARM64) || CPU(X86_64)
     // store64
     {
         auto test = compile([=](CCallHelpers& jit) {
@@ -5697,24 +5675,6 @@ static void testBranchIfNotType()
     CHECK_EQ(invoke<bool>(isNotType, &cell), true);
 }
 
-static void testGPRInfoConsistency()
-{
-    for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
-        GPRReg reg = GPRInfo::toRegister(index);
-        CHECK_EQ(GPRInfo::toIndex(reg), index);
-    }
-    for (auto reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = nextID(reg)) {
-        if (isSpecialGPR(reg))
-            continue;
-        unsigned index = GPRInfo::toIndex(reg);
-        if (index == GPRInfo::InvalidIndex) {
-            CHECK_EQ(index >= GPRInfo::numberOfRegisters, true);
-            continue;
-        }
-        CHECK_EQ(index < GPRInfo::numberOfRegisters, true);
-    }
-}
-
 #define RUN(test) do {                          \
         if (!shouldRun(#test))                  \
             break;                              \
@@ -5899,11 +5859,11 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testAtomicStrongCASFill16());
 #endif
 
-#if CPU(X86) || CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86) || CPU(X86_64) || CPU(ARM64)
     FOR_EACH_DOUBLE_CONDITION_RUN(testCompareFloat);
 #endif
 
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+#if CPU(X86_64) || CPU(ARM64)
     // Comparing 2 different registers.
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyDouble2);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyDouble3);
@@ -5951,8 +5911,6 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testOrImmMem());
 
     RUN(testAndOrDouble());
-
-    RUN(testGPRInfoConsistency());
 
     if (tasks.isEmpty())
         usage();

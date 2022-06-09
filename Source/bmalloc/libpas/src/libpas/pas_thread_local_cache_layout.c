@@ -42,10 +42,6 @@ static unsigned pas_thread_local_cache_layout_last_segment_size = 0;
 
 pas_allocator_index pas_thread_local_cache_layout_next_allocator_index =
     PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES;
-pas_thread_local_cache_layout_hashtable pas_thread_local_cache_layout_hashtable_instance =
-    PAS_HASHTABLE_INITIALIZER;
-
-PAS_DEFINE_LOCK(pas_thread_local_cache_layout_hashtable);
 
 pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cache_layout_node node)
 {
@@ -53,7 +49,6 @@ pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cach
 
     pas_allocator_index result;
     bool did_overflow;
-    pas_compact_thread_local_cache_layout_node compact_node;
 
     pas_heap_lock_assert_held();
 
@@ -77,12 +72,12 @@ pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cach
     if (verbose) {
         pas_log("pas_thread_local_cache_layout_add_node: node = %p, allocator_index = %u, "
                 "num_allocator_indices = %u\n",
-                node, result, pas_thread_local_cache_layout_node_num_allocator_indices(node));
+                node, result, pas_thread_local_cache_layout_num_allocator_indices(node));
     }
 
     did_overflow = __builtin_add_overflow(
         pas_thread_local_cache_layout_next_allocator_index,
-        pas_thread_local_cache_layout_node_num_allocator_indices(node),
+        pas_thread_local_cache_layout_num_allocator_indices(node),
         &pas_thread_local_cache_layout_next_allocator_index);
     PAS_ASSERT(!did_overflow);
 
@@ -111,13 +106,6 @@ pas_allocator_index pas_thread_local_cache_layout_add_node(pas_thread_local_cach
         pas_fence();
         pas_compact_atomic_thread_local_cache_layout_node_store(&pas_thread_local_cache_layout_last_segment->nodes[pas_thread_local_cache_layout_last_segment_size++], node);
     }
-
-    pas_thread_local_cache_layout_hashtable_lock_lock();
-    pas_compact_thread_local_cache_layout_node_store(&compact_node, node);
-    pas_thread_local_cache_layout_hashtable_add_new(
-        &pas_thread_local_cache_layout_hashtable_instance, compact_node,
-        NULL, &pas_large_utility_free_heap_allocation_config);
-    pas_thread_local_cache_layout_hashtable_lock_unlock();
     
     return result;
 }
@@ -152,18 +140,6 @@ pas_allocator_index pas_thread_local_cache_layout_add_view_cache(
     pas_segregated_size_directory* directory)
 {
     return pas_thread_local_cache_layout_add_node(pas_wrap_local_view_cache_node(directory));
-}
-
-pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_node_for_index(pas_allocator_index index)
-{
-    pas_compact_thread_local_cache_layout_node compact_node;
-
-    pas_thread_local_cache_layout_hashtable_lock_lock();
-    compact_node = pas_thread_local_cache_layout_hashtable_get(
-        &pas_thread_local_cache_layout_hashtable_instance, index);
-    pas_thread_local_cache_layout_hashtable_lock_unlock();
-
-    return pas_compact_thread_local_cache_layout_node_load(&compact_node);
 }
 
 pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_last_node()

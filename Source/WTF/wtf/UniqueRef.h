@@ -86,8 +86,6 @@ public:
 
     std::unique_ptr<T> moveToUniquePtr() { return WTFMove(m_ref); }
 
-    explicit UniqueRef(HashTableEmptyValueType) { }
-
 private:
     template<class U, class... Args> friend UniqueRef<U> makeUniqueRefWithoutFastMallocCheck(Args&&...);
     template<class U> friend UniqueRef<U> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<U>&&);

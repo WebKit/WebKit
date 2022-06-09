@@ -26,7 +26,6 @@
 #include "Document.h"
 #include "EventListener.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "Page.h"
 #include "SMILTimeContainer.h"
@@ -261,7 +260,7 @@ void SVGDocumentExtensions::addElementToRebuild(SVGElement& element)
 
 void SVGDocumentExtensions::removeElementToRebuild(SVGElement& element)
 {
-    m_rebuildElements.removeFirstMatching([&](auto& item) { return item.ptr() == &element; });
+    m_rebuildElements.removeFirst(element);
 }
 
 void SVGDocumentExtensions::rebuildElements()

@@ -29,10 +29,10 @@
 #import "CVUtilities.h"
 #import "GraphicsContextCG.h"
 #import "Logging.h"
-#import "VideoFrameCV.h"
+#import "MediaSampleAVFObjC.h"
+#import "RemoteVideoSample.h"
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
-#import <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #if !PLATFORM(MACCATALYST)
 #import <pal/spi/cocoa/IOSurfaceSPI.h>
@@ -44,8 +44,7 @@
 
 namespace WebCore {
 
-ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat, bool shouldUseIOSurface)
-    : m_shouldUseIOSurface(shouldUseIOSurface)
+ImageTransferSessionVT::ImageTransferSessionVT(uint32_t pixelFormat)
 {
     VTPixelTransferSessionRef transferSession;
     VTPixelTransferSessionCreate(kCFAllocatorDefault, &transferSession);
@@ -77,10 +76,10 @@ bool ImageTransferSessionVT::setSize(const IntSize& size)
 {
     if (m_size == size && m_outputBufferPool)
         return true;
-    auto bufferPool = createCVPixelBufferPool(size.width(), size.height(), m_pixelFormat, 6, false, m_shouldUseIOSurface);
+    auto bufferPool = createIOSurfaceCVPixelBufferPool(size.width(), size.height(), m_pixelFormat, 6).value_or(nullptr);
     if (!bufferPool)
         return false;
-    m_outputBufferPool = WTFMove(*bufferPool);
+    m_outputBufferPool = WTFMove(bufferPool);
     m_size = size;
     return true;
 }
@@ -255,45 +254,54 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(IOSurf
 }
 #endif
 
-RefPtr<VideoFrame> ImageTransferSessionVT::convertVideoFrame(VideoFrame& videoFrame, const IntSize& size)
+RefPtr<MediaSample> ImageTransferSessionVT::convertMediaSample(MediaSample& sample, const IntSize& size)
 {
-    if (size == expandedIntSize(videoFrame.presentationSize()))
-        return &videoFrame;
+    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
 
-    auto resizedBuffer = convertPixelBuffer(videoFrame.pixelBuffer(), size);
+    if (size == expandedIntSize(sample.presentationSize()))
+        return &sample;
+
+    auto resizedBuffer = convertCMSampleBuffer(sample.platformSample().sample.cmSampleBuffer, size);
     if (!resizedBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), WTFMove(resizedBuffer));
+    return MediaSampleAVFObjC::create(resizedBuffer.get(), sample.videoRotation(), sample.videoMirrored());
 }
 
 #if !PLATFORM(MACCATALYST)
-RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(IOSurfaceRef surface, const MediaTime& sampleTime, const IntSize& size, VideoFrame::Rotation rotation, bool mirrored)
+#if ENABLE(MEDIA_STREAM)
+RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(const RemoteVideoSample& remoteSample)
+{
+    return createMediaSample(remoteSample.surface(), remoteSample.time(), remoteSample.size(), remoteSample.rotation(), remoteSample.mirrored());
+}
+#endif
+
+RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(IOSurfaceRef surface, const MediaTime& sampleTime, const IntSize& size, MediaSample::VideoRotation rotation, bool mirrored)
 {
     auto sampleBuffer = createCMSampleBuffer(surface, sampleTime, size);
     if (!sampleBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(sampleBuffer.get(), mirrored, rotation);
+    return MediaSampleAVFObjC::create(sampleBuffer.get(), rotation, mirrored);
 }
 #endif
 
-RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CGImageRef image, const MediaTime& sampleTime, const IntSize& size, VideoFrame::Rotation rotation, bool mirrored)
+RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CGImageRef image, const MediaTime& sampleTime, const IntSize& size, MediaSample::VideoRotation rotation, bool mirrored)
 {
     auto sampleBuffer = createCMSampleBuffer(image, sampleTime, size);
     if (!sampleBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(sampleBuffer.get(), mirrored, rotation);
+    return MediaSampleAVFObjC::create(sampleBuffer.get(), rotation, mirrored);
 }
 
-RefPtr<VideoFrame> ImageTransferSessionVT::createVideoFrame(CMSampleBufferRef buffer, const MediaTime& sampleTime, const IntSize& size, VideoFrame::Rotation rotation, bool mirrored)
+RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CMSampleBufferRef buffer, const MediaTime& sampleTime, const IntSize& size, MediaSample::VideoRotation rotation, bool mirrored)
 {
     auto sampleBuffer = convertCMSampleBuffer(buffer, size, &sampleTime);
     if (!sampleBuffer)
         return nullptr;
 
-    return VideoFrameCV::create(sampleBuffer.get(), mirrored, rotation);
+    return MediaSampleAVFObjC::create(sampleBuffer.get(), rotation, mirrored);
 }
 
 } // namespace WebCore

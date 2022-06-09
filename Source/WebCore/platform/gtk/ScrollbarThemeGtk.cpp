@@ -58,7 +58,6 @@ ScrollbarThemeGtk::ScrollbarThemeGtk()
     static bool themeMonitorInitialized = false;
     if (!themeMonitorInitialized) {
         g_signal_connect(gtk_settings_get_default(), "notify::gtk-theme-name", G_CALLBACK(themeChangedCallback), nullptr);
-        g_signal_connect(gtk_settings_get_default(), "notify::gtk-overlay-scrolling", G_CALLBACK(themeChangedCallback), nullptr);
         themeMonitorInitialized = true;
         updateThemeProperties();
     }
@@ -332,7 +331,7 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     if (graphicsContext.paintingDisabled())
         return false;
 
-    if (!scrollbar.enabled() && usesOverlayScrollbars())
+    if (!scrollbar.enabled())
         return true;
 
     double opacity = scrollbar.hoveredPart() == NoPart ? scrollbar.opacity() : 1;
@@ -377,20 +376,18 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     preferredSize += scrollbarGadget.preferredSize() - scrollbarGadget.minimumSize();
 
     FloatRect contentsRect(rect);
-    if (usesOverlayScrollbars()) {
-        // When using overlay scrollbars we always claim the size of the scrollbar when hovered, so when
-        // drawing the indicator we need to adjust the rectangle to its actual size in indicator mode.
-        if (scrollbar.orientation() == ScrollbarOrientation::Vertical) {
-            if (rect.width() != preferredSize.width()) {
-                if (!scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
-                    contentsRect.move(std::abs(rect.width() - preferredSize.width()), 0);
-                contentsRect.setWidth(preferredSize.width());
-            }
-        } else {
-            if (rect.height() != preferredSize.height()) {
-                contentsRect.move(0, std::abs(rect.height() - preferredSize.height()));
-                contentsRect.setHeight(preferredSize.height());
-            }
+    // When using overlay scrollbars we always claim the size of the scrollbar when hovered, so when
+    // drawing the indicator we need to adjust the rectangle to its actual size in indicator mode.
+    if (scrollbar.orientation() == ScrollbarOrientation::Vertical) {
+        if (rect.width() != preferredSize.width()) {
+            if (!scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
+                contentsRect.move(std::abs(rect.width() - preferredSize.width()), 0);
+            contentsRect.setWidth(preferredSize.width());
+        }
+    } else {
+        if (rect.height() != preferredSize.height()) {
+            contentsRect.move(0, std::abs(rect.height() - preferredSize.height()));
+            contentsRect.setHeight(preferredSize.height());
         }
     }
 

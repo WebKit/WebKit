@@ -33,6 +33,7 @@
 #include "EventDispatcher.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "EventQueue.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBError.h"
@@ -51,7 +52,6 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
-#include "WebCoreOpaqueRoot.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -122,8 +122,12 @@ Ref<DOMStringList> IDBTransaction::objectStoreNames() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
 
-    auto names = isVersionChange() ? m_database->info().objectStoreNames() : m_info.objectStores();
-    auto objectStoreNames = DOMStringList::create(WTFMove(names));
+    const Vector<String> names = isVersionChange() ? m_database->info().objectStoreNames() : m_info.objectStores();
+
+    Ref<DOMStringList> objectStoreNames = DOMStringList::create();
+    for (auto& name : names)
+        objectStoreNames->append(name);
+
     objectStoreNames->sort();
     return objectStoreNames;
 }
@@ -266,8 +270,10 @@ void IDBTransaction::abortInProgressOperations(const IDBError& error)
 {
     LOG(IndexedDB, "IDBTransaction::abortInProgressOperations");
 
-    auto inProgressAbortVector = copyToVectorOf<RefPtr<IDBClient::TransactionOperation>>(m_transactionOperationsInProgressQueue);
-    m_transactionOperationsInProgressQueue.clear();
+    Vector<RefPtr<IDBClient::TransactionOperation>> inProgressAbortVector;
+    inProgressAbortVector.reserveInitialCapacity(m_transactionOperationsInProgressQueue.size());
+    while (!m_transactionOperationsInProgressQueue.isEmpty())
+        inProgressAbortVector.uncheckedAppend(m_transactionOperationsInProgressQueue.takeFirst());
 
     for (auto& operation : inProgressAbortVector) {
         m_transactionOperationsInProgressQueue.append(operation.get());
@@ -933,7 +939,7 @@ Ref<IDBRequest> IDBTransaction::requestGetAllObjectStoreRecords(IDBObjectStore& 
     LOG(IndexedDBOperations, "IDB get all object store records operation: %s", getAllRecordsData.loggingString().utf8().data());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, request.get(), [protectedThis = Ref { *this }, request] (const auto& result) {
         protectedThis->didGetAllRecordsOnServer(request.get(), result);
-    }, [protectedThis = Ref { *this }, getAllRecordsData = WTFMove(getAllRecordsData).isolatedCopy()] (auto& operation) {
+    }, [protectedThis = Ref { *this }, getAllRecordsData = getAllRecordsData.isolatedCopy()] (auto& operation) {
         protectedThis->getAllRecordsOnServer(operation, getAllRecordsData);
     }));
 
@@ -955,7 +961,7 @@ Ref<IDBRequest> IDBTransaction::requestGetAllIndexRecords(IDBIndex& index, const
     LOG(IndexedDBOperations, "IDB get all index records operation: %s", getAllRecordsData.loggingString().utf8().data());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, request.get(), [protectedThis = Ref { *this }, request] (const auto& result) {
         protectedThis->didGetAllRecordsOnServer(request.get(), result);
-    }, [protectedThis = Ref { *this }, getAllRecordsData = WTFMove(getAllRecordsData).isolatedCopy()] (auto& operation) {
+    }, [protectedThis = Ref { *this }, getAllRecordsData = getAllRecordsData.isolatedCopy()] (auto& operation) {
         protectedThis->getAllRecordsOnServer(operation, getAllRecordsData);
     }));
 
@@ -1473,9 +1479,9 @@ void IDBTransaction::visitReferencedObjectStores(Visitor& visitor) const
 {
     Locker locker { m_referencedObjectStoreLock };
     for (auto& objectStore : m_referencedObjectStores.values())
-        addWebCoreOpaqueRoot(visitor, objectStore.get());
+        visitor.addOpaqueRoot(objectStore.get());
     for (auto& objectStore : m_deletedObjectStores.values())
-        addWebCoreOpaqueRoot(visitor, objectStore.get());
+        visitor.addOpaqueRoot(objectStore.get());
 }
 
 template void IDBTransaction::visitReferencedObjectStores(JSC::AbstractSlotVisitor&) const;

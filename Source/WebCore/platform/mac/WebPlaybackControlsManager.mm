@@ -244,14 +244,14 @@ using WebCore::PlaybackSessionInterfaceMac;
         model->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
-static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOptionType(MediaSelectionOption::LegibleType type)
+static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOptionType(MediaSelectionOption::Type type)
 {
     switch (type) {
-    case MediaSelectionOption::LegibleType::Regular:
+    case MediaSelectionOption::Type::Regular:
         return AVTouchBarMediaSelectionOptionTypeRegular;
-    case MediaSelectionOption::LegibleType::LegibleOff:
+    case MediaSelectionOption::Type::LegibleOff:
         return AVTouchBarMediaSelectionOptionTypeLegibleOff;
-    case MediaSelectionOption::LegibleType::LegibleAuto:
+    case MediaSelectionOption::Type::LegibleAuto:
         return AVTouchBarMediaSelectionOptionTypeLegibleAuto;
     }
 
@@ -262,7 +262,7 @@ static AVTouchBarMediaSelectionOptionType toAVTouchBarMediaSelectionOptionType(M
 static RetainPtr<NSArray> mediaSelectionOptions(const Vector<MediaSelectionOption>& options)
 {
     return createNSArray(options, [] (auto& option) {
-        return adoptNS([allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:option.displayName type:toAVTouchBarMediaSelectionOptionType(option.legibleType)]);
+        return adoptNS([allocAVTouchBarMediaSelectionOptionInstance() initWithTitle:option.displayName type:toAVTouchBarMediaSelectionOptionType(option.type)]);
     });
 }
 

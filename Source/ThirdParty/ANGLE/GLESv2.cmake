@@ -138,6 +138,7 @@ set(libangle_image_util_headers
     "src/image_util/imageformats.h"
     "src/image_util/loadimage.h"
     "src/image_util/loadimage.inc"
+    "src/image_util/loadtextureborder.h"
 )
 
 
@@ -146,6 +147,7 @@ set(libangle_image_util_sources
     "src/image_util/imageformats.cpp"
     "src/image_util/loadimage.cpp"
     "src/image_util/loadimage_etc.cpp"
+    "src/image_util/loadtextureborder.cpp"
 )
 
 
@@ -217,11 +219,11 @@ set(libangle_includes
     "include/KHR/khrplatform.h"
     "include/WGL/wgl.h"
     "include/platform/Feature.h"
-    "include/platform/FeaturesD3D_autogen.h"
-    "include/platform/FeaturesGL_autogen.h"
-    "include/platform/FeaturesMtl_autogen.h"
-    "include/platform/FeaturesVk_autogen.h"
-    "include/platform/FrontendFeatures_autogen.h"
+    "include/platform/FeaturesD3D.h"
+    "include/platform/FeaturesGL.h"
+    "include/platform/FeaturesMtl.h"
+    "include/platform/FeaturesVk.h"
+    "include/platform/FrontendFeatures.h"
     "include/platform/Platform.h"
     "include/platform/PlatformMethods.h"
     "include/vulkan/vulkan_fuchsia_ext.h"
@@ -348,6 +350,7 @@ set(libangle_headers
     "src/libANGLE/renderer/copyvertex.h"
     "src/libANGLE/renderer/copyvertex.inc.h"
     "src/libANGLE/renderer/load_functions_table.h"
+    "src/libANGLE/renderer/load_texture_border_functions_table.h"
     "src/libANGLE/renderer/renderer_utils.h"
     "src/libANGLE/renderer/serial_utils.h"
     "src/libANGLE/validationEGL.h"
@@ -450,6 +453,7 @@ set(libangle_sources
     "src/libANGLE/renderer/TextureImpl.cpp"
     "src/libANGLE/renderer/driver_utils.cpp"
     "src/libANGLE/renderer/load_functions_table_autogen.cpp"
+    "src/libANGLE/renderer/load_texture_border_functions_table_autogen.cpp"
     "src/libANGLE/renderer/renderer_utils.cpp"
     "src/libANGLE/validationEGL.cpp"
     "src/libANGLE/validationES.cpp"

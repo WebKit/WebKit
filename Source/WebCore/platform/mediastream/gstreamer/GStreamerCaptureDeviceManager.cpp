@@ -103,10 +103,10 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
 
     CaptureDevice::DeviceType type = deviceType();
     GUniquePtr<char> deviceClassChar(gst_device_get_device_class(device.get()));
-    auto deviceClass = String::fromLatin1(deviceClassChar.get());
-    if (type == CaptureDevice::DeviceType::Microphone && !deviceClass.startsWith("Audio"_s))
+    String deviceClass(String(deviceClassChar.get()));
+    if (type == CaptureDevice::DeviceType::Microphone && !deviceClass.startsWith("Audio"))
         return;
-    if (type == CaptureDevice::DeviceType::Camera && !deviceClass.startsWith("Video"_s))
+    if (type == CaptureDevice::DeviceType::Camera && !deviceClass.startsWith("Video"))
         return;
 
     // This isn't really a UID but should be good enough (libwebrtc
@@ -144,7 +144,6 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
             gst_device_monitor_add_filter(m_deviceMonitor.get(), "Audio/Source", caps.get());
             break;
         }
-        case CaptureDevice::DeviceType::SystemAudio:
         case CaptureDevice::DeviceType::Speaker:
             // FIXME: Add Audio/Sink filter. See https://bugs.webkit.org/show_bug.cgi?id=216880
         case CaptureDevice::DeviceType::Screen:

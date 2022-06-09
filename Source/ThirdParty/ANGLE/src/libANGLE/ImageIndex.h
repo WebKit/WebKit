@@ -45,7 +45,6 @@ class ImageIndex
     bool isLayered() const;
     bool isEntireLevelCubeMap() const;
 
-    static ImageIndex MakeBuffer();
     static ImageIndex Make2D(GLint levelIndex);
     static ImageIndex MakeRectangle(GLint levelIndex);
     static ImageIndex MakeCubeMapFace(TextureTarget target, GLint levelIndex);
@@ -93,7 +92,6 @@ class ImageIndexIterator
   public:
     ImageIndexIterator(const ImageIndexIterator &other);
 
-    static ImageIndexIterator MakeBuffer();
     static ImageIndexIterator Make2D(GLint minMip, GLint maxMip);
     static ImageIndexIterator MakeRectangle(GLint minMip, GLint maxMip);
     static ImageIndexIterator MakeCube(GLint minMip, GLint maxMip);

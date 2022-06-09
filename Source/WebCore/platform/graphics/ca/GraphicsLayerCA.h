@@ -154,7 +154,7 @@ public:
 
     WEBCORE_EXPORT void setContentsToSolidColor(const Color&) override;
 #if ENABLE(MODEL_ELEMENT)
-    WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&, ModelInteraction) override;
+    WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&) override;
     WEBCORE_EXPORT PlatformLayerID contentsLayerIDForModel() const override;
 #endif
     WEBCORE_EXPORT void setContentsMinificationFilter(ScalingFilter) override;
@@ -233,12 +233,12 @@ private:
     WEBCORE_EXPORT void setAllowsBackingStoreDetaching(bool) override;
     bool allowsBackingStoreDetaching() const override { return m_allowsBackingStoreDetaching; }
 
-    WEBCORE_EXPORT String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;
+    WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const override;
 
     WEBCORE_EXPORT String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const override;
 
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool) override;
-    WEBCORE_EXPORT String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const override;
+    WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const override;
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS) && HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
     WEBCORE_EXPORT void setIsDescendentOfSeparatedPortal(bool) override;
@@ -530,7 +530,7 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperation::OperationType, const Animation*, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     enum LayerChange : uint64_t {
@@ -661,6 +661,7 @@ private:
     bool m_isCommittingChanges { false };
 
     bool m_needsFullRepaint : 1;
+    bool m_usingBackdropLayerType : 1;
     bool m_allowsBackingStoreDetaching : 1;
     bool m_intersectsCoverageRect : 1;
     bool m_hasEverPainted : 1;

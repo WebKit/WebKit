@@ -33,7 +33,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GeneratorFunctionPrototype);
 
-const ClassInfo GeneratorFunctionPrototype::s_info = { "GeneratorFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GeneratorFunctionPrototype) };
+const ClassInfo GeneratorFunctionPrototype::s_info = { "GeneratorFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GeneratorFunctionPrototype) };
 
 GeneratorFunctionPrototype::GeneratorFunctionPrototype(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
@@ -43,7 +43,7 @@ GeneratorFunctionPrototype::GeneratorFunctionPrototype(VM& vm, Structure* struct
 void GeneratorFunctionPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

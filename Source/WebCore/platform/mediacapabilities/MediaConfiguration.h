@@ -35,21 +35,15 @@ struct MediaConfiguration {
     std::optional<VideoConfiguration> video;
     std::optional<AudioConfiguration> audio;
 
-    MediaConfiguration isolatedCopy() const &;
-    MediaConfiguration isolatedCopy() &&;
+    MediaConfiguration isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MediaConfiguration> decode(Decoder&);
 };
 
-inline MediaConfiguration MediaConfiguration::isolatedCopy() const &
+inline MediaConfiguration MediaConfiguration::isolatedCopy() const
 {
     return { crossThreadCopy(video),  crossThreadCopy(audio) };
-}
-
-inline MediaConfiguration MediaConfiguration::isolatedCopy() &&
-{
-    return { crossThreadCopy(WTFMove(video)),  crossThreadCopy(WTFMove(audio)) };
 }
 
 template<class Encoder>

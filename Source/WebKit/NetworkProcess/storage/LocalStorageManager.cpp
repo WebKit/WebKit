@@ -35,22 +35,21 @@ namespace WebKit {
 
 // Suggested by https://www.w3.org/TR/webstorage/#disk-space
 constexpr unsigned localStorageQuotaInBytes = 5 * MB;
-constexpr auto s_fileSuffix = ".localstorage"_s;
-constexpr auto s_fileName = "localstorage.sqlite3"_s;
+constexpr auto fileSuffix = ".localstorage"_s;
 
 // This is intended to be used for existing files.
 // We should not include origin in file name.
 static std::optional<WebCore::SecurityOriginData> fileNameToOrigin(const String& fileName)
 {
-    if (!fileName.endsWith(StringView { s_fileSuffix }))
+    if (!fileName.endsWith(fileSuffix))
         return std::nullopt;
 
-    auto suffixLength = s_fileSuffix.length();
+    auto suffixLength = strlen(fileSuffix);
     auto fileNameLength = fileName.length();
     if (fileNameLength <= suffixLength)
         return std::nullopt;
 
-    auto originIdentifier = fileName.left(fileNameLength - suffixLength);
+    auto originIdentifier = fileName.substring(0, fileNameLength - suffixLength);
     return WebCore::SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
 }
 
@@ -76,17 +75,9 @@ Vector<WebCore::SecurityOriginData> LocalStorageManager::originsOfLocalStorageDa
 String LocalStorageManager::localStorageFilePath(const String& directory, const WebCore::ClientOrigin& origin)
 {
     if (directory.isEmpty())
-        return emptyString();
+        return String { };
 
     return FileSystem::pathByAppendingComponent(directory, originToFileName(origin));
-}
-
-String LocalStorageManager::localStorageFilePath(const String& directory)
-{
-    if (directory.isEmpty())
-        return emptyString();
-
-    return FileSystem::pathByAppendingComponent(directory, s_fileName);
 }
 
 LocalStorageManager::LocalStorageManager(const String& path, StorageAreaRegistry& registry)
@@ -174,7 +165,7 @@ void LocalStorageManager::connectionClosedForTransientStorageArea(IPC::Connectio
     m_transientStorageArea = nullptr;
 }
 
-StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& workQueue)
+StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connection::UniqueID connection, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& workQueue)
 {
     if (!m_localStorageArea) {
         if (!m_path.isEmpty())
@@ -186,11 +177,11 @@ StorageAreaIdentifier LocalStorageManager::connectToLocalStorageArea(IPC::Connec
     }
 
     ASSERT(m_path.isEmpty() || m_localStorageArea->type() == StorageAreaBase::Type::SQLite);
-    m_localStorageArea->addListener(connection, sourceIdentifier);
+    m_localStorageArea->addListener(connection);
     return m_localStorageArea->identifier();
 }
 
-StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IPC::Connection::UniqueID connection, StorageAreaMapIdentifier sourceIdentifier, const WebCore::ClientOrigin& origin)
+StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IPC::Connection::UniqueID connection, const WebCore::ClientOrigin& origin)
 {
     if (!m_transientStorageArea) {
         m_transientStorageArea = makeUnique<MemoryStorageArea>(origin, StorageAreaBase::StorageType::Local);
@@ -198,18 +189,8 @@ StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IP
     }
 
     ASSERT(m_transientStorageArea->type() == StorageAreaBase::Type::Memory);
-    m_transientStorageArea->addListener(connection, sourceIdentifier);
+    m_transientStorageArea->addListener(connection);
     return m_transientStorageArea->identifier();
-}
-
-void LocalStorageManager::cancelConnectToLocalStorageArea(IPC::Connection::UniqueID connection)
-{
-    connectionClosedForLocalStorageArea(connection);
-}
-
-void LocalStorageManager::cancelConnectToTransientLocalStorageArea(IPC::Connection::UniqueID connection)
-{
-    connectionClosedForLocalStorageArea(connection);
 }
 
 void LocalStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID connection, StorageAreaIdentifier identifier)

@@ -24,18 +24,16 @@ import os
 import time
 
 import json as jsonlib
-from webkitbugspy import mocks as bmocks
 from webkitcorepy import mocks
 from webkitscmpy import Commit, remote as scmremote
 
 
-class GitHub(bmocks.GitHub):
+class GitHub(mocks.Requests):
     top = None
 
     def __init__(
         self, remote='github.example.com/WebKit/WebKit', datafile=None,
-        default_branch='main', git_svn=False, environment=None,
-        releases=None, issues=None, projects=None, labels=None,
+        default_branch='main', git_svn=False,
     ):
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid GitHub remote'.format(remote))
@@ -43,23 +41,18 @@ class GitHub(bmocks.GitHub):
         self.default_branch = default_branch
         self.remote = remote
         self.forks = []
+        hostname = self.remote.split('/')[0]
+        self.api_remote = 'api.{hostname}/repos/{repo}'.format(
+            hostname=hostname,
+            repo='/'.join(self.remote.split('/')[1:]),
+        )
 
-        super(GitHub, self).__init__(remote, environment=environment, issues=issues, projects=projects, labels=labels)
+        super(GitHub, self).__init__(hostname, 'api.{}'.format(hostname))
 
         with open(datafile or os.path.join(os.path.dirname(os.path.dirname(__file__)), 'git-repo.json')) as file:
             self.commits = jsonlib.load(file)
         for key, commits in self.commits.items():
-            commit_objs = []
-            for kwargs in commits:
-                changeFiles = None
-                if 'changeFiles' in kwargs:
-                    changeFiles = kwargs['changeFiles']
-                    del kwargs['changeFiles']
-                commit = Commit(**kwargs)
-                if changeFiles:
-                    setattr(commit, '__mock__changeFiles', changeFiles)
-                commit_objs.append(commit)
-            self.commits[key] = commit_objs
+            self.commits[key] = [Commit(**kwargs) for kwargs in commits]
             if not git_svn:
                 for commit in self.commits[key]:
                     commit.revision = None
@@ -67,23 +60,31 @@ class GitHub(bmocks.GitHub):
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
         self.pull_requests = []
-        self.releases = releases or dict()
+        self.issues = dict()
+        self.users = dict()
+        self._environment = None
 
-    def resolve_all_commits(self, branch):
-        all_commits = self.commits[branch][:]
-        last_commit = all_commits[0]
-        while last_commit.branch != branch:
-            head_index = None
-            commits_part = self.commits[last_commit.branch]
-            for i in range(len(commits_part)):
-                if commits_part[i].hash == last_commit.hash:
-                    head_index = i
-                    break
-            all_commits = commits_part[:head_index] + all_commits
-            last_commit = all_commits[0]
-            if last_commit.branch == self.default_branch and last_commit.identifier == 1:
-                break
-        return all_commits
+    def __enter__(self):
+        prefix = self.remote.split('/')[0].replace('.', '_').upper()
+        username_key = '{}_USERNAME'.format(prefix)
+        token_key = '{}_TOKEN'.format(prefix)
+        self._environment = {
+            username_key: os.environ.get(username_key),
+            token_key: os.environ.get(token_key),
+        }
+        os.environ[username_key] = 'username'
+        os.environ[token_key] = 'token'
+
+        return super(GitHub, self).__enter__()
+
+    def __exit__(self, *args, **kwargs):
+        result = super(GitHub, self).__exit__(*args, **kwargs)
+        for key in self._environment.keys():
+            if self._environment[key]:
+                os.environ[key] = self._environment[key]
+            else:
+                del os.environ[key]
+        return result
 
     def commit(self, ref):
         if ref in self.commits:
@@ -104,15 +105,11 @@ class GitHub(bmocks.GitHub):
             return None
         delta = int(delta)
 
-        all_commits = self.resolve_all_commits(commit.branch)
-        commit_index = 0
-        for i in range(len(all_commits)):
-            if all_commits[i].hash == commit.hash:
-                commit_index = i
-                break
-
-        if commit_index - delta >= 0:
-            return all_commits[commit_index - delta]
+        if delta < commit.identifier:
+            return self.commits[commit.branch][commit.identifier - delta - 1]
+        delta -= commit.identifier
+        if commit.branch_point and delta < commit.branch_point:
+            return self.commits[self.default_branch][commit.branch_point - delta - 1]
         return None
 
     def _api_response(self, url):
@@ -287,6 +284,15 @@ class GitHub(bmocks.GitHub):
             ), url=url
         )
 
+    def _users(self, url, username):
+        user = self.users.get(username)
+        if not user:
+            return mocks.Response.create404(url)
+        return mocks.Response.fromJson(dict(
+            name=user.name,
+            email=user.email,
+        ), url=url)
+
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         from datetime import datetime, timedelta
 
@@ -402,8 +408,6 @@ class GitHub(bmocks.GitHub):
                 )
             if json.get('state'):
                 pr['state'] = json.get('state')
-            if json.get('draft'):
-                pr['draft'] = json.get('draft')
 
         # Create specifically
         if method == 'POST' and auth and stripped_url == pr_base:
@@ -411,20 +415,12 @@ class GitHub(bmocks.GitHub):
             pr['state'] = 'open'
             pr['user'] = dict(login=auth.username)
             pr['_links'] = dict(issue=dict(href='https://{}/issues/{}'.format(self.api_remote, pr['number'])))
-            pr['draft'] = pr.get('draft', False)
             self.pull_requests.append(pr)
-            if pr['number'] not in self.issues:
-                self.issues[pr['number']] = dict(
-                    creator=self.users.create(username=pr['user']['login']),
-                    timestamp=time.time(),
-                    assignee=None,
+            if int(pr['number']) not in self.issues:
+                self.issues[int(pr['number'])] = dict(
                     comments=[],
+                    assignees=[],
                 )
-            self.issues[pr['number']].update(dict(
-                title=pr['title'],
-                opened=pr['state'] == 'open',
-                description=pr['body'],
-            ))
             return mocks.Response.fromJson(pr, url=url)
 
         # Update specifically
@@ -437,16 +433,30 @@ class GitHub(bmocks.GitHub):
             if existing is None:
                 return mocks.Response.create404(url)
             self.pull_requests[existing].update(pr)
-            self.issues[number].update(dict(
-                title=self.pull_requests[existing]['title'],
-                opened=self.pull_requests[existing]['state'] == 'open',
-                description=self.pull_requests[existing]['body'],
-            ))
             return mocks.Response.fromJson(self.pull_requests[existing], url=url)
 
-        # Releases
-        download_base = '{}/releases/download/'.format(self.remote)
-        if method == 'GET' and stripped_url.startswith(download_base):
-            return self.releases.get(stripped_url[len(download_base):], mocks.Response.create404(url))
+        # Access user
+        if method == 'GET' and stripped_url.startswith('{}/users'.format(self.api_remote.split('/')[0])):
+            return self._users(url, stripped_url.split('/')[-1])
 
-        return super(GitHub, self).request(method, url, data=data, params=params, auth=auth, json=json, **kwargs)
+        # Access underlying issue
+        if stripped_url.startswith('{}/issues/'.format(self.api_remote)):
+            number = int(stripped_url.split('/')[5])
+            issue = self.issues.get(number, dict(comments=[]))
+            if method == 'GET' and stripped_url.split('/')[6] == 'comments':
+                return mocks.Response.fromJson(issue['comments'], url=url)
+            if method == 'POST' and stripped_url.split('/')[6] == 'comments':
+                self.issues[number] = issue
+                now = datetime.utcfromtimestamp(int(time.time()) - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ')
+                self.issues[number]['comments'].append(dict(
+                    user=dict(login=auth.username),
+                    created_at=now, updated_at=now,
+                    body=json.get('body', ''),
+                ))
+                return mocks.Response.fromJson(issue['comments'], url=url)
+            if method == 'POST' and stripped_url.split('/')[6] == 'assignees':
+                self.issues[number]['assignees'] = {'login': name for name in json.get('assignees', [])}
+                return mocks.Response.fromJson(issue['assignees'], url=url)
+            return mocks.Response.create404(url)
+
+        return mocks.Response.create404(url)

@@ -52,7 +52,7 @@ void UPluralRulesDeleter::operator()(UPluralRules* pluralRules)
         uplrules_close(pluralRules);
 }
 
-const ClassInfo IntlPluralRules::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlPluralRules) };
+const ClassInfo IntlPluralRules::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlPluralRules) };
 
 using UEnumerationDeleter = ICUDeleter<uenum_close>;
 
@@ -76,7 +76,7 @@ IntlPluralRules::IntlPluralRules(VM& vm, Structure* structure)
 void IntlPluralRules::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 template<typename Visitor>
@@ -230,7 +230,7 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
         categories->putDirectIndex(globalObject, index++, jsNontrivialString(vm, String(result, resultLength)));
         RETURN_IF_EXCEPTION(scope, { });
     }
-    options->putDirect(vm, Identifier::fromString(vm, "pluralCategories"_s), categories);
+    options->putDirect(vm, Identifier::fromString(vm, "pluralCategories"), categories);
     options->putDirect(vm, vm.propertyNames->roundingMode, jsNontrivialString(vm, IntlNumberFormat::roundingPriorityString(m_roundingType)));
 
     return options;

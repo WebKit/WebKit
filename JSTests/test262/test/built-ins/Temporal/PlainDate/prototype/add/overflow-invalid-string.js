@@ -18,12 +18,4 @@ features: [Temporal]
 
 const date = new Temporal.PlainDate(2000, 5, 2);
 const duration = new Temporal.Duration(3, 3, 0, 3);
-
-const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
-for (const overflow of badOverflows) {
-  assert.throws(
-    RangeError,
-    () => date.add(duration, { overflow }),
-    `invalid overflow ("${overflow}")`
-  );
-}
+assert.throws(RangeError, () => date.add(duration, { overflow: "other string" }));

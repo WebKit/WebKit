@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/FileSystem.h>
+#include <wtf/FunctionDispatcher.h>
 #include <wtf/SHA1.h>
 #include <wtf/Span.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -110,6 +111,7 @@ private:
 Data concatenate(const Data&, const Data&);
 bool bytesEqual(const Data&, const Data&);
 Data adoptAndMapFile(FileSystem::PlatformFileHandle, size_t offset, size_t);
+Data mapFile(const char* path);
 Data mapFile(const String& path);
 
 using Salt = FileSystem::Salt;

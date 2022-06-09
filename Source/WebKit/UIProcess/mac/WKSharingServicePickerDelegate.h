@@ -26,7 +26,6 @@
 #if ENABLE(SERVICE_CONTROLS)
 
 #import <wtf/RetainPtr.h>
-#import <wtf/text/WTFString.h>
 
 namespace WebKit {
 class WebContextMenuProxyMac;
@@ -51,7 +50,6 @@ class WebContextMenuProxyMac;
 - (void)setHandlesEditingReplacement:(BOOL)handlesEditingReplacement;
 - (void)setSourceFrame:(NSRect)sourceFrame;
 - (void)setAttachmentID:(String)attachmentID;
-- (void)removeBackground;
 
 @end
 

@@ -44,13 +44,13 @@ void CreateLinkCommand::doApply()
         return;
 
     auto anchorElement = HTMLAnchorElement::create(document());
-    anchorElement->setHref(AtomString { m_url });
+    anchorElement->setHref(m_url);
     
     if (endingSelection().isRange())
         applyStyledElement(WTFMove(anchorElement));
     else {
         insertNodeAt(anchorElement.copyRef(), endingSelection().start());
-        appendNode(Text::create(document(), String { m_url }), anchorElement.copyRef());
+        appendNode(Text::create(document(), m_url), anchorElement.copyRef());
         setEndingSelection(VisibleSelection(positionInParentBeforeNode(anchorElement.ptr()), positionInParentAfterNode(anchorElement.ptr()), Affinity::Downstream, endingSelection().isDirectional()));
     }
 }

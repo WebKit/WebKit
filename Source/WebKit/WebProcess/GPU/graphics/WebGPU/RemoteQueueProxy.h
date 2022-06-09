@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,15 +75,15 @@ private:
 
     void submit(Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>>&&) final;
 
-    void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
+    void onSubmittedWorkDone(WTF::Function<void()>&&) final;
 
     void writeBuffer(
         const PAL::WebGPU::Buffer&,
         PAL::WebGPU::Size64 bufferOffset,
         const void* source,
         size_t byteLength,
-        PAL::WebGPU::Size64 dataOffset = 0,
-        std::optional<PAL::WebGPU::Size64> = std::nullopt) final;
+        PAL::WebGPU::Size64 dataOffset,
+        std::optional<PAL::WebGPU::Size64>) final;
 
     void writeTexture(
         const PAL::WebGPU::ImageCopyTexture& destination,
@@ -99,7 +99,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    Deque<CompletionHandler<void()>> m_callbacks;
+    Deque<WTF::Function<void()>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,16 +33,10 @@
 #include "LayoutInlineTextBox.h"
 #include "LayoutLineBreakBox.h"
 #include "LayoutReplacedBox.h"
-#include "RenderBlock.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
-#include "RenderDetailsMarker.h"
-#include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderLineBreak.h"
-#include "RenderListItem.h"
-#include "RenderListMarker.h"
-#include "RenderTable.h"
 #include "TextUtil.h"
 
 #if ENABLE(TREE_DEBUGGING)
@@ -57,46 +51,41 @@ static constexpr size_t smallTreeThreshold = 8;
 // FIXME: see webkit.org/b/230964
 #define CAN_USE_FIRST_LINE_STYLE_RESOLVE 1
 
-static RenderStyle rootBoxStyle(const RenderBlock& rootRenderer)
+static RenderStyle rootBoxStyle(const RenderStyle& style)
 {
-    auto clonedStyle = RenderStyle::clone(rootRenderer.style());
-    if (is<RenderBlockFlow>(rootRenderer))
-        clonedStyle.setEffectiveDisplay(DisplayType::Block);
+    auto clonedStyle = RenderStyle::clone(style);
+    clonedStyle.setEffectiveDisplay(DisplayType::Block);
     return clonedStyle;
 }
 
-static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlock& rootRenderer)
+static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlockFlow& root)
 {
 #if CAN_USE_FIRST_LINE_STYLE_RESOLVE
-    auto& firstLineStyle = rootRenderer.firstLineStyle();
-    if (rootRenderer.style() == firstLineStyle)
+    auto& firstLineStyle = root.firstLineStyle();
+    if (root.style() == firstLineStyle)
         return { };
     auto clonedStyle = RenderStyle::clonePtr(firstLineStyle);
-    if (is<RenderBlockFlow>(rootRenderer))
-        clonedStyle->setEffectiveDisplay(DisplayType::Block);
+    clonedStyle->setEffectiveDisplay(DisplayType::Block);
     return clonedStyle;
 #else
-    UNUSED_PARAM(rootRenderer);
+    UNUSED_PARAM(root);
     return { };
 #endif
 }
 
-BoxTree::BoxTree(RenderBlock& rootRenderer)
-    : m_rootRenderer(rootRenderer)
-    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, rootBoxStyle(rootRenderer), rootBoxFirstLineStyle(rootRenderer))
+BoxTree::BoxTree(RenderBlockFlow& flow)
+    : m_flow(flow)
+    , m_root(Layout::Box::ElementAttributes { }, rootBoxStyle(flow.style()), rootBoxFirstLineStyle(flow))
 {
-    if (rootRenderer.isAnonymous())
+    m_root.setIsIntegrationBlockContainer();
+
+    if (flow.isAnonymous())
         m_root.setIsAnonymous();
 
-    if (is<RenderBlockFlow>(rootRenderer))
-        buildTreeForInlineContent();
-    else if (is<RenderFlexibleBox>(rootRenderer))
-        buildTreeForFlexContent();
-    else
-        ASSERT_NOT_IMPLEMENTED_YET();
+    buildTree();
 }
 
-void BoxTree::buildTreeForInlineContent()
+void BoxTree::buildTree()
 {
     auto createChildBox = [&](RenderObject& childRenderer) -> std::unique_ptr<Layout::Box> {
         std::unique_ptr<RenderStyle> firstLineStyle;
@@ -108,7 +97,8 @@ void BoxTree::buildTreeForInlineContent()
             auto& textRenderer = downcast<RenderText>(childRenderer);
             auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
             auto text = style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text());
-            return makeUnique<Layout::InlineTextBox>(text, textRenderer.canUseSimplifiedTextMeasuring(), textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
+            auto useSimplifiedTextMeasuring = textRenderer.canUseSimplifiedTextMeasuring() && (!firstLineStyle || firstLineStyle->fontCascade() == style.fontCascade());
+            return makeUnique<Layout::InlineTextBox>(text, useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         auto style = RenderStyle::clone(childRenderer.style());
@@ -117,12 +107,6 @@ void BoxTree::buildTreeForInlineContent()
                 styleToAdjust.setDisplay(DisplayType::Inline);
                 styleToAdjust.setFloating(Float::None);
                 styleToAdjust.setPosition(PositionType::Static);
-
-                // Clear property should only apply on block elements, however,
-                // it appears that browsers seem to ignore it on <br> inline elements.
-                // https://drafts.csswg.org/css2/#propdef-clear
-                if (downcast<RenderLineBreak>(childRenderer).isWBR())
-                    styleToAdjust.setClear(Clear::None);
             };
             adjustStyle(style);
             if (firstLineStyle)
@@ -134,15 +118,8 @@ void BoxTree::buildTreeForInlineContent()
         if (is<RenderReplaced>(childRenderer))
             return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
 
-        if (is<RenderListMarker>(childRenderer))
-            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { downcast<RenderListMarker>(childRenderer).isInside() ? Layout::Box::ElementType::InsideListMarker : Layout::Box::ElementType::OutsideListMarker }, WTFMove(style), WTFMove(firstLineStyle));
-
-        if (is<RenderBlock>(childRenderer)) {
-            auto attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationInlineBlock };
-            if (is<RenderTable>(childRenderer) || is<RenderDetailsMarker>(childRenderer) || is<RenderListItem>(childRenderer))
-                attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement };
-            return makeUnique<Layout::ReplacedBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
-        }
+        if (is<RenderBlock>(childRenderer))
+            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
 
         if (is<RenderInline>(childRenderer)) {
             // This looks like continuation renderer.
@@ -171,19 +148,10 @@ void BoxTree::buildTreeForInlineContent()
         return nullptr;
     };
 
-    for (auto walker = InlineWalker(downcast<RenderBlockFlow>(m_rootRenderer)); !walker.atEnd(); walker.advance()) {
+    for (auto walker = InlineWalker(m_flow); !walker.atEnd(); walker.advance()) {
         auto& childRenderer = *walker.current();
         auto childBox = createChildBox(childRenderer);
         appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(childBox)), childRenderer);
-    }
-}
-
-void BoxTree::buildTreeForFlexContent()
-{
-    for (auto& flexItemRenderer : childrenOfType<RenderObject>(m_rootRenderer)) {
-        auto style = RenderStyle::clone(flexItemRenderer.style());
-        auto flexItem = makeUnique<Layout::ContainerBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, WTFMove(style));
-        appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(flexItem)), flexItemRenderer);
     }
 }
 
@@ -219,7 +187,7 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     };
 
     if (&layoutBox == &rootLayoutBox())
-        layoutBox.updateStyle(rootBoxStyle(downcast<RenderBlock>(renderer)), rootBoxFirstLineStyle(downcast<RenderBlock>(renderer)));
+        layoutBox.updateStyle(rootBoxStyle(style), rootBoxFirstLineStyle(downcast<RenderBlockFlow>(renderer)));
     else
         layoutBox.updateStyle(style, firstLineStyle());
 
@@ -233,11 +201,11 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
 
 Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer)
 {
-    if (&renderer == &m_rootRenderer)
+    if (&renderer == &m_flow)
         return m_root;
 
     if (m_boxes.size() <= smallTreeThreshold) {
-        auto index = m_boxes.findIf([&](auto& entry) {
+        auto index = m_boxes.findMatching([&](auto& entry) {
             return entry.renderer == &renderer;
         });
         RELEASE_ASSERT(index != notFound);
@@ -255,10 +223,10 @@ const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) c
 RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
 {
     if (&box == &m_root)
-        return m_rootRenderer;
+        return m_flow;
 
     if (m_boxes.size() <= smallTreeThreshold) {
-        auto index = m_boxes.findIf([&](auto& entry) {
+        auto index = m_boxes.findMatching([&](auto& entry) {
             return entry.box.ptr() == &box;
         });
         RELEASE_ASSERT(index != notFound);
@@ -303,7 +271,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
         auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
             addSpacing();
             stream << "    ";
-            auto rect = inlineLevelBox.visualRectIgnoringBlockDirection();
+            auto rect = inlineLevelBox.rect();
             auto& layoutBox = inlineLevelBox.layoutBox();
             if (layoutBox.isAtomicInlineLevelBox())
                 stream << "Atomic inline level box";

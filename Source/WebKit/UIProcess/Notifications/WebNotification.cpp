@@ -26,16 +26,20 @@
 #include "config.h"
 #include "WebNotification.h"
 
-#include "APIDictionary.h"
 #include <WebCore/NotificationData.h>
 
 namespace WebKit {
 
-WebNotification::WebNotification(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, IPC::Connection& sourceConnection)
-    : m_data(data)
+WebNotification::WebNotification(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier)
+    : m_title(data.title)
+    , m_body(data.body)
+    , m_iconURL(data.iconURL)
+    , m_tag(data.tag)
+    , m_lang(data.language)
+    , m_dir(data.direction)
     , m_origin(API::SecurityOrigin::createFromString(data.originString))
+    , m_coreNotificationID(data.notificationID)
     , m_pageIdentifier(pageIdentifier)
-    , m_sourceConnection(sourceConnection)
 {
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DecomposedGlyphs.h"
 #include "DisplayListItemBuffer.h"
 #include "DisplayListItemType.h"
 #include "DisplayListResourceHeap.h"
@@ -47,6 +46,13 @@ namespace WebCore {
 
 namespace DisplayList {
 
+enum AsTextFlag {
+    None                            = 0,
+    IncludesPlatformOperations      = 1 << 0,
+};
+
+typedef unsigned AsTextFlags;
+
 class DisplayList {
     WTF_MAKE_NONCOPYABLE(DisplayList); WTF_MAKE_FAST_ALLOCATED;
     friend class RecorderImpl;
@@ -66,7 +72,7 @@ public:
     WEBCORE_EXPORT bool isEmpty() const;
     WEBCORE_EXPORT size_t sizeInBytes() const;
 
-    String asText(OptionSet<AsTextFlag>) const;
+    String asText(AsTextFlags) const;
 
     const ResourceHeap& resourceHeap() const { return m_resourceHeap; }
 
@@ -119,12 +125,7 @@ private:
         m_resourceHeap.add(font.renderingResourceIdentifier(), Ref { font });
     }
 
-    void cacheDecomposedGlyphs(WebCore::DecomposedGlyphs& decomposedGlyphs)
-    {
-        m_resourceHeap.add(decomposedGlyphs.renderingResourceIdentifier(), Ref { decomposedGlyphs });
-    }
-
-    static bool shouldDumpForFlags(OptionSet<AsTextFlag>, ItemHandle);
+    static bool shouldDumpForFlags(AsTextFlags, ItemHandle);
 
     LocalResourceHeap m_resourceHeap;
     std::unique_ptr<ItemBuffer> m_items;

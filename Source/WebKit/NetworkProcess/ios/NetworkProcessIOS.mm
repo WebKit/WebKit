@@ -33,7 +33,7 @@
 #import "ProcessAssertion.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
-#import <UIKit/UIKit.h>
+#import "WebIDBServer.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
@@ -79,7 +79,7 @@ bool NetworkProcess::parentProcessHasServiceWorkerEntitlement() const
     if (disableServiceWorkerEntitlementTestingOverride)
         return false;
 
-    static bool hasEntitlement = WTF::hasEntitlement(parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers"_s) || WTF::hasEntitlement(parentProcessConnection()->xpcConnection(), "com.apple.developer.web-browser"_s);
+    static bool hasEntitlement = WTF::hasEntitlement(parentProcessConnection()->xpcConnection(), "com.apple.developer.WebKit.ServiceWorkers") || WTF::hasEntitlement(parentProcessConnection()->xpcConnection(), "com.apple.developer.web-browser");
     return hasEntitlement;
 }
 
@@ -109,6 +109,19 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     // We synchronously take a process assertion when beginning a SQLite transaction so that we don't get suspended
     // while holding a locked file. We would get killed if suspended while holding locked files.
     m_holdingLockedFileAssertion = ProcessAssertion::create(getCurrentProcessID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskInterruptable, ProcessAssertion::Mode::Sync);
+    m_holdingLockedFileAssertion->setPrepareForInvalidationHandler([this, weakThis = WeakPtr { *this }]() mutable {
+        ASSERT(isMainRunLoop());
+        if (!weakThis)
+            return;
+
+        if (!m_shouldSuspendIDBServers)
+            return;
+
+        forEachNetworkSession([](auto& session) {
+            if (auto* server = session.webIDBServer())
+                server->suspend();
+        });
+    });
 }
 
 } // namespace WebKit

@@ -33,28 +33,24 @@
 namespace WebCore {
 
 template<typename> class ExceptionOr;
-class CSSKeywordValue;
-using CSSPerspectiveValue = std::variant<RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
 
 class CSSPerspective : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSPerspective);
 public:
-    static ExceptionOr<Ref<CSSPerspective>> create(CSSPerspectiveValue);
+    static Ref<CSSPerspective> create(Ref<CSSNumericValue>&& length);
     
-    const CSSPerspectiveValue& length() const { return m_length; }
-    ExceptionOr<void> setLength(CSSPerspectiveValue);
-
-    void serialize(StringBuilder&) const final;
+    CSSNumericValue& length() { return m_length.get(); }
+    void setLength(Ref<CSSNumericValue>&& length) { m_length = WTFMove(length); }
+    
+    String toString() const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
     
     CSSTransformType getType() const final { return CSSTransformType::Perspective; }
 
 private:
-    CSSPerspective(CSSPerspectiveValue);
-
-    void setIs2D(bool);
-
-    CSSPerspectiveValue m_length;
+    CSSPerspective(Ref<CSSNumericValue>&& length);
+    
+    Ref<CSSNumericValue> m_length;
 };
     
 } // namespace WebCore

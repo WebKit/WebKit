@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,12 @@
 
 #pragma once
 
-#include "CompilationMessage.h"
 #include <cinttypes>
 #include <cstdint>
 #include <memory>
 #include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
-#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,22 +40,31 @@ namespace WGSL {
 // Step 1
 //
 
-namespace AST {
-class ShaderModule;
-}
+enum class CompilationMessageType : uint8_t {
+    Error,
+    Warning,
+    Info
+};
+
+struct CompilationMessage {
+    String message;
+    uint64_t lineNumber;
+    uint64_t linePosition;
+    uint64_t offset;
+    uint64_t length;
+};
+
+class AST;
 
 struct SuccessfulCheck {
-    SuccessfulCheck() = delete;
-    SuccessfulCheck(SuccessfulCheck&&);
-    SuccessfulCheck(Vector<Warning>&&, UniqueRef<AST::ShaderModule>&&);
     ~SuccessfulCheck();
-    Vector<Warning> warnings;
-    UniqueRef<AST::ShaderModule> ast;
+    Vector<CompilationMessage> warnings;
+    std::unique_ptr<AST> ast;
 };
 
 struct FailedCheck {
-    Vector<Error> errors;
-    Vector<Warning> warnings;
+    Vector<CompilationMessage> errors;
+    Vector<CompilationMessage> warnings;
 };
 
 struct SourceMap {
@@ -65,7 +72,7 @@ struct SourceMap {
     // https://sourcemaps.info/spec.html
 };
 
-std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&);
+std::variant<SuccessfulCheck, FailedCheck> check(const String& wgsl, const std::optional<SourceMap>&);
 
 //
 // Step 2
@@ -186,12 +193,10 @@ struct SpecializationConstant {
 };
 
 struct EntryPointInformation {
-    // FIXME: This can probably be factored better.
     String mangledName;
     std::optional<PipelineLayout> defaultLayout; // If the input PipelineLayout is nullopt, the compiler computes a layout and returns it. https://gpuweb.github.io/gpuweb/#default-pipeline-layout
     HashMap<std::pair<size_t, size_t>, size_t> bufferLengthLocations; // Metal buffer identity -> offset within helper buffer where its size needs to lie
-    HashMap<size_t, SpecializationConstant> specializationConstants;
-    HashMap<String, size_t> specializationConstantIndices; // Points into specializationConstantsByIndex
+    Vector<SpecializationConstant> specializationConstants;
     std::variant<Vertex, Fragment, Compute> typedEntryPoint;
 };
 
@@ -204,7 +209,7 @@ struct PrepareResult {
 
 // These are not allowed to fail.
 // All failures must have already been caught in check().
-PrepareResult prepare(const AST::ShaderModule&, const HashMap<String, PipelineLayout>&);
-PrepareResult prepare(const AST::ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
+PrepareResult prepare(const AST&, const HashMap<String, std::optional<PipelineLayout>>&);
+PrepareResult prepare(const AST&, const String& entryPointName, const std::optional<PipelineLayout>&);
 
 } // namespace WGSL

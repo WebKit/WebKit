@@ -175,30 +175,8 @@ public:
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
 class YarrJITRegisters {
 public:
-    YarrJITRegisters() = default;
-
-    void validate()
+    YarrJITRegisters()
     {
-#if ASSERT_ENABLED
-        ASSERT(input != InvalidGPRReg);
-        ASSERT(index != InvalidGPRReg);
-        ASSERT(length != InvalidGPRReg);
-        ASSERT(output != InvalidGPRReg);
-
-        ASSERT(returnRegister != InvalidGPRReg);
-        ASSERT(returnRegister2 != InvalidGPRReg);
-
-        ASSERT(regT0 != InvalidGPRReg);
-        ASSERT(regT1 != InvalidGPRReg);
-
-        ASSERT(noOverlap(input, index, length, output, regT0, regT1));
-        ASSERT(noOverlap(returnRegister, returnRegister2));
-        ASSERT(noOverlap(index, output, returnRegister));
-
-#if CPU(X86_64) && OS(WINDOWS)
-        ASSERT(noOverlap(X86Registers::ecx, returnRegister, m_regs.returnRegister2));
-#endif
-#endif
     }
 
     // Argument registers
@@ -206,7 +184,6 @@ public:
     GPRReg index { InvalidGPRReg };
     GPRReg length { InvalidGPRReg };
     GPRReg output { InvalidGPRReg };
-
     GPRReg matchingContext { InvalidGPRReg };
     GPRReg freelistRegister { InvalidGPRReg };
     GPRReg freelistSizeRegister { InvalidGPRReg };
@@ -231,7 +208,6 @@ public:
     const MacroAssembler::TrustedImm32 supplementaryPlanesBase = MacroAssembler::TrustedImm32(0x10000);
     const MacroAssembler::TrustedImm32 leadingSurrogateTag = MacroAssembler::TrustedImm32(0xd800);
     const MacroAssembler::TrustedImm32 trailingSurrogateTag = MacroAssembler::TrustedImm32(0xdc00);
-    const MacroAssembler::TrustedImm32 surrogateTagMask = MacroAssembler::TrustedImm32(0xfffffc00);
 };
 #endif
 

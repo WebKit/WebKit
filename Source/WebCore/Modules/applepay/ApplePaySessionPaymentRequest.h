@@ -44,6 +44,8 @@
 
 namespace WebCore {
 
+enum class PaymentAuthorizationStatus;
+
 class ApplePaySessionPaymentRequest {
 public:
     WEBCORE_EXPORT ApplePaySessionPaymentRequest();
@@ -184,6 +186,13 @@ private:
     ApplePaySessionPaymentRequestAdditions_members
 #endif
 };
+
+struct PaymentAuthorizationResult {
+    PaymentAuthorizationStatus status;
+    Vector<RefPtr<ApplePayError>> errors;
+};
+
+WEBCORE_EXPORT bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>&);
 
 } // namespace WebCore
 

@@ -61,7 +61,6 @@ public:
     void append(const AtomString& string) { append(string.string()); }
     void append(const String&);
     void append(StringView);
-    void append(ASCIILiteral);
     void append(UChar);
     void append(LChar);
     void append(char character) { append(static_cast<LChar>(character)); }
@@ -93,7 +92,6 @@ public:
     template<typename CharacterType> const CharacterType* characters() const;
     const LChar* characters8() const { return characters<LChar>(); }
     const UChar* characters16() const { return characters<UChar>(); }
-    template<typename CharacterType> Span<const CharacterType> span() const { return Span { characters<CharacterType>(), length() }; }
     
     unsigned capacity() const;
     WTF_EXPORT_PRIVATE void reserveCapacity(unsigned newCapacity);
@@ -223,11 +221,6 @@ inline void StringBuilder::append(StringView string)
         appendCharacters(string.characters16(), string.length());
 }
 
-inline void StringBuilder::append(ASCIILiteral string)
-{
-    appendCharacters(string.characters8(), string.length());
-}
-
 inline void StringBuilder::appendSubstring(const String& string, unsigned offset, unsigned length)
 {
     append(StringView { string }.substring(offset, length));
@@ -235,7 +228,7 @@ inline void StringBuilder::appendSubstring(const String& string, unsigned offset
 
 inline void StringBuilder::append(const char* characters)
 {
-    append(StringView::fromLatin1(characters));
+    append(StringView { characters });
 }
 
 inline void StringBuilder::appendCharacter(UChar32 c)
@@ -274,7 +267,7 @@ inline AtomString StringBuilder::toAtomString() const
         return StringView { *this }.toAtomString();
 
     if (!m_string.isNull())
-        return AtomString { m_string };
+        return m_string;
 
     // Use the length function here so we crash on overflow without explicit overflow checks.
     ASSERT(m_buffer);

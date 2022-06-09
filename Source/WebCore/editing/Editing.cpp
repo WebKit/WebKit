@@ -321,7 +321,8 @@ bool isInline(const Node* node)
 // knowing about these kinds of special cases.
 Element* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
 {
-    return dynamicDowncast<Element>(enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule));
+    Node* enclosingNode = enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule);
+    return is<Element>(enclosingNode) ? downcast<Element>(enclosingNode) : nullptr;
 }
 
 TextDirection directionOfEnclosingBlock(const Position& position)
@@ -820,16 +821,16 @@ static Ref<Element> createTabSpanElement(Document& document, Text& tabTextNode)
     auto spanElement = HTMLSpanElement::create(document);
 
     spanElement->setAttributeWithoutSynchronization(classAttr, AppleTabSpanClass);
-    spanElement->setAttribute(styleAttr, "white-space:pre"_s);
+    spanElement->setAttribute(styleAttr, "white-space:pre");
 
     spanElement->appendChild(tabTextNode);
 
     return spanElement;
 }
 
-Ref<Element> createTabSpanElement(Document& document, String&& tabText)
+Ref<Element> createTabSpanElement(Document& document, const String& tabText)
 {
-    return createTabSpanElement(document, document.createTextNode(WTFMove(tabText)));
+    return createTabSpanElement(document, document.createTextNode(tabText));
 }
 
 Ref<Element> createTabSpanElement(Document& document)
@@ -888,7 +889,7 @@ bool isMailBlockquote(const Node* node)
     ASSERT(node);
     if (!node->hasTagName(blockquoteTag))
         return false;
-    return downcast<HTMLElement>(*node).attributeWithoutSynchronization(typeAttr) == "cite"_s;
+    return downcast<HTMLElement>(*node).attributeWithoutSynchronization(typeAttr) == "cite";
 }
 
 int caretMinOffset(const Node& node)

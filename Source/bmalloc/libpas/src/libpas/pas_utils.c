@@ -32,57 +32,9 @@
 #include "pas_lock.h"
 #include "pas_log.h"
 #include "pas_string_stream.h"
-#include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <unistd.h>
-
-#if PAS_X86_64
-
-#define CRASH_INST "int3"
-
-#define CRASH_GPR0 "r11"
-#define CRASH_GPR1 "r10"
-#define CRASH_GPR2 "r9"
-#define CRASH_GPR3 "r8"
-#define CRASH_GPR4 "r15"
-#define CRASH_GPR5 "r14"
-#define CRASH_GPR6 "r13"
-
-#elif PAS_ARM64
-
-#define CRASH_INST "brk #0xc471"
-
-#define CRASH_GPR0 "x16"
-#define CRASH_GPR1 "x17"
-#define CRASH_GPR2 "x18"
-#define CRASH_GPR3 "x19"
-#define CRASH_GPR4 "x20"
-#define CRASH_GPR5 "x21"
-#define CRASH_GPR6 "x22"
-
-#endif
-
-#if PAS_X86_64 || PAS_ARM64
-
-PAS_NEVER_INLINE PAS_NO_RETURN static void pas_crash_with_info_impl(uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6)
-{
-    register uint64_t reasonGPR asm(CRASH_GPR0) = reason;
-    register uint64_t misc1GPR asm(CRASH_GPR1) = misc1;
-    register uint64_t misc2GPR asm(CRASH_GPR2) = misc2;
-    register uint64_t misc3GPR asm(CRASH_GPR3) = misc3;
-    register uint64_t misc4GPR asm(CRASH_GPR4) = misc4;
-    register uint64_t misc5GPR asm(CRASH_GPR5) = misc5;
-    register uint64_t misc6GPR asm(CRASH_GPR6) = misc6;
-    __asm__ volatile (CRASH_INST : : "r"(reasonGPR), "r"(misc1GPR), "r"(misc2GPR), "r"(misc3GPR), "r"(misc4GPR), "r"(misc5GPR), "r"(misc6GPR));
-    __builtin_trap();
-}
-
-#else
-
-PAS_NEVER_INLINE PAS_NO_RETURN static void pas_crash_with_info_impl(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) { __builtin_trap(); }
-
-#endif
 
 void pas_panic(const char* format, ...)
 {
@@ -92,7 +44,6 @@ void pas_panic(const char* format, ...)
         pas_log("[%d] pas panic: ", getpid());
         va_start(arg_list, format);
         pas_vlog(format, arg_list);
-        pas_crash_with_info_impl((uint64_t)format, 0, 0, 0, 0, 0, 0);
     }
     __builtin_trap();
 }
@@ -106,16 +57,7 @@ void pas_assertion_failed(const char* filename, int line, const char* function, 
 
 void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression)
 {
-    pas_log("[%d] pas assertion failed: ", getpid());
-    pas_log("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
-    pas_crash_with_info_impl((uint64_t)filename, (uint64_t)line, (uint64_t)function, (uint64_t)expression, 0xbeefbff0, 42, 1337);
-}
-
-void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int line, const char* function, const char* expression, uint64_t extra)
-{
-    pas_log("[%d] pas assertion failed (with extra detail): ", getpid());
-    pas_log("%s:%d: %s: assertion %s failed. Extra data: %" PRIu64 ".\n", filename, line, function, expression, extra);
-    pas_crash_with_info_impl((uint64_t)filename, (uint64_t)line, (uint64_t)function, (uint64_t)expression, extra, 1337, 0xbeef0bff);
+    pas_panic("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
 }
 
 void pas_panic_on_out_of_memory_error()

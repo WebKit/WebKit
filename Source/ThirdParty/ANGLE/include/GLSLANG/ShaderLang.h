@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 277
+#define ANGLE_SH_VERSION 271
 
 enum ShShaderSpec
 {
@@ -247,9 +247,7 @@ const ShCompileOptions SH_SELECT_VIEW_IN_NV_GLSL_VERTEX_SHADER = UINT64_C(1) << 
 // ShBuiltInResources in vertex shaders.
 const ShCompileOptions SH_CLAMP_POINT_SIZE = UINT64_C(1) << 32;
 
-// This flag indicates whether advanced blend equation should be emulated.  Currently only
-// implemented for the Vulkan backend.
-const ShCompileOptions SH_ADD_ADVANCED_BLEND_EQUATIONS_EMULATION = UINT64_C(1) << 33;
+// Bit 33 is available.
 
 // Don't use loops to initialize uninitialized variables. Only has an effect if some kind of
 // variable initialization is turned on.
@@ -321,9 +319,11 @@ const ShCompileOptions SH_REWRITE_ROW_MAJOR_MATRICES = UINT64_C(1) << 49;
 // Drop any explicit precision qualifiers from shader.
 const ShCompileOptions SH_IGNORE_PRECISION_QUALIFIERS = UINT64_C(1) << 50;
 
-// Bit 51 is unused.
+// Allow compiler to do early fragment tests as an optimization.
+const ShCompileOptions SH_EARLY_FRAGMENT_TESTS_OPTIMIZATION = UINT64_C(1) << 51;
 
-// Note: bit 52 is unused
+// Allow compiler to insert Android pre-rotation code.
+const ShCompileOptions SH_ADD_PRE_ROTATION = UINT64_C(1) << 52;
 
 const ShCompileOptions SH_FORCE_SHADER_PRECISION_HIGHP_TO_MEDIUMP = UINT64_C(1) << 53;
 
@@ -348,10 +348,6 @@ const ShCompileOptions SH_GENERATE_SPIRV_THROUGH_GLSLANG = UINT64_C(1) << 58;
 
 // Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel driver
 const ShCompileOptions SH_ADD_EXPLICIT_BOOL_CASTS = UINT64_C(1) << 59;
-
-// Add round() after applying dither.  This works around a Qualcomm quirk where values can get
-// ceil()ed instead.
-const ShCompileOptions SH_ROUND_OUTPUT_AFTER_DITHERING = UINT64_C(1) << 60;
 
 // The 64 bits hash function. The first parameter is the input string; the
 // second parameter is the string length.
@@ -722,9 +718,8 @@ sh::WorkGroupSize GetComputeShaderLocalGroupSize(const ShHandle handle);
 // Returns the number of views specified through the num_views layout qualifier. If num_views is
 // not set, the function returns -1.
 int GetVertexShaderNumViews(const ShHandle handle);
-// Returns true if the shader has specified the |sample| qualifier, implying that per-sample shading
-// should be enabled
-bool EnablesPerSampleShading(const ShHandle handle);
+// Returns true if compiler has injected instructions for early fragment tests as an optimization
+bool HasEarlyFragmentTestsOptimization(const ShHandle handle);
 
 // Returns specialization constant usage bits
 uint32_t GetShaderSpecConstUsageBits(const ShHandle handle);
@@ -833,19 +828,38 @@ enum class SpecializationConstantId : uint32_t
 {
     LineRasterEmulation = 0,
     SurfaceRotation     = 1,
-    Dither              = 2,
+    DrawableWidth       = 2,
+    DrawableHeight      = 3,
+    Dither              = 4,
 
-    InvalidEnum = 3,
+    InvalidEnum = 5,
     EnumCount   = InvalidEnum,
+};
+
+enum class SurfaceRotation : uint32_t
+{
+    Identity,
+    Rotated90Degrees,
+    Rotated180Degrees,
+    Rotated270Degrees,
+    FlippedIdentity,
+    FlippedRotated90Degrees,
+    FlippedRotated180Degrees,
+    FlippedRotated270Degrees,
+
+    InvalidEnum,
+    EnumCount = InvalidEnum,
 };
 
 enum class SpecConstUsage : uint32_t
 {
     LineRasterEmulation = 0,
-    Rotation            = 1,
-    Dither              = 2,
+    YFlip               = 1,
+    Rotation            = 2,
+    DrawableSize        = 3,
+    Dither              = 4,
 
-    InvalidEnum = 3,
+    InvalidEnum = 5,
     EnumCount   = InvalidEnum,
 };
 
@@ -870,20 +884,6 @@ extern const char kDefaultUniformsNameCS[];
 extern const char kDriverUniformsBlockName[];
 extern const char kDriverUniformsVarName[];
 
-// Packing information for driver uniform's misc field:
-// - 1 bit for whether surface rotation results in swapped axes
-// - 5 bits for advanced blend equation
-// - 6 bits for sample count
-// - 8 bits for enabled clip planes
-// - 12 bits unused
-constexpr uint32_t kDriverUniformsMiscSwapXYMask                  = 0x1;
-constexpr uint32_t kDriverUniformsMiscAdvancedBlendEquationOffset = 1;
-constexpr uint32_t kDriverUniformsMiscAdvancedBlendEquationMask   = 0x1F;
-constexpr uint32_t kDriverUniformsMiscSampleCountOffset           = 6;
-constexpr uint32_t kDriverUniformsMiscSampleCountMask             = 0x3F;
-constexpr uint32_t kDriverUniformsMiscEnabledClipPlanesOffset     = 12;
-constexpr uint32_t kDriverUniformsMiscEnabledClipPlanesMask       = 0xFF;
-
 // Interface block array name used for atomic counter emulation
 extern const char kAtomicCountersBlockName[];
 
@@ -899,9 +899,6 @@ extern const char kXfbEmulationBufferFieldName[];
 
 // Transform feedback extension support
 extern const char kXfbExtensionPositionOutName[];
-
-// Pre-rotation support
-extern const char kPreRotationRotatePositionFunctionName[];
 
 // EXT_shader_framebuffer_fetch and EXT_shader_framebuffer_fetch_non_coherent
 extern const char kInputAttachmentName[];

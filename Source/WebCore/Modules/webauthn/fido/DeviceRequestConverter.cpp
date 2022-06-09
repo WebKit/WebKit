@@ -35,7 +35,6 @@
 #include "CBORWriter.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialRequestOptions.h"
-#include "ResidentKeyRequirement.h"
 #include <wtf/Vector.h>
 
 namespace fido {
@@ -69,12 +68,14 @@ static CBORValue convertUserEntityToCBOR(const PublicKeyCredentialCreationOption
 
 static CBORValue convertParametersToCBOR(const Vector<PublicKeyCredentialCreationOptions::Parameters>& parameters)
 {
-    auto credentialParamArray = parameters.map([](auto& credential) {
+    CBORValue::ArrayValue credentialParamArray;
+    credentialParamArray.reserveInitialCapacity(parameters.size());
+    for (const auto& credential : parameters) {
         CBORValue::MapValue cborCredentialMap;
         cborCredentialMap.emplace(CBORValue(kCredentialTypeMapKey), CBORValue(publicKeyCredentialTypeToString(credential.type)));
         cborCredentialMap.emplace(CBORValue(kCredentialAlgorithmMapKey), CBORValue(credential.alg));
-        return CBORValue { WTFMove(cborCredentialMap) };
-    });
+        credentialParamArray.append(WTFMove(cborCredentialMap));
+    }
     return CBORValue(WTFMove(credentialParamArray));
 }
 
@@ -86,7 +87,7 @@ static CBORValue convertDescriptorToCBOR(const PublicKeyCredentialDescriptor& de
     return CBORValue(WTFMove(cborDescriptorMap));
 }
 
-Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, AuthenticatorSupportedOptions::ResidentKeyAvailability residentKeyAvailability, std::optional<PinParameters> pin)
+Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, std::optional<PinParameters> pin)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(1)] = CBORValue(hash);
@@ -103,11 +104,7 @@ Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, c
     CBORValue::MapValue optionMap;
     if (options.authenticatorSelection) {
         // Resident keys are not supported by default.
-        if (options.authenticatorSelection->residentKey) {
-            if (*options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required
-                || (*options.authenticatorSelection->residentKey == ResidentKeyRequirement::Preferred && residentKeyAvailability == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported))
-                optionMap[CBORValue(kResidentKeyMapKey)] = CBORValue(true);
-        } else if (options.authenticatorSelection->requireResidentKey)
+        if (options.authenticatorSelection->requireResidentKey)
             optionMap[CBORValue(kResidentKeyMapKey)] = CBORValue(true);
 
         // User verification is not required by default.

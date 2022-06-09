@@ -76,8 +76,7 @@ PAS_API void pagesize64k_heap_config_activate(void);
     .medium_shared_segregated_logging_mode = pas_segregated_deallocation_size_aware_logging_mode, \
     .use_medium_bitfit = true, \
     .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
-    .use_marge_bitfit = false, \
-    .pgm_enabled = false)
+    .use_marge_bitfit = false)
 
 PAS_API extern pas_heap_config pagesize64k_heap_config;
 

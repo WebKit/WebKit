@@ -99,7 +99,7 @@ public:
     void dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage = { });
 
     // Add matching pending messages to the provided MessageReceiveQueue.
-    void enqueueMatchingMessages(Connection&, MessageReceiveQueue&, const ReceiverMatcher&);
+    void enqueueMatchingMessages(Connection&, MessageReceiveQueue&, ReceiverName, uint64_t destinationID);
 
 private:
     friend class LazyNeverDestroyed<Connection::SyncMessageState>;
@@ -141,13 +141,13 @@ Connection::SyncMessageState& Connection::SyncMessageState::singleton()
     return syncMessageState;
 }
 
-void Connection::SyncMessageState::enqueueMatchingMessages(Connection& connection, MessageReceiveQueue& receiveQueue, const ReceiverMatcher& receiverMatcher)
+void Connection::SyncMessageState::enqueueMatchingMessages(Connection& connection, MessageReceiveQueue& receiveQueue, ReceiverName receiverName, uint64_t destinationID)
 {
     ASSERT(isMainRunLoop());
     auto enqueueMatchingMessagesInContainer = [&](Deque<ConnectionAndIncomingMessage>& connectionAndMessages) {
         Deque<ConnectionAndIncomingMessage> rest;
         for (auto& connectionAndMessage : connectionAndMessages) {
-            if (connectionAndMessage.connection.ptr() == &connection && connectionAndMessage.message->matches(receiverMatcher))
+            if (connectionAndMessage.connection.ptr() == &connection && connectionAndMessage.message->messageReceiverName() == receiverName && (connectionAndMessage.message->destinationID() == destinationID || !destinationID))
                 receiveQueue.enqueueMessage(connection, WTFMove(connectionAndMessage.message));
             else
                 rest.append(WTFMove(connectionAndMessage));
@@ -340,15 +340,15 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
 
 // Enqueue any pending message to the MessageReceiveQueue that is meant to go on that queue. This is important to maintain the ordering of
 // IPC messages as some messages may get received on the IPC thread before the message receiver registered itself on the main thread.
-void Connection::enqueueMatchingMessagesToMessageReceiveQueue(MessageReceiveQueue& receiveQueue, const ReceiverMatcher& receiverMatcher)
+void Connection::enqueueMatchingMessagesToMessageReceiveQueue(MessageReceiveQueue& receiveQueue, ReceiverName receiverName, uint64_t destinationID)
 {
     ASSERT(isMainRunLoop());
 
-    SyncMessageState::singleton().enqueueMatchingMessages(*this, receiveQueue, receiverMatcher);
+    SyncMessageState::singleton().enqueueMatchingMessages(*this, receiveQueue, receiverName, destinationID);
 
     Deque<std::unique_ptr<Decoder>> remainingIncomingMessages;
     for (auto& message : m_incomingMessages) {
-        if (message->matches(receiverMatcher))
+        if (message->messageReceiverName() == receiverName && (message->destinationID() == destinationID || !destinationID))
             receiveQueue.enqueueMessage(*this, WTFMove(message));
         else
             remainingIncomingMessages.append(WTFMove(message));
@@ -356,46 +356,33 @@ void Connection::enqueueMatchingMessagesToMessageReceiveQueue(MessageReceiveQueu
     m_incomingMessages = WTFMove(remainingIncomingMessages);
 }
 
-void Connection::addMessageReceiveQueue(MessageReceiveQueue& receiveQueue, const ReceiverMatcher& receiverMatcher)
+void Connection::addMessageReceiveQueue(MessageReceiveQueue& receiveQueue, ReceiverName receiverName, uint64_t destinationID)
 {
     Locker incomingMessagesLocker { m_incomingMessagesLock };
-    enqueueMatchingMessagesToMessageReceiveQueue(receiveQueue, receiverMatcher);
-    m_receiveQueues.add(receiveQueue, receiverMatcher);
+    enqueueMatchingMessagesToMessageReceiveQueue(receiveQueue, receiverName, destinationID);
+    m_receiveQueues.add(receiveQueue, receiverName, destinationID);
 }
 
-void Connection::removeMessageReceiveQueue(const ReceiverMatcher& receiverMatcher)
+void Connection::addWorkQueueMessageReceiver(ReceiverName receiverName, WorkQueue& workQueue, WorkQueueMessageReceiver* receiver, uint64_t destinationID)
 {
-    Locker locker { m_incomingMessagesLock };
-    m_receiveQueues.remove(receiverMatcher);
-}
-
-void Connection::addWorkQueueMessageReceiver(ReceiverName receiverName, WorkQueue& workQueue, WorkQueueMessageReceiver& receiver, uint64_t destinationID)
-{
-    auto receiverMatcher = ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID);
-
-    auto receiveQueue = makeUnique<WorkQueueMessageReceiverQueue>(workQueue, receiver);
+    auto receiveQueue = makeUnique<WorkQueueMessageReceiverQueue>(workQueue, *receiver);
     Locker incomingMessagesLocker { m_incomingMessagesLock };
-    enqueueMatchingMessagesToMessageReceiveQueue(*receiveQueue, receiverMatcher);
-    m_receiveQueues.add(WTFMove(receiveQueue), receiverMatcher);
-}
-
-void Connection::removeWorkQueueMessageReceiver(ReceiverName receiverName, uint64_t destinationID)
-{
-    removeMessageReceiveQueue(ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID));
+    enqueueMatchingMessagesToMessageReceiveQueue(*receiveQueue, receiverName, destinationID);
+    m_receiveQueues.add(WTFMove(receiveQueue), receiverName, destinationID);
 }
 
 void Connection::addThreadMessageReceiver(ReceiverName receiverName, ThreadMessageReceiver* receiver, uint64_t destinationID)
 {
-    auto receiverMatcher = ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID);
     auto receiveQueue = makeUnique<ThreadMessageReceiverQueue>(*receiver);
     Locker incomingMessagesLocker { m_incomingMessagesLock };
-    enqueueMatchingMessagesToMessageReceiveQueue(*receiveQueue, receiverMatcher);
-    m_receiveQueues.add(WTFMove(receiveQueue), receiverMatcher);
+    enqueueMatchingMessagesToMessageReceiveQueue(*receiveQueue, receiverName, destinationID);
+    m_receiveQueues.add(WTFMove(receiveQueue), receiverName, destinationID);
 }
 
-void Connection::removeThreadMessageReceiver(ReceiverName receiverName, uint64_t destinationID)
+void Connection::removeMessageReceiveQueue(ReceiverName receiverName, uint64_t destinationID)
 {
-    removeMessageReceiveQueue(ReceiverMatcher::createWithZeroAsAnyDestination(receiverName, destinationID));
+    Locker locker { m_incomingMessagesLock };
+    m_receiveQueues.remove(receiverName, destinationID);
 }
 
 void Connection::dispatchMessageReceiverMessage(MessageReceiver& messageReceiver, std::unique_ptr<Decoder>&& decoder)
@@ -665,10 +652,7 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(SyncRequestID syncRequestID
         encoder->setShouldMaintainOrderingWithAsyncMessages();
 
     auto messageName = encoder->messageName();
-
-    // Since sync IPC is blocking the current thread, make sure we use the same priority for the IPC sending thread
-    // as the current thread.
-    sendMessage(WTFMove(encoder), sendOptions, Thread::currentThreadQOS());
+    sendMessage(WTFMove(encoder), sendOptions);
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
@@ -890,13 +874,6 @@ void Connection::addMessageObserver(const MessageObserver& observer)
 {
     m_messageObservers.append(observer);
 }
-
-void Connection::dispatchIncomingMessageForTesting(std::unique_ptr<Decoder>&& decoder)
-{
-    m_connectionQueue->dispatch([protectedThis = Ref { *this }, decoder = WTFMove(decoder)]() mutable {
-        protectedThis->processIncomingMessage(WTFMove(decoder));
-    });
-}
 #endif
 
 void Connection::postConnectionDidCloseOnConnectionWorkQueue()
@@ -1079,11 +1056,6 @@ void Connection::dispatchMessage(Decoder& decoder)
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
         auto handler = takeAsyncReplyHandler(*this, decoder.destinationID());
         if (!handler) {
-            markCurrentlyDispatchedMessageAsInvalid();
-#if ENABLE(IPC_TESTING_API)
-            if (m_ignoreInvalidMessageForTesting)
-                return;
-#endif
             ASSERT_NOT_REACHED();
             return;
         }
@@ -1302,24 +1274,22 @@ CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection& connection, 
     Locker locker { asyncReplyHandlerMapLock };
     auto& map = asyncReplyHandlerMap();
     auto iterator = map.find(reinterpret_cast<uintptr_t>(&connection));
-    if (iterator == map.end())
-        return nullptr;
-    if (!iterator->value.isValidKey(identifier))
-        return nullptr;
-    return iterator->value.take(identifier);
+    if (iterator != map.end()) {
+        if (!iterator->value.isValidKey(identifier)) {
+            ASSERT_NOT_REACHED();
+            connection.markCurrentlyDispatchedMessageAsInvalid();
+            return nullptr;
+        }
+        ASSERT(iterator->value.contains(identifier));
+        return iterator->value.take(identifier);
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 void Connection::wakeUpRunLoop()
 {
     RunLoop::main().wakeUp();
 }
-
-#if !USE(UNIX_DOMAIN_SOCKETS) && !OS(DARWIN) && !OS(WINDOWS)
-std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
-{
-    notImplemented();
-    return std::nullopt;
-}
-#endif
 
 } // namespace IPC

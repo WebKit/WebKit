@@ -37,6 +37,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
 
+#if USE(ATK)
+#include "AccessibilityNotificationHandlerAtk.h"
+#endif
+
 namespace WTR {
 
 class AccessibilityUIElement;
@@ -61,14 +65,14 @@ public:
     JSRetainPtr<JSStringRef> platformName();
 
     // Controller Methods - platform-independent implementations.
-#if ENABLE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY)
     Ref<AccessibilityUIElement> rootElement();
     RefPtr<AccessibilityUIElement> focusedElement();
 #endif
     RefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
     RefPtr<AccessibilityUIElement> accessibleElementById(JSStringRef idAttribute);
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(ATSPI)
     void executeOnAXThreadAndWait(Function<void()>&&);
     void executeOnAXThread(Function<void()>&&);
     void executeOnMainThread(Function<void()>&&);
@@ -86,7 +90,7 @@ public:
 
     void resetToConsistentState();
 
-#if !ENABLE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
+#if !HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(WPE))
     RefPtr<AccessibilityUIElement> rootElement() { return nullptr; }
     RefPtr<AccessibilityUIElement> focusedElement() { return nullptr; }
 #endif
@@ -96,12 +100,18 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<id> m_globalNotificationHandler;
+#elif USE(ATK)
+    RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #elif USE(ATSPI)
     std::unique_ptr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void updateIsolatedTreeMode();
+
+#if USE(ATSPI)
+    RunLoop& axRunLoop();
+#endif
 
 #if PLATFORM(COCOA)
     void spinMainRunLoop() const;
@@ -112,6 +122,9 @@ private:
     bool m_useMockAXThread { false };
 #endif
     bool m_accessibilityIsolatedTreeMode { false };
+#if USE(ATSPI)
+    RunLoop* m_axRunLoop { nullptr };
+#endif
 #endif
 };
 

@@ -238,7 +238,7 @@ static const char* fragmentTemplateCommon =
         uniform SamplerExternalOESType s_externalOESTexture;
         uniform float u_opacity;
         uniform float u_filterAmount;
-        uniform mat4 u_yuvToRgb;
+        uniform mat3 u_yuvToRgb;
         uniform vec2 u_blurRadius;
         uniform vec2 u_shadowOffset;
         uniform vec4 u_color;
@@ -269,8 +269,9 @@ static const char* fragmentTemplateCommon =
 
         vec3 yuvToRgb(float y, float u, float v)
         {
-            vec4 rgb = vec4(y, u, v, 1.0) * u_yuvToRgb;
-            return rgb.xyz;
+            // yuv is either bt601 or bt709 so the offset is the same
+            vec3 yuv = vec3(y - 0.0625, u - 0.5, v - 0.5);
+            return yuv * u_yuvToRgb;
         }
         void applyTextureYUV(inout vec4 color, vec2 texCoord)
         {
@@ -501,8 +502,6 @@ static const char* fragmentTemplateCommon =
             applyTexturePackedYUVIfNeeded(color, texCoord);
             applyPremultiplyIfNeeded(color);
             applySolidColorIfNeeded(color);
-            applyAlphaBlurIfNeeded(color, texCoord);
-            applyContentTextureIfNeeded(color, texCoord);
             applyAntialiasingIfNeeded(color);
             applyOpacityIfNeeded(color);
             applyGrayscaleFilterIfNeeded(color);
@@ -514,6 +513,8 @@ static const char* fragmentTemplateCommon =
             applyContrastFilterIfNeeded(color);
             applyOpacityFilterIfNeeded(color);
             applyBlurFilterIfNeeded(color, texCoord);
+            applyAlphaBlurIfNeeded(color, texCoord);
+            applyContentTextureIfNeeded(color, texCoord);
             applyTextureExternalOESIfNeeded(color, texCoord);
             applyRoundedRectClipIfNeeded(color);
             gl_FragColor = color;

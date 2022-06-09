@@ -120,7 +120,7 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(Decoder& decoder, Resource
     if (!decoder.decode(localizedDescription))
         return false;
 
-    resourceError = ResourceError(domain, errorCode, URL { failingURL }, localizedDescription);
+    resourceError = ResourceError(domain, errorCode, URL(URL(), failingURL), localizedDescription);
 
     CertificateInfo certificateInfo;
     if (!decoder.decode(certificateInfo))
@@ -224,12 +224,12 @@ bool ArgumentCoder<DictionaryPopupInfo>::decodePlatformData(Decoder&, Dictionary
     return false;
 }
 
-void ArgumentCoder<Font>::encodePlatformData(Encoder&, const Font&)
+void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder&, const Ref<Font>&)
 {
     ASSERT_NOT_REACHED();
 }
 
-std::optional<FontPlatformData> ArgumentCoder<Font>::decodePlatformData(Decoder&)
+std::optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;

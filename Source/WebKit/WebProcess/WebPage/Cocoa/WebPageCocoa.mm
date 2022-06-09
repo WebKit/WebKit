@@ -27,17 +27,16 @@
 #import "WebPage.h"
 
 #import "InsertTextOptions.h"
+#import "LaunchServicesDatabaseManager.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
 #import "UserMediaCaptureManager.h"
 #import "WKAccessibilityWebPageObjectBase.h"
 #import "WebPageProxyMessages.h"
-#import "WebPasteboardOverrides.h"
 #import "WebPaymentCoordinator.h"
 #import "WebRemoteObjectRegistry.h"
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <WebCore/DictionaryLookup.h>
-#import <WebCore/DocumentMarkerController.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/EventHandler.h>
@@ -45,9 +44,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
-#import <WebCore/HTMLBodyElement.h>
 #import <WebCore/HTMLConverter.h>
-#import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLOListElement.h>
 #import <WebCore/HTMLUListElement.h>
 #import <WebCore/HitTestResult.h>
@@ -58,7 +55,6 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
-#import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
 
 #if PLATFORM(IOS)
@@ -75,16 +71,31 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
 
 #if ENABLE(MEDIA_STREAM)
     if (auto* captureManager = WebProcess::singleton().supplement<UserMediaCaptureManager>())
-        captureManager->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess, parameters.shouldCaptureDisplayInGPUProcess, m_page->settings().webRTCRemoteVideoFrameEnabled());
+        captureManager->setupCaptureProcesses(parameters.shouldCaptureAudioInUIProcess, parameters.shouldCaptureAudioInGPUProcess, parameters.shouldCaptureVideoInUIProcess, parameters.shouldCaptureVideoInGPUProcess, parameters.shouldCaptureDisplayInUIProcess);
 #endif
 }
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
+#if HAVE(LSDATABASECONTEXT)
+    static bool hasWaitedForLaunchServicesDatabase = false;
+    if (!hasWaitedForLaunchServicesDatabase) {
+        auto startTime = WallTime::now();
+        bool databaseUpdated = LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(5_s);
+        auto elapsedTime = WallTime::now() - startTime;
+        if (elapsedTime.value() > 0.5)
+            RELEASE_LOG(Loading, "Waiting for Launch Services database update took %f seconds", elapsedTime.value());
+        ASSERT_UNUSED(databaseUpdated, databaseUpdated);
+        if (!databaseUpdated)
+            RELEASE_LOG_ERROR(Loading, "Timed out waiting for Launch Services database update.");
+        hasWaitedForLaunchServicesDatabase = true;
+    }
+#endif
+
     m_dataDetectionContext = parameters.dataDetectionContext;
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);
+
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
@@ -92,8 +103,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 
     if (parameters.frontboardServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.frontboardServiceExtensionHandle);
-#endif // PLATFORM(IOS)
-#endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#endif
 }
 
 void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& completionHandler)
@@ -118,12 +128,10 @@ void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bo
     
 void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 {
-#if ENABLE(PDFKIT_PLUGIN)
-    if (auto* pluginView = mainFramePlugIn()) {
+    if (auto* pluginView = pluginViewForFrame(&m_page->mainFrame())) {
         if (pluginView->performDictionaryLookupAtLocation(floatPoint))
             return;
     }
-#endif
     
     // Find the frame the point is over.
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
@@ -167,7 +175,8 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
     Editor& editor = frame.editor();
     editor.setIsGettingDictionaryPopupInfo(true);
 
-    if (plainText(range).find(isNotSpaceOrNewline) == notFound) {
+    // FIXME: Inefficient to call stripWhiteSpace to detect whether a string has a non-whitespace character in it.
+    if (plainText(range).stripWhiteSpace().isEmpty()) {
         editor.setIsGettingDictionaryPopupInfo(false);
         return { };
     }
@@ -183,7 +192,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
     IntRect rangeRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     const RenderStyle* style = range.startContainer().renderStyle();
-    float scaledAscent = style ? style->metricsOfPrimaryFont().ascent() * pageScaleFactor() : 0;
+    float scaledAscent = style ? style->fontMetrics().ascent() * pageScaleFactor() : 0;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
     dictionaryPopupInfo.options = options;
 
@@ -252,88 +261,6 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
     }
 }
 
-void WebPage::addDictationAlternative(const String& text, DictationContext context, CompletionHandler<void(bool)>&& completion)
-{
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    RefPtr document = frame->document();
-    if (!document) {
-        completion(false);
-        return;
-    }
-
-    auto selection = frame->selection().selection();
-    RefPtr editableRoot = selection.rootEditableElement();
-    if (!editableRoot) {
-        completion(false);
-        return;
-    }
-
-    auto firstEditablePosition = firstPositionInNode(editableRoot.get());
-    auto selectionEnd = selection.end();
-    auto searchRange = makeSimpleRange(firstEditablePosition, selectionEnd);
-    if (!searchRange) {
-        completion(false);
-        return;
-    }
-
-    auto targetOffset = characterCount(*searchRange);
-    targetOffset -= std::min<uint64_t>(targetOffset, text.length());
-    auto matchRange = findClosestPlainText(*searchRange, text, { Backwards, DoNotRevealSelection }, targetOffset);
-    if (matchRange.collapsed()) {
-        completion(false);
-        return;
-    }
-
-    document->markers().addMarker(matchRange, DocumentMarker::DictationAlternatives, { DocumentMarker::DictationData { context, text } });
-    completion(true);
-}
-
-void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
-{
-    Vector<DictationContext> contexts;
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    RefPtr document = frame->document();
-    if (!document) {
-        completion(WTFMove(contexts));
-        return;
-    }
-
-    auto selection = frame->selection().selection();
-    auto expandedSelectionRange = VisibleSelection { selection.visibleStart().previous(CannotCrossEditingBoundary), selection.visibleEnd().next(CannotCrossEditingBoundary) }.range();
-    if (!expandedSelectionRange) {
-        completion(WTFMove(contexts));
-        return;
-    }
-
-    auto markers = document->markers().markersInRange(*expandedSelectionRange, DocumentMarker::DictationAlternatives);
-    contexts.reserveInitialCapacity(markers.size());
-    for (auto* marker : markers) {
-        if (std::holds_alternative<DocumentMarker::DictationData>(marker->data()))
-            contexts.uncheckedAppend(std::get<DocumentMarker::DictationData>(marker->data()).context);
-    }
-    completion(WTFMove(contexts));
-}
-
-void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
-{
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    RefPtr document = frame->document();
-    if (!document)
-        return;
-
-    HashSet<DictationContext> setOfContextsToRemove;
-    setOfContextsToRemove.reserveInitialCapacity(contexts.size());
-    for (auto context : contexts)
-        setOfContextsToRemove.add(context);
-
-    auto documentRange = makeRangeSelectingNodeContents(*document);
-    document->markers().filterMarkers(documentRange, [&] (auto& marker) {
-        if (!std::holds_alternative<DocumentMarker::DictationData>(marker.data()))
-            return FilterMarkerResult::Keep;
-        return setOfContextsToRemove.contains(std::get<WebCore::DocumentMarker::DictationData>(marker.data()).context) ? FilterMarkerResult::Remove : FilterMarkerResult::Keep;
-    }, DocumentMarker::DictationAlternatives);
-}
-
 void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)
 {
     IPC::DataReference dataToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
@@ -345,7 +272,8 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
 {
     if (!m_page)
         return nullptr;
-    return dynamicDowncast<WebPaymentCoordinator>(m_page->paymentCoordinator().client());
+    auto& client = m_page->paymentCoordinator().client();
+    return is<WebPaymentCoordinator>(client) ? downcast<WebPaymentCoordinator>(&client) : nullptr;
 }
 #endif
 
@@ -424,11 +352,7 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(IntRect rect, IntSize bitmapSize
 void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-#if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
-    WebProcess::singleton().getProcessDisplayName(WTFMove(completionHandler));
-#else
     completionHandler(adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get());
-#endif
 #else
     completionHandler({ });
 #endif
@@ -499,7 +423,6 @@ void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& resu
     postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
 }
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>& networkExtensionsHandles)
 {
 #if ENABLE(CONTENT_FILTERING)
@@ -509,23 +432,26 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExten
     UNUSED_PARAM(networkExtensionsHandles);
 #endif
 }
-#endif
 
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
 {
-#if !ENABLE(PDFKIT_PLUGIN)
-    return completionHandler({ });
-#else
     auto* webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame)
         return completionHandler({ });
 
-    auto* pluginView = pluginViewForFrame(webFrame->coreFrame());
+    auto* coreFrame = webFrame->coreFrame();
+    if (!coreFrame)
+        return completionHandler({ });
+
+    auto* pluginView = pluginViewForFrame(coreFrame);
     if (!pluginView)
         return completionHandler({ });
     
-    completionHandler(FloatSize(pluginView->pdfDocumentSizeForPrinting()));
-#endif
+    auto* plugin = pluginView->plugin();
+    if (!plugin)
+        return completionHandler({ });
+
+    completionHandler(FloatSize(plugin->pdfDocumentSizeForPrinting()));
 }
 
 #if ENABLE(DATA_DETECTION)
@@ -536,117 +462,6 @@ void WebPage::handleClickForDataDetectionResult(const DataDetectorElementInfo& i
 }
 
 #endif
-
-static String& replaceSelectionPasteboardName()
-{
-    static NeverDestroyed<String> string("ReplaceSelectionPasteboard"_s);
-    return string;
-}
-
-class OverridePasteboardForSelectionReplacement {
-    WTF_MAKE_NONCOPYABLE(OverridePasteboardForSelectionReplacement);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    OverridePasteboardForSelectionReplacement(const Vector<String>& types, const IPC::DataReference& data)
-        : m_types(types)
-    {
-        for (auto& type : types)
-            WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, { data });
-    }
-
-    ~OverridePasteboardForSelectionReplacement()
-    {
-        for (auto& type : m_types)
-            WebPasteboardOverrides::sharedPasteboardOverrides().removeOverride(replaceSelectionPasteboardName(), type);
-    }
-
-private:
-    Vector<String> m_types;
-};
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-void WebPage::replaceImageWithMarkupResults(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
-{
-    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    auto element = elementForContext(elementContext);
-    if (!element || !element->isContentEditable())
-        return;
-
-    Ref document = element->document();
-    if (frame->document() != document.ptr())
-        return;
-
-    auto originalSelection = frame->selection().selection();
-    RefPtr selectionHost = originalSelection.rootEditableElement() ?: document->body();
-    if (!selectionHost)
-        return;
-
-    constexpr OptionSet iteratorOptions = TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions;
-    std::optional<CharacterRange> rangeToRestore;
-    uint64_t numberOfCharactersInSelectionHost = 0;
-    if (auto range = originalSelection.range()) {
-        auto selectionHostRangeBeforeReplacement = makeRangeSelectingNodeContents(*selectionHost);
-        rangeToRestore = characterRange(selectionHostRangeBeforeReplacement, *range, iteratorOptions);
-        numberOfCharactersInSelectionHost = characterCount(selectionHostRangeBeforeReplacement, iteratorOptions);
-    }
-
-    {
-        OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
-        IgnoreSelectionChangeForScope ignoreSelectionChanges { frame.get() };
-        frame->editor().replaceNodeFromPasteboard(*element, replaceSelectionPasteboardName(), EditAction::RemoveBackground);
-
-        auto position = frame->selection().selection().visibleStart();
-        if (auto imageRange = makeSimpleRange(WebCore::VisiblePositionRange { position.previous(), position })) {
-            for (WebCore::TextIterator iterator { *imageRange, { } }; !iterator.atEnd(); iterator.advance()) {
-                if (RefPtr image = dynamicDowncast<HTMLImageElement>(iterator.node())) {
-                    m_elementsToExcludeFromMarkup.add(*image);
-                    break;
-                }
-            }
-        }
-    }
-
-    constexpr auto restoreSelectionOptions = FrameSelection::defaultSetSelectionOptions(UserTriggered);
-    if (!originalSelection.isNoneOrOrphaned()) {
-        frame->selection().setSelection(originalSelection, restoreSelectionOptions);
-        return;
-    }
-
-    if (!rangeToRestore || !selectionHost->isConnected())
-        return;
-
-    auto selectionHostRange = makeRangeSelectingNodeContents(*selectionHost);
-    if (numberOfCharactersInSelectionHost != characterCount(selectionHostRange, iteratorOptions)) {
-        // FIXME: We don't attempt to restore the selection if the replaced element contains a different
-        // character count than the content that replaces it, since this codepath is currently only used
-        // to replace a single non-text element with another. If this is used to replace text content in
-        // the future, we should adjust the `rangeToRestore` to fit the newly inserted content.
-        return;
-    }
-
-    // The node replacement may have orphaned the original selection range; in this case, try to restore
-    // the original selected character range.
-    auto newSelectionRange = resolveCharacterRange(selectionHostRange, *rangeToRestore, iteratorOptions);
-    frame->selection().setSelection(newSelectionRange, restoreSelectionOptions);
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
-{
-    OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
-    readSelectionFromPasteboard(replaceSelectionPasteboardName(), [](bool) { });
-}
-
-void WebPage::readSelectionFromPasteboard(const String& pasteboardName, CompletionHandler<void(bool&&)>&& completionHandler)
-{
-    auto& frame = m_page->focusController().focusedOrMainFrame();
-    if (frame.selection().isNone())
-        return completionHandler(false);
-    frame.editor().readSelectionFromPasteboard(pasteboardName);
-    completionHandler(true);
-}
 
 } // namespace WebKit
 

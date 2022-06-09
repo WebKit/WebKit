@@ -164,17 +164,7 @@ constexpr MediaTime::MediaTime(int64_t value, uint32_t scale, uint8_t flags)
     if (scale || !(flags & Valid))
         return;
 
-    if (value < 0) {
-        // Negative infinite time
-        m_timeValue = -1;
-        m_timeScale = 1;
-        m_timeFlags = NegativeInfinite | Valid;
-    } else {
-        // Positive infinite time
-        m_timeValue = 0;
-        m_timeScale = 1;
-        m_timeFlags = PositiveInfinite | Valid;
-    }
+    *this = value < 0 ? negativeInfiniteTime() : positiveInfiniteTime();
 }
 
 inline MediaTime operator*(int32_t lhs, const MediaTime& rhs) { return rhs.operator*(lhs); }
@@ -213,7 +203,9 @@ template<> struct LogArgument<MediaTimeRange> {
     static String toString(const MediaTimeRange& range) { return range.toJSONString(); }
 };
 
+#ifndef NDEBUG
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const MediaTime&);
+#endif
 
 }
 

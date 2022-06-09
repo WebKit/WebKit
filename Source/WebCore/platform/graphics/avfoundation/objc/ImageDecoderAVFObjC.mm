@@ -53,7 +53,6 @@
 #import <wtf/MediaTime.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Vector.h>
-#import <wtf/cf/TypeCastsCF.h>
 
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
@@ -271,26 +270,6 @@ private:
     ImageDecoderAVFObjCSample(RetainPtr<CMSampleBufferRef>&& sample)
         : MediaSampleAVFObjC(WTFMove(sample))
     {
-    }
-
-    std::optional<ByteRange> byteRangeForAttachment(CFStringRef key) const
-    {
-        auto byteOffsetCF = dynamic_cf_cast<CFNumberRef>(PAL::CMGetAttachment(m_sample.get(), key, nullptr));
-        if (!byteOffsetCF)
-            return std::nullopt;
-
-        int64_t byteOffset = 0;
-        if (!CFNumberGetValue(byteOffsetCF, kCFNumberSInt64Type, &byteOffset))
-            return std::nullopt;
-
-        CMItemCount sizeArrayEntries = 0;
-        PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 0, nullptr, &sizeArrayEntries);
-        if (sizeArrayEntries != 1)
-            return std::nullopt;
-
-        size_t singleSizeEntry = 0;
-        PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 1, &singleSizeEntry, nullptr);
-        return { { CheckedSize(byteOffset), singleSizeEntry } };
     }
 
     RetainPtr<CGImageRef> m_image;
@@ -556,10 +535,13 @@ Vector<ImageDecoder::FrameInfo> ImageDecoderAVFObjC::frameInfos() const
     if (m_sampleData.empty())
         return { };
 
-    return WTF::map(m_sampleData.presentationOrder(), [](auto& sample) {
+    Vector<ImageDecoder::FrameInfo> infos;
+    for (auto& sample : m_sampleData.presentationOrder()) {
         auto* imageSample = (ImageDecoderAVFObjCSample*)sample.second.get();
-        return ImageDecoder::FrameInfo { imageSample->hasAlpha(), Seconds(imageSample->duration().toDouble()) };
-    });
+        infos.append({ imageSample->hasAlpha(), Seconds(imageSample->duration().toDouble())});
+    }
+
+    return infos;
 }
 
 bool ImageDecoderAVFObjC::frameAllowSubsamplingAtIndex(size_t index) const

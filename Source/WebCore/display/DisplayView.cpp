@@ -74,7 +74,7 @@ void View::prepareForDisplay()
         return;
 
     // Workaround for webkit.org/b/219369
-    if (RuntimeEnabledFeatures::sharedFeatures().inlineFormattingContextIntegrationEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
         return;
 
     auto treeBuilder = TreeBuilder { deviceScaleFactor() };

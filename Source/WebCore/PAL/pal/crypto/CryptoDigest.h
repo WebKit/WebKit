@@ -27,7 +27,6 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace PAL {
 
@@ -48,7 +47,6 @@ public:
 
     PAL_EXPORT void addBytes(const void* input, size_t length);
     PAL_EXPORT Vector<uint8_t> computeHash();
-    PAL_EXPORT String toHexString();
 
 private:
     CryptoDigest();

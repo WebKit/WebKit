@@ -62,8 +62,6 @@ public:
     bool isLoading() const;
     bool canGoForward() const;
 
-    WebKitWebView* webView() const;
-
 public Q_SLOTS:
     void goBack();
     void goForward();

@@ -50,25 +50,11 @@ public:
         size_t start { 0 };
         size_t end { 0 };
     };
-    struct PartialContent {
-        PartialContent(size_t, std::optional<InlineLayoutUnit>);
-
-        size_t length { 0 };
-        std::optional<InlineLayoutUnit> width { };
-    };
-    struct PreviousLine {
-        InlineItemRange range;
-        bool endsWithLineBreak { false };
-        TextDirection inlineBaseDirection { TextDirection::LTR };
-        std::optional<PartialContent> partialOverflowingContent { };
-        // Content width measured during line breaking (avoid double-measuring).
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-    };
     using FloatList = Vector<const Box*>;
     struct LineContent {
         InlineItemRange inlineItemRange;
-        std::optional<PartialContent> partialOverflowingContent { };
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth;
+        size_t partialTrailingContentLength { 0 };
+        std::optional<InlineLayoutUnit> overflowLogicalWidth;
         const FloatList& floats;
         bool hasIntrusiveFloat { false };
         InlineLayoutUnit lineMarginStart { 0 };
@@ -80,18 +66,16 @@ public:
         bool isLastLineWithInlineContent { true };
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
-        TextDirection inlineBaseDirection { TextDirection::LTR };
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>&);
+    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
         InlineLayoutUnit logicalWidth { 0 };
-        std::optional<PartialContent> partialOverflowingContent { };
         const FloatList& floats;
     };
-    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
+    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, bool isFirstLine);
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
@@ -107,7 +91,7 @@ private:
         size_t partialTrailingContentLength { 0 };
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
-    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const;
+    UsedConstraints initialConstraintsForLine(const InlineRect& initialLineLogicalRect, bool isFirstLine) const;
     std::optional<HorizontalConstraints> floatConstraints(const InlineRect& lineLogicalRect) const;
 
     void handleFloatContent(const InlineItem&);
@@ -115,7 +99,7 @@ private:
     size_t rebuildLine(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
-    void initialize(const UsedConstraints&, size_t leadingInlineTextItemIndex, const std::optional<PreviousLine>&);
+    void initialize(const UsedConstraints&, bool isFirstLine, size_t leadingInlineTextItemIndex, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth);
     struct CommittedContent {
         size_t inlineItemCount { 0 };
         size_t partialTrailingContentLength { 0 };
@@ -130,8 +114,6 @@ private:
     std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
     bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 
-    bool isFirstLine() const { return !m_previousLine.has_value(); }
-
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
     FloatingState* floatingState() { return m_floatingState; }
@@ -140,7 +122,7 @@ private:
     const LayoutState& layoutState() const;
 
 private:
-    std::optional<PreviousLine> m_previousLine { };
+    bool m_isFirstLine { false };
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };
@@ -159,12 +141,6 @@ private:
     unsigned m_successiveHyphenatedLineCount { 0 };
     bool m_contentIsConstrainedByFloat { false };
 };
-
-inline LineBuilder::PartialContent::PartialContent(size_t length, std::optional<InlineLayoutUnit> width)
-    : length(length)
-    , width(width)
-{
-}
 
 }
 }

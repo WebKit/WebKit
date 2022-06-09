@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSSet::s_info = { "Set"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSet) };
+const ClassInfo JSSet::s_info = { "Set", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSet) };
 
 JSSet* JSSet::clone(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 {
@@ -61,12 +61,12 @@ bool JSSet::isIteratorProtocolFastAndNonObservable()
         return false;
 
     VM& vm = globalObject->vm();
-    Structure* structure = this->structure();
+    Structure* structure = this->structure(vm);
     // This is the fast case. Many sets will be an original set.
     if (structure == globalObject->setStructure())
         return true;
 
-    if (getPrototypeDirect() != globalObject->jsSetPrototype())
+    if (getPrototypeDirect(vm) != globalObject->jsSetPrototype())
         return false;
 
     if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)

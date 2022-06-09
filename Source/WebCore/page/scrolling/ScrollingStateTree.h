@@ -70,7 +70,7 @@ public:
     unsigned nodeCount() const { return m_stateNodeMap.size(); }
     unsigned scrollingNodeCount() const { return m_scrollingNodeCount; }
 
-    using StateNodeMap = HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>>;
+    typedef HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> StateNodeMap;
     const StateNodeMap& nodeMap() const { return m_stateNodeMap; }
 
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }
@@ -91,12 +91,18 @@ private:
     void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&&);
     void addNode(ScrollingStateNode&);
 
+    void nodeWasReattachedRecursive(ScrollingStateNode&);
+
     Ref<ScrollingStateNode> createNode(ScrollingNodeType, ScrollingNodeID);
 
-    void removeNodeAndAllDescendants(ScrollingStateNode&);
+    bool nodeTypeAndParentMatch(ScrollingStateNode&, ScrollingNodeType, ScrollingStateNode* parentNode) const;
 
-    void recursiveNodeWillBeRemoved(ScrollingStateNode&);
-    void willRemoveNode(ScrollingStateNode&);
+    void removeNodeAndAllDescendants(ScrollingStateNode*);
+
+    void recursiveNodeWillBeRemoved(ScrollingStateNode*);
+    void willRemoveNode(ScrollingStateNode*);
+
+    void reconcileLayerPositionsRecursive(ScrollingStateNode&, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
@@ -105,17 +111,17 @@ private:
     HashMap<ScrollingNodeID, RefPtr<ScrollingStateNode>> m_unparentedNodes;
 
     RefPtr<ScrollingStateFrameScrollingNode> m_rootStateNode;
-    unsigned m_scrollingNodeCount { 0 };
-    LayerRepresentation::Type m_preferredLayerRepresentation { LayerRepresentation::GraphicsLayerRepresentation };
     bool m_hasChangedProperties { false };
     bool m_hasNewRootStateNode { false };
+    unsigned m_scrollingNodeCount { 0 };
+    LayerRepresentation::Type m_preferredLayerRepresentation { LayerRepresentation::GraphicsLayerRepresentation };
 };
 
 } // namespace WebCore
 
 #ifndef NDEBUG
-void showScrollingStateTree(const WebCore::ScrollingStateTree&);
-void showScrollingStateTree(const WebCore::ScrollingStateNode&);
+void showScrollingStateTree(const WebCore::ScrollingStateTree*);
+void showScrollingStateTree(const WebCore::ScrollingStateNode*);
 #endif
 
 #endif // ENABLE(ASYNC_SCROLLING)

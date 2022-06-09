@@ -46,8 +46,9 @@ class Color;
 class FloatRect;
 class FloatRoundedRect;
 class FloatSize;
-class GraphicsContextState;
 class Path;
+
+struct GraphicsContextState;
 
 namespace Cairo {
 

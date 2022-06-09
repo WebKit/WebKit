@@ -106,7 +106,8 @@ input[type="button"], input[type="submit"], input[type="reset"], input[type="fil
 }
 
 /* Windows selects are not rounded. Custom borders for them shouldn't be either. */
-select,
+keygen, 
+select, 
 select[size="0"],
 select[size="1"] {
     border-radius: 0;

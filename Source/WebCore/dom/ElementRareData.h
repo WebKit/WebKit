@@ -35,9 +35,13 @@
 #include "ShadowRoot.h"
 #include "SpaceSplitString.h"
 #include "StylePropertyMap.h"
-#include "StylePropertyMapReadOnly.h"
 
 namespace WebCore {
+
+inline IntSize defaultMinimumSizeForResizing()
+{
+    return IntSize(LayoutUnit::max(), LayoutUnit::max());
+}
 
 class ElementRareData : public NodeRareData {
 public:
@@ -78,6 +82,9 @@ public:
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
     void setDataset(std::unique_ptr<DatasetDOMStringMap> dataset) { m_dataset = WTFMove(dataset); }
 
+    LayoutSize minimumSizeForResizing() const { return m_minimumSizeForResizing; }
+    void setMinimumSizeForResizing(LayoutSize size) { m_minimumSizeForResizing = size; }
+
     IntPoint savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
     void setSavedLayerScrollPosition(IntPoint position) { m_savedLayerScrollPosition = position; }
 
@@ -102,12 +109,7 @@ public:
 #if ENABLE(CSS_TYPED_OM)
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
     void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTFMove(map); }
-
-    StylePropertyMapReadOnly* computedStyleMap() { return m_computedStyleMap.get(); }
-    void setComputedStyleMap(Ref<StylePropertyMapReadOnly>&& map) { m_computedStyleMap = WTFMove(map); }
 #endif
-
-    ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap() { return m_explicitlySetAttrElementsMap; }
 
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
@@ -115,6 +117,8 @@ public:
         auto result = NodeRareData::useTypes();
         if (m_unusualTabIndex)
             result.add(UseType::TabIndex);
+        if (m_minimumSizeForResizing != defaultMinimumSizeForResizing())
+            result.add(UseType::MinimumSize);
         if (!m_savedLayerScrollPosition.isZero())
             result.add(UseType::ScrollingPosition);
         if (m_computedStyle)
@@ -140,8 +144,6 @@ public:
 #if ENABLE(CSS_TYPED_OM)
         if (m_attributeStyleMap)
             result.add(UseType::StyleMap);
-        if (m_computedStyleMap)
-            result.add(UseType::ComputedStyleMap);
 #endif
         if (m_partList)
             result.add(UseType::PartList);
@@ -149,13 +151,12 @@ public:
             result.add(UseType::PartNames);
         if (m_nonce)
             result.add(UseType::Nonce);
-        if (!m_explicitlySetAttrElementsMap.isEmpty())
-            result.add(UseType::ExplicitlySetAttrElementsMap);
         return result;
     }
 #endif
 
 private:
+    LayoutSize m_minimumSizeForResizing;
     IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;
 
@@ -176,7 +177,6 @@ private:
 
 #if ENABLE(CSS_TYPED_OM)
     RefPtr<StylePropertyMap> m_attributeStyleMap;
-    RefPtr<StylePropertyMapReadOnly> m_computedStyleMap;
 #endif
 
     std::unique_ptr<DOMTokenList> m_partList;
@@ -184,13 +184,12 @@ private:
 
     AtomString m_nonce;
 
-    ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
-
     void releasePseudoElement(PseudoElement*);
 };
 
 inline ElementRareData::ElementRareData()
     : NodeRareData(Type::Element)
+    , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }
 
@@ -246,24 +245,6 @@ inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData(Pseudo
 
     m_animationRareData.append(makeUnique<ElementAnimationRareData>(pseudoId));
     return *m_animationRareData.last().get();
-}
-
-inline ElementRareData* Element::elementRareData() const
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(hasRareData());
-    return static_cast<ElementRareData*>(rareData());
-}
-
-inline ShadowRoot* Node::shadowRoot() const
-{
-    if (!is<Element>(*this))
-        return nullptr;
-    return downcast<Element>(*this).shadowRoot();
-}
-
-inline ShadowRoot* Element::shadowRoot() const
-{
-    return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
 }
 
 } // namespace WebCore

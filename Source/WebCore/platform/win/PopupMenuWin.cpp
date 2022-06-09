@@ -97,7 +97,7 @@ static void translatePoint(LPARAM& lParam, HWND from, HWND to)
     lParam = MAKELPARAM(pt.x, pt.y);
 }
 
-static IntRect monitorFromHwnd(HWND hwnd)
+static FloatRect monitorFromHwnd(HWND hwnd)
 {
     HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
     MONITORINFOEX monitorInfo;
@@ -305,7 +305,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
     } else
         ::MoveWindow(m_popup, absoluteScreenCoords.x(), absoluteScreenCoords.y(), absoluteScreenCoords.width(), absoluteScreenCoords.height(), false);
 
-    IntRect screen = monitorFromHwnd(m_popup);
+    FloatRect screen = monitorFromHwnd(m_popup);
     
     // Now we determine the actual location and measurements of the popup itself.
     // r is in absolute document coordinates, but we want to be in screen coordinates.
@@ -330,7 +330,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
     // First, determine the popup's height
     int itemCount = client()->listSize();
-    m_itemHeight = m_font.metricsOfPrimaryFont().height() + optionSpacingMiddle;
+    m_itemHeight = m_font.fontMetrics().height() + optionSpacingMiddle;
 
     int naturalHeight = m_itemHeight * itemCount;
     int popupHeight = std::min(maxPopupHeight, naturalHeight);
@@ -644,7 +644,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
 
         String itemText = client()->itemText(index);
 
-        TextRun textRun(itemText, 0, 0, ExpansionBehavior::allowLeftOnly(), itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
+        TextRun textRun(itemText, 0, 0, AllowLeftExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
         context.setFillColor(optionTextColor);
 
         FontCascade itemFont = m_font;
@@ -668,7 +668,7 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
                 if (RenderTheme::singleton().popupOptionSupportsTextIndent())
                     textX -= minimumIntValueForLength(itemStyle.textIndent(), itemRect.width());
             }
-            int textY = itemRect.y() + itemFont.metricsOfPrimaryFont().ascent() + (itemRect.height() - itemFont.metricsOfPrimaryFont().height()) / 2;
+            int textY = itemRect.y() + itemFont.fontMetrics().ascent() + (itemRect.height() - itemFont.fontMetrics().height()) / 2;
             context.drawBidiText(itemFont, textRun, IntPoint(textX, textY));
         }
     }

@@ -4,9 +4,6 @@ PASS KeyframeEffect.getKeyframes() returns expected frames for a simple animatio
 PASS KeyframeEffect.getKeyframes() returns frames with expected easing values, when the easing comes from animation-timing-function on the element
 PASS KeyframeEffect.getKeyframes() returns frames with expected easing values, when the easing is specified on each keyframe
 PASS KeyframeEffect.getKeyframes() returns frames with expected easing values, when the easing is specified on some keyframes
-PASS KeyframeEffect.getKeyframes() returns frames with expected composite values, when the composite is set on the effect using animation-composition on the element
-PASS KeyframeEffect.getKeyframes() returns frames with expected composite values, when the composite is specified on each keyframe
-PASS KeyframeEffect.getKeyframes() returns frames with expected composite values, when the composite is specified on some keyframes
 PASS KeyframeEffect.getKeyframes() returns expected frames for a simple animation that specifies a single shorthand property
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with a 0% keyframe and no 100% keyframe
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with a 100% keyframe and no 0% keyframe
@@ -17,8 +14,6 @@ PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time, and all with the same easing function
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time and with different easing functions
 PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time and with different but equivalent easing functions
-PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time and with different composite operations
-PASS KeyframeEffect.getKeyframes() returns expected frames for an animation with multiple keyframes for the same time and with different easing functions and composite operations
 PASS KeyframeEffect.getKeyframes() returns expected frames for overlapping keyframes
 PASS KeyframeEffect.getKeyframes() returns expected values for animations with filter properties and missing keyframes
 PASS KeyframeEffect.getKeyframes() returns expected values for animation with drop-shadow of filter property

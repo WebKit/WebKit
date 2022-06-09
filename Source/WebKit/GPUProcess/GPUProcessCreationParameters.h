@@ -48,9 +48,6 @@ struct GPUProcessCreationParameters {
     SandboxExtension::Handle microphoneSandboxExtensionHandle;
 #endif
 #endif
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool sampleBufferContentKeySessionSupportEnabled { false };
-#endif
     ProcessID parentPID;
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
@@ -60,8 +57,8 @@ struct GPUProcessCreationParameters {
 #if PLATFORM(IOS_FAMILY)
     Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
+    Vector<SandboxExtension::Handle> dynamicMachExtensionHandles;
 #endif
-    std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
 
     String applicationVisibleName;
 

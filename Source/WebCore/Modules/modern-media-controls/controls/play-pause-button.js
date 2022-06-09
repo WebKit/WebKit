@@ -33,6 +33,8 @@ class PlayPauseButton extends Button
             iconName: Icons.Play,
             layoutDelegate
         });
+
+        this.scaleFactor = this.layoutTraits.playPauseButtonScaleFactor();
     }
 
     // Public

@@ -44,9 +44,9 @@
 using namespace WebKit;
 
 /**
- * WebKitUserContentFilterStore:
- *
- * Handles storage of user content filters on disk.
+ * SECTION: WebKitUserContentFilterStore
+ * @Short_description: Handles storage of user content filters on disk.
+ * @Title: WebKitUserContentFilterStore
  *
  * The WebKitUserContentFilterStore provides the means to import and save
  * [JSON rule sets](https://webkit.org/blog/3476/content-blockers-first-look/),
@@ -167,9 +167,7 @@ WebKitUserContentFilterStore* webkit_user_content_filter_store_new(const gchar* 
  * webkit_user_content_filter_store_get_path:
  * @store: a #WebKitUserContentFilterStore
  *
- * Gets the storage path for user content filters.
- *
- * Returns: (transfer none): path, as a string.
+ * Returns: (transfer none): The storage path for user content filters.
  *
  * Since: 2.24
  */
@@ -189,7 +187,7 @@ static void webkitUserContentFilterStoreSaveBytes(GRefPtr<GTask>&& task, String&
     }
 
     auto* store = WEBKIT_USER_CONTENT_FILTER_STORE(g_task_get_source_object(task.get()));
-    store->priv->store->compileContentRuleList(WTFMove(identifier), String::fromUTF8(sourceData, sourceSize), [task = WTFMove(task)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
+    store->priv->store->compileContentRuleList(identifier, String::fromUTF8(sourceData, sourceSize), [task = WTFMove(task)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
         if (g_task_return_error_if_cancelled(task.get()))
             return;
 

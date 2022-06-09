@@ -31,7 +31,6 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKExperimentalFeature.h>
 
@@ -42,7 +41,7 @@ enum class ShouldUseSameProcess : bool { No, Yes };
 static void runSnapshotAcrossPagesTest(ShouldUseSameProcess shouldUseSameProcess)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { "foo"_s } }
+        { "/", { "foo" } }
     });
 
     auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -135,7 +134,7 @@ TEST(WebLocks, SnapshotAcrossPagesInSameProcess)
 static void runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess shouldUseSameProcess)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { "foo"_s } }
+        { "/", { "foo" } }
     });
 
     auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);

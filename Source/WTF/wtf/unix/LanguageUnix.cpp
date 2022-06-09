@@ -32,12 +32,14 @@ namespace WTF {
 // always the same value.
 static String platformLanguage()
 {
-    auto localeDefault = String::fromLatin1(setlocale(LC_CTYPE, nullptr));
-    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C"_s) || equalIgnoringASCIICase(localeDefault, "POSIX"_s))
+    String localeDefault(setlocale(LC_CTYPE, nullptr));
+    if (localeDefault.isEmpty() || equalIgnoringASCIICase(localeDefault, "C") || equalIgnoringASCIICase(localeDefault, "POSIX"))
         return "en-US"_s;
 
-    auto normalizedDefault = makeStringByReplacingAll(localeDefault, '_', '-');
-    return normalizedDefault.left(normalizedDefault.find('.'));
+    String normalizedDefault = localeDefault;
+    normalizedDefault.replace('_', '-');
+    normalizedDefault.truncate(normalizedDefault.find('.'));
+    return normalizedDefault;
 }
 
 Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)

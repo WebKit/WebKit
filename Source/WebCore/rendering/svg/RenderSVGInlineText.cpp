@@ -52,9 +52,9 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
         // copy of the original character data content. It will convert all newline and tab
         // characters into space characters. Then, it will draw all space characters, including
         // leading, trailing and multiple contiguous space characters.
-        newString = makeStringByReplacingAll(newString, '\t', ' ');
-        newString = makeStringByReplacingAll(newString, '\n', ' ');
-        newString = makeStringByReplacingAll(newString, '\r', ' ');
+        newString.replace('\t', ' ');
+        newString.replace('\n', ' ');
+        newString.replace('\r', ' ');
         return newString;
     }
 
@@ -63,9 +63,9 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
     // characters. Then it will convert all tab characters into space characters.
     // Then, it will strip off all leading and trailing space characters.
     // Then, all contiguous space characters will be consolidated.
-    newString = makeStringByReplacingAll(newString, '\n', ""_s);
-    newString = makeStringByReplacingAll(newString, '\r', ""_s);
-    newString = makeStringByReplacingAll(newString, '\t', ' ');
+    newString.replace('\n', emptyString());
+    newString.replace('\r', emptyString());
+    newString.replace('\t', ' ');
     return newString;
 }
 
@@ -155,7 +155,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
     if (!firstTextBox() || text().isEmpty())
         return createVisiblePosition(0, Affinity::Downstream);
 
-    float baseline = m_scaledFont.metricsOfPrimaryFont().floatAscent();
+    float baseline = m_scaledFont.fontMetrics().floatAscent();
 
     RenderBlock* containingBlock = this->containingBlock();
     ASSERT(containingBlock);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,15 +91,15 @@ int main(int argc, char** argv) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     WTF::initializeMainThread();
     JSC::initialize();
 
-    VM& vm = VM::create(HeapType::Large).leakRef();
+    VM& vm = VM::create(LargeHeap).leakRef();
     {
         JSLockHolder locker(vm);
 
         JSGlobalObject* globalObject =
             JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, jsNull()));
 
-        Identifier identF = Identifier::fromString(vm, "f"_s);
-        Identifier identG = Identifier::fromString(vm, "g"_s);
+        Identifier identF = Identifier::fromString(vm, "f");
+        Identifier identG = Identifier::fromString(vm, "g");
 
         Structure* objectStructure =
             JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 2);

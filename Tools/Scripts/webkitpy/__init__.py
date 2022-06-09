@@ -54,7 +54,7 @@ else:
     AutoInstall.register(Package('importlib_metadata', Version(1, 7, 0)))
 
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
-AutoInstall.register(Package('attr', Version(20, 3, 0), pypi_name='attrs'))
+AutoInstall.register(Package('attr', Version(18, 1, 0), pypi_name='attrs'))
 AutoInstall.register(Package('bs4', Version(4, 9, 3), pypi_name='beautifulsoup4'))
 AutoInstall.register(Package('configparser', Version(4, 0, 2)))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
@@ -71,7 +71,6 @@ AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
 AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
 AutoInstall.register(Package('py', Version(1, 5, 2)))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
-AutoInstall.register(Package('pyfakefs', Version(3, 7, 2)))
 AutoInstall.register(Package('scandir', Version(1, 10, 0)))
 AutoInstall.register(Package('soupsieve', Version(1, 9, 6)))
 AutoInstall.register(Package('selenium', Version(3, 141, 0)))
@@ -82,10 +81,9 @@ AutoInstall.register(Package('zipp', Version(1, 2, 0)))
 AutoInstall.register(Package('zope.interface', Version(5, 1, 0), aliases=['zope'], pypi_name='zope-interface'))
 
 if sys.version_info > (3, 0):
-    AutoInstall.register(Package('reporelaypy', Version(0, 4, 1)), local=True)
+    AutoInstall.register(Package('reporelaypy', Version(0, 1, 0)), local=True)
 
-AutoInstall.register(Package('webkitflaskpy', Version(0, 3, 0)), local=True)
-AutoInstall.register(Package('webkitscmpy', Version(4, 0, 0)), local=True)
-AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)
+AutoInstall.register(Package('webkitflaskpy', Version(0, 1, 1)), local=True)
+AutoInstall.register(Package('webkitscmpy', Version(0, 12, 5)), local=True)
 
 import webkitscmpy

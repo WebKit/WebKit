@@ -33,14 +33,14 @@
 #import "Logging.h"
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
-#import "WKAPICast.h"
 #import "WKDownloadInternal.h"
 #import "WKObject.h"
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
+#import "WebAuthnProcessProxy.h"
 #import "WebBackForwardCache.h"
 #import "WebCertificateInfo.h"
-#import "WebNotificationManagerProxy.h"
+#import "WebCookieManagerProxy.h"
 #import "WebProcessCache.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
@@ -194,6 +194,15 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
         url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
 
     return [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
+}
+
++ (pid_t)_webAuthnProcessIdentifier
+{
+#if ENABLE(WEB_AUTHN)
+    return WebKit::WebAuthnProcessProxy::singleton().processIdentifier();
+#else
+    return 0;
+#endif
 }
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
@@ -391,11 +400,6 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 #endif
 }
 
-- (BOOL)_hasAudibleMediaActivity
-{
-    return _processPool->hasAudibleMediaActivity() ? YES : NO;
-}
-
 - (BOOL)_requestWebProcessTermination:(pid_t)pid
 {
     for (auto& process : _processPool->processes()) {
@@ -487,7 +491,8 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 + (void)_setLinkedOnOrBeforeEverythingForTesting
 {
-    disableAllSDKAlignedBehaviors();
+    setApplicationSDKVersion(0);
+    setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::BeforeEverything);
 }
 
 + (void)_setLinkedOnOrAfterEverythingForTesting
@@ -497,7 +502,8 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 + (void)_setLinkedOnOrAfterEverything
 {
-    enableAllSDKAlignedBehaviors();
+    setApplicationSDKVersion(std::numeric_limits<uint32_t>::max());
+    setLinkedOnOrAfterOverride(LinkedOnOrAfterOverride::AfterEverything);
 }
 
 + (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled
@@ -604,11 +610,6 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (void)_terminateAllWebContentProcesses
 {
     _processPool->terminateAllWebContentProcesses();
-}
-
-- (WKNotificationManagerRef)_notificationManagerForTesting
-{
-    return WebKit::toAPI(_processPool->supplement<WebKit::WebNotificationManagerProxy>());
 }
 
 @end

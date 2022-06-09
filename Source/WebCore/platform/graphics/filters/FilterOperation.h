@@ -165,9 +165,9 @@ private:
 
 class ReferenceFilterOperation : public FilterOperation {
 public:
-    static Ref<ReferenceFilterOperation> create(const String& url, AtomString&& fragment)
+    static Ref<ReferenceFilterOperation> create(const String& url, const String& fragment)
     {
-        return adoptRef(*new ReferenceFilterOperation(url, WTFMove(fragment)));
+        return adoptRef(*new ReferenceFilterOperation(url, fragment));
     }
     virtual ~ReferenceFilterOperation();
 
@@ -184,19 +184,19 @@ public:
     bool shouldBeRestrictedBySecurityOrigin() const override { return true; }
 
     const String& url() const { return m_url; }
-    const AtomString& fragment() const { return m_fragment; }
+    const String& fragment() const { return m_fragment; }
 
     void loadExternalDocumentIfNeeded(CachedResourceLoader&, const ResourceLoaderOptions&);
 
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
 
 private:
-    ReferenceFilterOperation(const String& url, AtomString&& fragment);
+    ReferenceFilterOperation(const String& url, const String& fragment);
 
     bool operator==(const FilterOperation&) const override;
 
     String m_url;
-    AtomString m_fragment;
+    String m_fragment;
     std::unique_ptr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
 };
 

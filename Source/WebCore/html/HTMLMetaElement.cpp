@@ -85,7 +85,7 @@ bool HTMLMetaElement::mediaAttributeMatches()
 const Color& HTMLMetaElement::contentColor()
 {
     if (!m_contentColor)
-        m_contentColor = CSSParser::parseColorWithoutContext(content());
+        m_contentColor = CSSParser::parseColor(content());
     return *m_contentColor;
 }
 
@@ -97,7 +97,7 @@ void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomStri
         return;
 
     if (name == nameAttr) {
-        if (equalLettersIgnoringASCIICase(oldValue, "theme-color"_s) && !equalLettersIgnoringASCIICase(newValue, "theme-color"_s))
+        if (equalLettersIgnoringASCIICase(oldValue, "theme-color") && !equalLettersIgnoringASCIICase(newValue, "theme-color"))
             document().metaElementThemeColorChanged(*this);
         return;
     }
@@ -147,7 +147,7 @@ void HTMLMetaElement::removedFromAncestor(RemovalType removalType, ContainerNode
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
-    if (removalType.disconnectedFromDocument && equalLettersIgnoringASCIICase(name(), "theme-color"_s))
+    if (removalType.disconnectedFromDocument && equalLettersIgnoringASCIICase(name(), "theme-color"))
         oldParentOfRemovedTree.document().metaElementThemeColorChanged(*this);
 }
 
@@ -161,23 +161,23 @@ void HTMLMetaElement::process()
     if (contentValue.isNull())
         return;
 
-    if (equalLettersIgnoringASCIICase(name(), "viewport"_s))
+    if (equalLettersIgnoringASCIICase(name(), "viewport"))
         document().processViewport(contentValue, ViewportArguments::ViewportMeta);
-    else if (document().settings().disabledAdaptationsMetaTagEnabled() && equalLettersIgnoringASCIICase(name(), "disabled-adaptations"_s))
+    else if (document().settings().disabledAdaptationsMetaTagEnabled() && equalLettersIgnoringASCIICase(name(), "disabled-adaptations"))
         document().processDisabledAdaptations(contentValue);
 #if ENABLE(DARK_MODE_CSS)
-    else if (equalLettersIgnoringASCIICase(name(), "color-scheme"_s) || equalLettersIgnoringASCIICase(name(), "supported-color-schemes"_s))
+    else if (equalLettersIgnoringASCIICase(name(), "color-scheme") || equalLettersIgnoringASCIICase(name(), "supported-color-schemes"))
         document().processColorScheme(contentValue);
 #endif
-    else if (equalLettersIgnoringASCIICase(name(), "theme-color"_s))
+    else if (equalLettersIgnoringASCIICase(name(), "theme-color"))
         document().metaElementThemeColorChanged(*this);
 #if PLATFORM(IOS_FAMILY)
-    else if (equalLettersIgnoringASCIICase(name(), "format-detection"_s))
+    else if (equalLettersIgnoringASCIICase(name(), "format-detection"))
         document().processFormatDetection(contentValue);
-    else if (equalLettersIgnoringASCIICase(name(), "apple-mobile-web-app-orientations"_s))
+    else if (equalLettersIgnoringASCIICase(name(), "apple-mobile-web-app-orientations"))
         document().processWebAppOrientations();
 #endif
-    else if (equalLettersIgnoringASCIICase(name(), "referrer"_s))
+    else if (equalLettersIgnoringASCIICase(name(), "referrer"))
         document().processReferrerPolicy(contentValue, ReferrerPolicySource::MetaTag);
 
     const AtomString& httpEquivValue = attributeWithoutSynchronization(http_equivAttr);

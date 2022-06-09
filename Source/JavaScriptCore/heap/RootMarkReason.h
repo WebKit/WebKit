@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-
 namespace JSC {
 
 #define FOR_EACH_ROOT_MARK_REASON(v) \
@@ -57,7 +55,7 @@ enum class RootMarkReason : uint8_t {
 
 #undef DECLARE_ROOT_MARK_REASON
 
-ASCIILiteral rootMarkReasonDescription(RootMarkReason);
+const char* rootMarkReasonDescription(RootMarkReason);
 
 } // namespace JSC
 

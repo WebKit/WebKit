@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr/#dictdef-xrinputsourceeventinit
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
 ] dictionary XRInputSourceEventInit : EventInit {
     required WebXRFrame frame;
     required WebXRInputSource inputSource;
@@ -39,7 +39,7 @@
     SecureContext,
     Exposed=Window
 ] interface XRInputSourceEvent : Event {
-    constructor([AtomString] DOMString type, XRInputSourceEventInit eventInitDict);
+    constructor(DOMString type, XRInputSourceEventInit eventInitDict);
     [SameObject] readonly attribute WebXRFrame frame;
     [SameObject] readonly attribute WebXRInputSource inputSource;
 };

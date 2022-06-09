@@ -43,7 +43,7 @@ ContextMenuContextData::ContextMenuContextData()
 {
 }
 
-ContextMenuContextData::ContextMenuContextData(const IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
+ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const ContextMenuContext& context)
 #if ENABLE(SERVICE_CONTROLS)
     : m_type(context.controlledImage() ? Type::ServicesMenu : context.type())
 #else
@@ -67,14 +67,12 @@ ContextMenuContextData::ContextMenuContextData(const IntPoint& menuLocation, con
 }
 
 #if ENABLE(SERVICE_CONTROLS)
-ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image& image, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID, std::optional<ElementContext>&& elementContext, const String& sourceImageMIMEType)
+ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLocation, WebCore::Image& image, bool isEditable, const WebCore::IntRect& imageRect, const String& attachmentID)
     : m_type(Type::ServicesMenu)
     , m_menuLocation(menuLocation)
     , m_selectionIsEditable(isEditable)
     , m_controlledImageBounds(imageRect)
     , m_controlledImageAttachmentID(attachmentID)
-    , m_controlledImageElementContext(WTFMove(elementContext))
-    , m_controlledImageMIMEType(sourceImageMIMEType)
 {
     setImage(&image);
 }
@@ -82,7 +80,7 @@ ContextMenuContextData::ContextMenuContextData(const WebCore::IntPoint& menuLoca
 void ContextMenuContextData::setImage(WebCore::Image* image)
 {
     // FIXME: figure out the rounding strategy for ShareableBitmap.
-    m_controlledImage = ShareableBitmap::create(IntSize(image->size()), { });
+    m_controlledImage = ShareableBitmap::createShareable(IntSize(image->size()), { });
     auto graphicsContext = m_controlledImage->createGraphicsContext();
     if (!graphicsContext)
         return;
@@ -108,8 +106,6 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
     encoder << m_selectionIsEditable;
     encoder << m_controlledImageBounds;
     encoder << m_controlledImageAttachmentID;
-    encoder << m_controlledImageElementContext;
-    encoder << m_controlledImageMIMEType;
 #endif
 }
 
@@ -148,10 +144,6 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
         return false;
     if (!decoder.decode(result.m_controlledImageAttachmentID))
         return false;
-    if (!decoder.decode(result.m_controlledImageElementContext))
-        return false;
-    if (!decoder.decode(result.m_controlledImageMIMEType))
-        return false;
 #endif
 
     return true;
@@ -160,7 +152,7 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
 #if ENABLE(SERVICE_CONTROLS)
 bool ContextMenuContextData::controlledDataIsEditable() const
 {
-    if (!m_controlledSelectionData.isEmpty() || m_controlledImage || !m_controlledImageAttachmentID.isNull())
+    if (!m_controlledSelectionData.isEmpty() || m_controlledImage)
         return m_selectionIsEditable;
 
     return false;

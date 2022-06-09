@@ -50,16 +50,11 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 #include <webrtc/pc/peer_connection_factory.h>
 #include <webrtc/pc/peer_connection_factory_proxy.h>
 #include <webrtc/rtc_base/physical_socket_server.h>
-#include <webrtc/rtc_base/task_queue_gcd.h>
 
 ALLOW_UNUSED_PARAMETERS_END
 
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
-#endif
-
-#if PLATFORM(COCOA)
-#include "VP9UtilitiesCocoa.h"
 #endif
 
 namespace WebCore {
@@ -300,11 +295,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::cr
     auto audioModule = rtc::scoped_refptr<LibWebRTCAudioModule>(new rtc::RefCountedObject<LibWebRTCAudioModule>());
     m_audioModule = audioModule.get();
 
-    return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, WTFMove(audioModule), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr, nullptr
-#if PLATFORM(COCOA)
-        , webrtc::CreateTaskQueueGcdFactory()
-#endif
-    );
+    return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, WTFMove(audioModule), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr, nullptr);
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFactory()
@@ -501,9 +492,6 @@ std::optional<RTCRtpCapabilities> LibWebRTCProvider::receiverCapabilities(const 
         ASSERT_NOT_REACHED();
         return { };
     }
-
-    ASSERT_NOT_REACHED();
-    return { };
 }
 
 std::optional<RTCRtpCapabilities>& LibWebRTCProvider::audioDecodingCapabilities()
@@ -542,8 +530,6 @@ std::optional<RTCRtpCapabilities> LibWebRTCProvider::senderCapabilities(const St
         ASSERT_NOT_REACHED();
         return { };
     }
-    ASSERT_NOT_REACHED();
-    return { };
 }
 
 std::optional<RTCRtpCapabilities>& LibWebRTCProvider::audioEncodingCapabilities()
@@ -576,20 +562,6 @@ std::optional<RTCRtpCodecCapability> LibWebRTCProvider::codecCapability(const Co
     }
     return { };
 }
-
-#if !PLATFORM(COCOA)
-// FIXME: Implement these routines.
-static std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&)
-{
-    return { };
-}
-
-static bool isVPSoftwareDecoderSmooth(const VideoConfiguration&)
-{
-    return true;
-}
-#endif // !PLATFORM(COCOA)
-
 #endif // USE(LIBWEBRTC)
 
 void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&& configuration, DecodingConfigurationCallback&& callback)
@@ -607,23 +579,17 @@ void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&&
             callback({ });
             return;
         }
+        info.supported = true;
+#if PLATFORM(COCOA)
         auto containerType = contentType.containerType();
-        if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s)) {
+        if (containerType == "video/vp8")
             info.powerEfficient = false;
-            info.smooth = isVPSoftwareDecoderSmooth(*info.supportedConfiguration.video);
-        } else if (equalLettersIgnoringASCIICase(containerType, "video/vp9"_s)) {
-            auto decodingInfo = computeVPParameters(*info.supportedConfiguration.video);
-            if (decodingInfo && !decodingInfo->supported && isSupportingVP9VTB()) {
-                callback({ });
-                return;
-            }
-            info.powerEfficient = decodingInfo ? decodingInfo->powerEfficient : true;
-            info.smooth = decodingInfo ? decodingInfo->smooth : isVPSoftwareDecoderSmooth(*info.supportedConfiguration.video);
-        } else {
-            // FIXME: Provide more granular H.264 decoder information.
+        else if (containerType == "video/vp9")
+            info.powerEfficient = isSupportingVP9VTB();
+        else
             info.powerEfficient = true;
-            info.smooth = true;
-        }
+        info.smooth = info.powerEfficient;
+#endif
     }
     if (info.supportedConfiguration.audio) {
         ContentType contentType { info.supportedConfiguration.audio->contentType };
@@ -632,8 +598,8 @@ void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&&
             callback({ });
             return;
         }
+        info.supported = true;
     }
-    info.supported = true;
     callback(WTFMove(info));
 #else
     UNUSED_PARAM(configuration);
@@ -659,15 +625,13 @@ void LibWebRTCProvider::createEncodingConfiguration(MediaEncodingConfiguration&&
         info.supported = true;
 #if PLATFORM(COCOA)
         auto containerType = contentType.containerType();
-        if (equalLettersIgnoringASCIICase(containerType, "video/vp8"_s) || equalLettersIgnoringASCIICase(containerType, "video/vp9"_s)) {
+        if (containerType == "video/vp8")
             info.powerEfficient = false;
-            // FIXME: Provide more granular VPX encoder smoothness.
-            info.smooth = false;
-        } else {
-            // FIXME: Provide more granular H.264 encoder information.
+        else if (containerType == "video/vp9")
+            info.powerEfficient = isSupportingVP9VTB();
+        else
             info.powerEfficient = true;
-            info.smooth = true;
-        }
+        info.smooth = info.powerEfficient;
 #endif
     }
     if (info.supportedConfiguration.audio) {

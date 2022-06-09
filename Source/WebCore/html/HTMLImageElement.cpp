@@ -28,10 +28,8 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "CommonAtomStrings.h"
 #include "Editor.h"
 #include "ElementIterator.h"
-#include "ElementRareData.h"
 #include "EventLoop.h"
 #include "EventNames.h"
 #include "FrameView.h"
@@ -193,14 +191,6 @@ void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidat
         downcast<RenderImage>(*renderer()).setImageDevicePixelRatio(m_imageDevicePixelRatio);
 }
 
-static String extractMIMETypeFromTypeAttributeForLookup(const String& typeAttribute)
-{
-    auto semicolonIndex = typeAttribute.find(';');
-    if (semicolonIndex == notFound)
-        return stripLeadingAndTrailingHTMLSpaces(typeAttribute);
-    return StringView(typeAttribute).left(semicolonIndex).stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toStringWithoutCopying();
-}
-
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 {
     RefPtr picture = pictureElement();
@@ -220,13 +210,15 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 
         auto& typeAttribute = source.attributeWithoutSynchronization(typeAttr);
         if (!typeAttribute.isNull()) {
-            auto type = extractMIMETypeFromTypeAttributeForLookup(typeAttribute);
+            String type = typeAttribute.string();
+            type.truncate(type.find(';'));
+            type = stripLeadingAndTrailingHTMLSpaces(type);
             if (!type.isEmpty() && !MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(type))
                 continue;
         }
 
         RefPtr documentElement = document().documentElement();
-        MediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
+        MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
         auto* queries = source.parsedMediaAttribute(document());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
 
@@ -250,7 +242,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 {
     RefPtr documentElement = document().documentElement();
-    MediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
+    MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
 
     if (!evaluator.evaluateForChanges(m_mediaQueryDynamicResults))
         return;
@@ -281,7 +273,7 @@ void HTMLImageElement::selectImageSource(RelevantMutation relevantMutation)
 
 bool HTMLImageElement::hasLazyLoadableAttributeValue(const AtomString& attributeValue)
 {
-    return equalLettersIgnoringASCIICase(attributeValue, "lazy"_s);
+    return equalLettersIgnoringASCIICase(attributeValue, "lazy");
 }
 
 enum CrossOriginState { NotSet, UseCredentials, Anonymous };
@@ -289,7 +281,7 @@ static CrossOriginState parseCrossoriginState(const AtomString& crossoriginValue
 {
     if (crossoriginValue.isNull())
         return NotSet;
-    return equalLettersIgnoringASCIICase(crossoriginValue, "use-credentials"_s) ? UseCredentials : Anonymous;
+    return equalIgnoringASCIICase(crossoriginValue, "use-credentials") ? UseCredentials : Anonymous;
 }
 
 void HTMLImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)
@@ -328,8 +320,8 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomStrin
         if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeOperator::SourceOver;
 #if ENABLE(SERVICE_CONTROLS)
-    } else if (isImageMenuEnabled()) {
-        ImageControlsMac::updateImageControls(*this);
+    } else if (m_imageMenuEnabled) {
+        updateImageControls();
 #endif
     } else if (name == loadingAttr) {
         // No action needed for eager to lazy transition.
@@ -400,7 +392,7 @@ void HTMLImageElement::didAttachRenderers()
         return;
 
 #if ENABLE(SERVICE_CONTROLS)
-    ImageControlsMac::updateImageControls(*this);
+    updateImageControls();
 #endif
 
     auto& renderImage = downcast<RenderImage>(*renderer());
@@ -623,7 +615,7 @@ URL HTMLImageElement::src() const
     return document().completeURL(attributeWithoutSynchronization(srcAttr));
 }
 
-void HTMLImageElement::setSrc(const AtomString& value)
+void HTMLImageElement::setSrc(const String& value)
 {
     setAttributeWithoutSynchronization(srcAttr, value);
 }
@@ -660,7 +652,7 @@ bool HTMLImageElement::complete() const
     return m_imageLoader->imageComplete();
 }
 
-void HTMLImageElement::setDecoding(AtomString&& decodingMode)
+void HTMLImageElement::setDecoding(String&& decodingMode)
 {
     setAttributeWithoutSynchronization(decodingAttr, WTFMove(decodingMode));
 }
@@ -675,15 +667,15 @@ String HTMLImageElement::decoding() const
     case DecodingMode::Auto:
         break;
     }
-    return autoAtom();
+    return "auto"_s;
 }
 
 DecodingMode HTMLImageElement::decodingMode() const
 {
     const AtomString& decodingMode = attributeWithoutSynchronization(decodingAttr);
-    if (equalLettersIgnoringASCIICase(decodingMode, "sync"_s))
+    if (equalLettersIgnoringASCIICase(decodingMode, "sync"))
         return DecodingMode::Synchronous;
-    if (equalLettersIgnoringASCIICase(decodingMode, "async"_s))
+    if (equalLettersIgnoringASCIICase(decodingMode, "async"))
         return DecodingMode::Asynchronous;
     return DecodingMode::Auto;
 }
@@ -710,6 +702,8 @@ void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& new
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     if (RefPtr element = pictureElement())
         element->sourcesChanged();
+    else if (hasAttribute(srcAttr) || hasAttribute(srcsetAttr))
+        selectImageSource(RelevantMutation::Yes);
 }
 
 bool HTMLImageElement::isServerMap() const
@@ -756,7 +750,7 @@ void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachm
     attachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone, true);
     ensureUserAgentShadowRoot().appendChild(WTFMove(attachment));
 #if ENABLE(SERVICE_CONTROLS)
-    setImageMenuEnabled(true);
+    m_imageMenuEnabled = true;
 #endif
 }
 
@@ -782,20 +776,63 @@ const String& HTMLImageElement::attachmentIdentifier() const
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #if ENABLE(SERVICE_CONTROLS)
+void HTMLImageElement::updateImageControls()
+{
+    // If this image element is inside a shadow tree then it is part of an image control.
+    if (isInShadowTree())
+        return;
+    if (!document().settings().imageControlsEnabled())
+        return;
+    document().eventLoop().queueTask(TaskSource::InternalAsyncTask, [this, protectedThis = Ref { *this }] {
+        bool hasControls = hasImageControls();
+        if (!m_imageMenuEnabled && hasControls)
+            destroyImageControls();
+        else if (m_imageMenuEnabled && !hasControls)
+            tryCreateImageControls();
+    });
+}
+
+void HTMLImageElement::tryCreateImageControls()
+{
+    ASSERT(m_imageMenuEnabled);
+    ASSERT(!hasImageControls());
+    ImageControlsMac::createImageControls(*this);
+}
+
+void HTMLImageElement::destroyImageControls()
+{
+    auto shadowRoot = userAgentShadowRoot();
+    if (!shadowRoot)
+        return;
+    if (RefPtr<Node> node = shadowRoot->firstChild()) {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ImageControlsMac::hasControls(downcast<HTMLElement>(*node)));
+        shadowRoot->removeChild(*node);
+    }
+    auto* renderObject = renderer();
+    if (!renderObject)
+        return;
+    downcast<RenderImage>(*renderObject).setHasShadowControls(false);
+}
+
+bool HTMLImageElement::hasImageControls() const
+{
+    return ImageControlsMac::hasControls(*this);
+}
+
 bool HTMLImageElement::childShouldCreateRenderer(const Node& child) const
 {
     return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
 }
-#endif
+#endif // ENABLE(SERVICE_CONTROLS)
 
 #if PLATFORM(IOS_FAMILY)
 // FIXME: We should find a better place for the touch callout logic. See rdar://problem/48937767.
-bool HTMLImageElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
+bool HTMLImageElement::willRespondToMouseClickEvents()
 {
     auto renderer = this->renderer();
     if (!renderer || renderer->style().touchCalloutEnabled())
         return true;
-    return HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
+    return HTMLElement::willRespondToMouseClickEvents();
 }
 #endif
 
@@ -852,8 +889,10 @@ size_t HTMLImageElement::pendingDecodePromisesCountForTesting() const
 
 const AtomString& HTMLImageElement::loadingForBindings() const
 {
+    static MainThreadNeverDestroyed<const AtomString> eager("eager", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> lazy("lazy", AtomString::ConstructFromLiteral);
     auto& attributeValue = attributeWithoutSynchronization(HTMLNames::loadingAttr);
-    return hasLazyLoadableAttributeValue(attributeValue) ? lazyAtom() : eagerAtom();
+    return hasLazyLoadableAttributeValue(attributeValue) ? lazy : eager;
 }
 
 void HTMLImageElement::setLoadingForBindings(const AtomString& value)
@@ -907,19 +946,6 @@ void HTMLImageElement::invalidateAttributeMapping()
 {
     ensureUniqueElementData().setPresentationalHintStyleIsDirty(true);
     invalidateStyle();
-}
-
-Ref<Element> HTMLImageElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
-{
-    auto clone = create(targetDocument);
-#if ENABLE(ATTACHMENT_ELEMENT)
-    if (auto attachment = attachmentElement()) {
-        auto attachmentClone = attachment->cloneElementWithoutChildren(targetDocument);
-        RELEASE_ASSERT(is<HTMLAttachmentElement>(attachmentClone));
-        clone->setAttachmentElement(downcast<HTMLAttachmentElement>(attachmentClone.get()));
-    }
-#endif
-    return clone;
 }
 
 }

@@ -76,27 +76,19 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
 
     _populateResourceTreeOutline()
     {
-        function createHighlightedTitleFragment(title, searchString, highlightTextRanges)
+        function createHighlightedTitleFragment(title, highlightTextRanges)
         {
-            let shift = searchString.indexOf(title.toLowerCase());
-            console.assert(shift >= 0);
-
             let titleFragment = document.createDocumentFragment();
             let lastIndex = 0;
             for (let textRange of highlightTextRanges) {
-                let end = textRange.endColumn - shift;
-                if (end >= 0) {
-                    let start = textRange.startColumn - shift;
-                    if (start > lastIndex)
-                        titleFragment.append(title.substring(lastIndex, start));
+                if (textRange.startColumn > lastIndex)
+                    titleFragment.append(title.substring(lastIndex, textRange.startColumn));
 
-                    let highlightSpan = document.createElement("span");
-                    highlightSpan.classList.add("highlighted");
-                    highlightSpan.append(title.substring(start, end));
-                    titleFragment.append(highlightSpan);
-                }
-
-                lastIndex = end;
+                let highlightSpan = document.createElement("span");
+                highlightSpan.classList.add("highlighted");
+                highlightSpan.append(title.substring(textRange.startColumn, textRange.endColumn));
+                titleFragment.append(highlightSpan);
+                lastIndex = textRange.endColumn;
             }
 
             if (lastIndex < title.length)
@@ -130,7 +122,7 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
             if (!treeElement)
                 continue;
 
-            treeElement.mainTitle = createHighlightedTitleFragment(resource.displayName, result.searchString, result.matchingTextRanges);
+            treeElement.mainTitle = createHighlightedTitleFragment(resource.displayName, result.matchingTextRanges);
 
             if (resource instanceof WI.LocalResource && resource.localResourceOverride)
                 treeElement.subtitle = WI.UIString("Local Override");

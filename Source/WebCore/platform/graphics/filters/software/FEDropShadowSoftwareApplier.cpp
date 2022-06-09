@@ -65,8 +65,9 @@ bool FEDropShadowSoftwareApplier::apply(const Filter& filter, const FilterImageV
     if (!pixelBuffer)
         return false;
 
-    contextShadow.blurLayerImage(pixelBuffer->bytes(), pixelBuffer->size(), 4 * pixelBuffer->size().width());
-
+    auto& sourcePixelArray = pixelBuffer->data();
+    contextShadow.blurLayerImage(sourcePixelArray.data(), pixelBuffer->size(), 4 * pixelBuffer->size().width());
+    
     resultImage->putPixelBuffer(*pixelBuffer, shadowArea);
 
     resultContext.setCompositeOperation(CompositeOperator::SourceIn);

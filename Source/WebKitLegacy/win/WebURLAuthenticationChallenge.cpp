@@ -46,13 +46,13 @@ WebURLAuthenticationChallenge::WebURLAuthenticationChallenge(const Authenticatio
     , m_sender(sender)
 {
     gClassCount++;
-    gClassNameCount().add("WebURLAuthenticationChallenge"_s);
+    gClassNameCount().add("WebURLAuthenticationChallenge");
 }
 
 WebURLAuthenticationChallenge::~WebURLAuthenticationChallenge()
 {
     gClassCount--;
-    gClassNameCount().remove("WebURLAuthenticationChallenge"_s);
+    gClassNameCount().remove("WebURLAuthenticationChallenge");
 }
 
 WebURLAuthenticationChallenge* WebURLAuthenticationChallenge::createInstance(const AuthenticationChallenge& authenticationChallenge)

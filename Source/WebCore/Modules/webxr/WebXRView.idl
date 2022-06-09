@@ -25,11 +25,12 @@
 
 // https://immersive-web.github.io/webxr/#xrview
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
     JSCustomMarkFunction,
+    ImplementationLacksVTable,
     InterfaceName=XRView
 ] interface WebXRView {
     readonly attribute XREye eye;

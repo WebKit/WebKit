@@ -94,7 +94,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 #else
         auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), static_cast<DDHighlightStyle>(DDHighlightStyleBubbleStandard) | static_cast<DDHighlightStyle>(DDHighlightStyleStandardIconArrow), YES, NSWritingDirectionNatural, NO, YES));
 #endif
-        m_dataDetectorContainersAndHighlights.uncheckedAppend({ element, DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
+        m_dataDetectorContainersAndHighlights.append({ element, DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
     }
 }
 
@@ -181,20 +181,6 @@ void ImageOverlayController::clearDataDetectorHighlights()
     m_hostElementForDataDetectors = nullptr;
     m_dataDetectorContainersAndHighlights.clear();
     m_activeDataDetectorHighlight = nullptr;
-}
-
-void ImageOverlayController::textRecognitionResultsChanged(HTMLElement& element)
-{
-    if (m_hostElementForDataDetectors != &element)
-        return;
-
-    clearDataDetectorHighlights();
-    uninstallPageOverlayIfNeeded();
-}
-
-bool ImageOverlayController::hasActiveDataDetectorHighlightForTesting() const
-{
-    return !!m_activeDataDetectorHighlight;
 }
 
 void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* elementUnderMouse)

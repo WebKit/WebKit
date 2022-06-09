@@ -192,9 +192,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
         ASSERT(messageBody);
         auto messageBodyDictionary = dictionaryValue(messageBody);
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        m_accessibilityIsolatedTreeMode = booleanValue(messageBodyDictionary, "IsAccessibilityIsolatedTreeEnabled");
-#endif
         WKBundlePagePostMessage(page, toWK("Ack").get(), toWK("BeginTest").get());
         beginTesting(messageBodyDictionary, BegingTestingMode::New);
         return;
@@ -208,6 +205,10 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         if (booleanValue(messageBodyDictionary, "ShouldGC"))
             WKBundleGarbageCollectJavaScriptObjects(m_bundle.get());
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        m_accessibilityIsolatedTreeMode = booleanValue(messageBodyDictionary, "AccessibilityIsolatedTree");
+#endif
+        
         auto allowedHostsValue = value(messageBodyDictionary, "AllowedHosts");
         if (allowedHostsValue && WKGetTypeID(allowedHostsValue) == WKArrayGetTypeID()) {
             m_allowedHosts.clear();
@@ -510,7 +511,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_gcController = GCController::create();
     m_eventSendingController = EventSendingController::create();
     m_textInputController = TextInputController::create();
-#if ENABLE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY)
     m_accessibilityController = AccessibilityController::create();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_accessibilityController->setIsolatedTreeMode(m_accessibilityIsolatedTreeMode);
@@ -539,6 +540,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     if (testingMode != BegingTestingMode::New)
         return;
 
+    WKBundleClearAllDatabases(m_bundle.get());
     WKBundlePageClearApplicationCache(page()->page());
     WKBundleResetOriginAccessAllowLists(m_bundle.get());
     clearResourceLoadStatistics();
@@ -557,7 +559,7 @@ void InjectedBundle::done()
     page()->stopLoading();
     setTopLoadingFrame(0);
 
-#if ENABLE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY)
     m_accessibilityController->resetToConsistentState();
 #endif
 
@@ -597,7 +599,7 @@ void InjectedBundle::dumpToStdErr(const String& output)
     postPageMessage("DumpToStdErr", string ? string->data() : "Out of memory\n");
 }
 
-void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTestOutput)
+void InjectedBundle::outputText(const String& output, IsFinalTestOutput isFinalTestOutput)
 {
     if (m_state != Testing)
         return;
@@ -669,11 +671,6 @@ void InjectedBundle::postSetViewSize(double width, double height)
 void InjectedBundle::postSimulateWebNotificationClick(WKDataRef notificationID)
 {
     postPageMessage("SimulateWebNotificationClick", notificationID);
-}
-
-void InjectedBundle::postSimulateWebNotificationClickForServiceWorkerNotifications()
-{
-    postPageMessage("SimulateWebNotificationClickForServiceWorkerNotifications");
 }
 
 void InjectedBundle::postSetAddsVisitedLinks(bool addsVisitedLinks)

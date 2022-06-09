@@ -223,31 +223,12 @@ String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
 
 MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(TextTrack* track) const
 {
-    auto legibleType = MediaSelectionOption::LegibleType::Regular;
+    auto type = MediaSelectionOption::Type::Regular;
     if (track == &TextTrack::captionMenuOffItem())
-        legibleType = MediaSelectionOption::LegibleType::LegibleOff;
+        type = MediaSelectionOption::Type::LegibleOff;
     else if (track == &TextTrack::captionMenuAutomaticItem())
-        legibleType = MediaSelectionOption::LegibleType::LegibleAuto;
-
-    auto mediaType = MediaSelectionOption::MediaType::Unknown;
-    switch (track->kind()) {
-    case TextTrack::Kind::Forced:
-    case TextTrack::Kind::Descriptions:
-    case TextTrack::Kind::Subtitles:
-        mediaType = MediaSelectionOption::MediaType::Subtitles;
-        break;
-    case TextTrack::Kind::Captions:
-        mediaType = MediaSelectionOption::MediaType::Captions;
-        break;
-    case TextTrack::Kind::Metadata:
-        mediaType = MediaSelectionOption::MediaType::Metadata;
-        break;
-    case TextTrack::Kind::Chapters:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return { mediaType, displayNameForTrack(track), legibleType };
+        type = MediaSelectionOption::Type::LegibleAuto;
+    return { displayNameForTrack(track), type };
 }
     
 Vector<RefPtr<TextTrack>> CaptionUserPreferences::sortedTrackListForMenu(TextTrackList* trackList, HashSet<TextTrack::Kind> kinds)
@@ -292,7 +273,7 @@ String CaptionUserPreferences::displayNameForTrack(AudioTrack* track) const
 
 MediaSelectionOption CaptionUserPreferences::mediaSelectionOptionForTrack(AudioTrack* track) const
 {
-    return { MediaSelectionOption::MediaType::Audio, displayNameForTrack(track), MediaSelectionOption::LegibleType::Regular };
+    return { displayNameForTrack(track), MediaSelectionOption::Type::Regular };
 }
 
 Vector<RefPtr<AudioTrack>> CaptionUserPreferences::sortedTrackListForMenu(AudioTrackList* trackList)

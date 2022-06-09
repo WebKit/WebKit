@@ -28,11 +28,12 @@
 #include "config.h"
 #include "AccessibilityNotificationHandler.h"
 
-#if USE(ATSPI)
+#if HAVE(ACCESSIBILITY) && USE(ATSPI)
 #include "InjectedBundlePage.h"
 #include "JSWrapper.h"
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/AccessibilityObjectAtspi.h>
+#include <WebCore/AccessibilityRootAtspi.h>
 #include <WebKit/WKBundleFrame.h>
 #include <WebKit/WKBundlePage.h>
 #include <WebKit/WKBundlePagePrivate.h>
@@ -43,11 +44,13 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
     : m_callback(callback)
     , m_element(element)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueProtect(jsContext, m_callback);
 
-    WebCore::AccessibilityAtspi::singleton().addNotificationObserver(this, [this](WebCore::AccessibilityObjectAtspi& element, const char* notificationName, WebCore::AccessibilityAtspi::NotificationObserverParameter parameter) {
+    auto& atspi = m_element ? m_element->root().atspi() : static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(page))->root().atspi();
+    atspi.addNotificationObserver(this, [this](WebCore::AccessibilityObjectAtspi& element, const char* notificationName, WebCore::AccessibilityAtspi::NotificationObserverParameter parameter) {
         if (m_element && m_element.get() != &element)
             return;
 
@@ -92,13 +95,15 @@ AccessibilityNotificationHandler::AccessibilityNotificationHandler(JSValueRef ca
 
 AccessibilityNotificationHandler::~AccessibilityNotificationHandler()
 {
-    WebCore::AccessibilityAtspi::singleton().removeNotificationObserver(this);
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    auto& atspi = m_element ? m_element->root().atspi() : static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(page))->root().atspi();
+    atspi.removeNotificationObserver(this);
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueUnprotect(jsContext, m_callback);
 }
 
 } // namespace WTR
 
-#endif // USE(ATSPI)
+#endif // HAVE(ACCESSIBILITY) && USE(ATSPI)

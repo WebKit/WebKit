@@ -51,7 +51,7 @@ JSValue LazyJSValue::getValue(VM& vm) const
     case SingleCharacterString:
         return jsSingleCharacterString(vm, u.character);
     case KnownStringImpl:
-        return jsString(vm, String { u.stringImpl });
+        return jsString(vm, u.stringImpl);
     case NewStringImpl:
         return jsString(vm, AtomStringImpl::add(u.stringImpl));
     }
@@ -88,7 +88,7 @@ static TriState equalToStringImpl(JSValue value, StringImpl* stringImpl)
     return triState(WTF::equal(stringImpl, string));
 }
 
-const StringImpl* LazyJSValue::tryGetStringImpl() const
+const StringImpl* LazyJSValue::tryGetStringImpl(VM& vm) const
 {
     switch (m_kind) {
     case KnownStringImpl:
@@ -96,7 +96,7 @@ const StringImpl* LazyJSValue::tryGetStringImpl() const
         return u.stringImpl;
 
     case KnownValue:
-        if (JSString* string = value()->dynamicCast<JSString*>())
+        if (JSString* string = value()->dynamicCast<JSString*>(vm))
             return string->tryGetValueImpl();
         return nullptr;
 
@@ -135,7 +135,7 @@ String LazyJSValue::tryGetString(Graph& graph) const
 
     case KnownValue:
     case KnownStringImpl:
-        if (const StringImpl* string = tryGetStringImpl()) {
+        if (const StringImpl* string = tryGetStringImpl(graph.m_vm)) {
             unsigned ginormousStringLength = 10000;
             if (string->length() > ginormousStringLength)
                 return String();

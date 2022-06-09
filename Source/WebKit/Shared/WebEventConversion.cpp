@@ -111,8 +111,6 @@ public:
 #if PLATFORM(MAC)
         m_eventNumber = webEvent.eventNumber();
         m_menuTypeForEvent = webEvent.menuTypeForEvent();
-#elif PLATFORM(GTK)
-        m_isTouchEvent = webEvent.isTouchEvent();
 #endif
         m_modifierFlags = 0;
         if (webEvent.shiftKey())

@@ -34,7 +34,6 @@
 #import "TestRunnerWKWebView.h"
 #import "TextInputSPI.h"
 #import "UIKitSPI.h"
-#import "UIPasteboardConsistencyEnforcer.h"
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -110,10 +109,8 @@ void TestController::platformInitialize(const Options& options)
     auto center = CFNotificationCenterGetLocalCenter();
     CFNotificationCenterAddObserver(center, this, handleKeyboardWillHideNotification, (CFStringRef)UIKeyboardWillHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, handleKeyboardDidHideNotification, (CFStringRef)UIKeyboardDidHideNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CFNotificationCenterAddObserver(center, this, handleMenuWillHideNotification, (CFStringRef)UIMenuControllerWillHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, handleMenuDidHideNotification, (CFStringRef)UIMenuControllerDidHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
-    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void TestController::platformDestroy()
@@ -123,10 +120,8 @@ void TestController::platformDestroy()
     auto center = CFNotificationCenterGetLocalCenter();
     CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIKeyboardWillHideNotification, nullptr);
     CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIKeyboardDidHideNotification, nullptr);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIMenuControllerWillHideMenuNotification, nullptr);
     CFNotificationCenterRemoveObserver(center, this, (CFStringRef)UIMenuControllerDidHideMenuNotification, nullptr);
-    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 void TestController::initializeInjectedBundlePath()
@@ -159,10 +154,9 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     cocoaResetStateToConsistentValues(options);
 
     [UIKeyboardImpl.activeInstance setCorrectionLearningAllowed:NO];
-    [pasteboardConsistencyEnforcer() clearPasteboard];
+    [UIPasteboard generalPasteboard].items = @[ ];
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
-    [[UIScreen mainScreen] _setScale:2.0];
 
     // Ensures that only the UCB is on-screen when showing the keyboard, if the hardware keyboard is attached.
     TIPreferencesController *textInputPreferences = [getTIPreferencesControllerClass() sharedPreferencesController];
@@ -388,13 +382,6 @@ void TestController::setKeyboardInputModeIdentifier(const String& identifier)
     m_inputModeSwizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(currentInputModeInPreference), reinterpret_cast<IMP>(swizzleCurrentInputMode)));
     m_inputModeSwizzlers.uncheckedAppend(makeUnique<InstanceMethodSwizzler>(controllerClass, @selector(activeInputModes), reinterpret_cast<IMP>(swizzleActiveInputModes)));
     [UIKeyboardImpl.sharedInstance prepareKeyboardInputModeFromPreferences:nil];
-}
-
-UIPasteboardConsistencyEnforcer *TestController::pasteboardConsistencyEnforcer()
-{
-    if (!m_pasteboardConsistencyEnforcer)
-        m_pasteboardConsistencyEnforcer = adoptNS([[UIPasteboardConsistencyEnforcer alloc] initWithPasteboardName:UIPasteboardNameGeneral]);
-    return m_pasteboardConsistencyEnforcer.get();
 }
 
 } // namespace WTR

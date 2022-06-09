@@ -714,7 +714,7 @@ bool EventHandler::tryToBeginDragAtPoint(const IntPoint& clientPosition, const I
     if (!document)
         return false;
 
-    SetForScope shouldAllowMouseDownToStartDrag { m_shouldAllowMouseDownToStartDrag, true };
+    SetForScope<bool> shouldAllowMouseDownToStartDrag { m_shouldAllowMouseDownToStartDrag, true };
 
     document->updateLayoutIgnorePendingStylesheets();
 

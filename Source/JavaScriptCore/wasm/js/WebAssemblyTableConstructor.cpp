@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyTableConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(WebAssemblyTableConstructor) };
+const ClassInfo WebAssemblyTableConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(WebAssemblyTableConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyTable);
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyTable);
@@ -69,7 +69,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
 
     Wasm::TableElementType type;
     {
-        Identifier elementIdent = Identifier::fromString(vm, "element"_s);
+        Identifier elementIdent = Identifier::fromString(vm, "element");
         JSValue elementValue = memoryDescriptor->get(globalObject, elementIdent);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String elementString = elementValue.toWTFString(globalObject);
@@ -82,14 +82,14 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s);
     }
 
-    Identifier initialIdent = Identifier::fromString(vm, "initial"_s);
+    Identifier initialIdent = Identifier::fromString(vm, "initial");
     JSValue initialSizeValue = memoryDescriptor->get(globalObject, initialIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    Identifier minimumIdent = Identifier::fromString(vm, "minimum"_s);
+    Identifier minimumIdent = Identifier::fromString(vm, "minimum");
     JSValue minSizeValue = memoryDescriptor->get(globalObject, minimumIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (!initialSizeValue.isUndefined() && !minSizeValue.isUndefined())
-        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table 'initial' and 'minimum' options are specified at the same time"_s);
+        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table 'initial' and 'minimum' options are specified at the same time");
 
     if (!minSizeValue.isUndefined())
         initialSizeValue = minSizeValue;
@@ -100,7 +100,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
     // https://webidl.spec.whatwg.org/#idl-dictionaries
     std::optional<uint32_t> maximum;
-    Identifier maximumIdent = Identifier::fromString(vm, "maximum"_s);
+    Identifier maximumIdent = Identifier::fromString(vm, "maximum");
     JSValue maxSizeValue = memoryDescriptor->get(globalObject, maximumIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (!maxSizeValue.isUndefined()) {
@@ -123,7 +123,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
         : callFrame->uncheckedArgument(1);
     WebAssemblyFunction* wasmFunction = nullptr;
     WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-    if (jsWebAssemblyTable->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(defaultValue, wasmFunction, wasmWrapperFunction))
+    if (jsWebAssemblyTable->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(vm, defaultValue, wasmFunction, wasmWrapperFunction))
         return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.constructor expects the second argument to be null or an instance of WebAssembly.Function"_s);
     for (uint32_t tableIndex = 0; tableIndex < initial; ++tableIndex) {
         if (jsWebAssemblyTable->table()->isFuncrefTable() && wasmFunction)

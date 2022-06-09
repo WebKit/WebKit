@@ -69,7 +69,6 @@ class WebGLTransformFeedback;
 class WebGLUniformLocation;
 class WebGLVertexArrayObject;
 struct DOMMatrix2DInit;
-struct DOMPointInit;
 struct ImageDataSettings;
 enum class RecordingSwizzleType : int;
 enum class CanvasDirection;
@@ -143,7 +142,6 @@ enum ImageSmoothingQuality;
     macro(CanvasImageSource&) \
     macro(CanvasLineCap) \
     macro(CanvasLineJoin) \
-    macro(CanvasPath::RadiusVariant&) \
     macro(CanvasRenderingContext2DBase::StyleVariant&) \
     macro(CanvasTextAlign) \
     macro(CanvasTextBaseline) \
@@ -174,7 +172,6 @@ enum ImageSmoothingQuality;
     macro(Vector<double>&) \
     macro(Vector<uint32_t>&) \
     macro(Vector<int32_t>&) \
-    macro(Vector<CanvasPath::RadiusVariant>&) \
     macro(double) \
     macro(float) \
     macro(uint64_t) \

@@ -166,9 +166,9 @@ static CachedResourceHandle<CachedResource> createResource(CachedResourceRequest
     case CachedResource::Type::Script:
         return new CachedScript(WTFMove(request), resource.sessionID(), resource.cookieJar());
     case CachedResource::Type::SVGDocumentResource:
-        return new CachedSVGDocument(WTFMove(request), downcast<CachedSVGDocument>(resource));
+        return new CachedSVGDocument(WTFMove(request), static_cast<CachedSVGDocument&>(resource));
     case CachedResource::Type::SVGFontResource:
-        return new CachedSVGFont(WTFMove(request), downcast<CachedSVGFont>(resource));
+        return new CachedSVGFont(WTFMove(request), static_cast<CachedSVGFont&>(resource));
     case CachedResource::Type::FontResource:
         return new CachedFont(WTFMove(request), resource.sessionID(), resource.cookieJar());
     case CachedResource::Type::Beacon:
@@ -790,13 +790,11 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
 
 void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, CachedResource::Type type, CachedResourceRequest& request)
 {
-    // Implementing steps 11 to 19 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022.
+    // Implementing steps 7 to 12 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
 
     // FIXME: We should reconcile handling of MainResource with other resources.
     if (type != CachedResource::Type::MainResource)
         request.updateReferrerAndOriginHeaders(frameLoader);
-    if (frameLoader.frame().settings().fetchMetadataEnabled())
-        request.updateFetchMetadataHeaders();
     request.updateUserAgentHeader(frameLoader);
 
     request.updateAccordingCacheMode();
@@ -891,7 +889,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     if (request.options().destination == FetchOptions::Destination::Document || request.options().destination == FetchOptions::Destination::Iframe) {
         // FIXME: Identify HSTS cases and avoid adding the header. <https://bugs.webkit.org/show_bug.cgi?id=157885>
-        if (!url.protocolIs("https"_s))
+        if (!url.protocolIs("https"))
             request.resourceRequest().setHTTPHeaderField(HTTPHeaderName::UpgradeInsecureRequests, "1"_s);
     }
 
@@ -1094,7 +1092,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     }
 
     if (document() && !document()->loadEventFinished() && !resource->resourceRequest().url().protocolIsData())
-        m_validatedURLs.add(resource->resourceRequest().url());
+        m_validatedURLs.add(resource->resourceRequest().url().string());
 
     ASSERT(resource->url() == url.string());
     m_documentResources.set(resource->url().string(), resource);
@@ -1187,20 +1185,6 @@ static void logResourceRevalidationDecision(CachedResource::RevalidationDecision
     }
 }
 
-#if ENABLE(SERVICE_WORKER)
-static inline bool mustReloadFromServiceWorkerOptions(const ResourceLoaderOptions& options, const ResourceLoaderOptions& cachedOptions)
-{
-    // FIXME: We should validate/specify this behavior.
-    if (options.serviceWorkerRegistrationIdentifier != cachedOptions.serviceWorkerRegistrationIdentifier)
-        return true;
-
-    if (options.serviceWorkersMode == cachedOptions.serviceWorkersMode)
-        return false;
-
-    return cachedOptions.mode == FetchOptions::Mode::Navigate || cachedOptions.destination == FetchOptions::Destination::Worker || cachedOptions.destination == FetchOptions::Destination::Sharedworker;
-}
-#endif
-
 CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, CachedResourceRequest& cachedResourceRequest, CachedResource* existingResource, ForPreload forPreload, ImageLoading imageLoading) const
 {
     auto& request = cachedResourceRequest.resourceRequest();
@@ -1215,8 +1199,9 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
 
 #if ENABLE(SERVICE_WORKER)
-    if (mustReloadFromServiceWorkerOptions(cachedResourceRequest.options(), existingResource->options())) {
-        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker may differ");
+    // FIXME: We should validate/specify this behavior.
+    if (cachedResourceRequest.options().serviceWorkerRegistrationIdentifier != existingResource->options().serviceWorkerRegistrationIdentifier) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker differs");
         return Reload;
     }
 #endif
@@ -1315,7 +1300,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     }
 
     // During the initial load, avoid loading the same resource multiple times for a single document, even if the cache policies would tell us to.
-    if (document() && !document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url()))
+    if (document() && !document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url().string()))
         return Use;
 
     // CachePolicy::Reload always reloads
@@ -1349,14 +1334,8 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // Check if the cache headers requires us to revalidate (cache expiration for example).
     if (revalidationDecision != CachedResource::RevalidationDecision::No) {
         // See if the resource has usable ETag or Last-modified headers.
-        if (existingResource->canUseCacheValidator()) {
-#if ENABLE(SERVICE_WORKER)
-            // Revalidating will mean exposing headers to the service worker, let's reload given the service worker already handled it.
-            if (cachedResourceRequest.options().serviceWorkerRegistrationIdentifier)
-                return Reload;
-#endif
+        if (existingResource->canUseCacheValidator())
             return Revalidate;
-        }
         
         // No, must reload.
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to missing cache validators.");
@@ -1530,7 +1509,7 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
 void CachedResourceLoader::notifyFinished(const CachedResource& resource)
 {
     if (isSVGImageCachedResource(&resource))
-        m_cachedSVGImagesURLs.add(resource.url());
+        m_cachedSVGImagesURLs.add(resource.url().string());
 }
 
 Vector<Ref<SVGImage>> CachedResourceLoader::allCachedSVGImages() const

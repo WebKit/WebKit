@@ -41,17 +41,22 @@ std::pair<TypeLocation*, bool> TypeLocationCache::getTypeLocation(GlobalVariable
     key.m_start = start;
     key.m_end = end;
 
-    auto result = m_locationMap.ensure(key, [&]{
+    bool isNewLocation = false;
+    if (m_locationMap.find(key) == m_locationMap.end()) {
         ASSERT(vm->typeProfiler());
-        auto* location = vm->typeProfiler()->nextTypeLocation();
+        TypeLocation* location = vm->typeProfiler()->nextTypeLocation();
         location->m_globalVariableID = globalVariableID;
         location->m_sourceID = sourceID;
         location->m_divotStart = start;
         location->m_divotEnd = end;
         location->m_globalTypeSet = WTFMove(globalTypeSet);
-        return location;
-    });
-    return std::pair { result.iterator->value, result.isNewEntry };
+
+        m_locationMap[key] = location;
+        isNewLocation = true;
+    }
+
+    TypeLocation* location = m_locationMap.find(key)->second;
+    return std::pair<TypeLocation*, bool>(location, isNewLocation);
 }
 
 } // namespace JSC

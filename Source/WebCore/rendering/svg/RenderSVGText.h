@@ -23,7 +23,6 @@
 
 #include "AffineTransform.h"
 #include "RenderSVGBlock.h"
-#include "SVGBoundingBoxComputation.h"
 #include "SVGTextLayoutAttributesBuilder.h"
 
 namespace WebCore {
@@ -43,10 +42,9 @@ public:
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
     void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
-    void setNeedsTextMetricsUpdate() { m_needsTextMetricsUpdate = true; }
-
-    // FIXME: [LBSE] Only needed for legacy SVG engine.
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
+    void setNeedsTextMetricsUpdate() { m_needsTextMetricsUpdate = true; }
+    FloatRect repaintRectInLocalCoordinates() const override;
 
     static RenderSVGText* locateRenderSVGTextAncestor(RenderObject&);
     static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject&);
@@ -60,56 +58,40 @@ public:
     void subtreeStyleDidChange(RenderSVGInlineText*);
     void subtreeTextDidChange(RenderSVGInlineText*);
 
-    FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
-    FloatRect strokeBoundingBox() const final;
-    FloatRect repaintRectInLocalCoordinates() const final;
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
-#endif
-    void updatePositionAndOverflow(const FloatRect&);
+    FloatRect objectBoundingBox() const override { return frameRect(); }
+    FloatRect strokeBoundingBox() const override;
 
 private:
     void graphicsElement() const = delete;
 
-    ASCIILiteral renderName() const override { return "RenderSVGText"_s; }
+    const char* renderName() const override { return "RenderSVGText"; }
     bool isSVGText() const override { return true; }
 
     void paint(PaintInfo&, const LayoutPoint&) override;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
-#endif
+    bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
-    bool requiresLayer() const override
-    {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (document().settings().layerBasedSVGEngineEnabled())
-            return true;
-#endif
-        return false;
-    }
-
+    bool requiresLayer() const override { return false; }
     void layout() override;
+
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
     void willBeDestroyed() override;
 
-    // FIXME: [LBSE] Begin code only needed for legacy SVG engine.
-    bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction) override;
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }
     AffineTransform localTransform() const override { return m_localTransform; }
-    // FIXME: [LBSE] End code only needed for legacy SVG engine.
+
+    RenderBlock* firstLineBlock() const override;
 
     bool shouldHandleSubtreeMutations() const;
 
-    bool m_needsReordering : 1 { false };
-    bool m_needsPositioningValuesUpdate : 1 { false };
-    bool m_needsTransformUpdate : 1 { true }; // FIXME: [LBSE] Only needed for legacy SVG engine.
-    bool m_needsTextMetricsUpdate : 1 { false };
-    AffineTransform m_localTransform; // FIXME: [LBSE] Only needed for legacy SVG engine.
+    bool m_needsReordering : 1;
+    bool m_needsPositioningValuesUpdate : 1;
+    bool m_needsTransformUpdate : 1;
+    bool m_needsTextMetricsUpdate : 1;
+    AffineTransform m_localTransform;
     SVGTextLayoutAttributesBuilder m_layoutAttributesBuilder;
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
-    FloatRect m_objectBoundingBox;
 };
 
 } // namespace WebCore

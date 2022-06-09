@@ -39,10 +39,10 @@ static ExceptionOr<JSC::JSValue> invokeWritableStreamFunction(JSC::JSGlobalObjec
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto function = globalObject.get(&globalObject, identifier);
-    ASSERT(function.isCallable());
+    ASSERT(function.isCallable(vm));
     scope.assertNoExceptionExceptTermination();
 
-    auto callData = JSC::getCallData(function);
+    auto callData = JSC::getCallData(vm, function);
 
     auto result = call(&globalObject, function, callData, JSC::jsUndefined(), arguments);
     RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });

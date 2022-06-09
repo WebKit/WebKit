@@ -70,17 +70,6 @@ struct Styleable {
 
     RenderElement* renderer() const;
 
-    std::unique_ptr<RenderStyle> computeAnimatedStyle() const;
-
-    // If possible, compute the visual extent of any transform animation using the given rect,
-    // returning the result in the rect. Return false if there is some transform animation but
-    // we were unable to cheaply compute its effect on the extent.
-    bool computeAnimationExtent(LayoutRect&) const;
-
-    bool isRunningAcceleratedTransformAnimation() const;
-
-    bool runningAnimationsAreAllAccelerated() const;
-
     KeyframeEffectStack* keyframeEffectStack() const
     {
         return element.keyframeEffectStack(pseudoId);
@@ -96,7 +85,7 @@ struct Styleable {
         return element.hasKeyframeEffects(pseudoId);
     }
 
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext) const
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext) const
     {
         return element.ensureKeyframeEffectStack(pseudoId).applyKeyframeEffects(targetStyle, previousLastStyleChangeEventStyle, resolutionContext);
     }

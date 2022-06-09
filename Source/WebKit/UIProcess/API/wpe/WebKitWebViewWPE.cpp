@@ -62,19 +62,15 @@ void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& comp
 
 /**
  * webkit_web_view_new:
- * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
+ * @backend: (transfer full): a #WebKitWebViewBackend
  *
- * Creates a new web view with a default configuration.
+ * Creates a new #WebKitWebView with the default #WebKitWebContext and
+ * no #WebKitUserContentManager associated with it.
+ * See also webkit_web_view_new_with_context(),
+ * webkit_web_view_new_with_user_content_manager(), and
+ * webkit_web_view_new_with_settings().
  *
- * The new view will use the default [class@WebContext] and will not
- * have an associated [class@UserContentManager].
- *
- * See also [id@webkit_web_view_new_with_context],
- * [id@webkit_web_view_new_with_user_content_manager]), and
- * [id@webkit_web_view_new_with_settings].
- *
- * Returns: The newly created web view.
+ * Returns: The newly created #WebKitWebView
  */
 WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
 {
@@ -88,19 +84,15 @@ WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
 
 /**
  * webkit_web_view_new_with_context:
- * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
- * @context: the web context the new [class@WebView] will use.
+ * @backend: (transfer full): a #WebKitWebViewBackend
+ * @context: the #WebKitWebContext to be used by the #WebKitWebView
  *
- * Creates a new web view with a given context.
+ * Creates a new #WebKitWebView with the given #WebKitWebContext and
+ * no #WebKitUserContentManager associated with it.
+ * See also webkit_web_view_new_with_user_content_manager() and
+ * webkit_web_view_new_with_settings().
  *
- * The new web view will use the given [class@WebContext] and will not have
- * an associated [class@UserContentManager].
- *
- * See also [id@webkit_web_view_new_with_user_content_manager] and
- * [id@webkit_web_view_new_with_settings].
- *
- * Returns: The newly created web view.
+ * Returns: The newly created #WebKitWebView
  */
 WebKitWebView* webkit_web_view_new_with_context(WebKitWebViewBackend* backend, WebKitWebContext* context)
 {
@@ -116,19 +108,21 @@ WebKitWebView* webkit_web_view_new_with_context(WebKitWebViewBackend* backend, W
 
 /**
  * webkit_web_view_new_with_related_view: (constructor)
- * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
- * @web_view: the related web view.
+ * @backend: (transfer full): a #WebKitWebViewBackend
+ * @web_view: the related #WebKitWebView
  *
- * Creates a new web view sharing the same configuration and web process as another.
+ * Creates a new #WebKitWebView sharing the same web process with @web_view.
+ * This method doesn't have any effect when %WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS
+ * process model is used, because a single web process is shared for all the web views in the
+ * same #WebKitWebContext. When using %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES process model,
+ * this method should always be used when creating the #WebKitWebView in the #WebKitWebView::create signal.
+ * You can also use this method to implement other process models based on %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES,
+ * like for example, sharing the same web process for all the views in the same security domain.
  *
- * A related view should always be set when creating a [class@WebView] in a handler
- * for the [signal@WebView::create] signal.
+ * The newly created #WebKitWebView will also have the same #WebKitUserContentManager
+ * and #WebKitSettings as @web_view.
  *
- * The new view will also have the same [class@UserContentManager] and
- * [class@Settings] as the related @web_view.
- *
- * Returns: (transfer full): The newly created web view.
+ * Returns: (transfer full): The newly created #WebKitWebView
  *
  * Since: 2.4
  */
@@ -147,16 +141,14 @@ WebKitWebView* webkit_web_view_new_with_related_view(WebKitWebViewBackend* backe
 
 /**
  * webkit_web_view_new_with_settings:
- * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
- * @settings: settings for the new view.
+ * @backend: (nullable) (transfer full): a #WebKitWebViewBackend, or %NULL to use the default
+ * @settings: a #WebKitSettings
  *
- * Creates a new web view with the given settings.
+ * Creates a new #WebKitWebView with the given #WebKitSettings.
+ * See also webkit_web_view_new_with_context(), and
+ * webkit_web_view_new_with_user_content_manager().
  *
- * See also [id@webkit_web_view_new_with_context], and
- * [id@webkit_web_view_new_with_user_content_manager].
- *
- * Returns: (transfer full): The newly created web view.
+ * Returns: The newly created #WebKitWebView
  *
  * Since: 2.6
  */
@@ -173,16 +165,14 @@ WebKitWebView* webkit_web_view_new_with_settings(WebKitWebViewBackend* backend, 
 
 /**
  * webkit_web_view_new_with_user_content_manager:
- * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
- * @user_content_manager: the user content manager for the new view.
+ * @backend: (transfer full): a #WebKitWebViewBackend
+ * @user_content_manager: a #WebKitUserContentManager.
  *
- * Creates a new web view with the given user content manager.
+ * Creates a new #WebKitWebView with the given #WebKitUserContentManager.
+ * The content loaded in the view may be affected by the content injected
+ * in the view by the user content manager.
  *
- * The content loaded in the new [class@WebView] may be affected by the
- * configuration of the given [class@UserContentManager].
- *
- * Returns: (transfer full): The newly created web view.
+ * Returns: The newly created #WebKitWebView
  *
  * Since: 2.6
  */
@@ -200,7 +190,7 @@ WebKitWebView* webkit_web_view_new_with_user_content_manager(WebKitWebViewBacken
 /**
  * webkit_web_view_set_background_color:
  * @web_view: a #WebKitWebView
- * @color: a #WebKitColor
+ * @backgroundColor: a #WebKitColor
  *
  * Sets the color that will be used to draw the @web_view background before
  * the actual contents are rendered. Note that if the web page loaded in @web_view
@@ -221,7 +211,7 @@ void webkit_web_view_set_background_color(WebKitWebView* webView, WebKitColor* b
 /**
  * webkit_web_view_get_background_color:
  * @web_view: a #WebKitWebView
- * @color: (out): a #WebKitColor to fill in with the background color
+ * @rgba: (out): a #WebKitColor to fill in with the background color
  *
  * Gets the color that is used to draw the @web_view background before the
  * actual contents are rendered. For more information see also

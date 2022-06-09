@@ -30,9 +30,7 @@
 #include "DataReference.h"
 #include "MediaRecorderIdentifier.h"
 #include "MessageReceiver.h"
-#include "RemoteVideoFrameIdentifier.h"
 #include "SharedMemory.h"
-#include "SharedVideoFrame.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/MediaRecorderPrivateWriterCocoa.h>
 #include <wtf/MediaTime.h>
@@ -44,6 +42,8 @@ class Decoder;
 
 namespace WebCore {
 class CARingBuffer;
+class ImageTransferSessionVT;
+class RemoteVideoSample;
 class WebAudioBufferList;
 struct MediaRecorderPrivateOptions;
 }
@@ -71,13 +71,11 @@ private:
     // IPC::MessageReceiver
     void audioSamplesStorageChanged(const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
     void audioSamplesAvailable(MediaTime, uint64_t numberOfFrames);
-    void videoFrameAvailable(SharedVideoFrame&&);
+    void videoSampleAvailable(WebCore::RemoteVideoSample&&);
     void fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&&);
     void stopRecording(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
     void resume(CompletionHandler<void()>&&);
-    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
     MediaRecorderIdentifier m_identifier;
@@ -86,8 +84,7 @@ private:
     WebCore::CAAudioStreamDescription m_description;
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     std::unique_ptr<WebCore::WebAudioBufferList> m_audioBufferList;
-
-    SharedVideoFrameReader m_sharedVideoFrameReader;
+    std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
 };
 
 }

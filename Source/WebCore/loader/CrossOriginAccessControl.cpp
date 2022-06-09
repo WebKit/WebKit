@@ -49,7 +49,7 @@ namespace WebCore {
 
 bool isOnAccessControlSimpleRequestMethodAllowlist(const String& method)
 {
-    return method == "GET"_s || method == "HEAD"_s || method == "POST"_s;
+    return method == "GET" || method == "HEAD" || method == "POST";
 }
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap& headerMap)
@@ -87,7 +87,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     static const double platformDefaultTimeout = 0;
     preflightRequest.setTimeoutInterval(platformDefaultTimeout);
     updateRequestForAccessControl(preflightRequest, securityOrigin, StoredCredentialsPolicy::DoNotUse);
-    preflightRequest.setHTTPMethod("OPTIONS"_s);
+    preflightRequest.setHTTPMethod("OPTIONS");
     preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestMethod, request.httpMethod());
     preflightRequest.setPriority(request.priority());
     preflightRequest.setFirstPartyForCookies(request.firstPartyForCookies());
@@ -149,8 +149,8 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
         return cachedRequest;
     }
 
-    FetchOptions::Credentials credentials = equalLettersIgnoringASCIICase(crossOriginAttribute, "omit"_s)
-        ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(crossOriginAttribute, "use-credentials"_s)
+    FetchOptions::Credentials credentials = equalLettersIgnoringASCIICase(crossOriginAttribute, "omit")
+        ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(crossOriginAttribute, "use-credentials")
         ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     options.credentials = credentials;
     switch (credentials) {
@@ -171,7 +171,7 @@ CachedResourceRequest createPotentialAccessControlRequest(ResourceRequest&& requ
 
 String validateCrossOriginRedirectionURL(const URL& redirectURL)
 {
-    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol()))
+    if (!LegacySchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol().toStringWithoutCopying()))
         return makeString("not allowed to follow a cross-origin CORS redirection with non CORS scheme");
 
     if (redirectURL.hasCredentials())
@@ -216,8 +216,6 @@ void cleanHTTPRequestHeadersForAccessControl(ResourceRequest& request, OptionSet
         request.clearHTTPAcceptEncoding();
     if (!headersToKeep.contains(HTTPHeadersToKeepFromCleaning::CacheControl))
         request.removeHTTPHeaderField(HTTPHeaderName::CacheControl);
-    request.removeHTTPHeaderField(HTTPHeaderName::SecFetchDest);
-    request.removeHTTPHeaderField(HTTPHeaderName::SecFetchMode);
 }
 
 CrossOriginAccessControlCheckDisabler& CrossOriginAccessControlCheckDisabler::singleton()
@@ -247,12 +245,12 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
     bool starAllowed = storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse;
     if (!starAllowed)
         starAllowed = checkDisabler && !checkDisabler->crossOriginAccessControlCheckEnabled();
-    if (accessControlOriginString == "*"_s && starAllowed)
+    if (accessControlOriginString == "*" && starAllowed)
         return { };
 
     String securityOriginString = securityOrigin.toString();
     if (accessControlOriginString != securityOriginString) {
-        if (accessControlOriginString == "*"_s)
+        if (accessControlOriginString == "*")
             return makeUnexpected("Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."_s);
         if (accessControlOriginString.find(',') != notFound)
             return makeUnexpected("Access-Control-Allow-Origin cannot contain more than one origin."_s);
@@ -261,7 +259,7 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
 
     if (storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         const String& accessControlCredentialsString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowCredentials);
-        if (accessControlCredentialsString != "true"_s)
+        if (accessControlCredentialsString != "true")
             return makeUnexpected("Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\"."_s);
     }
 
@@ -316,7 +314,7 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedder
         if (!RegistrableDomain::uncheckedCreateFromHost(origin.host()).matches(response.url()))
             return true;
 #endif
-        if (origin.protocol() == "http"_s && response.url().protocol() == "https"_s)
+        if (origin.protocol() == "http" && response.url().protocol() == "https")
             return true;
     }
 

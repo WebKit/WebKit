@@ -22,12 +22,6 @@
 
 #include <wtf/text/CString.h>
 
-/**
- * WebKitApplicationInfo: (ref-func webkit_application_info_ref) (unref-func webkit_application_info_unref)
- *
- * Information about an application running in automation mode.
- */
-
 struct _WebKitApplicationInfo {
     CString name;
     uint64_t majorVersion;
@@ -40,7 +34,7 @@ struct _WebKitApplicationInfo {
 G_DEFINE_BOXED_TYPE(WebKitApplicationInfo, webkit_application_info, webkit_application_info_ref, webkit_application_info_unref)
 
 /**
- * webkit_application_info_new: (constructor)
+ * webkit_application_info_new:
  *
  * Creates a new #WebKitApplicationInfo
  *

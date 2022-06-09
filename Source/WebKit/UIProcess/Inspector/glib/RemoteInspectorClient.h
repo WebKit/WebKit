@@ -51,17 +51,22 @@ public:
 class RemoteInspectorClient {
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    RemoteInspectorClient(String&& hostAndPort, RemoteInspectorObserver&);
+    RemoteInspectorClient(const char* address, unsigned port, RemoteInspectorObserver&);
     ~RemoteInspectorClient();
 
+    struct Target {
+    public:
+        uint64_t id;
+        CString type;
+        CString name;
+        CString url;
+    };
+
+    const HashMap<uint64_t, Vector<Target>>& targets() const { return m_targets; }
     const String& hostAndPort() const { return m_hostAndPort; }
     const String& backendCommandsURL() const { return m_backendCommandsURL; }
 
-    enum class InspectorType { UI, HTTP };
-    GString* buildTargetListPage(InspectorType) const;
-    enum class ShouldEscapeSingleQuote : bool { No, Yes };
-    void appendTargertList(GString*, InspectorType, ShouldEscapeSingleQuote) const;
-    void inspect(uint64_t connectionID, uint64_t targetID, const String& targetType, InspectorType = InspectorType::UI);
+    void inspect(uint64_t connectionID, uint64_t targetID, const String& targetType);
     void sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String&);
     void closeFromFrontend(uint64_t connectionID, uint64_t targetID);
 
@@ -69,13 +74,6 @@ private:
     static const SocketConnection::MessageHandlers& messageHandlers();
     void setupConnection(Ref<SocketConnection>&&);
     void connectionDidClose();
-
-    struct Target {
-        uint64_t id;
-        CString type;
-        CString name;
-        CString url;
-    };
 
     void setBackendCommands(const char*);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);

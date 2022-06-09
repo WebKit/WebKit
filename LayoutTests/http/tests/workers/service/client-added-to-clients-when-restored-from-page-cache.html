@@ -22,7 +22,7 @@ function containsExpectedClients(clientIdentifiers)
 
 navigator.serviceWorker.addEventListener("message", function(event) {
   if (step == "BothClientsInitiallyActive") {
-    if (!containsExpectedClients(event.data.ids)) {
+    if (!containsExpectedClients(event.data)) {
       if (++tries > 20) {
           log("FAIL: Wrong initial number of clients");
           finishSWTest();
@@ -59,7 +59,7 @@ navigator.serviceWorker.addEventListener("message", function(event) {
   }
 
   if (step == "SecondClientRestoredFromPageCache") {
-    if (!containsExpectedClients(event.data.ids)) {
+    if (!containsExpectedClients(event.data)) {
       log("FAIL: Wrong number of clients after one client was restored from page cache");
       finishSWTest();
     }
@@ -70,12 +70,12 @@ navigator.serviceWorker.addEventListener("message", function(event) {
 });
 
 navigator.serviceWorker.register("resources/getClientIds-worker.js", { }).then(function(registration) {
-    expectedClientIdentifiers.push(internals.serviceWorkerClientInternalIdentifier(document));
+    expectedClientIdentifiers.push(internals.serviceWorkerClientIdentifier(document));
 
     worker = registration.installing;
     otherWindow = open("other_resources/test.html");
     otherWindow.onload = function() {
-      expectedClientIdentifiers.push(internals.serviceWorkerClientInternalIdentifier(otherWindow.document));
+      expectedClientIdentifiers.push(internals.serviceWorkerClientIdentifier(otherWindow.document));
       step = "BothClientsInitiallyActive"
       worker.postMessage("getClientIds");
     };

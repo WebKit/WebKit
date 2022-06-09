@@ -39,16 +39,10 @@ namespace WebCore {
 // N bytes : CueSettingsBox : box : optional
 // N bytes : CuePayloadBox : box : required
 
-class ISOWebVTTCue final : public ISOBox {
+class WEBCORE_EXPORT ISOWebVTTCue final : public ISOBox {
 public:
     ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration);
-    WEBCORE_EXPORT ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, AtomString&& cueID, String&& cueText, String&& settings = { }, String&& sourceID = { }, String&& originalStartTime = { });
-    ISOWebVTTCue(const ISOWebVTTCue&) = default;
-    WEBCORE_EXPORT ISOWebVTTCue(ISOWebVTTCue&&);
-    WEBCORE_EXPORT ~ISOWebVTTCue();
-
-    ISOWebVTTCue& operator=(const ISOWebVTTCue&) = default;
-    ISOWebVTTCue& operator=(ISOWebVTTCue&&) = default;
+    ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, String&& cueID, String&& cueText, String&& settings = { }, String&& sourceID = { }, String&& originalStartTime = { });
 
     static FourCC boxTypeName() { return "vttc"; }
 
@@ -56,7 +50,7 @@ public:
     const MediaTime& duration() const { return m_duration; }
 
     const String& sourceID() const { return m_sourceID; }
-    const AtomString& id() const { return m_identifier; }
+    const String& id() const { return m_identifier; }
     const String& originalStartTime() const { return m_originalStartTime; }
     const String& settings() const { return m_settings; }
     const String& cueText() const { return m_cueText; }
@@ -93,7 +87,7 @@ public:
         if (!sourceID)
             return std::nullopt;
 
-        std::optional<AtomString> identifier;
+        std::optional<String> identifier;
         decoder >> identifier;
         if (!identifier)
             return std::nullopt;
@@ -131,7 +125,7 @@ private:
     MediaTime m_duration;
 
     String m_sourceID;
-    AtomString m_identifier;
+    String m_identifier;
     String m_originalStartTime;
     String m_settings;
     String m_cueText;

@@ -69,7 +69,7 @@ ALWAYS_INLINE bool isRegExp(VM& vm, JSGlobalObject* globalObject, JSValue value)
     if (!matchValue.isUndefined())
         return matchValue.toBoolean(globalObject);
 
-    return object->inherits<RegExpObject>();
+    return object->inherits<RegExpObject>(vm);
 }
 
 JSC_DECLARE_HOST_FUNCTION(esSpecRegExpCreate);

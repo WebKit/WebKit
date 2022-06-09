@@ -105,7 +105,7 @@ std::optional<Vector<SessionHost::Target>> SessionHost::parseTargetList(const st
         if (!targetId
             || !itemObject->getString("name"_s, name)
             || !itemObject->getString("type"_s, type)
-            || type != "automation"_s)
+            || type != "automation")
             continue;
 
         target.id = *targetId;
@@ -150,7 +150,7 @@ void SessionHost::startAutomationSession(Function<void (bool, std::optional<Stri
 {
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTFMove(completionHandler);
-    m_sessionID = createVersion4UUIDString();
+    m_sessionID = createCanonicalUUIDString();
 
     auto sendMessageEvent = JSON::Object::create();
     sendMessageEvent->setString("event"_s, "StartAutomationSession"_s);

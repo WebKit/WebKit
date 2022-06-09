@@ -1,0 +1,12 @@
+
+PASS Before: parent to child: setting document.domain must give sync access
+FAIL before parent: originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL before child: originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
+PASS Navigation
+FAIL After: parent to child: messageerror event must occur assert_equals: expected "messageerror" but got "WebAssembly.Module message received"
+FAIL After: parent to child: setting document.domain must not give sync access assert_throws_dom: function "() => {
+        frameWindow.document;
+      }" did not throw
+FAIL after parent: originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
+FAIL after child: originAgentCluster must equal false assert_equals: expected (boolean) false but got (undefined) undefined
+

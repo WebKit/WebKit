@@ -170,8 +170,8 @@ template<typename ElementType> ElementDescendantIterator<ElementType> ElementDes
 template<typename ElementType> ElementDescendantIterator<ElementType> ElementDescendantRange<ElementType>::from(Element& descendant) const
 {
     ASSERT(descendant.isDescendantOf(m_root));
-    if (auto descendantElement = dynamicDowncast<ElementType>(descendant))
-        return ElementDescendantIterator<ElementType>(m_root, descendantElement);
+    if (is<ElementType>(descendant))
+        return ElementDescendantIterator<ElementType>(m_root, downcast<ElementType>(&descendant));
     ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
     return ElementDescendantIterator<ElementType>(m_root, next);
 }
@@ -207,8 +207,8 @@ template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveE
 template<typename ElementType> ElementDescendantIterator<ElementType> InclusiveElementDescendantRange<ElementType>::from(Element& descendant) const
 {
     ASSERT(&m_root == &descendant || descendant.isDescendantOf(m_root));
-    if (auto descendantElement = dynamicDowncast<ElementType>(descendant))
-        return ElementDescendantIterator<ElementType>(m_root, descendantElement);
+    if (is<ElementType>(descendant))
+        return ElementDescendantIterator<ElementType>(m_root, downcast<ElementType>(&descendant));
     ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
     return ElementDescendantIterator<ElementType>(m_root, next);
 }

@@ -38,7 +38,7 @@
 #include "LinkBuffer.h"
 #include "WasmCallee.h"
 #include "WasmLLIntGenerator.h"
-#include "WasmTypeDefinitionInlines.h"
+#include "WasmSignatureInlines.h"
 
 namespace JSC { namespace Wasm {
 
@@ -79,10 +79,10 @@ bool LLIntPlan::prepareImpl()
 void LLIntPlan::compileFunction(uint32_t functionIndex)
 {
     const auto& function = m_moduleInformation->functions[functionIndex];
-    TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-    const TypeDefinition& signature = TypeInformation::get(typeIndex);
+    SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
+    const Signature& signature = SignatureInformation::get(signatureIndex);
     unsigned functionIndexSpace = m_wasmToWasmExitStubs.size() + functionIndex;
-    ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->typeIndexFromFunctionIndexSpace(functionIndexSpace) == typeIndex);
+    ASSERT_UNUSED(functionIndexSpace, m_moduleInformation->signatureIndexFromFunctionIndexSpace(functionIndexSpace) == signatureIndex);
 
     m_unlinkedWasmToWasmCalls[functionIndex] = Vector<UnlinkedWasmToWasmCall>();
     Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileResult = parseAndCompileBytecode(function.data.data(), function.data.size(), signature, m_moduleInformation.get(), functionIndex);
@@ -130,7 +130,7 @@ void LLIntPlan::didCompleteCompilation()
 
         LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
         if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-            Base::fail("Out of executable memory in Wasm LLInt entry thunks"_s);
+            Base::fail("Out of executable memory in Wasm LLInt entry thunks");
             return;
         }
 
@@ -148,8 +148,8 @@ void LLIntPlan::didCompleteCompilation()
 
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
         if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->referencedFunctions().contains(functionIndex)) {
-            TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
-            const TypeDefinition& signature = TypeInformation::get(typeIndex);
+            SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
+            const Signature& signature = SignatureInformation::get(signatureIndex);
             CCallHelpers jit;
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
@@ -168,8 +168,8 @@ void LLIntPlan::didCompleteCompilation()
             Ref<EmbedderEntrypointCallee> callee = EmbedderEntrypointCallee::create(WTFMove(function->entrypoint));
             // FIXME: remove this repatchPointer - just pass in the callee directly
             // https://bugs.webkit.org/show_bug.cgi?id=166462
-            for (auto& moveLocation : function->calleeMoveLocations)
-                MacroAssembler::repatchPointer(moveLocation, CalleeBits::boxWasm(callee.ptr()));
+            if (function->calleeMoveLocation)
+                MacroAssembler::repatchPointer(function->calleeMoveLocation, CalleeBits::boxWasm(callee.ptr()));
 
             auto result = m_embedderCallees.add(functionIndex, WTFMove(callee));
             ASSERT_UNUSED(result, result.isNewEntry);

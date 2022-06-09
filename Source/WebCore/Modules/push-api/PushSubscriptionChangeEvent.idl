@@ -25,13 +25,13 @@
 
 [
     Conditional=SERVICE_WORKER,
-    EnabledBySetting=PushAPIEnabled,
+    EnabledAtRuntime=PushAPIEnabled,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=ServiceWorker,
     JSGenerateToNativeObject,
     SecureContext
 ] interface PushSubscriptionChangeEvent : ExtendableEvent {
-    constructor([AtomString] DOMString type, optional PushSubscriptionChangeEventInit eventInitDict);
+    constructor(DOMString type, optional PushSubscriptionChangeEventInit eventInitDict);
     readonly attribute PushSubscription? newSubscription;
     readonly attribute PushSubscription? oldSubscription;
 };

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 #include "AudioStreamDescription.h"
 
@@ -56,9 +56,9 @@ namespace WebCore {
 
 class AudioSampleBufferCompressor;
 class AudioStreamDescription;
+class MediaSample;
 class MediaStreamTrackPrivate;
 class PlatformAudioData;
-class VideoFrame;
 class VideoSampleBufferCompressor;
 struct MediaRecorderPrivateOptions;
 
@@ -67,7 +67,7 @@ public:
     static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivateWriter();
 
-    void appendVideoFrame(VideoFrame&);
+    void appendVideoSampleBuffer(MediaSample&);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
     void stopRecording();
     void fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&&);
@@ -132,7 +132,7 @@ private:
     bool m_hasEncodedVideoSamples { false };
 
     RetainPtr<WebAVAssetWriterDelegate> m_writerDelegate;
-    Deque<RetainPtr<CMSampleBufferRef>> m_pendingVideoFrameQueue;
+    Deque<RetainPtr<CMSampleBufferRef>> m_pendingVideoSampleQueue;
     Deque<RetainPtr<CMSampleBufferRef>> m_pendingAudioSampleQueue;
 
     bool m_isFlushingSamples { false };
@@ -147,4 +147,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

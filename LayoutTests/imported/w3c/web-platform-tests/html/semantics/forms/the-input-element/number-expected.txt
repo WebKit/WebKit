@@ -15,7 +15,7 @@ PASS Value < min attribute
 PASS Value <= max attribute
 PASS Value > max attribute
 PASS value with a leading '.'
-PASS value ending with '.'
+FAIL value ending with '.' assert_equals: expected "" but got "1."
 PASS value = -0
 PASS  value = Infinity
 PASS value = -Infinity

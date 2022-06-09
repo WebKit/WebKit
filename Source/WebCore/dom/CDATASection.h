@@ -29,16 +29,16 @@ namespace WebCore {
 class CDATASection final : public Text {
     WTF_MAKE_ISO_ALLOCATED(CDATASection);
 public:
-    static Ref<CDATASection> create(Document&, String&&);
+    static Ref<CDATASection> create(Document&, const String&);
 
 private:
-    CDATASection(Document&, String&&);
+    CDATASection(Document&, const String&);
 
     String nodeName() const override;
     NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     bool childTypeAllowed(NodeType) const override;
-    Ref<Text> virtualCreate(String&&) override;
+    Ref<Text> virtualCreate(const String&) override;
 };
 
 } // namespace WebCore

@@ -72,13 +72,13 @@ WebNavigationData::WebNavigationData(const String& url, const String& title, IWe
 
 {
     gClassCount++;
-    gClassNameCount().add("WebNavigationData"_s);
+    gClassNameCount().add("WebNavigationData");
 }
 
 WebNavigationData::~WebNavigationData()
 {
     gClassCount--;
-    gClassNameCount().remove("WebNavigationData"_s);
+    gClassNameCount().remove("WebNavigationData");
 }
 
 WebNavigationData* WebNavigationData::createInstance(const String& url, const String& title, IWebURLRequest* request, IWebURLResponse* response, bool hasSubstituteData, const String& clientRedirectSource)

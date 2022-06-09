@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,37 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
 import json
 import unittest
 
-from webkitbugspy import Issue, Tracker, User, github, mocks
-from webkitcorepy import OutputCapture, mocks as wkmocks
+from webkitbugspy import Issue, User, github, mocks
 
 
 class TestGitHub(unittest.TestCase):
     URL = 'https://github.example.com/WebKit/WebKit'
-
-    def test_encoding(self):
-        self.assertEqual(
-            github.Tracker.Encoder().default(github.Tracker(
-                self.URL,
-                res=[re.compile(r'\Aexample.com/b/(?P<id>\d+)\Z')],
-            )), dict(
-                type='github',
-                url='https://github.example.com/WebKit/WebKit',
-                res=['\\Aexample.com/b/(?P<id>\\d+)\\Z']
-            ),
-        )
-
-    def test_decoding(self):
-        decoded = Tracker.from_json(json.dumps(github.Tracker(
-            self.URL,
-            res=[re.compile(r'\Aexample.com/b/(?P<id>\d+)\Z')],
-        ), cls=Tracker.Encoder))
-        self.assertIsInstance(decoded, github.Tracker)
-        self.assertEqual(decoded.url, 'https://github.example.com/WebKit/WebKit')
-        self.assertEqual(decoded.from_string('example.com/b/1234').id, 1234)
 
     def test_users(self):
         with mocks.GitHub(self.URL.split('://')[1], users=mocks.USERS):
@@ -71,10 +48,6 @@ class TestGitHub(unittest.TestCase):
         self.assertEqual(tracker.issue(1234).link, 'https://github.example.com/WebKit/WebKit/issues/1234')
         self.assertEqual(
             tracker.from_string('http://github.example.com/WebKit/WebKit/issues/1234').link,
-            'https://github.example.com/WebKit/WebKit/issues/1234',
-        )
-        self.assertEqual(
-            tracker.from_string('http://api.github.example.com/repos/WebKit/WebKit/issues/1234').link,
             'https://github.example.com/WebKit/WebKit/issues/1234',
         )
         self.assertEqual(tracker.from_string('https://github.example.com/Apple/Swift/issues/1234'), None)
@@ -132,12 +105,15 @@ class TestGitHub(unittest.TestCase):
             )
 
     def test_watcher_parse(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-                GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
-                GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES) as mock:
             tracker = github.Tracker(self.URL)
-            tracker.issue(2).add_comment('Looks like @ffiler stumbled upon this in #3')
+            mock.issues[2]['comments'].append(
+                Issue.Comment(
+                    user=mocks.USERS['Tim Contributor'],
+                    timestamp=1639539630,
+                    content='Looks like @ffiler stumbled upon this in #3',
+                ),
+            )
             self.assertEqual(
                 User.Encoder().default(tracker.issue(2).watchers), [
                     dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
@@ -154,232 +130,13 @@ class TestGitHub(unittest.TestCase):
             self.assertEqual(tracker.issue(3).references, [tracker.issue(2)])
 
     def test_reference_parse(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='wwatcher',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES) as mock:
             tracker = github.Tracker(self.URL)
-            tracker.issue(1).add_comment('Is this related to #2?')
+            mock.issues[1]['comments'].append(
+                Issue.Comment(
+                    user=mocks.USERS['Wilma Watcher'],
+                    timestamp=1639539630,
+                    content='Is this related to #2?',
+                ),
+            )
             self.assertEqual(tracker.issue(1).references, [tracker.issue(2)])
-
-    def test_me(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
-            self.assertEqual(
-                User.Encoder().default(github.Tracker(self.URL).me()),
-                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
-            )
-
-    def test_add_comment(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertEqual(len(issue.comments), 2)
-
-            comment = issue.add_comment('Automated comment')
-            self.assertEqual(comment.content, 'Automated comment')
-            self.assertEqual(
-                User.Encoder().default(comment.user),
-                User.Encoder().default(github.Tracker(self.URL).me()),
-            )
-
-            self.assertEqual(len(issue.comments), 3)
-            self.assertEqual(len(github.Tracker(self.URL).issue(1).comments), 3)
-
-    def test_assign(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='ffiler',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
-            )
-            issue.assign(github.Tracker(self.URL).me())
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Felix Filer', username='ffiler', emails=['ffiler@example.com']),
-            )
-
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Felix Filer', username='ffiler', emails=['ffiler@example.com']),
-            )
-
-    def test_assign_why(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='ffiler',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
-            )
-            issue.assign(github.Tracker(self.URL).me(), why='Let me provide a better reproduction')
-            self.assertEqual(
-                User.Encoder().default(issue.assignee),
-                dict(name='Felix Filer', username='ffiler', emails=['ffiler@example.com']),
-            )
-            self.assertEqual(issue.comments[-1].content, 'Let me provide a better reproduction')
-
-    def test_state(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertTrue(issue.opened)
-            self.assertFalse(issue.open())
-            self.assertTrue(issue.close())
-            self.assertFalse(issue.opened)
-
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertFalse(issue.opened)
-            self.assertFalse(issue.close())
-            self.assertTrue(issue.open())
-            self.assertTrue(issue.opened)
-
-    def test_state_why(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertTrue(issue.opened)
-            self.assertTrue(issue.close(why='Fixed in 1234@main'))
-            self.assertFalse(issue.opened)
-            self.assertEqual(issue.comments[-1].content, 'Fixed in 1234@main')
-
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertFalse(issue.opened)
-            self.assertTrue(issue.open(why='Need to revert, fix broke the build'))
-            self.assertTrue(issue.opened)
-            self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
-
-    def test_labels(self):
-        with mocks.GitHub(self.URL.split('://')[1]) as mocked:
-            self.assertDictEqual(github.Tracker(self.URL).labels, mocked.DEFAULT_LABELS)
-
-    def test_projects(self):
-        with mocks.GitHub(self.URL.split('://')[1], projects=mocks.PROJECTS):
-            self.assertDictEqual(
-                dict(
-                    WebKit=dict(
-                        versions=['All', 'Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
-                        components=dict(
-                            IPv4=dict(
-                                description='Bugs involving IPv4 networking',
-                                color='FFFFFF',
-                            ), IPv6=dict(
-                                description='Bugs involving IPv6 networking',
-                                color='FFFFFF',
-                            ), Scrolling=dict(
-                                description='Bugs related to main thread and off-main thread scrolling',
-                                color='FFFFFF',
-                            ), SVG=dict(
-                                description='For bugs in the SVG implementation.',
-                                color='FFFFFF',
-                            ), Tables=dict(
-                                description='For bugs specific to tables (both the DOM and rendering issues).',
-                                color='FFFFFF',
-                            ), Text=dict(
-                                description='For bugs in text layout and rendering, including international text support.',
-                                color='FFFFFF',
-                            ),
-                        ),
-                    ),
-                ), github.Tracker(self.URL).projects,
-            )
-
-    def test_create(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
-            created = github.Tracker(self.URL).create('New bug', 'Creating new bug')
-            self.assertEqual(created.id, 4)
-            self.assertEqual(created.title, 'New bug')
-            self.assertEqual(created.description, 'Creating new bug')
-            self.assertTrue(created.opened)
-            self.assertEqual(
-                User.Encoder().default(created.creator),
-                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
-            )
-            self.assertEqual(
-                User.Encoder().default(created.assignee),
-                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
-            )
-
-    def test_create_projects(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )), wkmocks.Terminal.input('3', '2'), OutputCapture() as captured:
-            created = github.Tracker(self.URL).create('New bug', 'Creating new bug')
-            self.assertEqual(created.id, 4)
-            self.assertEqual(created.title, 'New bug')
-            self.assertEqual(created.description, 'Creating new bug')
-            self.assertTrue(created.opened)
-            self.assertEqual(
-                User.Encoder().default(created.creator),
-                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
-            )
-            self.assertEqual(
-                User.Encoder().default(created.assignee),
-                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
-            )
-
-            self.assertEqual(created.project, 'WebKit')
-            self.assertEqual(created.component, 'SVG')
-            self.assertEqual(created.version, 'Other')
-
-        self.assertEqual(
-            captured.stdout.getvalue(),
-            '''What component in 'WebKit' should the bug be associated with?:
-    1) IPv4
-    2) IPv6
-    3) SVG
-    4) Scrolling
-    5) Tables
-    6) Text
-: 
-What version of 'WebKit' should the bug be associated with?:
-    1) All
-    2) Other
-    3) Safari 15
-    4) Safari Technology Preview
-    5) WebKit Local Build
-: 
-''',
-        )
-
-    def test_get_component(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertEqual(issue.project, 'WebKit')
-            self.assertEqual(issue.component, 'Text')
-            self.assertEqual(issue.version, 'Other')
-
-    def test_set_component(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS, environment=wkmocks.Environment(
-            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
-            GITHUB_EXAMPLE_COM_TOKEN='token',
-        )):
-            github.Tracker(self.URL).issue(1).set_component(component='Tables', version='Safari 15')
-
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertEqual(issue.project, 'WebKit')
-            self.assertEqual(issue.component, 'Tables')
-            self.assertEqual(issue.version, 'Safari 15')
-
-    def test_issue_label(self):
-        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
-            issue = github.Tracker(self.URL).issue(1)
-            self.assertEqual(issue.labels, ['Other', 'Text'])

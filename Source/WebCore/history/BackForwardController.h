@@ -58,7 +58,6 @@ public:
     WEBCORE_EXPORT unsigned forwardCount() const;
 
     WEBCORE_EXPORT RefPtr<HistoryItem> itemAtIndex(int);
-    bool containsItem(const HistoryItem&) const;
 
     void close();
 

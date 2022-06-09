@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSFinalizationRegistry::s_info = { "FinalizationRegistry"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalizationRegistry) };
+const ClassInfo JSFinalizationRegistry::s_info = { "FinalizationRegistry", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalizationRegistry) };
 
 Structure* JSFinalizationRegistry::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
@@ -50,7 +50,7 @@ JSFinalizationRegistry* JSFinalizationRegistry::create(VM& vm, Structure* struct
 void JSFinalizationRegistry::finishCreation(VM& vm, JSGlobalObject* globalObject, JSObject* callback)
 {
     Base::finishCreation(vm);
-    ASSERT(callback->isCallable());
+    ASSERT(callback->isCallable(vm));
     auto values = initialValues();
     for (unsigned index = 0; index < values.size(); ++index)
         Base::internalField(index).setWithoutWriteBarrier(values[index]);
@@ -169,7 +169,7 @@ void JSFinalizationRegistry::runFinalizationCleanup(JSGlobalObject* globalObject
     while (JSValue value = takeDeadHoldingsValue()) {
         MarkedArgumentBuffer args;
         args.append(value);
-        call(globalObject, callback(), args, "This should not be visible: please report a bug to bugs.webkit.org"_s);
+        call(globalObject, callback(), args, "This should not be visible: please report a bug to bugs.webkit.org");
         RETURN_IF_EXCEPTION(scope, void());
     }
 }
@@ -207,7 +207,7 @@ void JSFinalizationRegistry::registerTarget(VM& vm, JSObject* target, JSValue ho
     if (token.isUndefined())
         m_noUnregistrationLive.append(WTFMove(registration));
     else {
-        auto result = m_liveRegistrations.add(jsSecureCast<JSObject*>(token), LiveRegistrations());
+        auto result = m_liveRegistrations.add(jsSecureCast<JSObject*>(vm, token), LiveRegistrations());
         result.iterator->value.append(WTFMove(registration));
     }
     vm.writeBarrier(this);

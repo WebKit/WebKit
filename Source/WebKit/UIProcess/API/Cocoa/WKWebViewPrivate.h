@@ -122,7 +122,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class WKFrameInfo;
 @class WKWebpagePreferences;
 @class _WKApplicationManifest;
-@class _WKDataTask;
 @class _WKFrameHandle;
 @class _WKFrameTreeNode;
 @class _WKHitTestResult;
@@ -179,7 +178,6 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 @property (nonatomic, readonly) pid_t _provisionalWebProcessIdentifier WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
-@property (nonatomic, readonly) pid_t _gpuProcessIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
@@ -265,8 +263,6 @@ for this property.
 
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForPainting:(void (^)(void))updateBlock WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
-
-- (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_executeEditCommand:(NSString *)command argument:(NSString *)argument completion:(void (^)(BOOL))completion WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
@@ -367,6 +363,8 @@ for this property.
 
 - (void)_getProcessDisplayNameWithCompletionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
+- (void)_grantAccessToPreferenceService WK_API_AVAILABLE(macos(11.0), ios(14.0));
+
 - (void)_serviceWorkersEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 - (void)_clearServiceWorkerEntitlementOverride:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
@@ -407,8 +405,6 @@ for this property.
 - (void)_grantAccessToAssetServices WK_API_AVAILABLE(macos(12.0), ios(14.0));
 - (void)_revokeAccessToAssetServices WK_API_AVAILABLE(macos(12.0), ios(14.0));
 
-- (void)_disableURLSchemeCheckInDataDetectors WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
 /*! @abstract If the WKWebView was created with _shouldAllowUserInstalledFonts = NO,
  the web process will automatically use an in-process font registry, and its sandbox
  will be restricted to forbid access to fontd. Otherwise, the web process will use
@@ -427,75 +423,16 @@ for this property.
 - (void)_suspendPage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 - (void)_resumePage:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
-- (void)_startImageAnalysis:(NSString *)identifier target:(NSString *)targetIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_startImageAnalysis:(NSString *)identifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-- (void)_dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void(^)(_WKDataTask *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-typedef NS_ENUM(NSInteger, WKDisplayCaptureState) {
-    WKDisplayCaptureStateNone,
-    WKDisplayCaptureStateActive,
-    WKDisplayCaptureStateMuted,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-typedef NS_ENUM(NSInteger, WKSystemAudioCaptureState) {
-    WKSystemAudioCaptureStateNone,
-    WKSystemAudioCaptureStateActive,
-    WKSystemAudioCaptureStateMuted,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
-    WKDisplayCaptureSurfaceNone = 0,
-    WKDisplayCaptureSurfaceScreen = 0x1,
-    WKDisplayCaptureSurfaceWindow = 0x2,
-};
-
-/*! @abstract The type(s) of displays being captured on a web page.
- @discussion @link WKWebView @/link is key-value observing (KVO) compliant
- for this property.
- */
-@property (nonatomic, readonly) WKDisplayCaptureSurfaces _displayCaptureSurfaces WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/*! @abstract The state of display capture on a web page.
- @discussion @link WKWebView @/link is key-value observing (KVO) compliant
- for this property.
- */
-@property (nonatomic, readonly) WKDisplayCaptureState _displayCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/*! @abstract The state of system audio capture on a web page.
- @discussion @link WKWebView @/link is key-value observing (KVO) compliant
- for this property.
- */
-@property (nonatomic, readonly) WKSystemAudioCaptureState _systemAudioCaptureState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/*! @abstract Set display capture state of a WKWebView.
- @param state State to apply for capture.
- @param completionHandler A block to invoke after the screen state has been changed.
- @discussion
- If value is WKDisplayCaptureStateNone, this will stop all display capture.
- If value is WKDisplayCaptureStateMuted, all active display captures will become muted.
- If value is WKDisplayCaptureStateActive, all muted display captures will become active.
- */
-- (void)_setDisplayCaptureState:(WKDisplayCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/*! @abstract Set system audio capture state of a WKWebView.
- @param state State to apply for system audio capture.
- @param completionHandler A block to invoke after the system audio state has been changed.
- @discussion
- If value is WKSystemAudioCaptureStateNone, this will stop any system audio capture.
- If value is WKSystemAudioCaptureStateMuted, any active system audio capture will become muted.
- If value is WKSystemAudioCaptureStateActive, any muted system audio capture will become active.
- @note When system audio capture is active, if screenCaptureState is active, all system audio will be captured.
- Otherwise, if windowCaptureState is active, only the application whose window being is captured will have its audio captured.
- If both screenCaptureState and windowCaptureState are None or Muted, no system audio will be captured.
- */
-- (void)_setSystemAudioCaptureState:(WKSystemAudioCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_requestResource:(NSURLRequest *)request completionHandler:(void(^)(NSData *, NSURLResponse *, NSError *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
 #if TARGET_OS_IPHONE
 
 #if !TARGET_OS_TV && !TARGET_OS_WATCH && __has_include(<UIKit/_UITextSearching.h>)
-@interface WKWebView (WKPrivateIOS) <_UITextSearching, UITextSearching, UIFindInteractionDelegate>
+@interface WKWebView (WKPrivateIOS) <_UITextSearching>
 #else
 @interface WKWebView (WKPrivateIOS)
 #endif
@@ -508,8 +445,6 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 #if __has_include(<UIKit/_UIFindInteraction.h>)
 @property (nonatomic, readonly) _UIFindInteraction *_findInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, readwrite, setter=_setFindInteractionEnabled:) BOOL _findInteractionEnabled WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
-- (void)_requestRectForFoundTextRange:(UITextRange *)ranges completionHandler:(void (^)(CGRect))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 #endif

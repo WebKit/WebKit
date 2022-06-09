@@ -33,7 +33,6 @@
 #include <WebCore/MediaSourcePrivate.h>
 #include <WebCore/MediaSourcePrivateClient.h>
 #include <wtf/MediaTime.h>
-#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -53,8 +52,7 @@ class GPUConnectionToWebProcess;
 class RemoteMediaPlayerProxy;
 
 class RemoteMediaSourceProxy final
-    : public RefCounted<RemoteMediaSourceProxy>
-    , public WebCore::MediaSourcePrivateClient
+    : public WebCore::MediaSourcePrivateClient
     , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:

@@ -35,7 +35,6 @@
 
 #include "AudioContext.h"
 #include "AudioFileReader.h"
-#include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 
@@ -312,11 +311,6 @@ Ref<AudioBuffer> AudioBuffer::clone(ShouldCopyChannelData shouldCopyChannelData)
     if (shouldCopyChannelData == ShouldCopyChannelData::Yes)
         copyTo(*clone);
     return clone.releaseNonNull();
-}
-
-WebCoreOpaqueRoot root(AudioBuffer* buffer)
-{
-    return WebCoreOpaqueRoot { buffer };
 }
 
 } // namespace WebCore

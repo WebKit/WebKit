@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr/#dictdef-xrinputsourceschangeeventinit
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
 ] dictionary XRInputSourcesChangeEventInit : EventInit {
     required WebXRSession session;
     required FrozenArray<WebXRInputSource> added;
@@ -40,7 +40,7 @@
     SecureContext,
     Exposed=Window
 ] interface XRInputSourcesChangeEvent : Event {
-    constructor([AtomString] DOMString type, XRInputSourcesChangeEventInit eventInitDict);
+    constructor(DOMString type, XRInputSourcesChangeEventInit eventInitDict);
     [SameObject] readonly attribute WebXRSession session;
     [CachedAttribute, SameObject] readonly attribute FrozenArray<WebXRInputSource> added;
     [CachedAttribute, SameObject] readonly attribute FrozenArray<WebXRInputSource> removed;

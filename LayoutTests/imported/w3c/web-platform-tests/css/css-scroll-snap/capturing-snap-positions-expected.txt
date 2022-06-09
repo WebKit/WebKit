@@ -1,3 +1,0 @@
-
-FAIL The third item should be snapped to by default, not the second's child. assert_equals: expected 200 but got 100
-

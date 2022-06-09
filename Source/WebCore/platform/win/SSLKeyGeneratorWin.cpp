@@ -31,7 +31,7 @@ namespace WebCore {
 void getSupportedKeySizes(Vector<String>& v)
 {
     // FIXME: Strings should be localizable.
-    v.append("High Grade"_s);
+    v.append("High Grade");
 }
 
 String signedPublicKeyAndChallengeString(unsigned index, const String& challenge, const URL& url)

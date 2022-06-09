@@ -34,8 +34,6 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptBuffer.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include "ServiceWorkerRegistrationData.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include <memory>
@@ -51,8 +49,6 @@ class Exception;
 class ScriptExecutionContext;
 class TextResourceDecoder;
 class WorkerScriptLoaderClient;
-struct ServiceWorkerRegistrationData;
-struct WorkerFetchResult;
 enum class CertificateInfoPolicy : uint8_t;
 
 class WorkerScriptLoader : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
@@ -63,19 +59,16 @@ public:
         return adoptRef(*new WorkerScriptLoader);
     }
 
-    enum class Source : uint8_t { ClassicWorkerScript, ClassicWorkerImport, ModuleScript };
-
-    std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, Source, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
-    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, Source, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode, ScriptExecutionContextIdentifier clientIdentifier = { });
+    std::optional<Exception> loadSynchronously(ScriptExecutionContext*, const URL&, FetchOptions::Mode, FetchOptions::Cache, ContentSecurityPolicyEnforcement, const String& initiatorIdentifier);
+    void loadAsynchronously(ScriptExecutionContext&, ResourceRequest&&, FetchOptions&&, ContentSecurityPolicyEnforcement, ServiceWorkersMode, WorkerScriptLoaderClient&, String&& taskMode);
 
     void notifyError();
 
-    const ScriptBuffer& script() const { return m_script; }
+    const ScriptBuffer& script() { return m_script; }
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
     const String& referrerPolicy() const { return m_referrerPolicy; }
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
     const URL& url() const { return m_url; }
-    const URL& lastRequestURL() const { return m_lastRequestURL; }
     const URL& responseURL() const;
     ResourceResponse::Source responseSource() const { return m_responseSource; }
     bool isRedirected() const { return m_isRedirected; }
@@ -85,27 +78,14 @@ public:
     ResourceLoaderIdentifier identifier() const { return m_identifier; }
     const ResourceError& error() const { return m_error; }
 
-    WorkerFetchResult fetchResult() const;
-
-    void redirectReceived(const URL& redirectURL) override;
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) override;
     void didReceiveData(const SharedBuffer&) override;
-    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override;
+    void didFinishLoading(ResourceLoaderIdentifier) override;
     void didFail(const ResourceError&) override;
 
     void cancel();
 
-    WEBCORE_EXPORT static ResourceError validateWorkerResponse(const ResourceResponse&, Source, FetchOptions::Destination);
-
-    WEBCORE_EXPORT static WorkerScriptLoader* fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
-
-#if ENABLE(SERVICE_WORKER)
-    WEBCORE_EXPORT bool setControllingServiceWorker(ServiceWorkerData&&);
-    std::optional<ServiceWorkerData> takeServiceWorkerData() { return std::exchange(m_activeServiceWorkerData, { }); }
-#endif
-
-    ScriptExecutionContextIdentifier clientIdentifier() const { return m_clientIdentifier; }
-    const String& userAgentForSharedWorker() const { return m_userAgentForSharedWorker; }
+    WEBCORE_EXPORT static ResourceError validateWorkerResponse(const ResourceResponse&, FetchOptions::Destination);
 
 private:
     friend class RefCounted<WorkerScriptLoader>;
@@ -119,14 +99,13 @@ private:
 
     WorkerScriptLoaderClient* m_client { nullptr };
     RefPtr<ThreadableLoader> m_threadableLoader;
+    String m_responseEncoding;
     RefPtr<TextResourceDecoder> m_decoder;
     ScriptBuffer m_script;
     URL m_url;
-    URL m_lastRequestURL;
     URL m_responseURL;
     CertificateInfo m_certificateInfo;
     String m_responseMIMEType;
-    Source m_source;
     FetchOptions::Destination m_destination;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     String m_referrerPolicy;
@@ -138,11 +117,6 @@ private:
     bool m_isCOEPEnabled { false };
     ResourceResponse::Source m_responseSource { ResourceResponse::Source::Unknown };
     ResourceError m_error;
-    ScriptExecutionContextIdentifier m_clientIdentifier;
-#if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerData> m_activeServiceWorkerData;
-#endif
-    String m_userAgentForSharedWorker;
 };
 
 } // namespace WebCore

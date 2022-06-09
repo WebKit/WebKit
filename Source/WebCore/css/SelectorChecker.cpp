@@ -31,10 +31,8 @@
 
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
-#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "ElementInlines.h"
-#include "ElementRareData.h"
 #include "ElementTraversal.h"
 #include "Frame.h"
 #include "FrameSelection.h"

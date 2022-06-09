@@ -17,7 +17,7 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
-#include "platform/FeaturesMtl_autogen.h"
+#include "platform/FeaturesMtl.h"
 
 #define ANGLE_OBJC_CP_PROPERTY(DST, SRC, PROPERTY) \
     (DST).PROPERTY = static_cast<__typeof__((DST).PROPERTY)>(ToObjC((SRC).PROPERTY))
@@ -995,8 +995,7 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         if (!vertShader)
         {
             // Render pipeline without vertex shader is invalid.
-            ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline without vertex shader is invalid.",
-                                   GL_INVALID_OPERATION);
+            context->handleError(GL_INVALID_OPERATION, __FILE__, ANGLE_FUNCTION, __LINE__);
             return nil;
         }
 
@@ -1014,11 +1013,14 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
                 ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(objCDesc, context, metalDevice);
             if (renderTargetSize > maxSize)
             {
-                std::stringstream errorStream;
-                errorStream << "This set of render targets requires " << renderTargetSize
-                            << " bytes of pixel storage. This device supports " << maxSize
-                            << " bytes.";
-                ANGLE_MTL_HANDLE_ERROR(context, errorStream.str().c_str(), GL_INVALID_OPERATION);
+                NSString *errorString = [NSString
+                    stringWithFormat:@"This set of render targets requires %lu bytes of "
+                                     @"pixel storage. This device supports %lu bytes.",
+                                     (unsigned long)renderTargetSize, (unsigned long)maxSize];
+                NSError *err          = [NSError errorWithDomain:@"MTLValidationError"
+                                                   code:-1
+                                               userInfo:@{NSLocalizedDescriptionKey : errorString}];
+                context->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
                 return nil;
             }
         }
@@ -1041,8 +1043,7 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         auto newState = metalDevice.newRenderPipelineStateWithDescriptor(objCDesc, &err);
         if (err)
         {
-            ANGLE_MTL_HANDLE_ERROR(context, mtl::FormatMetalErrorMessage(err).c_str(),
-                                   GL_INVALID_OPERATION);
+            context->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
             return nil;
         }
 
@@ -1221,8 +1222,8 @@ ProvokingVertexComputePipelineCache::createComputePipelineState(
 
         if (!computeFunction)
         {
-            ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline without vertex shader is invalid.",
-                                   GL_INVALID_OPERATION);
+            // Render pipeline without vertex shader is invalid.
+            context->handleError(GL_INVALID_OPERATION, __FILE__, ANGLE_FUNCTION, __LINE__);
             return nil;
         }
 
@@ -1233,8 +1234,7 @@ ProvokingVertexComputePipelineCache::createComputePipelineState(
         auto newState = metalDevice.newComputePipelineStateWithFunction(computeFunction, &err);
         if (err)
         {
-            ANGLE_MTL_HANDLE_ERROR(context, mtl::FormatMetalErrorMessage(err).c_str(),
-                                   GL_INVALID_OPERATION);
+            context->handleError(err, __FILE__, ANGLE_FUNCTION, __LINE__);
             return nil;
         }
 

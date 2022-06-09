@@ -81,7 +81,7 @@ WARN_UNUSED_RETURN bool ArgumentCoder<AtomString>::decode(Decoder& decoder, Atom
     if (!decoder.decode(string))
         return false;
 
-    atomString = AtomString { string };
+    atomString = string;
     return true;
 }
 
@@ -207,32 +207,6 @@ WARN_UNUSED_RETURN bool ArgumentCoder<String>::decode(Decoder& decoder, String& 
     result = WTFMove(*string);
     return true;
 }
-
-template<typename Encoder>
-void ArgumentCoder<StringView>::encode(Encoder& encoder, StringView string)
-{
-    // Special case the null string.
-    if (string.isNull()) {
-        encoder << std::numeric_limits<uint32_t>::max();
-        return;
-    }
-
-    uint32_t length = string.length();
-    bool is8Bit = string.is8Bit();
-
-    encoder << length << is8Bit;
-
-    if (is8Bit)
-        encoder.encodeFixedLengthData(string.characters8(), length * sizeof(LChar), alignof(LChar));
-    else
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
-}
-template
-void ArgumentCoder<StringView>::encode<Encoder>(Encoder&, StringView);
-template
-void ArgumentCoder<StringView>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, StringView);
-template
-void ArgumentCoder<StringView>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, StringView);
 
 void ArgumentCoder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
 {

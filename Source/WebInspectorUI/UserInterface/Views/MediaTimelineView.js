@@ -201,5 +201,3 @@ WI.MediaTimelineView = class MediaTimelineView extends WI.TimelineView
         dataGridNode.revealAndSelect();
     }
 };
-
-WI.MediaTimelineView.ReferencePage = WI.ReferencePage.TimelinesTab.MediaAndAnimationsTimeline;

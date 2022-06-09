@@ -119,7 +119,7 @@ void TileGrid::setNeedsDisplayInRect(const IntRect& rect)
 
     FloatRect scaledRect(rect);
     scaledRect.scale(m_scale);
-    IntRect repaintRectInTileCoords(enclosingIntRectPreservingEmptyRects(scaledRect));
+    IntRect repaintRectInTileCoords(enclosingIntRect(scaledRect));
 
     IntSize tileSize = m_tileSize;
 
@@ -151,7 +151,7 @@ void TileGrid::dropTilesInRect(const IntRect& rect)
 
     FloatRect scaledRect(rect);
     scaledRect.scale(m_scale);
-    IntRect dropRectInTileCoords(enclosingIntRectPreservingEmptyRects(scaledRect));
+    IntRect dropRectInTileCoords(enclosingIntRect(scaledRect));
 
     Vector<TileIndex> tilesToRemove;
 
@@ -213,7 +213,7 @@ bool TileGrid::tilesWouldChangeForCoverageRect(const FloatRect& coverageRect) co
 
     FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);
-    IntRect currentCoverageRectInTileCoords(enclosingIntRectPreservingEmptyRects(scaledRect));
+    IntRect currentCoverageRectInTileCoords(enclosingIntRect(scaledRect));
 
     IntRect tileCoverageRect;
     TileIndex topLeft;
@@ -230,7 +230,7 @@ bool TileGrid::prepopulateRect(const FloatRect& rect)
 {
     LOG_WITH_STREAM(Tiling, stream << "TileGrid " << this << " prepopulateRect: " << rect);
 
-    IntRect enclosingCoverageRect = enclosingIntRectPreservingEmptyRects(rect);
+    IntRect enclosingCoverageRect = enclosingIntRect(rect);
     if (m_primaryTileCoverageRect.contains(enclosingCoverageRect))
         return false;
 
@@ -290,7 +290,7 @@ unsigned TileGrid::blankPixelCount() const
     return TileController::blankPixelCountForTiles(tiles, m_controller.visibleRect(), IntPoint(0, 0));
 }
 
-void TileGrid::removeTiles(const Vector<TileGrid::TileIndex>& toRemove)
+void TileGrid::removeTiles(Vector<TileGrid::TileIndex>& toRemove)
 {
     for (size_t i = 0; i < toRemove.size(); ++i) {
         TileInfo tileInfo = m_tiles.take(toRemove[i]);
@@ -302,7 +302,13 @@ void TileGrid::removeTiles(const Vector<TileGrid::TileIndex>& toRemove)
 
 void TileGrid::removeAllTiles()
 {
-    removeTiles(copyToVector(m_tiles.keys()));
+    Vector<TileIndex> tilesToRemove;
+    tilesToRemove.reserveInitialCapacity(m_tiles.size());
+
+    for (auto& entry : m_tiles)
+        tilesToRemove.uncheckedAppend(entry.key);
+
+    removeTiles(tilesToRemove);
 }
 
 void TileGrid::removeAllSecondaryTiles()
@@ -343,7 +349,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
 
     FloatRect scaledRect(coverageRect);
     scaledRect.scale(m_scale);
-    IntRect coverageRectInTileCoords(enclosingIntRectPreservingEmptyRects(scaledRect));
+    IntRect coverageRectInTileCoords(enclosingIntRect(scaledRect));
 
     TileCohort currCohort = nextTileCohort();
     unsigned tilesInCohort = 0;
@@ -447,7 +453,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
 
         FloatRect scaledBounds(bounds);
         scaledBounds.scale(m_scale);
-        IntRect boundsInTileCoords(enclosingIntRectPreservingEmptyRects(scaledBounds));
+        IntRect boundsInTileCoords(enclosingIntRect(scaledBounds));
 
         TileIndex topLeftForBounds;
         TileIndex bottomRightForBounds;
@@ -542,7 +548,7 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, CoverageType newTile
 
     FloatRect scaledRect(rect);
     scaledRect.scale(m_scale);
-    IntRect rectInTileCoords(enclosingIntRectPreservingEmptyRects(scaledRect));
+    IntRect rectInTileCoords(enclosingIntRect(scaledRect));
 
     TileIndex topLeft;
     TileIndex bottomRight;

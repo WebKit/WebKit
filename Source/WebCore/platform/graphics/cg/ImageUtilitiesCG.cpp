@@ -101,15 +101,19 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
 
 Vector<String> findImagesForTranscoding(const Vector<String>& paths, const Vector<String>& allowedMIMETypes)
 {
+    Vector<String> transcodingPaths;
+    transcodingPaths.reserveInitialCapacity(paths.size());
+
     bool needsTranscoding = false;
-    auto transcodingPaths = paths.map([&](auto& path) {
+
+    for (auto& path : paths) {
         // Append a path of the image which needs transcoding. Otherwise append a null string.
         if (!allowedMIMETypes.contains(WebCore::MIMETypeRegistry::mimeTypeForPath(path))) {
+            transcodingPaths.uncheckedAppend(path);
             needsTranscoding = true;
-            return path;
-        }
-        return nullString();
-    });
+        } else
+            transcodingPaths.uncheckedAppend(nullString());
+    }
 
     // If none of the files needs image transcoding, return an empty Vector.
     return needsTranscoding ? transcodingPaths : Vector<String>();
@@ -120,10 +124,18 @@ Vector<String> transcodeImages(const Vector<String>& paths, const String& destin
     ASSERT(!destinationUTI.isNull());
     ASSERT(!destinationExtension.isNull());
     
-    return paths.map([&](auto& path) {
+    Vector<String> transcodedPaths;
+    transcodedPaths.reserveInitialCapacity(paths.size());
+
+    for (auto& path : paths) {
         // Append the transcoded path if the image needs transcoding. Otherwise append a null string.
-        return path.isNull() ? nullString() : transcodeImage(path, destinationUTI, destinationExtension);
-    });
+        if (!path.isNull())
+            transcodedPaths.uncheckedAppend(transcodeImage(path, destinationUTI, destinationExtension));
+        else
+            transcodedPaths.uncheckedAppend(nullString());
+    }
+
+    return transcodedPaths;
 }
 
 } // namespace WebCore

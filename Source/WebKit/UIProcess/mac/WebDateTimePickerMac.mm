@@ -240,21 +240,12 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     NSString *currentDateValueString = _params.currentValue;
 
-    NSString *format = [self dateFormatStringForType:_params.type];
-    [_dateFormatter setDateFormat:format];
+    [_dateFormatter setDateFormat:[self dateFormatStringForType:_params.type]];
 
     if (![currentDateValueString length])
         [_datePicker setDateValue:[self initialDateForEmptyValue]];
-    else {
-        NSDate *dateValue = [_dateFormatter dateFromString:currentDateValueString];
-
-        while (!dateValue && (format = [self dateFormatFallbackForFormat:format])) {
-            [_dateFormatter setDateFormat:format];
-            dateValue = [_dateFormatter dateFromString:currentDateValueString];
-        }
-
-        [_datePicker setDateValue:dateValue];
-    }
+    else
+        [_datePicker setDateValue:[_dateFormatter dateFromString:currentDateValueString]];
 
     [_datePicker setMinDate:[NSDate dateWithTimeIntervalSince1970:_params.minimum / 1000.0]];
     [_datePicker setMaxDate:[NSDate dateWithTimeIntervalSince1970:_params.maximum / 1000.0]];
@@ -296,16 +287,6 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
     }
 
     return kDateFormatString;
-}
-
-- (NSString *)dateFormatFallbackForFormat:(NSString *)format
-{
-    if ([format isEqualToString:kDateTimeWithMillisecondsFormatString])
-        return kDateTimeWithSecondsFormatString;
-    if ([format isEqualToString:kDateTimeWithSecondsFormatString])
-        return kDateTimeFormatString;
-
-    return nil;
 }
 
 - (NSDate *)initialDateForEmptyValue

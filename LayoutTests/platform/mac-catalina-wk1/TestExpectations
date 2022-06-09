@@ -1,0 +1,5 @@
+# This file should contain entries for expectations that are specific
+# to the Apple Mac Catalina port running WebKit1 (DumpRenderTree)
+
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html [ Skip ]
+imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentative.html [ Skip ]

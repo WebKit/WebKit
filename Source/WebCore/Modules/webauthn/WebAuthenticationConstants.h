@@ -78,23 +78,7 @@ enum class ClientDataType : bool {
     Get
 };
 
-constexpr const char LocalAuthenticatorAccessGroup[] = "com.apple.webkit.webauthn";
-
-// User entity extension
-constexpr const char userEntityLastModifiedKey[] = "last_modified";
-
-// Credential serialization
-constexpr const char privateKeyKey[] = "priv";
-constexpr const char keyTypeKey[] = "key_type";
-constexpr const char keySizeKey[] = "key_size";
-constexpr const char relyingPartyKey[] = "rp";
-constexpr const char applicationTagKey[] = "tag";
-
-constexpr auto authenticatorTransportUsb = "usb"_s;
-constexpr auto authenticatorTransportNfc = "nfc"_s;
-constexpr auto authenticatorTransportBle = "ble"_s;
-constexpr auto authenticatorTransportInternal = "internal"_s;
-constexpr auto authenticatorTransportCable = "cable"_s;
+const char LocalAuthenticatiorAccessGroup[] = "com.apple.webkit.webauthn";
 
 } // namespace WebCore
 
@@ -105,13 +89,5 @@ enum class Scope {
     SameOrigin,
     SameSite
 };
-
-// https://www.w3.org/TR/webauthn-2/#authenticator-data
-constexpr uint8_t userPresenceFlag = 0b00000001;
-constexpr uint8_t userVerifiedFlag = 0b00000100;
-constexpr uint8_t attestedCredentialDataIncludedFlag = 0b01000000;
-// https://github.com/w3c/webauthn/pull/1695
-constexpr uint8_t backupEligibilityFlag = 0b00001000;
-constexpr uint8_t backupStateFlag = 0b00010000;
 
 } // namespace WebAuthn

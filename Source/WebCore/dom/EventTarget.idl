@@ -20,13 +20,13 @@
 
 [
     CustomToJSObject,
-    Exposed=*,
+    Exposed=(Window,Worker),
     IsImmutablePrototypeExoticObjectOnPrototype,
     JSCustomHeader,
     JSCustomMarkFunction,
     JSCustomToNativeObject,
 ] interface EventTarget {
-    [CallWith=CurrentScriptExecutionContext] constructor();
+    [CallWith=ScriptExecutionContext] constructor();
 
     [ImplementedAs=addEventListenerForBindings] undefined addEventListener([AtomString] DOMString type, EventListener? listener, optional (AddEventListenerOptions or boolean) options = false);
     [ImplementedAs=removeEventListenerForBindings] undefined removeEventListener([AtomString] DOMString type, EventListener? listener, optional (EventListenerOptions or boolean) options = false);

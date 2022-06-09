@@ -60,7 +60,7 @@ CustomPaintImage::CustomPaintImage(PaintWorkletGlobalScope::PaintDefinition& def
 
 CustomPaintImage::~CustomPaintImage() = default;
 
-static RefPtr<CSSStyleValue> extractComputedProperty(const AtomString& name, Element& element)
+static RefPtr<CSSStyleValue> extractComputedProperty(const String& name, Element& element)
 {
     ComputedStyleExtractor extractor(&element);
 
@@ -79,12 +79,12 @@ static RefPtr<CSSStyleValue> extractComputedProperty(const AtomString& name, Ele
 
 class HashMapStylePropertyMap final : public StylePropertyMap {
 public:
-    static Ref<StylePropertyMap> create(HashMap<AtomString, RefPtr<CSSStyleValue>>&& map)
+    static Ref<StylePropertyMap> create(HashMap<String, RefPtr<CSSStyleValue>>&& map)
     {
         return adoptRef(*new HashMapStylePropertyMap(WTFMove(map)));
     }
 
-    static RefPtr<CSSStyleValue> extractComputedProperty(const AtomString& name, Element& element)
+    static RefPtr<CSSStyleValue> extractComputedProperty(const String& name, Element& element)
     {
         ComputedStyleExtractor extractor(&element);
 
@@ -102,32 +102,16 @@ public:
     }
 
 private:
-    explicit HashMapStylePropertyMap(HashMap<AtomString, RefPtr<CSSStyleValue>>&& map)
+    explicit HashMapStylePropertyMap(HashMap<String, RefPtr<CSSStyleValue>>&& map)
         : m_map(WTFMove(map))
     {
     }
 
     void clearElement() override { }
 
-    ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString& property) const final { return m_map.get(property); }
+    RefPtr<CSSStyleValue> get(const String& property) const final { return m_map.get(property); }
 
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const final
-    {
-        // FIXME: implement.
-        return Vector<RefPtr<CSSStyleValue>>();
-    }
-
-    unsigned size() const final { return m_map.size(); }
-
-    Vector<StylePropertyMapEntry> entries() const final
-    {
-        // FIXME: implement.
-        return { };
-    }
-
-    ExceptionOr<bool> has(const AtomString& property) const final { return m_map.contains(property); }
-
-    HashMap<AtomString, RefPtr<CSSStyleValue>> m_map;
+    HashMap<String, RefPtr<CSSStyleValue>> m_map;
 };
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)
@@ -149,9 +133,13 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
         return ImageDrawResult::DidNothing;
 
     auto canvas = CustomPaintCanvas::create(*scriptExecutionContext, destSize.width(), destSize.height());
-    RefPtr context = canvas->getContext();
+    ExceptionOr<RefPtr<PaintRenderingContext2D>> contextOrException = canvas->getContext();
 
-    HashMap<AtomString, RefPtr<CSSStyleValue>> propertyValues;
+    if (contextOrException.hasException())
+        return ImageDrawResult::DidNothing;
+    auto context = contextOrException.releaseReturnValue();
+
+    HashMap<String, RefPtr<CSSStyleValue>> propertyValues;
 
     if (auto* element = m_element->element()) {
         for (auto& name : m_inputProperties)
@@ -168,7 +156,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
 
     auto& lexicalGlobalObject = globalObject;
     JSC::ArgList noArgs;
-    JSC::JSValue thisObject = { JSC::construct(&lexicalGlobalObject, paintConstructor, noArgs, "Failed to construct paint class"_s) };
+    JSC::JSValue thisObject = { JSC::construct(&lexicalGlobalObject, paintConstructor, noArgs, "Failed to construct paint class") };
 
     if (UNLIKELY(scope.exception())) {
         reportException(&lexicalGlobalObject, scope.exception());
@@ -211,7 +199,7 @@ void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect
     adjustedPatternCTM.scale(1.0 / xScale, 1.0 / yScale);
     adjustedSrcRect.scale(xScale, yScale);
 
-    auto buffer = destContext.createAlignedImageBuffer(adjustedSize);
+    auto buffer = ImageBuffer::createCompatibleBuffer(adjustedSize, DestinationColorSpace::SRGB(), destContext);
     if (!buffer)
         return;
     doCustomPaint(buffer->context(), adjustedSize);
@@ -219,7 +207,7 @@ void CustomPaintImage::drawPattern(GraphicsContext& destContext, const FloatRect
     if (destContext.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
-    destContext.drawPattern(*buffer, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
+    buffer->drawPattern(destContext, destRect, adjustedSrcRect, adjustedPatternCTM, phase, spacing, options);
     destContext.setDrawLuminanceMask(false);
 }
 

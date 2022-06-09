@@ -26,93 +26,30 @@
 #include "config.h"
 #include "CSSMathProduct.h"
 
+#include "CSSNumericArray.h"
+
 #if ENABLE(CSS_TYPED_OM)
 
-#include "CSSMathInvert.h"
-#include "CSSNumericArray.h"
-#include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathProduct);
 
-ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(FixedVector<CSSNumberish> numberishes)
+Ref<CSSMathProduct> CSSMathProduct::create(FixedVector<CSSNumberish>&& numberishes)
 {
-    return create(WTF::map(WTFMove(numberishes), rectifyNumberish));
+    return adoptRef(*new CSSMathProduct(WTFMove(numberishes)));
 }
 
-ExceptionOr<Ref<CSSMathProduct>> CSSMathProduct::create(Vector<Ref<CSSNumericValue>> values)
-{
-    if (values.isEmpty())
-        return Exception { SyntaxError };
-
-    auto type = CSSNumericType::multiplyTypes(values);
-    if (!type)
-        return Exception { TypeError };
-
-    return adoptRef(*new CSSMathProduct(WTFMove(values), WTFMove(*type)));
-}
-
-CSSMathProduct::CSSMathProduct(Vector<Ref<CSSNumericValue>> values, CSSNumericType type)
-    : CSSMathValue(WTFMove(type))
-    , m_values(CSSNumericArray::create(WTFMove(values)))
+CSSMathProduct::CSSMathProduct(FixedVector<CSSNumberish>&& numberishes)
+    : CSSMathValue(CSSMathOperator::Product)
+    , m_values(CSSNumericArray::create(WTFMove(numberishes)))
 {
 }
 
-void CSSMathProduct::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
+const CSSNumericArray& CSSMathProduct::values() const
 {
-    // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
-    if (!arguments.contains(SerializationArguments::WithoutParentheses))
-        builder.append(arguments.contains(SerializationArguments::Nested) ? "(" : "calc(");
-    m_values->forEach([&](auto& numericValue, bool first) {
-        OptionSet<SerializationArguments> operandSerializationArguments { SerializationArguments::Nested };
-        operandSerializationArguments.set(SerializationArguments::WithoutParentheses, arguments.contains(SerializationArguments::WithoutParentheses));
-        if (!first) {
-            if (auto* mathNegate = dynamicDowncast<CSSMathInvert>(numericValue)) {
-                builder.append(" / ");
-                mathNegate->value().serialize(builder, operandSerializationArguments);
-                return;
-            }
-            builder.append(" * ");
-        }
-        numericValue.serialize(builder, operandSerializationArguments);
-    });
-    if (!arguments.contains(SerializationArguments::WithoutParentheses))
-        builder.append(')');
-}
-
-auto CSSMathProduct::toSumValue() const -> std::optional<SumValue>
-{
-    auto productOfUnits = [] (const auto& units1, const auto& units2) {
-        // https://drafts.css-houdini.org/css-typed-om/#product-of-two-unit-maps
-        auto result = units1;
-        for (auto& pair : units2) {
-            auto addResult = result.add(pair.key, pair.value);
-            if (!addResult.isNewEntry)
-                addResult.iterator->value += pair.value;
-            if (!addResult.iterator->value)
-                result.remove(pair.key);
-        }
-        return result;
-    };
-    
-    // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
-    SumValue values { Addend { 1.0, { } } };
-    for (auto& item : m_values->array()) {
-        auto newValues = item->toSumValue();
-        if (!newValues)
-            return std::nullopt;
-        SumValue temp;
-        for (auto& item1 : values) {
-            for (auto& item2 : *newValues) {
-                Addend item { item1.value * item2.value, productOfUnits(item1.units, item2.units) };
-                temp.append(WTFMove(item));
-            }
-        }
-        values = WTFMove(temp);
-    }
-    return { WTFMove(values) };
+    return m_values.get();
 }
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ public:
 
 private:
     void graphicsElement() const = delete;
-    ASCIILiteral renderName() const override { return "RenderSVGTSpan"_s; }
+    const char* renderName() const override { return "RenderSVGTSpan"; }
     bool isSVGTSpan() const override { return true; }
 };
 

@@ -27,7 +27,6 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "AbortableTaskQueue.h"
 #include "AudioTrackPrivate.h"
 #include "TrackPrivateBaseGStreamer.h"
 
@@ -43,9 +42,9 @@ public:
         return adoptRef(*new AudioTrackPrivateGStreamer(player, index, WTFMove(pad), shouldHandleStreamStartEvent));
     }
 
-    static Ref<AudioTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
+    static Ref<AudioTrackPrivateGStreamer> create(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstStream>&& stream)
     {
-        return adoptRef(*new AudioTrackPrivateGStreamer(player, index, stream));
+        return adoptRef(*new AudioTrackPrivateGStreamer(player, index, WTFMove(stream)));
     }
 
     Kind kind() const final;
@@ -60,15 +59,10 @@ public:
     AtomString id() const final { return m_id; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
-    AbortableTaskQueue m_taskQueue;
-
-protected:
-    void updateConfigurationFromCaps();
-    void updateConfigurationFromTags();
 
 private:
     AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
-    AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GstStream*);
+    AudioTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer>, unsigned index, GRefPtr<GstStream>&&);
 
     WeakPtr<MediaPlayerPrivateGStreamer> m_player;
 };

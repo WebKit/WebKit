@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr/#xrlayer
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
     InterfaceName=XRLayer,

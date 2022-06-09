@@ -237,7 +237,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         if (hasStackTrace) {
             this._message.stackTrace.callFrames.forEach(function(frame) {
-                clipboardString += "\n\t" + frame.displayName;
+                clipboardString += "\n\t" + (frame.functionName || WI.UIString("(anonymous function)"));
                 if (frame.sourceCodeLocation)
                     clipboardString += " (" + frame.sourceCodeLocation.originalLocationString() + ")";
             });
@@ -1030,16 +1030,14 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 
-        if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile)) {
-            contextMenu.appendItem(WI.UIString("Save Image"), () => {
-                const forceSaveAs = true;
-                WI.FileUtilities.save(WI.FileUtilities.SaveMode.SingleFile, {
-                    content: parseDataURL(this._message.messageText).data,
-                    base64Encoded: true,
-                    suggestedName: image.getAttribute("filename"),
-                }, forceSaveAs);
-            });
-        }
+        contextMenu.appendItem(WI.UIString("Save Image"), () => {
+            const forceSaveAs = true;
+            WI.FileUtilities.save({
+                content: parseDataURL(this._message.messageText).data,
+                base64Encoded: true,
+                suggestedName: image.getAttribute("filename"),
+            }, forceSaveAs);
+        });
 
         contextMenu.appendSeparator();
     }

@@ -27,12 +27,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "NotificationClient.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
-#include <wtf/MonotonicTime.h>
 #include <wtf/URLHash.h>
 
 namespace WebCore {
@@ -40,23 +38,17 @@ namespace WebCore {
 class DeferredPromise;
 class ExtendableEvent;
 class Page;
-class PushEvent;
+struct ServiceWorkerClientData;
 class ServiceWorkerClient;
 class ServiceWorkerClients;
 class ServiceWorkerThread;
 
-enum class NotificationEventType : bool;
-
-struct ServiceWorkerClientData;
-
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
-    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&);
+    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     ~ServiceWorkerGlobalScope();
-
-    bool isServiceWorkerGlobalScope() const final { return true; }
 
     ServiceWorkerClients& clients() { return m_clients.get(); }
     ServiceWorkerRegistration& registration() { return m_registration.get(); }
@@ -67,6 +59,10 @@ public:
     EventTargetInterface eventTargetInterface() const final;
 
     ServiceWorkerThread& thread();
+
+    ServiceWorkerClient* serviceWorkerClient(ScriptExecutionContextIdentifier);
+    void addServiceWorkerClient(ServiceWorkerClient&);
+    void removeServiceWorkerClient(ServiceWorkerClient&);
 
     void updateExtendedEventsSet(ExtendableEvent* newEvent = nullptr);
 
@@ -81,42 +77,23 @@ public:
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
 
     WEBCORE_EXPORT Page* serviceWorkerPage();
-
-    void dispatchPushEvent(PushEvent&);
-    PushEvent* pushEvent() { return m_pushEvent.get(); }
-
-    bool hasPendingSilentPushEvent() const { return m_hasPendingSilentPushEvent; }
-    void setHasPendingSilentPushEvent(bool value) { m_hasPendingSilentPushEvent = value; }
-
-    constexpr static Seconds userGestureLifetime  { 2_s };
-    bool isProcessingUserGesture() const { return m_isProcessingUserGesture; }
-    void recordUserGesture();
-    void setIsProcessingUserGestureForTesting(bool value) { m_isProcessingUserGesture = value; }
-
+    
 private:
-    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&);
+    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
     void notifyServiceWorkerPageOfCreationIfNecessary();
 
     Type type() const final { return Type::ServiceWorker; }
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
-    NotificationClient* notificationClient() final { return m_notificationClient.get(); }
-
-    void resetUserGesture() { m_isProcessingUserGesture = false; }
-
     ServiceWorkerContextData m_contextData;
     Ref<ServiceWorkerRegistration> m_registration;
     Ref<ServiceWorker> m_serviceWorker;
     Ref<ServiceWorkerClients> m_clients;
+    HashMap<ScriptExecutionContextIdentifier, ServiceWorkerClient*> m_clientMap;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;
 
     uint64_t m_lastRequestIdentifier { 0 };
     HashMap<uint64_t, RefPtr<DeferredPromise>> m_pendingSkipWaitingPromises;
-    std::unique_ptr<NotificationClient> m_notificationClient;
-    bool m_hasPendingSilentPushEvent { false };
-    bool m_isProcessingUserGesture { false };
-    Timer m_userGestureTimer;
-    RefPtr<PushEvent> m_pushEvent;
 };
 
 } // namespace WebCore

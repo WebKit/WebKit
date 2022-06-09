@@ -28,11 +28,16 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER) && !USE(ANGLE)
+#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
-#include "GraphicsContextGLOpenGL.h"
 #include "NicosiaContentLayerTextureMapperImpl.h"
 #include <memory>
+
+#if USE(ANGLE)
+#include "GraphicsContextGLANGLE.h"
+#else
+#include "GraphicsContextGLOpenGL.h"
+#endif
 
 namespace WebCore {
 class GLContext;
@@ -43,18 +48,23 @@ namespace Nicosia {
 class GCGLLayer : public ContentLayerTextureMapperImpl::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit GCGLLayer(WebCore::GraphicsContextGLOpenGL&);
+#if USE(ANGLE)
+    using GraphicsContextGLType = WebCore::GraphicsContextGLANGLE;
+#else
+    using GraphicsContextGLType = WebCore::GraphicsContextGLOpenGL;
+#endif
+    explicit GCGLLayer(GraphicsContextGLType&);
 
     virtual ~GCGLLayer();
 
     ContentLayer& contentLayer() const { return m_contentLayer; }
     virtual bool makeContextCurrent();
-    virtual GCGLContext platformContext() const;
+    virtual PlatformGraphicsContextGL platformContext() const;
 
     void swapBuffersIfNeeded() override;
 
 private:
-    WebCore::GraphicsContextGLOpenGL& m_context;
+    GraphicsContextGLType& m_context;
     std::unique_ptr<WebCore::GLContext> m_glContext;
 
     Ref<ContentLayer> m_contentLayer;

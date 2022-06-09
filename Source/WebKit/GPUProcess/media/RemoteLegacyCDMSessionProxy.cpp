@@ -31,53 +31,49 @@
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteLegacyCDMFactoryProxy.h"
 #include "RemoteLegacyCDMSessionMessages.h"
+#include "SharedBufferCopy.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <WebCore/LegacyCDM.h>
 #include <WebCore/SharedBuffer.h>
-#include <wtf/LoggerHelper.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteLegacyCDMSessionProxy> RemoteLegacyCDMSessionProxy::create(RemoteLegacyCDMFactoryProxy& factory, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)
+std::unique_ptr<RemoteLegacyCDMSessionProxy> RemoteLegacyCDMSessionProxy::create(WeakPtr<RemoteLegacyCDMFactoryProxy>&& factory, RemoteLegacyCDMSessionIdentifier identifier, WebCore::LegacyCDM& cdm)
 {
-    return std::unique_ptr<RemoteLegacyCDMSessionProxy>(new RemoteLegacyCDMSessionProxy(factory, logIdentifier, sessionIdentifier, cdm));
+    return std::unique_ptr<RemoteLegacyCDMSessionProxy>(new RemoteLegacyCDMSessionProxy(WTFMove(factory), identifier, cdm));
 }
 
-RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy& factory, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)
-    : m_factory(factory)
-#if !RELEASE_LOG_DISABLED
-    , m_logger(factory.logger())
-    , m_logIdentifier(reinterpret_cast<const void*>(logIdentifier))
-#endif
-    , m_identifier(sessionIdentifier)
+RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&& factory, RemoteLegacyCDMSessionIdentifier identifier, WebCore::LegacyCDM& cdm)
+    : m_factory(WTFMove(factory))
+    , m_identifier(identifier)
     , m_session(cdm.createSession(*this))
 {
 }
 
 RemoteLegacyCDMSessionProxy::~RemoteLegacyCDMSessionProxy() = default;
 
-static RefPtr<Uint8Array> convertToUint8Array(RefPtr<SharedBuffer>&& buffer)
+static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferCopy&& buffer)
 {
-    if (!buffer)
+    if (!buffer.buffer())
         return nullptr;
 
-    auto arrayBuffer = buffer->tryCreateArrayBuffer();
+    auto arrayBuffer = buffer.buffer()->tryCreateArrayBuffer();
     if (!arrayBuffer)
         return nullptr;
-    return Uint8Array::create(arrayBuffer.releaseNonNull(), 0, buffer->size());
+    return Uint8Array::create(arrayBuffer.releaseNonNull(), 0, buffer.size());
 }
 
 template <typename T>
-static RefPtr<WebCore::SharedBuffer> convertToOptionalSharedBuffer(T array)
+static std::optional<IPC::SharedBufferCopy> convertToOptionalSharedBuffer(T array)
 {
     if (!array)
-        return nullptr;
-    return SharedBuffer::create((const char*)array->data(), array->byteLength());
+        return std::nullopt;
+    return { IPC::SharedBufferCopy(SharedBuffer::create((const char*)array->data(), array->byteLength())) };
 }
 
-void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, RefPtr<SharedBuffer>&& initData, GenerateKeyCallback&& completion)
+void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, IPC::SharedBufferCopy&& initData, GenerateKeyCallback&& completion)
 {
     auto initDataArray = convertToUint8Array(WTFMove(initData));
     if (!initDataArray) {
@@ -101,11 +97,11 @@ void RemoteLegacyCDMSessionProxy::releaseKeys()
     m_session->releaseKeys();
 }
 
-void RemoteLegacyCDMSessionProxy::update(RefPtr<SharedBuffer>&& update, UpdateCallback&& completion)
+void RemoteLegacyCDMSessionProxy::update(IPC::SharedBufferCopy&& update, UpdateCallback&& completion)
 {
     auto updateArray = convertToUint8Array(WTFMove(update));
     if (!updateArray) {
-        completion(false, nullptr, 0, 0);
+        completion(false, std::nullopt, 0, 0);
         return;
     }
 

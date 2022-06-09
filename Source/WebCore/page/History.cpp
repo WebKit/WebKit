@@ -208,7 +208,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     // We allow sandboxed documents, 'data:'/'file:' URLs, etc. to use 'pushState'/'replaceState' to modify the URL query and fragments.
     // See https://bugs.webkit.org/show_bug.cgi?id=183028 for the compatibility concerns.
     bool allowSandboxException = (documentSecurityOrigin.isLocal() || documentSecurityOrigin.isUnique())
-        && documentURL.viewWithoutQueryOrFragmentIdentifier() == fullURL.viewWithoutQueryOrFragmentIdentifier();
+        && documentURL.stringWithoutQueryOrFragmentIdentifier() == fullURL.stringWithoutQueryOrFragmentIdentifier();
 
     if (!allowSandboxException && !documentSecurityOrigin.canRequest(fullURL) && (fullURL.path() != documentURL.path() || fullURL.query() != documentURL.query()))
         return createBlockedURLSecurityErrorWithMessageSuffix("Paths and fragments must match for a sandboxed document.");
@@ -239,7 +239,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     Checked<uint64_t> payloadSize = titleSize;
     payloadSize += urlSize;
-    payloadSize += data ? data->wireBytes().size() : 0;
+    payloadSize += data ? data->data().size() : 0;
 
     Checked<uint64_t> newTotalUsage = mainHistory.m_totalStateObjectUsage;
 

@@ -47,7 +47,7 @@ public:
     Vector<String> supportedPropertyNames() const;
 
     String namedItem(const AtomString& name) const;
-    ExceptionOr<void> setNamedItem(const String& name, const AtomString& value);
+    ExceptionOr<void> setNamedItem(const String& name, const String& value);
     bool deleteNamedProperty(const String& name);
 
     Element& element() { return m_element; }

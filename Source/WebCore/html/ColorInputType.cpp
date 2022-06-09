@@ -39,8 +39,6 @@
 #include "Chrome.h"
 #include "Color.h"
 #include "ColorSerialization.h"
-#include "ElementChildIterator.h"
-#include "ElementRareData.h"
 #include "Event.h"
 #include "HTMLDataListElement.h"
 #include "HTMLDivElement.h"
@@ -154,9 +152,9 @@ void ColorInputType::createShadowSubtree()
     updateColorSwatch();
 }
 
-void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
-    InputType::setValue(value, valueChanged, eventBehavior, selection);
+    InputType::setValue(value, valueChanged, eventBehavior);
 
     if (!valueChanged)
         return;
@@ -183,23 +181,14 @@ void ColorInputType::handleDOMActivateEvent(Event& event)
     if (!UserGestureIndicator::processingUserGesture())
         return;
 
-    showPicker();
-    event.setDefaultHandled();
-}
-
-void ColorInputType::showPicker() 
-{
     if (Chrome* chrome = this->chrome()) {
         if (!m_chooser)
             m_chooser = chrome->createColorChooser(*this, valueAsColor());
         else
             m_chooser->reattachColorChooser(valueAsColor());
     }
-}
 
-bool ColorInputType::allowsShowPickerAcrossFrames()
-{
-    return true;
+    event.setDefaultHandled();
 }
 
 void ColorInputType::detach()

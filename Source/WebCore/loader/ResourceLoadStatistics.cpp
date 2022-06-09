@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,15 +72,15 @@ static void encodeHashSet(KeyedEncoder& encoder, const String& label,  const Str
 
 static void encodeFontHashSet(KeyedEncoder& encoder, const String& label, const HashSet<String>& hashSet)
 {
-    encodeHashSet(encoder, label, "font"_s, hashSet);
+    encodeHashSet(encoder, label, "font", hashSet);
 }
     
 static void encodeCanvasActivityRecord(KeyedEncoder& encoder, const String& label, const CanvasActivityRecord& canvasActivityRecord)
 {
     encoder.encodeObject(label, canvasActivityRecord, [] (KeyedEncoder& encoderInner, const CanvasActivityRecord& canvasActivityRecord) {
-        encoderInner.encodeBool("wasDataRead"_s, canvasActivityRecord.wasDataRead);
-        encoderInner.encodeObjects("textWritten"_s, canvasActivityRecord.textWritten.begin(), canvasActivityRecord.textWritten.end(), [] (KeyedEncoder& encoderInner2, const String& text) {
-            encoderInner2.encodeString("text"_s, text);
+        encoderInner.encodeBool("wasDataRead", canvasActivityRecord.wasDataRead);
+        encoderInner.encodeObjects("textWritten", canvasActivityRecord.textWritten.begin(), canvasActivityRecord.textWritten.end(), [] (KeyedEncoder& encoderInner2, const String& text) {
+            encoderInner2.encodeString("text", text);
         });
     });
 }
@@ -103,9 +103,9 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
     // Top frame stats
     encodeHashSet(encoder, "topFrameUniqueRedirectsTo"_s, "domain"_s, topFrameUniqueRedirectsTo);
     encodeHashSet(encoder, "topFrameUniqueRedirectsFrom"_s, "domain"_s, topFrameUniqueRedirectsFrom);
-    encodeHashSet(encoder, "topFrameLinkDecorationsFrom"_s, "domain"_s, topFrameLinkDecorationsFrom);
+    encodeHashSet(encoder, "topFrameLinkDecorationsFrom"_s, "domain", topFrameLinkDecorationsFrom);
     encoder.encodeBool("gotLinkDecorationFromPrevalentResource"_s, gotLinkDecorationFromPrevalentResource);
-    encodeHashSet(encoder, "topFrameLoadedThirdPartyScripts"_s, "domain"_s, topFrameLoadedThirdPartyScripts);
+    encodeHashSet(encoder, "topFrameLoadedThirdPartyScripts"_s, "domain", topFrameLoadedThirdPartyScripts);
 
     // Subframe stats
     encodeHashSet(encoder, "subframeUnderTopFrameDomains"_s, "domain"_s, subframeUnderTopFrameDomains);
@@ -124,12 +124,12 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
     encoder.encodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI"_s, timesAccessedAsFirstPartyDueToStorageAccessAPI);
 
 #if ENABLE(WEB_API_STATISTICS)
-    encodeFontHashSet(encoder, "fontsFailedToLoad"_s, fontsFailedToLoad);
-    encodeFontHashSet(encoder, "fontsSuccessfullyLoaded"_s, fontsSuccessfullyLoaded);
-    encodeHashSet(encoder, "topFrameRegistrableDomainsWhichAccessedWebAPIs"_s, "domain"_s, topFrameRegistrableDomainsWhichAccessedWebAPIs);
-    encodeCanvasActivityRecord(encoder, "canvasActivityRecord"_s, canvasActivityRecord);
-    encodeOptionSet(encoder, "navigatorFunctionsAccessedBitMask"_s, navigatorFunctionsAccessed);
-    encodeOptionSet(encoder, "screenFunctionsAccessedBitMask"_s, screenFunctionsAccessed);
+    encodeFontHashSet(encoder, "fontsFailedToLoad", fontsFailedToLoad);
+    encodeFontHashSet(encoder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded);
+    encodeHashSet(encoder, "topFrameRegistrableDomainsWhichAccessedWebAPIs", "domain", topFrameRegistrableDomainsWhichAccessedWebAPIs);
+    encodeCanvasActivityRecord(encoder, "canvasActivityRecord", canvasActivityRecord);
+    encodeOptionSet(encoder, "navigatorFunctionsAccessedBitMask", navigatorFunctionsAccessed);
+    encodeOptionSet(encoder, "screenFunctionsAccessedBitMask", screenFunctionsAccessed);
 #endif
 }
 
@@ -138,11 +138,11 @@ static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, Has
     Vector<String> ignored;
 IGNORE_WARNINGS_BEGIN("unused-result")
     decoder.decodeObjects(label, ignored, [&hashCountedSet](KeyedDecoder& decoderInner, String& domain) {
-        if (!decoderInner.decodeString("origin"_s, domain))
+        if (!decoderInner.decodeString("origin", domain))
             return false;
         
         unsigned count;
-        if (!decoderInner.decodeUInt32("count"_s, count))
+        if (!decoderInner.decodeUInt32("count", count))
             return false;
 
         hashCountedSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(domain), count);
@@ -190,18 +190,18 @@ IGNORE_WARNINGS_END
 
 static void decodeFontHashSet(KeyedDecoder& decoder, const String& label, HashSet<String>& hashSet)
 {
-    decodeHashSet(decoder, label, "font"_s, hashSet);
+    decodeHashSet(decoder, label, "font", hashSet);
 }
     
 static void decodeCanvasActivityRecord(KeyedDecoder& decoder, const String& label, CanvasActivityRecord& canvasActivityRecord)
 {
 IGNORE_WARNINGS_BEGIN("unused-result")
     decoder.decodeObject(label, canvasActivityRecord, [] (KeyedDecoder& decoderInner, CanvasActivityRecord& canvasActivityRecord) {
-        if (!decoderInner.decodeBool("wasDataRead"_s, canvasActivityRecord.wasDataRead))
+        if (!decoderInner.decodeBool("wasDataRead", canvasActivityRecord.wasDataRead))
             return false;
         Vector<String> ignore;
-        decoderInner.decodeObjects("textWritten"_s, ignore, [&canvasActivityRecord] (KeyedDecoder& decoderInner2, String& text) {
-            if (!decoderInner2.decodeString("text"_s, text))
+        decoderInner.decodeObjects("textWritten", ignore, [&canvasActivityRecord] (KeyedDecoder& decoderInner2, String& text) {
+            if (!decoderInner2.decodeString("text", text))
                 return false;
             canvasActivityRecord.textWritten.add(text);
             return true;
@@ -216,81 +216,81 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
 {
     String registrableDomainAsString;
     if (modelVersion >= 15) {
-        if (!decoder.decodeString("PrevalentResourceDomain"_s, registrableDomainAsString))
+        if (!decoder.decodeString("PrevalentResourceDomain", registrableDomainAsString))
             return false;
     } else {
-        if (!decoder.decodeString("PrevalentResourceOrigin"_s, registrableDomainAsString))
+        if (!decoder.decodeString("PrevalentResourceOrigin", registrableDomainAsString))
             return false;
     }
     registrableDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(registrableDomainAsString);
 
     // User interaction
-    if (!decoder.decodeBool("hadUserInteraction"_s, hadUserInteraction))
+    if (!decoder.decodeBool("hadUserInteraction", hadUserInteraction))
         return false;
 
     // Storage access
     if (modelVersion >= 15)
-        decodeHashSet(decoder, "storageAccessUnderTopFrameDomains"_s, "domain"_s, storageAccessUnderTopFrameDomains);
+        decodeHashSet(decoder, "storageAccessUnderTopFrameDomains", "domain", storageAccessUnderTopFrameDomains);
     else
-        decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins"_s, "origin"_s, storageAccessUnderTopFrameDomains);
+        decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins", "origin", storageAccessUnderTopFrameDomains);
 
     // Top frame stats
     if (modelVersion >= 15) {
-        decodeHashSet(decoder, "topFrameUniqueRedirectsTo"_s, "domain"_s, topFrameUniqueRedirectsTo);
-        decodeHashSet(decoder, "topFrameUniqueRedirectsFrom"_s, "domain"_s, topFrameUniqueRedirectsFrom);
+        decodeHashSet(decoder, "topFrameUniqueRedirectsTo", "domain", topFrameUniqueRedirectsTo);
+        decodeHashSet(decoder, "topFrameUniqueRedirectsFrom", "domain", topFrameUniqueRedirectsFrom);
     } else if (modelVersion >= 11) {
         HashCountedSet<RegistrableDomain> topFrameUniqueRedirectsToCounted;
-        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo"_s, topFrameUniqueRedirectsToCounted);
+        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsToCounted);
         for (auto& domain : topFrameUniqueRedirectsToCounted.values())
             topFrameUniqueRedirectsTo.add(domain);
         
         HashCountedSet<RegistrableDomain> topFrameUniqueRedirectsFromCounted;
-        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom"_s, topFrameUniqueRedirectsFromCounted);
+        decodeHashCountedSet(decoder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFromCounted);
         for (auto& domain : topFrameUniqueRedirectsFromCounted.values())
             topFrameUniqueRedirectsFrom.add(domain);
     }
 
     if (modelVersion >= 16) {
-        decodeHashSet(decoder, "topFrameLinkDecorationsFrom"_s, "domain"_s, topFrameLinkDecorationsFrom);
-        if (!decoder.decodeBool("gotLinkDecorationFromPrevalentResource"_s, gotLinkDecorationFromPrevalentResource))
+        decodeHashSet(decoder, "topFrameLinkDecorationsFrom", "domain", topFrameLinkDecorationsFrom);
+        if (!decoder.decodeBool("gotLinkDecorationFromPrevalentResource", gotLinkDecorationFromPrevalentResource))
             return false;
     }
 
     if (modelVersion >= 17) {
         HashCountedSet<RegistrableDomain> topFrameLoadedThirdPartyScriptsCounted;
-        decodeHashCountedSet(decoder, "topFrameLoadedThirdPartyScripts"_s, topFrameLoadedThirdPartyScriptsCounted);
+        decodeHashCountedSet(decoder, "topFrameLoadedThirdPartyScripts", topFrameLoadedThirdPartyScriptsCounted);
         for (auto& domain : topFrameLoadedThirdPartyScriptsCounted.values())
             topFrameLoadedThirdPartyScripts.add(domain);
     }
 
     // Subframe stats
     if (modelVersion >= 15)
-        decodeHashSet(decoder, "subframeUnderTopFrameDomains"_s, "domain"_s, subframeUnderTopFrameDomains);
+        decodeHashSet(decoder, "subframeUnderTopFrameDomains", "domain", subframeUnderTopFrameDomains);
     else if (modelVersion >= 14) {
         HashCountedSet<RegistrableDomain> subframeUnderTopFrameDomainsCounted;
-        decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins"_s, subframeUnderTopFrameDomainsCounted);
+        decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameDomainsCounted);
         for (auto& domain : subframeUnderTopFrameDomainsCounted.values())
             subframeUnderTopFrameDomains.add(domain);
     }
 
     // Subresource stats
     if (modelVersion >= 15) {
-        decodeHashSet(decoder, "subresourceUnderTopFrameDomains"_s, "domain"_s, subresourceUnderTopFrameDomains);
-        decodeHashSet(decoder, "subresourceUniqueRedirectsTo"_s, "domain"_s, subresourceUniqueRedirectsTo);
-        decodeHashSet(decoder, "subresourceUniqueRedirectsFrom"_s, "domain"_s, subresourceUniqueRedirectsFrom);
+        decodeHashSet(decoder, "subresourceUnderTopFrameDomains", "domain", subresourceUnderTopFrameDomains);
+        decodeHashSet(decoder, "subresourceUniqueRedirectsTo", "domain", subresourceUniqueRedirectsTo);
+        decodeHashSet(decoder, "subresourceUniqueRedirectsFrom", "domain", subresourceUniqueRedirectsFrom);
     } else {
         HashCountedSet<RegistrableDomain> subresourceUnderTopFrameDomainsCounted;
-        decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins"_s, subresourceUnderTopFrameDomainsCounted);
+        decodeHashCountedSet(decoder, "subresourceUnderTopFrameOrigins", subresourceUnderTopFrameDomainsCounted);
         for (auto& domain : subresourceUnderTopFrameDomainsCounted.values())
             subresourceUnderTopFrameDomains.add(domain);
 
         HashCountedSet<RegistrableDomain> subresourceUniqueRedirectsToCounted;
-        decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo"_s, subresourceUniqueRedirectsToCounted);
+        decodeHashCountedSet(decoder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsToCounted);
         for (auto& domain : subresourceUniqueRedirectsToCounted.values())
             subresourceUniqueRedirectsTo.add(domain);
         if (modelVersion >= 11) {
             HashCountedSet<RegistrableDomain> subresourceUniqueRedirectsFromCounted;
-            decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom"_s, subresourceUniqueRedirectsFromCounted);
+            decodeHashCountedSet(decoder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFromCounted);
             for (auto& domain : subresourceUniqueRedirectsFromCounted.values())
                 subresourceUniqueRedirectsFrom.add(domain);
         }
@@ -298,11 +298,11 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
 
 
     // Prevalent Resource
-    if (!decoder.decodeBool("isPrevalentResource"_s, isPrevalentResource))
+    if (!decoder.decodeBool("isPrevalentResource", isPrevalentResource))
         return false;
 
     if (modelVersion >= 12) {
-        if (!decoder.decodeBool("isVeryPrevalentResource"_s, isVeryPrevalentResource))
+        if (!decoder.decodeBool("isVeryPrevalentResource", isVeryPrevalentResource))
             return false;
     }
 
@@ -312,44 +312,44 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder, unsigned modelVersion
         isVeryPrevalentResource = false;
     }
 
-    if (!decoder.decodeUInt32("dataRecordsRemoved"_s, dataRecordsRemoved))
+    if (!decoder.decodeUInt32("dataRecordsRemoved", dataRecordsRemoved))
         return false;
 
     double mostRecentUserInteractionTimeAsDouble;
-    if (!decoder.decodeDouble("mostRecentUserInteraction"_s, mostRecentUserInteractionTimeAsDouble))
+    if (!decoder.decodeDouble("mostRecentUserInteraction", mostRecentUserInteractionTimeAsDouble))
         return false;
     mostRecentUserInteractionTime = WallTime::fromRawSeconds(mostRecentUserInteractionTimeAsDouble);
 
-    if (!decoder.decodeBool("grandfathered"_s, grandfathered))
+    if (!decoder.decodeBool("grandfathered", grandfathered))
         return false;
 
     double lastSeenTimeAsDouble;
-    if (!decoder.decodeDouble("lastSeen"_s, lastSeenTimeAsDouble))
+    if (!decoder.decodeDouble("lastSeen", lastSeenTimeAsDouble))
         return false;
     lastSeen = WallTime::fromRawSeconds(lastSeenTimeAsDouble);
 
     if (modelVersion >= 11) {
-        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction"_s, timesAccessedAsFirstPartyDueToUserInteraction))
+        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction))
             timesAccessedAsFirstPartyDueToUserInteraction = 0;
-        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI"_s, timesAccessedAsFirstPartyDueToStorageAccessAPI))
+        if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI))
             timesAccessedAsFirstPartyDueToStorageAccessAPI = 0;
     }
 
 #if ENABLE(WEB_API_STATISTICS)
     if (modelVersion >= 13) {
-        decodeFontHashSet(decoder, "fontsFailedToLoad"_s, fontsFailedToLoad);
-        decodeFontHashSet(decoder, "fontsSuccessfullyLoaded"_s, fontsSuccessfullyLoaded);
-        decodeHashSet(decoder, "topFrameRegistrableDomainsWhichAccessedWebAPIs"_s, "domain"_s, topFrameRegistrableDomainsWhichAccessedWebAPIs);
-        decodeCanvasActivityRecord(decoder, "canvasActivityRecord"_s, canvasActivityRecord);
-        decodeOptionSet(decoder, "navigatorFunctionsAccessedBitMask"_s, navigatorFunctionsAccessed);
-        decodeOptionSet(decoder, "screenFunctionsAccessedBitMask"_s, screenFunctionsAccessed);
+        decodeFontHashSet(decoder, "fontsFailedToLoad", fontsFailedToLoad);
+        decodeFontHashSet(decoder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded);
+        decodeHashSet(decoder, "topFrameRegistrableDomainsWhichAccessedWebAPIs", "domain", topFrameRegistrableDomainsWhichAccessedWebAPIs);
+        decodeCanvasActivityRecord(decoder, "canvasActivityRecord", canvasActivityRecord);
+        decodeOptionSet(decoder, "navigatorFunctionsAccessedBitMask", navigatorFunctionsAccessed);
+        decodeOptionSet(decoder, "screenFunctionsAccessedBitMask", screenFunctionsAccessed);
     }
 #endif
 
     return true;
 }
 
-static void appendBoolean(StringBuilder& builder, ASCIILiteral label, bool flag)
+static void appendBoolean(StringBuilder& builder, const String& label, bool flag)
 {
     builder.append("    ", label, ": ", flag ? "Yes" : "No");
 }
@@ -378,6 +378,8 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
 static ASCIILiteral navigatorAPIEnumToString(ResourceLoadStatistics::NavigatorAPI navigatorEnum)
 {
     switch (navigatorEnum) {
+    case ResourceLoadStatistics::NavigatorAPI::JavaEnabled:
+        return "javaEnabled"_s;
     case ResourceLoadStatistics::NavigatorAPI::MimeTypes:
         return "mimeTypes"_s;
     case ResourceLoadStatistics::NavigatorAPI::CookieEnabled:
@@ -448,48 +450,48 @@ String ResourceLoadStatistics::toString() const
     builder.append("Registrable domain: ", registrableDomain.string(), '\n');
 
     // User interaction
-    appendBoolean(builder, "hadUserInteraction"_s, hadUserInteraction);
+    appendBoolean(builder, "hadUserInteraction", hadUserInteraction);
     builder.append('\n');
-    builder.append("    mostRecentUserInteraction: "_s, hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()) ? "within 24 hours" : "-1");
+    builder.append("    mostRecentUserInteraction: ", hasHadRecentUserInteraction(mostRecentUserInteractionTime.secondsSinceEpoch()) ? "within 24 hours" : "-1");
     builder.append('\n');
-    appendBoolean(builder, "grandfathered"_s, grandfathered);
+    appendBoolean(builder, "grandfathered", grandfathered);
     builder.append('\n');
 
     // Storage access
-    appendHashSet(builder, "storageAccessUnderTopFrameDomains"_s, storageAccessUnderTopFrameDomains);
+    appendHashSet(builder, "storageAccessUnderTopFrameDomains", storageAccessUnderTopFrameDomains);
 
     // Top frame stats
-    appendHashSet(builder, "topFrameUniqueRedirectsTo"_s, topFrameUniqueRedirectsTo);
-    appendHashSet(builder, "topFrameUniqueRedirectsFrom"_s, topFrameUniqueRedirectsFrom);
-    appendHashSet(builder, "topFrameLinkDecorationsFrom"_s, topFrameLinkDecorationsFrom);
-    appendBoolean(builder, "gotLinkDecorationFromPrevalentResource"_s, gotLinkDecorationFromPrevalentResource);
+    appendHashSet(builder, "topFrameUniqueRedirectsTo", topFrameUniqueRedirectsTo);
+    appendHashSet(builder, "topFrameUniqueRedirectsFrom", topFrameUniqueRedirectsFrom);
+    appendHashSet(builder, "topFrameLinkDecorationsFrom", topFrameLinkDecorationsFrom);
+    appendBoolean(builder, "gotLinkDecorationFromPrevalentResource", gotLinkDecorationFromPrevalentResource);
     builder.append('\n');
-    appendHashSet(builder, "topFrameLoadedThirdPartyScripts"_s, topFrameLoadedThirdPartyScripts);
+    appendHashSet(builder, "topFrameLoadedThirdPartyScripts", topFrameLoadedThirdPartyScripts);
 
     // Subframe stats
-    appendHashSet(builder, "subframeUnderTopFrameDomains"_s, subframeUnderTopFrameDomains);
+    appendHashSet(builder, "subframeUnderTopFrameDomains", subframeUnderTopFrameDomains);
     
     // Subresource stats
-    appendHashSet(builder, "subresourceUnderTopFrameDomains"_s, subresourceUnderTopFrameDomains);
-    appendHashSet(builder, "subresourceUniqueRedirectsTo"_s, subresourceUniqueRedirectsTo);
-    appendHashSet(builder, "subresourceUniqueRedirectsFrom"_s, subresourceUniqueRedirectsFrom);
+    appendHashSet(builder, "subresourceUnderTopFrameDomains", subresourceUnderTopFrameDomains);
+    appendHashSet(builder, "subresourceUniqueRedirectsTo", subresourceUniqueRedirectsTo);
+    appendHashSet(builder, "subresourceUniqueRedirectsFrom", subresourceUniqueRedirectsFrom);
 
     // Prevalent Resource
-    appendBoolean(builder, "isPrevalentResource"_s, isPrevalentResource);
+    appendBoolean(builder, "isPrevalentResource", isPrevalentResource);
     builder.append('\n');
-    appendBoolean(builder, "isVeryPrevalentResource"_s, isVeryPrevalentResource);
+    appendBoolean(builder, "isVeryPrevalentResource", isVeryPrevalentResource);
     builder.append('\n');
     builder.append("    dataRecordsRemoved: ", dataRecordsRemoved);
     builder.append('\n');
 
 #if ENABLE(WEB_API_STATISTICS)
-    appendHashSet(builder, "fontsFailedToLoad"_s, fontsFailedToLoad);
-    appendHashSet(builder, "fontsSuccessfullyLoaded"_s, fontsSuccessfullyLoaded);
-    appendHashSet(builder, "topFrameRegistrableDomainsWhichAccessedWebAPIs"_s, topFrameRegistrableDomainsWhichAccessedWebAPIs);
+    appendHashSet(builder, "fontsFailedToLoad", fontsFailedToLoad);
+    appendHashSet(builder, "fontsSuccessfullyLoaded", fontsSuccessfullyLoaded);
+    appendHashSet(builder, "topFrameRegistrableDomainsWhichAccessedWebAPIs", topFrameRegistrableDomainsWhichAccessedWebAPIs);
     appendNavigatorAPIOptionSet(builder, navigatorFunctionsAccessed);
     appendScreenAPIOptionSet(builder, screenFunctionsAccessed);
-    appendHashSet(builder, "canvasTextWritten"_s, canvasActivityRecord.textWritten);
-    appendBoolean(builder, "canvasReadData"_s, canvasActivityRecord.wasDataRead);
+    appendHashSet(builder, "canvasTextWritten", canvasActivityRecord.textWritten);
+    appendBoolean(builder, "canvasReadData", canvasActivityRecord.wasDataRead);
     builder.append('\n');
     builder.append('\n');
 #endif

@@ -95,12 +95,12 @@ Decimal StepRange::clampValue(const Decimal& value) const
     return clampedValue;
 }
 
-Decimal StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, StringView stepString)
+Decimal StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescription& stepDescription, const String& stepString)
 {
     if (stepString.isEmpty())
         return stepDescription.defaultValue();
 
-    if (equalLettersIgnoringASCIICase(stepString, "any"_s)) {
+    if (equalLettersIgnoringASCIICase(stepString, "any")) {
         switch (anyStepHandling) {
         case AnyStepHandling::Reject:
             return Decimal::nan();
@@ -140,20 +140,6 @@ Decimal StepRange::parseStep(AnyStepHandling anyStepHandling, const StepDescript
 Decimal StepRange::roundByStep(const Decimal& value, const Decimal& base) const
 {
     return base + ((value - base) / m_step).round() * m_step;
-}
-
-Decimal StepRange::stepSnappedMaximum() const
-{
-    Decimal base = stepBase();
-    Decimal step =  m_step;
-    if (base - step == base || !(base / step).isFinite())
-        return Decimal::nan();
-    Decimal alignedMaximum = base + ((maximum() - base) / step).floor() * step;
-    if (alignedMaximum > maximum())
-        alignedMaximum -= step;
-    if (alignedMaximum < minimum())
-        return Decimal::nan();
-    return alignedMaximum;
 }
 
 bool StepRange::stepMismatch(const Decimal& valueForCheck) const

@@ -1,3 +1,0 @@
-
-PASS fetch() in SharedWorker should be intercepted after the client is claimed.
-

@@ -24,7 +24,7 @@ MediaController conditional=VIDEO
 MediaDevices conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA
 MediaQueryList
-MediaRecorder conditional=MEDIA_RECORDER
+MediaRecorder conditional=MEDIA_STREAM
 MediaSessionCoordinator conditional=MEDIA_SESSION_COORDINATOR
 MediaSource conditional=MEDIA_SOURCE
 MediaStream conditional=MEDIA_STREAM
@@ -56,7 +56,6 @@ SharedWorkerGlobalScope
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition
-SpeechSynthesis conditional=SPEECH_SYNTHESIS
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
 TextTrack conditional=VIDEO
 TextTrackCue conditional=VIDEO

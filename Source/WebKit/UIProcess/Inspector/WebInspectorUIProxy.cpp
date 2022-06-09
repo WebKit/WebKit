@@ -394,7 +394,7 @@ void WebInspectorUIProxy::toggleElementSelection()
 bool WebInspectorUIProxy::isMainOrTestInspectorPage(const URL& url)
 {
     // Use URL so we can compare the paths and protocols.
-    URL mainPageURL { WebInspectorUIProxy::inspectorPageURL() };
+    URL mainPageURL(URL(), WebInspectorUIProxy::inspectorPageURL());
     if (url.protocol() == mainPageURL.protocol() && PAL::decodeURLEscapeSequences(url.path()) == PAL::decodeURLEscapeSequences(mainPageURL.path()))
         return true;
 
@@ -403,7 +403,7 @@ bool WebInspectorUIProxy::isMainOrTestInspectorPage(const URL& url)
     if (testPageURLString.isNull())
         return false;
 
-    URL testPageURL { testPageURLString };
+    URL testPageURL(URL(), testPageURLString);
     return url.protocol() == testPageURL.protocol() && PAL::decodeURLEscapeSequences(url.path()) == PAL::decodeURLEscapeSequences(testPageURL.path());
 }
 
@@ -489,7 +489,7 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     if (!m_inspectorPage)
         return;
 
-    m_inspectorPage->loadRequest(URL { m_underTest ? WebInspectorUIProxy::inspectorTestPageURL() : WebInspectorUIProxy::inspectorPageURL() });
+    m_inspectorPage->loadRequest(URL(URL(), m_underTest ? WebInspectorUIProxy::inspectorTestPageURL() : WebInspectorUIProxy::inspectorPageURL()));
 }
 
 void WebInspectorUIProxy::open()
@@ -500,17 +500,15 @@ void WebInspectorUIProxy::open()
     if (!m_inspectorPage)
         return;
 
-    SetForScope isOpening(m_isOpening, true);
+    SetForScope<bool> isOpening(m_isOpening, true);
 
     m_isVisible = true;
     m_inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));
 
-    if (m_isAttached && platformCanAttach(m_canAttach))
+    if (m_isAttached)
         platformAttach();
-    else {
-        m_isAttached = false;
+    else
         platformCreateFrontendWindow();
-    }
 
     platformBringToFront();
 }
@@ -529,7 +527,7 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     if (m_closing)
         return;
     
-    SetForScope reentrancyProtector(m_closing, true);
+    SetForScope<bool> reentrancyProtector(m_closing, true);
     
     // Notify WebKit client when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
     if (m_inspectedPage)
@@ -611,6 +609,11 @@ void WebInspectorUIProxy::bringToFront()
         open();
 }
 
+void WebInspectorUIProxy::bringInspectedPageToFront()
+{
+    platformBringInspectedPageToFront();
+}
+
 void WebInspectorUIProxy::attachAvailabilityChanged(bool available)
 {
     bool previousCanAttach = m_canAttach;
@@ -635,11 +638,6 @@ void WebInspectorUIProxy::openURLExternally(const String& url)
 {
     if (m_inspectorClient)
         m_inspectorClient->openURLExternally(*this, url);
-}
-
-void WebInspectorUIProxy::revealFileExternally(const String& path)
-{
-    platformRevealFileExternally(path);
 }
 
 void WebInspectorUIProxy::inspectedURLChanged(const String& urlString)
@@ -707,42 +705,28 @@ void WebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 #endif
 }
 
-void WebInspectorUIProxy::save(Vector<InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
+void WebInspectorUIProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
     if (!m_inspectedPage->preferences().developerExtrasEnabled())
         return;
 
-    ASSERT(!saveDatas.isEmpty());
-    if (saveDatas.isEmpty())
+    ASSERT(!filename.isEmpty());
+    if (filename.isEmpty())
         return;
 
-    ASSERT(!saveDatas[0].url.isEmpty());
-    if (saveDatas[0].url.isEmpty())
-        return;
-
-    platformSave(WTFMove(saveDatas), forceSaveAs);
+    platformSave(filename, content, base64Encoded, forceSaveAs);
 }
 
-void WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::append(const String& filename, const String& content)
 {
     if (!m_inspectedPage->preferences().developerExtrasEnabled())
         return;
 
-    ASSERT(!path.isEmpty());
-    if (path.isEmpty())
+    ASSERT(!filename.isEmpty());
+    if (filename.isEmpty())
         return;
 
-    platformLoad(path, WTFMove(completionHandler));
-}
-
-void WebInspectorUIProxy::pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color> &)>&& completionHandler)
-{
-    if (!m_inspectedPage->preferences().developerExtrasEnabled()) {
-        completionHandler({ });
-        return;
-    }
-
-    platformPickColorFromScreen(WTFMove(completionHandler));
+    platformAppend(filename, content);
 }
 
 bool WebInspectorUIProxy::shouldOpenAttached()
@@ -819,11 +803,6 @@ void WebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::A
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String&)
-{
-    notImplemented();
-}
-
 void WebInspectorUIProxy::platformInspectedURLChanged(const String&)
 {
     notImplemented();
@@ -834,21 +813,26 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo&)
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */)
+void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::platformAppend(const String& suggestedURL, const String& content)
 {
     notImplemented();
-    completionHandler(nullString());
 }
 
-void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
+unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
 {
     notImplemented();
-    completionHandler({ });
+    return 0;
+}
+
+unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
+{
+    notImplemented();
+    return 0;
 }
 
 void WebInspectorUIProxy::platformAttach()

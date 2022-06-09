@@ -42,6 +42,11 @@ WI.RecordingState = class RecordingState
 
         let data = {};
 
+        if (WI.ImageUtilities.supportsCanvasPathDebugging()) {
+            data.currentX = context.currentX;
+            data.currentY = context.currentY;
+        }
+
         data.direction = context.direction;
         data.fillStyle = context.fillStyle;
         data.font = context.font;
@@ -67,9 +72,8 @@ WI.RecordingState = class RecordingState
         data.webkitLineDash = context.webkitLineDash;
         data.webkitLineDashOffset = context.webkitLineDashOffset;
 
-        data.currentX = context.currentX;
-        data.currentY = context.currentY;
-        data.setPath = [context.getPath()];
+        if (WI.ImageUtilities.supportsCanvasPathDebugging())
+            data.setPath = [context.getPath()];
 
         return new WI.RecordingState(data, options);
     }

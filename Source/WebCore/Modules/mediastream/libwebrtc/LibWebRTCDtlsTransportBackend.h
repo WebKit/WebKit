@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include "LibWebRTCMacros.h"
 #include "RTCDtlsTransportBackend.h"
@@ -61,4 +61,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC)

@@ -56,7 +56,6 @@ public:
 
     WEBCORE_EXPORT bool containsSingleFileMappedSegment() const;
     void append(const String&);
-    void append(const FragmentedSharedBuffer&);
 
 private:
     SharedBufferBuilder m_buffer; // Contains the UTF-8 encoded script.

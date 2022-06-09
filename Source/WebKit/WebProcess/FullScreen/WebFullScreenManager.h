@@ -28,13 +28,10 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "WebCoreArgumentCoders.h"
-#include <WebCore/EventListener.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LengthBox.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RunLoop.h>
-#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -52,7 +49,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebFullScreenManager final : public WebCore::EventListener {
+class WebFullScreenManager : public RefCounted<WebFullScreenManager> {
 public:
     static Ref<WebFullScreenManager> create(WebPage*);
     virtual ~WebFullScreenManager();
@@ -71,8 +68,6 @@ public:
     WebCore::Element* element();
 
     void videoControlsManagerDidChange();
-
-    bool operator==(const WebCore::EventListener& listener) const final { return this == &listener; }
 
 protected:
     WebFullScreenManager(WebPage*);
@@ -102,23 +97,6 @@ protected:
 
 private:
     void close();
-
-    void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
-
-    void setElement(WebCore::Element&);
-
-#if ENABLE(VIDEO)
-    void scheduleTextRecognitionForMainVideo();
-    void endTextRecognitionForMainVideoIfNeeded();
-    void mainVideoElementTextRecognitionTimerFired();
-    void updateMainVideoElement();
-    void setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>&&);
-
-    WeakPtr<WebCore::HTMLVideoElement> m_mainVideoElement;
-    RunLoop::Timer<WebFullScreenManager> m_mainVideoElementTextRecognitionTimer;
-    bool m_isPerformingTextRecognitionInMainVideo { false };
-#endif // ENABLE(VIDEO)
-
     bool m_closing { false };
 };
 

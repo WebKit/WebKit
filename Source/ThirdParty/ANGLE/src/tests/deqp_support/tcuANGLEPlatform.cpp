@@ -26,7 +26,6 @@
 #include "egluGLContextFactory.hpp"
 #include "tcuANGLENativeDisplayFactory.h"
 #include "tcuNullContextFactory.hpp"
-#include "util/angle_features_autogen.h"
 #include "util/test_utils.h"
 
 static_assert(EGL_DONT_CARE == -1, "Unexpected value for EGL_DONT_CARE");
@@ -41,23 +40,19 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotat
 
     // Enable non-conformant ES versions and extensions for testing.  Our test expectations would
     // suppress failing tests, but allowing continuous testing of the pieces that are implemented.
-    mEnableFeatureOverrides.push_back(
-        angle::GetFeatureName(angle::Feature::ExposeNonConformantExtensionsAndVersions));
+    mEnableFeatureOverrides.push_back("exposeNonConformantExtensionsAndVersions");
 
     // Create pre-rotation attributes.
     switch (preRotation)
     {
         case 90:
-            mEnableFeatureOverrides.push_back(
-                angle::GetFeatureName(angle::Feature::EmulatedPrerotation90));
+            mEnableFeatureOverrides.push_back("emulatedPrerotation90");
             break;
         case 180:
-            mEnableFeatureOverrides.push_back(
-                angle::GetFeatureName(angle::Feature::EmulatedPrerotation180));
+            mEnableFeatureOverrides.push_back("emulatedPrerotation180");
             break;
         case 270:
-            mEnableFeatureOverrides.push_back(
-                angle::GetFeatureName(angle::Feature::EmulatedPrerotation270));
+            mEnableFeatureOverrides.push_back("emulatedPrerotation270");
             break;
         default:
             break;

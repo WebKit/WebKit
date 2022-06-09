@@ -47,6 +47,7 @@
 #include "ErrorInstance.h"
 #include "EvalCodeBlock.h"
 #include "Exception.h"
+#include "ExecutableToCodeBlockEdge.h"
 #include "FTLThunks.h"
 #include "FileBasedFuzzerAgent.h"
 #include "FunctionCodeBlock.h"
@@ -208,7 +209,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , m_heapRandom(Options::seedOfVMRandomForFuzzer() ? Options::seedOfVMRandomForFuzzer() : cryptographicallyRandomNumber())
     , m_integrityRandom(*this)
     , heap(*this, heapType)
-    , clientHeap(heap)
     , vmType(vmType)
     , clientData(nullptr)
     , topEntryFrame(nullptr)
@@ -220,6 +220,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , emptyList(new ArgList)
     , machineCodeBytesPerBytecodeWordForBaselineJIT(makeUnique<SimpleStats>())
     , symbolImplToSymbolMap(*this)
+    , structureCache(*this)
     , interpreter(nullptr)
     , entryScope(nullptr)
     , m_regExpCache(new RegExpCache(this))
@@ -240,8 +241,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 {
     if (UNLIKELY(vmCreationShouldCrash))
         CRASH_WITH_INFO(0x4242424220202020, 0xbadbeef0badbeef, 0x1234123412341234, 0x1337133713371337);
-
-    VMInspector::instance().add(this);
 
     interpreter = new Interpreter(*this);
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
@@ -299,6 +298,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     hashMapBucketSetStructure.set(*this, HashMapBucket<HashMapBucketDataKey>::createStructure(*this, nullptr, jsNull()));
     hashMapBucketMapStructure.set(*this, HashMapBucket<HashMapBucketDataKeyValue>::createStructure(*this, nullptr, jsNull()));
     bigIntStructure.set(*this, JSBigInt::createStructure(*this, nullptr, jsNull()));
+    executableToCodeBlockEdgeStructure.set(*this, ExecutableToCodeBlockEdge::createStructure(*this, nullptr, jsNull()));
 
     // Eagerly initialize constant cells since the concurrent compiler can access them.
     if (Options::useJIT()) {
@@ -403,12 +403,10 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
         jitSizeStatistics = makeUnique<JITSizeStatistics>();
 #endif
 
+    VMInspector::instance().add(this);
+
     if (!g_jscConfig.disabledFreezingForTesting)
         Config::permanentlyFreeze();
-
-    // We must set this at the end only after the VM is fully initialized.
-    WTF::storeStoreFence();
-    m_isInService = true;
 }
 
 static ReadWriteLock s_destructionLock;
@@ -431,8 +429,7 @@ VM::~VM()
     if (UNLIKELY(m_watchdog))
         m_watchdog->willDestroyVM(this);
     m_traps.willDestroyVM();
-    m_isInService = false;
-    WTF::storeStoreFence();
+    VMInspector::instance().remove(this);
 
     // Never GC, ever again.
     heap.incrementDeferralDepth();
@@ -460,9 +457,7 @@ VM::~VM()
     heap.lastChanceToFinalize();
 
     JSRunLoopTimer::Manager::shared().unregisterVM(*this);
-
-    VMInspector::instance().remove(this);
-
+    
     delete interpreter;
 #ifndef NDEBUG
     interpreter = reinterpret_cast<Interpreter*>(0xbbadbeef);
@@ -557,7 +552,7 @@ VM& VM::sharedInstance()
     GlobalJSLock globalLock;
     VM*& instance = sharedInstanceInternal();
     if (!instance)
-        instance = adoptRef(new VM(APIShared, HeapType::Small)).leakRef();
+        instance = adoptRef(new VM(APIShared, SmallHeap)).leakRef();
     return *instance;
 }
 
@@ -638,8 +633,6 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return randomThunkGenerator;
     case BoundFunctionCallIntrinsic:
         return boundFunctionCallGenerator;
-    case RemoteFunctionCallIntrinsic:
-        return remoteFunctionCallGenerator;
     default:
         return nullptr;
     }
@@ -717,33 +710,6 @@ NativeExecutable* VM::getBoundFunction(bool isJSFunction, bool canConstruct)
     return getOrCreate(m_fastBoundExecutable);
 }
 
-NativeExecutable* VM::getRemoteFunction(bool isJSFunction)
-{
-    bool slowCase = !isJSFunction;
-    auto getOrCreate = [&] (Weak<NativeExecutable>& slot) -> NativeExecutable* {
-        if (auto* cached = slot.get())
-            return cached;
-
-        Intrinsic intrinsic = NoIntrinsic;
-        if (!slowCase) {
-#if !(OS(WINDOWS) && CPU(X86_64))
-            intrinsic = RemoteFunctionCallIntrinsic;
-#endif
-        }
-
-        NativeExecutable* result = getHostFunction(
-            slowCase ? remoteFunctionCallGeneric : remoteFunctionCallForJSFunction,
-            intrinsic,
-            callHostFunctionAsConstructor, nullptr, String());
-        slot = Weak<NativeExecutable>(result);
-        return result;
-    };
-
-    if (slowCase)
-        return getOrCreate(m_slowRemoteFunctionExecutable);
-    return getOrCreate(m_fastRemoteFunctionExecutable);
-}
-
 MacroAssemblerCodePtr<JSEntryPtrTag> VM::getCTIInternalFunctionTrampolineFor(CodeSpecializationKind kind)
 {
 #if ENABLE(JIT)
@@ -809,14 +775,14 @@ void VM::whenIdle(Function<void()>&& callback)
 
 void VM::deleteAllLinkedCode(DeleteAllCodeEffort effort)
 {
-    whenIdle([=, this] () {
+    whenIdle([=] () {
         heap.deleteAllCodeBlocks(effort);
     });
 }
 
 void VM::deleteAllCode(DeleteAllCodeEffort effort)
 {
-    whenIdle([=, this] () {
+    whenIdle([=] () {
         m_codeCache->clear();
         m_regExpCache->deleteAllCode();
         heap.deleteAllCodeBlocks(effort);
@@ -827,7 +793,7 @@ void VM::deleteAllCode(DeleteAllCodeEffort effort)
 
 void VM::shrinkFootprintWhenIdle()
 {
-    whenIdle([=, this] () {
+    whenIdle([=] () {
         sanitizeStackForVM(*this);
         deleteAllCode(DeleteAllCodeIfNotCollecting);
         heap.collectNow(Synchronousness::Sync, CollectionScope::Full);
@@ -905,6 +871,9 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
     }
 
     CallFrame* throwOriginFrame = topJSCallFrame();
+    if (!throwOriginFrame)
+        throwOriginFrame = globalObject->deprecatedCallFrameForDebugger();
+
     if (UNLIKELY(Options::breakOnThrow())) {
         CodeBlock* codeBlock = throwOriginFrame ? throwOriginFrame->codeBlock() : nullptr;
         dataLog("Throwing exception in call frame ", RawPointer(throwOriginFrame), " for code block ", codeBlock, "\n");
@@ -924,7 +893,8 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
 
 Exception* VM::throwException(JSGlobalObject* globalObject, JSValue thrownValue)
 {
-    Exception* exception = jsDynamicCast<Exception*>(thrownValue);
+    VM& vm = *this;
+    Exception* exception = jsDynamicCast<Exception*>(vm, thrownValue);
     if (!exception)
         exception = Exception::create(*this, thrownValue);
 
@@ -1245,7 +1215,7 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
 
     auto scope = DECLARE_CATCH_SCOPE(*this);
 
-    auto callData = JSC::getCallData(callback);
+    auto callData = getCallData(*this, callback);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer args;
@@ -1409,16 +1379,6 @@ void VM::clearScratchBuffers()
         scratchBuffer->setActiveLength(0);
 }
 
-bool VM::isScratchBuffer(void* ptr)
-{
-    Locker locker { m_scratchBufferLock };
-    for (auto* scratchBuffer : m_scratchBuffers) {
-        if (scratchBuffer->dataBuffer() == ptr)
-            return true;
-    }
-    return false;
-}
-
 void VM::ensureShadowChicken()
 {
     if (m_shadowChicken)
@@ -1463,7 +1423,7 @@ void VM::setCrashOnVMCreation(bool shouldCrash)
     vmCreationShouldCrash = shouldCrash;
 }
 
-void VM::addLoopHintExecutionCounter(const JSInstruction* instruction)
+void VM::addLoopHintExecutionCounter(const Instruction* instruction)
 {
     Locker locker { m_loopHintExecutionCountLock };
     auto addResult = m_loopHintExecutionCounts.add(instruction, std::pair<unsigned, std::unique_ptr<uintptr_t>>(0, nullptr));
@@ -1475,14 +1435,14 @@ void VM::addLoopHintExecutionCounter(const JSInstruction* instruction)
     ++addResult.iterator->value.first;
 }
 
-uintptr_t* VM::getLoopHintExecutionCounter(const JSInstruction* instruction)
+uintptr_t* VM::getLoopHintExecutionCounter(const Instruction* instruction)
 {
     Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);
     return iter->value.second.get();
 }
 
-void VM::removeLoopHintExecutionCounter(const JSInstruction* instruction)
+void VM::removeLoopHintExecutionCounter(const Instruction* instruction)
 {
     Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);

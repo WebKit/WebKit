@@ -225,8 +225,6 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HT
                 return;
 
             listNode = mergeWithNeighboringLists(*listElement);
-            if (!listNode || !listNode->isConnected())
-                return;
         }
         
         if (!listNode->hasTagName(listTag)) {

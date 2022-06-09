@@ -12,8 +12,8 @@ info: |
     Return false.
 features: [optional-chaining]
 negative:
-  phase: parse
   type: SyntaxError
+  phase: parse
 ---*/
 
 $DONOTEVALUATE();

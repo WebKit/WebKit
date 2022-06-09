@@ -66,12 +66,6 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ALIGNED(amount) __attribute__((aligned(amount)))
 
-#if PAS_PLATFORM(PLAYSTATION) && !defined(alignof)
-#define PAS_ALIGNOF(type) _Alignof(type)
-#else
-#define PAS_ALIGNOF(type) alignof(type)
-#endif
-
 #define PAS_FORMAT_PRINTF(fmt, args) __attribute__((format(__printf__, fmt, args)))
 
 #define PAS_UNUSED __attribute__((unused))
@@ -202,7 +196,6 @@ static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(
 #endif /* PAS_ENABLE_TESTING -> so end of !PAS_ENABLE_TESTING */
 
 PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression);
-PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int line, const char* function, const char* expression, uint64_t extra);
 
 PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
@@ -240,15 +233,6 @@ PAS_IGNORE_WARNINGS_END
         if (PAS_LIKELY(exp)) \
             break; \
         pas_assertion_failed_no_inline(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
-    } while (0)
-
-#define PAS_ASSERT_WITH_EXTRA_DETAIL(exp, extra) \
-    do { \
-        if (!PAS_ENABLE_ASSERT) \
-            break; \
-        if (PAS_LIKELY(exp)) \
-            break; \
-        pas_assertion_failed_no_inline_with_extra_detail(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp, extra); \
     } while (0)
 
 static inline bool pas_is_power_of_2(uintptr_t value)
@@ -955,10 +939,6 @@ static inline bool pas_is_divisible_by(unsigned value, uint64_t magic_constant)
 #ifdef __cplusplus
 enum cpp_initialization_t { cpp_initialization };
 #endif
-
-#define PAS_SYSCALL(x) do { \
-    while ((x) == -1 && errno == EAGAIN) { } \
-} while (0)
 
 PAS_END_EXTERN_C;
 

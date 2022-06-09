@@ -27,8 +27,6 @@
 #pragma once
 
 #include "CompositeOperation.h"
-#include "FloatPoint.h"
-#include "FloatSize.h"
 #include <array>
 #include <optional>
 #include <wtf/FastMalloc.h>
@@ -182,22 +180,9 @@ public:
     WEBCORE_EXPORT operator CGAffineTransform() const;
 #endif
 
-    static AffineTransform makeTranslation(FloatSize delta)
+    static AffineTransform translation(double x, double y)
     {
-        return AffineTransform(1, 0, 0, 1, delta.width(), delta.height());
-    }
-
-    static AffineTransform makeScale(FloatSize scale)
-    {
-        return AffineTransform(scale.width(), 0, 0, scale.height(), 0, 0);
-    }
-
-    static AffineTransform makeRotation(double angleInDegrees, FloatPoint center = { })
-    {
-        auto matrix = makeTranslation(toFloatSize(center));
-        matrix.rotate(angleInDegrees);
-        matrix.translate(-toFloatSize(center));
-        return matrix;
+        return AffineTransform(1, 0, 0, 1, x, y);
     }
 
     // decompose the matrix into its component parts

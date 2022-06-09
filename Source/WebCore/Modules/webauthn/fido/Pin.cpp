@@ -73,8 +73,8 @@ static Vector<uint8_t> makePinAuth(const CryptoKeyHMAC& key, const Vector<uint8_
 Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_t>& y)
 {
     Vector<uint8_t> rawKey;
-    rawKey.reserveInitialCapacity(1 + x.size() + y.size());
-    rawKey.uncheckedAppend(0x04);
+    rawKey.reserveCapacity(1 + x.size() + y.size());
+    rawKey.append(0x04);
     rawKey.appendVector(x);
     rawKey.appendVector(y);
     return rawKey;
@@ -171,7 +171,7 @@ std::optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CB
 
     const auto& x = xIt->second.getByteString();
     const auto& y = yIt->second.getByteString();
-    auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
+    auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256", encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
     if (!peerKey)
         return std::nullopt;
 
@@ -247,7 +247,7 @@ std::optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const Cr
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
     // 1. Generate a P256 key pair.
-    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256", true, CryptoKeyUsageDeriveBits);
     ASSERT(!keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,12 +45,6 @@ static constexpr bool mediaSourceEnabledValue = false;
 static constexpr bool mediaSourceEnabledValue = true;
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-static constexpr bool fullGPUProcessEnabledValue = true;
-#else
-static constexpr bool fullGPUProcessEnabledValue = false;
-#endif
-
 const TestFeatures& TestOptions::defaults()
 {
     static TestFeatures features;
@@ -63,9 +57,7 @@ const TestFeatures& TestOptions::defaults()
             // an experimental feature which gets enabled by default automatically)
             // as it adds a small amount of unnecessary work per-test.
 
-#if !PLATFORM(IOS_SIMULATOR)
             { "AcceleratedDrawingEnabled", false },
-#endif
             { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
@@ -97,6 +89,9 @@ const TestFeatures& TestOptions::defaults()
             { "InputTypeMonthEnabled", true },
             { "InputTypeTimeEnabled", true },
             { "InputTypeWeekEnabled", true },
+#if USE(ATSPI)
+            { "IsAccessibilityIsolatedTreeEnabled", true },
+#endif
             { "JavaScriptCanAccessClipboard", true },
             { "JavaScriptCanOpenWindowsAutomatically", true },
             { "LargeImageAsyncDecodingEnabled", false },
@@ -113,7 +108,6 @@ const TestFeatures& TestOptions::defaults()
             { "OffscreenCanvasEnabled", true },
             { "OffscreenCanvasInWorkersEnabled", true },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
-            { "PdfJSViewerEnabled", false },
             { "PluginsEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
             { "RequiresUserGestureForMediaPlayback", false },
@@ -125,17 +119,16 @@ const TestFeatures& TestOptions::defaults()
             { "TextAutosizingUsesIdempotentMode", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
-            { "WebRTCRemoteVideoFrameEnabled", true },
             { "WebRTCMDNSICECandidatesEnabled", false },
             { "XSSAuditorEnabled", false },
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
             { "VP9DecoderEnabled", false },
 #endif
 #if ENABLE(GPU_PROCESS)
-            { "UseGPUProcessForDOMRenderingEnabled", fullGPUProcessEnabledValue },
+            { "UseGPUProcessForDOMRenderingEnabled", false },
 #endif
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !PLATFORM(WIN)
-            { "UseGPUProcessForWebGLEnabled", fullGPUProcessEnabledValue },
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+            { "UseGPUProcessForWebGLEnabled", false },
 #endif
         };
         features.stringWebPreferenceFeatures = {
@@ -186,7 +179,6 @@ const TestFeatures& TestOptions::defaults()
             { "applicationBundleIdentifier", { } },
             { "applicationManifest", { } },
             { "contentMode", { } },
-            { "contentSecurityPolicyExtensionMode", { } },
             { "dragInteractionPolicy", { } },
             { "jscOptions", { } },
             { "standaloneWebApplicationURL", { } },
@@ -239,7 +231,6 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "applicationBundleIdentifier", TestHeaderKeyType::StringTestRunner },
         { "applicationManifest", TestHeaderKeyType::StringRelativePathTestRunner },
         { "contentMode", TestHeaderKeyType::StringTestRunner },
-        { "contentSecurityPolicyExtensionMode", TestHeaderKeyType::StringTestRunner },
         { "dragInteractionPolicy", TestHeaderKeyType::StringTestRunner },
         { "jscOptions", TestHeaderKeyType::StringTestRunner },
         { "standaloneWebApplicationURL", TestHeaderKeyType::StringURLTestRunner },

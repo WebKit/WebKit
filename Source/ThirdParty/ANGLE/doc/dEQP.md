@@ -75,14 +75,12 @@ you fix tests, please remove the suppression(s) from the relevant files!
 
 ### Running dEQP on Android
 
-When you only need to run a few tests with `--gtest_filter` you can use Android wrappers such as `angle_deqp_egl_tests` directly but beware that Android test runner wipes data by default (try `--skip-clear-data`).
-
-Running the tests not using the test runner is tricky, but is necessary in order to get a complete TestResults.qpa from the dEQP tests when running many tests (since the runner shards the tests, only the results of the last shard will be available when using the test runner). First, use the runner to install the APK, test data and test expectations on the device. After the tests start running, the test runner can be stopped with Ctrl+C. Then, run
+Running the tests not using the test runner is tricky, but is necessary in order to get a complete TestResults.qpa from the dEQP tests (since the runner shards the tests, only the results of the last shard will be available when using the test runner). First, use the runner to install the APK, test data and test expectations on the device. After the tests start running, the test runner can be stopped with Ctrl+C. Then, run
 ```
 adb shell am start -a android.intent.action.MAIN -n org.chromium.native_test/.NativeUnitTestNativeActivity -e org.chromium.native_test.NativeTest.StdoutFile /sdcard/chromium_tests_root/out.txt
 ```
-After the tests finish, get the results with (requires `adb root`)
+After the tests finish, get the results with
 ```
-adb pull /data/data/com.android.angle.test/TestResults.qpa .
+adb pull /sdcard/chromium_tests_root/gen/vk_gl_cts_data/data/TestResults.qpa .
 ```
 Note: this location might change, one can double-check with `adb logcat -d | grep qpa`.

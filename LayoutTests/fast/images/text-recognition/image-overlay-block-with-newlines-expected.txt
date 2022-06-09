@@ -1,5 +1,0 @@
-PASS getSelection().toString() is "Hello\nworld"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

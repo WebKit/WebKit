@@ -429,15 +429,15 @@ void SerializeRectangle(JsonSerializer *json,
 void SerializeBlendStateExt(JsonSerializer *json, const gl::BlendStateExt &blendStateExt)
 {
     GroupScope group(json, "BlendStateExt");
-    json->addScalar("DrawBufferCount", blendStateExt.getDrawBufferCount());
-    json->addScalar("EnableMask", blendStateExt.getEnabledMask().bits());
-    json->addScalar("DstColor", blendStateExt.getDstColorBits());
-    json->addScalar("DstAlpha", blendStateExt.getDstAlphaBits());
-    json->addScalar("SrcColor", blendStateExt.getSrcColorBits());
-    json->addScalar("SrcAlpha", blendStateExt.getSrcAlphaBits());
-    json->addScalar("EquationColor", blendStateExt.getEquationColorBits());
-    json->addScalar("EquationAlpha", blendStateExt.getEquationAlphaBits());
-    json->addScalar("ColorMask", blendStateExt.getColorMaskBits());
+    json->addScalar("MaxDrawBuffers", blendStateExt.mMaxDrawBuffers);
+    json->addScalar("enableMask", blendStateExt.mEnabledMask.bits());
+    json->addScalar("DstColor", blendStateExt.mDstColor);
+    json->addScalar("DstAlpha", blendStateExt.mDstAlpha);
+    json->addScalar("SrcColor", blendStateExt.mSrcColor);
+    json->addScalar("SrcAlpha", blendStateExt.mSrcAlpha);
+    json->addScalar("EquationColor", blendStateExt.mEquationColor);
+    json->addScalar("EquationAlpha", blendStateExt.mEquationAlpha);
+    json->addScalar("ColorMask", blendStateExt.mColorMask);
 }
 
 void SerializeDepthStencilState(JsonSerializer *json,
@@ -798,7 +798,7 @@ Result SerializeRenderbuffer(const gl::Context *context,
     SerializeRenderbufferState(json, renderbuffer->getState());
     json->addString("Label", renderbuffer->getLabel());
 
-    if (renderbuffer->initState(GL_NONE, gl::ImageIndex()) == gl::InitState::Initialized)
+    if (renderbuffer->initState(gl::ImageIndex()) == gl::InitState::Initialized)
     {
         if (renderbuffer->getSamples() > 1 && renderbuffer->getFormat().info->depthBits > 0)
         {
@@ -927,6 +927,8 @@ void SerializeShaderState(JsonSerializer *json, const gl::ShaderState &shaderSta
     SerializeShaderVariablesVector(json, shaderState.getAllAttributes());
     SerializeShaderVariablesVector(json, shaderState.getActiveAttributes());
     SerializeShaderVariablesVector(json, shaderState.getActiveOutputVariables());
+    json->addScalar("EarlyFragmentTestsOptimization",
+                    shaderState.getEarlyFragmentTestsOptimization());
     json->addScalar("NumViews", shaderState.getNumViews());
     json->addScalar("SpecConstUsageBits", shaderState.getSpecConstUsageBits().bits());
     if (shaderState.getGeometryShaderInputPrimitiveType().valid())
@@ -1043,6 +1045,8 @@ void SerializeProgramState(JsonSerializer *json, const gl::ProgramState &program
                                      programState.getSecondaryOutputLocations());
     json->addScalar("BinaryRetrieveableHint", programState.hasBinaryRetrieveableHint());
     json->addScalar("Separable", programState.isSeparable());
+    json->addScalar("EarlyFragmentTestsOptimization",
+                    programState.hasEarlyFragmentTestsOptimization());
     json->addScalar("NumViews", programState.getNumViews());
     json->addScalar("DrawIDLocation", programState.getDrawIDLocation());
     json->addScalar("BaseVertexLocation", programState.getBaseVertexLocation());

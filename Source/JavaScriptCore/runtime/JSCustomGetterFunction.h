@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ public:
     static void destroy(JSCell*);
 
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.customGetterFunctionSpace<mode>();
     }
@@ -59,12 +59,6 @@ public:
     CustomFunctionPointer getter() const { return m_getter; };
     CustomFunctionPointer customFunctionPointer() const { return m_getter; };
     std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; };
-    const ClassInfo* slotBaseClassInfoIfExists() const
-    {
-        if (m_domAttribute)
-            return m_domAttribute->classInfo;
-        return nullptr;
-    }
 
 private:
     JSCustomGetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, CustomFunctionPointer, std::optional<DOMAttributeAnnotation>);

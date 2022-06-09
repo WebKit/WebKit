@@ -42,7 +42,7 @@ namespace {
 class ObjCVideoEncoder : public VideoEncoder {
  public:
   ObjCVideoEncoder(id<RTCVideoEncoder> encoder)
-      : encoder_(encoder), implementation_name_([encoder implementationName].rtcStdString) {}
+      : encoder_(encoder), implementation_name_([encoder implementationName].stdString) {}
 
   int32_t InitEncode(const VideoCodec *codec_settings, const Settings &encoder_settings) override {
 #if defined(WEBRTC_WEBKIT_BUILD)

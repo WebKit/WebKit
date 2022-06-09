@@ -9,34 +9,4 @@ features: [Temporal]
 
 const earlier = new Temporal.PlainYearMonth(2000, 5);
 const later = new Temporal.PlainYearMonth(2001, 6);
-const badValues = [
-  "era",
-  "eraYear",
-  "week",
-  "day",
-  "hour",
-  "minute",
-  "second",
-  "millisecond",
-  "microsecond",
-  "nanosecond",
-  "month\0",
-  "YEAR",
-  "eras",
-  "eraYears",
-  "weeks",
-  "days",
-  "hours",
-  "minutes",
-  "seconds",
-  "milliseconds",
-  "microseconds",
-  "nanoseconds",
-  "months\0",
-  "YEARS",
-  "other string"
-];
-for (const largestUnit of badValues) {
-  assert.throws(RangeError, () => earlier.until(later, { largestUnit }),
-    `"${largestUnit}" is not a valid value for largestUnit`);
-}
+assert.throws(RangeError, () => earlier.until(later, { largestUnit: "other string" }));

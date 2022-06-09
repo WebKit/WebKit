@@ -29,7 +29,6 @@
 #include "Editing.h"
 #include "ElementAncestorIterator.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "FrameSelection.h"
 #include "HTMLElement.h"
 #include "HTMLOListElement.h"

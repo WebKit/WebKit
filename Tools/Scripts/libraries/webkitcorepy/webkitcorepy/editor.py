@@ -47,17 +47,6 @@ class Editor(object):
         )
 
     @classmethod
-    def bbedit(cls):
-        from whichcraft import which
-        path = which('bbedit') or '/Applications/BBEdit.app/Contents/Helpers/bbedit_tool'
-        return cls(
-            name='BBEdit',
-            path=path,
-            command=[path, '--view-top'],
-            wait=['--wait', '--resume'],
-        )
-
-    @classmethod
     def textmate(cls):
         from whichcraft import which
         return cls(
@@ -82,27 +71,6 @@ class Editor(object):
             path='/System/Applications/TextEdit.app/Contents/MacOS/TextEdit',
             command=['open', '-a', 'TextEdit'],
             wait=['--wait-apps'],
-        )
-
-    @classmethod
-    def vscode(cls):
-        from whichcraft import which
-        path = which('code') or '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code'
-        return cls(
-            name='VSCode',
-            path=path,
-            command=[path, '-n'],
-            wait=['-w'],
-        )
-
-    @classmethod
-    def vi(cls):
-        from whichcraft import which
-        path = which('vi')
-        return cls(
-            name='vi',
-            path=path,
-            command=[path],
         )
 
     @classmethod
@@ -136,11 +104,8 @@ class Editor(object):
             Editor.sublime(),
             Editor.textmate(),
             Editor.atom(),
-            Editor.bbedit(),
-            Editor.vscode(),
             Editor.xcode(),
             Editor.textedit(),
-            Editor.vi(),
             Editor.default(),
         ]:
             if not exists or program:

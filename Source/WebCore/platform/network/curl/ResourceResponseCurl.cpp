@@ -36,37 +36,37 @@ namespace WebCore {
 
 bool ResourceResponse::isAppendableHeader(const String &key)
 {
-    static constexpr ASCIILiteral appendableHeaders[] = {
-        "access-control-allow-headers"_s,
-        "access-control-allow-methods"_s,
-        "access-control-allow-origin"_s,
-        "access-control-expose-headers"_s,
-        "allow"_s,
-        "cache-control"_s,
-        "connection"_s,
-        "content-encoding"_s,
-        "content-language"_s,
-        "if-match"_s,
-        "if-none-match"_s,
-        "keep-alive"_s,
-        "pragma"_s,
-        "proxy-authenticate"_s,
-        "public"_s,
-        "server"_s,
-        "set-cookie"_s,
-        "te"_s,
-        "trailer"_s,
-        "transfer-encoding"_s,
-        "upgrade"_s,
-        "user-agent"_s,
-        "vary"_s,
-        "via"_s,
-        "warning"_s,
-        "www-authenticate"_s
+    static const char* appendableHeaders[] = {
+        "access-control-allow-headers",
+        "access-control-allow-methods",
+        "access-control-allow-origin",
+        "access-control-expose-headers",
+        "allow",
+        "cache-control",
+        "connection",
+        "content-encoding",
+        "content-language",
+        "if-match",
+        "if-none-match",
+        "keep-alive",
+        "pragma",
+        "proxy-authenticate",
+        "public",
+        "server",
+        "set-cookie",
+        "te",
+        "trailer",
+        "transfer-encoding",
+        "upgrade",
+        "user-agent",
+        "vary",
+        "via",
+        "warning",
+        "www-authenticate"
     };
 
     // Custom headers start with 'X-', and need no further checking.
-    if (startsWithLettersIgnoringASCIICase(key, "x-"_s))
+    if (startsWithLettersIgnoringASCIICase(key, "x-"))
         return true;
 
     for (const auto& header : appendableHeaders) {
@@ -89,21 +89,21 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
 
     switch (response.httpVersion) {
     case CURL_HTTP_VERSION_1_0:
-        setHTTPVersion("HTTP/1.0"_s);
+        setHTTPVersion("HTTP/1.0");
         break;
     case CURL_HTTP_VERSION_1_1:
-        setHTTPVersion("HTTP/1.1"_s);
+        setHTTPVersion("HTTP/1.1");
         break;
     case CURL_HTTP_VERSION_2_0:
-        setHTTPVersion("HTTP/2"_s);
+        setHTTPVersion("HTTP/2");
         break;
     case CURL_HTTP_VERSION_NONE:
     default:
         break;
     }
 
-    setMimeType(AtomString { extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase() });
-    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).toAtomString());
+    setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
+    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)));
     setSource(ResourceResponse::Source::Network);
 }
 
@@ -118,29 +118,29 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
             addHTTPHeaderField(key, value);
         else
             setHTTPHeaderField(key, value);
-    } else if (startsWithLettersIgnoringASCIICase(header, "http"_s)) {
+    } else if (startsWithLettersIgnoringASCIICase(header, "http")) {
         // This is the first line of the response.
         setStatusLine(header);
     }
 }
 
-void ResourceResponse::setStatusLine(StringView header)
+void ResourceResponse::setStatusLine(const String& header)
 {
-    auto statusLine = header.stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+    auto statusLine = header.stripWhiteSpace();
 
     auto httpVersionEndPosition = statusLine.find(' ');
     auto statusCodeEndPosition = notFound;
 
     // Extract the http version
     if (httpVersionEndPosition != notFound) {
-        statusLine = statusLine.substring(httpVersionEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
+        statusLine = statusLine.substring(httpVersionEndPosition + 1).stripWhiteSpace();
         statusCodeEndPosition = statusLine.find(' ');
     }
 
     // Extract the http status text
     if (statusCodeEndPosition != notFound) {
-        auto statusText = statusLine.substring(statusCodeEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(isSpaceOrNewline);
-        setHTTPStatusText(statusText.toAtomString());
+        auto statusText = statusLine.substring(statusCodeEndPosition + 1);
+        setHTTPStatusText(statusText.stripWhiteSpace());
     }
 }
 
@@ -151,10 +151,7 @@ void ResourceResponse::setCertificateInfo(CertificateInfo&& certificateInfo)
 
 String ResourceResponse::platformSuggestedFilename() const
 {
-    StringView contentDisposition = filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
-    if (contentDisposition.is8Bit())
-        return String::fromUTF8WithLatin1Fallback(contentDisposition.characters8(), contentDisposition.length());
-    return contentDisposition.toString();
+    return filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
 }
 
 bool ResourceResponse::shouldRedirect()

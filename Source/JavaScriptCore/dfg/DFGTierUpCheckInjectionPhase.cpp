@@ -61,7 +61,7 @@ public:
     
     bool run()
     {
-        RELEASE_ASSERT(m_graph.m_plan.isDFG());
+        RELEASE_ASSERT(m_graph.m_plan.mode() == JITCompilationMode::DFG);
 
         if (!Options::useFTLJIT())
             return false;

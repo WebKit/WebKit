@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,13 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
+
 import os
 import re
 import six
 
-from webkitbugspy import Tracker, bugzilla, github, radar
-from webkitcorepy import decorators
 from webkitscmpy import ScmBase, Contributor
 
 
@@ -61,9 +59,9 @@ class Scm(ScmBase):
         self.path = path
 
         root_path = self.root_path
-        if not contributors and self.metadata:
+        if not contributors and root_path:
             for candidate in [
-                os.path.join(self.metadata, 'contributors.json'),
+                os.path.join(root_path, 'metadata', 'contributors.json'),
             ]:
                 if not os.path.isfile(candidate):
                     continue
@@ -72,42 +70,8 @@ class Scm(ScmBase):
 
         super(Scm, self).__init__(dev_branches=dev_branches, prod_branches=prod_branches, contributors=contributors, id=id)
 
-        trackers = []
-        if self.metadata:
-            path = os.path.join(self.metadata, 'trackers.json')
-            if os.path.isfile(path):
-                with open(path, 'r') as file:
-                    trackers = Tracker.from_json(json.load(file))
-        for tracker in trackers:
-            if isinstance(tracker, radar.Tracker) and (not tracker.radarclient() or not tracker.client):
-                continue
-            for contributor in self.contributors:
-                if contributor.name and contributor.emails:
-                    username = None
-                    if isinstance(tracker, bugzilla.Tracker):
-                        username = contributor.emails[0]
-                    if isinstance(tracker, github.Tracker):
-                        username = contributor.github
-                    tracker.users.create(name=contributor.name, username=username, emails=contributor.emails)
-            Tracker.register(tracker)
-
-    @property
-    @decorators.Memoize()
-    def metadata(self):
-        if not self.root_path:
-            return None
-        for name in ('metadata', '.repo-metadata'):
-            candidate = os.path.join(self.root_path, name)
-            if os.path.isdir(candidate):
-                return candidate
-        return None
-
     @property
     def root_path(self):
-        raise NotImplementedError()
-
-    @property
-    def common_directory(self):
         raise NotImplementedError()
 
     @property

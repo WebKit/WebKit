@@ -280,7 +280,7 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 
 - (void)assertion:(RBSAssertion *)assertion didInvalidateWithError:(NSError *)error
 {
-    RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertion was invalidated, error: %{public}@", self, error);
+    RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertion was invalidated, error: %{public}@", error, self);
 
     RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
         auto strongSelf = weakSelf.get();
@@ -351,23 +351,6 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}@ assertion for process with PID=%d will be invalidated", this, runningBoardAssertionName, pid);
         processAssertionWillBeInvalidated();
     };
-}
-
-double ProcessAssertion::remainingRunTimeInSeconds(ProcessID pid)
-{
-    RBSProcessIdentifier *processIdentifier = [RBSProcessIdentifier identifierWithPid:pid];
-    if (!processIdentifier) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "ProcessAssertion::remainingRunTimeInSeconds failed to get identifier for process with PID=%d", pid);
-        return 0;
-    }
-
-    RBSProcessHandle *processHandle = [RBSProcessHandle handleForIdentifier:processIdentifier error:nil];
-    if (!processHandle) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "ProcessAssertion::remainingRunTimeInSeconds failed to get handle for process with PID=%d", pid);
-        return 0;
-    }
-
-    return processHandle.activeLimitations.runTime;
 }
 
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)

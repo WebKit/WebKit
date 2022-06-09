@@ -74,7 +74,7 @@ static void removeAllMediaKeyStorageForOriginPath(const String& originPath, Wall
 
     for (const auto& mediaKeyName : mediaKeyNames) {
         auto mediaKeyPath = FileSystem::pathByAppendingComponent(originPath, mediaKeyName);
-        String mediaKeyFile = FileSystem::pathByAppendingComponent(mediaKeyPath, "SecureStop.plist"_s);
+        String mediaKeyFile = FileSystem::pathByAppendingComponent(mediaKeyPath, "SecureStop.plist");
 
         if (!FileSystem::fileExists(mediaKeyFile))
             continue;

@@ -26,16 +26,11 @@
 [
     Conditional=MODEL_ELEMENT,
     EnabledBySetting=ModelElementEnabled,
-    ExportToWrappedFunction,
     Exposed=Window,
-    JSGenerateToNativeObject
 ] interface HTMLModelElement : HTMLElement {
     [URL] readonly attribute USVString currentSrc;
 
-    readonly attribute boolean complete;
     readonly attribute Promise<HTMLModelElement> ready;
-
-    [Reflect] attribute boolean interactive;
 
     undefined enterFullscreen();
 

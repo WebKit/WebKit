@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +38,6 @@ public:
         DetectingContentfulPaint
     };
 
-    NullGraphicsContext() = default;
-
     NullGraphicsContext(PaintInvalidationReasons reasons)
         : m_paintInvalidationReasons(reasons)
     {
@@ -57,7 +55,7 @@ private:
     bool invalidatingImagesWithAsyncDecodes() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes; }
     bool detectingContentfulPaint() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::DetectingContentfulPaint; }
 
-    void didUpdateState(GraphicsContextState&) final { }
+    void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final { }
 
 #if USE(CG)
     void setIsAcceleratedContext(bool) final { }
@@ -65,9 +63,7 @@ private:
 
     void drawNativeImage(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) final { }
 
-    void drawSystemImage(SystemImage&, const FloatRect&) final { };
-
-    void drawPattern(NativeImage&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&) final { }
+    void drawPattern(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, const FloatSize&, const ImagePaintingOptions&) final { }
 
     IntRect clipBounds() const final { return { }; }
 
@@ -88,6 +84,7 @@ private:
     void strokeRect(const FloatRect&, float) final { }
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final { }
     FloatRect roundToDevicePixels(const FloatRect& rect, RoundingMode = RoundAllSides) final { return rect; }
+    void drawLineForText(const FloatRect&, bool, bool = false, StrokeStyle = SolidStroke) final { }
     void drawLinesForText(const FloatPoint&, float, const DashArray&, bool, bool = false, StrokeStyle = SolidStroke) final { }
     void setLineCap(LineCap) final { }
     void setLineDash(const DashArray&, float) final { }
@@ -111,7 +108,6 @@ private:
     FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned = 0, std::optional<unsigned> = std::nullopt) final { return { }; }
 
     void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned, const FloatPoint&, FontSmoothingMode) final { }
-    void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) final { }
 
     void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString&, const FloatPoint&, unsigned = 0, std::optional<unsigned> = std::nullopt) final { }
     void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady) final { }
@@ -135,6 +131,8 @@ private:
 
     void clipRoundedRect(const FloatRoundedRect&) final { }
     void clipOutRoundedRect(const FloatRoundedRect&) final { }
+
+    ClipToDrawingCommandsResult clipToDrawingCommands(const FloatRect&, const DestinationColorSpace&, Function<void(GraphicsContext&)>&&) final { return ClipToDrawingCommandsResult::Success; }
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final { }
 
     void fillRect(const FloatRect&, Gradient&) final { }

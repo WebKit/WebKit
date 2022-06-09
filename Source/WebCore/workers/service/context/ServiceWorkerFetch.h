@@ -37,7 +37,6 @@ class FetchEvent;
 struct FetchOptions;
 class FetchResponse;
 class FormData;
-class NetworkLoadMetrics;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -55,15 +54,14 @@ public:
     virtual void didReceiveData(const SharedBuffer&) = 0;
     virtual void didReceiveFormDataAndFinish(Ref<FormData>&&) = 0;
     virtual void didFail(const ResourceError&) = 0;
-    virtual void didFinish(const NetworkLoadMetrics&) = 0;
+    virtual void didFinish() = 0;
     virtual void didNotHandle() = 0;
     virtual void cancel() = 0;
-    virtual void setCancelledCallback(Function<void()>&&) = 0;
     virtual void continueDidReceiveResponse() = 0;
     virtual void convertFetchToDownload() = 0;
 };
 
-void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
+void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ScriptExecutionContextIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled);
 };
 
 } // namespace WebCore

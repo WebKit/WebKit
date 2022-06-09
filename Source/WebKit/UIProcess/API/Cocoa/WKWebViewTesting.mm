@@ -145,6 +145,18 @@
     [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:NO withoutWaitingForAnimatedResize:YES];
 }
 
+- (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock
+{
+#if PLATFORM(IOS_FAMILY)
+    _visibleContentRectUpdateCallbacks.append(makeBlockPtr(updateBlock));
+    [self _scheduleVisibleContentRectUpdate];
+#else
+    RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
+        updateBlock();
+    });
+#endif
+}
+
 - (void)_disableBackForwardSnapshotVolatilityForTesting
 {
     WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);
@@ -199,7 +211,7 @@
         completionHandler();
         return;
     }
-    _page->process().sendPrepareToSuspend(WebKit::IsSuspensionImminent::No, 0.0, [completionHandler = makeBlockPtr(completionHandler)] {
+    _page->process().sendPrepareToSuspend(WebKit::IsSuspensionImminent::No, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -207,13 +219,13 @@
 - (void)_processWillSuspendImminentlyForTesting
 {
     if (_page)
-        _page->process().sendPrepareToSuspend(WebKit::IsSuspensionImminent::Yes, 0.0, [] { });
+        _page->process().sendPrepareToSuspend(WebKit::IsSuspensionImminent::Yes, [] { });
 }
 
 - (void)_processDidResumeForTesting
 {
     if (_page)
-        _page->process().sendProcessDidResume(WebKit::ProcessThrottlerClient::ResumeReason::ForegroundActivity);
+        _page->process().sendProcessDidResume();
 }
 
 - (void)_setAssertionTypeForTesting:(int)value
@@ -246,20 +258,6 @@
 {
 #if ENABLE(MEDIA_STREAM)
     WebKit::UserMediaProcessManager::singleton().denyNextUserMediaRequest();
-#endif
-}
-
-- (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(NSNumber *)nsIndex
-{
-#if HAVE(SCREEN_CAPTURE_KIT)
-    if (!_page)
-        return;
-
-    std::optional<unsigned> index;
-    if (nsIndex)
-        index = nsIndex.unsignedIntValue;
-
-    _page->setIndexOfGetDisplayMediaDeviceSelectedForTesting(index);
 #endif
 }
 
@@ -437,7 +435,8 @@
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler
 {
     WebKit::PrintInfo printInfo;
-    _page->computePagesForPrinting(handle->_frameHandle->frameID(), printInfo, [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&) {
+    auto* webFrameProxy = _page->process().webFrame(handle->_frameHandle->frameID());
+    _page->computePagesForPrinting(webFrameProxy, printInfo, [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&) {
         completionHandler();
     });
 }

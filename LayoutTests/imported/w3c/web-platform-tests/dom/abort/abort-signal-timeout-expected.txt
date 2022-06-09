@@ -1,3 +1,0 @@
-
-PASS Signal returned by AbortSignal.timeout() is not aborted after frame detach
-

@@ -280,17 +280,17 @@ inline bool operator==(ComparableStringView a, ComparableASCIILiteral b)
 
 inline bool operator<(ComparableStringView a, ComparableASCIILiteral b)
 {
-    return codePointCompare(a.string, b.literal) < 0;
+    return codePointCompare(a.string, b.literal.characters()) < 0;
 }
 
 inline bool operator<(ComparableASCIILiteral a, ComparableStringView b)
 {
-    return codePointCompare(a.literal, b.string) < 0;
+    return codePointCompare(a.literal.characters(), b.string) < 0;
 }
 
 inline bool operator==(ComparableStringView a, ComparableLettersLiteral b)
 {
-    return equalLettersIgnoringASCIICaseCommon(a.string, b.literal);
+    return equalLettersIgnoringASCIICaseCommonWithoutLength(a.string, b.literal);
 }
 
 inline bool operator<(ComparableStringView a, ComparableLettersLiteral b)

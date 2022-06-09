@@ -70,7 +70,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/text/TextStream.h>
-#import <wtf/threads/BinarySemaphore.h>
 #import "AppKitSoftLink.h"
 
 
@@ -148,7 +147,6 @@
     RetainPtr<NSUndoManager> _undoManager;
     RetainPtr<WKQuirkyNSUndoManager> _quirkyUndoManager;
 
-    std::unique_ptr<BinarySemaphore> _pdfPrintCompletionSemaphore;
     uint64_t _pdfPrintCallbackID;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
@@ -200,7 +198,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [self addSubview:_fixedClippingView.get()];
     [_fixedClippingView addSubview:_rootContentView.get()];
 
-    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LazyGestureRecognizerInstallation))
+    if (!linkedOnOrAfter(SDKVersion::FirstWithLazyGestureRecognizerInstallation))
         [self setUpInteraction];
     [self setUserInteractionEnabled:YES];
 
@@ -224,7 +222,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_screenCapturedDidChange:) name:UIScreenCapturedDidChangeNotification object:[UIScreen mainScreen]];
 
-    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::WKContentViewDoesNotOverrideKeyCommands))
+    if (WebCore::IOSApplication::isEvernote() && !linkedOnOrAfter(SDKVersion::FirstWhereWKContentViewDoesNotOverrideKeyCommands))
         class_addMethod(self.class, @selector(keyCommands), reinterpret_cast<IMP>(&keyCommandsPlaceholderHackForEvernote), method_getTypeEncoding(class_getInstanceMethod(self.class, @selector(keyCommands))));
 
     return self;
@@ -689,9 +687,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _removeVisibilityPropagationViewForWebProcess];
 #endif
 
-    if (auto pdfPrintCompletionSemaphore = std::exchange(_pdfPrintCompletionSemaphore, nullptr))
-        pdfPrintCompletionSemaphore->signal();
-
     _pdfPrintCallbackID = 0;
 }
 
@@ -866,16 +861,10 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 @implementation WKContentView (_WKWebViewPrintFormatter)
 
-- (BOOL)_wk_printFormatterRequiresMainThread
-{
-    return NO;
-}
-
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
-    bool isPrintingOnBackgroundThread = !isMainRunLoop();
-
-    [self _waitForDrawToPDFCallbackIfNeeded];
+    if (_pdfPrintCallbackID)
+        [self _waitForDrawToPDFCallback];
 
     WebCore::FrameIdentifier frameID;
     if (_WKFrameHandle *handle = printFormatter.frameToPrint)
@@ -907,64 +896,35 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     printInfo.availablePaperWidth = CGRectGetWidth(printingRect);
     printInfo.availablePaperHeight = CGRectGetHeight(printingRect);
 
-    size_t pageCount;
-    if (printInfo.snapshotFirstPage)
-        pageCount = 1;
-    else {
-        if (isPrintingOnBackgroundThread) {
-            BinarySemaphore computePagesSemaphore;
-            callOnMainRunLoop([self, frameID, printInfo, &pageCount, &computePagesSemaphore]() mutable {
-                _page->computePagesForPrinting(frameID, printInfo, [&pageCount, &computePagesSemaphore](const Vector<WebCore::IntRect>& pageRects, double /* totalScaleFactorForPrinting */, const WebCore::FloatBoxExtent& /* computedPageMargin */) mutable {
-                    ASSERT(pageRects.size() >= 1);
-                    pageCount = pageRects.size();
-
-                    computePagesSemaphore.signal();
-                });
-            });
-            computePagesSemaphore.wait();
-        } else
-            pageCount = _page->computePagesForPrintingiOS(frameID, printInfo);
-    }
-
-    ASSERT(!_pdfPrintCompletionSemaphore);
-    if (isPrintingOnBackgroundThread)
-        _pdfPrintCompletionSemaphore = makeUnique<BinarySemaphore>();
-
-    // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
-    _pdfPrintCallbackID = _page->drawToPDFiOS(frameID, printInfo, pageCount, [retainedSelf = retainPtr(self)](RefPtr<WebCore::SharedBuffer>&& pdfData) {
-        if (!pdfData || pdfData->isEmpty())
-            retainedSelf->_printedDocument = nullptr;
-        else {
-            auto data = pdfData->createCFData();
-            auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
-            retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
-        }
-
-        if (auto pdfPrintCompletionSemaphore = std::exchange(retainedSelf->_pdfPrintCompletionSemaphore, nullptr))
-            pdfPrintCompletionSemaphore->signal();
-
+    auto retainedSelf = retainPtr(self);
+    auto pair = _page->computePagesForPrintingAndDrawToPDF(frameID, printInfo, [retainedSelf](const IPC::SharedBufferCopy& pdfData) {
         retainedSelf->_pdfPrintCallbackID = 0;
-    });
+        if (pdfData.isEmpty())
+            return;
 
-    return pageCount;
+        auto data = pdfData.buffer()->createCFData();
+        auto dataProvider = adoptCF(CGDataProviderCreateWithCFData(data.get()));
+        retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
+    });
+    _pdfPrintCallbackID = pair.second;
+    return pair.first;
 }
 
-- (BOOL)_waitForDrawToPDFCallbackIfNeeded
+- (BOOL)_waitForDrawToPDFCallback
 {
-    if (auto callbackID = std::exchange(_pdfPrintCallbackID, 0)) {
-        if (_pdfPrintCompletionSemaphore)
-            _pdfPrintCompletionSemaphore->wait();
-        else if (!_page->process().connection()->waitForAsyncCallbackAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity()))
-            return false;
-    }
+    ASSERT(_pdfPrintCallbackID);
+    if (!_page->process().connection()->waitForAsyncCallbackAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(std::exchange(_pdfPrintCallbackID, 0), Seconds::infinity()))
+        return false;
     ASSERT(!_pdfPrintCallbackID);
     return true;
 }
 
 - (CGPDFDocumentRef)_wk_printedDocument
 {
-    if (![self _waitForDrawToPDFCallbackIfNeeded])
-        return nullptr;
+    if (_pdfPrintCallbackID) {
+        if (![self _waitForDrawToPDFCallback])
+            return nullptr;
+    }
 
     return _printedDocument.get();
 }

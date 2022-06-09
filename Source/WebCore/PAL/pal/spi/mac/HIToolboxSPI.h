@@ -27,10 +27,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
-#define CGCOLORTAGGEDPOINTER_H_
-#endif
-
 #include <Carbon/CarbonPriv.h>
 
 #else

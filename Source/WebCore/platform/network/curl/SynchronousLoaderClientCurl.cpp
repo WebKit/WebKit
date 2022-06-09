@@ -44,7 +44,7 @@ ResourceError SynchronousLoaderClient::platformBadResponseError()
 {
     int errorCode = 0;
     URL failingURL;
-    String localizedDescription("Bad Server Response"_s);
+    String localizedDescription("Bad Server Response");
 
     return ResourceError("CURL"_s, errorCode, failingURL, localizedDescription);
 }

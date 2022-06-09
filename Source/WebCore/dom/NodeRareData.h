@@ -22,7 +22,6 @@
 #pragma once
 
 #include "ChildNodeList.h"
-#include "CommonAtomStrings.h"
 #include "HTMLCollection.h"
 #include "MutationObserverRegistration.h"
 #include "QualifiedName.h"
@@ -199,7 +198,7 @@ public:
             cache->invalidateCacheForDocument(oldDocument);
 
         for (auto& list : m_tagCollectionNSCache.values()) {
-            ASSERT(!list->isRootedAtTreeScope());
+            ASSERT(!list->isRootedAtDocument());
             list->invalidateCacheForDocument(oldDocument);
         }
 
@@ -249,23 +248,22 @@ public:
         NodeList = 1 << 0,
         MutationObserver = 1 << 1,
         TabIndex = 1 << 2,
-        ScrollingPosition = 1 << 3,
-        ComputedStyle = 1 << 4,
-        Dataset = 1 << 5,
-        ClassList = 1 << 6,
-        ShadowRoot = 1 << 7,
-        CustomElementQueue = 1 << 8,
-        AttributeMap = 1 << 9,
-        InteractionObserver = 1 << 10,
-        ResizeObserver = 1 << 11,
-        Animations = 1 << 12,
-        PseudoElements = 1 << 13,
-        StyleMap = 1 << 14,
-        PartList = 1 << 15,
-        PartNames = 1 << 16,
-        Nonce = 1 << 17,
-        ComputedStyleMap = 1 << 18,
-        ExplicitlySetAttrElementsMap = 1 << 19,
+        MinimumSize = 1 << 3,
+        ScrollingPosition = 1 << 4,
+        ComputedStyle = 1 << 5,
+        Dataset = 1 << 6,
+        ClassList = 1 << 7,
+        ShadowRoot = 1 << 8,
+        CustomElementQueue = 1 << 9,
+        AttributeMap = 1 << 10,
+        InteractionObserver = 1 << 11,
+        ResizeObserver = 1 << 12,
+        Animations = 1 << 13,
+        PseudoElements = 1 << 14,
+        StyleMap = 1 << 15,
+        PartList = 1 << 16,
+        PartNames = 1 << 17,
+        Nonce = 1 << 18,
     };
 #endif
 

@@ -1,3 +1,0 @@
-
-PASS remove()ing an out-of-bounds index does nothing
-

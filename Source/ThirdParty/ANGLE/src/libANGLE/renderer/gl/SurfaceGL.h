@@ -26,7 +26,6 @@ class SurfaceGL : public SurfaceImpl
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
 
     angle::Result initializeContents(const gl::Context *context,
-                                     GLenum binding,
                                      const gl::ImageIndex &imageIndex) override;
 
     virtual bool hasEmulatedAlphaChannel() const;

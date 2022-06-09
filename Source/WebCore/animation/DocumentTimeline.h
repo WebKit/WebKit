@@ -60,7 +60,14 @@ public:
     void removeAnimation(WebAnimation&) override;
     void transitionDidComplete(RefPtr<CSSTransition>);
 
+    // If possible, compute the visual extent of any transform animation on the given renderer
+    // using the given rect, returning the result in the rect. Return false if there is some
+    // transform animation but we were unable to cheaply compute its effect on the extent.
+    bool computeExtentOfAnimation(RenderElement&, LayoutRect&) const;
+    std::unique_ptr<RenderStyle> animatedStyleForRenderer(RenderElement& renderer);
+    bool isRunningAcceleratedAnimationOnRenderer(RenderElement&, CSSPropertyID) const;
     void animationAcceleratedRunningStateDidChange(WebAnimation&);
+    bool runningAnimationsForRendererAreAllAccelerated(const RenderBoxModelObject&) const;
     void detachFromDocument();
 
     void enqueueAnimationEvent(AnimationEventBase&);

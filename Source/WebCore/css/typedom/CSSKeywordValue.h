@@ -34,10 +34,8 @@
 namespace WebCore {
 
 template<typename> class ExceptionOr;
-class CSSKeywordValue;
-using CSSKeywordish = std::variant<String, RefPtr<CSSKeywordValue>>;
 
-class CSSKeywordValue final : public CSSStyleValue {
+class CSSKeywordValue : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSKeywordValue);
 public:
     static ExceptionOr<Ref<CSSKeywordValue>> create(const String&);
@@ -46,12 +44,7 @@ public:
     ExceptionOr<void> setValue(const String&);
     
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSKeywordValue; }
-    
-    static Ref<CSSKeywordValue> rectifyKeywordish(CSSKeywordish&&);
-
 private:
-    void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
-
     explicit CSSKeywordValue(const String& value)
         : m_value(value) { }
     String m_value;

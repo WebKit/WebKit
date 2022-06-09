@@ -209,11 +209,6 @@ PAS_BEGIN_EXTERN_C;
         return pas_lock_try_lock(&name##_lock); \
     } \
     \
-    PAS_UNUSED static inline bool name##_lock_lock_with_mode(pas_lock_lock_mode mode) \
-    { \
-        return pas_lock_lock_with_mode(&name##_lock, mode); \
-    } \
-    \
     PAS_UNUSED static inline void name##_lock_unlock(void) \
     { \
         pas_lock_unlock(&name##_lock); \

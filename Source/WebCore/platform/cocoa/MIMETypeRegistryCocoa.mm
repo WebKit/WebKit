@@ -89,10 +89,9 @@ static Vector<String> extensionsForWildcardMIMEType(const String& type)
     return extensions;
 }
 
-String MIMETypeRegistry::mimeTypeForExtension(StringView extension)
+String MIMETypeRegistry::mimeTypeForExtension(const String& extension)
 {
-    auto string = extension.createNSStringWithoutCopying();
-    return [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:string.get()];
+    return [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:(NSString *)extension];
 }
 
 Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& type)

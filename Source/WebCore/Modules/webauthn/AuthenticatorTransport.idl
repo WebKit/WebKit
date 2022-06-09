@@ -29,6 +29,5 @@
     "usb",
     "nfc",
     "ble",
-    "internal",
-    "cable"
+    "internal"
 };

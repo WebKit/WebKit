@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ namespace JSC {
 
 static_assert(sizeof(UnlinkedFunctionExecutable) <= 128, "UnlinkedFunctionExecutable should fit in a 128-byte cell to keep allocated blocks count to only one after initializing JSGlobalObject.");
 
-const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedFunctionExecutable) };
+const ClassInfo UnlinkedFunctionExecutable::s_info = { "UnlinkedFunctionExecutable", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedFunctionExecutable) };
 
 static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     VM& vm, UnlinkedFunctionExecutable* executable, const SourceCode& source,
@@ -251,8 +251,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::unlinkedCodeBlockFor(
         m_unlinkedCodeBlockForConstruct.set(vm, this, result);
         break;
     }
-    // FIXME GlobalGC: Need syncrhonization here for accessing the Heap server.
-    vm.heap.unlinkedFunctionExecutableSpaceAndSet.set.add(this);
+    vm.unlinkedFunctionExecutableSpace().set.add(this);
     return result;
 }
 
@@ -310,10 +309,8 @@ void UnlinkedFunctionExecutable::finalizeUnconditionally(VM& vm)
         };
         clearIfDead(m_unlinkedCodeBlockForCall);
         clearIfDead(m_unlinkedCodeBlockForConstruct);
-        if (isCleared && !isStillValid) {
-            // FIXME GlobalGC: Need syncrhonization here for accessing the Heap server.
-            vm.heap.unlinkedFunctionExecutableSpaceAndSet.set.remove(this);
-        }
+        if (isCleared && !isStillValid)
+            vm.unlinkedFunctionExecutableSpace().set.remove(this);
     }
 }
 

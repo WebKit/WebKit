@@ -342,6 +342,7 @@ public:
     void setLineLayoutPath(LineLayoutPath path) { setRenderBlockFlowLineLayoutPath(path); }
 
     int lineCount() const;
+    void clearTruncation();
 
     void setHasMarkupTruncation(bool b) { setRenderBlockFlowHasMarkupTruncation(b); }
     bool hasMarkupTruncation() const { return renderBlockFlowHasMarkupTruncation(); }
@@ -392,7 +393,7 @@ public:
     
     LayoutUnit endPaddingWidthForCaret() const;
 
-    LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const;
+    LayoutUnit adjustSelectionTopForPrecedingBlock(LayoutUnit top) const;
 
 protected:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
@@ -545,6 +546,7 @@ public:
     void materializeRareBlockFlowData();
 
 #if ENABLE(TEXT_AUTOSIZING)
+    int lineCountForTextAutosizing();
     void adjustComputedFontSizes(float size, float visibleWidth);
     void resetComputedFontSize()
     {
@@ -614,6 +616,8 @@ inline LayoutUnit RenderBlockFlow::endPaddingWidthForCaret() const
         return caretWidth;
     return { };
 }
+
+bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow&);
 
 } // namespace WebCore
 

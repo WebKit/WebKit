@@ -150,16 +150,9 @@ function waitFor(duration)
     return new Promise((resolve) => setTimeout(resolve, duration));
 }
 
-async function waitForVideoSize(video, width, height, count)
+function waitForVideoSize(video, width, height, count)
 {
-    if (video.requestVideoFrameCallback) {
-        const frameMetadata = await new Promise(resolve => video.requestVideoFrameCallback((now, metadata) => {
-            resolve(metadata);
-        }));
-
-        if (frameMetadata.width === width && frameMetadata.height === height)
-            return Promise.resolve("video has expected size");
-    } else if (video.videoWidth === width && video.videoHeight === height)
+    if (video.videoWidth === width && video.videoHeight === height)
         return Promise.resolve("video has expected size");
 
     if (count === undefined)
@@ -167,8 +160,9 @@ async function waitForVideoSize(video, width, height, count)
     if (++count > 20)
         return Promise.reject("waitForVideoSize timed out, expected " + width + "x"+ height + " but got " + video.videoWidth + "x" + video.videoHeight);
 
-    await waitFor(100);
-    return waitForVideoSize(video, width, height, count);
+    return waitFor(100).then(() => {
+        return waitForVideoSize(video, width, height, count);
+    });
 }
 
 async function doHumAnalysis(stream, expected)
@@ -213,15 +207,15 @@ async function checkVideoBlack(expected, canvas, video, errorMessage, counter)
         return Promise.resolve();
 
     if (counter === undefined)
-        counter = 400;
-    if (counter === 0) {
+        counter = 0;
+    if (counter > 400) {
         if (!errorMessage)
             errorMessage = "checkVideoBlack timed out expecting " + expected;
         return Promise.reject(errorMessage);
     }
 
     await waitFor(50);
-    return checkVideoBlack(expected, canvas, video, errorMessage, --counter);
+    return checkVideoBlack(expected, canvas, video, errorMessage, ++counter);
 }
 
 function setCodec(sdp, codec)
@@ -393,38 +387,14 @@ function drawCanvasTestPatternWebGL(canvas, patternNumber)
     }
 }
 
-function drawCanvasTestPattern2D(canvas, patternNumber)
-{
-    patternNumber = patternNumber || 0;
-    const context = canvas.getContext("2d");
-    const boxSize = [ canvas.width, canvas.height ];
-    const boxes = [
-        [0.0, 0.0, 0.5, 0.5],
-        [0.5, 0.0, 1.0, 0.5],
-        [0.5, 0.5, 1.0, 1.0],
-        [0.0, 0.5, 0.5, 1.0],
-    ];
-    const boxColors = Object.values(testColors);
-    for (let n = 0; n < 4; ++n) {
-        const i = (n + patternNumber) % boxes.length;
-        const color = boxColors[i];
-        const box = boxes[n];
-
-        context.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-        context.fillRect(box[0] * boxSize[0], box[1] * boxSize[1], box[2] * boxSize[0], box[3] * boxSize[1]);
-    }
-}
-
-
-function assertImageSourceContainsCanvasTestPattern(imageSource, patternNumber, desc, err)
+function assertImageSourceContainsCanvasTestPattern(imageSource, patternNumber, desc)
 {
     patternNumber = patternNumber || 0;
     desc = desc || "";
     const verifyWidth = 300;
     // FIXME: canvas-to-peer-connection on Catalina-WK2 would fail with 0 -> 8 and 255 -> 240 for some reason.
     // https://bugs.webkit.org/show_bug.cgi?id=235708
-    if (!err)
-        err = 25;
+    const err = 25;
     let imageSourceSize;
     let imageSourceHeight;
     if (imageSource instanceof HTMLVideoElement)

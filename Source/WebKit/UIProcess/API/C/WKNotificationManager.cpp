@@ -78,8 +78,3 @@ void WKNotificationManagerProviderDidRemoveNotificationPolicies(WKNotificationMa
 {
     toImpl(managerRef)->providerDidRemoveNotificationPolicies(toImpl(origins));
 }
-
-WKNotificationManagerRef WKNotificationManagerGetSharedServiceWorkerNotificationManager()
-{
-    return toAPI(&WebNotificationManagerProxy::sharedServiceWorkerManager());
-}

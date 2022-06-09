@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@
 #include "pas_heap_config_kind.h"
 #include "pas_heap_ref.h"
 #include "pas_heap_ref_kind.h"
-#include "pas_mmap_capability.h"
+#include "pas_allocation_result.h"
 #include "pas_segregated_heap_lookup_kind.h"
 #include "pas_segregated_page_config.h"
 #include "pas_size_lookup_mode.h"
@@ -174,9 +174,6 @@ struct pas_heap_config {
     bool aligned_allocator_talks_to_sharing_pool;
     pas_deallocator deallocator;
 
-    /* Tells if it's OK to call mmap on memory managed by this heap. */
-    pas_mmap_capability mmap_capability;
-
     /* This points to things that are necessary for enumeration that are specific to the heap config. */
     void* root_data;
 
@@ -195,9 +192,6 @@ struct pas_heap_config {
     pas_heap_config_specialized_local_allocator_try_allocate_slow specialized_local_allocator_try_allocate_slow;
     pas_heap_config_specialized_try_allocate_common_impl_slow specialized_try_allocate_common_impl_slow;
     pas_heap_config_specialized_try_deallocate_not_small_exclusive_segregated specialized_try_deallocate_not_small_exclusive_segregated;
-
-    /* Configure whether probabilistic guard malloc may be called or not during allocation. */
-    bool pgm_enabled;
 };
 
 #define PAS_HEAP_CONFIG_SPECIALIZATIONS(lower_case_heap_config_name) \
@@ -309,23 +303,6 @@ pas_heap_config_bitfit_page_config_for_variant(
     }
     PAS_ASSERT(!"Should not reach here");
     return config.small_bitfit_config;
-}
-
-static PAS_ALWAYS_INLINE size_t pas_heap_config_segregated_heap_min_align_shift(pas_heap_config config)
-{
-    size_t result;
-    result = SIZE_MAX;
-    if (config.small_bitfit_config.base.is_enabled)
-        result = PAS_MIN(result, config.small_bitfit_config.base.min_align_shift);
-    if (config.small_segregated_config.base.is_enabled)
-        result = PAS_MIN(result, config.small_segregated_config.base.min_align_shift);
-    PAS_ASSERT(result != SIZE_MAX);
-    return result;
-}
-
-static PAS_ALWAYS_INLINE size_t pas_heap_config_segregated_heap_min_align(pas_heap_config config)
-{
-    return (size_t)1 << pas_heap_config_segregated_heap_min_align_shift(config);
 }
 
 /* Returns true if we were the first to active it. Must hold the heap lock to call this. This is

@@ -45,7 +45,7 @@ DragSource::~DragSource()
 {
 }
 
-void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> operationMask, RefPtr<ShareableBitmap>&& image, IntPoint&& imageHotspot)
+void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> operationMask, RefPtr<ShareableBitmap>&& image)
 {
     if (m_drag) {
         gdk_drag_drop_done(m_drag.get(), FALSE);
@@ -89,7 +89,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
 
     if (m_selectionData->hasCustomData()) {
         GRefPtr<GBytes> bytes = m_selectionData->customData()->createGBytes();
-        providers.append(gdk_content_provider_new_for_bytes(PasteboardCustomData::gtkType().characters(), bytes.get()));
+        providers.append(gdk_content_provider_new_for_bytes(PasteboardCustomData::gtkType(), bytes.get()));
     }
 
     auto* surface = gtk_native_get_surface(gtk_widget_get_native(m_webView));
@@ -129,7 +129,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     RefPtr<Image> iconImage = image ? image->createImage() : nullptr;
     if (iconImage) {
         if (GRefPtr<GdkTexture> texture = adoptGRef(iconImage->gdkTexture())) {
-            gdk_drag_set_hotspot(m_drag.get(), -imageHotspot.x(), -imageHotspot.y());
+            gdk_drag_set_hotspot(m_drag.get(), -gdk_texture_get_width(texture.get()) / 2, -gdk_texture_get_height(texture.get()) / 2);
             auto* picture = gtk_picture_new_for_paintable(GDK_PAINTABLE(texture.get()));
             gtk_drag_icon_set_child(GTK_DRAG_ICON(dragIcon), picture);
             return;

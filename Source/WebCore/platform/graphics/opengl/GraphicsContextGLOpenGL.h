@@ -142,7 +142,6 @@ public:
     void getFloatv(GCGLenum pname, GCGLSpan<GCGLfloat> value) final;
     GCGLint getFramebufferAttachmentParameteri(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
     void getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> value) final;
-    void getIntegeri_v(GCGLenum pname, GCGLuint index, GCGLSpan<GCGLint, 4> value) final; // NOLINT
     GCGLint64 getInteger64(GCGLenum pname) final;
     GCGLint64 getInteger64i(GCGLenum pname, GCGLuint index) final;
     GCGLint getProgrami(PlatformGLObject program, GCGLenum pname) final;
@@ -365,33 +364,35 @@ public:
     void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, GCGLSpan<GCGLint> params) final;
 
     // GL_ANGLE_multi_draw
-    void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) override;
-    void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) override;
-    void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLint> countsAndOffsets, GCGLenum type) override;
-    void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLint, const GCGLsizei> countsOffsetsAndInstanceCounts, GCGLenum type) override;
-
-    // GL_OES_draw_buffers_indexed
-    void enableiOES(GCGLenum target, GCGLuint index) final;
-    void disableiOES(GCGLenum target, GCGLuint index) final;
-    void blendEquationiOES(GCGLuint buf, GCGLenum mode) final;
-    void blendEquationSeparateiOES(GCGLuint buf, GCGLenum modeRGB, GCGLenum modeAlpha) final;
-    void blendFunciOES(GCGLuint buf, GCGLenum src, GCGLenum dst) final;
-    void blendFuncSeparateiOES(GCGLuint buf, GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha) final;
-    void colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha) final;
+    void multiDrawArraysANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLsizei drawcount) override;
+    void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLint> firsts, GCGLSpan<const GCGLsizei> counts, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) override;
+    void multiDrawElementsANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLsizei drawcount) override;
+    void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpan<const GCGLsizei> counts, GCGLenum type, GCGLSpan<const GCGLint> offsets, GCGLSpan<const GCGLsizei> instanceCounts, GCGLsizei drawcount) override;
 
     bool supportsExtension(const String&) final;
     void ensureExtensionEnabled(const String&) final;
     bool isExtensionEnabled(const String&) final;
+    GLint getGraphicsResetStatusARB() final;
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
     String getTranslatedShaderSourceANGLE(PlatformGLObject) final;
 
     // Helper methods.
+    void forceContextLost();
+    void recycleContext();
+
+    void dispatchContextChangedNotification();
+
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
+    std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     void paintCompositedResultsToCanvas(ImageBuffer&) final;
 
-    RefPtr<PixelBuffer> readRenderingResultsForPainting();
-    RefPtr<PixelBuffer> readCompositedResultsForPainting();
+    std::optional<PixelBuffer> readRenderingResultsForPainting();
+    std::optional<PixelBuffer> readCompositedResultsForPainting();
+
+#if USE(OPENGL) && ENABLE(WEBGL2)
+    void primitiveRestartIndex(GCGLuint);
+#endif
+
 
     void setContextVisibility(bool) final;
 
@@ -435,15 +436,11 @@ protected:
     // Called once by all the public entry points of ExtensionsGLOpenGL/ExtensionGLOpenGLES that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
 
-    // Initializes the instance. Returns false if the instance should not be used.
-    bool initialize();
-    virtual bool platformInitialize() = 0;
-
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or
     // could not be honored based on the capabilities of the OpenGL
     // implementation.
-    void validateDepthStencil(ASCIILiteral packedDepthStencilExtension);
+    void validateDepthStencil(const char* packedDepthStencilExtension);
     void validateAttributes();
 
     void readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, GCGLsizei* length, GCGLsizei* columns, GCGLsizei* rows, GCGLvoid* data, bool readingToPixelBufferObject);
@@ -451,11 +448,12 @@ protected:
     // Did the most recent drawing operation leave the GPU in an acceptable state?
     void checkGPUStatus();
 
-    RefPtr<PixelBuffer> readRenderingResults();
-    RefPtr<PixelBuffer> readCompositedResults();
-    RefPtr<PixelBuffer> readPixelsForPaintResults();
+    std::optional<PixelBuffer> readRenderingResults();
+    std::optional<PixelBuffer> readCompositedResults();
+    std::optional<PixelBuffer> readPixelsForPaintResults();
 
     bool reshapeFBOs(const IntSize&);
+    void prepareTextureImpl();
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
 

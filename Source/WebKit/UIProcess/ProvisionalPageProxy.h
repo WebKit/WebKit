@@ -61,7 +61,6 @@ class UserData;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProcessProxy;
-class WebsiteDataStore;
 struct FrameInfoData;
 struct NavigationActionData;
 struct URLSchemeTaskParameters;
@@ -164,8 +163,6 @@ private:
     WebPageProxy& m_page;
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
-    // Keep WebsiteDataStore alive for provisional page load.
-    RefPtr<WebsiteDataStore> m_websiteDataStore;
     std::unique_ptr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebFrameProxy> m_mainFrame;
     uint64_t m_navigationID;

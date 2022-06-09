@@ -27,9 +27,9 @@
 #include <wtf/text/CString.h>
 
 /**
- * WebKitNotification:
- *
- * Holds information about a notification that should be shown to the user.
+ * SECTION: WebKitNotification
+ * @Short_description: Object used to hold information about a notification that should be shown to the user.
+ * @Title: WebKitNotification
  *
  * Since: 2.8
  */

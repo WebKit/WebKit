@@ -45,7 +45,7 @@ class WebPageProxy;
 @interface WKTransformView : WKCompositingView
 @end
 
-@interface WKBackdropView : WKCompositingView
+@interface WKSimpleBackdropView : WKCompositingView
 @end
 
 @interface WKShapeView : WKCompositingView
@@ -58,6 +58,9 @@ class WebPageProxy;
 @end
 
 @interface WKUIRemoteView : _UIRemoteView <WKContentControlled>
+@end
+
+@interface WKBackdropView : _UIBackdropView <WKContentControlled>
 @end
 
 @interface WKChildScrollView : UIScrollView <WKContentControlled>

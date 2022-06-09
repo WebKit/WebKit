@@ -34,7 +34,7 @@ namespace WebKit {
 String logLevelString()
 {
 #if !LOG_DISABLED
-    return String::fromLatin1(getenv("WEBKIT_DEBUG"));
+    return getenv("WEBKIT_DEBUG");
 #else
     return String();
 #endif

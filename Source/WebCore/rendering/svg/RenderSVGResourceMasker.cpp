@@ -1,6 +1,5 @@
 /*
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -69,18 +68,13 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
     AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
     FloatRect repaintRect = renderer.repaintRectInLocalCoordinates();
 
-    // Ignore 2D rotation, as it doesn't affect the size of the mask.
-    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
-
-    // Determine scale factor for the mask. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
-    ImageBuffer::sizeNeedsClamping(repaintRect.size(), scale);
-
     if (!maskerData->maskImage && !repaintRect.isEmpty()) {
+        const SVGRenderStyle& svgStyle = style().svgStyle();
+
         auto maskColorSpace = DestinationColorSpace::SRGB();
         auto drawColorSpace = DestinationColorSpace::SRGB();
 
 #if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
-        const SVGRenderStyle& svgStyle = style().svgStyle();
         if (svgStyle.colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG)
             maskColorSpace = DestinationColorSpace::LinearSRGB();
@@ -88,8 +82,9 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
             drawColorSpace = DestinationColorSpace::LinearSRGB();
         }
 #endif
+
         // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
-        maskerData->maskImage = context->createScaledImageBuffer(repaintRect, scale, maskColorSpace, RenderingMode::Unaccelerated);
+        maskerData->maskImage = SVGRenderingContext::createImageBuffer(repaintRect, absoluteTransform, maskColorSpace, RenderingMode::Unaccelerated, nullptr);
         if (!maskerData->maskImage)
             return false;
 
@@ -100,7 +95,7 @@ bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const Rende
     if (!maskerData->maskImage)
         return false;
 
-    SVGRenderingContext::clipToImageBuffer(*context, repaintRect, scale, maskerData->maskImage, missingMaskerData);
+    SVGRenderingContext::clipToImageBuffer(*context, absoluteTransform, repaintRect, maskerData->maskImage, missingMaskerData);
     return true;
 }
 

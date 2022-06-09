@@ -45,7 +45,6 @@ struct VerticalConstraints {
     LayoutUnit logicalHeight;
 };
 
-// FIXME: Move the vertical bits to a dedicated ConstraintsForBlockContent class.
 struct ConstraintsForInFlowContent {
     ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop);
 
@@ -54,11 +53,9 @@ struct ConstraintsForInFlowContent {
 
     enum BaseTypeFlag : uint8_t {
         GenericContent = 1 << 0,
-        TableContent   = 1 << 1,
-        FlexContent    = 1 << 2
+        TableContent   = 1 << 1
     };
     bool isConstraintsForTableContent() const { return baseTypeFlags().contains(TableContent); }
-    bool isConstraintsForFlexContent() const { return baseTypeFlags().contains(FlexContent); }
 
 protected:
     ConstraintsForInFlowContent(HorizontalConstraints, LayoutUnit logicalTop, OptionSet<BaseTypeFlag>);
@@ -66,7 +63,7 @@ protected:
 private:
     OptionSet<BaseTypeFlag> baseTypeFlags() const { return OptionSet<BaseTypeFlag>::fromRaw(m_baseTypeFlags); }
 
-    unsigned m_baseTypeFlags : 3; // OptionSet<BaseTypeFlag>
+    unsigned m_baseTypeFlags : 2; // OptionSet<BaseTypeFlag>
     HorizontalConstraints m_horizontal;
     LayoutUnit m_logicalTop;
 };

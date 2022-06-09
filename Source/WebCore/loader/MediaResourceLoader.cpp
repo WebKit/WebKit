@@ -35,7 +35,6 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Element.h"
-#include "FrameDestructionObserverInlines.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "SecurityOrigin.h"
@@ -181,7 +180,7 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_resource->resourceError().isAccessControl()) {
-        static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy."_s);
+        static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy.");
         m_loader->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         m_didPassAccessControlCheck = false;
         if (m_client)

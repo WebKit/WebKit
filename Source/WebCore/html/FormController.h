@@ -30,7 +30,7 @@ class Document;
 class HTMLFormControlElementWithState;
 class HTMLFormElement;
 
-using FormControlState = Vector<AtomString>;
+using FormControlState = Vector<String>;
 
 class FormController {
     WTF_MAKE_FAST_ALLOCATED;
@@ -39,15 +39,15 @@ public:
     FormController();
     ~FormController();
 
-    Vector<AtomString> formElementsState(const Document&) const;
-    void setStateForNewFormElements(const Vector<AtomString>& stateVector);
+    Vector<String> formElementsState(const Document&) const;
+    void setStateForNewFormElements(const Vector<String>& stateVector);
 
     void willDeleteForm(HTMLFormElement&);
     void restoreControlStateFor(HTMLFormControlElementWithState&);
     void restoreControlStateIn(HTMLFormElement&);
     bool hasFormStateToRestore() const;
 
-    WEBCORE_EXPORT static Vector<String> referencedFilePaths(const Vector<AtomString>& stateVector);
+    WEBCORE_EXPORT static Vector<String> referencedFilePaths(const Vector<String>& stateVector);
 
 private:
     class FormKeyGenerator;
@@ -55,7 +55,7 @@ private:
     using SavedFormStateMap = HashMap<String, SavedFormState>;
 
     FormControlState takeStateForFormElement(const HTMLFormControlElementWithState&);
-    static SavedFormStateMap parseStateVector(const Vector<AtomString>&);
+    static SavedFormStateMap parseStateVector(const Vector<String>&);
 
     SavedFormStateMap m_savedFormStateMap;
     std::unique_ptr<FormKeyGenerator> m_formKeyGenerator;

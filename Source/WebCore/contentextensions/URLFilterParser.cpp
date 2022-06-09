@@ -349,7 +349,7 @@ URLFilterParser::URLFilterParser(CombinedURLFilters& combinedURLFilters)
 
 URLFilterParser::~URLFilterParser() = default;
 
-URLFilterParser::ParseStatus URLFilterParser::addPattern(StringView pattern, bool patternIsCaseSensitive, uint64_t patternId)
+URLFilterParser::ParseStatus URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId)
 {
     if (!pattern.isAllASCII())
         return NonASCII;
@@ -369,39 +369,39 @@ URLFilterParser::ParseStatus URLFilterParser::addPattern(StringView pattern, boo
     return status;
 }
 
-ASCIILiteral URLFilterParser::statusString(ParseStatus status)
+String URLFilterParser::statusString(ParseStatus status)
 {
     switch (status) {
     case Ok:
-        return "Ok"_s;
+        return "Ok";
     case MatchesEverything:
-        return "Matches everything."_s;
+        return "Matches everything.";
     case NonASCII:
-        return "Only ASCII characters are supported in pattern."_s;
+        return "Only ASCII characters are supported in pattern.";
     case UnsupportedCharacterClass:
-        return "Character class is not supported."_s;
+        return "Character class is not supported.";
     case BackReference:
-        return "Patterns cannot contain backreferences."_s;
+        return "Patterns cannot contain backreferences.";
     case ForwardReference:
-        return "Patterns cannot contain forward references."_s;
+        return "Patterns cannot contain forward references.";
     case MisplacedStartOfLine:
-        return "Start of line assertion can only appear as the first term in a filter."_s;
+        return "Start of line assertion can only appear as the first term in a filter.";
     case WordBoundary:
-        return "Word boundaries assertions are not supported yet."_s;
+        return "Word boundaries assertions are not supported yet.";
     case AtomCharacter:
-        return "Builtins character class atoms are not supported yet."_s;
+        return "Builtins character class atoms are not supported yet.";
     case Group:
-        return "Groups are not supported yet."_s;
+        return "Groups are not supported yet.";
     case Disjunction:
-        return "Disjunctions are not supported yet."_s;
+        return "Disjunctions are not supported yet.";
     case MisplacedEndOfLine:
-        return "The end of line assertion must be the last term in an expression."_s;
+        return "The end of line assertion must be the last term in an expression.";
     case EmptyPattern:
-        return "Empty pattern."_s;
+        return "Empty pattern.";
     case YarrError:
-        return "Internal error in YARR."_s;
+        return "Internal error in YARR.";
     case InvalidQuantifier:
-        return "Arbitrary atom repetitions are not supported."_s;
+        return "Arbitrary atom repetitions are not supported.";
     }
 
     RELEASE_ASSERT_NOT_REACHED();

@@ -62,7 +62,13 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
 
     case PlatformCALayer::LayerTypeBackdropLayer:
-        return makeWithView(adoptNS([[WKBackdropView alloc] init]));
+        return makeWithView(adoptNS([[WKSimpleBackdropView alloc] init]));
+
+    case PlatformCALayer::LayerTypeLightSystemBackdropLayer:
+        return makeWithView(adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Light]));
+
+    case PlatformCALayer::LayerTypeDarkSystemBackdropLayer:
+        return makeWithView(adoptNS([[WKBackdropView alloc] initWithFrame:CGRectZero privateStyle:_UIBackdropViewStyle_Dark]));
 
     case PlatformCALayer::LayerTypeTransformLayer:
         return makeWithView(adoptNS([[WKTransformView alloc] init]));
@@ -95,7 +101,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #if ENABLE(SEPARATED_MODEL)
         return makeWithView(adoptNS([[WKSeparatedModelView alloc] initWithModel:*properties.model]));
 #elif ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-        return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*properties.model layerID:properties.layerID page:m_drawingArea->page()]));
+        return makeWithView(adoptNS([[WKModelView alloc] initWithModel:*properties.model]));
 #else
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 #endif

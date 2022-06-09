@@ -34,38 +34,38 @@ TEST(GridPositionTest, GridPositionLimits)
 
     WebCore::GridPosition gridPosition;
 
-    gridPosition.setExplicitPosition(999999, emptyString());
+    gridPosition.setExplicitPosition(999999, "");
     EXPECT_EQ(gridPosition.integerPosition(), 999999);
-    gridPosition.setExplicitPosition(1000000, emptyString());
+    gridPosition.setExplicitPosition(1000000, "");
     EXPECT_EQ(gridPosition.integerPosition(), 1000000);
-    gridPosition.setExplicitPosition(1000001, emptyString());
+    gridPosition.setExplicitPosition(1000001, "");
     EXPECT_EQ(gridPosition.integerPosition(), 1000000);
-    gridPosition.setExplicitPosition(INT_MAX, emptyString());
+    gridPosition.setExplicitPosition(INT_MAX, "");
     EXPECT_EQ(gridPosition.integerPosition(), 1000000);
-    gridPosition.setExplicitPosition(-999999, emptyString());
+    gridPosition.setExplicitPosition(-999999, "");
     EXPECT_EQ(gridPosition.integerPosition(), -999999);
-    gridPosition.setExplicitPosition(-1000000, emptyString());
+    gridPosition.setExplicitPosition(-1000000, "");
     EXPECT_EQ(gridPosition.integerPosition(), -1000000);
-    gridPosition.setExplicitPosition(-1000001, emptyString());
+    gridPosition.setExplicitPosition(-1000001, "");
     EXPECT_EQ(gridPosition.integerPosition(), -1000000);
-    gridPosition.setExplicitPosition(INT_MIN, emptyString());
+    gridPosition.setExplicitPosition(INT_MIN, "");
     EXPECT_EQ(gridPosition.integerPosition(), -1000000);
 
-    gridPosition.setSpanPosition(999999, emptyString());
+    gridPosition.setSpanPosition(999999, "");
     EXPECT_EQ(gridPosition.spanPosition(), 999999);
-    gridPosition.setSpanPosition(1000000, emptyString());
+    gridPosition.setSpanPosition(1000000, "");
     EXPECT_EQ(gridPosition.spanPosition(), 1000000);
-    gridPosition.setSpanPosition(1000001, emptyString());
+    gridPosition.setSpanPosition(1000001, "");
     EXPECT_EQ(gridPosition.spanPosition(), 1000000);
-    gridPosition.setSpanPosition(INT_MAX, emptyString());
+    gridPosition.setSpanPosition(INT_MAX, "");
     EXPECT_EQ(gridPosition.spanPosition(), 1000000);
-    gridPosition.setSpanPosition(-999999, emptyString());
+    gridPosition.setSpanPosition(-999999, "");
     EXPECT_EQ(gridPosition.spanPosition(), -999999);
-    gridPosition.setSpanPosition(-1000000, emptyString());
+    gridPosition.setSpanPosition(-1000000, "");
     EXPECT_EQ(gridPosition.spanPosition(), -1000000);
-    gridPosition.setSpanPosition(-1000001, emptyString());
+    gridPosition.setSpanPosition(-1000001, "");
     EXPECT_EQ(gridPosition.spanPosition(), -1000000);
-    gridPosition.setSpanPosition(INT_MIN, emptyString());
+    gridPosition.setSpanPosition(INT_MIN, "");
     EXPECT_EQ(gridPosition.spanPosition(), -1000000);
 
 }

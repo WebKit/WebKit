@@ -28,7 +28,6 @@
 #include "MessageReceiver.h"
 #include "WebGeolocationPosition.h"
 #include "WebProcessSupplement.h"
-#include <WebCore/RegistrableDomain.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakHashSet.h>
@@ -48,34 +47,31 @@ class WebGeolocationManager : public WebProcessSupplement, public IPC::MessageRe
     WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
 public:
     explicit WebGeolocationManager(WebProcess&);
-    ~WebGeolocationManager();
 
     static const char* supplementName();
 
-    void registerWebPage(WebPage&, const String& authorizationToken, bool needsHighAccuracy);
+    void registerWebPage(WebPage&, const String& authorizationToken);
     void unregisterWebPage(WebPage&);
     void setEnableHighAccuracyForPage(WebPage&, bool);
+
+    void requestPermission(WebCore::Geolocation&);
 
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void didChangePosition(const WebCore::RegistrableDomain&, const WebCore::GeolocationPositionData&);
-    void didFailToDeterminePosition(const WebCore::RegistrableDomain&, const String& errorMessage);
+    bool isUpdating() const;
+    bool isHighAccuracyEnabled() const;
+
+    void didChangePosition(const WebCore::GeolocationPositionData&);
+    void didFailToDeterminePosition(const String& errorMessage);
 #if PLATFORM(IOS_FAMILY)
-    void resetPermissions(const WebCore::RegistrableDomain&);
+    void resetPermissions();
 #endif // PLATFORM(IOS_FAMILY)
 
-    struct PageSets {
-        WeakHashSet<WebPage> pageSet;
-        WeakHashSet<WebPage> highAccuracyPageSet;
-    };
-    bool isUpdating(const PageSets&) const;
-    bool isHighAccuracyEnabled(const PageSets&) const;
-
     WebProcess& m_process;
-    HashMap<WebCore::RegistrableDomain, PageSets> m_pageSets;
-    HashMap<WebPage*, WebCore::RegistrableDomain> m_pageToRegistrableDomain;
+    WeakHashSet<WebPage> m_pageSet;
+    WeakHashSet<WebPage> m_highAccuracyPageSet;
 };
 
 } // namespace WebKit

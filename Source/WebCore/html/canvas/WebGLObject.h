@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class GraphicsContextGL;
-class WebCoreOpaqueRoot;
 class WebGLContextGroup;
 class WebGLRenderingContextBase;
 
@@ -97,8 +96,6 @@ inline PlatformGLObject objectOrZero(WebGLObject* object)
 {
     return object ? object->object() : 0;
 }
-
-WebCoreOpaqueRoot root(WebGLObject*);
 
 } // namespace WebCore
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -122,7 +122,7 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(GlobalObject, JSGlobalObject);
 
-const ClassInfo GlobalObject::s_info = { "global"_s, &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
+const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure, const Vector<String>& arguments)
     : JSGlobalObject(vm, structure)
@@ -318,7 +318,7 @@ static RegExp* parseRegExpLine(VM& vm, char* line, int lineLength, const char** 
 
     ++i;
 
-    auto flags = Yarr::parseFlags(StringView::fromLatin1(line + i));
+    auto flags = Yarr::parseFlags(line + i);
     if (!flags) {
         *regexpError = Yarr::errorMessage(Yarr::ErrorCode::InvalidRegularExpressionFlags);
         return nullptr;
@@ -507,16 +507,16 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
         if (!strcmp(arg, "-v") || !strcmp(arg, "--verbose"))
             options.verbose = true;
         else
-            options.files.append(String::fromLatin1(argv[i]));
+            options.files.append(argv[i]);
     }
 
     for (; i < argc; ++i)
-        options.arguments.append(String::fromLatin1(argv[i]));
+        options.arguments.append(argv[i]);
 }
 
 int realMain(int argc, char** argv)
 {
-    VM* vm = &VM::create(HeapType::Large).leakRef();
+    VM* vm = &VM::create(LargeHeap).leakRef();
     JSLockHolder locker(vm);
 
     CommandLine options;

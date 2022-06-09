@@ -27,7 +27,6 @@
 #include "WorkerLocation.h"
 
 #include "SecurityOrigin.h"
-#include "WebCoreOpaqueRoot.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -77,11 +76,6 @@ String WorkerLocation::hash() const
 String WorkerLocation::origin() const
 {
     return m_origin;
-}
-
-WebCoreOpaqueRoot root(WorkerLocation* location)
-{
-    return WebCoreOpaqueRoot { location };
 }
 
 } // namespace WebCore

@@ -184,7 +184,8 @@ void webkit_dom_html_frame_set_element_set_cols(WebKitDOMHTMLFrameSetElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_SET_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameSetElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::colsAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::colsAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_frame_set_element_get_rows(WebKitDOMHTMLFrameSetElement* self)
@@ -202,7 +203,8 @@ void webkit_dom_html_frame_set_element_set_rows(WebKitDOMHTMLFrameSetElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_FRAME_SET_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLFrameSetElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::rowsAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::rowsAttr, convertedValue);
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

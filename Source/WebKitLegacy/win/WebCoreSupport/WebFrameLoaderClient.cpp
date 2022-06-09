@@ -750,7 +750,7 @@ ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& reques
 {
     // FIXME: Need ChickenCat to include CFNetwork/CFURLError.h to get these values
     // Alternatively, we could create our own error domain/codes.
-    return ResourceError(String(WebURLErrorDomain), -999, request.url(), String("Cancelled"_s));
+    return ResourceError(String(WebURLErrorDomain), -999, request.url(), String("Cancelled"));
 }
 
 ResourceError WebFrameLoaderClient::blockedError(const ResourceRequest& request) const
@@ -780,7 +780,7 @@ ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceRespon
 
 ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse& response) const
 {
-    return ResourceError(String(WebURLErrorDomain), -1100, response.url(), String("File does not exist."_s));
+    return ResourceError(String(WebURLErrorDomain), -1100, response.url(), String("File does not exist."));
 }
 
 ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response) const
@@ -814,13 +814,13 @@ bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& mimeType) const
     return m_webFrame->webView()->canShowMIMETypeAsHTML(mimeType);
 }
 
-bool WebFrameLoaderClient::representationExistsForURLScheme(StringView /*URLScheme*/) const
+bool WebFrameLoaderClient::representationExistsForURLScheme(const String& /*URLScheme*/) const
 {
     notImplemented();
     return false;
 }
 
-String WebFrameLoaderClient::generatedMIMETypeForURLScheme(StringView /*URLScheme*/) const
+String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& /*URLScheme*/) const
 {
     notImplemented();
     ASSERT_NOT_REACHED();
@@ -946,7 +946,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<Frame> WebFrameLoaderClient::createFrame(const AtomString& name, HTMLFrameOwnerElement& ownerElement)
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const String& name, HTMLFrameOwnerElement& ownerElement)
 {
     Frame* coreFrame = core(m_webFrame);
     ASSERT(coreFrame);
@@ -978,7 +978,7 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     return WebCore::ObjectContentType::None;
 }
 
-RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool)
+RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool)
 {
     return nullptr;
 }

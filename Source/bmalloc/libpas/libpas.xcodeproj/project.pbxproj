@@ -549,11 +549,9 @@
 		2B2A58992742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B2A58972742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.h */; };
 		2B2A589A2742D803005EE07C /* pas_probabilistic_guard_malloc_allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */; };
 		2B2A589C2742D815005EE07C /* PGMTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B2A589B2742D815005EE07C /* PGMTests.cpp */; };
-		2B6055E42805368B00C8BDAC /* BmallocTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B6055E32805368B00C8BDAC /* BmallocTests.cpp */; };
 		2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C11E88C2728A783002162D0 /* bmalloc_type.h */; };
 		2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E88D2728A783002162D0 /* pas_simple_type.c */; };
 		2C11E8912728A893002162D0 /* bmalloc_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E8902728A893002162D0 /* bmalloc_type.c */; };
-		2C16DAE0279E07290042E919 /* ViewCacheTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C16DADF279E07290042E919 /* ViewCacheTests.cpp */; };
 		2C340000275815D0005565CB /* pas_segregated_page_config_kind_and_role.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C34FFFF275815D0005565CB /* pas_segregated_page_config_kind_and_role.c */; };
 		2C34000227581687005565CB /* pas_page_base_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C34000127581687005565CB /* pas_page_base_config.c */; };
 		2C34FFFA27571D2F005565CB /* pas_page_base_and_kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF527571D2F005565CB /* pas_page_base_and_kind.h */; };
@@ -562,11 +560,6 @@
 		2C34FFFD27571D2F005565CB /* pas_segregated_page_config_kind_and_role.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF827571D2F005565CB /* pas_segregated_page_config_kind_and_role.h */; };
 		2C34FFFE27571D2F005565CB /* pas_segregated_page_role.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C34FFF927571D2F005565CB /* pas_segregated_page_role.h */; };
 		2C3D0FC7272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C3D0FC6272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp */; };
-		2C473152277A540F00B62C49 /* pas_mmap_capability.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C47314F277A540F00B62C49 /* pas_mmap_capability.h */; };
-		2C473153277A540F00B62C49 /* pas_large_virtual_range_min_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C473150277A540F00B62C49 /* pas_large_virtual_range_min_heap.h */; };
-		2C473154277A540F00B62C49 /* pas_large_virtual_range.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C473151277A540F00B62C49 /* pas_large_virtual_range.h */; };
-		2C473162277D4C9E00B62C49 /* TLCDecommitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */; };
-		2C47316A277D4EA800B62C49 /* pas_committed_pages_vector.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C473164277D4CCC00B62C49 /* pas_committed_pages_vector.c */; };
 		2C481326273F341A006CAB55 /* pas_large_expendable_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C481320273F341A006CAB55 /* pas_large_expendable_memory.c */; };
 		2C481327273F341A006CAB55 /* pas_compact_expendable_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C481321273F341A006CAB55 /* pas_compact_expendable_memory.c */; };
 		2C481328273F341A006CAB55 /* pas_expendable_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C481322273F341A006CAB55 /* pas_expendable_memory.c */; };
@@ -574,17 +567,16 @@
 		2C48132A273F341A006CAB55 /* pas_large_expendable_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C481324273F341A006CAB55 /* pas_large_expendable_memory.h */; };
 		2C48132B273F341A006CAB55 /* pas_expendable_memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C481325273F341A006CAB55 /* pas_expendable_memory.h */; };
 		2C48132D273F4159006CAB55 /* ExpendableMemoryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */; };
-		2C734C90277680EF0017BFFE /* MemalignTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C734C8F277680EF0017BFFE /* MemalignTests.cpp */; };
-		2C8548B127B48FC5001750BB /* pas_thread_suspend_lock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C8548AF27B48FC5001750BB /* pas_thread_suspend_lock.h */; };
-		2C8548B227B48FC5001750BB /* pas_thread_suspend_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C8548B027B48FC5001750BB /* pas_thread_suspend_lock.c */; };
 		2C85DC4127128F0F00367905 /* pas_try_allocate_intrinsic.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */; };
 		2C91E5502718DA9A00D67FF9 /* pas_size_lookup_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C91E54F2718DA9A00D67FF9 /* pas_size_lookup_mode.h */; };
-		2CB9B158278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B154278F85ED003A8C1B /* pas_lenient_compact_unsigned_ptr.h */; };
-		2CB9B159278F85EE003A8C1B /* pas_lenient_compact_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B155278F85ED003A8C1B /* pas_lenient_compact_ptr.h */; };
-		2CB9B15A278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B156278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c */; };
-		2CB9B15B278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */; };
-		2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */; };
+		2C971CFA278E11C300C9E129 /* pas_lenient_compact_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C971CF8278E11C300C9E129 /* pas_lenient_compact_ptr.h */; };
+		2C971CFB278E11C300C9E129 /* pas_lenient_compact_unsigned_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C971CF9278E11C300C9E129 /* pas_lenient_compact_unsigned_ptr.h */; };
+		2C971CFE278E136300C9E129 /* pas_lenient_compact_unsigned_ptr.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C971CFC278E136300C9E129 /* pas_lenient_compact_unsigned_ptr.c */; };
+		2C971CFF278E136300C9E129 /* pas_lenient_compact_ptr_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C971CFD278E136300C9E129 /* pas_lenient_compact_ptr_inlines.h */; };
+		2CB9B153278F6C85003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B152278F6C85003A8C1B /* LotsOfHeapsAndThreads.cpp */; };
 		2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */; };
+		E3A7DC8F27BEF8EA004E76E9 /* pas_thread_suspend_lock.h in Headers */ = {isa = PBXBuildFile; fileRef = E3A7DC8D27BEF8EA004E76E9 /* pas_thread_suspend_lock.h */; };
+		E3A7DC9027BEF8EA004E76E9 /* pas_thread_suspend_lock.c in Sources */ = {isa = PBXBuildFile; fileRef = E3A7DC8E27BEF8EA004E76E9 /* pas_thread_suspend_lock.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1250,11 +1242,9 @@
 		2B2A58972742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_probabilistic_guard_malloc_allocator.h; sourceTree = "<group>"; };
 		2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_probabilistic_guard_malloc_allocator.c; sourceTree = "<group>"; };
 		2B2A589B2742D815005EE07C /* PGMTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PGMTests.cpp; sourceTree = "<group>"; };
-		2B6055E32805368B00C8BDAC /* BmallocTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BmallocTests.cpp; sourceTree = "<group>"; };
 		2C11E88C2728A783002162D0 /* bmalloc_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_type.h; sourceTree = "<group>"; };
 		2C11E88D2728A783002162D0 /* pas_simple_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_simple_type.c; sourceTree = "<group>"; };
 		2C11E8902728A893002162D0 /* bmalloc_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bmalloc_type.c; sourceTree = "<group>"; };
-		2C16DADF279E07290042E919 /* ViewCacheTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewCacheTests.cpp; sourceTree = "<group>"; };
 		2C34000127581687005565CB /* pas_page_base_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_page_base_config.c; sourceTree = "<group>"; };
 		2C34FFF527571D2F005565CB /* pas_page_base_and_kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_page_base_and_kind.h; sourceTree = "<group>"; };
 		2C34FFF627571D2F005565CB /* pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_get_page_base_and_kind_for_small_other_in_fast_megapage.h; sourceTree = "<group>"; };
@@ -1263,16 +1253,6 @@
 		2C34FFF927571D2F005565CB /* pas_segregated_page_role.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_segregated_page_role.h; sourceTree = "<group>"; };
 		2C34FFFF275815D0005565CB /* pas_segregated_page_config_kind_and_role.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_segregated_page_config_kind_and_role.c; sourceTree = "<group>"; };
 		2C3D0FC6272B9241005C5A02 /* HeapRefAllocatorIndexTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapRefAllocatorIndexTests.cpp; sourceTree = "<group>"; };
-		2C47314F277A540F00B62C49 /* pas_mmap_capability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_mmap_capability.h; sourceTree = "<group>"; };
-		2C473150277A540F00B62C49 /* pas_large_virtual_range_min_heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_virtual_range_min_heap.h; sourceTree = "<group>"; };
-		2C473151277A540F00B62C49 /* pas_large_virtual_range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_virtual_range.h; sourceTree = "<group>"; };
-		2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TLCDecommitTests.cpp; sourceTree = "<group>"; };
-		2C473163277D4CCC00B62C49 /* pas_decommit_exclusion_range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_decommit_exclusion_range.h; sourceTree = "<group>"; };
-		2C473164277D4CCC00B62C49 /* pas_committed_pages_vector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_committed_pages_vector.c; sourceTree = "<group>"; };
-		2C473165277D4CCC00B62C49 /* pas_committed_pages_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_committed_pages_vector.h; sourceTree = "<group>"; };
-		2C473166277D4CCC00B62C49 /* pas_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_platform.h; sourceTree = "<group>"; };
-		2C473167277D4CCC00B62C49 /* pas_thread_local_cache_layout_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_thread_local_cache_layout_entry.h; sourceTree = "<group>"; };
-		2C473168277D4CCC00B62C49 /* pas_compact_thread_local_cache_layout_node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_compact_thread_local_cache_layout_node.h; sourceTree = "<group>"; };
 		2C481320273F341A006CAB55 /* pas_large_expendable_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_large_expendable_memory.c; sourceTree = "<group>"; };
 		2C481321273F341A006CAB55 /* pas_compact_expendable_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_compact_expendable_memory.c; sourceTree = "<group>"; };
 		2C481322273F341A006CAB55 /* pas_expendable_memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_expendable_memory.c; sourceTree = "<group>"; };
@@ -1280,17 +1260,16 @@
 		2C481324273F341A006CAB55 /* pas_large_expendable_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_large_expendable_memory.h; sourceTree = "<group>"; };
 		2C481325273F341A006CAB55 /* pas_expendable_memory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_expendable_memory.h; sourceTree = "<group>"; };
 		2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExpendableMemoryTests.cpp; sourceTree = "<group>"; };
-		2C734C8F277680EF0017BFFE /* MemalignTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemalignTests.cpp; sourceTree = "<group>"; };
-		2C8548AF27B48FC5001750BB /* pas_thread_suspend_lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_thread_suspend_lock.h; sourceTree = "<group>"; };
-		2C8548B027B48FC5001750BB /* pas_thread_suspend_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_thread_suspend_lock.c; sourceTree = "<group>"; };
 		2C85DC4027128F0F00367905 /* pas_try_allocate_intrinsic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_try_allocate_intrinsic.h; sourceTree = "<group>"; };
 		2C91E54F2718DA9A00D67FF9 /* pas_size_lookup_mode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_size_lookup_mode.h; sourceTree = "<group>"; };
-		2CB9B154278F85ED003A8C1B /* pas_lenient_compact_unsigned_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_unsigned_ptr.h; sourceTree = "<group>"; };
-		2CB9B155278F85ED003A8C1B /* pas_lenient_compact_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr.h; sourceTree = "<group>"; };
-		2CB9B156278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_lenient_compact_unsigned_ptr.c; sourceTree = "<group>"; };
-		2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr_inlines.h; sourceTree = "<group>"; };
-		2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LotsOfHeapsAndThreads.cpp; sourceTree = "<group>"; };
+		2C971CF8278E11C300C9E129 /* pas_lenient_compact_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr.h; sourceTree = "<group>"; };
+		2C971CF9278E11C300C9E129 /* pas_lenient_compact_unsigned_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_unsigned_ptr.h; sourceTree = "<group>"; };
+		2C971CFC278E136300C9E129 /* pas_lenient_compact_unsigned_ptr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_lenient_compact_unsigned_ptr.c; sourceTree = "<group>"; };
+		2C971CFD278E136300C9E129 /* pas_lenient_compact_ptr_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr_inlines.h; sourceTree = "<group>"; };
+		2CB9B152278F6C85003A8C1B /* LotsOfHeapsAndThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LotsOfHeapsAndThreads.cpp; sourceTree = "<group>"; };
 		2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitfitTests.cpp; sourceTree = "<group>"; };
+		E3A7DC8D27BEF8EA004E76E9 /* pas_thread_suspend_lock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_thread_suspend_lock.h; sourceTree = "<group>"; };
+		E3A7DC8E27BEF8EA004E76E9 /* pas_thread_suspend_lock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_thread_suspend_lock.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1385,7 +1364,6 @@
 				0FDEA45D228B651B0085E340 /* BitfieldVectorTests.cpp */,
 				2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */,
 				0F53181022C954ED003F7B6A /* BitvectorTests.cpp */,
-				2B6055E32805368B00C8BDAC /* BmallocTests.cpp */,
 				0F31A66723E8B336002C0CA3 /* CartesianTreeTests.cpp */,
 				0FC682362129D4EB003C6A13 /* CoalignTests.cpp */,
 				2C48132C273F4159006CAB55 /* ExpendableMemoryTests.cpp */,
@@ -1404,8 +1382,7 @@
 				0FEB6667231C87BC009C001B /* LargeSharingPoolDump.h */,
 				0FEB6669231DA86F009C001B /* LargeSharingPoolTests.cpp */,
 				0FEA45BE236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp */,
-				2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */,
-				2C734C8F277680EF0017BFFE /* MemalignTests.cpp */,
+				2CB9B152278F6C85003A8C1B /* LotsOfHeapsAndThreads.cpp */,
 				0FD22D0722CD8A7500B21841 /* MinHeapTests.cpp */,
 				2B2A589B2742D815005EE07C /* PGMTests.cpp */,
 				0F5E483923D69F610046DA5C /* RaceTests.cpp */,
@@ -1414,10 +1391,8 @@
 				0FC681EB21127A16003C6A13 /* TestHarness.cpp */,
 				0FC681EA210FEDB5003C6A13 /* TestHarness.h */,
 				0F8700B225B0AB29000E1ABF /* ThingyAndUtilityHeapAllocationTests.cpp */,
-				2C473161277D4C9E00B62C49 /* TLCDecommitTests.cpp */,
 				0F8700DE25B14C68000E1ABF /* TSDTests.cpp */,
 				0F53181222C9609D003F7B6A /* UtilsTests.cpp */,
-				2C16DADF279E07290042E919 /* ViewCacheTests.cpp */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -1532,8 +1507,6 @@
 				0F19324C22ED04A500FBA713 /* pas_commit_mode.h */,
 				0F9A1CA42559961200C8D11B /* pas_commit_span.c */,
 				0F9A1CA82559961200C8D11B /* pas_commit_span.h */,
-				2C473164277D4CCC00B62C49 /* pas_committed_pages_vector.c */,
-				2C473165277D4CCC00B62C49 /* pas_committed_pages_vector.h */,
 				0F2150EC2484BB86000D634B /* pas_compact_atomic_allocator_index_ptr.h */,
 				0F9A1D46255E284200C8D11B /* pas_compact_atomic_biasing_directory_ptr.h */,
 				0F9A1D3A255A4BA600C8D11B /* pas_compact_atomic_bitfit_biasing_directory_ptr.h */,
@@ -1578,7 +1551,6 @@
 				0F9A1CD32559961600C8D11B /* pas_compact_tagged_page_granule_use_count_ptr.h */,
 				0F6D564423CAA1B900F40DBB /* pas_compact_tagged_ptr.h */,
 				0F6D567823CD705900F40DBB /* pas_compact_tagged_unsigned_ptr.h */,
-				2C473168277D4CCC00B62C49 /* pas_compact_thread_local_cache_layout_node.h */,
 				0F6D564F23CBD19B00F40DBB /* pas_compact_unsigned_ptr.h */,
 				0FC4EC35234A91E300B710A3 /* pas_compute_summary_object_callbacks.c */,
 				0FC4EC30234A91E200B710A3 /* pas_compute_summary_object_callbacks.h */,
@@ -1594,7 +1566,6 @@
 				0F373E512659EA5E0034BA96 /* pas_debug_heap.h */,
 				0FBC62C0265F12A3005A5720 /* pas_debug_spectrum.c */,
 				0FBC62C1265F12A3005A5720 /* pas_debug_spectrum.h */,
-				2C473163277D4CCC00B62C49 /* pas_decommit_exclusion_range.h */,
 				0F78089822FA6F0800F37451 /* pas_deferred_decommit_log.c */,
 				0F78089922FA6F0800F37451 /* pas_deferred_decommit_log.h */,
 				0F5B83BB2491888A00F41052 /* pas_designated_intrinsic_heap.c */,
@@ -1722,12 +1693,10 @@
 				0FC84794232D694900B386B6 /* pas_large_sharing_pool_epoch_update_mode.h */,
 				0F6D547523C573E000F40DBB /* pas_large_utility_free_heap.c */,
 				0F6D547223C573E000F40DBB /* pas_large_utility_free_heap.h */,
-				2C473151277A540F00B62C49 /* pas_large_virtual_range.h */,
-				2C473150277A540F00B62C49 /* pas_large_virtual_range_min_heap.h */,
-				2CB9B155278F85ED003A8C1B /* pas_lenient_compact_ptr.h */,
-				2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */,
-				2CB9B156278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c */,
-				2CB9B154278F85ED003A8C1B /* pas_lenient_compact_unsigned_ptr.h */,
+				2C971CF8278E11C300C9E129 /* pas_lenient_compact_ptr.h */,
+				2C971CFD278E136300C9E129 /* pas_lenient_compact_ptr_inlines.h */,
+				2C971CFC278E136300C9E129 /* pas_lenient_compact_unsigned_ptr.c */,
+				2C971CF9278E11C300C9E129 /* pas_lenient_compact_unsigned_ptr.h */,
 				0F8A802725EC588800790B4A /* pas_line_word_config.h */,
 				0F31A64323E3509E002C0CA3 /* pas_list_direction.h */,
 				0FDBB07122B875A6006BA5FC /* pas_local_allocator.c */,
@@ -1752,7 +1721,6 @@
 				0FC6820021210B19003C6A13 /* pas_megapage_cache.c */,
 				0FC681FD21210B18003C6A13 /* pas_megapage_cache.h */,
 				0FD22CFB22CAF16400B21841 /* pas_min_heap.h */,
-				2C47314F277A540F00B62C49 /* pas_mmap_capability.h */,
 				0FD48B1023A9ABB10026C46D /* pas_monotonic_time.c */,
 				0FD48AFD23A9ABB00026C46D /* pas_monotonic_time.h */,
 				0F09226922B07C21007D5D3A /* pas_mutation_count.h */,
@@ -1787,7 +1755,6 @@
 				0F6D547323C573E000F40DBB /* pas_physical_memory_synchronization_style.h */,
 				0FF248F722FC9EDA0077202E /* pas_physical_memory_transaction.c */,
 				0F78088622FA2E4900F37451 /* pas_physical_memory_transaction.h */,
-				2C473166277D4CCC00B62C49 /* pas_platform.h */,
 				0FDEA578228E23450085E340 /* pas_primitive_heap_ref.c */,
 				0FDEA577228E23440085E340 /* pas_primitive_heap_ref.h */,
 				2B2A58982742D802005EE07C /* pas_probabilistic_guard_malloc_allocator.c */,
@@ -1898,14 +1865,13 @@
 				0FC681C4210F7C9E003C6A13 /* pas_thread_local_cache.h */,
 				0FC681C2210F7C9E003C6A13 /* pas_thread_local_cache_layout.c */,
 				0FC681CA210F7C9F003C6A13 /* pas_thread_local_cache_layout.h */,
-				2C473167277D4CCC00B62C49 /* pas_thread_local_cache_layout_entry.h */,
 				0FA5E4512492D5B900CE962A /* pas_thread_local_cache_layout_node.c */,
 				0FA5E4532492D5B900CE962A /* pas_thread_local_cache_layout_node.h */,
 				0F14871E269F5FCA006887A9 /* pas_thread_local_cache_layout_node_kind.h */,
 				0F7F51BC23159EC0007552AE /* pas_thread_local_cache_node.c */,
 				0F7F51BD23159EC0007552AE /* pas_thread_local_cache_node.h */,
-				2C8548B027B48FC5001750BB /* pas_thread_suspend_lock.c */,
-				2C8548AF27B48FC5001750BB /* pas_thread_suspend_lock.h */,
+				E3A7DC8E27BEF8EA004E76E9 /* pas_thread_suspend_lock.c */,
+				E3A7DC8D27BEF8EA004E76E9 /* pas_thread_suspend_lock.h */,
 				0F6D547123C573E000F40DBB /* pas_tiny_large_map_entry.h */,
 				0F31A66923E8E594002C0CA3 /* pas_tree_direction.h */,
 				0F8A800C25CF64C900790B4A /* pas_tri_state.h */,
@@ -2234,11 +2200,9 @@
 				0FCFA49A238352EC00CCD726 /* pas_large_sharing_pool.h in Headers */,
 				0FC84795232D694900B386B6 /* pas_large_sharing_pool_epoch_update_mode.h in Headers */,
 				0F6D547A23C573E100F40DBB /* pas_large_utility_free_heap.h in Headers */,
-				2C473154277A540F00B62C49 /* pas_large_virtual_range.h in Headers */,
-				2C473153277A540F00B62C49 /* pas_large_virtual_range_min_heap.h in Headers */,
-				2CB9B159278F85EE003A8C1B /* pas_lenient_compact_ptr.h in Headers */,
-				2CB9B15B278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h in Headers */,
-				2CB9B158278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.h in Headers */,
+				2C971CFA278E11C300C9E129 /* pas_lenient_compact_ptr.h in Headers */,
+				2C971CFF278E136300C9E129 /* pas_lenient_compact_ptr_inlines.h in Headers */,
+				2C971CFB278E11C300C9E129 /* pas_lenient_compact_unsigned_ptr.h in Headers */,
 				0F8A802925EC588800790B4A /* pas_line_word_config.h in Headers */,
 				0F31A64423E3509E002C0CA3 /* pas_list_direction.h in Headers */,
 				0FDBB07522B875A6006BA5FC /* pas_local_allocator.h in Headers */,
@@ -2255,7 +2219,6 @@
 				0F037AF425AEA91A0079B582 /* pas_medium_megapage_cache.h in Headers */,
 				0FE7EE2222960142004F4166 /* pas_megapage_cache.h in Headers */,
 				0FD22CFC22CAF16400B21841 /* pas_min_heap.h in Headers */,
-				2C473152277A540F00B62C49 /* pas_mmap_capability.h in Headers */,
 				0FD48B3823A9ABB30026C46D /* pas_monotonic_time.h in Headers */,
 				0F09226A22B07C21007D5D3A /* pas_mutation_count.h in Headers */,
 				0F9A1D4C255F2CD700C8D11B /* pas_object_kind.h in Headers */,
@@ -2360,7 +2323,7 @@
 				0FA5E4582492D5BA00CE962A /* pas_thread_local_cache_layout_node.h in Headers */,
 				0F148723269F5FCA006887A9 /* pas_thread_local_cache_layout_node_kind.h in Headers */,
 				0F7F51BF23159EC0007552AE /* pas_thread_local_cache_node.h in Headers */,
-				2C8548B127B48FC5001750BB /* pas_thread_suspend_lock.h in Headers */,
+				E3A7DC8F27BEF8EA004E76E9 /* pas_thread_suspend_lock.h in Headers */,
 				0F6D547923C573E100F40DBB /* pas_tiny_large_map_entry.h in Headers */,
 				0F31A66A23E8E594002C0CA3 /* pas_tree_direction.h in Headers */,
 				0F8A800D25CF64C900790B4A /* pas_tri_state.h in Headers */,
@@ -2642,7 +2605,6 @@
 				0FDEA461228B651B0085E340 /* BitfieldVectorTests.cpp in Sources */,
 				2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */,
 				0F53181122C954ED003F7B6A /* BitvectorTests.cpp in Sources */,
-				2B6055E42805368B00C8BDAC /* BmallocTests.cpp in Sources */,
 				0F31A66823E8B336002C0CA3 /* CartesianTreeTests.cpp in Sources */,
 				0FC682382129D4EE003C6A13 /* CoalignTests.cpp in Sources */,
 				2C48132D273F4159006CAB55 /* ExpendableMemoryTests.cpp in Sources */,
@@ -2659,18 +2621,15 @@
 				0FEB6668231C87BC009C001B /* LargeSharingPoolDump.cpp in Sources */,
 				0FEB666A231DA86F009C001B /* LargeSharingPoolTests.cpp in Sources */,
 				0FEA45BF236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp in Sources */,
-				2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */,
-				2C734C90277680EF0017BFFE /* MemalignTests.cpp in Sources */,
+				2CB9B153278F6C85003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */,
 				0FD22D0822CD8A7500B21841 /* MinHeapTests.cpp in Sources */,
 				2B2A589C2742D815005EE07C /* PGMTests.cpp in Sources */,
 				0F5E483A23D69F610046DA5C /* RaceTests.cpp in Sources */,
 				0FF08F3622A59DB300386575 /* RedBlackTreeTests.cpp in Sources */,
 				0FC681ED21127A19003C6A13 /* TestHarness.cpp in Sources */,
 				0F8700C225B0B26A000E1ABF /* ThingyAndUtilityHeapAllocationTests.cpp in Sources */,
-				2C473162277D4C9E00B62C49 /* TLCDecommitTests.cpp in Sources */,
 				0F8700F525B14C8B000E1ABF /* TSDTests.cpp in Sources */,
 				0F53181322C9609D003F7B6A /* UtilsTests.cpp in Sources */,
-				2C16DAE0279E07290042E919 /* ViewCacheTests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2711,7 +2670,6 @@
 				0F5B6083235E572000CAE629 /* pas_bootstrap_heap_page_provider.c in Sources */,
 				0FE7EDB922960142004F4166 /* pas_coalign.c in Sources */,
 				0F9A1CF02559961700C8D11B /* pas_commit_span.c in Sources */,
-				2C47316A277D4EA800B62C49 /* pas_committed_pages_vector.c in Sources */,
 				0F6D564A23CAA1BA00F40DBB /* pas_compact_bootstrap_free_heap.c in Sources */,
 				2C481327273F341A006CAB55 /* pas_compact_expendable_memory.c in Sources */,
 				0F6D566E23CBD19D00F40DBB /* pas_compact_heap_reservation.c in Sources */,
@@ -2763,7 +2721,7 @@
 				0FE7EDC722960142004F4166 /* pas_large_map.c in Sources */,
 				0FCFA49B238352EC00CCD726 /* pas_large_sharing_pool.c in Sources */,
 				0F6D547D23C573E100F40DBB /* pas_large_utility_free_heap.c in Sources */,
-				2CB9B15A278F85EE003A8C1B /* pas_lenient_compact_unsigned_ptr.c in Sources */,
+				2C971CFE278E136300C9E129 /* pas_lenient_compact_unsigned_ptr.c in Sources */,
 				0FDBB07422B875A6006BA5FC /* pas_local_allocator.c in Sources */,
 				0F45D5AA26AB731400C35D93 /* pas_local_allocator_scavenger_data.c in Sources */,
 				0F148720269F5FCA006887A9 /* pas_local_view_cache.c in Sources */,
@@ -2815,7 +2773,7 @@
 				0FE7EDD422960142004F4166 /* pas_thread_local_cache_layout.c in Sources */,
 				0FA5E4562492D5BA00CE962A /* pas_thread_local_cache_layout_node.c in Sources */,
 				0F7F51BE23159EC0007552AE /* pas_thread_local_cache_node.c in Sources */,
-				2C8548B227B48FC5001750BB /* pas_thread_suspend_lock.c in Sources */,
+				E3A7DC9027BEF8EA004E76E9 /* pas_thread_suspend_lock.c in Sources */,
 				0FE7EDD722960142004F4166 /* pas_utility_heap.c in Sources */,
 				0FE7EDBB22960142004F4166 /* pas_utility_heap_config.c in Sources */,
 				0FE7EDD822960142004F4166 /* pas_utils.c in Sources */,
@@ -2928,7 +2886,7 @@
 		0F443B3C23416A7C00BE50D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_STYLE = Automatic;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -2937,7 +2895,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2948,12 +2906,12 @@
 		0F443B3D23416A7C00BE50D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CODE_SIGN_STYLE = Automatic;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2964,7 +2922,7 @@
 		0F443B4C2341761500BE50D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -2975,7 +2933,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2986,14 +2944,14 @@
 		0F443B4D2341761500BE50D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3004,7 +2962,7 @@
 		0F8A803925EECBAF00790B4A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -3015,7 +2973,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3026,14 +2984,14 @@
 		0F8A803A25EECBAF00790B4A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3044,7 +3002,7 @@
 		0F8A809525F6A44F00790B4A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -3055,7 +3013,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3066,14 +3024,14 @@
 		0F8A809625F6A44F00790B4A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3084,7 +3042,6 @@
 		0F8A80C025F6A48700790B4A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3093,7 +3050,6 @@
 		0F8A80C125F6A48700790B4A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3102,7 +3058,6 @@
 		0F8A80DF25F6A6E700790B4A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3111,7 +3066,6 @@
 		0F8A80E025F6A6E700790B4A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3120,7 +3074,7 @@
 		0FBAE681248EC1C000311E6F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -3137,7 +3091,7 @@
 		0FBAE682248EC1C000311E6F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -3149,7 +3103,7 @@
 		0FC681E0210FAC4B003C6A13 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -3166,7 +3120,7 @@
 		0FC681E1210FAC4B003C6A13 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -3178,7 +3132,7 @@
 		0FDEA5DB2295FC8E0085E340 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CLANG_WARN_ASSIGN_ENUM = YES;
@@ -3202,7 +3156,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-DLIBPAS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3215,7 +3169,7 @@
 		0FDEA5DC2295FC8E0085E340 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CLANG_WARN_ASSIGN_ENUM = YES;
@@ -3235,7 +3189,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-DLIBPAS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3248,7 +3202,7 @@
 		0FF08F5222A86C9A00386575 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -3259,7 +3213,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3270,14 +3224,14 @@
 		0FF08F5322A86C9A00386575 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3339,7 +3293,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_DIR = "$(SRCROOT)/clang+llvm-internal";
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx.internal;
@@ -3398,7 +3352,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_DIR = "$(SRCROOT)/clang+llvm-internal";
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx.internal;
 				SUPPORTED_PLATFORMS = "macosx iphoneos";

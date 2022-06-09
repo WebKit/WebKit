@@ -28,74 +28,73 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
-#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
-ASCIILiteral exitKindToString(ExitKind kind)
+const char* exitKindToString(ExitKind kind)
 {
     switch (kind) {
     case ExitKindUnset:
-        return "Unset"_s;
+        return "Unset";
     case BadType:
-        return "BadType"_s;
+        return "BadType";
     case BadConstantValue:
-        return "BadConstantValue"_s;
+        return "BadConstantValue";
     case BadIdent:
-        return "BadIdent"_s;
+        return "BadIdent";
     case BadExecutable:
-        return "BadExecutable"_s;
+        return "BadExecutable";
     case BadCache:
-        return "BadCache"_s;
+        return "BadCache";
     case BadConstantCache:
-        return "BadConstantCache"_s;
+        return "BadConstantCache";
     case BadIndexingType:
-        return "BadIndexingType"_s;
+        return "BadIndexingType";
     case BadTypeInfoFlags:
-        return "BadTypeInfoFlags"_s;
+        return "BadTypeInfoFlags";
     case Overflow:
-        return "Overflow"_s;
+        return "Overflow";
     case NegativeZero:
-        return "NegativeZero"_s;
+        return "NegativeZero";
     case NegativeIndex:
-        return "NegativeIndex"_s;
+        return "NegativeIndex";
     case Int52Overflow:
-        return "Int52Overflow"_s;
+        return "Int52Overflow";
     case StoreToHole:
-        return "StoreToHole"_s;
+        return "StoreToHole";
     case LoadFromHole:
-        return "LoadFromHole"_s;
+        return "LoadFromHole";
     case OutOfBounds:
-        return "OutOfBounds"_s;
+        return "OutOfBounds";
     case InadequateCoverage:
-        return "InadequateCoverage"_s;
+        return "InadequateCoverage";
     case ArgumentsEscaped:
-        return "ArgumentsEscaped"_s;
+        return "ArgumentsEscaped";
     case ExoticObjectMode:
-        return "ExoticObjectMode"_s;
+        return "ExoticObjectMode";
     case VarargsOverflow:
-        return "VarargsOverflow"_s;
+        return "VarargsOverflow";
     case TDZFailure:
-        return "TDZFailure"_s;
+        return "TDZFailure";
     case HoistingFailed:
-        return "HoistingFailed"_s;
+        return "HoistingFailed";
     case Uncountable:
-        return "Uncountable"_s;
+        return "Uncountable";
     case UncountableInvalidation:
-        return "UncountableInvalidation"_s;
+        return "UncountableInvalidation";
     case WatchdogTimerFired:
-        return "WatchdogTimerFired"_s;
+        return "WatchdogTimerFired";
     case DebuggerEvent:
-        return "DebuggerEvent"_s;
+        return "DebuggerEvent";
     case ExceptionCheck:
-        return "ExceptionCheck"_s;
+        return "ExceptionCheck";
     case GenericUnwind:
-        return "GenericUnwind"_s;
+        return "GenericUnwind";
     case BigInt32Overflow:
-        return "BigInt32Overflow"_s;
+        return "BigInt32Overflow";
     }
     RELEASE_ASSERT_NOT_REACHED();
-    return "Unknown"_s;
+    return "Unknown";
 }
 
 bool exitKindMayJettison(ExitKind kind)

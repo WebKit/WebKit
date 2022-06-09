@@ -29,20 +29,18 @@
 #include "UserMessage.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
-#include <signal.h>
-#include <sys/types.h>
+#include <WebCore/PlatformDisplay.h>
 #include <wtf/FileSystem.h>
-
 
 namespace WebKit {
 using namespace WebCore;
 
 void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    launchOptions.extraInitializationData.set("enable-sandbox"_s, m_processPool->sandboxEnabled() ? "true"_s : "false"_s);
+    launchOptions.extraInitializationData.set("enable-sandbox", m_processPool->sandboxEnabled() ? "true" : "false");
 
     if (m_processPool->sandboxEnabled()) {
-        WebsiteDataStore* dataStore = websiteDataStore();
+        WebsiteDataStore* dataStore = m_websiteDataStore.get();
         if (!dataStore) {
             // Prewarmed processes don't have a WebsiteDataStore yet, so use the primary WebsiteDataStore from the WebProcessPool.
             // The process won't be used if current WebsiteDataStore is different than the WebProcessPool primary one.
@@ -51,10 +49,11 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 
         ASSERT(dataStore);
         dataStore->resolveDirectoriesIfNecessary();
-        launchOptions.extraInitializationData.set("mediaKeysDirectory"_s, dataStore->resolvedMediaKeysDirectory());
-        launchOptions.extraInitializationData.set("applicationCacheDirectory"_s, dataStore->resolvedApplicationCacheDirectory());
+        launchOptions.extraInitializationData.set("webSQLDatabaseDirectory", dataStore->resolvedDatabaseDirectory());
+        launchOptions.extraInitializationData.set("mediaKeysDirectory", dataStore->resolvedMediaKeysDirectory());
+        launchOptions.extraInitializationData.set("applicationCacheDirectory", dataStore->resolvedApplicationCacheDirectory());
 
-        launchOptions.extraSandboxPaths = m_processPool->sandboxPaths();
+        launchOptions.extraWebProcessSandboxPaths = m_processPool->sandboxPaths();
     }
 }
 
@@ -69,24 +68,4 @@ void WebProcessProxy::sendMessageToWebContext(UserMessage&& message)
     sendMessageToWebContextWithReply(WTFMove(message), [](UserMessage&&) { });
 }
 
-void WebProcessProxy::platformSuspendProcess()
-{
-    auto id = processIdentifier();
-    if (!id)
-        return;
-
-    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformSuspendProcess", this, id);
-    kill(id, SIGSTOP);
-}
-
-void WebProcessProxy::platformResumeProcess()
-{
-    auto id = processIdentifier();
-    if (!id)
-        return;
-
-    RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformResumeProcess", this, id);
-    kill(id, SIGCONT);
-}
-
-} // namespace WebKit
+};

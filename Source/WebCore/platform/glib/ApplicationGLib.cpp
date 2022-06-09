@@ -25,18 +25,17 @@ namespace WebCore {
 
 static String gApplicationName;
 static String gApplicationID;
-static NeverDestroyed<WTF::String> gDefaultApplicationName(MAKE_STATIC_STRING_IMPL("WebKit"));
 
 void setApplicationName(const String& applicationName)
 {
     gApplicationName = applicationName;
 }
 
-const String& getApplicationName()
+const char* getApplicationName()
 {
     if (!gApplicationName.isEmpty())
-        return gApplicationName;
-    return gDefaultApplicationName;
+        return gApplicationName.ascii().data();
+    return "WebKit";
 }
 
 void setApplicationID(const String& applicationID)

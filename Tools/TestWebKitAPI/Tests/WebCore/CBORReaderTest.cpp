@@ -169,10 +169,10 @@ TEST(CBORReaderTest, TestReadString)
     };
 
     static const StringTestCase kStringTestCases[] = {
-        { emptyString(), { 0x60 } },
-        { "a"_s, { 0x61, 0x61 } },
-        { "IETF"_s, { 0x64, 0x49, 0x45, 0x54, 0x46 } },
-        { "\"\\"_s, { 0x62, 0x22, 0x5c } },
+        { "", { 0x60 } },
+        { "a", { 0x61, 0x61 } },
+        { "IETF", { 0x64, 0x49, 0x45, 0x54, 0x46 } },
+        { "\"\\", { 0x62, 0x22, 0x5c } },
         { String::fromUTF8("\xc3\xbc"), { 0x62, 0xc3, 0xbc } },
         { String::fromUTF8("\xe6\xb0\xb4"), { 0x63, 0xe6, 0xb0, 0xb4 } },
         { String::fromUTF8("\xf0\x90\x85\x91"), { 0x64, 0xf0, 0x90, 0x85, 0x91 } },
@@ -192,7 +192,7 @@ TEST(CBORReaderTest, TestReadStringWithNUL)
         const String value;
         const Vector<uint8_t> cborData;
     } kStringTestCases[] = {
-        { "string_without_nul"_str,
+        { String("string_without_nul"),
             { 0x72, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67, 0x5F, 0x77, 0x69, 0x74, 0x68,
                 0x6F, 0x75, 0x74, 0x5F, 0x6E, 0x75, 0x6C } },
         { String("nul_terminated_string\0", 22),
@@ -277,22 +277,22 @@ TEST(CBORReaderTest, TestReadMapWithMapValue)
     const CBORValue keyUint(24);
     ASSERT_EQ(cborVal.getMap().count(keyUint), 1u);
     ASSERT_TRUE(cborVal.getMap().find(keyUint)->second.type() == CBORValue::Type::String);
-    EXPECT_TRUE(cborVal.getMap().find(keyUint)->second.getString() == "abc"_s);
+    EXPECT_TRUE(cborVal.getMap().find(keyUint)->second.getString() == "abc");
 
     const CBORValue keyEmptyString("");
     ASSERT_EQ(cborVal.getMap().count(keyEmptyString), 1u);
     ASSERT_TRUE(cborVal.getMap().find(keyEmptyString)->second.type() == CBORValue::Type::String);
-    EXPECT_TRUE(cborVal.getMap().find(keyEmptyString)->second.getString() == "."_s);
+    EXPECT_TRUE(cborVal.getMap().find(keyEmptyString)->second.getString() == ".");
 
     const CBORValue keyB("b");
     ASSERT_EQ(cborVal.getMap().count(keyB), 1u);
     ASSERT_TRUE(cborVal.getMap().find(keyB)->second.type() == CBORValue::Type::String);
-    EXPECT_TRUE(cborVal.getMap().find(keyB)->second.getString() == "B"_s);
+    EXPECT_TRUE(cborVal.getMap().find(keyB)->second.getString() == "B");
 
     const CBORValue keyAa("aa");
     ASSERT_EQ(cborVal.getMap().count(keyAa), 1u);
     ASSERT_TRUE(cborVal.getMap().find(keyAa)->second.type() == CBORValue::Type::String);
-    EXPECT_TRUE(cborVal.getMap().find(keyAa)->second.getString() == "AA"_s);
+    EXPECT_TRUE(cborVal.getMap().find(keyAa)->second.getString() == "AA");
 }
 
 TEST(CBORReaderTest, TestReadMapWithIntegerKeys)
@@ -321,22 +321,22 @@ TEST(CBORReaderTest, TestReadMapWithIntegerKeys)
     const CBORValue key1(1);
     ASSERT_EQ(cborVal.getMap().count(key1), 1u);
     ASSERT_TRUE(cborVal.getMap().find(key1)->second.type() == CBORValue::Type::String);
-    ASSERT_TRUE(cborVal.getMap().find(key1)->second.getString() == "a"_s);
+    ASSERT_TRUE(cborVal.getMap().find(key1)->second.getString() == "a");
 
     const CBORValue key9(9);
     ASSERT_EQ(cborVal.getMap().count(key9), 1u);
     ASSERT_TRUE(cborVal.getMap().find(key9)->second.type() == CBORValue::Type::String);
-    ASSERT_TRUE(cborVal.getMap().find(key9)->second.getString() == "b"_s);
+    ASSERT_TRUE(cborVal.getMap().find(key9)->second.getString() == "b");
 
     const CBORValue key999(999);
     ASSERT_EQ(cborVal.getMap().count(key999), 1u);
     ASSERT_TRUE(cborVal.getMap().find(key999)->second.type() == CBORValue::Type::String);
-    ASSERT_TRUE(cborVal.getMap().find(key999)->second.getString() == "c"_s);
+    ASSERT_TRUE(cborVal.getMap().find(key999)->second.getString() == "c");
 
     const CBORValue key1111(1111);
     ASSERT_EQ(cborVal.getMap().count(key1111), 1u);
     ASSERT_TRUE(cborVal.getMap().find(key1111)->second.type() == CBORValue::Type::String);
-    ASSERT_TRUE(cborVal.getMap().find(key1111)->second.getString() == "d"_s);
+    ASSERT_TRUE(cborVal.getMap().find(key1111)->second.getString() == "d");
 }
 
 TEST(CBORReaderTest, TestReadMapWithArray)

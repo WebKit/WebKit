@@ -26,14 +26,6 @@
 
 using namespace WebKit;
 
-/**
- * WebKitCredential:
- *
- * Groups information used for user authentication.
- *
- * Since: 2.2
- */
-
 struct _WebKitCredential {
     _WebKitCredential(const WebCore::Credential& coreCredential)
         : credential(coreCredential)
@@ -131,7 +123,7 @@ WebKitCredential* webkit_credential_new_for_certificate_pin(const gchar* pin, We
         persistence = WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION;
     }
 
-    return webkitCredentialCreate(WebCore::Credential(emptyString(), String::fromUTF8(pin), toWebCoreCredentialPersistence(persistence)));
+    return webkitCredentialCreate(WebCore::Credential("", String::fromUTF8(pin), toWebCoreCredentialPersistence(persistence)));
 }
 
 /**

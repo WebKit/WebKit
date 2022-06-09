@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,49 +25,34 @@
 
 #pragma once
 
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
-struct WGPURenderPipelineImpl {
-};
-
 namespace WebGPU {
 
 class BindGroupLayout;
-class Device;
 
-// https://gpuweb.github.io/gpuweb/#gpurenderpipeline
-class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline> {
+class RenderPipeline : public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, Device& device)
+    static Ref<RenderPipeline> create()
     {
-        return adoptRef(*new RenderPipeline(renderPipelineState, device));
-    }
-    static Ref<RenderPipeline> createInvalid(Device& device)
-    {
-        return adoptRef(*new RenderPipeline(device));
+        return adoptRef(*new RenderPipeline());
     }
 
     ~RenderPipeline();
 
-    BindGroupLayout* getBindGroupLayout(uint32_t groupIndex);
-    void setLabel(String&&);
-
-    bool isValid() const { return m_renderPipelineState; }
-
-    id<MTLRenderPipelineState> renderPipelineState() const { return m_renderPipelineState; }
-
-    Device& device() const { return m_device; }
+    Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
+    void setLabel(const char*);
 
 private:
-    RenderPipeline(id<MTLRenderPipelineState>, Device&);
-    RenderPipeline(Device&);
-
-    const id<MTLRenderPipelineState> m_renderPipelineState { nil };
-
-    const Ref<Device> m_device;
+    RenderPipeline();
 };
 
 } // namespace WebGPU
+
+struct WGPURenderPipelineImpl {
+    Ref<WebGPU::RenderPipeline> renderPipeline;
+};

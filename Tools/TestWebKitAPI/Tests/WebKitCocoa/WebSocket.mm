@@ -166,11 +166,11 @@ TEST(WebSocket, CloseCode)
     };
 
     HTTPServer httpServer({
-        { "/navigateAway"_s, { htmlWithOnOpen("window.location = '/navigationTarget'") }},
-        { "/navigationTarget"_s, { "hi"_s } },
-        { "/closeCustomCode"_s, { htmlWithOnOpen("ws.close(3000)") } },
-        { "/closeNoArguments"_s, { htmlWithOnOpen("ws.close()") } },
-        { "/closeBothParameters"_s, { htmlWithOnOpen("ws.close(3001, 'custom reason')") } },
+        { "/navigateAway", { htmlWithOnOpen("window.location = '/navigationTarget'") }},
+        { "/navigationTarget", { "hi" } },
+        { "/closeCustomCode", { htmlWithOnOpen("ws.close(3000)") } },
+        { "/closeNoArguments", { htmlWithOnOpen("ws.close()") } },
+        { "/closeBothParameters", { htmlWithOnOpen("ws.close(3001, 'custom reason')") } },
     });
 
     auto appendString = [] (Vector<uint8_t>& vector, const char* string) {
@@ -180,7 +180,7 @@ TEST(WebSocket, CloseCode)
     };
 
     auto webView = adoptNS([WKWebView new]);
-    [webView loadRequest:httpServer.request("/navigateAway"_s)];
+    [webView loadRequest:httpServer.request("/navigateAway")];
     Util::run(&receivedWebSocketClose);
     Vector<uint8_t> expected { 0x3, 0xe9 }; // NSURLSessionWebSocketCloseCodeGoingAway
     appendString(expected, "WebSocket is closed due to suspension.");
@@ -189,14 +189,14 @@ TEST(WebSocket, CloseCode)
     receivedWebSocketClose = false;
     closeData = { };
     expected = { 0xb, 0xb8 }; // 3000
-    [webView loadRequest:httpServer.request("/closeCustomCode"_s)];
+    [webView loadRequest:httpServer.request("/closeCustomCode")];
     Util::run(&receivedWebSocketClose);
     EXPECT_EQ(closeData, expected);
 
     receivedWebSocketClose = false;
     closeData = { };
     expected = { };
-    [webView loadRequest:httpServer.request("/closeNoArguments"_s)];
+    [webView loadRequest:httpServer.request("/closeNoArguments")];
     Util::run(&receivedWebSocketClose);
     EXPECT_EQ(closeData, expected);
 
@@ -204,7 +204,7 @@ TEST(WebSocket, CloseCode)
     closeData = { };
     expected = { 0xb, 0xb9 }; // 3001
     appendString(expected, "custom reason");
-    [webView loadRequest:httpServer.request("/closeBothParameters"_s)];
+    [webView loadRequest:httpServer.request("/closeBothParameters")];
     Util::run(&receivedWebSocketClose);
     EXPECT_EQ(closeData, expected);
 }

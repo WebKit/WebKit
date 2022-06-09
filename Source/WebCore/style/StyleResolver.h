@@ -163,7 +163,7 @@ private:
 
     ScopeRuleSets m_ruleSets;
 
-    typedef HashMap<AtomString, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
+    typedef HashMap<AtomStringImpl*, RefPtr<StyleRuleKeyframes>> KeyframesRuleMap;
     KeyframesRuleMap m_keyframesRuleMap;
 
     MediaQueryEvaluator m_mediaQueryEvaluator;

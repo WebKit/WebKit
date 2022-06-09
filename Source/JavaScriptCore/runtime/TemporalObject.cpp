@@ -35,8 +35,6 @@
 #include "TemporalInstantConstructor.h"
 #include "TemporalInstantPrototype.h"
 #include "TemporalNow.h"
-#include "TemporalPlainDateConstructor.h"
-#include "TemporalPlainDatePrototype.h"
 #include "TemporalPlainTimeConstructor.h"
 #include "TemporalPlainTimePrototype.h"
 #include "TemporalTimeZoneConstructor.h"
@@ -52,49 +50,42 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalObject);
 static JSValue createCalendarConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject();
+    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
     return TemporalCalendarConstructor::create(vm, TemporalCalendarConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalCalendarPrototype*>(globalObject->calendarStructure()->storedPrototypeObject()));
 }
 
 static JSValue createNowObject(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject();
+    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
     return TemporalNow::create(vm, TemporalNow::createStructure(vm, globalObject));
 }
 
 static JSValue createDurationConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject();
+    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
     return TemporalDurationConstructor::create(vm, TemporalDurationConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalDurationPrototype*>(globalObject->durationStructure()->storedPrototypeObject()));
 }
 
 static JSValue createInstantConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject();
+    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
     return TemporalInstantConstructor::create(vm, TemporalInstantConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalInstantPrototype*>(globalObject->instantStructure()->storedPrototypeObject()));
-}
-
-static JSValue createPlainDateConstructor(VM& vm, JSObject* object)
-{
-    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    auto* globalObject = temporalObject->globalObject();
-    return TemporalPlainDateConstructor::create(vm, TemporalPlainDateConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainDatePrototype*>(globalObject->plainDateStructure()->storedPrototypeObject()));
 }
 
 static JSValue createPlainTimeConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    auto* globalObject = temporalObject->globalObject();
+    auto* globalObject = temporalObject->globalObject(vm);
     return TemporalPlainTimeConstructor::create(vm, TemporalPlainTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainTimePrototype*>(globalObject->plainTimeStructure()->storedPrototypeObject()));
 }
 
 static JSValue createTimeZoneConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
-    JSGlobalObject* globalObject = temporalObject->globalObject();
+    JSGlobalObject* globalObject = temporalObject->globalObject(vm);
     return TemporalTimeZoneConstructor::create(vm, TemporalTimeZoneConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalTimeZonePrototype*>(globalObject->timeZoneStructure()->storedPrototypeObject()));
 }
 
@@ -110,13 +101,12 @@ namespace JSC {
   Duration       createDurationConstructor       DontEnum|PropertyCallback
   Instant        createInstantConstructor        DontEnum|PropertyCallback
   Now            createNowObject                 DontEnum|PropertyCallback
-  PlainDate      createPlainDateConstructor      DontEnum|PropertyCallback
   PlainTime      createPlainTimeConstructor      DontEnum|PropertyCallback
   TimeZone       createTimeZoneConstructor       DontEnum|PropertyCallback
 @end
 */
 
-const ClassInfo TemporalObject::s_info = { "Temporal"_s, &Base::s_info, &temporalObjectTable, nullptr, CREATE_METHOD_TABLE(TemporalObject) };
+const ClassInfo TemporalObject::s_info = { "Temporal", &Base::s_info, &temporalObjectTable, nullptr, CREATE_METHOD_TABLE(TemporalObject) };
 
 TemporalObject::TemporalObject(VM& vm, Structure* structure)
     : Base(vm, structure)
@@ -138,22 +128,25 @@ Structure* TemporalObject::createStructure(VM& vm, JSGlobalObject* globalObject)
 void TemporalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
 static StringView singularUnit(StringView unit)
 {
     // Plurals are allowed, but thankfully they're all just a simple -s.
-    return unit.endsWith('s') ? unit.left(unit.length() - 1) : unit;
+    return unit.endsWith("s") ? unit.left(unit.length() - 1) : unit;
 }
 
 // For use in error messages where a string value is potentially unbounded
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String& string)
 {
-    if (string.length() <= maxLength)
-        return string;
-    return makeString(StringView(string).left(maxLength - 1), horizontalEllipsis);
+    WTF::String copy { string };
+    if (string.length() > maxLength) {
+        copy.truncate(maxLength - 1);
+        copy.append(horizontalEllipsis);
+    }
+    return copy;
 }
 
 PropertyName temporalUnitPluralPropertyName(VM& vm, TemporalUnit unit)
@@ -196,25 +189,25 @@ std::optional<TemporalUnit> temporalUnitType(StringView unit)
 {
     StringView singular = singularUnit(unit);
 
-    if (singular == "year"_s)
+    if (singular == "year")
         return TemporalUnit::Year;
-    if (singular == "month"_s)
+    if (singular == "month")
         return TemporalUnit::Month;
-    if (singular == "week"_s)
+    if (singular == "week")
         return TemporalUnit::Week;
-    if (singular == "day"_s)
+    if (singular == "day")
         return TemporalUnit::Day;
-    if (singular == "hour"_s)
+    if (singular == "hour")
         return TemporalUnit::Hour;
-    if (singular == "minute"_s)
+    if (singular == "minute")
         return TemporalUnit::Minute;
-    if (singular == "second"_s)
+    if (singular == "second")
         return TemporalUnit::Second;
-    if (singular == "millisecond"_s)
+    if (singular == "millisecond")
         return TemporalUnit::Millisecond;
-    if (singular == "microsecond"_s)
+    if (singular == "microsecond")
         return TemporalUnit::Microsecond;
-    if (singular == "nanosecond"_s)
+    if (singular == "nanosecond")
         return TemporalUnit::Nanosecond;
     
     return std::nullopt;
@@ -227,7 +220,7 @@ std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject* globalObject, JS
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String largestUnit = intlStringOption(globalObject, options, vm.propertyNames->largestUnit, { }, { }, { });
+    String largestUnit = intlStringOption(globalObject, options, vm.propertyNames->largestUnit, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     if (!largestUnit)
@@ -257,7 +250,7 @@ std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject* globalObject, J
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String smallestUnit = intlStringOption(globalObject, options, vm.propertyNames->smallestUnit, { }, { }, { });
+    String smallestUnit = intlStringOption(globalObject, options, vm.propertyNames->smallestUnit, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     if (!smallestUnit)
@@ -306,7 +299,7 @@ std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject* globalObj
     String stringValue = value.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
-    if (stringValue != "auto"_s)
+    if (stringValue != "auto")
         throwRangeError(globalObject, scope, makeString("fractionalSecondDigits must be 'auto' or 0 through 9, not "_s, ellipsizeAt(100, stringValue)));
 
     return std::nullopt;

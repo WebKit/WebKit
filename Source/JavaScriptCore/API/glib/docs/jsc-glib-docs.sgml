@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>JavaScriptCore GLib Reference Manual</title>
+    <releaseinfo>for JavaScriptCore &version;</releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>Class Overview</title>
+    <xi:include href="xml/JSCVirtualMachine.xml"/>
+    <xi:include href="xml/JSCContext.xml"/>
+    <xi:include href="xml/JSCValue.xml"/>
+    <xi:include href="xml/JSCWeakValue.xml"/>
+    <xi:include href="xml/JSCException.xml"/>
+    <xi:include href="xml/JSCClass.xml"/>
+    <xi:include href="xml/JSCOptions.xml"/>
+    <xi:include href="xml/JSCVersion.xml"/>
+  </chapter>
+
+  <index id="index-all">
+    <title>Index</title>
+  </index>
+
+  <index id="api-index-2-24" role="2.24">
+    <title>Index of new symbols in 2.24</title>
+    <xi:include href="xml/api-index-2.24.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <index id="api-index-2-28" role="2.28">
+    <title>Index of new symbols in 2.28</title>
+    <xi:include href="xml/api-index-2.28.xml"><xi:fallback /></xi:include>
+  </index>
+
+  <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
+</book>

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "CommonAtomStrings.h"
 #include "FEConvolveMatrix.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -41,7 +40,7 @@ struct SVGPropertyTraits<EdgeModeType> {
         case EdgeModeType::Wrap:
             return "wrap"_s;
         case EdgeModeType::None:
-            return noneAtom();
+            return "none"_s;
         }
 
         ASSERT_NOT_REACHED();
@@ -50,11 +49,11 @@ struct SVGPropertyTraits<EdgeModeType> {
 
     static EdgeModeType fromString(const String& value)
     {
-        if (value == "duplicate"_s)
+        if (value == "duplicate")
             return EdgeModeType::Duplicate;
-        if (value == "wrap"_s)
+        if (value == "wrap")
             return EdgeModeType::Wrap;
-        if (value == noneAtom())
+        if (value == "none")
             return EdgeModeType::None;
         return EdgeModeType::Unknown;
     }
@@ -104,8 +103,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
-    RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder&) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

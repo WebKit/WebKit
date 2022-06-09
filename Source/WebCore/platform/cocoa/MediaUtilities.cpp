@@ -68,21 +68,4 @@ RetainPtr<CMSampleBufferRef> createAudioSampleBuffer(const PlatformAudioData& da
     return buffer;
 }
 
-RetainPtr<CMSampleBufferRef> createVideoSampleBuffer(CVPixelBufferRef pixelBuffer, CMTime presentationTime)
-{
-    CMVideoFormatDescriptionRef formatDescription = nullptr;
-    auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer, &formatDescription);
-    if (status)
-        return nullptr;
-    auto retainedFormatDescription = adoptCF(formatDescription);
-
-    CMSampleTimingInfo timingInfo { PAL::kCMTimeInvalid, presentationTime, PAL::kCMTimeInvalid };
-    CMSampleBufferRef sampleBuffer;
-    status = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
-    if (status)
-        return nullptr;
-
-    return adoptCF(sampleBuffer);
-}
-
 } // namespace WebCore

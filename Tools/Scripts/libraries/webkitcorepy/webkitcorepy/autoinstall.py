@@ -400,7 +400,6 @@ def _default_pypi_index():
 
 class AutoInstall(object):
     DISABLE_ENV_VAR = 'DISABLE_WEBKITCOREPY_AUTOINSTALLER'
-    CA_CERT_PATH_ENV_VAR = 'AUTOINSTALL_CA_CERT_PATH'
 
     directory = None
     index = _default_pypi_index()
@@ -412,9 +411,7 @@ class AutoInstall(object):
 
     # Rely on our own certificates for PyPi, since we use PyPi to standardize root certificates.
     # This is not needed in Linux platforms.
-    ca_cert_path = os.environ.get(CA_CERT_PATH_ENV_VAR)
-    if not ca_cert_path or not os.path.isfile(ca_cert_path):
-        ca_cert_path = os.path.join(os.path.dirname(__file__), 'cacert.pem')
+    ca_cert_path = os.path.join(os.path.dirname(__file__), 'cacert.pem')
 
     _previous_index = None
     _previous_ca_cert_path = None
@@ -540,9 +537,6 @@ class AutoInstall(object):
         if check:
             cls._verify_index()
 
-        if cls.ca_cert_path:
-            os.environ[cls.CA_CERT_PATH_ENV_VAR] = ca_cert_path
-
         return cls.index
 
     @classmethod
@@ -569,18 +563,16 @@ class AutoInstall(object):
         if local:
             if package.name == 'autoinstalled':
                 raise ValueError("local package name 'autoinstalled' is forbidden")
-            containing_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            libraries = os.path.dirname(containing_path)
+            libraries = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             checkout_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(libraries))))
             for candidate in [
-                containing_path,
                 os.path.join(libraries, package.pypi_name),
                 os.path.join(checkout_root, 'Internal', 'Tools', 'Scripts', 'libraries', package.pypi_name),
             ]:
+                if candidate in sys.path:
+                    return package
                 if not os.path.isdir(os.path.join(candidate, package.name)):
                     continue
-                if candidate in sys.path:
-                    return [package]
                 sys.path.insert(0, candidate)
                 return [package]
             else:

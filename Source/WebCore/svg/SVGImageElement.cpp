@@ -93,22 +93,27 @@ void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomString
 
 void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
-            updateRelativeLengthsInformation();
+        updateRelativeLengthsInformation();
 
-            if (auto* renderer = this->renderer()) {
-                if (!downcast<RenderSVGImage>(*renderer).updateImageViewport())
-                    return;
-                updateSVGRendererForElementChange();
-            }
-        } else if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
-            setPresentationalHintStyleIsDirty();
-        else {
-            ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
-            updateSVGRendererForElementChange();
+        if (auto* renderer = this->renderer()) {
+            if (!downcast<RenderSVGImage>(*renderer).updateImageViewport())
+                return;
+            setSVGResourcesInAncestorChainAreDirty();
         }
+        return;
+    }
+
+    if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
+        InstanceInvalidationGuard guard(*this);
+        invalidateSVGPresentationalHintStyle();
+        return;
+    }
+
+    if (attrName == SVGNames::preserveAspectRatioAttr) {
+        InstanceInvalidationGuard guard(*this);
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

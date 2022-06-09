@@ -61,21 +61,13 @@ if (window.accessibilityController) {
 
     var item = element.childAtIndex(0);
     shouldBe("item.role", "'AXRole: AXListItem'");
-    shouldBe("item.childrenCount", "1");
-
-    var marker = item.childAtIndex(0);
-    shouldBe("marker.role", "'AXRole: AXStatic'");
-    shouldBe("marker.childrenCount", "0");
+    shouldBe("item.childrenCount", "0");
 
     item = element.childAtIndex(1);
     shouldBe("item.role", "'AXRole: AXListItem'");
-    shouldBe("item.childrenCount", "2");
+    shouldBe("item.childrenCount", "1");
 
-    marker = item.childAtIndex(0);
-    shouldBe("marker.role", "'AXRole: AXStatic'");
-    shouldBe("marker.childrenCount", "0");
-
-    link = item.childAtIndex(1);
+    link = item.childAtIndex(0);
     shouldBe("link.role", "'AXRole: AXLink'");
     shouldBe("link.childrenCount", "0");
 }

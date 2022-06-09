@@ -23,16 +23,15 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// https://drafts.css-houdini.org/css-typed-om/#cssstylevalue
 [
     InterfaceName=CSSStyleValue,
     CustomToJSObject,
-    EnabledBySetting=CSSTypedOMEnabled,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
     SkipVTableValidation
 ] interface CSSStyleValue {
     stringifier;
-    [Exposed=Window] static CSSStyleValue parse([AtomString] USVString property, USVString cssText);
-    [Exposed=Window] static sequence<CSSStyleValue> parseAll([AtomString] USVString property, USVString cssText);
+    [Exposed=Window] static CSSStyleValue parse(USVString property, USVString cssText);
+    [Exposed=Window] static sequence<CSSStyleValue> parseAll(USVString property, USVString cssText);
 };

@@ -48,6 +48,9 @@ public:
     static Ref<RemoteMediaResource> create(RemoteMediaResourceManager&, RemoteMediaPlayerProxy&, RemoteMediaResourceIdentifier);
     ~RemoteMediaResource();
 
+    bool ready() const { return m_ready; }
+    void setReady(bool ready) { m_ready = ready; }
+
     // PlatformMediaResource
     void stop() final;
     bool didPassAccessControlCheck() const final;
@@ -67,6 +70,7 @@ private:
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
     RemoteMediaResourceIdentifier m_id;
     bool m_didPassAccessControlCheck { false };
+    bool m_ready { false };
 };
 
 } // namespace WebKit

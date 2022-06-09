@@ -96,7 +96,7 @@ static bool isValidVideoMIMEType(const ContentType& contentType)
         return false;
 
     auto containerType = contentType.containerType();
-    if (!startsWithLettersIgnoringASCIICase(containerType, "video/"_s) && !startsWithLettersIgnoringASCIICase(containerType, "application/"_s))
+    if (!startsWithLettersIgnoringASCIICase(containerType, "video/") && !startsWithLettersIgnoringASCIICase(containerType, "application/"))
         return false;
 
     return true;
@@ -112,7 +112,7 @@ static bool isValidAudioMIMEType(const ContentType& contentType)
         return false;
 
     auto containerType = contentType.containerType();
-    if (!startsWithLettersIgnoringASCIICase(containerType, "audio/"_s) && !startsWithLettersIgnoringASCIICase(containerType, "application/"_s))
+    if (!startsWithLettersIgnoringASCIICase(containerType, "audio/") && !startsWithLettersIgnoringASCIICase(containerType, "application/"))
         return false;
 
     return true;
@@ -180,7 +180,7 @@ static void gatherDecodingInfo(Document& document, MediaDecodingConfiguration&& 
     configuration.canExposeVP9 = document.settings().vp9DecoderEnabled();
 #endif
 
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC)
     if (configuration.type == MediaDecodingType::WebRTC) {
         if (auto* page = document.page())
             page->libWebRTCProvider().createDecodingConfiguration(WTFMove(configuration), WTFMove(decodingCallback));
@@ -200,7 +200,7 @@ static void gatherEncodingInfo(Document& document, MediaEncodingConfiguration&& 
         callback(WTFMove(result));
     };
 
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC)
     if (configuration.type == MediaEncodingType::WebRTC) {
         if (auto* page = document.page())
             page->libWebRTCProvider().createEncodingConfiguration(WTFMove(configuration), WTFMove(encodingCallback));

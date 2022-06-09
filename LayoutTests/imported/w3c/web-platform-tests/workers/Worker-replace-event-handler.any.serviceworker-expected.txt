@@ -1,3 +1,0 @@
-
-PASS Tests that repeatedly setting 'onmessage' within a worker doesn't crash.
-

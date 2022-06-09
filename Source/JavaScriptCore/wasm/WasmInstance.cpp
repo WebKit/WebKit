@@ -33,8 +33,8 @@
 #include "JSWebAssemblyInstance.h"
 #include "Register.h"
 #include "WasmModuleInformation.h"
+#include "WasmSignatureInlines.h"
 #include "WasmTag.h"
-#include "WasmTypeDefinitionInlines.h"
 #include <wtf/CheckedArithmetic.h>
 
 namespace JSC { namespace Wasm {
@@ -126,7 +126,7 @@ JSValue Instance::getFunctionWrapper(unsigned i) const
 void Instance::setFunctionWrapper(unsigned i, JSValue value)
 {
     ASSERT(m_owner);
-    ASSERT(value.isCallable());
+    ASSERT(value.isCallable(owner<JSWebAssemblyInstance>()->vm()));
     ASSERT(!m_functionWrappers.contains(i));
     Locker locker { owner<JSWebAssemblyInstance>()->cellLock() };
     m_functionWrappers.set(i, WriteBarrier<Unknown>(owner<JSWebAssemblyInstance>()->vm(), owner<JSWebAssemblyInstance>(), value));
@@ -232,11 +232,11 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
         // for the import.
         // https://bugs.webkit.org/show_bug.cgi?id=165510
         uint32_t functionIndex = segment.functionIndices[srcIndex];
-        TypeIndex typeIndex = m_module->typeIndexFromFunctionIndexSpace(functionIndex);
+        SignatureIndex signatureIndex = m_module->signatureIndexFromFunctionIndexSpace(functionIndex);
         if (isImportFunction(functionIndex)) {
             JSObject* functionImport = importFunction<WriteBarrier<JSObject>>(functionIndex)->get();
-            if (isWebAssemblyHostFunction(functionImport)) {
-                WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(functionImport);
+            if (isWebAssemblyHostFunction(vm, functionImport)) {
+                WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(vm, functionImport);
                 // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
                 // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
                 // the only type this could be is WebAssemblyFunction.
@@ -251,14 +251,14 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
                 functionImport,
                 functionIndex,
                 jsInstance,
-                typeIndex);
+                signatureIndex);
             jsTable->set(dstIndex, wrapperFunction);
             continue;
         }
 
         Callee& embedderEntrypointCallee = calleeGroup()->embedderEntrypointCalleeFromFunctionIndexSpace(functionIndex);
         WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
-        const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
+        const Signature& signature = SignatureInformation::get(signatureIndex);
         // FIXME: Say we export local function "foo" at function index 0.
         // What if we also set it to the table an Element w/ index 0.
         // Does (new Instance(...)).exports.foo === table.get(0)?
@@ -272,7 +272,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             jsInstance,
             embedderEntrypointCallee,
             entrypointLoadLocation,
-            typeIndex);
+            signatureIndex);
         jsTable->set(dstIndex, function);
     }
 }

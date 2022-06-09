@@ -53,7 +53,7 @@ void GStreamerDisplayCaptureDeviceManager::computeCaptureDevices(CompletionHandl
 {
     m_devices.clear();
 
-    CaptureDevice screenCaptureDevice(createVersion4UUIDString(), CaptureDevice::DeviceType::Screen, makeString("Capture Screen"));
+    CaptureDevice screenCaptureDevice(createCanonicalUUIDString(), CaptureDevice::DeviceType::Screen, makeString("Capture Screen"));
     screenCaptureDevice.setEnabled(true);
     m_devices.append(WTFMove(screenCaptureDevice));
     callback();
@@ -64,7 +64,7 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     const auto it = m_sessions.find(device.persistentId());
     if (it != m_sessions.end()) {
         return GStreamerVideoCaptureSource::createPipewireSource(device.persistentId().isolatedCopy(),
-            it->value->nodeAndFd, WTFMove(hashSalt), constraints, device.type());
+            it->value->fd, WTFMove(hashSalt), constraints, device.type());
     }
 
     GUniqueOutPtr<GError> error;
@@ -94,9 +94,8 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     g_variant_get(result.get(), "(o)", &objectPath.outPtr());
     waitResponseSignal(objectPath.get());
 
-    auto requestPath = String::fromLatin1(objectPath.get());
-    auto sessionPath = makeStringByReplacingAll(requestPath, "/request/"_s, "/session/"_s);
-    sessionPath = makeStringByReplacingAll(sessionPath, token, sessionToken);
+    String requestPath(objectPath.get());
+    auto sessionPath = requestPath.replace("/request/", "/session/").replace(token, sessionToken);
 
     // FIXME: Maybe check this depending on device.type().
     auto outputType = GStreamerDisplayCaptureDeviceManager::PipeWireOutputType::Monitor | GStreamerDisplayCaptureDeviceManager::PipeWireOutputType::Window;
@@ -138,38 +137,8 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
         return { };
     }
 
-    std::optional<uint32_t> nodeId;
     g_variant_get(result.get(), "(o)", &objectPath.outPtr());
-    waitResponseSignal(objectPath.get(), [&nodeId](GVariant* parameters) mutable {
-        uint32_t portalResponse;
-        GRefPtr<GVariant> responseData;
-        g_variant_get(parameters, "(u@a{sv})", &portalResponse, &responseData.outPtr());
-
-        if (portalResponse) {
-            WTFLogAlways("User cancelled the Start request or an unknown error happened");
-            return;
-        }
-
-        // The portal interface allows multiple streams but we care only about the first one.
-        GUniqueOutPtr<GVariantIter> iter;
-        if (g_variant_lookup(responseData.get(), "streams", "a(ua{sv})", &iter.outPtr())) {
-            auto variant = adoptGRef(g_variant_iter_next_value(iter.get()));
-            if (!variant) {
-                WTFLogAlways("Stream list is empty");
-                return;
-            }
-
-            uint32_t streamId;
-            GRefPtr<GVariant> options;
-            g_variant_get(variant.get(), "(u@a{sv})", &streamId, &options.outPtr());
-            nodeId = streamId;
-        }
-    });
-
-    if (!nodeId) {
-        WTFLogAlways("Unable to retrieve display capture session data");
-        return { };
-    }
+    waitResponseSignal(objectPath.get());
 
     GRefPtr<GUnixFDList> fdList;
     int fd = -1;
@@ -185,10 +154,9 @@ CaptureSourceOrError GStreamerDisplayCaptureDeviceManager::createDisplayCaptureS
     g_variant_get(result.get(), "(h)", &fdOut);
     fd = g_unix_fd_list_get(fdList.get(), fdOut, nullptr);
 
-    NodeAndFD nodeAndFd = { *nodeId, fd };
-    auto session = makeUnique<GStreamerDisplayCaptureDeviceManager::Session>(nodeAndFd, WTFMove(sessionPath));
+    auto session = makeUnique<GStreamerDisplayCaptureDeviceManager::Session>(fd, WTFMove(sessionPath));
     m_sessions.add(device.persistentId(), WTFMove(session));
-    return GStreamerVideoCaptureSource::createPipewireSource(device.persistentId().isolatedCopy(), nodeAndFd, WTFMove(hashSalt), constraints, device.type());
+    return GStreamerVideoCaptureSource::createPipewireSource(device.persistentId().isolatedCopy(), fd, WTFMove(hashSalt), constraints, device.type());
 }
 
 void GStreamerDisplayCaptureDeviceManager::stopSource(const String& persistentID)
@@ -209,15 +177,15 @@ void GStreamerDisplayCaptureDeviceManager::stopSource(const String& persistentID
         WTFLogAlways("Portal session could not be closed: %s", error->message);
 }
 
-void GStreamerDisplayCaptureDeviceManager::waitResponseSignal(const char* objectPath, ResponseCallback&& callback)
+void GStreamerDisplayCaptureDeviceManager::waitResponseSignal(const char* objectPath)
 {
     RELEASE_ASSERT(!m_currentResponseCallback);
-    m_currentResponseCallback = WTFMove(callback);
+    m_currentResponseCallback = [] { };
     auto* connection = g_dbus_proxy_get_connection(m_proxy.get());
     auto signalId = g_dbus_connection_signal_subscribe(connection, "org.freedesktop.portal.Desktop", "org.freedesktop.portal.Request",
-        "Response", objectPath, nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE, reinterpret_cast<GDBusSignalCallback>(+[](GDBusConnection*, const char* /* senderName */, const char* /* objectPath */, const char* /* interfaceName */, const char* /* signalName */, GVariant* parameters, gpointer userData) {
+        "Response", objectPath, nullptr, G_DBUS_SIGNAL_FLAGS_NO_MATCH_RULE, reinterpret_cast<GDBusSignalCallback>(+[](GDBusConnection*, const char* /* senderName */, const char* /* objectPath */, const char* /* interfaceName */, const char* /* signalName */, GVariant* /* parameters */, gpointer userData) {
             auto& manager = *reinterpret_cast<GStreamerDisplayCaptureDeviceManager*>(userData);
-            manager.notifyResponse(parameters);
+            manager.notifyResponse();
         }), this, nullptr);
 
     while (m_currentResponseCallback)

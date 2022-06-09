@@ -96,31 +96,22 @@ PAS_BEGIN_EXTERN_C;
     \
     static inline type* name ## _load(name* ptr) \
     { \
-        uintptr_t ptr_as_index = 0; \
-        memcpy(&ptr_as_index, ptr->payload, PAS_COMPACT_PTR_SIZE); \
-        ptr_as_index &= PAS_COMPACT_PTR_MASK; \
-        return name ## _ptr_for_index(ptr_as_index); \
+        return name ## _ptr_for_index(*(uintptr_t*)ptr & PAS_COMPACT_PTR_MASK); \
     } \
     \
     static inline type* name ## _load_non_null(name* ptr) \
     { \
-        uintptr_t ptr_as_index = 0; \
-        memcpy(&ptr_as_index, ptr->payload, PAS_COMPACT_PTR_SIZE); \
-        ptr_as_index &= PAS_COMPACT_PTR_MASK; \
-        return name ## _ptr_for_index_non_null(ptr_as_index); \
+        return name ## _ptr_for_index_non_null(*(uintptr_t*)ptr & PAS_COMPACT_PTR_MASK); \
     } \
     \
     static inline bool name ## _is_null(name* ptr) \
     { \
-        uintptr_t ptr_as_index = 0; \
-        memcpy(&ptr_as_index, ptr->payload, PAS_COMPACT_PTR_SIZE); \
-        ptr_as_index &= PAS_COMPACT_PTR_MASK; \
-        return !ptr_as_index; \
+        return !(*(uintptr_t*)ptr & PAS_COMPACT_PTR_MASK); \
     } \
     \
     static inline type* name ## _load_remote(pas_enumerator* enumerator, name* ptr) \
     { \
-        uintptr_t ptr_as_index = 0; \
+        uintptr_t ptr_as_index; \
         memcpy(&ptr_as_index, ptr->payload, PAS_COMPACT_PTR_SIZE); \
         ptr_as_index &= PAS_COMPACT_PTR_MASK; \
         return name ## _ptr_for_remote_index(enumerator, ptr_as_index); \

@@ -29,7 +29,7 @@
 #include "WorkerInspectorProxy.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
-#include <wtf/RobinHoodHashMap.h>
+#include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -54,7 +54,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> sendMessageToWorker(const String& workerId, const String& message);
 
     // WorkerInspectorProxy::PageChannel
-    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, String&& message);
+    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, const String& message);
 
     // InspectorInstrumentation
     bool shouldWaitForDebuggerOnStart() const;
@@ -71,7 +71,7 @@ private:
     RefPtr<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
 
     Page& m_page;
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<WorkerInspectorProxy>> m_connectedProxies;
+    HashMap<String, WeakPtr<WorkerInspectorProxy>> m_connectedProxies;
     bool m_enabled { false };
 };
 

@@ -1,4 +1,0 @@
-
-PASS div 1
-PASS div 2
-

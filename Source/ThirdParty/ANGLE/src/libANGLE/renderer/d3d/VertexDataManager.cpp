@@ -220,7 +220,6 @@ VertexDataManager::CurrentValueState::~CurrentValueState() {}
 VertexDataManager::VertexDataManager(BufferFactoryD3D *factory)
     : mFactory(factory), mStreamingBuffer(factory)
 {
-    mCurrentValueCache.reserve(gl::MAX_VERTEX_ATTRIBS);
     for (int currentValueIndex = 0; currentValueIndex < gl::MAX_VERTEX_ATTRIBS; ++currentValueIndex)
     {
         mCurrentValueCache.emplace_back(factory);

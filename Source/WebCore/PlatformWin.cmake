@@ -42,7 +42,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/ComplexTextControllerUniscribe.cpp
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/DisplayRefreshMonitorWin.cpp
-    platform/graphics/win/FloatRectWin.cpp
     platform/graphics/win/FontCacheWin.cpp
     platform/graphics/win/FontDescriptionWin.cpp
     platform/graphics/win/FontPlatformDataWin.cpp
@@ -56,7 +55,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/IntSizeWin.cpp
     platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp
     platform/graphics/win/SimpleFontDataWin.cpp
-    platform/graphics/win/SystemFontDatabaseWin.cpp
     platform/graphics/win/TransformationMatrixWin.cpp
 
     platform/network/win/DownloadBundleWin.cpp

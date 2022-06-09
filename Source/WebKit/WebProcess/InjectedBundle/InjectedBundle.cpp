@@ -257,7 +257,7 @@ void InjectedBundle::reportException(JSContextRef context, JSValueRef exception)
     JSLockHolder lock(globalObject);
 
     // Make sure the context has a DOMWindow global object, otherwise this context didn't originate from a Page.
-    if (!globalObject->inherits<JSDOMWindow>())
+    if (!globalObject->inherits<JSDOMWindow>(globalObject->vm()))
         return;
 
     WebCore::reportException(globalObject, toJS(globalObject, exception));
@@ -286,7 +286,7 @@ void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messag
 void InjectedBundle::setUserStyleSheetLocation(const String& location)
 {
     Page::forEachPage([location](Page& page) {
-        page.settings().setUserStyleSheetLocation(URL { location });
+        page.settings().setUserStyleSheetLocation(URL(URL(), location));
     });
 }
 
@@ -338,14 +338,14 @@ InjectedBundle::DocumentIDToURLMap InjectedBundle::liveDocumentURLs(bool exclude
     DocumentIDToURLMap result;
 
     for (const auto* document : Document::allDocuments())
-        result.add(document->identifier().object(), document->url().string());
+        result.add(document->identifier().object().toUInt64(), document->url().string());
 
     if (excludeDocumentsInPageGroupPages) {
         Page::forEachPage([&](Page& page) {
             for (auto* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
                 if (!frame->document())
                     continue;
-                result.remove(frame->document()->identifier().object());
+                result.remove(frame->document()->identifier().object().toUInt64());
             }
         });
     }

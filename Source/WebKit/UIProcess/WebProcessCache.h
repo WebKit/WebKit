@@ -74,19 +74,19 @@ private:
         WebProcessProxy& process() { ASSERT(m_process); return *m_process; }
         void startSuspensionTimer();
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(MAC)
         bool isSuspended() const { return !m_suspensionTimer.isActive(); }
 #endif
 
     private:
         void evictionTimerFired();
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(MAC)
         void suspensionTimerFired();
 #endif
 
         RefPtr<WebProcessProxy> m_process;
         RunLoop::Timer<CachedProcess> m_evictionTimer;
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
+#if PLATFORM(MAC)
         RunLoop::Timer<CachedProcess> m_suspensionTimer;
 #endif
     };

@@ -66,95 +66,20 @@ LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid& grid, GridTrackSiz
     return marginStartIsAuto(child, flowAwareDirection) ? marginEnd : marginEndIsAuto(child, flowAwareDirection) ? marginStart : marginStart + marginEnd;
 }
 
-static inline GridTrackSizingDirection directionFromSide(GridPositionSide side)
-{
-    return side == ColumnStartSide || side == ColumnEndSide ? ForColumns : ForRows;
-}
-
-static bool hasRelativeOrIntrinsicSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
-{
-    if (direction == ForColumns)
-        return child.hasRelativeLogicalWidth() || child.style().logicalWidth().isIntrinsicOrAuto();
-    return child.hasRelativeLogicalHeight() || child.style().logicalHeight().isIntrinsicOrAuto();
-}
-
-static LayoutUnit extraMarginForSubgrid(const RenderGrid& parent, unsigned startLine, unsigned endLine, GridTrackSizingDirection direction)
-{
-    unsigned numTracks = parent.numTracks(direction);
-    if (!numTracks || !parent.isSubgrid(direction))
-        return 0_lu;
-
-    std::optional<LayoutUnit> availableSpace;
-    if (!hasRelativeOrIntrinsicSizeForChild(parent, direction))
-        availableSpace = parent.availableSpaceForGutters(direction);
-
-    RenderGrid& grandParent = downcast<RenderGrid>(*parent.parent());
-    LayoutUnit mbp;
-    if (!startLine)
-        mbp += (direction == ForColumns) ? parent.marginAndBorderAndPaddingStart() : parent.marginAndBorderAndPaddingBefore();
-    else
-        mbp += (parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2;
-
-    if (endLine == numTracks)
-        mbp += (direction == ForColumns) ? parent.marginAndBorderAndPaddingEnd() : parent.marginAndBorderAndPaddingAfter();
-    else
-        mbp += (parent.gridGap(direction, availableSpace) - grandParent.gridGap(direction)) / 2;
-
-    return mbp;
-}
-
-LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection direction, const RenderBox& child)
-{
-    const RenderGrid* grid = downcast<RenderGrid>(child.parent());
-    LayoutUnit mbp;
-
-    while (grid->isSubgrid(direction)) {
-        GridSpan span = grid->gridSpanForChild(child, direction);
-
-        mbp += extraMarginForSubgrid(*grid, span.startLine(), span.endLine(), direction);
-
-        const RenderElement* parent = grid->parent();
-        if (!parent || !is<RenderGrid>(parent))
-            break;
-
-        const RenderGrid* parentGrid = downcast<RenderGrid>(parent);
-        direction = flowAwareDirectionForParent(*grid, *parentGrid, direction);
-
-        grid = parentGrid;
-    }
-
-    return mbp;
-}
-
 LayoutUnit marginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDirection direction, const RenderBox& child)
 {
-    LayoutUnit margin;
     if (child.needsLayout())
-        margin = computeMarginLogicalSizeForChild(grid, direction, child);
-    else {
-        GridTrackSizingDirection flowAwareDirection = flowAwareDirectionForChild(grid, child, direction);
-        bool isRowAxis = flowAwareDirection == ForColumns;
-        LayoutUnit marginStart = marginStartIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginStart() : child.marginBefore();
-        LayoutUnit marginEnd = marginEndIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginEnd() : child.marginAfter();
-        margin = marginStart + marginEnd;
-    }
-
-    if (&grid != child.parent()) {
-        GridTrackSizingDirection subgridDirection = flowAwareDirectionForChild(grid, *downcast<RenderGrid>(child.parent()), direction);
-        margin += extraMarginForSubgridAncestors(subgridDirection, child);
-    }
-
-    return margin;
+        return computeMarginLogicalSizeForChild(grid, direction, child);
+    GridTrackSizingDirection flowAwareDirection = flowAwareDirectionForChild(grid, child, direction);
+    bool isRowAxis = flowAwareDirection == ForColumns;
+    LayoutUnit marginStart = marginStartIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginStart() : child.marginBefore();
+    LayoutUnit marginEnd = marginEndIsAuto(child, flowAwareDirection) ? 0_lu : isRowAxis ? child.marginEnd() : child.marginAfter();
+    return marginStart + marginEnd;
 }
 
 bool isOrthogonalChild(const RenderGrid& grid, const RenderBox& child)
 {
     return child.isHorizontalWritingMode() != grid.isHorizontalWritingMode();
-}
-
-bool isOrthogonalParent(const RenderGrid& grid, const RenderElement& parent)
-{
-    return parent.isHorizontalWritingMode() != grid.isHorizontalWritingMode();
 }
 
 bool isAspectRatioBlockSizeDependentChild(const RenderBox& child)
@@ -167,11 +92,6 @@ GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid& grid, cons
     return !isOrthogonalChild(grid, child) ? direction : (direction == ForColumns ? ForRows : ForColumns);
 }
 
-GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid& grid, const RenderElement& parent, GridTrackSizingDirection direction)
-{
-    return isOrthogonalParent(grid, parent) ? (direction == ForColumns ? ForRows : ForColumns) : direction;
-}
-
 bool hasOverridingContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
     return direction == ForColumns ? child.hasOverridingContainingBlockContentLogicalWidth() : child.hasOverridingContainingBlockContentLogicalHeight();
@@ -180,20 +100,6 @@ bool hasOverridingContainingBlockContentSizeForChild(const RenderBox& child, Gri
 std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox& child, GridTrackSizingDirection direction)
 {
     return direction == ForColumns ? child.overridingContainingBlockContentLogicalWidth() : child.overridingContainingBlockContentLogicalHeight();
-}
-
-bool isFlippedDirection(const RenderGrid& grid, GridTrackSizingDirection direction)
-{
-    if (direction == ForColumns)
-        return !grid.style().isLeftToRightDirection();
-    return grid.style().isFlippedBlocksWritingMode();
-}
-
-bool isSubgridReversedDirection(const RenderGrid& grid, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid)
-{
-    GridTrackSizingDirection childDirection = flowAwareDirectionForChild(grid, subgrid, outerDirection);
-    ASSERT(subgrid.isSubgrid(childDirection));
-    return isFlippedDirection(grid, outerDirection) != isFlippedDirection(subgrid, childDirection);
 }
 
 } // namespace GridLayoutFunctions

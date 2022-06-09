@@ -108,20 +108,20 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
 {
     LOG(Network, "SocketStreamHandle %p new client %p", this, &m_client);
 
-    ASSERT(url.protocolIs("ws"_s) || url.protocolIs("wss"_s));
+    ASSERT(url.protocolIs("ws") || url.protocolIs("wss"));
 
-    URL httpsURL { "https://" + m_url.host() };
+    URL httpsURL(URL(), "https://" + m_url.host());
     m_httpsURL = httpsURL.createCFURL();
 
 #if PLATFORM(COCOA)
     // Don't check for HSTS violation for ephemeral sessions since
     // HSTS state should not transfer between regular and private browsing.
-    if (url.protocolIs("ws"_s)
+    if (url.protocolIs("ws")
         && !sessionID.isEphemeral()
         && _CFNetworkIsKnownHSTSHostWithSession(m_httpsURL.get(), nullptr)) {
         // Call this asynchronously because the socket stream is not fully constructed at this point.
         callOnMainThread([this, protectedThis = Ref { *this }] {
-            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."_s));
+            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."));
         });
         return;
     }
@@ -434,7 +434,7 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
 
     if (!CFHTTPAuthenticationRequiresUserNameAndPassword(authentication.get())) {
         // That's all we can offer...
-        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"_s));
+        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"));
         return;
     }
 
@@ -445,7 +445,7 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
 
     if (!methodCF || !realmCF) {
         // This shouldn't happen, but on some OS versions we get incomplete authentication data, see <rdar://problem/10416316>.
-        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket proxy authentication couldn't be handled"_s));
+        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket proxy authentication couldn't be handled"));
         return;
     }
 
@@ -464,7 +464,7 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
 
         if (!proxyAuthorizationString) {
             // Fails e.g. for NTLM auth.
-            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"_s));
+            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy authentication scheme is not supported for WebSockets"));
             return;
         }
 
@@ -476,7 +476,7 @@ void SocketStreamHandleImpl::addCONNECTCredentials(CFHTTPMessageRef proxyRespons
 
     // FIXME: On platforms where AuthBrokerAgent is not available, ask the client if credentials could not be found.
 
-    m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy credentials are not available"_s));
+    m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "Proxy credentials are not available"));
 }
 
 CFStringRef SocketStreamHandleImpl::copyCFStreamDescription(void* info)
@@ -573,7 +573,7 @@ void SocketStreamHandleImpl::readStreamCallback(CFStreamEventType type)
                     addCONNECTCredentials(proxyResponse.get());
                     return;
                 default:
-                    m_client.didFailSocketStream(*this, SocketStreamError(static_cast<int>(proxyResponseCode), m_url.string(), "Proxy connection could not be established, unexpected response code"_s));
+                    m_client.didFailSocketStream(*this, SocketStreamError(static_cast<int>(proxyResponseCode), m_url.string(), "Proxy connection could not be established, unexpected response code"));
                     platformClose();
                     return;
                 }

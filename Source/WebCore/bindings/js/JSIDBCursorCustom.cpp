@@ -29,7 +29,6 @@
 #include "IDBBindingUtilities.h"
 #include "JSDOMBinding.h"
 #include "JSIDBCursorWithValue.h"
-#include "WebCoreOpaqueRoot.h"
 
 
 namespace WebCore {
@@ -54,7 +53,7 @@ void JSIDBCursor::visitAdditionalChildren(Visitor& visitor)
 {
     auto& cursor = wrapped();
     if (auto* request = cursor.request())
-        addWebCoreOpaqueRoot(visitor, *request);
+        visitor.addOpaqueRoot(request);
     cursor.keyWrapper().visit(visitor);
     cursor.primaryKeyWrapper().visit(visitor);
 }

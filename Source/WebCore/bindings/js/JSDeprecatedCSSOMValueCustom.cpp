@@ -38,13 +38,13 @@ using namespace JSC;
 bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, const char** reason)
 {
     JSDeprecatedCSSOMValue* jsCSSValue = jsCast<JSDeprecatedCSSOMValue*>(handle.slot()->asCell());
-    if (!jsCSSValue->hasCustomProperties())
+    if (!jsCSSValue->hasCustomProperties(jsCSSValue->vm()))
         return false;
 
     if (UNLIKELY(reason))
         *reason = "CSSStyleDeclaration is opaque root";
 
-    return containsWebCoreOpaqueRoot(visitor, jsCSSValue->wrapped().owner());
+    return visitor.containsOpaqueRoot(root(&jsCSSValue->wrapped().owner()));
 }
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<DeprecatedCSSOMValue>&& value)

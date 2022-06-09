@@ -57,7 +57,6 @@ const char *GetEGLString(EGLDisplay display, EGLint name)
 {
     const char *value = "";
     value             = eglQueryString(display, name);
-    EXPECT_EGL_ERROR(EGL_SUCCESS);
     EXPECT_TRUE(value != nullptr);
     return value;
 }
@@ -67,7 +66,6 @@ const char *GetGLString(EGLint name)
 {
     const char *value = "";
     value             = reinterpret_cast<const char *>(glGetString(name));
-    EXPECT_GL_ERROR(GL_NO_ERROR);
     EXPECT_TRUE(value != nullptr);
     return value;
 }
@@ -79,8 +77,6 @@ TEST_P(EGLPrintEGLinfoTest, PrintEGLInfo)
 {
     std::cout << "    EGL Information:" << std::endl;
     std::cout << "\tVendor: " << GetEGLString(mDisplay, EGL_VENDOR) << std::endl;
-    std::cout << "\tVersion (EGL_NO_DISPLAY): " << GetEGLString(EGL_NO_DISPLAY, EGL_VERSION)
-              << std::endl;
     std::cout << "\tVersion: " << GetEGLString(mDisplay, EGL_VERSION) << std::endl;
     std::cout << "\tClient APIs: " << GetEGLString(mDisplay, EGL_CLIENT_APIS) << std::endl;
 

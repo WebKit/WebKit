@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,42 +34,6 @@ class CheckoutUnittest(testing.PathTestCase):
     def setUp(self):
         super(CheckoutUnittest, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
-
-    def test_json(self):
-        with mocks.local.Git(self.path) as repo, OutputCapture():
-            checkout = Checkout(
-                path=self.path,
-                url=repo.remote,
-                credentials={
-                    'https://github.com': dict(
-                        username='username',
-                        password='password',
-                    ),
-                }, sentinal=False,
-            )
-
-            encoded = Checkout.Encoder().default(checkout)
-            self.assertEqual(
-                encoded, dict(
-                    path=self.path,
-                    url=repo.remote,
-                    remotes={},
-                    forwarding=[('origin', [])],
-                    credentials={
-                        'https://github.com': dict(
-                            username='username',
-                            password='password',
-                        ),
-                    }, sentinal=False,
-                ),
-            )
-
-            constructed = Checkout(**encoded)
-            self.assertEqual(checkout.path, constructed.path)
-            self.assertEqual(checkout.url, constructed.url)
-            self.assertEqual(checkout.remotes, constructed.remotes)
-            self.assertEqual(checkout.credentials, constructed.credentials)
-
 
     def test_constructor_sentinal(self):
         with mocks.local.Git(self.path) as repo, OutputCapture():

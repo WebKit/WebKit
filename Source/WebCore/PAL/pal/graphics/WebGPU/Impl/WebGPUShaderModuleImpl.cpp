@@ -44,9 +44,8 @@ ShaderModuleImpl::~ShaderModuleImpl()
     wgpuShaderModuleRelease(m_backing);
 }
 
-void ShaderModuleImpl::compilationInfo(CompletionHandler<void(Ref<CompilationInfo>&&)>&&)
+void ShaderModuleImpl::compilationInfo(WTF::Function<void(Ref<CompilationInfo>&&)>&&)
 {
-    // FIXME: Implement this.
 }
 
 void ShaderModuleImpl::setLabelInternal(const String& label)

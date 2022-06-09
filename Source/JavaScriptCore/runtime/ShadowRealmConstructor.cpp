@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo ShadowRealmConstructor::s_info = { "Function"_s, &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ShadowRealmConstructor) };
+const ClassInfo ShadowRealmConstructor::s_info = { "Function", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ShadowRealmConstructor) };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ShadowRealmConstructor);
 
@@ -53,7 +53,7 @@ JSC_DEFINE_HOST_FUNCTION(constructWithShadowRealmConstructor, (JSGlobalObject* g
 {
     VM& vm = globalObject->vm();
     Structure* shadowRealmStructure = ShadowRealmObject::createStructure(vm, globalObject, globalObject->shadowRealmPrototype());
-    JSObject* shadowRealmObject = ShadowRealmObject::create(vm, shadowRealmStructure, globalObject);
+    JSObject* shadowRealmObject = ShadowRealmObject::create(vm, shadowRealmStructure, globalObject->globalObjectMethodTable());
     return JSValue::encode(shadowRealmObject);
 }
 

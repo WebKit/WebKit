@@ -301,7 +301,7 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
 static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
     Element* node = core(element);
-    return dynamicDowncast<HTMLInputElement>(node);
+    return is<HTMLInputElement>(node) ? downcast<HTMLInputElement>(node) : nullptr;
 }
 
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
@@ -358,7 +358,7 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     static const unsigned int regExpCacheSize = 4;
     static NeverDestroyed<RetainPtr<NSMutableArray>> regExpLabels = adoptNS([[NSMutableArray alloc] initWithCapacity:regExpCacheSize]);
     static NeverDestroyed<Vector<RegularExpression*>> regExps;
-    static NeverDestroyed<RegularExpression> wordRegExp("\\w"_s);
+    static NeverDestroyed<RegularExpression> wordRegExp("\\w");
 
     RegularExpression* result;
     CFIndex cacheHit = [regExpLabels.get() indexOfObject:labels];
@@ -375,9 +375,8 @@ static RegularExpression* regExpForLabels(NSArray *labels)
             bool startsWithWordCharacter = false;
             bool endsWithWordCharacter = false;
             if (label.length()) {
-                StringView labelView { label };
-                startsWithWordCharacter = wordRegExp.get().match(labelView.left(1)) >= 0;
-                endsWithWordCharacter = wordRegExp.get().match(labelView.right(1)) >= 0;
+                startsWithWordCharacter = wordRegExp.get().match(label.substring(0, 1)) >= 0;
+                endsWithWordCharacter = wordRegExp.get().match(label.substring(label.length() - 1, 1)) >= 0;
             }
             
             // Search for word boundaries only if label starts/ends with "word characters".
@@ -484,8 +483,8 @@ static NSString *matchLabelsAgainstString(NSArray *labels, const String& stringT
     String mutableStringToMatch = stringToMatch;
     
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
-    replace(mutableStringToMatch, RegularExpression("\\d"_s), " "_s);
-    mutableStringToMatch = makeStringByReplacingAll(mutableStringToMatch, '_', ' ');
+    replace(mutableStringToMatch, RegularExpression("\\d"), " ");
+    mutableStringToMatch.replace('_', ' ');
     
     RegularExpression* regExp = regExpForLabels(labels);
     // Use the largest match we can find in the whole string

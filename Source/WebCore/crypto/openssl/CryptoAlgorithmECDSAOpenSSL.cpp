@@ -76,11 +76,8 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
         return false;
     
     auto sig = ECDSASigPtr(ECDSA_SIG_new());
-    auto r = BN_bin2bn(signature.data(), keySizeInBytes, nullptr);
-    auto s = BN_bin2bn(signature.data() + keySizeInBytes, keySizeInBytes, nullptr);
-
-    if (!ECDSA_SIG_set0(sig.get(), r, s))
-        return Exception { OperationError };
+    sig->r = BN_bin2bn(signature.data(), keySizeInBytes, sig->r);
+    sig->s = BN_bin2bn(signature.data() + keySizeInBytes, keySizeInBytes, sig->s);
 
     const EVP_MD* md = digestAlgorithm(parameters.hashIdentifier);
     if (!md)

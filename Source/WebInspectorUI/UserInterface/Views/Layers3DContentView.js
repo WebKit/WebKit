@@ -175,7 +175,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         this.element.appendChild(this._renderer.domElement);
 
-        this.element.appendChild(WI.ReferencePage.LayersTab.createLinkElement());
+        this.element.appendChild(WI.createReferencePageLink("layers-tab"));
 
         this._animate();
     }

@@ -49,69 +49,7 @@
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
-#if HAVE(UIFINDINTERACTION)
-
-@interface WKPDFFoundTextRange : UITextRange
-
-@property (nonatomic) NSUInteger index;
-
-+ (WKPDFFoundTextRange *)foundTextRangeWithIndex:(NSUInteger)index;
-
-@end
-
-@interface WKPDFFoundTextPosition : UITextPosition
-
-@property (nonatomic) NSUInteger index;
-
-+ (WKPDFFoundTextPosition *)textPositionWithIndex:(NSUInteger)index;
-
-@end
-
-@implementation WKPDFFoundTextRange
-
-+ (WKPDFFoundTextRange *)foundTextRangeWithIndex:(NSUInteger)index
-{
-    auto range = adoptNS([[WKPDFFoundTextRange alloc] init]);
-    [range setIndex:index];
-    return range.autorelease();
-}
-
-- (WKPDFFoundTextPosition *)start
-{
-    WKPDFFoundTextPosition *position = [WKPDFFoundTextPosition textPositionWithIndex:self.index];
-    return position;
-}
-
-- (UITextPosition *)end
-{
-    return self.start;
-}
-
-- (BOOL)isEmpty
-{
-    return NO;
-}
-
-@end
-
-@implementation WKPDFFoundTextPosition
-
-+ (WKPDFFoundTextPosition *)textPositionWithIndex:(NSUInteger)index
-{
-    auto position = adoptNS([[WKPDFFoundTextPosition alloc] init]);
-    [position setIndex:index];
-    return position.autorelease();
-}
-
-@end
-
-#endif // HAVE(UIFINDINTERACTION)
-
-@interface WKPDFView () <PDFHostViewControllerDelegate, WKActionSheetAssistantDelegate
-#if HAVE(UIFINDINTERACTION)
-    , UITextSearching
-#endif
->
+@interface WKPDFView () <PDFHostViewControllerDelegate, WKActionSheetAssistantDelegate>
 @end
 
 @implementation WKPDFView {
@@ -134,10 +72,6 @@
     WeakObjCPtr<WKWebView> _webView;
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
     RetainPtr<WKShareSheet> _shareSheet;
-#if HAVE(UIFINDINTERACTION)
-    RetainPtr<id<UITextSearchAggregator>> _searchAggregator;
-    RetainPtr<NSString> _searchString;
-#endif
 }
 
 - (void)dealloc
@@ -152,10 +86,6 @@
     [_pageNumberIndicator removeFromSuperview];
     [_keyboardScrollingAnimator invalidate];
     std::memset(_passwordForPrinting.mutableData(), 0, _passwordForPrinting.length());
-#if HAVE(UIFINDINTERACTION)
-    _searchAggregator = nil;
-    _searchString = nil;
-#endif
     [super dealloc];
 }
 
@@ -433,7 +363,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 + (BOOL)web_requiresCustomSnapshotting
 {
-    static bool hasGlobalCaptureEntitlement = WTF::processHasEntitlement("com.apple.QuartzCore.global-capture"_s);
+    static bool hasGlobalCaptureEntitlement = WTF::processHasEntitlement("com.apple.QuartzCore.global-capture");
     return !hasGlobalCaptureEntitlement;
 }
 
@@ -502,24 +432,6 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
 
 - (void)pdfHostViewController:(PDFHostViewController *)controller findStringUpdate:(NSUInteger)numFound done:(BOOL)done
 {
-#if HAVE(UIFINDINTERACTION)
-    if (_searchAggregator) {
-        if (!done)
-            return;
-
-        for (NSUInteger index = 0; index < numFound; index++) {
-            WKPDFFoundTextRange *range = [WKPDFFoundTextRange foundTextRangeWithIndex:index];
-            [_searchAggregator foundRange:range forSearchString:_searchString.get() inDocument:nil];
-        }
-
-        [_searchAggregator finishedSearching];
-
-        _searchAggregator = nil;
-        _searchString = nil;
-        return;
-    }
-#endif
-
     if (numFound > _findStringMaxCount && !done) {
         [controller cancelFindStringWithHighlightsCleared:NO];
         done = YES;
@@ -688,62 +600,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [uiDelegate _dataDetectionContextForWebView:webView];
 }
 
-#pragma mark UITextSearching
-
-#if HAVE(UIFINDINTERACTION)
-
-- (UITextRange *)selectedTextRange
-{
-    return nil;
-}
-
-- (NSComparisonResult)compareFoundRange:(UITextRange *)fromRange toRange:(UITextRange *)toRange inDocument:(UITextSearchDocumentIdentifier)document
-{
-    auto from = dynamic_objc_cast<WKPDFFoundTextPosition>(fromRange.start);
-    if (!from)
-        return NSOrderedSame;
-
-    auto to = dynamic_objc_cast<WKPDFFoundTextPosition>(toRange.start);
-    if (!to)
-        return NSOrderedSame;
-
-    if (from.index < to.index)
-        return NSOrderedAscending;
-
-    if (from.index > to.index)
-        return NSOrderedDescending;
-
-    return NSOrderedSame;
-}
-
-- (void)performTextSearchWithQueryString:(NSString *)string usingOptions:(UITextSearchOptions *)options resultAggregator:(id<UITextSearchAggregator>)aggregator
-{
-    [_hostViewController cancelFindString];
-    _searchAggregator = aggregator;
-    _searchString = string;
-    [_hostViewController findString:string withOptions:options.stringCompareOptions];
-}
-
-- (void)decorateFoundTextRange:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document usingStyle:(UITextSearchFoundTextStyle)style
-{
-    if (style != UITextSearchFoundTextStyleHighlighted)
-        return;
-
-    auto foundTextRange = dynamic_objc_cast<WKPDFFoundTextRange>(range);
-    if (!foundTextRange)
-        return;
-
-    [_hostViewController focusOnSearchResultAtIndex:foundTextRange.index];
-}
-
-- (void)clearAllDecoratedFoundText
-{
-    [_hostViewController cancelFindString];
-    _searchAggregator = nil;
-}
-
-#endif // HAVE(UIFINDINTERACTION)
-
 @end
 
 
@@ -771,11 +627,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _documentForPrinting = WTFMove(pdfDocument);
     return _documentForPrinting.get();
-}
-
-- (BOOL)_wk_printFormatterRequiresMainThread
-{
-    return YES;
 }
 
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter

@@ -47,7 +47,7 @@ public:
 
 private:
     bool isRenderMathMLFraction() const final { return true; }
-    ASCIILiteral renderName() const final { return "RenderMathMLFraction"_s; }
+    const char* renderName() const final { return "RenderMathMLFraction"; }
 
     void computePreferredLogicalWidths() final;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;

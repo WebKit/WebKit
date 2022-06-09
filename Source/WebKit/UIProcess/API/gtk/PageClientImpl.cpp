@@ -51,11 +51,9 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RefPtrCairo.h>
-#include <WebCore/ValidationBubble.h>
 #include <wtf/Compiler.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "WebDateTimePickerGtk.h"
@@ -295,13 +293,6 @@ RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestions
 }
 #endif
 
-Ref<ValidationBubble> PageClientImpl::createValidationBubble(const String& message, const ValidationBubble::Settings& settings)
-{
-    return ValidationBubble::create(m_viewWidget, message, settings, [](GtkWidget* webView, bool shouldNotifyFocusEvents) {
-        webkitWebViewBaseSetShouldNotifyFocusEvents(WEBKIT_WEB_VIEW_BASE(webView), shouldNotifyFocusEvents);
-    });
-}
-
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
     webkitWebViewBaseEnterAcceleratedCompositingMode(WEBKIT_WEB_VIEW_BASE(m_viewWidget), layerTreeContext);
@@ -345,9 +336,9 @@ void PageClientImpl::didChangeContentSize(const IntSize& size)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void PageClientImpl::startDrag(SelectionData&& selection, OptionSet<DragOperation> dragOperationMask, RefPtr<ShareableBitmap>&& dragImage, IntPoint&& dragImageHotspot)
+void PageClientImpl::startDrag(SelectionData&& selection, OptionSet<DragOperation> dragOperationMask, RefPtr<ShareableBitmap>&& dragImage)
 {
-    webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(selection), dragOperationMask, WTFMove(dragImage), WTFMove(dragImageHotspot));
+    webkitWebViewBaseStartDrag(WEBKIT_WEB_VIEW_BASE(m_viewWidget), WTFMove(selection), dragOperationMask, WTFMove(dragImage));
 }
 
 void PageClientImpl::didPerformDragControllerAction()
@@ -475,7 +466,7 @@ void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&,
 
 void PageClientImpl::navigationGestureDidBegin()
 {
-    webkitWebViewBaseSynthesizeWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget), 0, 0, 0, 0, WheelEventPhase::Began, WheelEventPhase::NoPhase, true);
+    webkitWebViewBaseSynthesizeWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget), 0, 0, 0, 0, WheelEventPhase::Began, WheelEventPhase::NoPhase);
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool, WebBackForwardListItem&)
@@ -593,7 +584,7 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
 #if USE(WPE_RENDERER)
 IPC::Attachment PageClientImpl::hostFileDescriptor()
 {
-    return IPC::Attachment({ webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), UnixFileDescriptor::Adopt });
+    return webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 #endif
 
@@ -606,30 +597,6 @@ void PageClientImpl::didChangeWebPageID() const
 void PageClientImpl::makeViewBlank(bool makeBlank)
 {
     webkitWebViewBaseMakeBlank(WEBKIT_WEB_VIEW_BASE(m_viewWidget), makeBlank);
-}
-
-WebCore::Color PageClientImpl::accentColor()
-{
-    auto* context = gtk_widget_get_style_context(m_viewWidget);
-    GdkRGBA accentColor;
-
-    // libadwaita
-    if (gtk_style_context_lookup_color(context, "accent_bg_color", &accentColor))
-        return WebCore::Color(accentColor);
-
-    // elementary OS 6.x
-    if (gtk_style_context_lookup_color(context, "accent_color", &accentColor))
-        return WebCore::Color(accentColor);
-
-    // elementary OS 5.x
-    if (gtk_style_context_lookup_color(context, "accentColor", &accentColor))
-        return WebCore::Color(accentColor);
-
-    // Legacy
-    if (gtk_style_context_lookup_color(context, "theme_selected_bg_color", &accentColor))
-        return WebCore::Color(accentColor);
-
-    return SRGBA<uint8_t> { 52, 132, 228 };
 }
 
 } // namespace WebKit

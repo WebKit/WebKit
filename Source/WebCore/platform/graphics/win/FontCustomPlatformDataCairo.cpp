@@ -101,12 +101,12 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
 
 bool FontCustomPlatformData::supportsFormat(const String& format)
 {
-    return equalLettersIgnoringASCIICase(format, "truetype"_s)
-        || equalLettersIgnoringASCIICase(format, "opentype"_s)
+    return equalLettersIgnoringASCIICase(format, "truetype")
+        || equalLettersIgnoringASCIICase(format, "opentype")
 #if USE(WOFF2)
-        || equalLettersIgnoringASCIICase(format, "woff2"_s)
+        || equalLettersIgnoringASCIICase(format, "woff2")
 #endif
-        || equalLettersIgnoringASCIICase(format, "woff"_s);
+        || equalLettersIgnoringASCIICase(format, "woff");
 }
 
 }

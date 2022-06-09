@@ -54,7 +54,7 @@ var expected = [
   "ErrorEvent",
   "Event",
   "CustomEvent",
-  // https://webidl.spec.whatwg.org/
+  // http://heycam.github.io/webidl/
   "DOMException",
   // https://streams.spec.whatwg.org/
   "ReadableStream",

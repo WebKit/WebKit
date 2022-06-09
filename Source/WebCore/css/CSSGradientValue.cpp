@@ -30,7 +30,6 @@
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include "ColorInterpolation.h"
-#include "GeometryUtilities.h"
 #include "GradientImage.h"
 #include "NodeRenderStyle.h"
 #include "Pair.h"
@@ -477,7 +476,7 @@ GradientColorStops CSSGradientValue::computeStops(GradientAdapter& gradientAdapt
         for (size_t y = 0; y < 9; ++y) {
             float relativeOffset = (*newStops[y].offset - offset1) / (offset2 - offset1);
             float multiplier = std::pow(relativeOffset, std::log(.5f) / std::log(midpoint));
-            newStops[y].color = interpolateColors(m_colorInterpolationMethod.method, color1, 1.0f - multiplier, color2, multiplier);
+            newStops[y].color = interpolateColors(m_colorInterpolationMethod, color1, 1.0f - multiplier, color2, multiplier);
         }
 
         stops.remove(x);
@@ -548,7 +547,7 @@ GradientColorStops CSSGradientValue::computeStops(GradientAdapter& gradientAdapt
 
     // If the gradient goes outside the 0-1 range, normalize it by moving the endpoints, and adjusting the stops.
     if (stops.size() > 1 && (*stops.first().offset < 0 || *stops.last().offset > 1))
-        gradientAdapter.normalizeStopsAndEndpointsOutsideRange(stops, m_colorInterpolationMethod.method);
+        gradientAdapter.normalizeStopsAndEndpointsOutsideRange(stops, m_colorInterpolationMethod);
     
     GradientColorStops::StopVector result;
     result.reserveInitialCapacity(stops.size());
@@ -672,9 +671,9 @@ static void appendHueInterpolationMethod(StringBuilder& builder, HueInterpolatio
     }
 }
 
-static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientColorInterpolationMethod colorInterpolationMethod, bool needsLeadingSpace)
+static bool appendColorInterpolationMethod(StringBuilder& builder, ColorInterpolationMethod colorInterpolationMethod, bool needsLeadingSpace)
 {
-    return WTF::switchOn(colorInterpolationMethod.method.colorSpace,
+    return WTF::switchOn(colorInterpolationMethod.colorSpace,
         [&] (const ColorInterpolationMethod::HSL& hsl) {
             builder.append(needsLeadingSpace ? " " : "", "in hsl");
             appendHueInterpolationMethod(builder, hsl.hueInterpolationMethod);
@@ -700,17 +699,10 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSSGradientCo
             return true;
         },
         [&] (const ColorInterpolationMethod::OKLab&) {
-            if (colorInterpolationMethod.defaultMethod != CSSGradientColorInterpolationMethod::Default::OKLab) {
-                builder.append(needsLeadingSpace ? " " : "", "in oklab");
-                return true;
-            }
-            return false;
+            builder.append(needsLeadingSpace ? " " : "", "in oklab");
+            return true;
         },
         [&] (const ColorInterpolationMethod::SRGB&) {
-            if (colorInterpolationMethod.defaultMethod != CSSGradientColorInterpolationMethod::Default::SRGB) {
-                builder.append(needsLeadingSpace ? " " : "", "in srgb");
-                return true;
-            }
             return false;
         },
         [&] (const ColorInterpolationMethod::SRGBLinear&) {
@@ -816,7 +808,9 @@ static void endPointsFromAngle(float angleDeg, const FloatSize& size, FloatPoint
     if (type == CSSPrefixedLinearGradient)
         angleDeg = 90 - angleDeg;
 
-    angleDeg = toPositiveAngle(angleDeg);
+    angleDeg = fmodf(angleDeg, 360);
+    if (angleDeg < 0)
+        angleDeg += 360;
 
     if (!angleDeg) {
         firstPoint.set(0, size.height());
@@ -883,7 +877,7 @@ Ref<Gradient> CSSLinearGradientValue::createGradient(RenderElement& renderer, co
     if (auto* documentElement = renderer.document().documentElement())
         rootStyle = documentElement->renderStyle();
 
-    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
+    CSSToLengthConversionData conversionData(&renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
 
     FloatPoint firstPoint;
     FloatPoint secondPoint;
@@ -940,7 +934,7 @@ Ref<Gradient> CSSLinearGradientValue::createGradient(RenderElement& renderer, co
     LinearGradientAdapter adapter { data };
     auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
 
-    return Gradient::create(WTFMove(data), colorInterpolationMethod().method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return Gradient::create(WTFMove(data), colorInterpolationMethod(), GradientSpreadMethod::Pad, WTFMove(stops));
 }
 
 bool CSSLinearGradientValue::equals(const CSSLinearGradientValue& other) const
@@ -1141,7 +1135,7 @@ Ref<Gradient> CSSRadialGradientValue::createGradient(RenderElement& renderer, co
     if (auto* documentElement = renderer.document().documentElement())
         rootStyle = documentElement->renderStyle();
 
-    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
+    CSSToLengthConversionData conversionData(&renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
 
     FloatPoint firstPoint = computeEndPoint(firstX(), firstY(), conversionData, size);
     if (!firstX())
@@ -1275,7 +1269,7 @@ Ref<Gradient> CSSRadialGradientValue::createGradient(RenderElement& renderer, co
     RadialGradientAdapter adapter { data };
     auto stops = computeStops(adapter, conversionData, renderer.style(), maxExtent);
 
-    return Gradient::create(WTFMove(data), colorInterpolationMethod().method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return Gradient::create(WTFMove(data), colorInterpolationMethod(), GradientSpreadMethod::Pad, WTFMove(stops));
 }
 
 bool CSSRadialGradientValue::equals(const CSSRadialGradientValue& other) const
@@ -1334,7 +1328,7 @@ Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, con
     if (auto* documentElement = renderer.document().documentElement())
         rootStyle = documentElement->renderStyle();
 
-    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
+    CSSToLengthConversionData conversionData(&renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
 
     FloatPoint centerPoint = computeEndPoint(firstX(), firstY(), conversionData, size);
     if (!firstX())
@@ -1350,7 +1344,7 @@ Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, con
     ConicGradientAdapter adapter;
     auto stops = computeStops(adapter, conversionData, renderer.style(), 1);
 
-    return Gradient::create(WTFMove(data), colorInterpolationMethod().method, GradientSpreadMethod::Pad, WTFMove(stops));
+    return Gradient::create(WTFMove(data), colorInterpolationMethod(), GradientSpreadMethod::Pad, WTFMove(stops));
 }
 
 bool CSSConicGradientValue::equals(const CSSConicGradientValue& other) const

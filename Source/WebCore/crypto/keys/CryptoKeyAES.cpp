@@ -84,7 +84,7 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importRaw(CryptoAlgorithmIdentifier algorithm
 
 RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages, CheckAlgCallback&& callback)
 {
-    if (keyData.kty != "oct"_s)
+    if (keyData.kty != "oct")
         return nullptr;
     if (keyData.k.isNull())
         return nullptr;
@@ -93,7 +93,7 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
         return nullptr;
     if (!callback(octetSequence->size() * 8, keyData.alg))
         return nullptr;
-    if (usages && !keyData.use.isNull() && keyData.use != "enc"_s)
+    if (usages && !keyData.use.isNull() && keyData.use != "enc")
         return nullptr;
     if (keyData.key_ops && ((keyData.usages & usages) != usages))
         return nullptr;
@@ -106,7 +106,7 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
 JsonWebKey CryptoKeyAES::exportJwk() const
 {
     JsonWebKey result;
-    result.kty = "oct"_s;
+    result.kty = "oct";
     result.k = base64URLEncodeToString(m_key);
     result.key_ops = usages();
     result.ext = extractable();

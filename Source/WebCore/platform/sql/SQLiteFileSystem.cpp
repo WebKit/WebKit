@@ -49,7 +49,7 @@ SQLiteFileSystem::SQLiteFileSystem()
 {
 }
 
-String SQLiteFileSystem::appendDatabaseFileNameToPath(StringView path, StringView fileName)
+String SQLiteFileSystem::appendDatabaseFileNameToPath(const String& path, const String& fileName)
 {
     return FileSystem::pathByAppendingComponent(path, fileName);
 }
@@ -91,13 +91,10 @@ bool SQLiteFileSystem::deleteDatabaseFile(const String& filePath)
     return !fileExists;
 }
 
-bool SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String& newFilePath)
+void SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String& newFilePath)
 {
-    bool allMoved = true;
     for (const auto* suffix : databaseFileSuffixes)
-        allMoved &= FileSystem::moveFile(makeString(oldFilePath, suffix), makeString(newFilePath, suffix));
-
-    return allMoved;
+        FileSystem::moveFile(makeString(oldFilePath, suffix), makeString(newFilePath, suffix));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -128,7 +125,7 @@ std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String&
     return FileSystem::fileModificationTime(fileName);
 }
     
-String SQLiteFileSystem::computeHashForFileName(StringView fileName)
+String SQLiteFileSystem::computeHashForFileName(const String& fileName)
 {
     auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     auto utf8FileName = fileName.utf8();

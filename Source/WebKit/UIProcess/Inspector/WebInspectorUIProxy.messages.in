@@ -29,12 +29,12 @@ messages -> WebInspectorUIProxy {
     FrontendLoaded()
     DidClose()
     BringToFront()
+    BringInspectedPageToFront()
     Reopen()
     ResetState()
 
     SetForcedAppearance(WebCore::InspectorFrontendClient::Appearance appearance)
     OpenURLExternally(String url)
-    RevealFileExternally(String path)
 
     InspectedURLChanged(String urlString)
     ShowCertificate(WebCore::CertificateInfo certificateInfo)
@@ -42,9 +42,8 @@ messages -> WebInspectorUIProxy {
     TimelineRecordingChanged(bool active)
     SetDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference developerPreference, std::optional<bool> overrideValue)
 
-    Save(Vector<WebCore::InspectorFrontendClient::SaveData> saveDatas, bool forceSaveAs)
-    Load(String path) -> (String content)
-    PickColorFromScreen() -> (std::optional<WebCore::Color> color)
+    Save(String filename, String content, bool base64Encoded, bool forceSaveAs)
+    Append(String filename, String content)
 
     AttachBottom()
     AttachRight()

@@ -86,20 +86,15 @@ public:
     // These are used to help debug <rdar://problem/48634553>.
     FrameState() { RELEASE_ASSERT(RunLoop::isMain()); }
     ~FrameState() { RELEASE_ASSERT(RunLoop::isMain()); }
-    FrameState(const FrameState&) = default;
-    FrameState(FrameState&&) = default;
-    FrameState& operator=(const FrameState&) = default;
-    FrameState& operator=(FrameState&&) = default;
-
-    const Vector<AtomString>& documentState() const { return m_documentState; }
+    const Vector<String>& documentState() const { return m_documentState; }
     enum class ShouldValidate : bool { No, Yes };
-    void setDocumentState(const Vector<AtomString>&, ShouldValidate = ShouldValidate::No);
+    void setDocumentState(const Vector<String>&, ShouldValidate = ShouldValidate::No);
     void validateDocumentState() const;
 
     String urlString;
     String originalURLString;
     String referrer;
-    AtomString target;
+    String target;
 
     std::optional<Vector<uint8_t>> stateObjectData;
 
@@ -125,7 +120,7 @@ public:
     Vector<FrameState> children;
 
 private:
-    Vector<AtomString> m_documentState;
+    Vector<String> m_documentState;
 };
 
 struct PageState {

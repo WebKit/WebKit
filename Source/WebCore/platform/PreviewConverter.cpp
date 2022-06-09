@@ -42,7 +42,7 @@ bool PreviewConverter::supportsMIMEType(const String& mimeType)
     if (mimeType.isNull())
         return false;
 
-    if (equalLettersIgnoringASCIICase(mimeType, "text/html"_s) || equalLettersIgnoringASCIICase(mimeType, "text/plain"_s))
+    if (equalLettersIgnoringASCIICase(mimeType, "text/html") || equalLettersIgnoringASCIICase(mimeType, "text/plain"))
         return false;
 
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> supportedMIMETypes = platformSupportedMIMETypes();
@@ -159,7 +159,7 @@ void PreviewConverter::setPasswordForTesting(const String& password)
 template<typename T>
 void PreviewConverter::iterateClients(T&& callback)
 {
-    SetForScope isInClientCallback { m_isInClientCallback, true };
+    SetForScope<bool> isInClientCallback { m_isInClientCallback, true };
     auto clientsCopy { m_clients };
     auto protectedThis { Ref { *this } };
 
@@ -201,7 +201,7 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
     if (!hasClient(client))
         return;
 
-    SetForScope isInClientCallback { m_isInClientCallback, true };
+    SetForScope<bool> isInClientCallback { m_isInClientCallback, true };
     auto protectedThis { Ref { *this } };
 
     client.previewConverterDidStartUpdating(*this);

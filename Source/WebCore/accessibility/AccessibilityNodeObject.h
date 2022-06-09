@@ -53,7 +53,6 @@ public:
 
     bool canvasHasFallbackContent() const override;
 
-    bool isBusy() const override;
     bool isControl() const override;
     bool isFieldset() const override;
     bool isGroup() const override;
@@ -134,7 +133,7 @@ public:
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
 
-    void updateRole() override;
+    void updateAccessibilityRole() override;
 
     void increment() override;
     void decrement() override;
@@ -154,11 +153,6 @@ protected:
     bool isDetached() const override { return !m_node; }
 
     virtual AccessibilityRole determineAccessibilityRole();
-    enum class TreatStyleFormatGroupAsInline {
-        No,
-        Yes
-    };
-    AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
     void addChildren() override;
 
     bool canHaveChildren() const override;
@@ -170,19 +164,12 @@ protected:
     void changeValueByStep(bool increase);
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
     bool isGenericFocusableElement() const;
-
-    bool elementAttributeValue(const QualifiedName&) const;
-
     bool isLabelable() const;
-    AccessibilityObject* correspondingControlForLabelElement() const override;
-    AccessibilityObject* correspondingLabelForControlElement() const override;
     HTMLLabelElement* labelForElement(Element*) const;
     String textForLabelElement(Element*) const;
-    HTMLLabelElement* labelElementContainer() const;
-
     String ariaAccessibilityDescription() const;
-    Vector<Element*> ariaLabeledByElements() const;
-    String descriptionForElements(Vector<Element*>&&) const;
+    void ariaLabeledByElements(Vector<Element*>& elements) const;
+    String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
     LayoutRect boundingBoxRect() const override;
     String ariaDescribedByAttribute() const override;
     
@@ -191,7 +178,6 @@ protected:
     AccessibilityObject* menuButtonForMenu() const;
     AccessibilityObject* captionForFigure() const;
     virtual void titleElementText(Vector<AccessibilityText>&) const;
-    bool exposesTitleUIElement() const override;
 
 private:
     bool isAccessibilityNodeObject() const final { return true; }
@@ -205,10 +191,7 @@ private:
     bool postKeyboardKeysForValueChange(bool increase);
     void setNodeValue(bool increase, float value);
     bool performDismissAction() final;
-    bool hasTextAlternative() const;
     
-    bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
-
     Node* m_node;
 };
 

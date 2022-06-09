@@ -333,7 +333,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     if (_isDismissingDatePicker)
         return;
 
-    SetForScope isDismissingDatePicker { _isDismissingDatePicker, YES };
+    SetForScope<BOOL> isDismissingDatePicker { _isDismissingDatePicker, YES };
     [_view accessoryDone];
 }
 
@@ -341,7 +341,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
 {
     if (_datePickerPresentation) {
         if (!_isDismissingDatePicker) {
-            SetForScope isDismissingDatePicker { _isDismissingDatePicker, YES };
+            SetForScope<BOOL> isDismissingDatePicker { _isDismissingDatePicker, YES };
             [_datePickerPresentation dismissPresentationAnimated:NO];
         }
 
@@ -416,11 +416,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     return UIEdgeInsetsZero;
 }
 
-#if HAVE(UI_CONTEXT_MENU_PREVIEW_ITEM_IDENTIFIER)
-- (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
-#else
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
-#endif
 {
     return [_view _createTargetedContextMenuHintPreviewForFocusedElement];
 }

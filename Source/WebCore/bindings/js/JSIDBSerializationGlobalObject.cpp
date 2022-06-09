@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-const ClassInfo JSIDBSerializationGlobalObject::s_info = { "JSIDBSerializationGlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIDBSerializationGlobalObject) };
+const ClassInfo JSIDBSerializationGlobalObject::s_info = { "JSIDBSerializationGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIDBSerializationGlobalObject) };
 
 inline JSIDBSerializationGlobalObject::JSIDBSerializationGlobalObject(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& impl)
     : Base(vm, structure, WTFMove(impl))
@@ -52,7 +52,7 @@ void JSIDBSerializationGlobalObject::finishCreation(VM& vm)
     Base::finishCreation(vm);
 }
 
-GCClient::IsoSubspace* JSIDBSerializationGlobalObject::subspaceForImpl(VM& vm)
+IsoSubspace* JSIDBSerializationGlobalObject::subspaceForImpl(VM& vm)
 {
     return &static_cast<JSVMClientData*>(vm.clientData)->idbSerializationSpace();
 }

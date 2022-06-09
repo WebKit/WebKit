@@ -34,7 +34,7 @@ namespace WebCore {
 
 Color SVGAnimationColorFunction::colorFromString(SVGElement& targetElement, const String& string)
 {
-    static MainThreadNeverDestroyed<const AtomString> currentColor("currentColor"_s);
+    static MainThreadNeverDestroyed<const AtomString> currentColor("currentColor", AtomString::ConstructFromLiteral);
 
     if (string != currentColor.get())
         return SVGPropertyTraits<Color>::fromString(string);

@@ -29,7 +29,6 @@
 
 #include "PlatformWebView.h"
 #include <WebKit/WKTextCheckerGLib.h>
-#include <WebKit/WKViewPrivate.h>
 #include <gtk/gtk.h>
 #include <wtf/Platform.h>
 #include <wtf/RunLoop.h>
@@ -148,10 +147,8 @@ void TestController::platformConfigureViewForTest(const TestInvocation&)
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions&)
 {
-    if (m_mainWebView) {
+    if (m_mainWebView)
         m_mainWebView->dismissAllPopupMenus();
-        WKViewSetEditable(m_mainWebView->platformView(), false);
-    }
 
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
     return true;

@@ -29,10 +29,10 @@ namespace WebCore {
 class Comment final : public CharacterData {
     WTF_MAKE_ISO_ALLOCATED(Comment);
 public:
-    static Ref<Comment> create(Document&, String&&);
+    static Ref<Comment> create(Document&, const String&);
 
 private:
-    Comment(Document&, String&&);
+    Comment(Document&, const String&);
 
     String nodeName() const override;
     NodeType nodeType() const override;

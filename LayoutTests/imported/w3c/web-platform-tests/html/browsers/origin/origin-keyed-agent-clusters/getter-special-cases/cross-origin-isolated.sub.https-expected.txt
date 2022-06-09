@@ -1,0 +1,8 @@
+Blocked access to external URL https://www1.localhost:9443/html/browsers/origin/origin-keyed-agent-clusters/resources/coep-frame.html
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL self: originAgentCluster must equal true assert_equals: expected (boolean) true but got (undefined) undefined
+TIMEOUT child: originAgentCluster must equal true Test timed out
+

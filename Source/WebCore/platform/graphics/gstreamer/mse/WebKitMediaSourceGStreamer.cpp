@@ -722,7 +722,8 @@ static gboolean webKitMediaSrcSendEvent(GstElement* element, GstEvent* event)
         return true;
     }
     default:
-        return GST_ELEMENT_CLASS(webkit_media_src_parent_class)->send_event(element, event);
+        GST_DEBUG_OBJECT(element, "Rejecting unsupported event: %" GST_PTR_FORMAT, event);
+        return false;
     }
 }
 

@@ -24,27 +24,29 @@
 #include "PlatformDisplay.h"
 #include <wtf/Noncopyable.h>
 
-#if USE(EGL) && !PLATFORM(GTK)
-// FIXME: For now default to the GBM EGL platform, but this should really be
-// somehow deducible from the build configuration. This is needed with libepoxy
-// as it could have been configured with X11 support enabled, resulting in
-// transitive inclusions of headers with definitions that clash with WebCore.
-#define __GBM__ 1
 #if USE(LIBEPOXY)
-#include <epoxy/egl.h>
-#else // !USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#elif USE(OPENGL_ES)
+#include <GLES2/gl2.h>
+#endif
+
+#if USE(EGL) && !PLATFORM(GTK)
+#if PLATFORM(WPE)
+// FIXME: For now default to the GBM EGL platform, but this should really be
+// somehow deducible from the build configuration.
+#define __GBM__ 1
+#endif // PLATFORM(WPE)
 #include <EGL/eglplatform.h>
-#endif // USE(LIBEPOXY)
 typedef EGLNativeWindowType GLNativeWindowType;
 #else // !USE(EGL) || PLATFORM(GTK)
 typedef uint64_t GLNativeWindowType;
-#endif // USE(EGL) && !PLATFORM(GTK)
+#endif
 
 #if USE(CAIRO)
 typedef struct _cairo_device cairo_device_t;
 #endif
 
-typedef void* GCGLContext;
+typedef void* PlatformGraphicsContextGL;
 
 // X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
 // As a workaround, we explicitly undef them here.
@@ -108,7 +110,7 @@ public:
 
     virtual bool isEGLContext() const = 0;
 
-    virtual GCGLContext platformContext() = 0;
+    virtual PlatformGraphicsContextGL platformContext() = 0;
 
 protected:
     GLContext(PlatformDisplay&);
@@ -118,10 +120,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#define SPECIALIZE_TYPE_TRAITS_GLCONTEXT(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-    static bool isType(const WebCore::GLContext& context) { return context.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // GLContext_h

@@ -31,6 +31,7 @@
 #include "CachedImage.h"
 #include "ColorBlending.h"
 #include "Document.h"
+#include "DocumentTimeline.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -59,7 +60,6 @@
 #include "RenderView.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
-#include "Styleable.h"
 #include "TextBoxPainter.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
@@ -211,7 +211,7 @@ void RenderBoxModelObject::updateFromStyle()
     setHorizontalWritingMode(styleToUse.isHorizontalWritingMode());
     if (styleToUse.isFlippedBlocksWritingMode())
         view().frameView().setHasFlippedBlockRenderers(true);
-    setPaintContainmentApplies(shouldApplyPaintContainment());
+    setPaintContainmentApplies(shouldApplyPaintContainment(*this));
 }
 
 static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
@@ -722,20 +722,13 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
     // the painter it should just modify the clip.
     PaintInfo maskInfo(maskImageContext, LayoutRect { maskRect }, PaintPhase::TextClip, PaintBehavior::ForceBlackText);
     if (inlineBox) {
-        auto paintOffset = scrolledPaintRect.location() - toLayoutSize(LayoutPoint(inlineBox->visualRectIgnoringBlockDirection().location()));
+        auto paintOffset = scrolledPaintRect.location() - toLayoutSize(LayoutPoint(inlineBox->rect().location()));
 
         for (auto box = inlineBox->firstLeafBox(), end = inlineBox->endLeafBox(); box != end; box.traverseNextOnLine()) {
             if (!box->isText())
                 continue;
-            if (auto* legacyTextBox = downcast<LegacyInlineTextBox>(box->legacyInlineBox())) {
-                LegacyTextBoxPainter textBoxPainter(*legacyTextBox, maskInfo, paintOffset);
-                textBoxPainter.paint();
-                continue;
-            }
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-            ModernTextBoxPainter textBoxPainter(box->modernPath().inlineContent(), box->modernPath().box(), maskInfo, paintOffset);
+            TextBoxPainter textBoxPainter(downcast<InlineIterator::TextBoxIterator>(box), maskInfo, paintOffset);
             textBoxPainter.paint();
-#endif
         }
         return;
     }
@@ -901,7 +894,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         maskRect.intersect(snapRectToDevicePixels(paintInfo.rect, deviceScaleFactor));
 
         // Now create the mask.
-        maskImage = context.createAlignedImageBuffer(maskRect.size());
+        maskImage = ImageBuffer::createCompatibleBuffer(maskRect.size(), DestinationColorSpace::SRGB(), context);
         if (!maskImage)
             return;
         paintMaskForTextFillBox(maskImage.get(), maskRect, box, scrolledPaintRect);
@@ -2093,8 +2086,10 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext& graphicsContext,
                 gapLength += (dashLength  / numberOfGaps);
             }
 
-            auto lineDash = DashArray::from(dashLength, gapLength);
-            graphicsContext.setLineDash(WTFMove(lineDash), dashLength);
+            DashArray lineDash;
+            lineDash.append(dashLength);
+            lineDash.append(gapLength);
+            graphicsContext.setLineDash(lineDash, dashLength);
         }
         
         // FIXME: stroking the border path causes issues with tight corners:
@@ -2218,9 +2213,13 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
     //         0----------------3
     //
     Vector<FloatPoint> quad;
+    quad.reserveInitialCapacity(4);
     switch (side) {
     case BoxSide::Top:
-        quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMinYCorner(), outerRect.maxXMinYCorner() };
+        quad.uncheckedAppend(outerRect.minXMinYCorner());
+        quad.uncheckedAppend(innerRect.minXMinYCorner());
+        quad.uncheckedAppend(innerRect.maxXMinYCorner());
+        quad.uncheckedAppend(outerRect.maxXMinYCorner());
 
         if (!innerBorder.radii().topLeft().isZero())
             findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
@@ -2230,7 +2229,10 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BoxSide::Left:
-        quad = { outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), outerRect.minXMaxYCorner() };
+        quad.uncheckedAppend(outerRect.minXMinYCorner());
+        quad.uncheckedAppend(innerRect.minXMinYCorner());
+        quad.uncheckedAppend(innerRect.minXMaxYCorner());
+        quad.uncheckedAppend(outerRect.minXMaxYCorner());
 
         if (!innerBorder.radii().topLeft().isZero())
             findIntersection(outerRect.minXMinYCorner(), innerRect.minXMinYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMinYCorner(), quad[1]);
@@ -2240,7 +2242,10 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BoxSide::Bottom:
-        quad = { outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
+        quad.uncheckedAppend(outerRect.minXMaxYCorner());
+        quad.uncheckedAppend(innerRect.minXMaxYCorner());
+        quad.uncheckedAppend(innerRect.maxXMaxYCorner());
+        quad.uncheckedAppend(outerRect.maxXMaxYCorner());
 
         if (!innerBorder.radii().bottomLeft().isZero())
             findIntersection(outerRect.minXMaxYCorner(), innerRect.minXMaxYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
@@ -2250,7 +2255,10 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext& graphicsContex
         break;
 
     case BoxSide::Right:
-        quad = { outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.maxXMaxYCorner(), outerRect.maxXMaxYCorner() };
+        quad.uncheckedAppend(outerRect.maxXMinYCorner());
+        quad.uncheckedAppend(innerRect.maxXMinYCorner());
+        quad.uncheckedAppend(innerRect.maxXMaxYCorner());
+        quad.uncheckedAppend(outerRect.maxXMaxYCorner());
 
         if (!innerBorder.radii().topRight().isZero())
             findIntersection(outerRect.maxXMinYCorner(), innerRect.maxXMinYCorner(), innerRect.minXMinYCorner(), innerRect.maxXMaxYCorner(), quad[1]);
@@ -2691,8 +2699,10 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>
 
 bool RenderBoxModelObject::hasRunningAcceleratedAnimations() const
 {
-    if (auto styleable = Styleable::fromRenderer(*this))
-        return styleable->runningAnimationsAreAllAccelerated();
+    if (auto* node = element()) {
+        if (auto* timeline = node->document().existingTimeline())
+            return timeline->runningAnimationsForRendererAreAllAccelerated(*this);
+    }
     return false;
 }
 
@@ -2711,13 +2721,6 @@ void RenderBoxModelObject::collectAbsoluteQuadsForContinuation(Vector<FloatQuad>
         }
         nextInContinuation->absoluteQuadsIgnoringContinuation({ }, quads, wasFixed);
     }
-}
-
-void RenderBoxModelObject::applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect&, OptionSet<RenderStyle::TransformOperationOption>) const
-{
-    // applyTransform() is only used through RenderLayer*, which only invokes this for RenderBox derived renderers, thus not for
-    // RenderInline/RenderLineBreak - the other two renderers that inherit from RenderBoxModelObject.
-    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

@@ -15,14 +15,18 @@
 namespace sh
 {
 
-class DriverUniformMetal : public DriverUniformExtended
+class DriverUniformMetal : public DriverUniform
 {
   public:
-    DriverUniformMetal(DriverUniformMode mode) : DriverUniformExtended(mode) {}
-    DriverUniformMetal() : DriverUniformExtended(DriverUniformMode::InterfaceBlock) {}
+    DriverUniformMetal(DriverUniformMode mode) : DriverUniform(mode) {}
+    DriverUniformMetal() : DriverUniform(DriverUniformMode::InterfaceBlock) {}
     ~DriverUniformMetal() override {}
 
-    TIntermTyped *getCoverageMaskField() const;
+    TIntermTyped *getHalfRenderAreaRef() const override;
+    TIntermTyped *getFlipXYRef() const override;
+    TIntermTyped *getNegFlipXYRef() const override;
+    TIntermTyped *getNegFlipYRef() const override;
+    TIntermTyped *getCoverageMaskFieldRef() const;
 
   protected:
     TFieldList *createUniformFields(TSymbolTable *symbolTable) override;

@@ -24,8 +24,6 @@
  */
 
 function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, callback) {
-    "use strict";
-
     ancestorElement = ancestorElement || document;
 
     switch (strategy) {
@@ -68,8 +66,8 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
 
             case "link text":
                 let linkTextResult = [];
-                for (let link of ancestorElement.querySelectorAll("a")) {
-                    if (utils.getText(link).trim() == query) {
+                for (let link of ancestorElement.getElementsByTagName("a")) {
+                    if (link.text.trim() == query) {
                         linkTextResult.push(link);
                         if (firstResultOnly)
                             break;
@@ -81,8 +79,8 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
 
             case "partial link text":
                 let partialLinkResult = [];
-                for (let link of ancestorElement.querySelectorAll("a")) {
-                    if (utils.getText(link).includes(query)) {
+                for (let link of ancestorElement.getElementsByTagName("a")) {
+                    if (link.text.includes(query)) {
                         partialLinkResult.push(link);
                         if (firstResultOnly)
                             break;

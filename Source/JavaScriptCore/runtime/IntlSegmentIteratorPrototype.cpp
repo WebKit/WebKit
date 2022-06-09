@@ -39,7 +39,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlSegmentIteratorPrototypeFuncNext);
 
 namespace JSC {
 
-const ClassInfo IntlSegmentIteratorPrototype::s_info = { "Segment String Iterator"_s, &Base::s_info, &segmentIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmentIteratorPrototype) };
+const ClassInfo IntlSegmentIteratorPrototype::s_info = { "Segment String Iterator", &Base::s_info, &segmentIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmentIteratorPrototype) };
 
 /* Source for IntlSegmentIteratorPrototype.lut.h
 @begin segmentIteratorPrototypeTable
@@ -67,7 +67,7 @@ IntlSegmentIteratorPrototype::IntlSegmentIteratorPrototype(VM& vm, Structure* st
 void IntlSegmentIteratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -77,7 +77,7 @@ JSC_DEFINE_HOST_FUNCTION(intlSegmentIteratorPrototypeFuncNext, (JSGlobalObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* segmentIterator = jsDynamicCast<IntlSegmentIterator*>(callFrame->thisValue());
+    auto* segmentIterator = jsDynamicCast<IntlSegmentIterator*>(vm, callFrame->thisValue());
     if (!segmentIterator)
         return throwVMTypeError(globalObject, scope, "Intl.SegmentIterator.prototype.next called on value that's not a SegmentIterator"_s);
 

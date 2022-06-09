@@ -49,11 +49,6 @@ public:
         return adoptRef(*new SVGTransform(value.type(), value.matrix()->value(), value.angle(), value.rotationCenter()));
     }
 
-    static Ref<SVGTransform> create(SVGTransformValue&& value)
-    {
-        return adoptRef(*new SVGTransform(WTFMove(value)));
-    }
-
     template<typename T>
     static ExceptionOr<Ref<SVGTransform>> create(ExceptionOr<T>&& value)
     {
@@ -169,12 +164,6 @@ private:
     SVGTransform(SVGTransformValue::SVGTransformType type, const AffineTransform& transform = { }, float angle = 0, const FloatPoint& rotationCenter = { })
         : Base(SVGTransformValue(type, SVGMatrix::create(this, SVGPropertyAccess::ReadWrite, transform), angle, rotationCenter))
     {
-    }
-
-    SVGTransform(SVGTransformValue&& value)
-        : Base(WTFMove(value))
-    {
-        m_value.matrix()->attach(this, SVGPropertyAccess::ReadWrite);
     }
 
     SVGPropertyOwner* owner() const override { return m_owner; }

@@ -32,7 +32,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-const ClassInfo JSRemoteDOMWindowBase::s_info = { "Window"_s, &JSDOMGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSRemoteDOMWindowBase) };
+const ClassInfo JSRemoteDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSRemoteDOMWindowBase) };
 
 const GlobalObjectMethodTable JSRemoteDOMWindowBase::s_globalObjectMethodTable = {
     nullptr, // shellSupportsRichSourceInfo
@@ -53,7 +53,6 @@ const GlobalObjectMethodTable JSRemoteDOMWindowBase::s_globalObjectMethodTable =
     nullptr, // defaultLanguage
     nullptr, // compileStreaming
     nullptr, // instantiateStreaming
-    nullptr, // deriveShadowRealmGlobalObject
 };
 
 JSRemoteDOMWindowBase::JSRemoteDOMWindowBase(VM& vm, Structure* structure, RefPtr<RemoteDOMWindow>&& window, JSWindowProxy* proxy)

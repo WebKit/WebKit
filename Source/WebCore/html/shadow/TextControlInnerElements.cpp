@@ -29,7 +29,6 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
-#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -126,7 +125,7 @@ std::optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(c
         // style to calculate em lengths. Since the element might not be in a document, just pass nullptr
         // for the root element style, the parent element style, and the render view.
         auto emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EMS);
-        int pixels = emSize->computeLength<int>(CSSToLengthConversionData { *newStyle, nullptr, nullptr, nullptr });
+        int pixels = emSize->computeLength<int>(CSSToLengthConversionData { newStyle.get(), nullptr, nullptr, nullptr, 1.0, std::nullopt });
         newStyle->setFlexBasis(Length { pixels, LengthType::Fixed });
     }
 
@@ -151,7 +150,9 @@ Ref<TextControlInnerTextElement> TextControlInnerTextElement::create(Document& d
 
 void TextControlInnerTextElement::updateInnerTextElementEditabilityImpl(bool isEditable, bool initialization)
 {
-    const auto& value = isEditable ? plaintextOnlyAtom() : falseAtom();
+    static MainThreadNeverDestroyed<const AtomString> plainTextOnlyName("plaintext-only", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> falseName("false", AtomString::ConstructFromLiteral);
+    const auto& value = isEditable ? plainTextOnlyName.get() : falseName.get();
     if (initialization) {
         Vector<Attribute> attributes { Attribute(contenteditableAttr, value) };
         parserSetAttributes(attributes);
@@ -245,7 +246,7 @@ std::optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCusto
         return std::nullopt;
 
     if (shadowHostStyle && shadowHostStyle->effectiveAppearance() != SearchFieldPart) {
-        SetForScope canAdjustStyleForAppearance(m_canAdjustStyleForAppearance, false);
+        SetForScope<bool> canAdjustStyleForAppearance(m_canAdjustStyleForAppearance, false);
         return resolveStyle(resolutionContext);
     }
 
@@ -278,7 +279,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-bool SearchFieldResultsButtonElement::willRespondToMouseClickEventsWithEditability(Editability) const
+bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
 {
     return true;
 }
@@ -296,11 +297,12 @@ Ref<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::create(Docum
 {
     auto element = adoptRef(*new SearchFieldCancelButtonElement(document));
 
+    static MainThreadNeverDestroyed<const AtomString> buttonName("button", AtomString::ConstructFromLiteral);
     element->setPseudo(ShadowPseudoIds::webkitSearchCancelButton());
 #if !PLATFORM(IOS_FAMILY)
-    element->setAttributeWithoutSynchronization(aria_labelAttr, AtomString { AXSearchFieldCancelButtonText() });
+    element->setAttributeWithoutSynchronization(aria_labelAttr, AXSearchFieldCancelButtonText());
 #endif
-    element->setAttributeWithoutSynchronization(roleAttr, HTMLNames::buttonTag->localName());
+    element->setAttributeWithoutSynchronization(roleAttr, buttonName);
     return element;
 }
 
@@ -338,13 +340,13 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-bool SearchFieldCancelButtonElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
+bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 {
     const RefPtr<HTMLInputElement> input = downcast<HTMLInputElement>(shadowHost());
     if (input && !input->isDisabledOrReadOnly())
         return true;
 
-    return HTMLDivElement::willRespondToMouseClickEventsWithEditability(editability);
+    return HTMLDivElement::willRespondToMouseClickEvents();
 }
 #endif
 

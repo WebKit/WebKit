@@ -34,7 +34,6 @@
 #include "JSFunction.h"
 #include "LinkTimeConstant.h"
 #include "ObjectPrototype.h"
-#include <wtf/Hasher.h>
 
 namespace JSC {
 
@@ -63,17 +62,19 @@ ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSaneConcurrently(Struct
 
 ALWAYS_INLINE bool JSGlobalObject::arrayPrototypeChainIsSane()
 {
+    VM& vm = this->vm();
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-    Structure* arrayPrototypeStructure = arrayPrototype()->structure();
-    Structure* objectPrototypeStructure = objectPrototype()->structure();
+    Structure* arrayPrototypeStructure = arrayPrototype()->structure(vm);
+    Structure* objectPrototypeStructure = objectPrototype()->structure(vm);
     return arrayPrototypeChainIsSaneConcurrently(arrayPrototypeStructure, objectPrototypeStructure);
 }
 
 ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSane()
 {
+    VM& vm = this->vm();
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-    Structure* stringPrototypeStructure = stringPrototype()->structure();
-    Structure* objectPrototypeStructure = objectPrototype()->structure();
+    Structure* stringPrototypeStructure = stringPrototype()->structure(vm);
+    Structure* objectPrototypeStructure = objectPrototype()->structure(vm);
     return stringPrototypeChainIsSaneConcurrently(stringPrototypeStructure, objectPrototypeStructure);
 }
 
@@ -152,7 +153,7 @@ inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const Weak
 {
     if (!value)
         return 0;
-    return hash(value->propertyName(), value->customFunctionPointer(), value->slotBaseClassInfoIfExists());
+    return hash(value->propertyName(), value->customFunctionPointer());
 }
 
 template<typename T>
@@ -164,11 +165,12 @@ inline bool JSGlobalObject::WeakCustomGetterOrSetterHash<T>::equal(const Weak<T>
 }
 
 template<typename T>
-inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const PropertyName& propertyName, typename T::CustomFunctionPointer functionPointer, const ClassInfo* classInfo)
+inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const PropertyName& propertyName, typename T::CustomFunctionPointer functionPointer)
 {
+    unsigned hash = DefaultHash<typename T::CustomFunctionPointer>::hash(functionPointer);
     if (!propertyName.isNull())
-        return WTF::computeHash(functionPointer, propertyName.uid()->existingSymbolAwareHash(), classInfo);
-    return WTF::computeHash(functionPointer, classInfo);
+        hash = WTF::pairIntHash(hash, propertyName.uid()->existingSymbolAwareHash());
+    return hash;
 }
 
 } // namespace JSC

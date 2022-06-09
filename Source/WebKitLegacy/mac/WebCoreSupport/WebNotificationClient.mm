@@ -36,7 +36,6 @@
 #import <WebCore/ScriptExecutionContext.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/CompletionHandler.h>
-#import <wtf/Scope.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 using namespace WebCore;
@@ -59,10 +58,8 @@ WebNotificationClient::WebNotificationClient(WebView *webView)
 {
 }
 
-bool WebNotificationClient::show(Notification& notification, CompletionHandler<void()>&& callback)
+bool WebNotificationClient::show(Notification& notification)
 {
-    auto scope = makeScopeExit([&callback] { callback(); });
-
     if (![m_webView _notificationProvider])
         return false;
 

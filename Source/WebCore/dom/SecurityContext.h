@@ -58,7 +58,6 @@ enum SandboxFlag {
     SandboxDocumentDomain       = 1 << 11,
     SandboxModals               = 1 << 12,
     SandboxStorageAccessByUserActivation = 1 << 13,
-    SandboxTopNavigationToCustomProtocols = 1 << 14,
     SandboxAll                  = -1 // Mask with all bits set to 1.
 };
 
@@ -100,7 +99,7 @@ public:
 
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 
-    static SandboxFlags parseSandboxPolicy(StringView policy, String& invalidTokensErrorMessage);
+    static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
     static bool isSupportedSandboxPolicy(StringView);
 
     enum MixedContentType {

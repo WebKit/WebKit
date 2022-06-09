@@ -572,7 +572,6 @@ asm (
 #else
     "ret" "\n"
 #endif
-    ".previous" "\n"
 );
 #endif // COMPILER(GCC_COMPATIBLE)
 

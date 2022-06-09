@@ -78,8 +78,7 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
 
     if (UNLIKELY(m_contextNodeIsFormElement)) {
         ASSERT(is<HTMLFormElement>(*m_node));
-        auto& eventNames = WebCore::eventNames();
-        if ((event.type() == eventNames.submitEvent || event.type() == eventNames.resetEvent)
+        if ((event.type() == eventNames().submitEvent || event.type() == eventNames().resetEvent)
             && event.eventPhase() != Event::CAPTURING_PHASE && event.target() != m_node && is<Node>(event.target())) {
             event.stopPropagation();
             return;

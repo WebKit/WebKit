@@ -1,8 +1,0 @@
---- !tapi-tbd-v3
-archs:           [ x86_64, arm64, arm64e ]
-install-name:    '/System/Library/PrivateFrameworks/InstallCoordination.framework/InstallCoordination'
-platform: ios
-exports:
-  - archs:           [ x86_64, arm64, arm64e ]
-    objc-classes:    [ IXAppInstallCoordinator, IXOpaqueDataPromise, IXOwnedDataPromise, IXPlaceholder, IXPlaceholderAttributes, IXPromisedInMemoryDictionary, IXPromisedOutOfBandTransfer, IXRestoringDemotedAppInstallCoordinator ]
-...

@@ -41,8 +41,6 @@ PAS_BEGIN_EXTERN_C;
 #define MINALIGN32_MINALIGN_SHIFT ((size_t)5)
 #define MINALIGN32_MINALIGN_SIZE ((size_t)1 << MINALIGN32_MINALIGN_SHIFT)
 
-#define MINALIGN32_SMALL_SHARING_SHIFT 3
-
 PAS_API void minalign32_heap_config_activate(void);
 
 #define MINALIGN32_HEAP_CONFIG PAS_BASIC_HEAP_CONFIG( \
@@ -53,13 +51,13 @@ PAS_API void minalign32_heap_config_activate(void);
     .dump_type = pas_simple_type_as_heap_type_dump, \
     .check_deallocation = false, \
     .small_segregated_min_align_shift = MINALIGN32_MINALIGN_SHIFT, \
-    .small_segregated_sharing_shift = MINALIGN32_SMALL_SHARING_SHIFT, \
+    .small_segregated_sharing_shift = PAS_SMALL_SHARING_SHIFT, \
     .small_segregated_page_size = PAS_SMALL_PAGE_DEFAULT_SIZE, \
     .small_segregated_wasteage_handicap = PAS_SMALL_PAGE_HANDICAP, \
     .small_exclusive_segregated_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode, \
     .small_shared_segregated_logging_mode = pas_segregated_deallocation_size_oblivious_logging_mode, \
     .small_exclusive_segregated_enable_empty_word_eligibility_optimization = true, \
-    .small_shared_segregated_enable_empty_word_eligibility_optimization = false, \
+    .small_shared_segregated_enable_empty_word_eligibility_optimization = true, \
     .small_segregated_use_reversed_current_word = true, \
     .enable_view_cache = true, \
     .use_small_bitfit = true, \
@@ -77,8 +75,7 @@ PAS_API void minalign32_heap_config_activate(void);
     .medium_bitfit_min_align_shift = PAS_MIN_MEDIUM_ALIGN_SHIFT, \
     .use_marge_bitfit = true, \
     .marge_bitfit_min_align_shift = PAS_MIN_MARGE_ALIGN_SHIFT, \
-    .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE, \
-    .pgm_enabled = false)
+    .marge_bitfit_page_size = PAS_MARGE_PAGE_DEFAULT_SIZE)
 
 PAS_API extern pas_heap_config minalign32_heap_config;
 

@@ -87,7 +87,7 @@ void AVTrackPrivateAVFObjCImpl::initializeAssetTrack()
         return;
 
     [m_assetTrack loadValuesAsynchronouslyForKeys:assetTrackConfigurationKeyNames() completionHandler:[weakThis = WeakPtr(this)] () mutable {
-        callOnMainThread([weakThis = WTFMove(weakThis)] {
+        callOnMainRunLoop([weakThis = WTFMove(weakThis)] {
             if (weakThis && weakThis->m_audioTrackConfigurationObserver)
                 (*weakThis->m_audioTrackConfigurationObserver)();
             if (weakThis && weakThis->m_videoTrackConfigurationObserver)
@@ -218,9 +218,9 @@ AtomString AVTrackPrivateAVFObjCImpl::label() const
 AtomString AVTrackPrivateAVFObjCImpl::language() const
 {
     if (m_assetTrack)
-        return AtomString { languageForAVAssetTrack(m_assetTrack.get()) };
+        return languageForAVAssetTrack(m_assetTrack.get());
     if (m_mediaSelectionOption)
-        return AtomString { languageForAVMediaSelectionOption(m_mediaSelectionOption->avMediaSelectionOption()) };
+        return languageForAVMediaSelectionOption(m_mediaSelectionOption->avMediaSelectionOption());
 
     ASSERT_NOT_REACHED();
     return emptyAtom();

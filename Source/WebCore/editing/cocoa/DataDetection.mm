@@ -32,11 +32,9 @@
 #import "CSSStyleDeclaration.h"
 #import "ColorConversion.h"
 #import "ColorSerialization.h"
-#import "CommonAtomStrings.h"
 #import "DataDetectionResultsStorage.h"
 #import "Editing.h"
 #import "ElementAncestorIterator.h"
-#import "ElementRareData.h"
 #import "ElementTraversal.h"
 #import "FrameView.h"
 #import "HTMLAnchorElement.h"
@@ -44,7 +42,6 @@
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
-#import "ImageOverlay.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
 #import "QualifiedName.h"
@@ -184,7 +181,7 @@ bool DataDetection::isDataDetectorLink(Element& element)
 
 bool DataDetection::requiresExtendedContext(Element& element)
 {
-    return equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr), "calendar-event"_s);
+    return equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr), "calendar-event");
 }
 
 String DataDetection::dataDetectorIdentifier(Element& element)
@@ -276,7 +273,7 @@ static void removeResultLinksFromAnchor(Element& element)
     if (!elementParent)
         return;
     
-    bool elementIsDDAnchor = is<HTMLAnchorElement>(element) && equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s);
+    bool elementIsDDAnchor = is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
     if (!elementIsDDAnchor)
         return;
 
@@ -292,7 +289,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
     for (Node* node = &startNode; node; node = NodeTraversal::next(*node)) {
         if (is<HTMLAnchorElement>(*node)) {
             auto& anchor = downcast<HTMLAnchorElement>(*node);
-            if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+            if (!equalIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
                 return true;
             removeResultLinksFromAnchor(anchor);
         }
@@ -301,7 +298,7 @@ static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
             // If we found the end node and no link, return false unless an ancestor node is a link.
             // The only ancestors not tested at this point are in the direct line from self's parent to the top.
             for (auto& anchor : ancestorsOfType<HTMLAnchorElement>(startNode)) {
-                if (!equalLettersIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s))
+                if (!equalIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
                     return true;
                 removeResultLinksFromAnchor(anchor);
             }
@@ -582,23 +579,23 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
                     lastTextNodeToUpdate->setData(lastNodeContent);
                 contentOffset = 0;
                 if (range.start.offset > 0)
-                    textNodeData = currentTextNode.data().left(range.start.offset);
+                    textNodeData = currentTextNode.data().substring(0, range.start.offset);
             } else
                 textNodeData = currentTextNode.data().substring(contentOffset, range.start.offset - contentOffset);
 
             if (!textNodeData.isEmpty()) {
-                parentNode->insertBefore(Text::create(document, WTFMove(textNodeData)), &currentTextNode);
+                parentNode->insertBefore(Text::create(document, textNodeData), &currentTextNode);
                 contentOffset = range.start.offset;
             }
 
             // Create the actual anchor node and insert it before the current node.
             textNodeData = currentTextNode.data().substring(range.start.offset, range.end.offset - range.start.offset);
-            auto newTextNode = Text::create(document, WTFMove(textNodeData));
+            auto newTextNode = Text::create(document, textNodeData);
             parentNode->insertBefore(newTextNode.copyRef(), &currentTextNode);
             
             Ref<HTMLAnchorElement> anchorElement = HTMLAnchorElement::create(document);
             anchorElement->setHref(correspondingURL);
-            anchorElement->setDir("ltr"_s);
+            anchorElement->setDir("ltr");
 
             if (shouldUseLightLinks) {
                 document.updateStyleIfNeeded();
@@ -627,7 +624,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
             anchorElement->appendChild(WTFMove(newTextNode));
 
             // Add a special attribute to mark this URLification as the result of data detectors.
-            anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectorsAttr, trueAtom());
+            anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectorsAttr, AtomString("true", AtomString::ConstructFromLiteral));
             anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_typeAttr, dataDetectorTypeForCategory(PAL::softLink_DataDetectorsCore_DDResultGetCategory(coreResult)));
             anchorElement->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, identifier);
 
@@ -689,24 +686,7 @@ bool DataDetection::isDataDetectorAttribute(const QualifiedName& name)
 
 bool DataDetection::isDataDetectorElement(const Element& element)
 {
-    return is<HTMLAnchorElement>(element) && equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"_s);
-}
-
-std::optional<std::pair<Ref<HTMLElement>, IntRect>> DataDetection::findDataDetectionResultElementInImageOverlay(const FloatPoint& location, const HTMLElement& imageOverlayHost)
-{
-    Vector<Ref<HTMLElement>> dataDetectorElements;
-    for (auto& child : descendantsOfType<HTMLElement>(*imageOverlayHost.shadowRoot())) {
-        if (ImageOverlay::isDataDetectorResult(child))
-            dataDetectorElements.append(child);
-    }
-
-    for (auto& element : dataDetectorElements) {
-        auto elementBounds = element->boundsInRootViewSpace();
-        if (elementBounds.contains(roundedIntPoint(location)))
-            return { { WTFMove(element), elementBounds } };
-    }
-
-    return std::nullopt;
+    return is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
 }
 
 #if ENABLE(IMAGE_ANALYSIS)
@@ -716,7 +696,7 @@ Ref<HTMLDivElement> DataDetection::createElementForImageOverlay(Document& docume
     auto container = HTMLDivElement::create(document);
     if (RefPtr frame = document.frame()) {
         auto resultIdentifier = frame->dataDetectionResults().addImageOverlayDataDetectionResult(info.result.get());
-        container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, AtomString::number(resultIdentifier.toUInt64()));
+        container->setAttributeWithoutSynchronization(x_apple_data_detectors_resultAttr, String::number(resultIdentifier.toUInt64()));
     }
     return container;
 }

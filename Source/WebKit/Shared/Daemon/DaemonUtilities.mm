@@ -28,11 +28,10 @@
 
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/Entitlements.h>
-#import <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {
 
-void startListeningForMachServiceConnections(const char* serviceName, ASCIILiteral entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t))
+void startListeningForMachServiceConnections(const char* serviceName, const char* entitlement, void(*connectionAdded)(xpc_connection_t), void(*connectionRemoved)(xpc_connection_t), void(*eventHandler)(xpc_object_t))
 {
     static NeverDestroyed<RetainPtr<xpc_connection_t>> listener = xpc_connection_create_mach_service(serviceName, dispatch_get_main_queue(), XPC_CONNECTION_MACH_SERVICE_LISTENER);
     xpc_connection_set_event_handler(listener.get().get(), ^(xpc_object_t peer) {
@@ -40,7 +39,7 @@ void startListeningForMachServiceConnections(const char* serviceName, ASCIILiter
             return;
 
 #if USE(APPLE_INTERNAL_SDK)
-        if (!entitlement.isNull() && !WTF::hasEntitlement(peer, entitlement)) {
+        if (entitlement && !WTF::hasEntitlement(peer, entitlement)) {
             NSLog(@"Connection attempted without required entitlement");
             xpc_connection_cancel(peer);
             return;

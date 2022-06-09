@@ -62,7 +62,6 @@ private:
     RefPtr<WebCore::HistoryItem> itemAtIndex(int) override;
     unsigned backListCount() const override;
     unsigned forwardListCount() const override;
-    bool containsItem(const WebCore::HistoryItem&) const final;
     const WebBackForwardListCounts& cacheListCountsIfNecessary() const;
     void clearCachedListCounts();
 

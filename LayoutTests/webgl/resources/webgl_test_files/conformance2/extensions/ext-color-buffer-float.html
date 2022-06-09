@@ -284,7 +284,7 @@ function runInternalFormatQueryTest()
     debug("testing the internal format query");
 
     var maxSamples = gl.getParameter(gl.MAX_SAMPLES);
-    const formats = [gl.RGBA16F, gl.R32F, gl.RG32F, gl.RGBA32F, gl.R16F, gl.RG16F, gl.R11F_G11F_B10F];
+    var formats = new Array(gl.RGBA16F, gl.R32F, gl.RG32F, gl.RGBA32F, gl.R16F, gl.RG16F, gl.R11F_G11F_B10F);
     var firstMultiOnlyFormat = 4;
     for (var fmt = 0; fmt < formats.length; ++fmt) {
         var samples = gl.getInternalformatParameter(gl.RENDERBUFFER, formats[fmt], gl.SAMPLES);

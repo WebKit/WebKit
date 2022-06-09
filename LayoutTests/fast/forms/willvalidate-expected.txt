@@ -11,6 +11,7 @@ PASS typeof controls[i].willValidate is "boolean"
 PASS typeof controls[i].willValidate is "boolean"
 PASS typeof controls[i].willValidate is "boolean"
 PASS typeof controls[i].willValidate is "boolean"
+PASS typeof controls[i].willValidate is "boolean"
 
 Form association
 PASS input.willValidate is true
@@ -46,7 +47,7 @@ Object element
 PASS document.getElementsByTagName("object")[0].willValidate is false
 
 Keygen element
-PASS document.getElementsByTagName("keygen")[0].willValidate is undefined.
+PASS document.getElementsByTagName("keygen")[0].willValidate is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -36,6 +36,9 @@
 #include "Scavenger.h"
 
 #if BUSE(LIBPAS)
+#ifndef PAS_BMALLOC
+#define PAS_BMALLOC 1
+#endif
 #include "bmalloc_heap_inlines.h"
 #endif
 

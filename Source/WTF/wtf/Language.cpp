@@ -26,7 +26,6 @@
 #include "config.h"
 #include <wtf/Language.h>
 
-#include <wtf/CrossThreadCopier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Logging.h>
@@ -113,29 +112,6 @@ Vector<String> userPreferredLanguagesOverride()
     return preferredLanguagesOverride();
 }
 
-Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
-{
-    {
-        Locker locker { preferredLanguagesOverrideLock };
-        Vector<String>& override = preferredLanguagesOverride();
-        if (!override.isEmpty()) {
-            LOG_WITH_STREAM(Language, stream << "Languages are overridden: " << override);
-            return crossThreadCopy(override);
-        }
-    }
-
-    Locker locker { cachedPlatformPreferredLanguagesLock };
-    auto& languages = shouldMinimizeLanguages == ShouldMinimizeLanguages::Yes ? cachedMinimizedPlatformPreferredLanguages() : cachedFullPlatformPreferredLanguages();
-    if (languages.isEmpty()) {
-        LOG(Language, "userPreferredLanguages() cache miss");
-        languages = platformUserPreferredLanguages(shouldMinimizeLanguages);
-    } else
-        LOG(Language, "userPreferredLanguages() cache hit");
-    return crossThreadCopy(languages);
-}
-
-#if !PLATFORM(COCOA)
-
 void overrideUserPreferredLanguages(const Vector<String>& override)
 {
     LOG_WITH_STREAM(Language, stream << "Languages are being overridden to: " << override);
@@ -146,12 +122,44 @@ void overrideUserPreferredLanguages(const Vector<String>& override)
     languageDidChange();
 }
 
+static Vector<String> isolatedCopy(const Vector<String>& strings)
+{
+    Vector<String> copy;
+    copy.reserveInitialCapacity(strings.size());
+    for (auto& language : strings)
+        copy.uncheckedAppend(language.isolatedCopy());
+    return copy;
+}
+
+Vector<String> userPreferredLanguages(ShouldMinimizeLanguages shouldMinimizeLanguages)
+{
+    {
+        Locker locker { preferredLanguagesOverrideLock };
+        Vector<String>& override = preferredLanguagesOverride();
+        if (!override.isEmpty()) {
+            LOG_WITH_STREAM(Language, stream << "Languages are overridden: " << override);
+            return isolatedCopy(override);
+        }
+    }
+
+    Locker locker { cachedPlatformPreferredLanguagesLock };
+    auto& languages = shouldMinimizeLanguages == ShouldMinimizeLanguages::Yes ? cachedMinimizedPlatformPreferredLanguages() : cachedFullPlatformPreferredLanguages();
+    if (languages.isEmpty()) {
+        LOG(Language, "userPreferredLanguages() cache miss");
+        languages = platformUserPreferredLanguages(shouldMinimizeLanguages);
+    } else
+        LOG(Language, "userPreferredLanguages() cache hit");
+    return isolatedCopy(languages);
+}
+
+#if !PLATFORM(COCOA)
+
 static String canonicalLanguageIdentifier(const String& languageCode)
 {
     String lowercaseLanguageCode = languageCode.convertToASCIILowercase();
     
     if (lowercaseLanguageCode.length() >= 3 && lowercaseLanguageCode[2] == '_')
-        lowercaseLanguageCode = makeStringByReplacing(lowercaseLanguageCode, 2, 1, "-"_s);
+        lowercaseLanguageCode.replace(2, 1, "-");
 
     return lowercaseLanguageCode;
 }

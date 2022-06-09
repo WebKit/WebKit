@@ -43,23 +43,23 @@ void YouTubePluginReplacement::registerPluginReplacement(PluginReplacementRegist
     registrar(ReplacementPlugin(create, supportsMIMEType, supportsFileExtension, supportsURL, isEnabledBySettings));
 }
 
-Ref<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
+Ref<PluginReplacement> YouTubePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     return adoptRef(*new YouTubePluginReplacement(plugin, paramNames, paramValues));
 }
 
 bool YouTubePluginReplacement::supportsMIMEType(const String& mimeType)
 {
-    return equalLettersIgnoringASCIICase(mimeType, "application/x-shockwave-flash"_s)
-        || equalLettersIgnoringASCIICase(mimeType, "application/futuresplash"_s);
+    return equalLettersIgnoringASCIICase(mimeType, "application/x-shockwave-flash")
+        || equalLettersIgnoringASCIICase(mimeType, "application/futuresplash");
 }
 
-bool YouTubePluginReplacement::supportsFileExtension(StringView extension)
+bool YouTubePluginReplacement::supportsFileExtension(const String& extension)
 {
-    return equalLettersIgnoringASCIICase(extension, "spl"_s) || equalLettersIgnoringASCIICase(extension, "swf"_s);
+    return equalLettersIgnoringASCIICase(extension, "spl") || equalLettersIgnoringASCIICase(extension, "swf");
 }
 
-YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
+YouTubePluginReplacement::YouTubePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
     : m_parentElement(plugin)
 {
     ASSERT(paramNames.size() == paramValues.size());
@@ -77,40 +77,42 @@ RenderPtr<RenderElement> YouTubePluginReplacement::createElementRenderer(HTMLPlu
     return m_embedShadowElement->createElementRenderer(WTFMove(style), insertionPosition);
 }
 
-void YouTubePluginReplacement::installReplacement(ShadowRoot& root)
+auto YouTubePluginReplacement::installReplacement(ShadowRoot& root) -> InstallResult
 {
     m_embedShadowElement = YouTubeEmbedShadowElement::create(m_parentElement->document());
 
     root.appendChild(*m_embedShadowElement);
 
     auto iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, m_parentElement->document());
-    if (m_attributes.contains<HashTranslatorASCIILiteral>("width"_s))
-        iframeElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, "100%"_s);
+    if (m_attributes.contains("width"))
+        iframeElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
 
-    const auto& heightValue = m_attributes.find<HashTranslatorASCIILiteral>("height"_s);
+    const auto& heightValue = m_attributes.find("height");
     if (heightValue != m_attributes.end()) {
-        iframeElement->setAttribute(HTMLNames::styleAttr, "max-height: 100%"_s);
+        iframeElement->setAttribute(HTMLNames::styleAttr, AtomString("max-height: 100%", AtomString::ConstructFromLiteral));
         iframeElement->setAttributeWithoutSynchronization(HTMLNames::heightAttr, heightValue->value);
     }
 
-    iframeElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, youTubeURL(m_attributes.get<HashTranslatorASCIILiteral>("src"_s)));
-    iframeElement->setAttributeWithoutSynchronization(HTMLNames::frameborderAttr, "0"_s);
+    iframeElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, youTubeURL(m_attributes.get("src")));
+    iframeElement->setAttributeWithoutSynchronization(HTMLNames::frameborderAttr, AtomString("0", AtomString::ConstructFromLiteral));
     
     // Disable frame flattening for this iframe.
-    iframeElement->setAttributeWithoutSynchronization(HTMLNames::scrollingAttr, "no"_s);
+    iframeElement->setAttributeWithoutSynchronization(HTMLNames::scrollingAttr, AtomString("no", AtomString::ConstructFromLiteral));
     m_embedShadowElement->appendChild(iframeElement);
+
+    return { true };
 }
     
 static URL createYouTubeURL(StringView videoID, StringView timeID)
 {
     ASSERT(!videoID.isEmpty());
-    ASSERT(videoID != "/"_s);
-    return URL(URL(), makeString("youtube:"_s, videoID, timeID.isEmpty() ? ""_s : "t="_s, timeID));
+    ASSERT(videoID != "/");
+    return URL(URL(), makeString("youtube:", videoID, timeID.isEmpty() ? "" : "t=", timeID));
 }
 
-static HashMap<String, String> queryKeysAndValues(StringView queryString)
+static YouTubePluginReplacement::KeyValueMap queryKeysAndValues(StringView queryString)
 {
-    HashMap<String, String> queryDictionary;
+    YouTubePluginReplacement::KeyValueMap queryDictionary;
     
     size_t queryLength = queryString.length();
     if (!queryLength)
@@ -148,7 +150,8 @@ static HashMap<String, String> queryKeysAndValues(StringView queryString)
         // Save the key and the value.
         if (keyLength && valueLength) {
             String key = queryString.substring(keyLocation, keyLength).convertToASCIILowercase();
-            auto value = makeStringByReplacingAll(queryString.substring(valueLocation, valueLength), '+', ' ');
+            String value = queryString.substring(valueLocation, valueLength).toString();
+            value.replace('+', ' ');
 
             if (!key.isEmpty() && !value.isEmpty())
                 queryDictionary.add(key, value);
@@ -172,15 +175,15 @@ static bool isYouTubeURL(const URL& url)
         return false;
 
     auto hostName = url.host();
-    return equalLettersIgnoringASCIICase(hostName, "m.youtube.com"_s)
-        || equalLettersIgnoringASCIICase(hostName, "youtu.be"_s)
-        || equalLettersIgnoringASCIICase(hostName, "www.youtube.com"_s)
-        || equalLettersIgnoringASCIICase(hostName, "youtube.com"_s)
-        || equalLettersIgnoringASCIICase(hostName, "www.youtube-nocookie.com"_s)
-        || equalLettersIgnoringASCIICase(hostName, "youtube-nocookie.com"_s);
+    return equalLettersIgnoringASCIICase(hostName, "m.youtube.com")
+        || equalLettersIgnoringASCIICase(hostName, "youtu.be")
+        || equalLettersIgnoringASCIICase(hostName, "www.youtube.com")
+        || equalLettersIgnoringASCIICase(hostName, "youtube.com")
+        || equalLettersIgnoringASCIICase(hostName, "www.youtube-nocookie.com")
+        || equalLettersIgnoringASCIICase(hostName, "youtube-nocookie.com");
 }
 
-static const String& valueForKey(const HashMap<String, String>& dictionary, const String& key)
+static const String& valueForKey(const YouTubePluginReplacement::KeyValueMap& dictionary, const String& key)
 {
     const auto& value = dictionary.find(key);
     if (value == dictionary.end())
@@ -198,13 +201,13 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
         return URL();
 
     auto hostName = url.host();
-    bool isYouTubeMobileWebAppURL = equalLettersIgnoringASCIICase(hostName, "m.youtube.com"_s);
-    isYouTubeShortenedURL = equalLettersIgnoringASCIICase(hostName, "youtu.be"_s);
+    bool isYouTubeMobileWebAppURL = equalLettersIgnoringASCIICase(hostName, "m.youtube.com");
+    isYouTubeShortenedURL = equalLettersIgnoringASCIICase(hostName, "youtu.be");
 
     // Short URL of the form: http://youtu.be/v1d301D
     if (isYouTubeShortenedURL) {
         auto videoID = url.lastPathComponent();
-        if (videoID.isEmpty() || videoID == "/"_s)
+        if (videoID.isEmpty() || videoID == "/")
             return URL();
         return createYouTubeURL(videoID, { });
     }
@@ -221,20 +224,20 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             path = fragment;
             query = emptyString();
         } else {
-            path = fragment.left(location);
+            path = fragment.substring(0, location);
             query = fragment.substring(location + 1);
         }
         fragment = emptyString();
     }
     
-    if (equalLettersIgnoringASCIICase(path, "/watch"_s)) {
+    if (equalLettersIgnoringASCIICase(path, "/watch")) {
         if (!query.isEmpty()) {
             const auto& queryDictionary = queryKeysAndValues(query);
-            String videoID = valueForKey(queryDictionary, "v"_s);
+            String videoID = valueForKey(queryDictionary, "v");
             
             if (!videoID.isEmpty()) {
                 const auto& fragmentDictionary = queryKeysAndValues(url.fragmentIdentifier());
-                String timeID = valueForKey(fragmentDictionary, "t"_s);
+                String timeID = valueForKey(fragmentDictionary, "t");
                 return createYouTubeURL(videoID, timeID);
             }
         }
@@ -245,15 +248,15 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             
             if (!query.isEmpty()) {
                 const auto& queryDictionary = queryKeysAndValues(query);
-                String videoID = valueForKey(queryDictionary, "v"_s);
+                String videoID = valueForKey(queryDictionary, "v");
                 
                 if (!videoID.isEmpty()) {
-                    String timeID = valueForKey(queryDictionary, "t"_s);
+                    String timeID = valueForKey(queryDictionary, "t");
                     return createYouTubeURL(videoID, timeID);
                 }
             }
         }
-    } else if (startsWithLettersIgnoringASCIICase(path, "/v/"_s) || startsWithLettersIgnoringASCIICase(path, "/e/"_s)) {
+    } else if (startsWithLettersIgnoringASCIICase(path, "/v/") || startsWithLettersIgnoringASCIICase(path, "/e/")) {
         StringView videoID;
         StringView pathAfterFirstAmpersand;
 
@@ -261,7 +264,7 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
         size_t ampersandLocation = lastPathComponent.find('&');
         if (ampersandLocation != notFound) {
             // Some URLs we care about use & in place of ? for the first query parameter.
-            videoID = lastPathComponent.left(ampersandLocation);
+            videoID = lastPathComponent.substring(0, ampersandLocation);
             pathAfterFirstAmpersand = lastPathComponent.substring(ampersandLocation + 1, lastPathComponent.length() - ampersandLocation);
         } else
             videoID = lastPathComponent;
@@ -275,17 +278,17 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
     return URL();
 }
 
-AtomString YouTubePluginReplacement::youTubeURL(const AtomString& srcString)
+String YouTubePluginReplacement::youTubeURL(const String& srcString)
 {
     URL srcURL = m_parentElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(srcString));
     return youTubeURLFromAbsoluteURL(srcURL, srcString);
 }
 
-AtomString YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, const AtomString& srcString)
+String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, const String& srcString)
 {
     // Validate URL to make sure it is a Youtube URL.
     if (!isYouTubeURL(srcURL))
-        return emptyAtom();
+        return emptyString();
 
     bool isYouTubeShortenedURL = false;
     String possiblyMalformedQuery;
@@ -303,17 +306,17 @@ AtomString YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL
         ASSERT(locationOfVideoIDInPath);
     
         // From the original URL, we need to get the part before /path/VideoId.
-        locationOfPathBeforeVideoID = StringView(srcString).find(srcPath.left(locationOfVideoIDInPath));
-    } else if (equalLettersIgnoringASCIICase(srcPath, "/watch"_s)) {
+        locationOfPathBeforeVideoID = StringView(srcString).find(srcPath.substring(0, locationOfVideoIDInPath));
+    } else if (equalLettersIgnoringASCIICase(srcPath, "/watch")) {
         // From the original URL, we need to get the part before /watch/#!v=VideoID
         // FIXME: Shouldn't this be ASCII case-insensitive?
-        locationOfPathBeforeVideoID = srcString.find("/watch"_s);
+        locationOfPathBeforeVideoID = srcString.find("/watch");
     } else
         return srcString;
 
     ASSERT(locationOfPathBeforeVideoID != notFound);
 
-    auto srcURLPrefix = StringView(srcString).left(locationOfPathBeforeVideoID);
+    auto srcURLPrefix = StringView(srcString).substring(0, locationOfPathBeforeVideoID);
     auto query = srcURL.query();
 
     // If the URL has no query, use the possibly malformed query we found.
@@ -321,11 +324,11 @@ AtomString YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL
         query = possiblyMalformedQuery;
 
     // Append the query string if it is valid.
-    return makeAtomString(
-        isYouTubeShortenedURL ? "http://www.youtube.com"_s : srcURLPrefix,
-        "/embed/"_s,
+    return makeString(
+        isYouTubeShortenedURL ? "http://www.youtube.com" : srcURLPrefix,
+        "/embed/",
         videoID,
-        query.isEmpty() ? ""_s : "?"_s,
+        query.isEmpty() ? "" : "?",
         query
     );
 }

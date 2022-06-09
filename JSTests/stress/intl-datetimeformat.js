@@ -3,7 +3,13 @@ function shouldBe(actual, expected) {
         throw new Error(`expected ${expected} but got ${actual}`);
 }
 
-function shouldBeOneOf(actual, expectedArray) {
+function shouldBeOneOfThem(actual, expectedArray) {
+    // Tolerate different space characters used by different ICU versions.
+    // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
+    // regular old U+0020. Let's ignore these differences.
+    if (typeof actual === 'string')
+        actual = actual.replaceAll(' ', ' ');
+
     if (!expectedArray.some((value) => value === actual))
         throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
 }
@@ -338,7 +344,7 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-indian', { timeZone: 'America/Los_Angeles'
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamic', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/14/1437 AH');
 shouldBe(Intl.DateTimeFormat('en-u-ca-islamicc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '3/13/1437 AH');
 shouldBe(Intl.DateTimeFormat('en-u-ca-ISO8601', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/2015');
-shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), [ '12/25/27 H', '12/25/H27' ]);
+shouldBeOneOfThem(Intl.DateTimeFormat('en-u-ca-japanese', { timeZone: 'America/Los_Angeles' }).format(1451099872641), [ '12/25/27 H', '12/25/H27' ]);
 shouldBe(Intl.DateTimeFormat('en-u-ca-persian', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '10/4/1394 AP');
 shouldBe(Intl.DateTimeFormat('en-u-ca-roc', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '12/25/104 Minguo');
 shouldBeForICUVersion(62, Intl.DateTimeFormat('en-u-ca-ethiopic-amete-alem', { timeZone: 'America/Los_Angeles' }).format(1451099872641), '4/15/7508 ERA0');
@@ -630,16 +636,14 @@ for (let locale of localesSample) {
 }
 
 // Exceed the 32 character default buffer size
-const actualMonthLongParts =
+shouldBe(
     JSON.stringify(
         Intl.DateTimeFormat('en-US', {
             hour: 'numeric', minute: 'numeric', second: 'numeric',
             year: 'numeric', month: 'long', day: 'numeric', weekday: 'long',
             timeZoneName: 'long', era: 'long', timeZone: 'America/Los_Angeles'
         }).formatToParts(0)
-    );
-
-const getExpectedMonthLongParts = separator => (
+    ),
     JSON.stringify([
         { type: 'weekday', value: 'Wednesday' },
         { type: 'literal', value: ', ' },
@@ -650,7 +654,7 @@ const getExpectedMonthLongParts = separator => (
         { type: 'year', value: '1969' },
         { type: 'literal', value: ' ' },
         { type: 'era', value: 'Anno Domini' },
-        { type: 'literal', value: separator },
+        { type: 'literal', value: ', ' },
         { type: 'hour', value: '4' },
         { type: 'literal', value: ':' },
         { type: 'minute', value: '00' },
@@ -662,10 +666,6 @@ const getExpectedMonthLongParts = separator => (
         { type: 'timeZoneName', value: 'Pacific Standard Time' }
     ])
 );
-
-// See https://bugs.webkit.org/show_bug.cgi?id=238852
-if (actualMonthLongParts !== getExpectedMonthLongParts(', ') && actualMonthLongParts !== getExpectedMonthLongParts(' at '))
-    throw new Error(`Unexpected format parts for {month: 'long'}: ${actualMonthLongParts}`);
 
 // Tests for relativeYear and yearName
 const parts = JSON.stringify([
@@ -757,7 +757,7 @@ shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric
     shouldBe(JSON.stringify(actual), JSON.stringify(expected));
 }
 {
-    shouldBeOneOf(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec', hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2 }), [ "〇〇:〇〇:〇〇.〇〇", "上午一二:〇〇:〇〇.〇〇" ]);
+    shouldBe(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec', hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2 }), $vm.icuVersion() >= 69 ? "〇〇:〇〇:〇〇.〇〇" : "上午一二:〇〇:〇〇.〇〇");
 }
 {
     const dtf = new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Melbourne', year: 'numeric' });

@@ -51,11 +51,9 @@ public:
     const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
     NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
     Vector<Ref<PerformanceServerTiming>> populateServerTiming() const;
-    ResourceTiming isolatedCopy() const &;
-    ResourceTiming isolatedCopy() &&;
+    ResourceTiming isolatedCopy() const;
 
     void overrideInitiatorName(const String& name) { m_initiator = name; }
-    bool isLoadedFromServiceWorker() const { return m_isLoadedFromServiceWorker; }
 
 private:
     ResourceTiming(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
@@ -73,7 +71,6 @@ private:
     ResourceLoadTiming m_resourceLoadTiming;
     NetworkLoadMetrics m_networkLoadMetrics;
     Vector<ServerTiming> m_serverTiming;
-    bool m_isLoadedFromServiceWorker { false };
 };
 
 } // namespace WebCore

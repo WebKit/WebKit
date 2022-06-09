@@ -1,5 +1,5 @@
 # Copyright (c) 2009, 2010, 2011 Google Inc. All rights reserved.
-# Copyright (c) 2009, 2016, 2022 Apple Inc. All rights reserved.
+# Copyright (c) 2009, 2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -350,36 +350,29 @@ class Git(SCM, SVNRepository):
 
         return string_utils.encode("Subversion Revision: ") + string_utils.encode(revision) + string_utils.encode('\n') + string_utils.encode(diff)
 
-    def create_patch(self, git_commit=None, changed_files=None, git_index=False, commit_message=True):
+    def create_patch(self, git_commit=None, changed_files=None, git_index=False):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain files of multiple different encodings.
         If git_index is True, git_commit is ignored because only indexed files are handled.
         """
 
-        head = self.rev_parse('HEAD')
-        merge_base = self.merge_base(git_commit)
-        if not commit_message or merge_base == head:
-            command = [self.executable_name, 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames']
-        else:
-            command = [self.executable_name, 'format-patch', '--stdout', '--binary']
-
         # Put code changes at the top of the patch and layout tests
         # at the bottom, this makes for easier reviewing.
         config_path = self._filesystem.dirname(self._filesystem.path_to_module('webkitpy.common.config'))
         order_file = self._filesystem.join(config_path, 'orderfile')
+        order = ''
         if self._filesystem.exists(order_file):
-            command += ['-O', order_file]
+            order = '-O' + order_file
 
+        command = [self.executable_name, 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames', order]
         if git_index:
             command += ['--cached']
-        elif git_commit:
-            command += [merge_base]
-        elif merge_base != head:
-            command += ['HEAD...{}'.format(merge_base)]
         else:
-            command += ['HEAD']
-
-        return self.run(command, decode_output=False, cwd=self.checkout_root)
+            command += [self.merge_base(git_commit)]
+        command += ['--']
+        if changed_files:
+            command += changed_files
+        return self.prepend_svn_revision(self.run(command, decode_output=False, cwd=self.checkout_root))
 
     def _run_git_svn_find_rev(self, revision_or_treeish, branch=None):
         # git svn find-rev requires SVN revisions to begin with the character 'r'.
@@ -628,6 +621,12 @@ class Git(SCM, SVNRepository):
     def commit(self, options):
         return self._run_git(['commit'] + options)
 
+    def format_patch(self, options):
+        return self._run_git(['format-patch'] + options)
+
+    def request_pull(self, options):
+        return self._run_git(['request-pull'] + options)
+
     def remote(self, options):
         return self._run_git(['remote'] + options)
 
@@ -648,6 +647,3 @@ class Git(SCM, SVNRepository):
         if quiet:
             command += ['-q']
         return self._run_git(command)
-
-    def rev_parse(self, rev):
-        return self._run_git(['rev-parse', rev]).rstrip()

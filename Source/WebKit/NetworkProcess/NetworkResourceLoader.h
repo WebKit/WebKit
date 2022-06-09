@@ -34,8 +34,6 @@
 #include "NetworkResourceLoadIdentifier.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PrivateRelayed.h"
-#include <WebCore/ContentFilterClient.h>
-#include <WebCore/ContentFilterUnblockHandler.h>
 #include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -48,7 +46,6 @@
 
 namespace WebCore {
 class BlobDataFileReference;
-class ContentFilter;
 class FormData;
 class NetworkStorageSession;
 class ResourceRequest;
@@ -76,9 +73,6 @@ class NetworkResourceLoader final
     , public IPC::MessageSender
     , public WebCore::ContentSecurityPolicyClient
     , public WebCore::CrossOriginAccessControlCheckDisabler
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    , public WebCore::ContentFilterClient
-#endif
     , public CanMakeWeakPtr<NetworkResourceLoader> {
 public:
     static Ref<NetworkResourceLoader> create(NetworkResourceLoadParameters&& parameters, NetworkConnectionToWebProcess& connection, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoadDelayedReply&& reply = nullptr)
@@ -99,7 +93,7 @@ public:
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::Decoder&);
 
-    void continueWillSendRequest(WebCore::ResourceRequest&&, bool isAllowedToAskUserForCredentials);
+    void continueWillSendRequest(WebCore::ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials);
 
     void setResponse(WebCore::ResourceResponse&& response) { m_response = WTFMove(response); }
     const WebCore::ResourceResponse& response() const { return m_response; }
@@ -141,7 +135,7 @@ public:
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     static bool shouldLogCookieInformation(NetworkConnectionToWebProcess&, PAL::SessionID);
-    static void logCookieInformation(NetworkConnectionToWebProcess&, ASCIILiteral label, const void* loggedObject, const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebCore::ResourceLoaderIdentifier>);
+    static void logCookieInformation(NetworkConnectionToWebProcess&, const String& label, const void* loggedObject, const WebCore::NetworkStorageSession&, const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, const String& referrer, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, std::optional<WebCore::ResourceLoaderIdentifier>);
 #endif
 
     void disableExtraNetworkLoadMetricsCapture() { m_shouldCaptureExtraNetworkLoadMetrics = false; }
@@ -153,8 +147,6 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void startWithServiceWorker();
     void serviceWorkerDidNotHandle(ServiceWorkerFetchTask*);
-    void setResultingClientIdentifier(String&& identifier) { m_resultingClientIdentifier = WTFMove(identifier); }
-    const String& resultingClientIdentifier() const { return m_resultingClientIdentifier; }
     void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
 #endif
 
@@ -163,27 +155,12 @@ public:
 
     bool isAppInitiated();
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    void ref() const final { RefCounted<NetworkResourceLoader>::ref(); }
-    void deref() const final { RefCounted<NetworkResourceLoader>::deref(); }
-#endif
-
-    void willSendServiceWorkerRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
-
 private:
     NetworkResourceLoader(NetworkResourceLoadParameters&&, NetworkConnectionToWebProcess&, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoadDelayedReply&&);
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override { return m_parameters.identifier.toUInt64(); }
-
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    // ContentFilterClient
-    void dataReceivedThroughContentFilter(const WebCore::SharedBuffer&, size_t) final;
-    WebCore::ResourceError contentFilterDidBlock(WebCore::ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
-    void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&) final;
-    void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&) final;
-#endif
 
     bool canUseCache(const WebCore::ResourceRequest&) const;
     bool canUseCachedRedirect(const WebCore::ResourceRequest&) const;
@@ -243,15 +220,7 @@ private:
 
     ResourceLoadInfo resourceLoadInfo();
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    bool startContentFiltering(WebCore::ResourceRequest&);
-#endif
-
-    enum class IsFromServiceWorker : bool { No, Yes };
-    void willSendRedirectedRequestInternal(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, IsFromServiceWorker);
-    std::optional<WebCore::NetworkLoadMetrics> computeResponseMetrics(const WebCore::ResourceResponse&) const;
-
-    NetworkResourceLoadParameters m_parameters;
+    const NetworkResourceLoadParameters m_parameters;
 
     Ref<NetworkConnectionToWebProcess> m_connection;
 
@@ -289,20 +258,12 @@ private:
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
 #if ENABLE(SERVICE_WORKER)
     std::unique_ptr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
-    String m_resultingClientIdentifier;
     WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
 #endif
     NetworkResourceLoadIdentifier m_resourceLoadID;
     WebCore::ResourceResponse m_redirectResponse;
     URL m_firstResponseURL; // First URL in response's URL list (https://fetch.spec.whatwg.org/#concept-response-url-list).
     std::optional<WebCore::CrossOriginOpenerPolicyEnforcementResult> m_currentCoopEnforcementResult;
-
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    std::unique_ptr<WebCore::ContentFilter> m_contentFilter;
-    WebCore::ContentFilterUnblockHandler m_unblockHandler;
-    String m_unblockRequestDeniedScript;
-#endif
-
     PrivateRelayed m_privateRelayed { PrivateRelayed::No };
 };
 

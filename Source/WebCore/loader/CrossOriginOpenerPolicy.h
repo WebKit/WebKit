@@ -60,8 +60,7 @@ struct CrossOriginOpenerPolicy {
     const String& reportingEndpointForDisposition(COOPDisposition) const;
     bool hasReportingEndpoint(COOPDisposition) const;
 
-    CrossOriginOpenerPolicy isolatedCopy() const &;
-    CrossOriginOpenerPolicy isolatedCopy() &&;
+    CrossOriginOpenerPolicy isolatedCopy() const;
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<CrossOriginOpenerPolicy> decode(Decoder&);
 };

@@ -71,8 +71,6 @@ public:
     std::optional<MediaPositionState> positionState() const { return m_positionState; }
 
     WEBCORE_EXPORT std::optional<double> currentPosition() const;
-    void willBeginPlayback();
-    void willPausePlayback();
 
     Document* document() const;
     
@@ -121,8 +119,6 @@ private:
     explicit MediaSession(Navigator&);
 
     const void* logIdentifier() const { return m_logIdentifier; }
-
-    void updateReportedPosition();
 
     void forEachObserver(const Function<void(Observer&)>&);
     void notifyMetadataObservers();

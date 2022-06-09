@@ -54,7 +54,7 @@ public:
     URL href() const;
     WEBCORE_EXPORT const AtomString& rel() const;
 
-    AtomString target() const final;
+    String target() const final;
 
     const AtomString& type() const;
 

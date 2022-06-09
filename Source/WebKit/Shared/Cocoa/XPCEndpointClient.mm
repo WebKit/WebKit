@@ -27,7 +27,6 @@
 #import "XPCEndpointClient.h"
 
 #import <wtf/cocoa/Entitlements.h>
-#import <wtf/text/ASCIILiteral.h>
 
 namespace WebKit {
 
@@ -59,7 +58,7 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
                 return;
 #if USE(APPLE_INTERNAL_SDK)
             auto pid = xpc_connection_get_pid(connection);
-            if (pid != getpid() && !WTF::hasEntitlement(connection, "com.apple.private.webkit.use-xpc-endpoint"_s)) {
+            if (pid != getpid() && !WTF::hasEntitlement(connection, "com.apple.private.webkit.use-xpc-endpoint")) {
                 WTFLogAlways("Audit token does not have required entitlement com.apple.private.webkit.use-xpc-endpoint");
                 return;
             }

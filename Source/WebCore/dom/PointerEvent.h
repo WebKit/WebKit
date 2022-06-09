@@ -78,12 +78,12 @@ public:
     }
 
     static RefPtr<PointerEvent> create(short button, const MouseEvent&, PointerID, const String& pointerType);
-    static Ref<PointerEvent> create(const AtomString& type, short button, const MouseEvent&, PointerID, const String& pointerType);
-    static Ref<PointerEvent> create(const AtomString& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
+    static Ref<PointerEvent> create(const String& type, short button, const MouseEvent&, PointerID, const String& pointerType);
+    static Ref<PointerEvent> create(const String& type, PointerID, const String& pointerType, IsPrimary = IsPrimary::No);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
-    static Ref<PointerEvent> create(const AtomString& type, const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
+    static Ref<PointerEvent> create(const String& type, const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif
 
     virtual ~PointerEvent();
@@ -112,7 +112,7 @@ public:
     EventInterface eventInterface() const override;
 
 private:
-    static bool typeIsEnterOrLeave(const AtomString& type);
+    static bool typeIsEnterOrLeave(const AtomString& type) { return type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent; }
     static CanBubble typeCanBubble(const AtomString& type) { return typeIsEnterOrLeave(type) ? CanBubble::No : CanBubble::Yes; }
     static IsCancelable typeIsCancelable(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsCancelable::No : IsCancelable::Yes; }
     static IsComposed typeIsComposed(const AtomString& type) { return typeIsEnterOrLeave(type) ? IsComposed::No : IsComposed::Yes; }
@@ -136,12 +136,6 @@ private:
     String m_pointerType { mousePointerEventType() };
     bool m_isPrimary { false };
 };
-
-inline bool PointerEvent::typeIsEnterOrLeave(const AtomString& type)
-{
-    auto& eventNames = WebCore::eventNames();
-    return type == eventNames.pointerenterEvent || type == eventNames.pointerleaveEvent;
-}
 
 } // namespace WebCore
 

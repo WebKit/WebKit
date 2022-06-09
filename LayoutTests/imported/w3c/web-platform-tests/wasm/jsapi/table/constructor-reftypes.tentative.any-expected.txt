@@ -1,0 +1,6 @@
+
+PASS initialize externref table with default value
+PASS initialize table with a wrong element value
+PASS initialize anyfunc table with default value
+PASS initialize anyfunc table with a bad default value
+

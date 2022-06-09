@@ -35,7 +35,7 @@ namespace WebKit {
 WebPaymentCoordinator::AvailablePaymentNetworksSet WebPaymentCoordinator::platformAvailablePaymentNetworks()
 {
 #if PLATFORM(MAC)
-    if (!PAL::isPassKitCoreFrameworkAvailable())
+    if (!PAL::isPassKitFrameworkAvailable())
         return { };
 #endif
 

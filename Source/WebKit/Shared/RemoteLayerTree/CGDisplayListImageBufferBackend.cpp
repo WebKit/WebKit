@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,8 +55,6 @@ public:
         return m_scaleTransform * GraphicsContextCG::getCTM(includeDeviceScale);
     }
 
-    bool canUseShadowBlur() const final { return false; }
-
 private:
     WebCore::AffineTransform m_scaleTransform;
     WebCore::AffineTransform m_inverseScaleTransform;
@@ -86,7 +84,7 @@ std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend
     return std::unique_ptr<CGDisplayListImageBufferBackend>(new CGDisplayListImageBufferBackend(parameters, WTFMove(context)));
 }
 
-std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters, const WebCore::ImageBuffer::CreationContext&)
+std::unique_ptr<CGDisplayListImageBufferBackend> CGDisplayListImageBufferBackend::create(const Parameters& parameters, const WebCore::HostWindow*)
 {
     return CGDisplayListImageBufferBackend::create(parameters);
 }
@@ -97,7 +95,7 @@ CGDisplayListImageBufferBackend::CGDisplayListImageBufferBackend(const Parameter
 {
 }
 
-ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(SharedMemory::Protection) const
+ImageBufferBackendHandle CGDisplayListImageBufferBackend::createImageBufferBackendHandle() const
 {
     auto data = adoptCF(WKCGCommandsContextCopyEncodedData(m_context->platformContext()));
     ASSERT(data);
@@ -107,7 +105,7 @@ ImageBufferBackendHandle CGDisplayListImageBufferBackend::createBackendHandle(Sh
     RELEASE_LOG(RemoteLayerTree, "CGDisplayListImageBufferBackend of size %dx%d encoded display list of %ld bytes", size.width(), size.height(), CFDataGetLength(data.get()));
 #endif
 
-    return ImageBufferBackendHandle { IPC::SharedBufferReference { WebCore::SharedBuffer::create(data.get()) } };
+    return ImageBufferBackendHandle { IPC::SharedBufferCopy { WebCore::SharedBuffer::create(data.get()) } };
 }
 
 WebCore::GraphicsContext& CGDisplayListImageBufferBackend::context() const
@@ -131,10 +129,10 @@ RefPtr<WebCore::NativeImage> CGDisplayListImageBufferBackend::copyNativeImage(We
     return nullptr;
 }
 
-RefPtr<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntRect&, const WebCore::ImageBufferAllocator&) const
+std::optional<WebCore::PixelBuffer> CGDisplayListImageBufferBackend::getPixelBuffer(const WebCore::PixelBufferFormat&, const WebCore::IntRect&) const
 {
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return { };
 }
 
 void CGDisplayListImageBufferBackend::putPixelBuffer(const WebCore::PixelBuffer&, const WebCore::IntRect&, const WebCore::IntPoint&, WebCore::AlphaPremultiplication)

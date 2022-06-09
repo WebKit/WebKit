@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -274,7 +274,7 @@ static ASCIILiteral propertyIdToString(AnimatedPropertyID property)
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return ASCIILiteral::null();
 }
 
 static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)
@@ -429,6 +429,7 @@ static LayerDisplayListHashMap& layerDisplayListMap()
 GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
     , m_needsFullRepaint(false)
+    , m_usingBackdropLayerType(false)
     , m_allowsBackingStoreDetaching(true)
     , m_intersectsCoverageRect(false)
     , m_hasEverPainted(false)
@@ -1078,7 +1079,7 @@ bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
 
 bool GraphicsLayerCA::animationIsRunning(const String& animationName) const
 {
-    auto index = m_animations.findIf([&](LayerPropertyAnimation animation) {
+    auto index = m_animations.findMatching([&](LayerPropertyAnimation animation) {
         return animation.m_name == animationName;
     });
     return index != notFound && m_animations[index].m_playState == PlayState::Playing;
@@ -1205,7 +1206,7 @@ void GraphicsLayerCA::platformCALayerAnimationStarted(const String& animationKey
 {
     LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " platformCALayerAnimationStarted " << animationKey);
 
-    auto index = m_animations.findIf([&](LayerPropertyAnimation animation) {
+    auto index = m_animations.findMatching([&](LayerPropertyAnimation animation) {
         return animation.animationIdentifier() == animationKey && !animation.m_beginTime;
     });
 
@@ -1284,7 +1285,7 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
 }
 
 #if ENABLE(MODEL_ELEMENT)
-void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model, ModelInteraction interactive)
+void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
 {
     if (model == m_contentsModel)
         return;
@@ -1301,7 +1302,6 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model, ModelInteraction
         m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents model"));
 #endif
 
-        m_contentsLayer->setUserInteractionEnabled(interactive == ModelInteraction::Enabled);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayerPurpose = ContentsLayerPurpose::Model;
         contentsLayerChanged = true;
@@ -1919,9 +1919,19 @@ void GraphicsLayerCA::platformCALayerLayerDisplay(PlatformCALayer* layer)
     m_contentsDisplayDelegate->display(*layer);
 }
 
+static PlatformCALayer::LayerType layerTypeForCustomBackdropAppearance(GraphicsLayer::CustomAppearance appearance)
+{
+    return appearance == GraphicsLayer::CustomAppearance::LightBackdrop ? PlatformCALayer::LayerTypeLightSystemBackdropLayer : PlatformCALayer::LayerTypeDarkSystemBackdropLayer;
+}
+
+static bool isCustomBackdropLayerType(PlatformCALayer::LayerType layerType)
+{
+    return layerType == PlatformCALayer::LayerTypeLightSystemBackdropLayer || layerType == PlatformCALayer::LayerTypeDarkSystemBackdropLayer;
+}
+
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
 {
-    SetForScope committingChangesChange(m_isCommittingChanges, true);
+    SetForScope<bool> committingChangesChange(m_isCommittingChanges, true);
 
     if (!m_uncommittedChanges) {
         // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
@@ -1930,13 +1940,16 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     }
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
+    bool needBackdropLayerType = (customAppearance() == CustomAppearance::LightBackdrop || customAppearance() == CustomAppearance::DarkBackdrop);
 
     PlatformCALayer::LayerType currentLayerType = m_layer->layerType();
     PlatformCALayer::LayerType neededLayerType = currentLayerType;
 
-    if (needTiledLayer)
+    if (needBackdropLayerType)
+        neededLayerType = layerTypeForCustomBackdropAppearance(customAppearance());
+    else if (needTiledLayer)
         neededLayerType = PlatformCALayer::LayerTypeTiledBackingLayer;
-    else if (currentLayerType == PlatformCALayer::LayerTypeTiledBackingLayer)
+    else if (currentLayerType == PlatformCALayer::LayerTypeTiledBackingLayer || isCustomBackdropLayerType(m_layer->layerType()))
         neededLayerType = PlatformCALayer::LayerTypeWebLayer;
 
     if (neededLayerType != m_layer->layerType()) {
@@ -2102,7 +2115,7 @@ void GraphicsLayerCA::commitLayerChangesAfterSublayers(CommitState& commitState)
     if (!m_uncommittedChanges)
         return;
 
-    SetForScope committingChangesChange(m_isCommittingChanges, true);
+    SetForScope<bool> committingChangesChange(m_isCommittingChanges, true);
 
     if (m_uncommittedChanges & MaskLayerChanged)
         updateMaskLayer();
@@ -3088,11 +3101,11 @@ void GraphicsLayerCA::updateAnimations()
     auto currentTime = Seconds(CACurrentMediaTime());
 
     auto addAnimationGroup = [&](AnimatedPropertyID property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
-        auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::Group, emptyString());
+        auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::Group, "");
         caAnimationGroup->setDuration(infiniteDuration);
         caAnimationGroup->setAnimations(animations);
 
-        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), makeString("group-"_s, UUID::createVersion4()), property, 0, 0, 0_s);
+        auto animationGroup = LayerPropertyAnimation(WTFMove(caAnimationGroup), "group-" + createCanonicalUUIDString(), property, 0, 0, 0_s);
         animationGroup.m_beginTime = animationGroupBeginTime;
 
         setAnimationOnLayer(animationGroup);
@@ -3140,7 +3153,7 @@ void GraphicsLayerCA::updateAnimations()
         caAnimation->setFromValue(matrix);
         caAnimation->setToValue(matrix);
 
-        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), makeString("base-transform-"_s, UUID::createVersion4()), property, 0, 0, 0_s);
+        auto animation = LayerPropertyAnimation(WTFMove(caAnimation), "base-transform-" + createCanonicalUUIDString(), property, 0, 0, 0_s);
         if (delay)
             animation.m_beginTime = currentTime - animationGroupBeginTime;
 
@@ -3286,7 +3299,7 @@ void GraphicsLayerCA::updateAnimations()
 
 bool GraphicsLayerCA::isRunningTransformAnimation() const
 {
-    return m_animations.findIf([&](LayerPropertyAnimation animation) {
+    return m_animations.findMatching([&](LayerPropertyAnimation animation) {
         return animatedPropertyIsTransformOrRelated(animation.m_property) && (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused);
     }) != notFound;
 }
@@ -3441,19 +3454,21 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     return true;
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, TransformOperation::OperationType operationType, const Animation* animation, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const TransformOperations* operations, const Animation* animation, const String& animationName, const FloatSize& boxSize, int animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
 {
+    TransformOperation::OperationType transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : operations->operations().at(animationIndex)->type();
+
     RefPtr<PlatformCAAnimation> caAnimation;
     bool validMatrices = true;
     if (isKeyframe(valueList)) {
         caAnimation = createKeyframeAnimation(animation, propertyIdToString(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
-        validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, operationType, isMatrixAnimation, boxSize, keyframesShouldUseAnimationWideTimingFunction);
+        validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize, keyframesShouldUseAnimationWideTimingFunction);
     } else {
         if (animation->timingFunction()->isSpringTimingFunction())
             caAnimation = createSpringAnimation(animation, propertyIdToString(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
         else
             caAnimation = createBasicAnimation(animation, propertyIdToString(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
-        validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, operationType, isMatrixAnimation, boxSize);
+        validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
     }
     
     if (!validMatrices)
@@ -3463,74 +3478,28 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
     return true;
 }
 
-static const TransformOperations& transformationAnimationValueAt(const KeyframeValueList& valueList, unsigned i)
-{
-    return static_cast<const TransformAnimationValue&>(valueList.at(i)).value();
-}
-
-static bool hasBigRotationAngle(const KeyframeValueList& valueList, const SharedPrimitivesPrefix& prefix)
-{
-    // Hardware non-matrix animations are used for every function in the shared primitives prefix.
-    // These kind of animations have issues with large rotation angles, so for every function that
-    // will be represented as a hardware non-matrix animation, check that for each of those functions
-    // the animation that's created for it will not have two consecutive keyframes that have a large
-    // rotation angle between them.
-    const auto& primitives = prefix.primitives();
-    for (unsigned animationIndex = 0; animationIndex < primitives.size(); ++animationIndex) {
-        auto type = primitives[animationIndex];
-        if (type != TransformOperation::ROTATE && type != TransformOperation::ROTATE_3D)
-            continue;
-        for (size_t i = 1; i < valueList.size(); ++i) {
-            // Since the shared primitive at this index is a rotation, both of these transform
-            // functions should be RotateTransformOperations.
-            auto prevOperation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i - 1).at(animationIndex));
-            auto operation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i).at(animationIndex));
-            auto angle = std::abs((prevOperation ? prevOperation->angle() : 0.0) - (operation ? operation->angle() : 0.0));
-            if (angle > 180.0)
-                return true;
-        }
-    }
-
-    return false;
-}
-
 bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
 
-    // https://www.w3.org/TR/css-transforms-1/#interpolation-of-transforms
-    // In the CSS Transform Level 1 and 2 Specification some transform functions can share a compatible transform
-    // function primitive. For instance, the shared primitive of a translateX and translate3D operation is
-    // TransformOperation::TRANSLATE_3D. When the transform function list of every keyframe in an animation
-    // shares the same transform function primitive, we should interpolate between them without resorting
-    // to matrix decomposition. The remaining parts of the transform function list should be interpolated
-    // using matrix decomposition. The code below finds the shared primitives in this prefix.
-    // FIXME: Currently, this only supports situations where every keyframe shares the same prefix of shared
-    // transformation primitives, but the specification says direct interpolation should be determined by
-    // the primitives shared between any two adjacent keyframes.
-    SharedPrimitivesPrefix prefix;
-    for (size_t i = 0; i < valueList.size(); ++i)
-        prefix.update(transformationAnimationValueAt(valueList, i));
+    bool hasBigRotation;
+    int listIndex = validateTransformOperations(valueList, hasBigRotation);
+    const TransformOperations* operations = (listIndex >= 0) ? &static_cast<const TransformAnimationValue&>(valueList.at(listIndex)).value() : 0;
 
-    // If this animation has a big rotation between two keyframes, fall back to software animation. CoreAnimation
-    // will always take the shortest path between two rotations, which will result in incorrect animation when
-    // the keyframes specify angles larger than one half rotation.
-    if (hasBigRotationAngle(valueList, prefix))
-        return false;
+    bool validMatrices = true;
 
-    const auto& primitives = prefix.primitives();
-    unsigned numberOfSharedPrimitives = valueList.size() > 1 ? primitives.size() : 0;
-    for (unsigned animationIndex = 0; animationIndex < numberOfSharedPrimitives; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, primitives[animationIndex], animation, animationName, boxSize, animationIndex, timeOffset, false /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction))
-            return false;
+    // If function lists don't match we do a matrix animation, otherwise we do a component hardware animation.
+    bool isMatrixAnimation = valueList.property() == AnimatedPropertyTransform ? listIndex < 0 : true;
+    int numAnimations = isMatrixAnimation ? 1 : operations->size();
+
+    for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
+        if (!appendToUncommittedAnimations(valueList, operations, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation, keyframesShouldUseAnimationWideTimingFunction)) {
+            validMatrices = false;
+            break;
+        }
     }
 
-    if (!prefix.hadIncompatibleTransformFunctions())
-        return true;
-
-    // If there were any incompatible transform functions, they will be appended to the animation list
-    // as a single combined transformation matrix animation.
-    return appendToUncommittedAnimations(valueList, TransformOperation::MATRIX_3D, animation, animationName, boxSize, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
+    return validMatrices;
 }
 
 bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
@@ -3558,7 +3527,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
             valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, internalFilterPropertyIndex);
         }
         
-        ASSERT_UNUSED(valuesOK, valuesOK);
+        ASSERT(valuesOK);
 
         m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, internalFilterPropertyIndex, timeOffset));
     }
@@ -3745,13 +3714,13 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
     
-    const auto& startValue = transformationAnimationValueAt(valueList, fromIndex);
-    const auto& endValue = transformationAnimationValueAt(valueList, toIndex);
+    auto& startValue = static_cast<const TransformAnimationValue&>(valueList.at(fromIndex));
+    auto& endValue = static_cast<const TransformAnimationValue&>(valueList.at(toIndex));
 
     if (isMatrixAnimation) {
         TransformationMatrix fromTransform, toTransform;
-        startValue.apply(boxSize, fromTransform);
-        endValue.apply(boxSize, toTransform);
+        startValue.value().apply(boxSize, fromTransform);
+        endValue.value().apply(boxSize, toTransform);
 
         // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
         if (!fromTransform.isInvertible() || !toTransform.isInvertible())
@@ -3762,27 +3731,27 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     } else {
         if (isTransformTypeNumber(transformOpType)) {
             float fromValue;
-            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
             
             float toValue;
-            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         } else if (isTransformTypeFloatPoint3D(transformOpType)) {
             FloatPoint3D fromValue;
-            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
             
             FloatPoint3D toValue;
-            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         } else {
             TransformationMatrix fromValue;
-            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
+            getTransformFunctionValue(startValue.value().at(functionIndex), transformOpType, boxSize, fromValue);
             basicAnim->setFromValue(fromValue);
 
             TransformationMatrix toValue;
-            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
+            getTransformFunctionValue(endValue.value().at(functionIndex), transformOpType, boxSize, toValue);
             basicAnim->setToValue(toValue);
         }
     }
@@ -3809,9 +3778,10 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
         const TransformAnimationValue& curValue = static_cast<const TransformAnimationValue&>(valueList.at(index));
         keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
+        TransformationMatrix transform;
+
         if (isMatrixAnimation) {
-            TransformationMatrix transform;
-            curValue.value().apply(functionIndex, boxSize, transform);
+            curValue.value().apply(boxSize, transform);
 
             // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
             if (!transform.isInvertible())
@@ -3833,6 +3803,8 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
                 getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
                 transformationMatrixValues.append(value);
             }
+
+            curValue.value().apply(boxSize, transform);
         }
 
         if (i < (valueList.size() - 1))
@@ -4051,7 +4023,7 @@ void GraphicsLayerCA::setShowRepaintCounter(bool showCounter)
     noteLayerPropertyChanged(DebugIndicatorsChanged);
 }
 
-String GraphicsLayerCA::displayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
+String GraphicsLayerCA::displayListAsText(DisplayList::AsTextFlags flags) const
 {
     if (!m_displayList)
         return String();
@@ -4078,7 +4050,7 @@ void GraphicsLayerCA::setIsTrackingDisplayListReplay(bool isTracking)
         layerDisplayListMap().remove(this);
 }
 
-String GraphicsLayerCA::replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag> flags) const
+String GraphicsLayerCA::replayDisplayListAsText(DisplayList::AsTextFlags flags) const
 {
     auto it = layerDisplayListMap().find(this);
     if (it != layerDisplayListMap().end()) {
@@ -4402,7 +4374,7 @@ void GraphicsLayerCA::setCustomAppearance(CustomAppearance customAppearance)
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
-    if (!m_drawsContent || isPageTiledBackingLayer() || !allowsTiling())
+    if (!m_drawsContent || isPageTiledBackingLayer())
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?
@@ -4425,6 +4397,8 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
 
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     m_layer = createPlatformCALayer(newLayerType, this);
+
+    m_usingBackdropLayerType = isCustomBackdropLayerType(newLayerType);
 
     m_layer->adoptSublayers(*oldLayer);
 
@@ -4841,22 +4815,22 @@ static String animatedPropertyIDAsString(AnimatedPropertyID property)
     case AnimatedPropertyScale:
     case AnimatedPropertyRotate:
     case AnimatedPropertyTransform:
-        return "transform"_s;
+        return "transform";
     case AnimatedPropertyOpacity:
-        return "opacity"_s;
+        return "opacity";
     case AnimatedPropertyBackgroundColor:
-        return "background-color"_s;
+        return "background-color";
     case AnimatedPropertyFilter:
-        return "filter"_s;
+        return "filter";
 #if ENABLE(FILTERS_LEVEL_2)
     case AnimatedPropertyWebkitBackdropFilter:
-        return "backdrop-filter"_s;
+        return "backdrop-filter";
 #endif
     case AnimatedPropertyInvalid:
-        return "invalid"_s;
+        return "invalid";
     }
     ASSERT_NOT_REACHED();
-    return ""_s;
+    return "";
 }
 
 Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesting() const
@@ -4864,8 +4838,6 @@ Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesti
     Vector<std::pair<String, double>> animations;
 
     for (auto& animation : m_animations) {
-        if (animation.m_pendingRemoval)
-            continue;
         if (auto caAnimation = animatedLayer(animation.m_property)->animationForKey(animation.animationIdentifier()))
             animations.append({ animatedPropertyIDAsString(animation.m_property), caAnimation->speed() });
         else

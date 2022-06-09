@@ -61,37 +61,37 @@ bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>
     return matchesAllowlist && !matchesBlocklist;
 }
 
-bool UserContentURLPattern::parse(StringView pattern)
+bool UserContentURLPattern::parse(const String& pattern)
 {
-    static constexpr ASCIILiteral schemeSeparator = "://"_s;
+    static NeverDestroyed<const String> schemeSeparator(MAKE_STATIC_STRING_IMPL("://"));
 
     size_t schemeEndPos = pattern.find(schemeSeparator);
     if (schemeEndPos == notFound)
         return false;
 
-    m_scheme = pattern.left(schemeEndPos).toString();
+    m_scheme = pattern.left(schemeEndPos);
 
-    unsigned hostStartPos = schemeEndPos + schemeSeparator.length();
+    unsigned hostStartPos = schemeEndPos + schemeSeparator.get().length();
     if (hostStartPos >= pattern.length())
         return false;
 
     int pathStartPos = 0;
 
-    if (equalLettersIgnoringASCIICase(m_scheme, "file"_s))
+    if (equalLettersIgnoringASCIICase(m_scheme, "file"))
         pathStartPos = hostStartPos;
     else {
         size_t hostEndPos = pattern.find('/', hostStartPos);
         if (hostEndPos == notFound)
             return false;
 
-        m_host = pattern.substring(hostStartPos, hostEndPos - hostStartPos).toString();
+        m_host = pattern.substring(hostStartPos, hostEndPos - hostStartPos);
         m_matchSubdomains = false;
 
-        if (m_host == "*"_s) {
+        if (m_host == "*") {
             // The pattern can be just '*', which means match all domains.
             m_host = emptyString();
             m_matchSubdomains = true;
-        } else if (m_host.startsWith("*."_s)) {
+        } else if (m_host.startsWith("*.")) {
             // The first component can be '*', which means to match all subdomains.
             m_host = m_host.substring(2); // Length of "*."
             m_matchSubdomains = true;
@@ -104,7 +104,7 @@ bool UserContentURLPattern::parse(StringView pattern)
         pathStartPos = hostEndPos;
     }
 
-    m_path = pattern.right(pattern.length() - pathStartPos).toString();
+    m_path = pattern.right(pattern.length() - pathStartPos);
 
     return true;
 }
@@ -114,10 +114,10 @@ bool UserContentURLPattern::matches(const URL& test) const
     if (m_invalid)
         return false;
 
-    if (m_scheme != "*"_s && !equalIgnoringASCIICase(test.protocol(), m_scheme))
+    if (m_scheme != "*" && !equalIgnoringASCIICase(test.protocol(), m_scheme))
         return false;
 
-    if (!equalLettersIgnoringASCIICase(m_scheme, "file"_s) && !matchesHost(test))
+    if (!equalLettersIgnoringASCIICase(m_scheme, "file") && !matchesHost(test))
         return false;
 
     return matchesPath(test);

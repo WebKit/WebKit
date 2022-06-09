@@ -50,6 +50,7 @@ private:
     char operatorValue(const CSSParserToken&);
 
     bool parseValue(CSSParserTokenRange&, CSSValueID, RefPtr<CSSCalcExpressionNode>&);
+    bool parseValueTerm(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
     bool parseCalcFunction(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
     bool parseCalcSum(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
     bool parseCalcProduct(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);

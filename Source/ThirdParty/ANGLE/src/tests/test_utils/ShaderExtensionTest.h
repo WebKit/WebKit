@@ -64,7 +64,7 @@ class ShaderExtensionTest
                                                const char *shader)
     {
         const char *shaderStrings[] = {version, pragma, shader};
-        bool success = sh::Compile(mCompiler, shaderStrings, 3, SH_OBJECT_CODE | SH_VARIABLES);
+        bool success                = sh::Compile(mCompiler, shaderStrings, 3, 0);
         if (success)
         {
             return ::testing::AssertionSuccess() << "Compilation success";

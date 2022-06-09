@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -162,7 +162,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
             if (!url.isEmpty()) {
                 auto& document = context.start.document();
                 auto anchor = HTMLAnchorElement::create(document);
-                anchor->setHref(AtomString { url });
+                anchor->setHref(url);
                 if (title.isEmpty()) {
                     // Try the plain text first because the URL might be normalized or escaped.
                     if (dragData.containsPlainText())
@@ -170,7 +170,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
                     if (title.isEmpty())
                         title = url;
                 }
-                anchor->appendChild(document.createTextNode(WTFMove(title)));
+                anchor->appendChild(document.createTextNode(title));
                 auto fragment = document.createDocumentFragment();
                 fragment->appendChild(anchor);
                 return fragment;
@@ -254,7 +254,7 @@ bool DragController::performDragOperation(const DragData& dragData)
 
     removeAllDroppedImagePlaceholders();
 
-    SetForScope isPerformingDrop(m_isPerformingDrop, true);
+    SetForScope<bool> isPerformingDrop(m_isPerformingDrop, true);
     IgnoreSelectionChangeForScope ignoreSelectionChanges { m_page.focusController().focusedOrMainFrame() };
 
     m_documentUnderMouse = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
@@ -294,9 +294,7 @@ bool DragController::performDragOperation(const DragData& dragData)
         return false;
 
     client().willPerformDragDestinationAction(DragDestinationAction::Load, dragData);
-    ResourceRequest resourceRequest { urlString };
-    resourceRequest.setIsAppInitiated(false);
-    FrameLoadRequest frameLoadRequest { m_page.mainFrame(), resourceRequest };
+    FrameLoadRequest frameLoadRequest { m_page.mainFrame(), ResourceRequest { urlString } };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     frameLoadRequest.setIsRequestFromClientOrUserInput();
     m_page.mainFrame().loader().load(WTFMove(frameLoadRequest));
@@ -345,8 +343,10 @@ static HTMLInputElement* asFileInput(Node& node)
     auto* inputElement = &downcast<HTMLInputElement>(node);
 
     // If this is a button inside of the a file input, move up to the file input.
-    if (inputElement->isTextButton())
-        inputElement = dynamicDowncast<HTMLInputElement>(inputElement->shadowHost());
+    if (inputElement->isTextButton() && is<ShadowRoot>(inputElement->treeScope().rootNode())) {
+        auto& host = *downcast<ShadowRoot>(inputElement->treeScope().rootNode()).host();
+        inputElement = is<HTMLInputElement>(host) ? &downcast<HTMLInputElement>(host) : nullptr;
+    }
 
     return inputElement && inputElement->isFileUpload() ? inputElement : nullptr;
 }
@@ -502,8 +502,12 @@ std::optional<DragOperation> DragController::operationForLoad(const DragData& dr
     Document* document = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
 
     bool pluginDocumentAcceptsDrags = false;
-    if (auto* pluginDocument = dynamicDowncast<PluginDocument>(document)) {
-        if (auto* pluginView = pluginDocument->pluginWidget())
+
+    if (is<PluginDocument>(document)) {
+        const Widget* widget = downcast<PluginDocument>(*document).pluginWidget();
+        const PluginViewBase* pluginView = is<PluginViewBase>(widget) ? downcast<PluginViewBase>(widget) : nullptr;
+
+        if (pluginView)
             pluginDocumentAcceptsDrags = pluginView->shouldAllowNavigationFromDrags();
     }
 
@@ -757,7 +761,7 @@ static bool imageElementIsDraggable(const HTMLImageElement& image, const Frame& 
 
 static bool modelElementIsDraggable(const HTMLModelElement& modelElement)
 {
-    return modelElement.supportsDragging() && !!modelElement.model();
+    return !!modelElement.model();
 }
 
 #endif
@@ -806,7 +810,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
 
         UserDrag dragMode = renderer->style().userDrag();
         if (m_dragSourceAction.contains(DragSourceAction::DHTML) && dragMode == UserDrag::Element) {
-            state.type = DragSourceAction::DHTML;
+            state.type.add(DragSourceAction::DHTML);
             return element;
         }
         if (dragMode == UserDrag::Auto) {
@@ -977,11 +981,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
     if (!state.source)
         return false;
 
-#if PLATFORM(GTK)
-    if (dragEvent.isTouchEvent())
-        return false;
-#endif
-
     Ref<Frame> protector(src);
     auto hitTestResult = hitTestResultForDragStart(src, *state.source, dragOrigin);
     if (!hitTestResult)
@@ -1094,7 +1093,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
         dragItem.imageAnchorPoint = dragImageAnchorPointForSelectionDrag(src, mouseDraggedPoint);
         dragItem.image = WTFMove(dragImage);
         dragItem.data = WTFMove(pasteboardWriterData);
-        dragItem.containsSelection = true;
 
         beginDrag(WTFMove(dragItem), src, dragOrigin, mouseDraggedPoint, dataTransfer, DragSourceAction::Selection);
 
@@ -1191,7 +1189,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
         dragItem.imageAnchorPoint = dragImage ? anchorPointForLinkDragImage(dragImage.get()) : FloatPoint();
         dragItem.image = WTFMove(dragImage);
         dragItem.data = WTFMove(pasteboardWriterData);
-        dragItem.containsSelection = true;
 
         beginDrag(WTFMove(dragItem), src, dragOrigin, mouseDraggedPoint, dataTransfer, DragSourceAction::Selection);
 
@@ -1378,7 +1375,6 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     ASSERT(state.type.hasExactlyOneBitSet());
     item.sourceAction = state.type.toSingleValue();
     item.promisedAttachmentInfo = WTFMove(promisedAttachmentInfo);
-    item.containsSelection = frame.selection().contains(eventPos);
 
     auto eventPositionInRootViewCoordinates = frame.view()->contentsToRootView(eventPos);
     auto dragLocationInRootViewCoordinates = frame.view()->contentsToRootView(dragLoc);

@@ -193,7 +193,7 @@ template<size_t divisor> constexpr size_t roundUpToMultipleOf(size_t x)
 
 template<size_t divisor, typename T> inline T* roundUpToMultipleOf(T* x)
 {
-    static_assert(sizeof(T*) == sizeof(size_t));
+    static_assert(sizeof(T*) == sizeof(size_t), "");
     return reinterpret_cast<T*>(roundUpToMultipleOf<divisor>(reinterpret_cast<size_t>(x)));
 }
 
@@ -604,19 +604,6 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
-
-// FIXME: Needed for GCC<=9.3. Remove it after Ubuntu 20.04 end of support (May 2023).
-#if defined(__GLIBCXX__) && !defined(HAVE_STD_REMOVE_CVREF) && !COMPILER(CLANG)
-namespace std {
-template <typename T>
-struct remove_cvref {
-    using type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
-};
-
-template <typename T>
-using remove_cvref_t = typename remove_cvref<T>::type;
-}
-#endif
 
 using WTF::GB;
 using WTF::KB;

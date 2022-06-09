@@ -45,7 +45,6 @@
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
 #include <wtf/text/AtomStringTable.h>
@@ -103,16 +102,11 @@ public:
     WTF_EXPORT_PRIVATE ~ThreadSuspendLocker();
 };
 
-class WTF_CAPABILITY("is current") Thread : public ThreadSafeRefCounted<Thread> {
+class Thread : public ThreadSafeRefCounted<Thread> {
     static std::atomic<uint32_t> s_uid;
 public:
     friend class ThreadGroup;
     friend WTF_EXPORT_PRIVATE void initialize();
-
-    class ClientData : public ThreadSafeRefCounted<ClientData> {
-    public:
-        virtual ~ClientData() = default;
-    };
 
     WTF_EXPORT_PRIVATE ~Thread();
 
@@ -200,7 +194,6 @@ public:
     // relativePriority is a value in the range [-15, 0] where a lower value indicates a lower priority.
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInteractive(int relativePriority = 0);
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInitiated(int relativePriority = 0);
-    WTF_EXPORT_PRIVATE static QOS currentThreadQOS();
 
 #if HAVE(QOS_CLASSES)
     WTF_EXPORT_PRIVATE static void setGlobalMaxQOSClass(qos_class_t);
@@ -216,8 +209,6 @@ public:
     WTF_EXPORT_PRIVATE static bool exchangeIsCompilationThread(bool newValue);
     WTF_EXPORT_PRIVATE static void registerGCThread(GCThreadType);
     WTF_EXPORT_PRIVATE static bool mayBeGCThread();
-
-    WTF_EXPORT_PRIVATE static void registerJSThread(Thread&);
 
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
@@ -272,7 +263,6 @@ public:
 #endif
 
     bool isCompilationThread() const { return m_isCompilationThread; }
-    bool isJSThread() const { return m_isJSThread; }
     GCThreadType gcThreadType() const { return static_cast<GCThreadType>(m_gcThreadType); }
 
     struct NewThreadContext;
@@ -355,13 +345,13 @@ protected:
     static Lock s_allThreadsLock;
 
     JoinableState m_joinableState { Joinable };
-    bool m_isShuttingDown : 1 { false };
-    bool m_didExit : 1 { false };
-    bool m_isDestroyedOnce : 1 { false };
-    bool m_isCompilationThread: 1 { false };
-    bool m_didUnregisterFromAllThreads : 1 { false };
-    bool m_isJSThread : 1 { false };
-    unsigned m_gcThreadType : 2 { static_cast<unsigned>(GCThreadType::None) };
+    bool m_isShuttingDown : 1;
+    bool m_didExit : 1;
+    bool m_isDestroyedOnce : 1;
+    bool m_isCompilationThread: 1;
+    unsigned m_gcThreadType : 2;
+
+    bool m_didUnregisterFromAllThreads { false };
 
     // Lock & ParkingLot rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
     // Use WordLock since WordLock does not depend on ThreadSpecific and this "Thread".
@@ -396,11 +386,15 @@ protected:
     void* m_savedLastStackTop;
 public:
     void* m_apiData { nullptr };
-    RefPtr<ClientData> m_clientData { nullptr };
 };
 
 inline Thread::Thread()
-    : m_uid(++s_uid)
+    : m_isShuttingDown(false)
+    , m_didExit(false)
+    , m_isDestroyedOnce(false)
+    , m_isCompilationThread(false)
+    , m_gcThreadType(static_cast<unsigned>(GCThreadType::None))
+    , m_uid(++s_uid)
 {
 }
 
@@ -433,19 +427,9 @@ inline Thread& Thread::current()
     return initializeCurrentTLS();
 }
 
-inline void assertIsCurrent(const Thread& thread) WTF_ASSERTS_ACQUIRED_CAPABILITY(thread)
-{
-#if ASSERT_ENABLED
-    ASSERT(&thread == &Thread::current());
-#else
-    UNUSED_PARAM(thread);
-#endif
-}
-
 } // namespace WTF
 
 using WTF::ThreadSuspendLocker;
 using WTF::Thread;
 using WTF::ThreadType;
 using WTF::GCThreadType;
-using WTF::assertIsCurrent;

@@ -7,8 +7,8 @@ description: >
     the Identifier in a PropertySetParameterList of a
     PropertyAssignment  if its FunctionBody is strict code
 negative:
-  phase: parse
   type: SyntaxError
+  phase: parse
 flags: [noStrict]
 ---*/
 

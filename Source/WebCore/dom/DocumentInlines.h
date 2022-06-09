@@ -26,11 +26,9 @@
 #pragma once
 
 #include "Document.h"
-#include "FrameDestructionObserverInlines.h"
 #include "MediaProducer.h"
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
-#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 
@@ -41,7 +39,7 @@ inline PAL::TextEncoding Document::textEncoding() const
     return PAL::TextEncoding();
 }
 
-inline AtomString Document::encoding() const { return AtomString::fromLatin1(textEncoding().domName()); }
+inline AtomString Document::encoding() const { return textEncoding().domName(); }
 
 inline String Document::charset() const { return Document::encoding(); }
 
@@ -88,18 +86,5 @@ inline ScriptExecutionContext* Node::scriptExecutionContext() const
     return &document().contextDocument();
 }
 
-inline bool Document::hasBrowsingContext() const
-{
-    return !!frame();
-}
 
-inline WebCoreOpaqueRoot Node::opaqueRoot() const
-{
-    // FIXME: Possible race?
-    // https://bugs.webkit.org/show_bug.cgi?id=165713
-    if (isConnected())
-        return WebCoreOpaqueRoot { &document() };
-    return traverseToOpaqueRoot();
 }
-
-} // namespace WebCore

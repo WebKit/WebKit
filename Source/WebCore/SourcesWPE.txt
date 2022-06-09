@@ -21,23 +21,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-accessibility/atspi/AccessibilityAtspi.cpp
-accessibility/atspi/AccessibilityObjectAtspi.cpp
-accessibility/atspi/AccessibilityObjectActionAtspi.cpp
-accessibility/atspi/AccessibilityObjectComponentAtspi.cpp
-accessibility/atspi/AccessibilityObjectDocumentAtspi.cpp
-accessibility/atspi/AccessibilityObjectHyperlinkAtspi.cpp
-accessibility/atspi/AccessibilityObjectHypertextAtspi.cpp
-accessibility/atspi/AccessibilityObjectImageAtspi.cpp
-accessibility/atspi/AccessibilityObjectSelectionAtspi.cpp
-accessibility/atspi/AccessibilityObjectTableAtspi.cpp
-accessibility/atspi/AccessibilityObjectTableCellAtspi.cpp
-accessibility/atspi/AccessibilityObjectTextAtspi.cpp
-accessibility/atspi/AccessibilityObjectValueAtspi.cpp
-accessibility/atspi/AccessibilityRootAtspi.cpp
-accessibility/atspi/AXObjectCacheAtspi.cpp
+accessibility/atk/AXObjectCacheAtk.cpp
+accessibility/atk/AccessibilityObjectAtk.cpp
+accessibility/atk/WebKitAccessible.cpp
+accessibility/atk/WebKitAccessibleHyperlink.cpp
+accessibility/atk/WebKitAccessibleInterfaceAction.cpp @no-unify
+accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
+accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
+accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
+accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
+accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
+accessibility/atk/WebKitAccessibleInterfaceImage.cpp
+accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
+accessibility/atk/WebKitAccessibleInterfaceTable.cpp
+accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp
+accessibility/atk/WebKitAccessibleInterfaceText.cpp
+accessibility/atk/WebKitAccessibleInterfaceValue.cpp
+accessibility/atk/WebKitAccessibleUtil.cpp
 
-editing/atspi/FrameSelectionAtspi.cpp
+editing/atk/FrameSelectionAtk.cpp
 editing/libwpe/EditorLibWPE.cpp
 
 loader/soup/ResourceLoaderSoup.cpp
@@ -67,15 +69,8 @@ platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/GLContext.cpp
 platform/graphics/PlatformDisplay.cpp
 
-platform/graphics/wpe/SystemFontDatabaseWPE.cpp
-
 platform/graphics/egl/GLContextEGL.cpp
 platform/graphics/egl/GLContextEGLLibWPE.cpp
-
-platform/graphics/gbm/GBMBufferSwapchain.cpp
-platform/graphics/gbm/GBMDevice.cpp
-platform/graphics/gbm/GraphicsContextGLGBM.cpp
-platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 

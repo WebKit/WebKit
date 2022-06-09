@@ -49,8 +49,8 @@
 #include "AirValidate.h"
 #include "B3Common.h"
 #include "B3Procedure.h"
+#include "B3TimingScope.h"
 #include "CCallHelpers.h"
-#include "CompilerTimingScope.h"
 #include "DisallowMacroScratchRegisterUsage.h"
 #include <wtf/IndexMap.h>
 
@@ -58,7 +58,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 void prepareForGeneration(Code& code)
 {
-    CompilerTimingScope timingScope("Total Air", "prepareForGeneration");
+    TimingScope timingScope("Air::prepareForGeneration");
     
     // If we're doing super verbose dumping, the phase scope of any phase will already do a dump.
     if (shouldDumpIR(code.proc(), AirMode) && !shouldDumpIRAtEachPhase(AirMode)) {
@@ -191,7 +191,7 @@ void prepareForGeneration(Code& code)
 
 static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
 {
-    CompilerTimingScope timingScope("Air", "generateWithAlreadyAllocatedRegisters");
+    TimingScope timingScope("Air::generate");
 
     DisallowMacroScratchRegisterUsage disallowScratch(jit);
 

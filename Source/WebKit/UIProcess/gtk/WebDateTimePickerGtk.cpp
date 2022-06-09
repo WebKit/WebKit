@@ -165,15 +165,15 @@ void WebDateTimePickerGtk::showDateTimePicker(WebCore::DateTimeChooserParameters
 
 void WebDateTimePickerGtk::update(WebCore::DateTimeChooserParameters&& params)
 {
-    SetForScope inUpdate(m_inUpdate, true);
-    if (params.type == "date"_s)
+    SetForScope<bool> inUpdate(m_inUpdate, true);
+    if (params.type == "date")
         m_currentDate = WebCore::DateComponents::fromParsingDate(params.currentValue);
-    else if (params.type == "datetime-local"_s)
+    else if (params.type == "datetime-local")
         m_currentDate = WebCore::DateComponents::fromParsingDateTimeLocal(params.currentValue);
 
     if (m_currentDate)
         g_object_set(m_calendar, "year", m_currentDate->fullYear(), "month", m_currentDate->month(), "day", m_currentDate->monthDay(), nullptr);
-    else if (params.type == "datetime-local"_s) {
+    else if (params.type == "datetime-local") {
         GRefPtr<GDateTime> now = adoptGRef(g_date_time_new_now_local());
         Seconds unixTime = Seconds(g_date_time_to_unix(now.get())) + Seconds::fromMicroseconds(g_date_time_get_utc_offset(now.get()));
         m_currentDate = WebCore::DateComponents::fromMillisecondsSinceEpochForDateTimeLocal(unixTime.milliseconds());

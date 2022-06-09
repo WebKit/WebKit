@@ -25,7 +25,7 @@
 
 // https://w3c.github.io/user-timing/#performancemeasure
 [
-    Exposed=*,
+    Exposed=(Window,Worker),
 ] interface PerformanceMeasure : PerformanceEntry {
-    [CallWith=CurrentGlobalObject, CachedAttribute] readonly attribute any detail;
+    [CallWith=GlobalObject, CachedAttribute] readonly attribute any detail;
 };

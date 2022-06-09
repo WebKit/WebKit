@@ -26,91 +26,11 @@
 #include "config.h"
 #include "EventTrackingRegions.h"
 
-#include "EventNames.h"
-
 namespace WebCore {
 
-ASCIILiteral EventTrackingRegions::eventName(EventType eventType)
+TrackingType EventTrackingRegions::trackingTypeForPoint(const String& eventName, const IntPoint& point)
 {
-    switch (eventType) {
-    case EventType::Mousedown:
-        return "mousedown"_s;
-    case EventType::Mousemove:
-        return "mousemove"_s;
-    case EventType::Mouseup:
-        return "mouseup"_s;
-    case EventType::Mousewheel:
-        return "mousewheel"_s;
-    case EventType::Pointerdown:
-        return "pointerdown"_s;
-    case EventType::Pointerenter:
-        return "pointerenter"_s;
-    case EventType::Pointerleave:
-        return "pointerleave"_s;
-    case EventType::Pointermove:
-        return "pointermove"_s;
-    case EventType::Pointerout:
-        return "pointerout"_s;
-    case EventType::Pointerover:
-        return "pointerover"_s;
-    case EventType::Pointerup:
-        return "pointerup"_s;
-    case EventType::Touchend:
-        return "touchend"_s;
-    case EventType::Touchforcechange:
-        return "touchforcechange"_s;
-    case EventType::Touchmove:
-        return "touchmove"_s;
-    case EventType::Touchstart:
-        return "touchstart"_s;
-    case EventType::Wheel:
-        return "wheel"_s;
-    }
-    return ASCIILiteral();
-}
-
-const AtomString& EventTrackingRegions::eventNameAtomString(const EventNames& eventNames, EventType eventType)
-{
-    switch (eventType) {
-    case EventType::Mousedown:
-        return eventNames.mousedownEvent;
-    case EventType::Mousemove:
-        return eventNames.mousemoveEvent;
-    case EventType::Mouseup:
-        return eventNames.mouseupEvent;
-    case EventType::Mousewheel:
-        return eventNames.mousewheelEvent;
-    case EventType::Pointerdown:
-        return eventNames.pointerdownEvent;
-    case EventType::Pointerenter:
-        return eventNames.pointerenterEvent;
-    case EventType::Pointerleave:
-        return eventNames.pointerleaveEvent;
-    case EventType::Pointermove:
-        return eventNames.pointermoveEvent;
-    case EventType::Pointerout:
-        return eventNames.pointeroutEvent;
-    case EventType::Pointerover:
-        return eventNames.pointeroverEvent;
-    case EventType::Pointerup:
-        return eventNames.pointerupEvent;
-    case EventType::Touchend:
-        return eventNames.touchendEvent;
-    case EventType::Touchforcechange:
-        return eventNames.touchforcechangeEvent;
-    case EventType::Touchmove:
-        return eventNames.touchmoveEvent;
-    case EventType::Touchstart:
-        return eventNames.touchstartEvent;
-    case EventType::Wheel:
-        return eventNames.wheelEvent;
-    }
-    return nullAtom();
-}
-
-TrackingType EventTrackingRegions::trackingTypeForPoint(EventType eventType, const IntPoint& point)
-{
-    auto synchronousRegionIterator = eventSpecificSynchronousDispatchRegions.find(eventType);
+    auto synchronousRegionIterator = eventSpecificSynchronousDispatchRegions.find(eventName);
     if (synchronousRegionIterator != eventSpecificSynchronousDispatchRegions.end()) {
         if (synchronousRegionIterator->value.contains(point))
             return TrackingType::Synchronous;
@@ -133,12 +53,12 @@ void EventTrackingRegions::translate(IntSize offset)
         slot.value.translate(offset);
 }
 
-void EventTrackingRegions::uniteSynchronousRegion(EventType eventType, const Region& region)
+void EventTrackingRegions::uniteSynchronousRegion(const String& eventName, const Region& region)
 {
     if (region.isEmpty())
         return;
 
-    auto addResult = eventSpecificSynchronousDispatchRegions.add(eventType, region);
+    auto addResult = eventSpecificSynchronousDispatchRegions.add(eventName, region);
     if (!addResult.isNewEntry)
         addResult.iterator->value.unite(region);
 }

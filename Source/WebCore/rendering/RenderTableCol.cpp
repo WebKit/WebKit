@@ -93,7 +93,7 @@ void RenderTableCol::updateFromElement()
         HTMLTableColElement& tc = static_cast<HTMLTableColElement&>(*element());
         m_span = tc.span();
     } else
-        m_span = 1;
+        m_span = !(hasInitializedStyle() && style().display() == DisplayType::TableColumnGroup);
     if (m_span != oldSpan && hasInitializedStyle() && parent())
         setNeedsLayoutAndPrefWidthsRecalc();
 }
@@ -155,7 +155,7 @@ RenderTable* RenderTableCol::table() const
     auto table = parent();
     if (table && !is<RenderTable>(*table))
         table = table->parent();
-    return dynamicDowncast<RenderTable>(table);
+    return is<RenderTable>(table) ? downcast<RenderTable>(table) : nullptr;
 }
 
 RenderTableCol* RenderTableCol::enclosingColumnGroup() const

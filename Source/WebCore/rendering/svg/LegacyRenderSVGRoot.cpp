@@ -71,7 +71,7 @@ SVGSVGElement& LegacyRenderSVGRoot::svgSVGElement() const
 
 void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
-    ASSERT(!shouldApplySizeContainment());
+    ASSERT(!shouldApplySizeContainment(*this));
 
     // Spec: http://www.w3.org/TR/SVG/coords.html#IntrinsicSizing
     // SVG needs to specify how to calculate some intrinsic sizing properties to enable inclusion within other languages.
@@ -83,6 +83,8 @@ void LegacyRenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicS
     // - If the ‘width’ and ‘height’ of the rootmost ‘svg’ element are both specified with unit identifiers (in, mm, cm, pt, pc,
     //   px, em, ex) or in user units, then the aspect ratio is calculated from the ‘width’ and ‘height’ attributes after
     //   resolving both values to user units.
+    intrinsicSize.hasIntrinsicWidth = svgSVGElement().hasIntrinsicWidth();
+    intrinsicSize.hasIntrinsicHeight = svgSVGElement().hasIntrinsicHeight();
     intrinsicSize.setWidth(floatValueForLength(svgSVGElement().intrinsicWidth(), 0));
     intrinsicSize.setHeight(floatValueForLength(svgSVGElement().intrinsicHeight(), 0));
 
@@ -154,7 +156,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<Layou
 
 void LegacyRenderSVGRoot::layout()
 {
-    SetForScope change(m_inLayout, true);
+    SetForScope<bool> change(m_inLayout, true);
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
@@ -222,8 +224,7 @@ bool LegacyRenderSVGRoot::shouldApplyViewportClip() const
 void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // An empty viewport disables rendering.
-    bool clipViewport = shouldApplyViewportClip();
-    if (clipViewport && contentSize().isEmpty())
+    if (borderBoxRect().isEmpty())
         return;
 
     // Don't paint, if the context explicitly disabled it.
@@ -268,13 +269,13 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
     childPaintInfo.context().save();
 
     // Apply initial viewport clip
-    if (clipViewport)
+    if (shouldApplyViewportClip())
         childPaintInfo.context().clip(snappedIntRect(overflowClipRect(paintOffset)));
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.
     IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset);
-    childPaintInfo.applyTransform(AffineTransform::makeTranslation(toFloatSize(adjustedPaintOffset)) * localToBorderBoxTransform());
+    childPaintInfo.applyTransform(AffineTransform::translation(adjustedPaintOffset.x(), adjustedPaintOffset.y()) * localToBorderBoxTransform());
 
     // SVGRenderingContext must be destroyed before we restore the childPaintInfo.context(), because a filter may have
     // changed the context and it is only reverted when the SVGRenderingContext destructor finishes applying the filter.
@@ -344,7 +345,7 @@ void LegacyRenderSVGRoot::buildLocalToBorderBoxTransform()
 
 const AffineTransform& LegacyRenderSVGRoot::localToParentTransform() const
 {
-    // Slightly optimized version of m_localToParentTransform = AffineTransform::makeTranslation(x(), y()) * m_localToBorderBoxTransform;
+    // Slightly optimized version of m_localToParentTransform = AffineTransform::translation(x(), y()) * m_localToBorderBoxTransform;
     m_localToParentTransform = m_localToBorderBoxTransform;
     if (x())
         m_localToParentTransform.setE(m_localToParentTransform.e() + roundToInt(x()));
@@ -355,8 +356,8 @@ const AffineTransform& LegacyRenderSVGRoot::localToParentTransform() const
 
 LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
-    if (isInsideEntirelyHiddenLayer())
-        return { };
+    if (style().visibility() != Visibility::Visible && !enclosingLayer()->hasVisibleContent())
+        return LayoutRect();
 
     FloatRect contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates());
     contentRepaintRect.intersect(snappedIntRect(borderBoxRect()));

@@ -20,7 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from crypt import methods
 import traceback
 
 from flask import abort, jsonify
@@ -31,14 +30,12 @@ from resultsdbpy.controller.failure_controller import FailureController
 from resultsdbpy.controller.suite_controller import SuiteController
 from resultsdbpy.controller.test_controller import TestController
 from resultsdbpy.controller.upload_controller import UploadController
-from resultsdbpy.controller.bug_tracker_controller import BugTrackerController
-from resultsdbpy.bug_trackers.bugzilla import WebKitBugzilla
 from webkitflaskpy import AuthedBlueprint
 from werkzeug.exceptions import HTTPException
 
 
 class APIRoutes(AuthedBlueprint):
-    def __init__(self, model, import_name=__name__, auth_decorator=None, bug_tracker_configs=[]):
+    def __init__(self, model, import_name=__name__, auth_decorator=None):
         super(APIRoutes, self).__init__('controller', import_name, url_prefix='/api', auth_decorator=auth_decorator)
 
         self.commit_controller = CommitController(commit_context=model.commit_context)
@@ -50,9 +47,6 @@ class APIRoutes(AuthedBlueprint):
 
         self.ci_controller = CIController(ci_context=model.ci_context, upload_context=model.upload_context)
         self.archive_controller = ArchiveController(commit_controller=self.commit_controller, archive_context=model.archive_context, upload_context=model.upload_context)
-
-        self.bug_tracker_configs = [WebKitBugzilla()] if not len(bug_tracker_configs) else bug_tracker_configs
-        self.bug_tracker_controller = BugTrackerController(bug_tracker_configs=self.bug_tracker_configs, commit_context=model.commit_context)
 
         for code in [400, 404, 405]:
             self.register_error_handler(code, self.error_response)
@@ -82,9 +76,6 @@ class APIRoutes(AuthedBlueprint):
 
         self.add_url_rule('/urls/queue', 'queue-urls', self.ci_controller.urls_for_queue_endpoint, methods=('GET',))
         self.add_url_rule('/urls', 'build-urls', self.ci_controller.urls_for_builds_endpoint, methods=('GET',))
-
-        self.add_url_rule('/bug-trackers', 'bug-trackers', self.bug_tracker_controller.list_trackers, methods=('GET',))
-        self.add_url_rule('/bug-trackers/<path:tracker>/create-bug', 'create-bug', self.bug_tracker_controller.create_bug, methods=('PUT',))
 
     def error_response(self, error):
         response = jsonify(status='error', error=error.name, description=error.description)

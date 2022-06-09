@@ -23,6 +23,10 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
+    NetworkProcess/WebStorage/StorageManager.cpp
+
+    NetworkProcess/curl/NetworkProcessMainCurl.cpp
+
     Platform/IPC/win/AttachmentWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
     Platform/IPC/win/IPCSemaphoreWin.cpp
@@ -33,6 +37,8 @@ list(APPEND WebKit_SOURCES
     Platform/win/ModuleWin.cpp
     Platform/win/SharedMemoryWin.cpp
 
+    Shared/API/c/curl/WKCertificateInfoCurl.cpp
+
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
 
     Shared/win/AuxiliaryProcessMainWin.cpp
@@ -42,6 +48,7 @@ list(APPEND WebKit_SOURCES
     Shared/win/NativeWebWheelEventWin.cpp
     Shared/win/WebCoreArgumentCodersWin.cpp
     Shared/win/WebEventFactory.cpp
+    Shared/win/WebPreferencesDefaultValuesWin.cpp
 
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
@@ -51,6 +58,9 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/API/C/WKViewportAttributes.cpp
 
+    UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
+    UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp
+
     UIProcess/API/C/win/WKView.cpp
 
     UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
@@ -59,6 +69,8 @@ list(APPEND WebKit_SOURCES
     UIProcess/Inspector/win/WebInspectorUIProxyWin.cpp
 
     UIProcess/Launcher/win/ProcessLauncherWin.cpp
+
+    UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
 
     UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp
 
@@ -78,7 +90,6 @@ list(APPEND WebKit_SOURCES
 
     WebProcess/InjectedBundle/win/InjectedBundleWin.cpp
 
-    WebProcess/Inspector/win/RemoteWebInspectorUIWin.cpp
     WebProcess/Inspector/win/WebInspectorUIWin.cpp
 
     WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
@@ -94,7 +105,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebPage/wc/DrawingAreaWC.cpp
     WebProcess/WebPage/wc/GraphicsLayerWC.cpp
     WebProcess/WebPage/wc/WCLayerFactory.cpp
-    WebProcess/WebPage/wc/WCTileGrid.cpp
 
     WebProcess/WebPage/win/WebPageWin.cpp
 
@@ -113,6 +123,8 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/Plugins/win"
     "${WEBKIT_DIR}/Shared/wc"
     "${WEBKIT_DIR}/Shared/win"
+    "${WEBKIT_DIR}/UIProcess/API/C/cairo"
+    "${WEBKIT_DIR}/UIProcess/API/C/curl"
     "${WEBKIT_DIR}/UIProcess/API/C/win"
     "${WEBKIT_DIR}/UIProcess/API/cpp/win"
     "${WEBKIT_DIR}/UIProcess/API/win"
@@ -135,6 +147,8 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 
 list(APPEND WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/wc/RemoteWCLayerTreeHost
+
+    WebProcess/GPU/graphics/wc/RemoteWCLayerTreeHostProxy
 )
 
 set(WebKitCommonIncludeDirectories ${WebKit_INCLUDE_DIRECTORIES})
@@ -153,6 +167,8 @@ list(APPEND GPUProcess_SOURCES
 )
 
 if (${WTF_PLATFORM_WIN_CAIRO})
+    add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1)
+
     list(APPEND WebKit_SOURCES
         NetworkProcess/Cookies/curl/WebCookieManagerCurl.cpp
 
@@ -161,24 +177,16 @@ if (${WTF_PLATFORM_WIN_CAIRO})
 
         NetworkProcess/curl/NetworkDataTaskCurl.cpp
         NetworkProcess/curl/NetworkProcessCurl.cpp
-        NetworkProcess/curl/NetworkProcessMainCurl.cpp
         NetworkProcess/curl/NetworkSessionCurl.cpp
-        NetworkProcess/curl/WebSocketTaskCurl.cpp
+        NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
 
         Shared/API/c/cairo/WKImageCairo.cpp
-
-        Shared/API/c/curl/WKCertificateInfoCurl.cpp
 
         Shared/cairo/ShareableBitmapCairo.cpp
 
         Shared/curl/WebCoreArgumentCodersCurl.cpp
 
-        UIProcess/API/C/curl/WKProtectionSpaceCurl.cpp
-        UIProcess/API/C/curl/WKWebsiteDataStoreRefCurl.cpp
-
         UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
-
-        UIProcess/WebsiteData/curl/WebsiteDataStoreCurl.cpp
 
         UIProcess/cairo/BackingStoreCairo.cpp
 
@@ -187,8 +195,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
 
     list(APPEND WebKit_INCLUDE_DIRECTORIES
         "${WEBKIT_DIR}/NetworkProcess/curl"
-        "${WEBKIT_DIR}/UIProcess/API/C/cairo"
-        "${WEBKIT_DIR}/UIProcess/API/C/curl"
         "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     )
 

@@ -88,10 +88,6 @@ ALL PROPERTIES:
     includes
     copyWithin
     at
-    toReversed
-    toSorted
-    toSpliced
-    with
     constructor
     Symbol(Symbol.iterator)
     Symbol(Symbol.unscopables)
@@ -148,10 +144,6 @@ OWN PROPERTIES:
     includes
     copyWithin
     at
-    toReversed
-    toSorted
-    toSpliced
-    with
     constructor
     Symbol(Symbol.iterator)
     Symbol(Symbol.unscopables)
@@ -193,10 +185,6 @@ DISPLAYABLE PROPERTIES:
     includes
     copyWithin
     at
-    toReversed
-    toSorted
-    toSpliced
-    with
     constructor
     Symbol(Symbol.iterator)
     Symbol(Symbol.unscopables)
@@ -238,10 +226,6 @@ ALL PROPERTIES:
     includes
     copyWithin
     at
-    toReversed
-    toSorted
-    toSpliced
-    with
     constructor
     Symbol(Symbol.iterator)
     Symbol(Symbol.unscopables)

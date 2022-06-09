@@ -38,7 +38,7 @@ public:
     
     const AtomString& value() const;
 
-    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool willRespondToMouseClickEvents() final;
 
     RenderButton* renderer() const;
 

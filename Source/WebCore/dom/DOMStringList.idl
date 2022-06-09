@@ -24,6 +24,7 @@
  */
 
 [
+    ImplementationLacksVTable,
     Exposed=(Window,Worker)
 ] interface DOMStringList {
     readonly attribute unsigned long length;

@@ -65,12 +65,12 @@ private:
     ConnectStatus connect(const URL&, const String& protocol) final;
     String subprotocol() final;
     String extensions() final;
-    SendResult send(CString&&) final;
+    SendResult send(const String& message) final;
     SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
     SendResult send(WebCore::Blob&) final;
     unsigned bufferedAmount() const final;
     void close(int code, const String& reason) final;
-    void fail(String&& reason) final;
+    void fail(const String& reason) final;
     void disconnect() final;
     void suspend() final;
     void resume() final;

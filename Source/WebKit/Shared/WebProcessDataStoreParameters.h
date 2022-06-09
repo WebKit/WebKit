@@ -55,11 +55,6 @@ struct WebProcessDataStoreParameters {
     String modelElementCacheDirectory;
     SandboxExtension::Handle modelElementCacheDirectoryExtensionHandle;
 #endif
-#if PLATFORM(IOS_FAMILY)
-    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
-    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
-    std::optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
-#endif
     bool resourceLoadStatisticsEnabled { false };
 
     template<class Encoder> void encode(Encoder&) const;
@@ -87,11 +82,6 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     encoder << modelElementCacheDirectory;
     encoder << modelElementCacheDirectoryExtensionHandle;
-#endif
-#if PLATFORM(IOS_FAMILY)
-    encoder << cookieStorageDirectoryExtensionHandle;
-    encoder << containerCachesDirectoryExtensionHandle;
-    encoder << containerTemporaryDirectoryExtensionHandle;
 #endif
     encoder << resourceLoadStatisticsEnabled;
 }
@@ -161,30 +151,14 @@ std::optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::deco
         return std::nullopt;
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-    String modelElementCacheDirectory;
-    if (!decoder.decode(modelElementCacheDirectory))
-        return std::nullopt;
+        String modelElementCacheDirectory;
+        if (!decoder.decode(modelElementCacheDirectory))
+            return std::nullopt;
 
-    std::optional<SandboxExtension::Handle> modelElementCacheDirectoryExtensionHandle;
-    decoder >> modelElementCacheDirectoryExtensionHandle;
-    if (!modelElementCacheDirectoryExtensionHandle)
-        return std::nullopt;
-#endif
-#if PLATFORM(IOS_FAMILY)
-    std::optional<std::optional<SandboxExtension::Handle>> cookieStorageDirectoryExtensionHandle;
-    decoder >> cookieStorageDirectoryExtensionHandle;
-    if (!cookieStorageDirectoryExtensionHandle)
-        return std::nullopt;
-
-    std::optional<std::optional<SandboxExtension::Handle>> containerCachesDirectoryExtensionHandle;
-    decoder >> containerCachesDirectoryExtensionHandle;
-    if (!containerCachesDirectoryExtensionHandle)
-        return std::nullopt;
-
-    std::optional<std::optional<SandboxExtension::Handle>> containerTemporaryDirectoryExtensionHandle;
-    decoder >> containerTemporaryDirectoryExtensionHandle;
-    if (!containerTemporaryDirectoryExtensionHandle)
-        return std::nullopt;
+        std::optional<SandboxExtension::Handle> modelElementCacheDirectoryExtensionHandle;
+        decoder >> modelElementCacheDirectoryExtensionHandle;
+        if (!modelElementCacheDirectoryExtensionHandle)
+            return std::nullopt;
 #endif
 
     bool resourceLoadStatisticsEnabled = false;
@@ -210,11 +184,6 @@ std::optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::deco
 #if ENABLE(ARKIT_INLINE_PREVIEW)
         WTFMove(modelElementCacheDirectory),
         WTFMove(*modelElementCacheDirectoryExtensionHandle),
-#endif
-#if PLATFORM(IOS_FAMILY)
-        WTFMove(*cookieStorageDirectoryExtensionHandle),
-        WTFMove(*containerCachesDirectoryExtensionHandle),
-        WTFMove(*containerTemporaryDirectoryExtensionHandle),
 #endif
         resourceLoadStatisticsEnabled
     };

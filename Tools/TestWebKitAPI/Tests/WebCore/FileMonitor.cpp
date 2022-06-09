@@ -44,9 +44,9 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
     
-const String FileMonitorTestData("This is a test"_s);
-const String FileMonitorRevisedData("This is some changed text for the test"_s);
-const String FileMonitorSecondRevisedData("This is some changed text for the test"_s);
+const String FileMonitorTestData("This is a test");
+const String FileMonitorRevisedData("This is some changed text for the test");
+const String FileMonitorSecondRevisedData("This is some changed text for the test");
 
 class FileMonitorTest : public testing::Test {
 public:
@@ -56,7 +56,7 @@ public:
         
         // create temp file
         FileSystem::PlatformFileHandle handle;
-        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile"_s, handle);
+        m_tempFilePath = FileSystem::openTemporaryFile("tempTestFile", handle);
         ASSERT_NE(handle, FileSystem::invalidPlatformFileHandle);
         
         int rc = FileSystem::writeToFile(handle, FileMonitorTestData.utf8().data(), FileMonitorTestData.length());
@@ -106,15 +106,32 @@ static String createCommand(const String& path, const String& payload)
 
 static String readContentsOfFile(const String& path)
 {
-    auto buffer = FileSystem::readEntireFile(path);
-    if (!buffer)
+    constexpr int bufferSize = 1024;
+
+    auto source = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
+    if (!FileSystem::isHandleValid(source))
         return emptyString();
 
-    String result(static_cast<const LChar*>(buffer->data()), buffer->size());
-    if (result.endsWith('\n'))
-        return result.left(result.length() - 1);
+    StringBuffer<LChar> buffer(bufferSize);
 
-    return result;
+    auto fileCloser = WTF::makeScopeExit([source]() {
+        FileSystem::PlatformFileHandle handle = source;
+        FileSystem::closeFile(handle);
+    });
+
+    // Since we control the test files, we know we only need one read
+    int readBytes = FileSystem::readFromFile(source, buffer.characters(), bufferSize);
+    if (readBytes < 0)
+        return emptyString();
+
+    // Strip the trailing carriage return from the file:
+    if (readBytes > 1) {
+        int lastByte = readBytes - 1;
+        if (buffer[lastByte] == '\n')
+            buffer.shrink(lastByte);
+    }
+    ASSERT(readBytes < bufferSize);
+    return String::adopt(WTFMove(buffer));
 }
 
 TEST_F(FileMonitorTest, DetectChange)

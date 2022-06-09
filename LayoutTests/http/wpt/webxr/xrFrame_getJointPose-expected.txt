@@ -1,4 +1,0 @@
-
-PASS Test XRFrame.getJointPose - webgl
-PASS Test XRFrame.getJointPose - webgl2
-

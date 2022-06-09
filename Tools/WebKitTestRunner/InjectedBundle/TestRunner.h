@@ -292,10 +292,8 @@ public:
     // Web notifications.
     static void grantWebNotificationPermission(JSStringRef origin);
     static void denyWebNotificationPermission(JSStringRef origin);
-    static void denyWebNotificationPermissionOnPrompt(JSStringRef origin);
     static void removeAllWebNotificationPermissions();
     static void simulateWebNotificationClick(JSValueRef notification);
-    static void simulateWebNotificationClickForServiceWorkerNotifications();
 
     // Geolocation.
     void setGeolocationPermission(bool);

@@ -138,12 +138,12 @@ void WorkerInspectorProxy::sendMessageToWorkerInspectorController(const String& 
     });
 }
 
-void WorkerInspectorProxy::sendMessageFromWorkerToFrontend(String&& message)
+void WorkerInspectorProxy::sendMessageFromWorkerToFrontend(const String& message)
 {
     if (!m_pageChannel)
         return;
 
-    m_pageChannel->sendMessageFromWorkerToFrontend(*this, WTFMove(message));
+    m_pageChannel->sendMessageFromWorkerToFrontend(*this, message);
 }
 
 } // namespace WebCore

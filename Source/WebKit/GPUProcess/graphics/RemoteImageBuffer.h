@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,15 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Decoder.h"
+#include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "RemoteDisplayListRecorder.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include <WebCore/ConcreteImageBuffer.h>
+#include <WebCore/DisplayList.h>
+#include <WebCore/DisplayListItems.h>
+#include <WebCore/DisplayListReplayer.h>
 
 namespace WebKit {
 
@@ -38,32 +44,25 @@ class RemoteImageBuffer : public WebCore::ConcreteImageBuffer<BackendType> {
     using BaseConcreteImageBuffer = WebCore::ConcreteImageBuffer<BackendType>;
     using BaseConcreteImageBuffer::context;
     using BaseConcreteImageBuffer::m_backend;
+    using BaseConcreteImageBuffer::putPixelBuffer;
 
 public:
-    static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
     {
-        auto context = ImageBuffer::CreationContext { nullptr
-#if HAVE(IOSURFACE)
-            , &remoteRenderingBackend.ioSurfacePool()
-#endif
-        };
-        return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, context, remoteRenderingBackend, renderingResourceIdentifier);
+        return BaseConcreteImageBuffer::template create<RemoteImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, nullptr, remoteRenderingBackend, renderingResourceIdentifier);
     }
 
     RemoteImageBuffer(const WebCore::ImageBufferBackend::Parameters& parameters, std::unique_ptr<BackendType>&& backend, RemoteRenderingBackend& remoteRenderingBackend, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
         : BaseConcreteImageBuffer(parameters, WTFMove(backend), renderingResourceIdentifier.object())
+        , m_remoteRenderingBackend(remoteRenderingBackend)
         , m_renderingResourceIdentifier(renderingResourceIdentifier)
         , m_remoteDisplayList({ RemoteDisplayListRecorder::create(*this, renderingResourceIdentifier, renderingResourceIdentifier.processIdentifier(), remoteRenderingBackend) })
-        , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
     {
-        remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
+        m_remoteRenderingBackend.didCreateImageBufferBackend(m_backend->createImageBufferBackendHandle(), renderingResourceIdentifier, *m_remoteDisplayList.get());
     }
 
     ~RemoteImageBuffer()
     {
-        // Volatile image buffers do not have contexts.
-        if (this->volatilityState() == WebCore::VolatilityState::Volatile)
-            return;
         // Unwind the context's state stack before destruction, since calls to restore may not have
         // been flushed yet, or the web process may have terminated.
         while (context().stackSize())
@@ -77,9 +76,11 @@ public:
     }
 
 private:
+    friend class RemoteRenderingBackend;
+
+    RemoteRenderingBackend& m_remoteRenderingBackend;
     QualifiedRenderingResourceIdentifier m_renderingResourceIdentifier;
     IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder> m_remoteDisplayList;
-    ScopedRenderingResourcesRequest m_renderingResourcesRequest;
 };
 
 } // namespace WebKit

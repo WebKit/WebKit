@@ -23,15 +23,11 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// https://drafts.css-houdini.org/css-typed-om/#cssmatrixcomponent
 [
-    EnabledBySetting=CSSTypedOMEnabled,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
 ] interface CSSMatrixComponent : CSSTransformComponent {
-    // FIXME: when the second parameter is missing or not a dictionary,
-    // CSSMatrixComponent::create is not called with std::nullopt in the generated bindings code.
-    // Doing so would fix the remaining failures in the cssMatrixComponent.tentative test.
     constructor(DOMMatrixReadOnly matrix, optional CSSMatrixComponentOptions options);
 
     attribute DOMMatrix matrix;

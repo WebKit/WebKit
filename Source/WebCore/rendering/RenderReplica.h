@@ -38,7 +38,7 @@ public:
     RenderReplica(Document&, RenderStyle&&);
     virtual ~RenderReplica();
 
-    ASCIILiteral renderName() const override { return "RenderReplica"_s; }
+    const char* renderName() const override { return "RenderReplica"; }
 
     bool requiresLayer() const override { return true; }
 

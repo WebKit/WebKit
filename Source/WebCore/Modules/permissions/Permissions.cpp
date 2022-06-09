@@ -27,7 +27,6 @@
 #include "Permissions.h"
 
 #include "Exception.h"
-#include "FeaturePolicy.h"
 #include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPermissionDescriptor.h"
@@ -61,20 +60,6 @@ Navigator* Permissions::navigator()
 
 Permissions::~Permissions() = default;
 
-static bool isAllowedByFeaturePolicy(const Document& document, PermissionName name)
-{
-    switch (name) {
-    case PermissionName::Camera:
-        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Camera, document, LogFeaturePolicyFailure::No);
-    case PermissionName::Geolocation:
-        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Geolocation, document, LogFeaturePolicyFailure::No);
-    case PermissionName::Microphone:
-        return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document, LogFeaturePolicyFailure::No);
-    default:
-        return true;
-    }
-}
-
 void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DOMPromiseDeferred<IDLInterface<PermissionStatus>>&& promise)
 {
     // FIXME: support permissions in WorkerNavigator.
@@ -84,14 +69,8 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
     }
 
     auto context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
-
     if (!context || !context->globalObject()) {
         promise.reject(Exception { InvalidStateError, "The context is invalid"_s });
-        return;
-    }
-
-    if (auto* document = dynamicDowncast<Document>(context); !document->isFullyActive()) {
-        promise.reject(Exception { InvalidStateError, "The document is not fully active"_s });
         return;
     }
 
@@ -108,28 +87,10 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
         return;
     }
 
-    if (is<Document>(context) && !isAllowedByFeaturePolicy(downcast<Document>(*context), parameterDescriptor.name)) {
-        context->postTask([parameterDescriptor, promise = WTFMove(promise)](auto& context) mutable {
-            promise.resolve(PermissionStatus::create(context, PermissionState::Denied, parameterDescriptor));
-        });
-        return;
-    }
-
     auto* origin = context->securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
-    m_controller->query(ClientOrigin { context->topOrigin().data(), originData }, PermissionDescriptor { parameterDescriptor }, [this, protectedThis = Ref { *this }, parameterDescriptor, promise = WTFMove(promise)](auto permissionState) mutable {
-        auto context = m_navigator ? m_navigator->scriptExecutionContext() : nullptr;
-        if (!context || !context->globalObject())
-            return;
-
-        context->postTask([parameterDescriptor, promise = WTFMove(promise),  permissionState = WTFMove(permissionState)](auto& context) mutable {
-            if (!permissionState) {
-                promise.reject(Exception { NotSupportedError });
-                return;
-            }
-            promise.resolve(PermissionStatus::create(context, *permissionState, parameterDescriptor));
-        });
-    });
+    auto permissionState = m_controller->query(ClientOrigin { context->topOrigin().data(), originData }, PermissionDescriptor { parameterDescriptor });
+    promise.resolve(PermissionStatus::create(*context, permissionState, parameterDescriptor));
 }
 
 } // namespace WebCore

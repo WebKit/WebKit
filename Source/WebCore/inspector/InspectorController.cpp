@@ -359,19 +359,9 @@ void InspectorController::getHighlight(InspectorOverlay::Highlight& highlight, I
     m_overlay->getHighlight(highlight, coordinateSystem);
 }
 
-bool InspectorController::isUnderTest() const
-{
-    return m_isUnderTest;
-}
-
 unsigned InspectorController::gridOverlayCount() const
 {
     return m_overlay->gridOverlayCount();
-}
-
-unsigned InspectorController::flexOverlayCount() const
-{
-    return m_overlay->flexOverlayCount();
 }
 
 unsigned InspectorController::paintRectCount() const
@@ -478,7 +468,7 @@ bool InspectorController::canAccessInspectedScriptState(JSC::JSGlobalObject* lex
 {
     JSLockHolder lock(lexicalGlobalObject);
 
-    auto* inspectedWindow = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject);
+    auto* inspectedWindow = jsDynamicCast<JSDOMWindow*>(lexicalGlobalObject->vm(), lexicalGlobalObject);
     if (!inspectedWindow)
         return false;
 

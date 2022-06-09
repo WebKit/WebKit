@@ -38,7 +38,7 @@
 #include "WasmOSREntryData.h"
 #include "WasmOps.h"
 #include "WasmPageCount.h"
-#include "WasmTypeDefinition.h"
+#include "WasmSignature.h"
 #include <cstdint>
 #include <limits>
 #include <memory>
@@ -54,7 +54,7 @@ struct CompilationContext;
 struct ModuleInformation;
 struct UnlinkedHandlerInfo;
 
-using BlockSignature = const TypeDefinition*;
+using BlockSignature = const Signature*;
 
 enum class TableElementType : uint8_t {
     Externref,
@@ -74,8 +74,6 @@ inline bool isValueType(Type type)
     case TypeKind::Ref:
     case TypeKind::RefNull:
         return Options::useWebAssemblyTypedFunctionReferences();
-    case TypeKind::Rtt:
-        return Options::useWebAssemblyGC();
     default:
         break;
     }
@@ -86,7 +84,7 @@ inline JSString* typeToString(VM& vm, TypeKind type)
 {
 #define TYPE_CASE(macroName, value, b3, inc, wasmName) \
     case TypeKind::macroName: \
-        return jsNontrivialString(vm, #wasmName""_s); \
+        return jsNontrivialString(vm, #wasmName); \
 
     switch (type) {
         FOR_EACH_WASM_TYPE(TYPE_CASE)
@@ -107,28 +105,28 @@ inline bool isRefType(Type type)
 inline bool isExternref(Type type)
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Externref);
+        return isRefType(type) && type.index == static_cast<SignatureIndex>(TypeKind::Externref);
     return type.kind == TypeKind::Externref;
 }
 
 inline bool isFuncref(Type type)
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Funcref);
+        return isRefType(type) && type.index == static_cast<SignatureIndex>(TypeKind::Funcref);
     return type.kind == TypeKind::Funcref;
 }
 
 inline Type funcrefType()
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
+        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::SignatureIndex>(Wasm::TypeKind::Funcref) };
     return Types::Funcref;
 }
 
 inline Type externrefType()
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
+        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::SignatureIndex>(Wasm::TypeKind::Externref) };
     return Types::Externref;
 }
 
@@ -167,7 +165,6 @@ inline bool isValidHeapTypeKind(TypeKind kind)
     switch (kind) {
     case TypeKind::Funcref:
     case TypeKind::Externref:
-    case TypeKind::Rtt:
         return true;
     default:
         break;
@@ -241,6 +238,11 @@ String makeString(const Name& characters);
 
 struct GlobalInformation {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    enum Mutability : uint8_t {
+        // FIXME auto-generate this. https://bugs.webkit.org/show_bug.cgi?id=165231
+        Mutable = 1,
+        Immutable = 0
+    };
 
     enum InitializationType : uint8_t {
         IsImport,
@@ -441,11 +443,10 @@ struct Entrypoint {
 
 struct InternalFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    Vector<CodeLocationDataLabelPtr<WasmEntryPtrTag>> calleeMoveLocations;
+    CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeMoveLocation;
     StackMaps stackmaps;
     Vector<UnlinkedHandlerInfo> exceptionHandlers;
     Entrypoint entrypoint;
-    unsigned osrEntryScratchBufferSize { 0 };
 };
 
 // WebAssembly direct calls and call_indirect use indices into "function index space". This space starts
@@ -454,11 +455,11 @@ struct InternalFunction {
 struct WasmToWasmImportableFunction {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     using LoadLocation = MacroAssemblerCodePtr<WasmEntryPtrTag>*;
-    static ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, typeIndex); }
+    static ptrdiff_t offsetOfSignatureIndex() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, signatureIndex); }
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WasmToWasmImportableFunction, entrypointLoadLocation); }
 
-    // FIXME: Pack type index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
-    TypeIndex typeIndex { TypeDefinition::invalidIndex };
+    // FIXME: Pack signature index and code pointer into one 64-bit value. See <https://bugs.webkit.org/show_bug.cgi?id=165511>.
+    SignatureIndex signatureIndex { Signature::invalidIndex };
     LoadLocation entrypointLoadLocation;
 };
 using FunctionIndexSpace = Vector<WasmToWasmImportableFunction>;

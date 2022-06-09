@@ -30,7 +30,6 @@
 
 #include "DocumentFragment.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "NotImplemented.h"
 #include "Pasteboard.h"
 #include "Settings.h"
@@ -46,17 +45,17 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
     if (types.isEmpty())
         return nullptr;
 
-    if (types.contains("text/html;charset=utf-8"_s) && frame.document()) {
-        String markup = pasteboard.readString("text/html;charset=utf-8"_s);
+    if (types.contains("text/html;charset=utf-8") && frame.document()) {
+        String markup = pasteboard.readString("text/html;charset=utf-8");
         return createFragmentFromMarkup(*frame.document(), markup, emptyString(), DisallowScriptingAndPluginContent);
     }
 
     if (!allowPlainText)
         return nullptr;
 
-    if (types.contains("text/plain;charset=utf-8"_s)) {
+    if (types.contains("text/plain;charset=utf-8")) {
         chosePlainText = true;
-        return createFragmentFromText(range, pasteboard.readString("text/plain;charset=utf-8"_s));
+        return createFragmentFromText(range, pasteboard.readString("text/plain;charset=utf-8"));
     }
 
     return nullptr;
@@ -66,7 +65,8 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
     PasteboardWebContent pasteboardContent;
     pasteboardContent.text = selectedTextForDataTransfer();
-    pasteboardContent.markup = serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy, SerializeComposedTree::Yes);
+    pasteboardContent.markup = serializePreservingVisualAppearance(m_document.selection().selection(), ResolveURLs::YesExcludingLocalFileURLsForPrivacy,
+        m_document.settings().selectionAcrossShadowBoundariesEnabled() ? SerializeComposedTree::Yes : SerializeComposedTree::No);
     pasteboard.write(pasteboardContent);
 }
 

@@ -84,7 +84,7 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
 {
     FloatRect visibleContentRect = m_webPage.mainFrameView()->unobscuredContentRectIncludingScrollbars();
 
-    if (m_webPage.handlesPageScaleGesture())
+    if (m_webPage.mainWebFrame().handlesPageScaleGesture())
         return;
 
     double viewportMinimumScale;
@@ -181,9 +181,10 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
         totalSampledTextLength += textLength;
     }
 
-    auto sortedFontSizesAndCounts = WTF::map(fontSizeToCountMap, [](auto& entry) {
-        return FontSizeAndCount { entry.key, entry.value };
-    });
+    Vector<FontSizeAndCount> sortedFontSizesAndCounts;
+    sortedFontSizesAndCounts.reserveCapacity(fontSizeToCountMap.size());
+    for (auto& entry : fontSizeToCountMap)
+        sortedFontSizesAndCounts.append({ entry.key, entry.value });
 
     std::sort(sortedFontSizesAndCounts.begin(), sortedFontSizesAndCounts.end(), [] (auto& first, auto& second) {
         return first.fontSize < second.fontSize;
@@ -247,7 +248,7 @@ void ViewGestureGeometryCollector::computeMinimumAndMaximumViewportScales(double
 void ViewGestureGeometryCollector::collectGeometryForMagnificationGesture()
 {
     FloatRect visibleContentRect = m_webPage.mainFrameView()->unobscuredContentRectIncludingScrollbars();
-    bool frameHandlesMagnificationGesture = m_webPage.handlesPageScaleGesture();
+    bool frameHandlesMagnificationGesture = m_webPage.mainWebFrame().handlesPageScaleGesture();
     m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForMagnificationGesture(visibleContentRect, frameHandlesMagnificationGesture));
 }
 

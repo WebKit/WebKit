@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #include "APICast.h"
 #include "CallFrame.h"
 #include "InitializeThreading.h"
-#include "IntegrityInlines.h"
 #include "JSAPIGlobalObject.h"
 #include "JSAPIWrapperObject.h"
 #include "JSCallbackObject.h"
@@ -192,7 +191,7 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
     VM& vm = globalObject->vm();
     JSLockHolder locker(vm);
 
-    return toRef(jsCast<JSObject*>(globalObject->methodTable()->toThis(globalObject, globalObject, ECMAMode::sloppy())));
+    return toRef(jsCast<JSObject*>(globalObject->methodTable(vm)->toThis(globalObject, globalObject, ECMAMode::sloppy())));
 }
 
 JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
@@ -261,7 +260,7 @@ void JSGlobalContextSetUnhandledRejectionCallback(JSGlobalContextRef ctx, JSObje
     JSLockHolder locker(vm);
 
     JSObject* object = toJS(function);
-    if (!object->isCallable()) {
+    if (!object->isCallable(vm)) {
         *exception = toRef(createTypeError(globalObject));
         return;
     }
@@ -291,7 +290,7 @@ public:
     {
     }
 
-    IterationStatus operator()(StackVisitor& visitor) const
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (m_remainingCapacityForFrameCapture) {
             // If callee is unknown, but we've not added any frame yet, we should
@@ -299,7 +298,7 @@ public:
             if (visitor->callee().isCell()) {
                 JSCell* callee = visitor->callee().asCell();
                 if (!callee && visitor->index())
-                    return IterationStatus::Done;
+                    return StackVisitor::Done;
             }
 
             StringBuilder& builder = m_builder;
@@ -314,12 +313,12 @@ public:
             }
 
             if (!visitor->callee().rawPtr())
-                return IterationStatus::Done;
+                return StackVisitor::Done;
 
             m_remainingCapacityForFrameCapture--;
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
         }
-        return IterationStatus::Done;
+        return StackVisitor::Done;
     }
 
 private:

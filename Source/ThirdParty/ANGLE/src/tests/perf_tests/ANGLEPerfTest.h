@@ -13,7 +13,6 @@
 #include <gtest/gtest.h>
 
 #include <mutex>
-#include <queue>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -113,25 +112,12 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     void processClockResult(const char *metric, double resultSeconds);
     void processMemoryResult(const char *metric, uint64_t resultKB);
 
-    void skipTest(const std::string &reason)
-    {
-        mSkipTestReason = reason;
-        mSkipTest       = true;
-    }
-
-    void failTest(const std::string &reason)
-    {
-        skipTest(reason);
-        FAIL() << reason;
-    }
-
     std::string mName;
     std::string mBackend;
     std::string mStory;
     Timer mTimer;
     uint64_t mGPUTimeNs;
     bool mSkipTest;
-    std::string mSkipTestReason;
     std::unique_ptr<perf_test::PerfResultReporter> mReporter;
     int mStepsToRun;
     int mTrialNumStepsPerformed;
@@ -145,7 +131,7 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
         std::string name;
         std::vector<GLuint> samples;
     };
-    std::map<GLuint, CounterInfo> mPerfCounterInfo;
+    angle::HashMap<GLuint, CounterInfo> mPerfCounterInfo;
     std::vector<uint64_t> mProcessMemoryUsageKBSamples;
 };
 
@@ -170,8 +156,6 @@ struct RenderTestParams : public angle::PlatformParameters
     bool trackGpuTime              = false;
     SurfaceType surfaceType        = SurfaceType::Window;
     EGLenum colorSpace             = EGL_COLORSPACE_LINEAR;
-    bool multisample               = false;
-    EGLint samples                 = -1;
 };
 
 class ANGLERenderTest : public ANGLEPerfTest
@@ -230,7 +214,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     void finishTest() override;
     void computeGPUTime() override;
 
-    void skipTestIfMissingExtensionPrerequisites();
+    bool areExtensionPrerequisitesFulfilled() const;
 
     void initPerfCounters();
 
@@ -248,7 +232,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     };
 
     GLuint mCurrentTimestampBeginQuery = 0;
-    std::queue<TimestampSample> mTimestampQueries;
+    std::vector<TimestampSample> mTimestampQueries;
 
     // Trace event record that can be output.
     std::vector<TraceEvent> mTraceEventBuffer;

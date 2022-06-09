@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "PageIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -36,16 +35,32 @@ namespace WebCore {
 
 class CaptureDevice;
 class CaptureDeviceManager;
-class DisplayCaptureManager;
 class RealtimeMediaSource;
 
 struct CaptureSourceOrError;
 struct MediaConstraints;
 
-class AudioCaptureFactory {
+class WEBCORE_EXPORT SingleSourceFactory {
+public:
+    virtual ~SingleSourceFactory() = default;
+
+    virtual void setActiveSource(RealtimeMediaSource&);
+    virtual void unsetActiveSource(RealtimeMediaSource&);
+
+    virtual RealtimeMediaSource* activeSource() { return m_activeSource; }
+
+private:
+    RealtimeMediaSource* m_activeSource { nullptr };
+};
+
+class AudioCaptureFactory
+#if PLATFORM(IOS_FAMILY)
+    : public SingleSourceFactory
+#endif
+{
 public:
     virtual ~AudioCaptureFactory() = default;
-    virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) = 0;
+    virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
     virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
     virtual const Vector<CaptureDevice>& speakerDevices() const = 0;
     virtual void computeSpeakerDevices(CompletionHandler<void()>&& callback) const { callback(); }
@@ -58,21 +73,29 @@ protected:
     AudioCaptureFactory() = default;
 };
 
-class VideoCaptureFactory {
+class VideoCaptureFactory
+#if PLATFORM(IOS_FAMILY)
+    : public SingleSourceFactory
+#endif
+{
 public:
     virtual ~VideoCaptureFactory() = default;
-    virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) = 0;
+    virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
     virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
 
 protected:
     VideoCaptureFactory() = default;
 };
 
-class DisplayCaptureFactory {
+class DisplayCaptureFactory
+#if PLATFORM(IOS_FAMILY)
+    : public SingleSourceFactory
+#endif
+{
 public:
     virtual ~DisplayCaptureFactory() = default;
-    virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) = 0;
-    virtual DisplayCaptureManager& displayCaptureDeviceManager() = 0;
+    virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
+    virtual CaptureDeviceManager& displayCaptureDeviceManager() = 0;
 
 protected:
     DisplayCaptureFactory() = default;

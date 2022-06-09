@@ -51,27 +51,26 @@ static const char* const gDictionaryDirectories[] = {
     "/usr/local/share/hyphen",
 };
 
-static AtomString extractLocaleFromDictionaryFileName(const String& fileName)
+static String extractLocaleFromDictionaryFileName(const String& fileName)
 {
-    if (!fileName.startsWith("hyph_"_s) || !fileName.endsWith(".dic"_s))
-        return nullAtom();
+    if (!fileName.startsWith("hyph_") || !fileName.endsWith(".dic"))
+        return { };
 
     // Dictionary files always have the form "hyph_<locale name>.dic"
     // so we strip everything except the locale.
     constexpr int prefixLength = 5;
     constexpr int suffixLength = 4;
-    return StringView(fileName).substring(prefixLength, fileName.length() - prefixLength - suffixLength).convertToASCIILowercaseAtom();
+    return fileName.substring(prefixLength, fileName.length() - prefixLength - suffixLength).convertToASCIILowercase();
 }
 
 static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<AtomString, Vector<String>>& availableLocales)
 {
-    auto directoryPathString = String::fromUTF8(directoryPath);
-    for (auto& fileName : FileSystem::listDirectory(directoryPathString)) {
-        auto locale = extractLocaleFromDictionaryFileName(fileName);
+    for (auto& fileName : FileSystem::listDirectory(directoryPath)) {
+        String locale = extractLocaleFromDictionaryFileName(fileName);
         if (locale.isEmpty())
             continue;
 
-        auto filePath = FileSystem::pathByAppendingComponent(directoryPathString, fileName);
+        auto filePath = FileSystem::pathByAppendingComponent(directoryPath, fileName);
         char normalizedPath[PATH_MAX];
         if (!realpath(FileSystem::fileSystemRepresentation(filePath).data(), normalizedPath))
             continue;
@@ -79,13 +78,16 @@ static void scanDirectoryForDictionaries(const char* directoryPath, HashMap<Atom
         filePath = FileSystem::stringFromFileSystemRepresentation(normalizedPath);
         availableLocales.add(locale, Vector<String>()).iterator->value.append(filePath);
 
-        String localeReplacingUnderscores = makeStringByReplacingAll(locale, '_', '-');
+        String localeReplacingUnderscores = String(locale);
+        localeReplacingUnderscores.replace('_', '-');
         if (locale != localeReplacingUnderscores)
-            availableLocales.add(AtomString { localeReplacingUnderscores }, Vector<String>()).iterator->value.append(filePath);
+            availableLocales.add(localeReplacingUnderscores, Vector<String>()).iterator->value.append(filePath);
 
         size_t dividerPosition = localeReplacingUnderscores.find('-');
-        if (dividerPosition != notFound)
-            availableLocales.add(StringView(localeReplacingUnderscores).left(dividerPosition).toAtomString(), Vector<String>()).iterator->value.append(filePath);
+        if (dividerPosition != notFound) {
+            localeReplacingUnderscores.truncate(dividerPosition);
+            availableLocales.add(localeReplacingUnderscores, Vector<String>()).iterator->value.append(filePath);
+        }
     }
 }
 
@@ -175,7 +177,7 @@ bool canHyphenate(const AtomString& localeIdentifier)
         return false;
     if (availableLocales().contains(localeIdentifier))
         return true;
-    return availableLocales().contains(localeIdentifier.convertToASCIILowercase());
+    return availableLocales().contains(AtomString(localeIdentifier.string().convertToASCIILowercase()));
 }
 
 class HyphenationDictionary : public RefCounted<HyphenationDictionary> {
@@ -289,7 +291,7 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomStrin
     Vector<char> hyphenArray(utf8StringCopy.length() - leadingSpaceBytes + 5);
     char* hyphenArrayData = hyphenArray.data();
 
-    AtomString lowercaseLocaleIdentifier = localeIdentifier.convertToASCIILowercase();
+    String lowercaseLocaleIdentifier = AtomString(localeIdentifier.string().convertToASCIILowercase());
 
     // Web content may specify strings for locales which do not exist or that we do not have.
     if (!availableLocales().contains(lowercaseLocaleIdentifier))

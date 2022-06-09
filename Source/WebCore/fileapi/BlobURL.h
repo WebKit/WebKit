@@ -54,7 +54,7 @@ public:
     static bool isSecureBlobURL(const URL&);
 
 private:
-    static URL createBlobURL(StringView originString);
+    static URL createBlobURL(const String& originString);
     BlobURL() { }
 };
 

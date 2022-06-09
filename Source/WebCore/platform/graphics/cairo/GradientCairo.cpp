@@ -247,7 +247,7 @@ RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha, const AffineT
 
 void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 {
-    auto pattern = createPattern(1.0, context.fillGradientSpaceTransform());
+    auto pattern = createPattern(1.0, context.state().fillGradientSpaceTransform);
     if (!pattern)
         return;
 

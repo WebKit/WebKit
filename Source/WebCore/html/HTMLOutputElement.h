@@ -44,9 +44,9 @@ public:
     static Ref<HTMLOutputElement> create(Document&);
 
     String value() const;
-    void setValue(String&&);
+    void setValue(const String&);
     String defaultValue() const;
-    void setDefaultValue(String&&);
+    void setDefaultValue(const String&);
     DOMTokenList& htmlFor();
     
 private:

@@ -40,8 +40,7 @@ public:
         HTTPHeaderName key;
         String value;
 
-        CommonHeader isolatedCopy() const & { return { key , value.isolatedCopy() }; }
-        CommonHeader isolatedCopy() && { return { key , WTFMove(value).isolatedCopy() }; }
+        CommonHeader isolatedCopy() const { return { key , value.isolatedCopy() }; }
         template <class Encoder> void encode(Encoder&) const;
         template <class Decoder> static std::optional<CommonHeader> decode(Decoder&);
 
@@ -52,8 +51,7 @@ public:
         String key;
         String value;
 
-        UncommonHeader isolatedCopy() const & { return { key.isolatedCopy() , value.isolatedCopy() }; }
-        UncommonHeader isolatedCopy() && { return { WTFMove(key).isolatedCopy() , WTFMove(value).isolatedCopy() }; }
+        UncommonHeader isolatedCopy() const { return { key.isolatedCopy() , value.isolatedCopy() }; }
         template <class Encoder> void encode(Encoder&) const;
         template <class Decoder> static std::optional<UncommonHeader> decode(Decoder&);
 
@@ -136,8 +134,7 @@ public:
     WEBCORE_EXPORT HTTPHeaderMap();
 
     // Gets a copy of the data suitable for passing to another thread.
-    WEBCORE_EXPORT HTTPHeaderMap isolatedCopy() const &;
-    WEBCORE_EXPORT HTTPHeaderMap isolatedCopy() &&;
+    WEBCORE_EXPORT HTTPHeaderMap isolatedCopy() const;
 
     bool isEmpty() const { return m_commonHeaders.isEmpty() && m_uncommonHeaders.isEmpty(); }
     int size() const { return m_commonHeaders.size() + m_uncommonHeaders.size(); }
@@ -154,11 +151,9 @@ public:
         m_uncommonHeaders.shrinkToFit();
     }
 
-    WEBCORE_EXPORT String get(StringView name) const;
+    WEBCORE_EXPORT String get(const String& name) const;
     WEBCORE_EXPORT void set(const String& name, const String& value);
     WEBCORE_EXPORT void add(const String& name, const String& value);
-    void setUncommonHeader(const String& name, const String& value);
-    void addUncommonHeader(const String& name, const String& value);
     WEBCORE_EXPORT void append(const String& name, const String& value);
     WEBCORE_EXPORT bool contains(const String&) const;
     WEBCORE_EXPORT bool remove(const String&);
@@ -178,10 +173,10 @@ public:
     WEBCORE_EXPORT bool remove(HTTPHeaderName);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String get(ASCIILiteral) const = delete;
-    template<size_t length> void set(ASCIILiteral, const String&) = delete;
-    template<size_t length> bool contains(ASCIILiteral) = delete;
-    template<size_t length> bool remove(ASCIILiteral) = delete;
+    template<size_t length> String get(const char (&)[length]) const = delete;
+    template<size_t length> void set(const char (&)[length], const String&) = delete;
+    template<size_t length> bool contains(const char (&)[length]) = delete;
+    template<size_t length> bool remove(const char (&)[length]) = delete;
 
     const CommonHeadersVector& commonHeaders() const { return m_commonHeaders; }
     const UncommonHeadersVector& uncommonHeaders() const { return m_uncommonHeaders; }
@@ -215,7 +210,8 @@ public:
     template <class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, HTTPHeaderMap&);
 
 private:
-    WEBCORE_EXPORT String getUncommonHeader(StringView name) const;
+    void setUncommonHeader(const String& name, const String& value);
+    WEBCORE_EXPORT String getUncommonHeader(const String& name) const;
 
     CommonHeadersVector m_commonHeaders;
     UncommonHeadersVector m_uncommonHeaders;

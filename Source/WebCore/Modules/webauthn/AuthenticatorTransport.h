@@ -35,8 +35,7 @@ enum class AuthenticatorTransport {
     Usb,
     Nfc,
     Ble,
-    Internal,
-    Cable
+    Internal
 };
 
 } // namespace WebCore
@@ -49,8 +48,7 @@ template<> struct EnumTraits<WebCore::AuthenticatorTransport> {
         WebCore::AuthenticatorTransport::Usb,
         WebCore::AuthenticatorTransport::Nfc,
         WebCore::AuthenticatorTransport::Ble,
-        WebCore::AuthenticatorTransport::Internal,
-        WebCore::AuthenticatorTransport::Cable
+        WebCore::AuthenticatorTransport::Internal
     >;
 };
 

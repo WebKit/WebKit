@@ -48,7 +48,7 @@ private:
 
     void gradientElement() const = delete;
 
-    ASCIILiteral renderName() const final { return "RenderSVGResourceLinearGradient"_s; }
+    const char* renderName() const final { return "RenderSVGResourceLinearGradient"; }
 
     LinearGradientAttributes m_attributes;
 };

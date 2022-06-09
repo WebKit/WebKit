@@ -51,8 +51,12 @@ void LoadableScript::removeClient(LoadableScriptClient& client)
 
 void LoadableScript::notifyClientFinished()
 {
-    Ref protectedThis { *this };
-    for (auto& client : copyToVector(m_clients.values()))
+    RefPtr<LoadableScript> protectedThis(this);
+
+    Vector<LoadableScriptClient*> vector;
+    for (auto& pair : m_clients)
+        vector.append(pair.key);
+    for (auto& client : vector)
         client->notifyFinished(*this);
 }
 

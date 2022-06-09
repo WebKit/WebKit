@@ -79,8 +79,6 @@ enum class TimelineRecordType {
     FireAnimationFrame,
     
     ObserverCallback,
-
-    Screenshot,
 };
 
 class InspectorTimelineAgent final : public InspectorAgentBase , public Inspector::TimelineBackendDispatcherHandler , public JSC::Debugger::Observer {
@@ -157,8 +155,6 @@ private:
     void disableBreakpoints();
     void enableBreakpoints();
 
-    void captureScreenshot();
-
     friend class TimelineRecordStack;
 
     struct TimelineRecordEntry {
@@ -182,10 +178,10 @@ private:
 
     void sendEvent(Ref<JSON::Object>&&);
     void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*);
-    void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, Frame*, std::optional<double> startTime = std::nullopt);
+    void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, Frame*);
     void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
 
-    TimelineRecordEntry createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*, std::optional<double> startTime = std::nullopt);
+    TimelineRecordEntry createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*);
 
     void setFrameIdentifier(JSON::Object* record, Frame*);
 
@@ -220,7 +216,6 @@ private:
     std::unique_ptr<RunLoop::Observer> m_runLoopObserver;
 #endif
     bool m_startedComposite { false };
-    bool m_isCapturingScreenshot { false };
 };
 
 } // namespace WebCore

@@ -29,26 +29,18 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import "TestNotificationProvider.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
-#import <WebKit/WebPushDaemonConstants.h>
 #import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <mach/mach_init.h>
 #import <mach/task.h>
-#import <wtf/BlockPtr.h>
-#import <wtf/text/Base64.h>
 
-#if ENABLE(NOTIFICATIONS) && (PLATFORM(MAC) || PLATFORM(IOS))
-
-using WebKit::WebPushD::MessageType;
+#if PLATFORM(MAC) || PLATFORM(IOS)
 
 static bool alertReceived = false;
 @interface NotificationPermissionDelegate : NSObject<WKUIDelegatePrivate>
@@ -69,26 +61,6 @@ static bool alertReceived = false;
 
 @end
 
-@interface NotificationScriptMessageHandler : NSObject<WKScriptMessageHandler> {
-    BlockPtr<void(id)> _messageHandler;
-}
-@end
-
-@implementation NotificationScriptMessageHandler
-
-- (void)setMessageHandler:(void (^)(id))handler
-{
-    _messageHandler = handler;
-}
-
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
-    if (_messageHandler)
-        _messageHandler(message.body);
-}
-
-@end
-
 namespace TestWebKitAPI {
 
 static RetainPtr<NSURL> testWebPushDaemonLocation()
@@ -96,22 +68,18 @@ static RetainPtr<NSURL> testWebPushDaemonLocation()
     return [currentExecutableDirectory() URLByAppendingPathComponent:@"webpushd" isDirectory:NO];
 }
 
-enum LaunchOnlyOnce : BOOL { No, Yes };
-
-static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation, LaunchOnlyOnce launchOnlyOnce)
+static NSDictionary<NSString *, id> *testWebPushDaemonPList(NSURL *storageLocation)
 {
     return @{
         @"Label" : @"org.webkit.webpushtestdaemon",
-        @"LaunchOnlyOnce" : @(static_cast<BOOL>(launchOnlyOnce)),
-        @"ThrottleInterval" : @(1),
+        @"LaunchOnlyOnce" : @YES,
         @"StandardErrorPath" : [storageLocation URLByAppendingPathComponent:@"daemon_stderr"].path,
         @"EnvironmentVariables" : @{ @"DYLD_FRAMEWORK_PATH" : currentExecutableDirectory().get().path },
         @"MachServices" : @{ @"org.webkit.webpushtestdaemon.service" : @YES },
         @"ProgramArguments" : @[
             testWebPushDaemonLocation().get().path,
             @"--machServiceName",
-            @"org.webkit.webpushtestdaemon.service",
-            @"--useMockPushService"
+            @"org.webkit.webpushtestdaemon.service"
         ]
     };
 }
@@ -129,7 +97,7 @@ static bool shouldSetupWebPushD()
     return shouldSetup;
 }
 
-static NSURL *setUpTestWebPushD(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes)
+static NSURL *setUpTestWebPushD()
 {
     if (!shouldSetupWebPushD())
         return nil;
@@ -143,15 +111,9 @@ static NSURL *setUpTestWebPushD(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::
 
     killFirstInstanceOfDaemon(@"webpushd");
 
-    registerPlistWithLaunchD(testWebPushDaemonPList(tempDir, launchOnlyOnce), tempDir);
+    registerPlistWithLaunchD(testWebPushDaemonPList(tempDir), tempDir);
 
     return tempDir;
-}
-
-// Only works if the test daemon was registered with LaunchOnlyOnce::No.
-static BOOL restartTestWebPushD()
-{
-    return restartService(@"org.webkit.webpushtestdaemon", @"webpushd");
 }
 
 static void cleanUpTestWebPushD(NSURL *tempDir)
@@ -173,24 +135,24 @@ static void cleanUpTestWebPushD(NSURL *tempDir)
     EXPECT_NULL(error);
 }
 
-static RetainPtr<xpc_object_t> createMessageDictionary(MessageType messageType, const Vector<uint8_t>& message)
+static RetainPtr<xpc_object_t> createMessageDictionary(uint8_t messageType, const Vector<uint8_t>& message)
 {
     auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
-    xpc_dictionary_set_uint64(dictionary.get(), "message type", static_cast<uint64_t>(messageType));
+    xpc_dictionary_set_uint64(dictionary.get(), "message type", messageType);
     xpc_dictionary_set_data(dictionary.get(), "encoded message", message.data(), message.size());
     return WTFMove(dictionary);
 }
 
 // Uses an existing connection to the daemon for a one-off message
-void sendMessageToDaemon(xpc_connection_t connection, MessageType messageType, const Vector<uint8_t>& message)
+void sendMessageToDaemon(xpc_connection_t connection, uint8_t messageType, const Vector<uint8_t>& message)
 {
     auto dictionary = createMessageDictionary(messageType, message);
     xpc_connection_send_message(connection, dictionary.get());
 }
 
 // Uses an existing connection to the daemon for a one-off message, waiting for the reply
-void sendMessageToDaemonWaitingForReply(xpc_connection_t connection, MessageType messageType, const Vector<uint8_t>& message)
+void sendMessageToDaemonWaitingForReply(xpc_connection_t connection, uint8_t messageType, const Vector<uint8_t>& message)
 {
     auto dictionary = createMessageDictionary(messageType, message);
 
@@ -219,7 +181,7 @@ static void sendConfigurationWithAuditToken(xpc_connection_t connection)
         encodedMessage[1] = 1;
         encodedMessage[2] = 32;
         memcpy(&encodedMessage[10], &token, sizeof(token));
-        sendMessageToDaemon(connection, MessageType::UpdateConnectionConfiguration, encodedMessage);
+        sendMessageToDaemon(connection, 6, encodedMessage);
     }
 }
 
@@ -290,13 +252,13 @@ TEST(WebPushD, BasicCommunication)
         auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
         Vector<uint8_t> encodedMessage(1);
         encodedMessage[0] = 1;
-        sendMessageToDaemon(connection.get(), MessageType::SetDebugModeIsEnabled, encodedMessage);
+        sendMessageToDaemon(connection.get(), 5, encodedMessage);
         TestWebKitAPI::Util::run(&done);
     }
 
     // Echo and wait for a reply
     auto dictionary = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    auto encodedString = encodeString("hello"_s);
+    auto encodedString = encodeString("hello");
     xpc_dictionary_set_uint64(dictionary.get(), "protocol version", 1);
     xpc_dictionary_set_uint64(dictionary.get(), "message type", 1);
     xpc_dictionary_set_data(dictionary.get(), "encoded message", encodedString.data(), encodedString.size());
@@ -322,561 +284,12 @@ TEST(WebPushD, BasicCommunication)
     cleanUpTestWebPushD(tempDir);
 }
 
-static void clearWebsiteDataStore(WKWebsiteDataStore *store)
-{
-    __block bool clearedStore = false;
-    [store removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
-        clearedStore = true;
-    }];
-    TestWebKitAPI::Util::run(&clearedStore);
-}
+static const char* mainBytes = R"WEBPUSHRESOURCE(
+<script>
+    Notification.requestPermission().then(() => { alert("done") })
+</script>
+)WEBPUSHRESOURCE";
 
-class WebPushDTest : public ::testing::Test {
-protected:
-    WebPushDTest(LaunchOnlyOnce launchOnlyOnce = LaunchOnlyOnce::Yes)
-    {
-        [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
-
-        m_tempDirectory = retainPtr(setUpTestWebPushD(launchOnlyOnce));
-
-        auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-        dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-        dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
-        m_dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-
-        m_configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        m_configuration.get().websiteDataStore = m_dataStore.get();
-        clearWebsiteDataStore([m_configuration websiteDataStore]);
-
-        [m_configuration.get().preferences _setNotificationsEnabled:YES];
-        [m_configuration.get().preferences _setPushAPIEnabled:YES];
-        for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
-            if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"])
-                [[m_configuration preferences] _setEnabled:YES forFeature:feature];
-        }
-
-        m_testMessageHandler = adoptNS([[TestMessageHandler alloc] init]);
-        [[m_configuration userContentController] addScriptMessageHandler:m_testMessageHandler.get() name:@"test"];
-
-        m_notificationMessageHandler = adoptNS([[NotificationScriptMessageHandler alloc] init]);
-        [[m_configuration userContentController] addScriptMessageHandler:m_notificationMessageHandler.get() name:@"note"];
-    }
-
-    void loadRequest(ASCIILiteral htmlSource, ASCIILiteral serviceWorkerScriptSource)
-    {
-        static constexpr auto constants = R"SRC(
-            const VALID_SERVER_KEY = "BA1Hxzyi1RUM1b5wjxsn7nGxAszw2u61m164i3MrAIxHF6YK5h4SDYic-dRuU_RCPCfA5aq9ojSwk5Y2EmClBPs";
-            const VALID_SERVER_KEY_THAT_CAUSES_INJECTED_FAILURE = "BEAxaUMo1s8tjORxJfnSSvWhYb4u51kg1hWT2s_9gpV7Zxar1pF_2BQ8AncuAdS2BoLhN4qaxzBy2CwHE8BBzWg";
-        )SRC"_s;
-        m_server.reset(new TestWebKitAPI::HTTPServer({
-            { "/"_s, { htmlSource } },
-            { "/constants.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, constants } },
-            { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, serviceWorkerScriptSource } }
-        }, TestWebKitAPI::HTTPServer::Protocol::Http));
-
-        m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [[m_configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
-        m_notificationProvider->setPermission(m_server->origin(), true);
-
-        m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
-        m_uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
-        [m_webView setUIDelegate:m_uiDelegate.get()];
-        [m_webView loadRequest:m_server->request()];
-    }
-
-    bool hasPushSubscription()
-    {
-        __block bool done = false;
-        __block bool result = false;
-
-        [m_dataStore _scopeURL:m_server->request().URL hasPushSubscriptionForTesting:^(BOOL fetchedResult) {
-            result = fetchedResult;
-            done = true;
-        }];
-
-        TestWebKitAPI::Util::run(&done);
-        return result;
-    }
-
-    ~WebPushDTest()
-    {
-        cleanUpTestWebPushD(m_tempDirectory.get());
-    }
-
-    RetainPtr<NSDictionary> injectPushMessage(NSDictionary *pushUserInfo)
-    {
-        String scope = m_server->request().URL.absoluteString;
-        String topic = "com.apple.WebKit.TestWebKitAPI "_str + scope;
-        id obj = @{
-            @"topic": (NSString *)topic,
-            @"userInfo": pushUserInfo
-        };
-        NSData *data = [NSJSONSerialization dataWithJSONObject:obj options:0 error:nullptr];
-
-        String message { static_cast<const char *>(data.bytes), static_cast<unsigned>(data.length) };
-        auto encodedMessage = encodeString(WTFMove(message));
-
-        auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
-        sendMessageToDaemonWaitingForReply(utilityConnection.get(), MessageType::InjectEncryptedPushMessageForTesting, encodedMessage);
-
-        // Fetch push messages
-        __block bool gotMessages = false;
-        __block RetainPtr<NSArray<NSDictionary *>> messages;
-        [m_dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *rawMessages) {
-            messages = rawMessages;
-            gotMessages = true;
-        }];
-        TestWebKitAPI::Util::run(&gotMessages);
-
-        EXPECT_EQ([messages count], 1u);
-
-        return [messages objectAtIndex:0];
-    }
-
-    RetainPtr<NSURL> m_tempDirectory;
-    RetainPtr<WKWebsiteDataStore> m_dataStore;
-    RetainPtr<WKWebViewConfiguration> m_configuration;
-    RetainPtr<TestMessageHandler> m_testMessageHandler;
-    RetainPtr<NotificationScriptMessageHandler> m_notificationMessageHandler;
-    std::unique_ptr<TestWebKitAPI::HTTPServer> m_server;
-    std::unique_ptr<TestWebKitAPI::TestNotificationProvider> m_notificationProvider;
-    RetainPtr<WKWebView> m_webView;
-    RetainPtr<id<WKUIDelegatePrivate>> m_uiDelegate;
-};
-
-class WebPushDInjectedPushTest : public WebPushDTest {
-protected:
-    void runTest(NSString *expectedMessage, NSDictionary *pushUserInfo);
-};
-
-class WebPushDMultipleLaunchTest : public WebPushDTest {
-public:
-    WebPushDMultipleLaunchTest()
-        : WebPushDTest(LaunchOnlyOnce::No)
-    {
-    }
-};
-
-void WebPushDInjectedPushTest::runTest(NSString *expectedMessage, NSDictionary *pushUserInfo)
-{
-    static constexpr auto htmlSource = R"SWRESOURCE(
-    <script src="/constants.js"></script>
-    <script>
-    function log(msg)
-    {
-        window.webkit.messageHandlers.test.postMessage(msg);
-    }
-
-    const channel = new MessageChannel();
-    channel.port1.onmessage = (event) => log(event.data);
-
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: VALID_SERVER_KEY
-        });
-        registration.active.postMessage({port: channel.port2}, [channel.port2]);
-    }).catch(function(error) {
-        log("Registration failed with: " + error);
-    });
-    </script>
-    )SWRESOURCE"_s;
-
-    static constexpr auto serviceWorkerSource = R"SWRESOURCE(
-    let port;
-    self.addEventListener("message", (event) => {
-        port = event.data.port;
-        port.postMessage("Ready");
-    });
-    self.addEventListener("push", (event) => {
-        try {
-            self.registration.showNotification("notification");
-            if (!event.data) {
-                port.postMessage("Received: null data");
-                return;
-            }
-            const value = event.data.text();
-            port.postMessage("Received: " + value);
-        } catch (e) {
-            port.postMessage("Error: " + e);
-        }
-    });
-    )SWRESOURCE"_s;
-
-    __block bool ready = false;
-    [m_testMessageHandler addMessage:@"Ready" withHandler:^{
-        ready = true;
-    }];
-
-    __block bool gotExpectedMessage = false;
-    [m_testMessageHandler addMessage:expectedMessage withHandler:^{
-        gotExpectedMessage = true;
-    }];
-
-    loadRequest(htmlSource, serviceWorkerSource);
-    TestWebKitAPI::Util::run(&ready);
-
-    auto message = injectPushMessage(pushUserInfo);
-
-    __block bool pushMessageProcessed = false;
-    __block bool pushMessageProcessedResult = false;
-    [m_dataStore _processPushMessage:message.get() completionHandler:^(bool result) {
-        pushMessageProcessedResult = result;
-        pushMessageProcessed = true;
-    }];
-    TestWebKitAPI::Util::run(&gotExpectedMessage);
-    TestWebKitAPI::Util::run(&pushMessageProcessed);
-
-    EXPECT_TRUE(pushMessageProcessedResult);
-}
-
-TEST_F(WebPushDInjectedPushTest, HandleInjectedEmptyPush)
-{
-    runTest(@"Received: null data", @{ });
-}
-
-TEST_F(WebPushDInjectedPushTest, HandleInjectedAESGCMPush)
-{
-    runTest(@"Received: test aesgcm payload", @{
-        @"content_encoding": @"aesgcm",
-        @"as_publickey": @"BC-AgYMhqmzamH7_Aum0YvId8FV1-umgHweJNe6XQ1IMAm3E29loWXqTRndibxH27kJKWcIbyymundODMfVx_UM",
-        @"as_salt": @"tkPT5xDeN0lAkSc6lZUkNg",
-        @"payload": @"o/u4yvcXI1nap+zyIOBbWXdLqj1qHG2cX+KVhAdBQj1GVAt7lQ=="
-    });
-}
-
-TEST_F(WebPushDInjectedPushTest, HandleInjectedAES128GCMPush)
-{
-    // From example in RFC8291 Section 5.
-    String payloadBase64URL = "DGv6ra1nlYgDCS1FRnbzlwAAEABBBP4z9KsN6nGRTbVYI_c7VJSPQTBtkgcy27mlmlMoZIIgDll6e3vCYLocInmYWAmS6TlzAC8wEqKK6PBru3jl7A_yl95bQpu6cVPTpK4Mqgkf1CXztLVBSt2Ks3oZwbuwXPXLWyouBWLVWGNWQexSgSxsj_Qulcy4a-fN"_s;
-    String payloadBase64 = base64EncodeToString(base64URLDecode(payloadBase64URL).value());
-
-    runTest(@"Received: When I grow up, I want to be a watermelon", @{
-        @"content_encoding": @"aes128gcm",
-        @"payload": (NSString *)payloadBase64
-    });
-}
-
-TEST_F(WebPushDTest, SubscribeTest)
-{
-    static constexpr auto source = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let result = null;
-        try {
-            let subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VALID_SERVER_KEY
-            });
-            result = subscription.toJSON();
-        } catch (e) {
-            result = "Error: " + e;
-        }
-        window.webkit.messageHandlers.note.postMessage(result);
-    });
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> obj = nil;
-    __block bool done = false;
-    [m_notificationMessageHandler setMessageHandler:^(id message) {
-        obj = message;
-        done = true;
-    }];
-
-    loadRequest(source, ""_s);
-    TestWebKitAPI::Util::run(&done);
-
-    ASSERT_TRUE([obj isKindOfClass:[NSDictionary class]]);
-
-    NSDictionary *subscription = obj.get();
-    ASSERT_TRUE([subscription[@"endpoint"] hasPrefix:@"https://"]);
-    ASSERT_TRUE([subscription[@"keys"] isKindOfClass:[NSDictionary class]]);
-
-    // Shared auth secret should be 16 bytes (22 bytes in unpadded base64url).
-    ASSERT_EQ([subscription[@"keys"][@"auth"] length], 22u);
-
-    // Client public key should be 65 bytes (87 bytes in unpadded base64url).
-    ASSERT_EQ([subscription[@"keys"][@"p256dh"] length], 87u);
-
-    ASSERT_TRUE(hasPushSubscription());
-}
-
-TEST_F(WebPushDTest, SubscribeFailureTest)
-{
-    static constexpr auto source = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let result = null;
-        try {
-            let subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VALID_SERVER_KEY_THAT_CAUSES_INJECTED_FAILURE
-            });
-            result = subscription.toJSON();
-        } catch (e) {
-            result = "Error: " + e;
-        }
-        window.webkit.messageHandlers.note.postMessage(result);
-    });
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> obj = nil;
-    __block bool done = false;
-    [m_notificationMessageHandler setMessageHandler:^(id message) {
-        obj = message;
-        done = true;
-    }];
-
-    loadRequest(source, ""_s);
-    TestWebKitAPI::Util::run(&done);
-
-    // Spec says that an error in the push service should be an AbortError.
-    ASSERT_TRUE([obj isKindOfClass:[NSString class]]);
-    ASSERT_TRUE([obj hasPrefix:@"Error: AbortError"]);
-
-    ASSERT_FALSE(hasPushSubscription());
-}
-
-TEST_F(WebPushDTest, UnsubscribeTest)
-{
-    static constexpr auto source = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let result = null;
-        try {
-            let subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VALID_SERVER_KEY
-            });
-            let result1 = await subscription.unsubscribe();
-            let result2 = await subscription.unsubscribe();
-            result = [result1, result2];
-        } catch (e) {
-            result = "Error: " + e;
-        }
-        window.webkit.messageHandlers.note.postMessage(result);
-    });
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> obj = nil;
-    __block bool done = false;
-    [m_notificationMessageHandler setMessageHandler:^(id message) {
-        obj = message;
-        done = true;
-    }];
-
-    loadRequest(source, ""_s);
-    TestWebKitAPI::Util::run(&done);
-
-    // First unsubscribe should succeed. Second one should fail since the first one removed the record from the database.
-    id expected = @[@(1), @(0)];
-    ASSERT_TRUE([obj isEqual:expected]);
-
-    ASSERT_FALSE(hasPushSubscription());
-}
-
-TEST_F(WebPushDTest, UnsubscribesOnServiceWorkerUnregisterTest)
-{
-    static constexpr auto source = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let result = null;
-        try {
-            let subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VALID_SERVER_KEY
-            });
-            result = await registration.unregister();
-        } catch (e) {
-            result = "Error: " + e;
-        }
-        window.webkit.messageHandlers.note.postMessage(result);
-    });
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> unregisterSucceeded = nil;
-    __block bool done = false;
-    [m_notificationMessageHandler setMessageHandler:^(id message) {
-        unregisterSucceeded = message;
-        done = true;
-    }];
-
-    loadRequest(source, ""_s);
-    TestWebKitAPI::Util::run(&done);
-
-    ASSERT_TRUE([unregisterSucceeded isEqual:@YES]);
-    ASSERT_FALSE(hasPushSubscription());
-}
-
-TEST_F(WebPushDTest, UnsubscribesOnClearingAllWebsiteData)
-{
-    static constexpr auto source = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let result = null;
-        try {
-            let subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VALID_SERVER_KEY
-            });
-            result = "Subscribed";
-        } catch (e) {
-            result = "Error: " + e;
-        }
-        window.webkit.messageHandlers.note.postMessage(result);
-    });
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> result = nil;
-    __block bool done = false;
-    [m_notificationMessageHandler setMessageHandler:^(id message) {
-        result = message;
-        done = true;
-    }];
-
-    loadRequest(source, ""_s);
-    TestWebKitAPI::Util::run(&done);
-
-    ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
-
-    __block bool removedData = false;
-    [m_dataStore removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] modifiedSince:[NSDate distantPast] completionHandler:^(void) {
-        removedData = true;
-    }];
-    TestWebKitAPI::Util::run(&removedData);
-
-    ASSERT_FALSE(hasPushSubscription());
-}
-
-TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
-{
-    static constexpr auto source = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let result = null;
-        try {
-            let subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VALID_SERVER_KEY
-            });
-            result = "Subscribed";
-        } catch (e) {
-            result = "Error: " + e;
-        }
-        window.webkit.messageHandlers.note.postMessage(result);
-    });
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> result = nil;
-    __block bool done = false;
-    [m_notificationMessageHandler setMessageHandler:^(id message) {
-        result = message;
-        done = true;
-    }];
-
-    loadRequest(source, ""_s);
-    TestWebKitAPI::Util::run(&done);
-
-    ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
-
-    __block bool fetchedRecords = false;
-    __block RetainPtr<NSArray<WKWebsiteDataRecord *>> records;
-    [m_dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
-        records = dataRecords;
-        fetchedRecords = true;
-    }];
-    TestWebKitAPI::Util::run(&fetchedRecords);
-
-    WKWebsiteDataRecord *filteredRecord = nil;
-    for (WKWebsiteDataRecord *record in records.get()) {
-        for (NSString *originString in record._originsStrings) {
-            if ([originString isEqualToString:m_server->origin()]) {
-                filteredRecord = record;
-                break;
-            }
-        }
-    }
-    ASSERT_TRUE(filteredRecord);
-
-    __block bool removedData = false;
-    [m_dataStore removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] forDataRecords:[NSArray arrayWithObject:filteredRecord] completionHandler:^(void) {
-        removedData = true;
-    }];
-    TestWebKitAPI::Util::run(&removedData);
-
-    ASSERT_FALSE(hasPushSubscription());
-}
-
-TEST_F(WebPushDTest, UnsubscribesOnPermissionReset)
-{
-    static constexpr auto source = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let result = null;
-        try {
-            let subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VALID_SERVER_KEY
-            });
-            result = "Subscribed";
-        } catch (e) {
-            result = "Error: " + e;
-        }
-        window.webkit.messageHandlers.note.postMessage(result);
-    });
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> result = nil;
-    __block bool done = false;
-    [m_notificationMessageHandler setMessageHandler:^(id message) {
-        result = message;
-        done = true;
-    }];
-
-    loadRequest(source, ""_s);
-    TestWebKitAPI::Util::run(&done);
-
-    ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
-    ASSERT_TRUE(hasPushSubscription());
-
-    m_notificationProvider->resetPermission(m_server->origin());
-
-    bool isSubscribed = true;
-    TestWebKitAPI::Util::waitForConditionWithLogging([this, &isSubscribed] {
-        isSubscribed = hasPushSubscription();
-        if (!isSubscribed)
-            return true;
-
-        sleep(1);
-        return false;
-    }, 5, @"Timed out waiting for push subscription to be removed.");
-
-    ASSERT_FALSE(isSubscribed);
-}
-
-#if ENABLE(INSTALL_COORDINATION_BUNDLES)
-#if USE(APPLE_INTERNAL_SDK)
 TEST(WebPushD, PermissionManagement)
 {
     NSURL *tempDirectory = setUpTestWebPushD();
@@ -885,107 +298,6 @@ TEST(WebPushD, PermissionManagement)
     dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
     dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().websiteDataStore = dataStore.get();
-    [configuration.get().preferences _setNotificationsEnabled:YES];
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
-        if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"])
-            [[configuration preferences] _setEnabled:YES forFeature:feature];
-    }
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    auto uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
-    [webView setUIDelegate:uiDelegate.get()];
-    [webView synchronouslyLoadHTMLString:@"" baseURL:[NSURL URLWithString:@"https://example.org"]];
-    [webView evaluateJavaScript:@"Notification.requestPermission().then(() => { alert('done') })" completionHandler:nil];
-    TestWebKitAPI::Util::run(&alertReceived);
-
-    static bool originOperationDone = false;
-    static RetainPtr<WKSecurityOrigin> origin;
-    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
-        EXPECT_EQ([origins count], 1u);
-        origin = [origins anyObject];
-        originOperationDone = true;
-    }];
-
-    TestWebKitAPI::Util::run(&originOperationDone);
-
-    EXPECT_WK_STREQ(origin.get().protocol, "https");
-    EXPECT_WK_STREQ(origin.get().host, "example.org");
-
-    // If we failed to retrieve an expected origin, we will have failed the above checks
-    if (!origin) {
-        cleanUpTestWebPushD(tempDirectory);
-        return;
-    }
-
-    originOperationDone = false;
-    [dataStore _deletePushAndNotificationRegistration:origin.get() completionHandler:^(NSError *error) {
-        EXPECT_FALSE(!!error);
-        originOperationDone = true;
-    }];
-
-    TestWebKitAPI::Util::run(&originOperationDone);
-
-    originOperationDone = false;
-    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
-        EXPECT_EQ([origins count], 0u);
-        originOperationDone = true;
-    }];
-    TestWebKitAPI::Util::run(&originOperationDone);
-
-    cleanUpTestWebPushD(tempDirectory);
-}
-
-static void deleteAllRegistrationsForDataStore(WKWebsiteDataStore *dataStore)
-{
-    __block bool originOperationDone = false;
-    __block RetainPtr<NSSet<WKSecurityOrigin *>> originSet;
-    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
-        originSet = origins;
-        originOperationDone = true;
-    }];
-    TestWebKitAPI::Util::run(&originOperationDone);
-
-    if (![originSet count])
-        return;
-
-    __block size_t deletedOrigins = 0;
-    originOperationDone = false;
-    for (WKSecurityOrigin *origin in originSet.get()) {
-        [dataStore _deletePushAndNotificationRegistration:origin completionHandler:^(NSError *error) {
-            EXPECT_FALSE(!!error);
-            if (++deletedOrigins == [originSet count])
-                originOperationDone = true;
-        }];
-    }
-    TestWebKitAPI::Util::run(&originOperationDone);
-
-    originOperationDone = false;
-    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
-        EXPECT_EQ([origins count], 0u);
-        originOperationDone = true;
-    }];
-    TestWebKitAPI::Util::run(&originOperationDone);
-
-}
-
-static const char* mainBytes = R"WEBPUSHRESOURCE(
-<script>
-    Notification.requestPermission().then(() => { alert("done") })
-</script>
-)WEBPUSHRESOURCE";
-
-TEST(WebPushD, InstallCoordinationBundles)
-{
-    NSURL *tempDirectory = setUpTestWebPushD();
-
-    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-    dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
-    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-
-    deleteAllRegistrationsForDataStore(dataStore.get());
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = dataStore.get();
@@ -1012,223 +324,172 @@ TEST(WebPushD, InstallCoordinationBundles)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://main/index.html"]]];
     TestWebKitAPI::Util::run(&alertReceived);
 
-    alertReceived = false;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://secondary/index.html"]]];
-    TestWebKitAPI::Util::run(&alertReceived);
-
     static bool originOperationDone = false;
-    static RetainPtr<NSSet<WKSecurityOrigin *>> origins;
-    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *rawOrigins) {
-        EXPECT_EQ([rawOrigins count], 2u);
-        origins = rawOrigins;
+    static RetainPtr<WKSecurityOrigin> origin;
+    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
+        EXPECT_EQ([origins count], 1u);
+        origin = [origins anyObject];
+        originOperationDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&originOperationDone);
+
+    EXPECT_WK_STREQ(origin.get().protocol, "testing");
+    EXPECT_WK_STREQ(origin.get().host, "main");
+
+    // If we failed to retrieve an expected origin, we will have failed the above checks
+    if (!origin) {
+        cleanUpTestWebPushD(tempDirectory);
+        return;
+    }
+
+    originOperationDone = false;
+    [dataStore _deletePushAndNotificationRegistration:origin.get() completionHandler:^(NSError *error) {
+        EXPECT_FALSE(!!error);
+        originOperationDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&originOperationDone);
+
+    originOperationDone = false;
+    [dataStore _getOriginsWithPushAndNotificationPermissions:^(NSSet<WKSecurityOrigin *> *origins) {
+        EXPECT_EQ([origins count], 0u);
         originOperationDone = true;
     }];
     TestWebKitAPI::Util::run(&originOperationDone);
 
-    for (WKSecurityOrigin *origin in origins.get()) {
-        EXPECT_TRUE([origin.protocol isEqualToString:@"testing"]);
-        EXPECT_TRUE([origin.host isEqualToString:@"main"] || [origin.host isEqualToString:@"secondary"]);
-    }
-
-    deleteAllRegistrationsForDataStore(dataStore.get());
     cleanUpTestWebPushD(tempDirectory);
 }
-#endif // #if USE(APPLE_INTERNAL_SDK)
-#endif // ENABLE(INSTALL_COORDINATION_BUNDLES)
 
-TEST_F(WebPushDTest, TooManySilentPushesCausesUnsubscribe)
+static const char* mainSWBytes = R"SWRESOURCE(
+<script>
+function log(msg)
 {
-    static constexpr auto htmlSource = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    let pushManager = null;
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
 
-    navigator.serviceWorker.register('/sw.js').then(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        let result = null;
-        try {
-            pushManager = registration.pushManager;
-            let subscription = await pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: VALID_SERVER_KEY
-            });
-            result = "Subscribed";
-        } catch (e) {
-            result = "Error: " + e;
-        }
-        window.webkit.messageHandlers.note.postMessage(result);
+const channel = new MessageChannel();
+channel.port1.onmessage = (event) => log(event.data);
+
+navigator.serviceWorker.register('/sw.js').then((registration) => {
+    if (registration.active) {
+        registration.active.postMessage({port: channel.port2}, [channel.port2]);
+        return;
+    }
+    worker = registration.installing;
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'activated')
+            worker.postMessage({port: channel.port2}, [channel.port2]);
     });
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+</script>
+)SWRESOURCE";
 
-    function getPushSubscription()
-    {
-        pushManager.getSubscription().then((subscription) => {
-            window.webkit.messageHandlers.note.postMessage(subscription ? "Subscribed" : "Unsubscribed");
-        });
+static const char* scriptBytes = R"SWRESOURCE(
+let port;
+self.addEventListener("message", (event) => {
+    port = event.data.port;
+    port.postMessage("Ready");
+});
+self.addEventListener("push", (event) => {
+    try {
+        if (!event.data) {
+            port.postMessage("Received: null data");
+            return;
+        }
+        const value = event.data.text();
+        port.postMessage("Received: " + value);
+        if (value != 'Sweet Potatoes')
+            event.waitUntil(Promise.reject('I want sweet potatoes'));
+    } catch (e) {
+        port.postMessage("Got exception " + e);
     }
-    </script>
-    )HTML"_s;
-    static constexpr auto serviceWorkerScriptSource = "self.addEventListener('push', (event) => { });"_s;
+});
+)SWRESOURCE";
 
-    __block RetainPtr<id> message = nil;
-    __block bool gotMessage = false;
-    [m_notificationMessageHandler setMessageHandler:^(id receivedMessage) {
-        message = receivedMessage;
-        gotMessage = true;
+static void clearWebsiteDataStore(WKWebsiteDataStore *store)
+{
+    __block bool clearedStore = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        clearedStore = true;
     }];
-
-    loadRequest(htmlSource, serviceWorkerScriptSource);
-
-    TestWebKitAPI::Util::run(&gotMessage);
-    ASSERT_TRUE([message isEqualToString:@"Subscribed"]);
-
-    for (unsigned i = 0; i < WebKit::WebPushD::maxSilentPushCount; i++) {
-        gotMessage = false;
-        [m_webView evaluateJavaScript:@"getPushSubscription()" completionHandler:^(id, NSError*) { }];
-        TestWebKitAPI::Util::run(&gotMessage);
-        ASSERT_TRUE([message isEqualToString:@"Subscribed"]);
-
-        __block bool processedPush = false;
-        __block bool pushResult = false;
-        auto message = injectPushMessage(@{ });
-
-        [m_dataStore _processPushMessage:message.get() completionHandler:^(bool result) {
-            pushResult = result;
-            processedPush = true;
-        }];
-        TestWebKitAPI::Util::run(&processedPush);
-
-        // WebContent should fail processing the push since no notification was shown.
-        EXPECT_FALSE(pushResult);
-    }
-
-    gotMessage = false;
-    [m_webView evaluateJavaScript:@"getPushSubscription()" completionHandler:^(id, NSError*) { }];
-    TestWebKitAPI::Util::run(&gotMessage);
-    ASSERT_TRUE([message isEqualToString:@"Unsubscribed"]);
+    TestWebKitAPI::Util::run(&clearedStore);
 }
 
-TEST_F(WebPushDTest, GetPushSubscriptionWithMismatchedPublicToken)
+TEST(WebPushD, HandleInjectedPush)
 {
-    static constexpr auto htmlSource = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    let postNoteMessage = window.webkit.messageHandlers.note.postMessage.bind(window.webkit.messageHandlers.note);
-    let getPushManager =
-        navigator.serviceWorker.register('/sw.js')
-            .then(() => navigator.serviceWorker.ready)
-            .then(registration => registration.pushManager);
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
-    function subscribe()
-    {
-        getPushManager
-            .then(pushManager => pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VALID_SERVER_KEY }))
-            .then(subscription => subscription.toJSON())
-            .then(postNoteMessage)
-            .catch(e => postNoteMessage(e.toString()));
+    NSURL *tempDirectory = setUpTestWebPushD();
+
+    auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    dataStoreConfiguration.get().webPushMachServiceName = @"org.webkit.webpushtestdaemon.service";
+    dataStoreConfiguration.get().webPushDaemonUsesMockBundlesForTesting = YES;
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    [configuration.get().preferences _setNotificationsEnabled:YES];
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
-    function getSubscription()
-    {
-        getPushManager
-            .then(pushManager => pushManager.getSubscription())
-            .then(subscription => subscription ? subscription.toJSON() : null)
-            .then(postNoteMessage)
-            .catch(e => postNoteMessage(e.toString()));
-    }
-
-    postNoteMessage('Ready');
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> message = nil;
-    __block bool gotMessage = false;
-    [m_notificationMessageHandler setMessageHandler:^(id receivedMessage) {
-        message = receivedMessage;
-        gotMessage = true;
+    auto messageHandler = adoptNS([[TestMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    __block bool done = false;
+    [messageHandler addMessage:@"Ready" withHandler:^{
+        done = true;
+    }];
+    [messageHandler addMessage:@"Received: Hello World" withHandler:^{
+        done = true;
     }];
 
-    loadRequest(htmlSource, ""_s);
-    TestWebKitAPI::Util::run(&gotMessage);
-    ASSERT_TRUE([message isEqualToString:@"Ready"]);
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainSWBytes } },
+        { "/sw.js", { { { "Content-Type", "application/javascript" } }, scriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    message = nil;
-    gotMessage = false;
-    [m_webView evaluateJavaScript:@"subscribe()" completionHandler:^(id, NSError*) { }];
-    TestWebKitAPI::Util::run(&gotMessage);
-    RetainPtr<id> subscription = message;
-    ASSERT_FALSE([subscription isEqual:[NSNull null]]);
-    ASSERT_TRUE([subscription isKindOfClass:[NSDictionary class]] && [subscription objectForKey:@"endpoint"]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
 
-    message = nil;
-    gotMessage = false;
-    [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
-    TestWebKitAPI::Util::run(&gotMessage);
-    ASSERT_TRUE([message isEqual:subscription.get()]);
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 
-    // If the public token changes, all subscriptions should be invalidated.
+    // Inject push message
+    auto encodedMessage = encodeString("com.apple.WebKit.TestWebKitAPI");
+    encodedMessage.appendVector(encodeString(server.request().URL.absoluteString));
+    encodedMessage.appendVector(encodeString("Hello World"));
+
     auto utilityConnection = createAndConfigureConnectionToService("org.webkit.webpushtestdaemon.service");
-    sendMessageToDaemonWaitingForReply(utilityConnection.get(), MessageType::SetPublicTokenForTesting, encodeString("foobar"_s));
+    sendMessageToDaemonWaitingForReply(utilityConnection.get(), 7, encodedMessage);
 
-    message = nil;
-    gotMessage = false;
-    [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
-    TestWebKitAPI::Util::run(&gotMessage);
-    ASSERT_TRUE([message isEqual:[NSNull null]]);
-}
-
-TEST_F(WebPushDMultipleLaunchTest, GetPushSubscriptionAfterDaemonRelaunch)
-{
-    static constexpr auto htmlSource = R"HTML(
-    <script src="/constants.js"></script>
-    <script>
-    let postNoteMessage = window.webkit.messageHandlers.note.postMessage.bind(window.webkit.messageHandlers.note);
-    let getPushManager =
-        navigator.serviceWorker.register('/sw.js')
-            .then(() => navigator.serviceWorker.ready)
-            .then(registration => registration.pushManager);
-
-    function getSubscription()
-    {
-        getPushManager
-            .then(pushManager => pushManager.getSubscription())
-            .then(subscription => subscription ? subscription.toJSON() : null)
-            .then(postNoteMessage)
-            .catch(e => postNoteMessage(e.toString()));
-    }
-
-    postNoteMessage('Ready');
-    </script>
-    )HTML"_s;
-
-    __block RetainPtr<id> message = nil;
-    __block bool gotMessage = false;
-    [m_notificationMessageHandler setMessageHandler:^(id receivedMessage) {
-        message = receivedMessage;
-        gotMessage = true;
+    // Fetch push messages
+    __block RetainPtr<NSArray<NSDictionary *>> messages;
+    [dataStore _getPendingPushMessages:^(NSArray<NSDictionary *> *rawMessages) {
+        messages = rawMessages;
+        done = true;
     }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 
-    loadRequest(htmlSource, ""_s);
-    TestWebKitAPI::Util::run(&gotMessage);
-    ASSERT_TRUE([message isEqualToString:@"Ready"]);
+    EXPECT_EQ([messages count], 1u);
 
-    message = nil;
-    gotMessage = false;
-    [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
-    TestWebKitAPI::Util::run(&gotMessage);
-    ASSERT_TRUE([message isEqual:[NSNull null]]);
+    // Handle push message
+    __block bool pushMessageProcessed = false;
+    [dataStore _processPushMessage:[messages firstObject] completionHandler:^(bool result) {
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
 
-    ASSERT_TRUE(restartTestWebPushD());
-
-    // Make sure that getSubscription works after killing webpushd. Previously, this didn't work and
-    // would fail with an AbortError because we didn't re-send the connection configuration after
-    // the daemon relaunched.
-    message = nil;
-    gotMessage = false;
-    [m_webView evaluateJavaScript:@"getSubscription()" completionHandler:^(id, NSError*) { }];
-    TestWebKitAPI::Util::run(&gotMessage);
-    ASSERT_TRUE([message isEqual:[NSNull null]]);
+    cleanUpTestWebPushD(tempDirectory);
 }
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(NOTIFICATIONS) && (PLATFORM(MAC) || PLATFORM(IOS))
+#endif // PLATFORM(MAC) || PLATFORM(IOS)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  * Copyright (C) 2021 Igalia S.A. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,7 @@ class BrandedStructure final : public Structure {
 public:
 
     template<typename CellType, SubspaceAccess>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return &vm.brandedStructureSpace();
     }
@@ -53,7 +53,7 @@ public:
     ALWAYS_INLINE bool checkBrand(Symbol* brand)
     {
         UniquedStringImpl* brandUid = &brand->uid();
-        for (BrandedStructure* currentStructure = this; currentStructure; currentStructure = jsCast<BrandedStructure*>(currentStructure->m_parentBrand.get())) {
+        for (BrandedStructure* currentStructure = this; currentStructure; currentStructure = currentStructure->m_parentBrand.get()) {
             if (brandUid == currentStructure->m_brand)
                 return true;
         }
@@ -78,8 +78,8 @@ private:
         m_brand = nullptr;
     }
 
-    CompactRefPtr<UniquedStringImpl> m_brand;
-    WriteBarrierStructureID m_parentBrand;
+    RefPtr<UniquedStringImpl> m_brand;
+    WriteBarrier<BrandedStructure> m_parentBrand;
 
     friend class Structure;
 };

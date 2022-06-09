@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,7 +39,7 @@ public:
     MediaRecorderProvider() = default;
     virtual ~MediaRecorderProvider() = default;
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     virtual std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
     virtual bool isSupported(const String&);
 #endif

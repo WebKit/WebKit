@@ -83,7 +83,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier identifier,
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::importJwk(CryptoAlgorithmIdentifier identifier, const String& curve, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (keyData.kty != "EC"_s)
+    if (keyData.kty != "EC")
         return nullptr;
     if (keyData.key_ops && ((keyData.usages & usages) != usages))
         return nullptr;
@@ -148,7 +148,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportRaw() const
 ExceptionOr<JsonWebKey> CryptoKeyEC::exportJwk() const
 {
     JsonWebKey result;
-    result.kty = "EC"_s;
+    result.kty = "EC";
     switch (m_curve) {
     case NamedCurve::P256:
         result.crv = P256;

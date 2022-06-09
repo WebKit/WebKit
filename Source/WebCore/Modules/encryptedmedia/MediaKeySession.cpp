@@ -37,7 +37,6 @@
 #include "Document.h"
 #include "EventLoop.h"
 #include "EventNames.h"
-#include "JSMediaKeyStatusMap.h"
 #include "Logging.h"
 #include "MediaKeyMessageEvent.h"
 #include "MediaKeyMessageEventInit.h"
@@ -50,7 +49,6 @@
 #include "SecurityOriginData.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
-#include <wtf/HashCountedSet.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/LoggerHelper.h>
 
@@ -84,7 +82,8 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     // https://w3c.github.io/encrypted-media/#dom-mediakeys-createsession
     // W3C Editor's Draft 09 November 2016
     // createSession(), ctd.
-    ALWAYS_LOG(LOGIDENTIFIER, "sessionType(", sessionType, "), useDistinctiveIdentifier(", useDistinctiveIdentifier, ")");
+
+    INFO_LOG(LOGIDENTIFIER, "sessionType(", sessionType, "), useDistinctiveIdentifier(", useDistinctiveIdentifier, ")");
 
     // 3.1. Let the sessionId attribute be the empty string.
     // 3.2. Let the expiration attribute be NaN.
@@ -105,7 +104,7 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     UNUSED_PARAM(m_uninitialized);
 
 #if !RELEASE_LOG_DISABLED
-    m_instanceSession->setLogIdentifier(m_logIdentifier);
+    m_instanceSession->setLogger(m_logger, m_logIdentifier);
 #endif
     m_instanceSession->setClient(*this);
 
@@ -142,10 +141,10 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's uninitialized value is false, return a promise rejected with an InvalidStateError.
     auto identifier = LOGIDENTIFIER;
-    ALWAYS_LOG(identifier, "initDataType(", initDataType, "), initData.length(", initData.length(), ")");
+    INFO_LOG(identifier, "initDataType(", initDataType, "), initData.length(", initData.length(), ")");
 
     if (m_closed || !m_uninitialized) {
-        ERROR_LOG(identifier, "Rejected: closed(", m_closed, ") or !uninitialized(", !m_uninitialized, ")");
+        INFO_LOG(identifier, "Rejected: closed(", m_closed, ") or !uninitialized(", !m_uninitialized, ")");
         promise->reject(InvalidStateError);
         return;
     }
@@ -156,7 +155,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     // 4. If initDataType is the empty string, return a promise rejected with a newly created TypeError.
     // 5. If initData is an empty array, return a promise rejected with a newly created TypeError.
     if (initDataType.isEmpty() || !initData.length()) {
-        ERROR_LOG(identifier, "Rejected: initDataType empty(", initDataType.isEmpty(), ") or initData empty(", !initData.length(), ")");
+        INFO_LOG(identifier, "Rejected: initDataType empty(", initDataType.isEmpty(), ") or initData empty(", !initData.length(), ")");
         promise->reject(TypeError);
         return;
     }
@@ -165,7 +164,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     //    initDataType as an Initialization Data Type, return a promise rejected with a NotSupportedError. String
     //    comparison is case-sensitive.
     if (!m_implementation->supportsInitDataType(initDataType)) {
-        ERROR_LOG(identifier, "Rejected: initDataType(", initDataType, ") unsupported");
+        INFO_LOG(identifier, "Rejected: initDataType(", initDataType, ") unsupported");
         promise->reject(NotSupportedError);
         return;
     }
@@ -177,18 +176,18 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, initData = SharedBuffer::create(initData.data(), initData.length()), initDataType, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 10.1. If the init data is not valid for initDataType, reject promise with a newly created TypeError.
         // 10.2. Let sanitized init data be a validated and sanitized version of init data.
-        RefPtr<SharedBuffer> sanitizedInitData = m_implementation->sanitizeInitData(initDataType, initData);
+        RefPtr<FragmentedSharedBuffer> sanitizedInitData = m_implementation->sanitizeInitData(initDataType, initData);
 
         // 10.3. If the preceding step failed, reject promise with a newly created TypeError.
         if (!sanitizedInitData) {
-            ERROR_LOG(identifier, "::task() Rejected: cannot sanitize init data");
+            INFO_LOG(identifier, "::task() Rejected: cannot sanitize init data");
             promise->reject(TypeError);
             return;
         }
 
         // 10.4. If sanitized init data is empty, reject promise with a NotSupportedError.
         if (sanitizedInitData->isEmpty()) {
-            ERROR_LOG(identifier, "::task() Rejected: empty sanitized init data");
+            INFO_LOG(identifier, "::task() Rejected: empty sanitized init data");
             promise->reject(NotSupportedError);
             return;
         }
@@ -200,7 +199,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
         // 10.9. Use the cdm to execute the following steps:
         // 10.9.1. If the sanitized init data is not supported by the cdm, reject promise with a NotSupportedError.
         if (!m_implementation->supportsInitData(initDataType, *sanitizedInitData)) {
-            ERROR_LOG(identifier, "::task() Rejected: unsupported initDataType (", initDataType, ") or sanitized initData");
+            INFO_LOG(identifier, "::task() Rejected: unsupported initDataType (", initDataType, ") or sanitized initData");
             promise->reject(NotSupportedError);
             return;
         }
@@ -224,7 +223,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             m_latestDecryptTime = 0;
         }
 
-        m_instanceSession->requestLicense(m_sessionType, initDataType, sanitizedInitData.releaseNonNull(), [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (Ref<SharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
+        m_instanceSession->requestLicense(m_sessionType, initDataType, sanitizedInitData.releaseNonNull(), [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (Ref<FragmentedSharedBuffer>&& message, const String& sessionId, bool needsIndividualization, CDMInstanceSession::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 
@@ -248,7 +247,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
             queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, promise = WTFMove(promise), message = WTFMove(message), messageType, sessionId, succeeded, identifier = WTFMove(identifier)] () mutable {
                 // 10.10.1. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
                 if (succeeded == CDMInstanceSession::SuccessValue::Failed) {
-                    ERROR_LOG(identifier, "::task() Rejected: failed to request license");
+                    INFO_LOG(identifier, "::task() Rejected: failed to request license");
                     promise->reject(NotSupportedError);
                     return;
                 }
@@ -262,7 +261,7 @@ void MediaKeySession::generateRequest(const AtomString& initDataType, const Buff
                 enqueueMessage(messageType, message);
 
                 // 10.9.3. Resolve promise.
-                ALWAYS_LOG(identifier, "::task() Resolved");
+                INFO_LOG(identifier, "::task() Resolved");
                 promise->resolve();
             });
         });
@@ -277,12 +276,12 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
     // W3C Editor's Draft 09 November 2016
 
     auto identifier = LOGIDENTIFIER;
-    ALWAYS_LOG(identifier, "sessionId(", sessionId, ")");
+    INFO_LOG(identifier, "sessionId(", sessionId, ")");
 
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's uninitialized value is false, return a promise rejected with an InvalidStateError.
     if (m_closed || !m_uninitialized) {
-        ERROR_LOG(identifier, "Rejected: closed(", m_closed, ") or !uninitialized(", !m_uninitialized, ")");
+        INFO_LOG(identifier, "Rejected: closed(", m_closed, ") or !uninitialized(", !m_uninitialized, ")");
         promise->reject(InvalidStateError);
         return;
     }
@@ -293,7 +292,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
     // 4. If sessionId is the empty string, return a promise rejected with a newly created TypeError.
     // 5. If the result of running the Is persistent session type? algorithm on this object's session type is false, return a promise rejected with a newly created TypeError.
     if (sessionId.isEmpty() || m_sessionType == MediaKeySessionType::Temporary) {
-        ERROR_LOG(identifier, "Rejected: sessionID empty(", sessionId.isEmpty(), ") or sessionType == Temporary (", m_sessionType == MediaKeySessionType::Temporary, ")");
+        INFO_LOG(identifier, "Rejected: sessionID empty(", sessionId.isEmpty(), ") or sessionType == Temporary (", m_sessionType == MediaKeySessionType::Temporary, ")");
         promise->reject(TypeError);
         return;
     }
@@ -308,7 +307,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
         // 8.2. If the preceding step failed, or if sanitized session ID is empty, reject promise with a newly created TypeError.
         std::optional<String> sanitizedSessionId = m_implementation->sanitizeSessionId(sessionId);
         if (!sanitizedSessionId || sanitizedSessionId->isEmpty()) {
-            ERROR_LOG(identifier, "Rejected: sanitizedSSessionID empty");
+            INFO_LOG(identifier, "Rejected: sanitizedSSessionID empty");
             promise->reject(TypeError);
             return;
         }
@@ -340,15 +339,15 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
             if (succeeded == CDMInstanceSession::SuccessValue::Failed) {
                 switch (failure) {
                 case CDMInstanceSession::SessionLoadFailure::NoSessionData:
-                    ALWAYS_LOG(identifier, "::task() Resolved: NoSessionData");
+                    INFO_LOG(identifier, "::task() Resolved: NoSessionData");
                     promise->resolve<IDLBoolean>(false);
                     return;
                 case CDMInstanceSession::SessionLoadFailure::MismatchedSessionType:
-                    ERROR_LOG(identifier, "::task() Rejected: MismatchedSessionType");
+                    INFO_LOG(identifier, "::task() Rejected: MismatchedSessionType");
                     promise->reject(TypeError);
                     return;
                 case CDMInstanceSession::SessionLoadFailure::QuotaExceeded:
-                    ERROR_LOG(identifier, "::task() Rejected: QuotaExceeded");
+                    INFO_LOG(identifier, "::task() Rejected: QuotaExceeded");
                     promise->reject(QuotaExceededError);
                     return;
                 case CDMInstanceSession::SessionLoadFailure::None:
@@ -362,7 +361,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
             queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, knownKeys = WTFMove(knownKeys), expiration = WTFMove(expiration), message = WTFMove(message), sanitizedSessionId, succeeded, promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
                 // 8.9.1. If any of the preceding steps failed, reject promise with a the appropriate error name.
                 if (succeeded == CDMInstanceSession::SuccessValue::Failed) {
-                    ERROR_LOG(identifier, "::task() Rejected: Other failure");
+                    INFO_LOG(identifier, "::task() Rejected: Other failure");
                     promise->reject(NotSupportedError);
                     return;
                 }
@@ -385,7 +384,7 @@ void MediaKeySession::load(const String& sessionId, Ref<DeferredPromise>&& promi
                     enqueueMessage(message->first, WTFMove(message->second));
 
                 // 8.9.7. Resolve promise with true.
-                ALWAYS_LOG(identifier, "::task() Resolved");
+                INFO_LOG(identifier, "::task() Resolved");
                 promise->resolve<IDLBoolean>(true);
             });
         });
@@ -403,17 +402,17 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     // 1. If this object is closed, return a promise rejected with an InvalidStateError.
     // 2. If this object's callable value is false, return a promise rejected with an InvalidStateError.
     auto identifier = LOGIDENTIFIER;
-    ALWAYS_LOG(identifier, "response.length(", response.length(), ")");
+    INFO_LOG(identifier, "response.length(", response.length(), ")");
 
     if (m_closed || !m_callable) {
-        ERROR_LOG(identifier, "Rejected: closed(", m_closed, ") or !callable(", !m_callable, ")");
+        INFO_LOG(identifier, "Rejected: closed(", m_closed, ") or !callable(", !m_callable, ")");
         promise->reject(InvalidStateError);
         return;
     }
 
     // 3. If response is an empty array, return a promise rejected with a newly created TypeError.
     if (!response.length()) {
-        ERROR_LOG(identifier, "Rejected: empty response");
+        INFO_LOG(identifier, "Rejected: empty response");
         promise->reject(TypeError);
         return;
     }
@@ -423,11 +422,11 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
     // 6. Run the following steps in parallel:
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, weakThis = WeakPtr { *this }, response = SharedBuffer::create(response.data(), response.length()), promise = WTFMove(promise), identifier = WTFMove(identifier)] () mutable {
         // 6.1. Let sanitized response be a validated and/or sanitized version of response copy.
-        RefPtr<SharedBuffer> sanitizedResponse = m_implementation->sanitizeResponse(response);
+        RefPtr<FragmentedSharedBuffer> sanitizedResponse = m_implementation->sanitizeResponse(response);
 
         // 6.2. If the preceding step failed, or if sanitized response is empty, reject promise with a newly created TypeError.
         if (!sanitizedResponse || sanitizedResponse->isEmpty()) {
-            ERROR_LOG(identifier, "::task - Rejected: empty sanitized response");
+            INFO_LOG(identifier, "::task - Rejected: empty sanitized response");
             promise->reject(TypeError);
             return;
         }
@@ -464,7 +463,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
             // NOTE: Steps 6.7.1. and 6.7.2. should be implemented in CDMInstance.
 
             if (succeeded == CDMInstanceSession::SuccessValue::Failed) {
-                ERROR_LOG(identifier, "::task() Rejected: Failed");
+                INFO_LOG(identifier, "::task() Rejected");
                 promise->reject(TypeError);
                 return;
             }
@@ -519,7 +518,7 @@ void MediaKeySession::update(const BufferSource& response, Ref<DeferredPromise>&
                 }
 
                 // 6.8.2. Resolve promise.
-                ALWAYS_LOG(identifier, "::task() Resolved");
+                INFO_LOG(identifier, "::task() Resolved");
                 promise->resolve();
             });
         });
@@ -534,20 +533,21 @@ void MediaKeySession::close(Ref<DeferredPromise>&& promise)
     // W3C Editor's Draft 09 November 2016
 
     auto identifier = LOGIDENTIFIER;
+    INFO_LOG(identifier);
 
     // 1. Let session be the associated MediaKeySession object.
     // 2. If session is closed, return a resolved promise.
-    ALWAYS_LOG(identifier, "EME - closing session ", m_sessionId.utf8().data());
+    LOG(EME, "EME - closing session %s", m_sessionId.utf8().data());
 
     if (m_closed) {
-        ALWAYS_LOG(identifier, "Resolved: already closed");
+        INFO_LOG(identifier, "Resolved: already closed");
         promise->resolve();
         return;
     }
 
     // 3. If session's callable value is false, return a promise rejected with an InvalidStateError.
     if (!m_callable) {
-        ERROR_LOG(identifier, "Rejected: !callable");
+        INFO_LOG(identifier, "Rejected: !callable");
         promise->reject(InvalidStateError);
         return;
     }
@@ -567,7 +567,7 @@ void MediaKeySession::close(Ref<DeferredPromise>&& promise)
                 sessionClosed();
 
                 // 5.3.2. Resolve promise.
-                ALWAYS_LOG(identifier, "::task() Resolved");
+                INFO_LOG(identifier, "::task() Resolved");
                 promise->resolve();
             });
         });
@@ -585,10 +585,10 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
     // 2. If this object's callable value is false, return a promise rejected with an InvalidStateError.
 
     auto identifier = LOGIDENTIFIER;
-    ALWAYS_LOG(identifier);
+    INFO_LOG(identifier);
 
     if (m_closed || !m_callable) {
-        ERROR_LOG(identifier, "Rejected: closed(", m_closed, ") or !callable(", !m_callable, ")");
+        INFO_LOG(identifier, "Rejected: closed(", m_closed, ") or !callable(", !m_callable, ")");
         promise->reject(InvalidStateError);
         return;
     }
@@ -601,7 +601,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
         // 4.3. Let message type be null.
 
         // 4.4. Use the cdm to execute the following steps:
-        m_instanceSession->removeSessionData(m_sessionId, m_sessionType, [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (CDMInstanceSession::KeyStatusVector&& keys, RefPtr<SharedBuffer>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
+        m_instanceSession->removeSessionData(m_sessionId, m_sessionType, [this, weakThis, promise = WTFMove(promise), identifier = WTFMove(identifier)] (CDMInstanceSession::KeyStatusVector&& keys, std::optional<Ref<FragmentedSharedBuffer>>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
             if (!weakThis)
                 return;
 
@@ -629,7 +629,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
 
                 // 4.5.3. If any of the preceding steps failed, reject promise with a new DOMException whose name is the appropriate error name.
                 if (succeeded == CDMInstanceSession::SuccessValue::Failed) {
-                    ERROR_LOG(identifier, "Rejected: failed");
+                    INFO_LOG(identifier, "Rejected: failed");
                     promise->reject(NotSupportedError);
                     return;
                 }
@@ -640,7 +640,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
                     enqueueMessage(MediaKeyMessageType::LicenseRelease, *message);
 
                 // 4.5.6. Resolve promise.
-                ALWAYS_LOG(identifier, "Resolved");
+                INFO_LOG(identifier, "Resolved");
                 promise->resolve();
             });
         });
@@ -649,7 +649,7 @@ void MediaKeySession::remove(Ref<DeferredPromise>&& promise)
     // 5. Return promise.
 }
 
-void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const SharedBuffer& message)
+void MediaKeySession::enqueueMessage(MediaKeyMessageType messageType, const FragmentedSharedBuffer& message)
 {
     // 6.4.1 Queue a "message" Event
     // https://w3c.github.io/encrypted-media/#queue-message
@@ -700,29 +700,10 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
         return MediaKeyStatus::InternalError;
     };
 
-#if !RELEASE_LOG_DISABLED
-    HashCountedSet<MediaKeyStatus, IntHash<MediaKeyStatus>, WTF::StrongEnumHashTraits<MediaKeyStatus>> statusCounts;
-#endif
-
-    m_statuses = WTF::map(WTFMove(inputStatuses), [&](auto&& inputStatus) {
-        auto status = std::pair { WTFMove(inputStatus.first), toMediaKeyStatus(inputStatus.second) };
-#if !RELEASE_LOG_DISABLED
-        statusCounts.add(status.second);
-#endif
-        return status;
-    });
-
-#if !RELEASE_LOG_DISABLED
-    StringBuilder statusString;
-    for (auto& statusCount : statusCounts) {
-        if (!statusCount.value)
-            continue;
-        if (!statusString.isEmpty())
-            statusString.append(", ");
-        statusString.append(makeString(convertEnumerationToString(statusCount.key), ": ", statusCount.value));
-    }
-    ALWAYS_LOG(LOGIDENTIFIER, "statuses: {", statusString.toString(), "}");
-#endif
+    m_statuses.clear();
+    m_statuses.reserveCapacity(inputStatuses.size());
+    for (auto& status : inputStatuses)
+        m_statuses.uncheckedAppend({ WTFMove(status.first), toMediaKeyStatus(status.second) });
 
     // 5. Queue a task to fire a simple event named keystatuseschange at the session.
     queueTaskToDispatchEvent(*this, TaskSource::Networking, Event::create(eventNames().keystatuseschangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -735,7 +716,7 @@ void MediaKeySession::updateKeyStatuses(CDMInstanceSession::KeyStatusVector&& in
         });
 }
 
-void MediaKeySession::sendMessage(CDMMessageType messageType, Ref<SharedBuffer>&& message)
+void MediaKeySession::sendMessage(CDMMessageType messageType, Ref<FragmentedSharedBuffer>&& message)
 {
     enqueueMessage(messageType, message);
 }
@@ -766,7 +747,7 @@ void MediaKeySession::sessionClosed()
 {
     // https://w3c.github.io/encrypted-media/#session-closed
     // W3C Editor's Draft 09 November 2016
-    ALWAYS_LOG(LOGIDENTIFIER);
+    INFO_LOG(LOGIDENTIFIER);
 
     // 1. Let session be the associated MediaKeySession object.
     // 2. If session's session type is "persistent-usage-record", execute the following steps in parallel:

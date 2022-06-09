@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
 #include "Connection.h"
@@ -33,12 +33,14 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 
-namespace IPC {
-class Semaphore;
-}
-
+#if PLATFORM(COCOA)
 namespace WebCore {
 class CAAudioStreamDescription;
+}
+#endif
+
+namespace IPC {
+class Semaphore;
 }
 
 namespace WebKit {
@@ -74,4 +76,4 @@ private:
 
 } // namespace WebKit;
 
-#endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)

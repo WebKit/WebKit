@@ -71,15 +71,10 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             }
         }
         break;
-    case MarkedText::FragmentHighlight: {
-        OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
-        style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
-        break;
-    }
 #if ENABLE(APP_HIGHLIGHTS)
     case MarkedText::AppHighlight: {
         OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
-        style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
+        style.backgroundColor = renderer.theme().appHighlightColor(styleColorOptions);
         break;
     }
 #endif
@@ -110,7 +105,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
     return styledMarkedText;
 }
 
-StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(const RenderText& renderer, const RenderStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
+static StyledMarkedText::Style computeStyleForUnmarkedMarkedText(const RenderText& renderer, const RenderStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
 {
     StyledMarkedText::Style style;
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationsInEffect(), isFirstLine);
@@ -198,7 +193,7 @@ Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualForeground(c
 Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualDecorations(const Vector<StyledMarkedText>& markedTexts)
 {
     return coalesceAdjacent(markedTexts, [&](auto& a, auto& b) {
-        return a.textDecorationStyles == b.textDecorationStyles && a.textStyles == b.textStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
+        return a.textDecorationStyles == b.textDecorationStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
     });
 }
 

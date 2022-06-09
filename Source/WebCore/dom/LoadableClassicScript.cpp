@@ -36,16 +36,9 @@
 
 namespace WebCore {
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(const AtomString& nonce, const AtomString& integrityMetadata, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
+Ref<LoadableClassicScript> LoadableClassicScript::create(const String& nonce, const String& integrityMetadata, ReferrerPolicy policy, const String& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
 {
     return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree, isAsync));
-}
-
-LoadableClassicScript::LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync)
-    : LoadableScript(nonce, policy, crossOriginMode, charset, initiatorName, isInUserAgentShadowTree)
-    , m_integrity(integrity)
-    , m_isAsync(isAsync)
-{
 }
 
 LoadableClassicScript::~LoadableClassicScript()
@@ -67,7 +60,7 @@ std::optional<LoadableScript::Error> LoadableClassicScript::error() const
         return m_error;
 
     if (m_cachedScript->errorOccurred())
-        return Error { ErrorType::CachedScript, std::nullopt, std::nullopt };
+        return Error { ErrorType::CachedScript, std::nullopt };
 
     return std::nullopt;
 }
@@ -89,8 +82,7 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource, const Netwo
                 MessageSource::JS,
                 MessageLevel::Error,
                 consoleMessage
-            },
-            std::nullopt
+            }
         };
     }
 
@@ -101,8 +93,7 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource, const Netwo
                 MessageSource::Security,
                 MessageLevel::Error,
                 makeString("Refused to execute ", m_cachedScript->url().stringCenterEllipsizedToLength(), " as script because \"X-Content-Type-Options: nosniff\" was given and its Content-Type is not a script MIME type.")
-            },
-            std::nullopt
+            }
         };
     }
 
@@ -113,16 +104,14 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource, const Netwo
                 MessageSource::Security,
                 MessageLevel::Error,
                 makeString("Refused to execute ", m_cachedScript->url().stringCenterEllipsizedToLength(), " as script because ", m_cachedScript->response().mimeType(), " is not a script MIME type.")
-            },
-            std::nullopt
+            }
         };
     }
 
     if (!m_error && !resource.errorOccurred() && !matchIntegrityMetadata(resource, m_integrity)) {
         m_error = Error {
             ErrorType::FailedIntegrityCheck,
-            ConsoleMessage { MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(resource, m_integrity)) },
-            std::nullopt
+            ConsoleMessage { MessageSource::Security, MessageLevel::Error, makeString("Cannot load script ", integrityMismatchDescription(resource, m_integrity)) }
         };
     }
 

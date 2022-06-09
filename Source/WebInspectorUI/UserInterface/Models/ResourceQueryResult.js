@@ -25,19 +25,17 @@
 
 WI.ResourceQueryResult = class ResourceQueryResult extends WI.QueryResult
 {
-    constructor(resource, searchString, matches, cookie)
+    constructor(resource, matches, cookie)
     {
         console.assert(resource instanceof WI.Resource, resource);
         super(resource, matches);
 
-        this._searchString = searchString;
         this._cookie = cookie || null;
     }
 
     // Public
 
     get resource() { return this.value; }
-    get searchString() { return this._searchString; }
     get cookie() { return this._cookie; }
 
     // Testing

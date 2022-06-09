@@ -319,13 +319,9 @@ void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
     if (!preservedLoaderId)
         m_requestIdToResourceDataMap.clear();
     else {
-        Vector<String> keysToRemove;
-        for (auto& [key, value] : m_requestIdToResourceDataMap) {
-            if (value->loaderId() != *preservedLoaderId)
-                keysToRemove.append(key);
-        }
-        for (auto& keyToRemove : keysToRemove)
-            m_requestIdToResourceDataMap.remove(keyToRemove);
+        m_requestIdToResourceDataMap.removeIf([loaderId = *preservedLoaderId] (auto& entry) {
+            return entry.value->loaderId() != loaderId;
+        });
     }
 }
 

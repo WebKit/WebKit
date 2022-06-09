@@ -52,8 +52,7 @@ static void check_size_lookup_recomputation_if_appropriate(pas_segregated_heap* 
                                                            unsigned *cached_index,
                                                            const char* where);
 
-static size_t min_align_for_heap(pas_segregated_heap* heap,
-                                 pas_heap_config* config)
+static size_t min_object_size_for_heap_config(pas_heap_config* config)
 {
     pas_segregated_page_config_variant segregated_variant;
     pas_bitfit_page_config_variant bitfit_variant;
@@ -61,7 +60,7 @@ static size_t min_align_for_heap(pas_segregated_heap* heap,
         pas_segregated_page_config* page_config;
         page_config =
             pas_heap_config_segregated_page_config_ptr_for_variant(config, segregated_variant);
-        if (!pas_segregated_page_config_is_enabled(*page_config, heap->runtime_config))
+        if (!pas_segregated_page_config_is_enabled(*page_config))
             continue;
         return pas_segregated_page_config_min_align(*page_config);
     }
@@ -71,19 +70,13 @@ static size_t min_align_for_heap(pas_segregated_heap* heap,
         pas_bitfit_page_config* page_config;
         page_config =
             pas_heap_config_bitfit_page_config_ptr_for_variant(config, bitfit_variant);
-        if (!pas_bitfit_page_config_is_enabled(*page_config, heap->runtime_config))
+        if (!pas_bitfit_page_config_is_enabled(*page_config))
             continue;
         return pas_page_base_config_min_align(page_config->base);
     }
     /* Allow segregated and bitfit to both be disabled. To make this work, we lie and say that the
        minimum object size is whatever would be minimum to the large heap. */
     return config->large_alignment;
-}
-
-static size_t min_object_size_for_heap(pas_segregated_heap* heap,
-                                       pas_heap_config* config)
-{
-    return min_align_for_heap(heap, config);
 }
 
 static size_t max_object_size_for_page_config(pas_heap* parent_heap,
@@ -105,9 +98,9 @@ static size_t max_object_size_for_page_config(pas_heap* parent_heap,
     return result;
 }
 
-static size_t max_segregated_object_size_for_heap(pas_heap* parent_heap,
-                                                  pas_segregated_heap* heap,
-                                                  pas_heap_config* config)
+static size_t max_segregated_object_size_for_heap_config(pas_heap* parent_heap,
+                                                         pas_segregated_heap* heap,
+                                                         pas_heap_config* config)
 {
     static const bool verbose = false;
     
@@ -118,7 +111,7 @@ static size_t max_segregated_object_size_for_heap(pas_heap* parent_heap,
         size_t result;
         
         page_config = pas_heap_config_segregated_page_config_ptr_for_variant(config, variant);
-        if (!pas_segregated_page_config_is_enabled(*page_config, heap->runtime_config))
+        if (!pas_segregated_page_config_is_enabled(*page_config))
             continue;
 
         max_size_per_config = max_object_size_for_page_config(parent_heap, &page_config->base);
@@ -132,9 +125,9 @@ static size_t max_segregated_object_size_for_heap(pas_heap* parent_heap,
     return 0;
 }
 
-static size_t max_bitfit_object_size_for_heap(pas_heap* parent_heap,
-                                              pas_segregated_heap* heap,
-                                              pas_heap_config* config)
+static size_t max_bitfit_object_size_for_heap_config(pas_heap* parent_heap,
+                                                     pas_segregated_heap* heap,
+                                                     pas_heap_config* config)
 {
     static const bool verbose = false;
     
@@ -152,7 +145,7 @@ static size_t max_bitfit_object_size_for_heap(pas_heap* parent_heap,
                     pas_bitfit_page_config_kind_get_string(page_config->kind));
         }
 
-        if (!pas_bitfit_page_config_is_enabled(*page_config, heap->runtime_config)) {
+        if (!pas_bitfit_page_config_is_enabled(*page_config)) {
             if (verbose) {
                 pas_log("Not considering %s because it's disabled.\n",
                         pas_bitfit_page_config_kind_get_string(page_config->kind));
@@ -189,12 +182,12 @@ static size_t max_bitfit_object_size_for_heap(pas_heap* parent_heap,
     return 0;
 }
 
-static size_t max_object_size_for_heap(pas_heap* parent_heap,
-                                       pas_segregated_heap* heap,
-                                       pas_heap_config* config)
+static size_t max_object_size_for_heap_config(pas_heap* parent_heap,
+                                              pas_segregated_heap* heap,
+                                              pas_heap_config* config)
 {
-    return PAS_MAX(max_segregated_object_size_for_heap(parent_heap, heap, config),
-                   max_bitfit_object_size_for_heap(parent_heap, heap, config));
+    return PAS_MAX(max_segregated_object_size_for_heap_config(parent_heap, heap, config),
+                   max_bitfit_object_size_for_heap_config(parent_heap, heap, config));
 }
 
 void pas_segregated_heap_construct(pas_segregated_heap* segregated_heap,
@@ -844,7 +837,7 @@ pas_segregated_heap_ensure_allocator_index(
 
     pas_heap_lock_assert_held();
     
-    PAS_ASSERT(directory->object_size >= min_object_size_for_heap(heap, config));
+    PAS_ASSERT(directory->object_size >= min_object_size_for_heap_config(config));
 
     rematerialize_size_lookup_if_necessary(heap, config, cached_index);
 
@@ -857,7 +850,7 @@ pas_segregated_heap_ensure_allocator_index(
     PAS_ASSERT(!pas_heap_config_is_utility(config));
     
     if (verbose)
-        pas_log("%p: In pas_segregated_heap_ensure_allocator_index, size = %zu\n", (void*)pthread_self(), size);
+        pas_log("%p: In pas_segregated_heap_ensure_allocator_index, size = %zu\n", pthread_self(), size);
     index = pas_segregated_heap_index_for_size(size, *config);
     if (verbose)
         pas_log("index = %zu\n", index);
@@ -1324,9 +1317,6 @@ pas_segregated_heap_ensure_size_directory_for_size(
     size_t object_size;
     pas_segregated_heap_medium_directory_tuple* medium_tuple;
     bool is_utility;
-    size_t dynamic_min_align;
-    size_t static_min_align;
-    size_t type_alignment;
 
     pas_heap_lock_assert_held();
 
@@ -1338,6 +1328,8 @@ pas_segregated_heap_ensure_size_directory_for_size(
         pas_log("%p(%s): being asked for directory with size = %zu, alignment = %zu.\n",
                 heap, pas_heap_config_kind_get_string(config->kind), size, alignment);
     }
+
+    PAS_ASSERT(pas_is_aligned(size, alignment));
 
     if (PAS_ENABLE_TESTING) {
         check_part_of_all_heaps_data data;
@@ -1387,48 +1379,8 @@ pas_segregated_heap_ensure_size_directory_for_size(
 
     parent_heap = pas_heap_for_segregated_heap(heap);
 
-    /* Say that the heap's type has an alignment of 128 and that someone calls something like
-       bmalloc_iso_allocate_array_by_size(&some_heap, 5163).
-       
-       Before considering what the possible behaviors could be, let's take note of a constraint: it's not
-       reasonable to require the fast path of allocation to align 5163 to 128, since that would require loading
-       the alignment from the type and doing it dynamically, which involves more cycles for the fast path than
-       we'd like.
-       
-       So what behavior do we want this to have?
-       
-       1) We could make this an error. But, since we cannot do the alignment computation on the fast path, the
-          error would only manifest if we hit a slow path.
-       
-       2) We could just silently align the size for the user. To make this work, we just have to make sure that
-          when the fast path asks for 5163 again, they will get an allocator that is aligned appropriately.
-       
-       The first option seems doubly bad: it will only manifest sometimes, and it's unnecessarily restrictive.
-       Who is to say that an array of that length is really wrong? Libpas generally takes the approach of
-       permitting the user to request a misaligned size, and it will align the size for the user.
-
-       To make the second option work, we need to ensure that the `index` is computed from the size that the
-       user thought they were requesting, and that this function gets called with size being exactly the size
-       that the allocator saw.
-       
-       Note that this size may be already aligned to the dynamically requested alignment (as opposed to the
-       type's alignment), and that's great! That behavior ensures that if we later try to allocate this size
-       without that alignment, we can get a directory that is better suited. The `alignment` we are passed here
-       is the max of the type's alignment and the requested alignment, so if the size is not aligned to
-       `alignment`, then we know it's because `alignment` is the type's alignment. */
-
-    type_alignment = pas_heap_get_type_alignment(parent_heap);
-    PAS_ASSERT(alignment >= type_alignment);
-    
     index = pas_segregated_heap_index_for_size(size, *config);
-
-    if (verbose)
-        pas_log("index = %zu\n", index);
-    
     object_size = pas_segregated_heap_size_for_index(index, *config);
-
-    if (verbose)
-        pas_log("object_size = %zu\n", object_size);
 
     if (object_size < size) {
         /* This'll only happen in certain kinds of overflows, in which case the size must be way too big. */
@@ -1436,37 +1388,14 @@ pas_segregated_heap_ensure_size_directory_for_size(
         return NULL;
     }
 
-    object_size = PAS_MAX(min_object_size_for_heap(heap, config), object_size);
-
-    if (verbose)
-        pas_log("object_size after accounting for min_object_size = %zu\n", object_size);
-
-    static_min_align = pas_heap_config_segregated_heap_min_align(*config);
-    dynamic_min_align = min_align_for_heap(heap, config);
-    PAS_ASSERT(dynamic_min_align >= static_min_align);
+    object_size = PAS_MAX(min_object_size_for_heap_config(config), object_size);
 
     PAS_ASSERT(pas_is_aligned(object_size, alignment));
-    PAS_ASSERT(pas_is_aligned(object_size, static_min_align));
+    PAS_ASSERT(pas_is_aligned(
+                   object_size, pas_segregated_page_config_min_align(config->small_segregated_config)));
 
-    object_size = pas_round_up_to_power_of_2(object_size, dynamic_min_align);
-    
-    alignment = PAS_MAX(alignment, dynamic_min_align);
-
-    if (alignment > type_alignment) {
-        /* If the alignment is bigger than type_alignment then it means that this is a dynamically requested
-           alignment. So, we expect that the object size was already aligned to it by the allocator fast
-           path. We should never get here with a size that isn't already aligned to the dynamically requested
-           alignment! */
-        PAS_ASSERT(pas_is_aligned(object_size, alignment));
-    } else {
-        /* If the alignment is exactly the type_alignment, then it might be that we are allocating without
-           any dynamically requested alignment, or a dynamically requested alignment that is smaller than the
-           type alignment. In that case, we align the object_size here, so that in this heap, all object sizes
-           are aligned to the type's alignment. */
-        object_size = pas_round_up_to_power_of_2(object_size, alignment);
-    }
-
-    PAS_ASSERT(object_size >= size);
+    alignment = PAS_MAX(alignment,
+                        pas_segregated_page_config_min_align(config->small_segregated_config));
 
     /* If we have overflowed already then bail. */
     if ((unsigned)object_size != object_size ||
@@ -1479,7 +1408,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
     /* If it's impossible to use the largest segregated heap to allocate the request then
        immediately give up. Do this before ensure_size_lookup so that heaps that are only used
        for large object allocation don't allocate any small heap meta-data. */
-    if (object_size > max_object_size_for_heap(parent_heap, heap, config)) {
+    if (object_size > max_object_size_for_heap_config(parent_heap, heap, config)) {
         if (verbose)
             pas_log("It's too big.\n");
         return NULL;
@@ -1717,7 +1646,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
                 
                 page_config_ptr =
                     pas_heap_config_segregated_page_config_ptr_for_variant(config, variant);
-                if (!pas_segregated_page_config_is_enabled(*page_config_ptr, heap->runtime_config))
+                if (!pas_segregated_page_config_is_enabled(*page_config_ptr))
                     continue;
                 
                 page_config = *page_config_ptr;
@@ -1761,9 +1690,9 @@ pas_segregated_heap_ensure_size_directory_for_size(
             }
             PAS_ASSERT(object_size <= heap->runtime_config->max_bitfit_object_size);
             PAS_TESTING_ASSERT(
-                object_size <= max_bitfit_object_size_for_heap(parent_heap, heap, config));
+                object_size <= max_bitfit_object_size_for_heap_config(parent_heap, heap, config));
             best_bytes_dirtied_per_object =
-                pas_bitfit_heap_select_variant(object_size, config, heap->runtime_config).object_size;
+                pas_bitfit_heap_select_variant(object_size, config).object_size;
             PAS_ASSERT(!is_utility);
         }
 
@@ -2093,7 +2022,7 @@ pas_segregated_heap_ensure_size_directory_for_size(
             
                     new_directories = pas_compact_expendable_memory_allocate(
                         sizeof(pas_segregated_heap_medium_directory_tuple) * new_capacity,
-                        PAS_ALIGNOF(pas_segregated_heap_medium_directory_tuple),
+                        alignof(pas_segregated_heap_medium_directory_tuple),
                         "pas_segregated_heap_rare_data/medium_directories");
             
                     memcpy(new_directories, medium_directories,

@@ -9,39 +9,13 @@ features: [Temporal]
 
 const datetime = new Temporal.ZonedDateTime(1_000_000_000_123_456_789n, "UTC");
 
-function test(instance, expectations, description) {
-  for (const [smallestUnit, expectedResult] of expectations) {
-    assert.sameValue(instance.toString({ smallestUnit }), expectedResult,
-      `${description} with smallestUnit "${smallestUnit}"`);
-  }
-}
-
-test(
-  datetime,
-  [
-    ["minute", "2001-09-09T01:46+00:00[UTC]"],
-    ["second", "2001-09-09T01:46:40+00:00[UTC]"],
-    ["millisecond", "2001-09-09T01:46:40.123+00:00[UTC]"],
-    ["microsecond", "2001-09-09T01:46:40.123456+00:00[UTC]"],
-    ["nanosecond", "2001-09-09T01:46:40.123456789+00:00[UTC]"],
-  ],
-  "subseconds toString"
-);
-
-test(
-  new Temporal.ZonedDateTime(999_999_960_000_000_000n, "UTC"),
-  [
-    ["minute", "2001-09-09T01:46+00:00[UTC]"],
-    ["second", "2001-09-09T01:46:00+00:00[UTC]"],
-    ["millisecond", "2001-09-09T01:46:00.000+00:00[UTC]"],
-    ["microsecond", "2001-09-09T01:46:00.000000+00:00[UTC]"],
-    ["nanosecond", "2001-09-09T01:46:00.000000000+00:00[UTC]"],
-  ],
-  "whole minutes toString"
-);
+assert.sameValue(datetime.toString({ smallestUnit: "minute" }), "2001-09-09T01:46+00:00[UTC]");
+assert.sameValue(datetime.toString({ smallestUnit: "second" }), "2001-09-09T01:46:40+00:00[UTC]");
+assert.sameValue(datetime.toString({ smallestUnit: "millisecond" }), "2001-09-09T01:46:40.123+00:00[UTC]");
+assert.sameValue(datetime.toString({ smallestUnit: "microsecond" }), "2001-09-09T01:46:40.123456+00:00[UTC]");
+assert.sameValue(datetime.toString({ smallestUnit: "nanosecond" }), "2001-09-09T01:46:40.123456789+00:00[UTC]");
 
 const notValid = [
-  "era",
   "year",
   "month",
   "week",
@@ -50,6 +24,5 @@ const notValid = [
 ];
 
 notValid.forEach((smallestUnit) => {
-  assert.throws(RangeError, () => datetime.toString({ smallestUnit }),
-    `"${smallestUnit}" is not a valid unit for the smallestUnit option`);
+  assert.throws(RangeError, () => datetime.toString({ smallestUnit }), smallestUnit);
 });

@@ -74,12 +74,12 @@ HTMLPlugInImageElement::~HTMLPlugInImageElement()
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
 {
     // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers when using fallback content.
-    return dynamicDowncast<RenderEmbeddedObject>(renderer());
+    return is<RenderEmbeddedObject>(renderer()) ? downcast<RenderEmbeddedObject>(renderer()) : nullptr;
 }
 
 bool HTMLPlugInImageElement::isImageType()
 {
-    if (m_serviceType.isEmpty() && protocolIs(m_url, "data"_s))
+    if (m_serviceType.isEmpty() && protocolIs(m_url, "data"))
         m_serviceType = mimeTypeFromDataURL(m_url);
 
     if (RefPtr frame = document().frame())
@@ -180,8 +180,9 @@ void HTMLPlugInImageElement::didAttachRenderers()
 
 void HTMLPlugInImageElement::willDetachRenderers()
 {
-    if (RefPtr widget = pluginWidget(PluginLoadingPolicy::DoNotLoad))
-        widget->willDetachRenderer();
+    RefPtr widget = pluginWidget(PluginLoadingPolicy::DoNotLoad);
+    if (is<PluginViewBase>(widget))
+        downcast<PluginViewBase>(*widget).willDetachRenderer();
 
     HTMLPlugInElement::willDetachRenderers();
 }
@@ -304,7 +305,7 @@ bool HTMLPlugInImageElement::canLoadPlugInContent(const String& relativeURL, con
     return contentSecurityPolicy.allowPluginType(mimeType, declaredMimeType, completedURL);
 }
 
-bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues)
+bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     ASSERT(document().frame());
 

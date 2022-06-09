@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,8 +38,6 @@
 #include "pas_segregated_page_inlines.h"
 #include "pas_segregated_size_directory.h"
 
-size_t pas_segregated_exclusive_view_count;
-
 pas_segregated_exclusive_view* pas_segregated_exclusive_view_create(
     pas_segregated_size_directory* directory,
     size_t index)
@@ -55,8 +53,6 @@ pas_segregated_exclusive_view* pas_segregated_exclusive_view_create(
         sizeof(pas_segregated_exclusive_view),
         "pas_segregated_exclusive_view",
         pas_object_allocation);
-
-    pas_segregated_exclusive_view_count++;
 
     /* We allocate this lazily. */
     result->page_boundary = NULL;

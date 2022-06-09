@@ -30,13 +30,15 @@
 #include <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #include <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, DataDetectorsCore);
-
 SOFT_LINK_CLASS_FOR_HEADER(PAL, DDScannerResult)
 
 #if PLATFORM(MAC)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsCore, DDBinderPhoneNumberKey, CFStringRef)
 #elif PLATFORM(IOS_FAMILY)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef * errorRef), (type, options, errorRef))
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerScanQuery, Boolean, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScanQueryCreate, DDScanQueryRef, (CFAllocatorRef allocator), (allocator))
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerCopyResultsWithOptions, CFArrayRef, (DDScannerRef scanner, DDScannerCopyResultsOptions options), (scanner, options))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDResultGetRange, CFRange, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDResultGetType, CFStringRef, (DDResultRef result), (result))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDResultGetCategory, DDResultCategory, (DDResultRef result), (result))
@@ -65,10 +67,5 @@ SOFT_LINK_POINTER_FOR_HEADER(PAL, DataDetectorsCore, DDBinderSignatureBlockKey, 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsCore, DDScannerCopyResultsOptionsForPassiveUse, DDScannerCopyResultsOptions)
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerEnableOptionalSource, void, (DDScannerRef scanner, DDScannerSource source, Boolean enable), (scanner, source, enable))
 #endif // PLATFORM(IOS_FAMILY)
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef * errorRef), (type, options, errorRef))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerScanQuery, Boolean, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScanQueryCreate, DDScanQueryRef, (CFAllocatorRef allocator), (allocator))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScanQueryCreateFromString, DDScanQueryRef, (CFAllocatorRef allocator, CFStringRef string, CFRange range), (allocator, string, range))
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerCopyResultsWithOptions, CFArrayRef, (DDScannerRef scanner, DDScannerCopyResultsOptions options), (scanner, options))
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, DataDetectorsCore, DDResultDisableURLSchemeChecking, void, (), ())
+
 #endif // ENABLE(DATA_DETECTION)

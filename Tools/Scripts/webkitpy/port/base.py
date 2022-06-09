@@ -379,16 +379,7 @@ class Port(object):
     def _expected_baselines_for_suffixes(self, test_name, suffixes, all_baselines=False, device_type=None):
         baseline_search_path = self.baseline_search_path(device_type=device_type) + [self.layout_tests_dir()]
         fs = self._filesystem
-
-        baseline_ext_parts = fs.splitext(test_name)
-
-        baseline_name_root = baseline_ext_parts[0]
-        if len(baseline_ext_parts) > 1:
-            if '?' in baseline_ext_parts[1]:
-                baseline_name_root += '_' + baseline_ext_parts[1].split('?')[1]
-            if '#' in baseline_ext_parts[1]:
-                baseline_name_root += '_' + baseline_ext_parts[1].split('#')[1]
-        baseline_name_root += '-expected'
+        baseline_name_root = fs.splitext(test_name)[0] + '-expected'
 
         baselines = []
         for platform_dir in baseline_search_path:
@@ -785,9 +776,6 @@ class Port(object):
     def _copy_value_from_environ_if_set(self, clean_env, name):
         if name in os.environ:
             clean_env[name] = os.environ[name]
-
-    def port_adjust_environment_for_test_driver(self, env):
-        return env
 
     def setup_environ_for_server(self, server_name=None):
         # We intentionally copy only a subset of os.environ when
@@ -1288,6 +1276,12 @@ class Port(object):
 
         This is needed only by ports that use the http_server.py module."""
         raise NotImplementedError('Port._path_to_lighttpd_modules')
+
+    def _path_to_lighttpd_php(self):
+        """Returns the path to the LigHTTPd PHP executable.
+
+        This is needed only by ports that use the http_server.py module."""
+        raise NotImplementedError('Port._path_to_lighttpd_php')
 
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a

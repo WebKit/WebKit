@@ -54,10 +54,10 @@ public:
         YarrError,
         InvalidQuantifier,
     };
-    static ASCIILiteral statusString(ParseStatus);
+    static String statusString(ParseStatus);
     explicit URLFilterParser(CombinedURLFilters&);
     ~URLFilterParser();
-    ParseStatus addPattern(StringView pattern, bool patternIsCaseSensitive, uint64_t patternId);
+    ParseStatus addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId);
 
 private:
     CombinedURLFilters& m_combinedURLFilters;

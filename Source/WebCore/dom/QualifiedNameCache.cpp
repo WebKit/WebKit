@@ -32,7 +32,7 @@ namespace WebCore {
 struct QNameComponentsTranslator {
     static unsigned hash(const QualifiedNameComponents& components)
     {
-        return computeHash(components);
+        return hashComponents(components);
     }
     static bool equal(QualifiedName::QualifiedNameImpl* name, const QualifiedNameComponents& c)
     {

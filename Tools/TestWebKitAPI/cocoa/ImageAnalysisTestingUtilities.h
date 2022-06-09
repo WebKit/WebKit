@@ -25,11 +25,9 @@
 
 #pragma once
 
-#if HAVE(VK_IMAGE_ANALYSIS)
-
-#import "InstanceMethodSwizzler.h"
-#import <pal/spi/cocoa/VisionKitCoreSPI.h>
 #import <wtf/RetainPtr.h>
+
+#if HAVE(VK_IMAGE_ANALYSIS)
 
 @class VKImageAnalysis;
 @class VKQuad;
@@ -44,20 +42,6 @@ RetainPtr<VKQuad> createQuad(CGPoint topLeft, CGPoint topRight, CGPoint bottomLe
 RetainPtr<VKWKTextInfo> createTextInfo(NSString *text, VKQuad *);
 RetainPtr<VKWKLineInfo> createLineInfo(NSString *text, VKQuad *, NSArray<VKWKTextInfo *> *);
 RetainPtr<VKImageAnalysis> createImageAnalysis(NSArray<VKWKLineInfo *> *);
-RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef, VKImageOrientation, VKAnalysisTypes);
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-class RemoveBackgroundSwizzler {
-public:
-    RemoveBackgroundSwizzler(CGImageRef, CGRect);
-    ~RemoveBackgroundSwizzler() = default;
-
-private:
-    InstanceMethodSwizzler m_removeBackgroundRequestSwizzler;
-};
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 } // namespace TestWebKitAPI
 

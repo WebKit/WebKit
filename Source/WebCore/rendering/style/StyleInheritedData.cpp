@@ -59,34 +59,17 @@ Ref<StyleInheritedData> StyleInheritedData::copy() const
     return adoptRef(*new StyleInheritedData(*this));
 }
 
-bool StyleInheritedData::operator==(const StyleInheritedData& other) const
+bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 {
-    return fastPathInheritedEqual(other) && nonFastPathInheritedEqual(other);
-}
-
-bool StyleInheritedData::fastPathInheritedEqual(const StyleInheritedData& other) const
-{
-    // These properties also need to have "fast-path-inherited" codegen property set.
-    // Cases where other properties depend on these values need to disallow the fast path (via RenderStyle::setDisallowsFastPathInheritance).
-    return color == other.color
-        && visitedLinkColor == other.visitedLinkColor;
-}
-
-bool StyleInheritedData::nonFastPathInheritedEqual(const StyleInheritedData& other) const
-{
-    return lineHeight == other.lineHeight
+    return lineHeight == o.lineHeight
 #if ENABLE(TEXT_AUTOSIZING)
-        && specifiedLineHeight == other.specifiedLineHeight
+        && specifiedLineHeight == o.specifiedLineHeight
 #endif
-        && fontCascade == other.fontCascade
-        && horizontalBorderSpacing == other.horizontalBorderSpacing
-        && verticalBorderSpacing == other.verticalBorderSpacing;
-}
-
-void StyleInheritedData::fastPathInheritFrom(const StyleInheritedData& inheritParent)
-{
-    color = inheritParent.color;
-    visitedLinkColor = inheritParent.visitedLinkColor;
+        && fontCascade == o.fontCascade
+        && color == o.color
+        && visitedLinkColor == o.visitedLinkColor
+        && horizontalBorderSpacing == o.horizontalBorderSpacing
+        && verticalBorderSpacing == o.verticalBorderSpacing;
 }
 
 } // namespace WebCore

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <utility>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
@@ -142,7 +141,7 @@ private:
     T* m_ptr { nullptr };
 };
 
-static_assert(sizeof(MallocPtr<int>) == sizeof(int*));
+static_assert(sizeof(MallocPtr<int>) == sizeof(int*), "");
 
 template<typename U, typename OtherMalloc> MallocPtr<U, OtherMalloc> adoptMallocPtr(U* ptr)
 {

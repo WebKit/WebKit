@@ -82,7 +82,7 @@ CSSPropertySourceData::CSSPropertySourceData()
 
 String CSSPropertySourceData::toString() const
 {
-    if (!name && value == "e"_s)
+    if (!name && value == "e")
         return String();
     return makeString(name, ": ", value, important ? " !important" : "", ';');
 }

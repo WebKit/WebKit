@@ -1,3 +1,0 @@
-
-PASS Test constructing a shared worker with Infinity
-

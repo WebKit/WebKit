@@ -44,15 +44,9 @@ public:
 
     void dump(PrintStream&) const;
 
-    size_t registerCount() const { return m_registers.size(); }
-    size_t sizeOfAreaInBytes() const
+    size_t size() const
     {
-#if USE(JSVALUE64)
-        static_assert(sizeof(CPURegister) == sizeof(double));
-        return registerCount() * sizeof(CPURegister);
-#elif USE(JSVALUE32_64)
-        return m_sizeOfAreaInBytes;
-#endif
+        return m_registers.size();
     }
 
     const RegisterAtOffset& at(size_t index) const
@@ -60,28 +54,22 @@ public:
         return m_registers.at(index);
     }
 
-    void adjustOffsets(ptrdiff_t addend)
+    RegisterAtOffset& at(size_t index)
     {
-        // This preserves m_sizeOfAreaInBytes
-        for (RegisterAtOffset &item : m_registers)
-            item = RegisterAtOffset { item.reg(), item.offset() + addend };
+        return m_registers.at(index);
     }
-
+    
     RegisterAtOffset* find(Reg) const;
     unsigned indexOf(Reg) const; // Returns UINT_MAX if not found.
 
     FixedVector<RegisterAtOffset>::const_iterator begin() const { return m_registers.begin(); }
     FixedVector<RegisterAtOffset>::const_iterator end() const { return m_registers.end(); }
 
-
     static const RegisterAtOffsetList& llintBaselineCalleeSaveRegisters(); // Registers and Offsets saved and used by the LLInt.
     static const RegisterAtOffsetList& dfgCalleeSaveRegisters(); // Registers and Offsets saved and used by DFG.
 
 private:
     FixedVector<RegisterAtOffset> m_registers;
-#if USE(JSVALUE32_64) // On JSVALUE64, we can compute this cheaply
-    size_t m_sizeOfAreaInBytes { 0 };
-#endif
 };
 
 } // namespace JSC

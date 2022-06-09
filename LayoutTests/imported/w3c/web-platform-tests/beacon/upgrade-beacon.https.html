@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+function with_iframe(url) {
+    return new Promise(function(resolve) {
+        var frame = document.createElement('iframe');
+        frame.src = url;
+        frame.onload = function() { resolve(frame); };
+        document.body.appendChild(frame);
+    });
+}
+var frame;
+promise_test(async (test) => {
+    frame = await with_iframe('resources/upgrade-iframe.html');
+    assert_true(frame.contentWindow.sendBeacon(), "Send beacon successfully");
+    assert_true(await frame.contentWindow.checkBeaconURL(test), "Upgraded beacon URL");
+}, "Ensure beacon gets upgraded");
+
+promise_test(async (test) => {
+    assert_true(frame.contentWindow.sendRedirectedBeacon(), "Send beacon successfully");
+    assert_true(await frame.contentWindow.checkBeaconURL(test), "Upgraded beacon URL");
+}, "Ensure beacon gets upgraded after redirection");
+</script>
+</body>
+</html>

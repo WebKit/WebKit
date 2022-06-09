@@ -45,14 +45,12 @@ public:
     unsigned parserAppendData(const String& string, unsigned offset, unsigned lengthLimit);
 
 protected:
-    CharacterData(Document& document, String&& text, ConstructionType type = CreateCharacterData)
+    CharacterData(Document& document, const String& text, ConstructionType type = CreateCharacterData)
         : Node(document, type)
-        , m_data(!text.isNull() ? WTFMove(text) : emptyString())
+        , m_data(!text.isNull() ? text : emptyString())
     {
         ASSERT(type == CreateCharacterData || type == CreateText || type == CreateEditingText);
     }
-
-    ~CharacterData();
 
     void setDataWithoutUpdate(const String& data)
     {
@@ -66,7 +64,7 @@ protected:
 
 private:
     String nodeValue() const final;
-    void setNodeValue(const String&) final;
+    ExceptionOr<void> setNodeValue(const String&) final;
     void notifyParentAfterChange(const ContainerNode::ChildChange&);
 
     String m_data;
@@ -74,8 +72,8 @@ private:
 
 inline unsigned Node::length() const
 {
-    if (auto characterData = dynamicDowncast<CharacterData>(*this))
-        return characterData->length();
+    if (is<CharacterData>(*this))
+        return downcast<CharacterData>(*this).length();
     return countChildNodes();
 }
 

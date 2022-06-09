@@ -1,6 +1,0 @@
-2d.text.drawing.style.wordSpacing.measure
-Testing if word spacing is working properly
-Actual output:
-
-FAIL Testing if word spacing is working properly assert_equals: ctx.letterSpacing === '0px' (got [undefined], expected 0px[string]) expected (string) "0px" but got (undefined) undefined
-

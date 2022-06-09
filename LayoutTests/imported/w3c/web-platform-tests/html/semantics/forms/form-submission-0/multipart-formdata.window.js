@@ -3,10 +3,7 @@
 // Form submissions in multipart/form-data are also tested in
 // /FileAPI/file/send-file*
 
-// The `expected` property of objects passed to `formTest` must be an object
-// with `name`, `value` and optionally `filename` properties, which represent
-// the corresponding data in a multipart/form-data part.
-const formTest = formSubmissionTemplate(
+const form = formSubmissionTemplate(
   "multipart/form-data",
   ({ name, filename, value }, serialized) => {
     let headers;
@@ -32,7 +29,7 @@ const formTest = formSubmissionTemplate(
   },
 );
 
-formTest({
+form({
   name: "basic",
   value: "test",
   expected: {
@@ -42,7 +39,7 @@ formTest({
   description: "Basic test",
 });
 
-formTest({
+form({
   name: "basic",
   value: new File([], "file-test.txt", { type: "text/plain" }),
   expected: {
@@ -53,7 +50,7 @@ formTest({
   description: "Basic File test",
 });
 
-formTest({
+form({
   name: "a\0b",
   value: "c",
   expected: {
@@ -63,7 +60,7 @@ formTest({
   description: "0x00 in name",
 });
 
-formTest({
+form({
   name: "a",
   value: "b\0c",
   expected: {
@@ -73,7 +70,7 @@ formTest({
   description: "0x00 in value",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], "b\0c", { type: "text/plain" }),
   expected: {
@@ -84,7 +81,7 @@ formTest({
   description: "0x00 in filename",
 });
 
-formTest({
+form({
   name: "a\nb",
   value: "c",
   expected: {
@@ -94,7 +91,7 @@ formTest({
   description: "\\n in name",
 });
 
-formTest({
+form({
   name: "a\rb",
   value: "c",
   expected: {
@@ -104,7 +101,7 @@ formTest({
   description: "\\r in name",
 });
 
-formTest({
+form({
   name: "a\r\nb",
   value: "c",
   expected: {
@@ -114,7 +111,7 @@ formTest({
   description: "\\r\\n in name",
 });
 
-formTest({
+form({
   name: "a\n\rb",
   value: "c",
   expected: {
@@ -124,7 +121,7 @@ formTest({
   description: "\\n\\r in name",
 });
 
-formTest({
+form({
   name: "a",
   value: "b\nc",
   expected: {
@@ -134,7 +131,7 @@ formTest({
   description: "\\n in value",
 });
 
-formTest({
+form({
   name: "a",
   value: "b\rc",
   expected: {
@@ -144,7 +141,7 @@ formTest({
   description: "\\r in value",
 });
 
-formTest({
+form({
   name: "a",
   value: "b\r\nc",
   expected: {
@@ -154,7 +151,7 @@ formTest({
   description: "\\r\\n in value",
 });
 
-formTest({
+form({
   name: "a",
   value: "b\n\rc",
   expected: {
@@ -164,7 +161,7 @@ formTest({
   description: "\\n\\r in value",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], "b\nc", { type: "text/plain" }),
   expected: {
@@ -175,7 +172,7 @@ formTest({
   description: "\\n in filename",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], "b\rc", { type: "text/plain" }),
   expected: {
@@ -186,7 +183,7 @@ formTest({
   description: "\\r in filename",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], "b\r\nc", { type: "text/plain" }),
   expected: {
@@ -197,7 +194,7 @@ formTest({
   description: "\\r\\n in filename",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], "b\n\rc", { type: "text/plain" }),
   expected: {
@@ -208,7 +205,7 @@ formTest({
   description: "\\n\\r in filename",
 });
 
-formTest({
+form({
   name: 'a"b',
   value: "c",
   expected: {
@@ -218,7 +215,7 @@ formTest({
   description: "double quote in name",
 });
 
-formTest({
+form({
   name: "a",
   value: 'b"c',
   expected: {
@@ -228,7 +225,7 @@ formTest({
   description: "double quote in value",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], 'b"c', { type: "text/plain" }),
   expected: {
@@ -239,7 +236,7 @@ formTest({
   description: "double quote in filename",
 });
 
-formTest({
+form({
   name: "a'b",
   value: "c",
   expected: {
@@ -249,7 +246,7 @@ formTest({
   description: "single quote in name",
 });
 
-formTest({
+form({
   name: "a",
   value: "b'c",
   expected: {
@@ -259,7 +256,7 @@ formTest({
   description: "single quote in value",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], "b'c", { type: "text/plain" }),
   expected: {
@@ -270,7 +267,7 @@ formTest({
   description: "single quote in filename",
 });
 
-formTest({
+form({
   name: "a\\b",
   value: "c",
   expected: {
@@ -280,7 +277,7 @@ formTest({
   description: "backslash in name",
 });
 
-formTest({
+form({
   name: "a",
   value: "b\\c",
   expected: {
@@ -290,7 +287,7 @@ formTest({
   description: "backslash in value",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], "b\\c", { type: "text/plain" }),
   expected: {
@@ -301,7 +298,7 @@ formTest({
   description: "backslash in filename",
 });
 
-formTest({
+form({
   name: "áb",
   value: "ç",
   expected: {
@@ -311,7 +308,7 @@ formTest({
   description: "non-ASCII in name and value",
 });
 
-formTest({
+form({
   name: "a",
   value: new File([], "ə.txt", { type: "text/plain" }),
   expected: {
@@ -322,7 +319,7 @@ formTest({
   description: "non-ASCII in filename",
 });
 
-formTest({
+form({
   name: "aəb",
   value: "c\uFFFDd",
   formEncoding: "windows-1252",
@@ -333,7 +330,7 @@ formTest({
   description: "characters not in encoding in name and value",
 });
 
-formTest({
+form({
   name: "á",
   value: new File([], "💩", { type: "text/plain" }),
   formEncoding: "windows-1252",

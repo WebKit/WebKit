@@ -1,4 +1,0 @@
-
-PASS Uploads need to set the Content-Length header
-PASS Fetched blob: URLs set the Content-Length header
-

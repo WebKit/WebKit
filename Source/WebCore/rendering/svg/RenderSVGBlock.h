@@ -45,13 +45,8 @@ private:
     bool isRenderSVGBlock() const final { return true; }
 
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
-    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    LayoutPoint currentSVGLayoutLocation() const final { return location(); }
-    void setCurrentSVGLayoutLocation(const LayoutPoint& location) final { setLocation(location); }
-#endif
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;
     std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* container, VisibleRectContext) const final;
@@ -59,9 +54,8 @@ private:
 
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const final;
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const final;
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
-#endif
+
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 };
 
 } // namespace WebCore

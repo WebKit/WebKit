@@ -50,7 +50,7 @@ def additional_setup(args, repository):
     if not isinstance(repository, local.Git):
         return 0
 
-    log.info('Setting merging behavior for changelogs...')
+    log.warning('Setting merging behavior for changelogs...')
     if run([
         repository.executable(),
         'config', 'merge.changelog.driver',
@@ -61,12 +61,13 @@ def additional_setup(args, repository):
     ], capture_output=True, cwd=repository.root_path).returncode:
         sys.stderr.write('Failed to set the git merging behaivor for changelogs...\n')
         return 1
-    log.info('Set merging behavior for changelogs!')
+    log.warning('Set merging behavior for changelogs!')
     return 0
 
 
 if '__main__' == __name__:
     sys.exit(program.main(
+        path=os.path.dirname(__file__),
         identifier_template=is_webkit_filter('Canonical link: https://commits.webkit.org/{}'),
         subversion=is_webkit_filter('https://svn.webkit.org/repository/webkit'),
         additional_setup=is_webkit_filter(additional_setup),

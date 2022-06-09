@@ -26,33 +26,9 @@
 #include "config.h"
 #include "NotificationEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
-
 #if ENABLE(NOTIFICATION_EVENT)
 
 namespace WebCore {
-
-WTF_MAKE_ISO_ALLOCATED_IMPL(NotificationEvent);
-
-Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
-{
-    auto* notification = init.notification.get();
-    ASSERT(notification);
-    auto action = init.action;
-    return adoptRef(*new NotificationEvent(type, WTFMove(init), notification, action, isTrusted));
-}
-
-Ref<NotificationEvent> NotificationEvent::create(const AtomString& type, Notification* notification, const String& action, IsTrusted isTrusted)
-{
-    return adoptRef(*new NotificationEvent(type, { }, notification, action, isTrusted));
-}
-
-NotificationEvent::NotificationEvent(const AtomString& type, NotificationEventInit&& eventInit, Notification* notification, const String& action, IsTrusted isTrusted)
-    : ExtendableEvent(type, WTFMove(eventInit), isTrusted)
-    , m_notification(notification)
-    , m_action(action)
-{
-}
 
 NotificationEvent::~NotificationEvent()
 {

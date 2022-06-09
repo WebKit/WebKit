@@ -41,7 +41,7 @@ public:
 
     virtual ~CDMFactoryFairPlayStreaming();
 
-    std::unique_ptr<CDMPrivate> createCDM(const String&, const CDMPrivateClient&) override;
+    std::unique_ptr<CDMPrivate> createCDM(const String&) override;
     bool supportsKeySystem(const String&) override;
 
 private:
@@ -52,14 +52,11 @@ private:
 class CDMPrivateFairPlayStreaming final : public CDMPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMPrivateFairPlayStreaming(const CDMPrivateClient&);
+    CDMPrivateFairPlayStreaming();
     virtual ~CDMPrivateFairPlayStreaming();
 
 #if !RELEASE_LOG_DISABLED
-    void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
-    const Logger& logger() const { return m_logger; };
-    const void* logIdentifier() const { return m_logIdentifier; }
-    const char* logClassName() const { return "CDMPrivateFairPlayStreaming"; }
+    void setLogger(Logger&, const void* logIdentifier) final;
 #endif
 
     Vector<AtomString> supportedInitDataTypes() const override;
@@ -74,24 +71,28 @@ public:
     void loadAndInitialize() override;
     bool supportsServerCertificates() const override;
     bool supportsSessions() const override;
-    bool supportsInitData(const AtomString&, const SharedBuffer&) const override;
-    RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const override;
+    bool supportsInitData(const AtomString&, const FragmentedSharedBuffer&) const override;
+    RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&) const override;
     std::optional<String> sanitizeSessionId(const String&) const override;
 
     static const AtomString& sinfName();
-    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSinf(const SharedBuffer&);
-    static RefPtr<SharedBuffer> sanitizeSinf(const SharedBuffer&);
+    static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsSinf(const FragmentedSharedBuffer&);
+    static RefPtr<FragmentedSharedBuffer> sanitizeSinf(const FragmentedSharedBuffer&);
 
     static const AtomString& skdName();
-    static std::optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
-    static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
+    static std::optional<Vector<Ref<FragmentedSharedBuffer>>> extractKeyIDsSkd(const FragmentedSharedBuffer&);
+    static RefPtr<FragmentedSharedBuffer> sanitizeSkd(const FragmentedSharedBuffer&);
 
     static const Vector<FourCC>& validFairPlayStreamingSchemes();
 
 private:
 #if !RELEASE_LOG_DISABLED
-    Ref<const Logger> m_logger;
-    const void* m_logIdentifier { nullptr };
+    Logger* loggerPtr() const { return m_logger.get(); };
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "CDMPrivateFairPlayStreaming"; }
+
+    RefPtr<Logger> m_logger;
+    const void* m_logIdentifier;
 #endif
 };
 

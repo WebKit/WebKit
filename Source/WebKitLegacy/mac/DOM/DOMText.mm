@@ -53,8 +53,7 @@
 - (DOMText *)replaceWholeText:(NSString *)content
 {
     WebCore::JSMainThreadNullState state;
-    RefPtr { IMPL }->replaceWholeText(content);
-    return self;
+    return kit(IMPL->replaceWholeText(content).get());
 }
 
 @end

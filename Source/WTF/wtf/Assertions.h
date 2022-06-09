@@ -273,14 +273,14 @@ WTF_EXPORT_PRIVATE bool WTFIsDebuggerAttached(void);
 #elif !ENABLE(DEVELOPER_MODE) && !OS(DARWIN)
 #ifdef __cplusplus
 #define CRASH() std::abort()
-#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() std::abort()
 #else
 #define CRASH() abort()
-#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() abort()
 #endif // __cplusplus
 #else
 #define CRASH() WTFCrash()
-#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFBreakpointTrapUnderConstexprContext()
+#define CRASH_UNDER_CONSTEXPR_CONTEXT() WTFCrash()
 #endif
 
 #endif // !defined(CRASH)
@@ -331,7 +331,6 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) ((void)0)
 #define ASSERT_AT(assertion, file, line, function) ((void)0)
 #define ASSERT_NOT_REACHED(...) ((void)0)
-#define ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT(...) ((void)0)
 #define ASSERT_NOT_IMPLEMENTED_YET() ((void)0)
 #define ASSERT_IMPLIES(condition, assertion) ((void)0)
 #define NO_RETURN_DUE_TO_ASSERT
@@ -377,10 +376,6 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT_NOT_REACHED(...) do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
     CRASH_WITH_INFO(__VA_ARGS__); \
-} while (0)
-
-#define ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT(...) do { \
-    CRASH_UNDER_CONSTEXPR_CONTEXT(); \
 } while (0)
 
 #define ASSERT_NOT_IMPLEMENTED_YET() do { \
@@ -499,10 +494,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #if LOG_DISABLED
 #define LOG(channel, ...) ((void)0)
 #else
-#define LOG(channel, ...) do { \
-        if (LOG_CHANNEL(channel).state != logChannelStateOff) \
-            WTFLog(&LOG_CHANNEL(channel), __VA_ARGS__); \
-    } while (0)
+#define LOG(channel, ...) WTFLog(&LOG_CHANNEL(channel), __VA_ARGS__)
 #endif
 
 /* LOG_VERBOSE */
@@ -510,10 +502,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #if LOG_DISABLED
 #define LOG_VERBOSE(channel, ...) ((void)0)
 #else
-#define LOG_VERBOSE(channel, ...) do { \
-        if (LOG_CHANNEL(channel).state != logChannelStateOff) \
-            WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &LOG_CHANNEL(channel), __VA_ARGS__); \
-    } while (0)
+#define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &LOG_CHANNEL(channel), __VA_ARGS__)
 #endif
 
 /* LOG_WITH_LEVEL */
@@ -521,10 +510,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #if LOG_DISABLED
 #define LOG_WITH_LEVEL(channel, level, ...) ((void)0)
 #else
-#define LOG_WITH_LEVEL(channel, level, ...) do { \
-        if  (LOG_CHANNEL(channel).state != logChannelStateOff && channel->level >= (level)) \
-            WTFLogWithLevel(&LOG_CHANNEL(channel), level, __VA_ARGS__); \
-    } while (0)
+#define LOG_WITH_LEVEL(channel, level, ...) WTFLogWithLevel(&LOG_CHANNEL(channel), level, __VA_ARGS__)
 #endif
 
 /* LOG_WITH_STREAM */
@@ -533,7 +519,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define LOG_WITH_STREAM(channel, commands) ((void)0)
 #else
 #define LOG_WITH_STREAM(channel, commands) do { \
-        if (LOG_CHANNEL(channel).state != logChannelStateOff) { \
+        if (LOG_CHANNEL(channel).state == WTFLogChannelState::On) { \
             WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
             commands; \
             WTFLog(&LOG_CHANNEL(channel), "%s", stream.release().utf8().data()); \
@@ -660,7 +646,6 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) RELEASE_ASSERT(assertion)
 #define RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(assertion) RELEASE_ASSERT(assertion)
 #define RELEASE_ASSERT_NOT_REACHED(...) CRASH_WITH_INFO(__VA_ARGS__)
-#define RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT() CRASH_UNDER_CONSTEXPR_CONTEXT();
 #define RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) do { \
     if (UNLIKELY(!(assertion))) { \
         CRASH_UNDER_CONSTEXPR_CONTEXT(); \
@@ -673,7 +658,6 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) ASSERT_WITH_MESSAGE(assertion, __VA_ARGS__)
 #define RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(assertion) ASSERT_WITH_SECURITY_IMPLICATION(assertion)
 #define RELEASE_ASSERT_NOT_REACHED() ASSERT_NOT_REACHED()
-#define RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT() ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT()
 #define RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion)
 
 #endif /* ASSERT_ENABLED */
@@ -774,27 +758,33 @@ inline void compilerFenceForCrash()
 }
 
 #ifndef CRASH_WITH_INFO
-
-#define PP_THIRD_ARG(a,b,c,...) c
-#define VA_OPT_SUPPORTED_I(...) PP_THIRD_ARG(__VA_OPT__(,),true,false,)
-#define VA_OPT_SUPPORTED VA_OPT_SUPPORTED_I(?)
-
 // This is useful if you are going to stuff data into registers before crashing, like the
 // crashWithInfo functions below.
-#if COMPILER(MSVC) || !VA_OPT_SUPPORTED
-// FIXME: Re-check whether MSVC 2020 supports __VA_OPT__ and remove the special
-//        casing once older versions of the compiler are no longer supported.
+#if COMPILER(CLANG) || COMPILER(MSVC)
 #define CRASH_WITH_INFO(...) do { \
         WTF::isIntegralOrPointerType(__VA_ARGS__); \
         compilerFenceForCrash(); \
         WTFCrashWithInfo(__LINE__, __FILE__, WTF_PRETTY_FUNCTION, __COUNTER__, ##__VA_ARGS__); \
     } while (false)
 #else
-#define CRASH_WITH_INFO(...) do { \
-        WTF::isIntegralOrPointerType(__VA_ARGS__); \
-        compilerFenceForCrash(); \
-        WTFCrashWithInfo(__LINE__, __FILE__, WTF_PRETTY_FUNCTION, __COUNTER__ __VA_OPT__(,) __VA_ARGS__); \
-    } while (false)
+// GCC does not allow ##__VA_ARGS__ unless GNU extensions are enabled (--std=gnu++NN instead of
+// --std=c++NN) and I think we don't want that, so we'll have a fallback path for GCC. Obviously
+// this will not actually succeed at getting the desired info into registers before crashing, but
+// it's just a fallback anyway.
+//
+// FIXME: When we enable C++20, we should replace ##__VA_ARGS__ with format __VA_OPT__(,) __VA_ARGS__
+// so that we can remove this fallback.
+inline NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO(...)
+{
+    CRASH();
+}
+
+// We must define this here because CRASH_WITH_INFO() is not defined as a macro.
+// FIXME: Remove this when upgrading to C++20.
+inline NO_RETURN_DUE_TO_CRASH void CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(...)
+{
+    CRASH();
+}
 #endif
 #endif // CRASH_WITH_INFO
 

@@ -39,9 +39,9 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * WebKitURISchemeResponse:
- *
- * Represents a URI scheme response.
+ * SECTION: WebKitURISchemeResponse
+ * @Short_description: Represents a URI scheme response
+ * @Title: WebKitURISchemeResponse
  *
  * If you register a particular URI scheme in a #WebKitWebContext,
  * using webkit_web_context_register_uri_scheme(), you have to provide
@@ -53,6 +53,7 @@ using namespace WebCore;
  * 
  * When you finished setting up your #WebKitURISchemeResponse, call
  * webkit_uri_request_finish_with_response() with it to return the response.
+ *
  */
 
 struct _WebKitURISchemeResponsePrivate {
@@ -107,9 +108,9 @@ static void webkit_uri_scheme_response_class_init(WebKitURISchemeResponseClass* 
             static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
     /**
-     * WebKitURISchemeResponse:stream-length:
+     * WebKitURISchemeResponse:stream_length:
      *
-     * The input stream length in bytes, `-1` for unknown length.
+     * The input stream length in bytes. -1 for unknown length.
      *
      * Since: 2.36
      */
@@ -190,7 +191,7 @@ void webkit_uri_scheme_response_set_content_type(WebKitURISchemeResponse* respon
     response->priv->contentType = contentType;
 }
 
-/**
+/*
  * webkit_uri_scheme_response_set_http_headers:
  * @response: a #WebKitURISchemeResponse
  * @headers: (transfer full): the HTTP headers to be set

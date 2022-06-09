@@ -140,8 +140,10 @@ class ViewGestureController;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
     BOOL _usePlatformFindUI;
 
+#if PLATFORM(IOS_FAMILY)
     CocoaEdgeInsets _minimumViewportInset;
     CocoaEdgeInsets _maximumViewportInset;
+#endif
 
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
@@ -162,9 +164,9 @@ class ViewGestureController;
     RetainPtr<WKFullScreenWindowController> _fullScreenWindowController;
 #endif
 
-    BOOL _findInteractionEnabled;
 #if HAVE(UIFINDINTERACTION)
-    RetainPtr<UIFindInteraction> _findInteraction;
+    RetainPtr<_UIFindInteraction> _findInteraction;
+    BOOL _findInteractionEnabled;
 #endif
 
     RetainPtr<_WKRemoteObjectRegistry> _remoteObjectRegistry;
@@ -222,10 +224,6 @@ class ViewGestureController;
     std::optional<WebCore::FloatPoint> _unobscuredCenterToRestore;
     std::optional<WebKit::TransactionID> _firstTransactionIDAfterPageRestore;
     double _scaleToRestore;
-
-#if HAVE(UIKIT_RESIZABLE_WINDOWS)
-    Vector<RetainPtr<id<_UIInvalidatable>>> _resizeAssertions;
-#endif
 
     BOOL _allowsBackForwardNavigationGestures;
 

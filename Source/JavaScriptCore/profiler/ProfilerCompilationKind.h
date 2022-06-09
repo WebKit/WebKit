@@ -31,9 +31,8 @@ enum CompilationKind {
     LLInt,
     Baseline,
     DFG,
-    UnlinkedDFG,
     FTL,
-    FTLForOSREntry,
+    FTLForOSREntry
 };
 
 } } // namespace JSC::Profiler

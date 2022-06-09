@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WasmTypeDefinition.h"
+#include "WasmSignature.h"
 
 namespace JSC { namespace Wasm {
 
@@ -35,27 +35,25 @@ class Tag final : public ThreadSafeRefCounted<Tag> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Tag);
 public:
-    static Ref<Tag> create(const TypeDefinition& type) { return adoptRef(*new Tag(type)); }
+    static Ref<Tag> create(const Signature& signature) { return adoptRef(*new Tag(signature)); }
 
-    FunctionArgCount parameterCount() const { return m_type->as<FunctionSignature>()->argumentCount(); }
-    Type parameter(FunctionArgCount i) const { return m_type->as<FunctionSignature>()->argumentType(i); }
-    TypeIndex typeIndex() const { return m_type->index(); }
+    SignatureArgCount parameterCount() const { return m_signature->argumentCount(); }
+    Type parameter(SignatureArgCount i) const { return m_signature->argument(i); }
 
     // Since (1) we do not copy Wasm::Tag and (2) we always allocate Wasm::Tag from heap, we can use
     // pointer comparison for identity check.
     bool operator==(const Tag& other) const { return this == &other; }
     bool operator!=(const Tag& other) const { return this != &other; }
 
-    const FunctionSignature& type() const { return *m_type->as<FunctionSignature>(); }
+    const Signature& signature() const { return m_signature.get(); }
 
 private:
-    Tag(const TypeDefinition& type)
-        : m_type(Ref { type })
+    Tag(const Signature& signature)
+        : m_signature(Ref { signature })
     {
-        ASSERT(type.is<FunctionSignature>());
     }
 
-    Ref<const TypeDefinition> m_type;
+    Ref<const Signature> m_signature;
 };
 
 } } // namespace JSC::Wasm

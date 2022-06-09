@@ -74,14 +74,14 @@ public:
 
     int32_t trackID() const { return m_trackID; }
 
-    const AtomString& codec() const { return m_codec; }
+    const String& codec() const { return m_codec; }
 
     enum TrackKind { Audio, Video, Text };
     TrackKind kind() const { return m_kind; }
 
 private:
     uint8_t m_trackID;
-    AtomString m_codec;
+    String m_codec;
     TrackKind m_kind;
 };
 

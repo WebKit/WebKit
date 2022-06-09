@@ -22,7 +22,6 @@
 #include "config.h"
 #include "Animation.h"
 
-#include "CommonAtomStrings.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
 
@@ -57,7 +56,6 @@ Animation::Animation()
     , m_playStateFilled(false)
     , m_propertyFilled(false)
     , m_timingFunctionFilled(false)
-    , m_compositeOperationFilled(false)
 {
 }
 
@@ -93,7 +91,6 @@ Animation::Animation(const Animation& o)
     , m_playStateFilled(o.m_playStateFilled)
     , m_propertyFilled(o.m_propertyFilled)
     , m_timingFunctionFilled(o.m_timingFunctionFilled)
-    , m_compositeOperationFilled(o.m_compositeOperationFilled)
 {
 }
 
@@ -130,7 +127,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
 
 auto Animation::initialName() -> const Name&
 {
-    static NeverDestroyed<Name> initialValue { Name { noneAtom(), true } };
+    static NeverDestroyed<Name> initialValue { Name { MAKE_STATIC_STRING_IMPL("none"), true } };
     return initialValue;
 }
 

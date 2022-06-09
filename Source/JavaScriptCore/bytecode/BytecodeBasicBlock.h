@@ -37,24 +37,21 @@ class BytecodeGraph;
 class CodeBlock;
 class UnlinkedCodeBlock;
 class UnlinkedCodeBlockGenerator;
-template<typename> struct Instruction;
+struct Instruction;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
 
-template<typename OpcodeTraits>
 class BytecodeBasicBlock {
     WTF_MAKE_FAST_ALLOCATED(BytecodeBasicBlock);
     WTF_MAKE_NONCOPYABLE(BytecodeBasicBlock);
     friend class BytecodeGraph;
 public:
     using BasicBlockVector = Vector<BytecodeBasicBlock, 0, UnsafeVectorOverflow, 16, BytecodeBasicBlockMalloc>;
-    using InstructionType = BaseInstruction<OpcodeTraits>;
-    using InstructionStreamType = InstructionStream<InstructionType>;
-    static_assert(maxBytecodeStructLength <= UINT8_MAX);
+    static_assert(maxOpcodeLength <= UINT8_MAX);
     enum SpecialBlockType { EntryBlock, ExitBlock };
-    inline BytecodeBasicBlock(const typename InstructionStreamType::Ref&, unsigned blockIndex);
+    inline BytecodeBasicBlock(const InstructionStream::Ref&, unsigned blockIndex);
     inline BytecodeBasicBlock(SpecialBlockType, unsigned blockIndex);
-    BytecodeBasicBlock(BytecodeBasicBlock<OpcodeTraits>&&) = default;
+    BytecodeBasicBlock(BytecodeBasicBlock&&) = default;
 
 
     bool isEntryBlock() { return !m_leaderOffset && !m_totalLength; }
@@ -75,12 +72,12 @@ public:
 
 private:
     // Only called from BytecodeGraph.
-    static BasicBlockVector compute(CodeBlock*, const InstructionStreamType& instructions);
-    static BasicBlockVector compute(UnlinkedCodeBlockGenerator*, const InstructionStreamType& instructions);
-    template<typename Block> static BasicBlockVector computeImpl(Block* codeBlock, const InstructionStreamType& instructions);
+    static BasicBlockVector compute(CodeBlock*, const InstructionStream& instructions);
+    static BasicBlockVector compute(UnlinkedCodeBlockGenerator*, const InstructionStream& instructions);
+    template<typename Block> static BasicBlockVector computeImpl(Block* codeBlock, const InstructionStream& instructions);
     void shrinkToFit();
 
-    void addSuccessor(BytecodeBasicBlock<OpcodeTraits>& block)
+    void addSuccessor(BytecodeBasicBlock& block)
     {
         if (!m_successors.contains(block.index()))
             m_successors.append(block.index());
@@ -88,7 +85,7 @@ private:
 
     inline void addLength(unsigned);
 
-    typename InstructionStreamType::Offset m_leaderOffset;
+    InstructionStream::Offset m_leaderOffset;
     unsigned m_totalLength;
     unsigned m_index;
 
@@ -98,8 +95,5 @@ private:
     FastBitVector m_in;
     FastBitVector m_out;
 };
-
-using JSBytecodeBasicBlock = BytecodeBasicBlock<JSOpcodeTraits>;
-using WasmBytecodeBasicBlock = BytecodeBasicBlock<WasmOpcodeTraits>;
 
 } // namespace JSC

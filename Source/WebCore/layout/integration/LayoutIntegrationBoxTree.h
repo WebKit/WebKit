@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class RenderBlock;
+class RenderBlockFlow;
 class RenderBoxModelObject;
 
 namespace LayoutIntegration {
@@ -45,12 +45,12 @@ struct InlineContent;
 
 class BoxTree {
 public:
-    BoxTree(RenderBlock&);
+    BoxTree(RenderBlockFlow&);
 
     void updateStyle(const RenderBoxModelObject&);
 
-    const RenderBlock& rootRenderer() const { return m_rootRenderer; }
-    RenderBlock& rootRenderer() { return m_rootRenderer; }
+    const RenderBlockFlow& flow() const { return m_flow; }
+    RenderBlockFlow& flow() { return m_flow; }
 
     const Layout::ContainerBox& rootLayoutBox() const { return m_root; }
     Layout::ContainerBox& rootLayoutBox() { return m_root; }
@@ -70,11 +70,10 @@ public:
     const auto& boxAndRendererList() const { return m_boxes; }
 
 private:
-    void buildTreeForInlineContent();
-    void buildTreeForFlexContent();
+    void buildTree();
     void appendChild(UniqueRef<Layout::Box>, RenderObject&);
 
-    RenderBlock& m_rootRenderer;
+    RenderBlockFlow& m_flow;
     Layout::ContainerBox m_root;
     Vector<BoxAndRenderer, 1> m_boxes;
 

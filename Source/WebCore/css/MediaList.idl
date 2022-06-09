@@ -27,6 +27,7 @@
     ExportToWrappedFunction,
     Exposed=Window,
     GenerateIsReachable,
+    ImplementationLacksVTable,
     JSCustomHeader,
 ] interface MediaList {
     stringifier attribute [LegacyNullToEmptyString] DOMString mediaText;

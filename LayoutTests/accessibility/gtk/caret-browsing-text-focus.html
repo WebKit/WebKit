@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<p id="par1">A paragraph with a<br />line break in the middle</p>
+<p id="par2">A paragraph with a single line</p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests the FOCUSABLE and FOCUSED states for text objects.");
+
+if (window.testRunner && window.internals) {
+  internals.settings.setCaretBrowsingEnabled(true);
+  testRunner.dumpAsText();
+
+  if (window.accessibilityController) {
+
+    document.getElementById("body").focus();
+    var webArea = accessibilityController.focusedElement;
+
+    var axPar1 = webArea.childAtIndex(0);
+    var axPar2 = webArea.childAtIndex(1);
+
+    // Check roles and initial states
+    shouldBe("axPar1.role", "'AXRole: AXParagraph'");
+    shouldBe("axPar2.role", "'AXRole: AXParagraph'");
+    shouldBe("axPar1.isFocusable", "true");
+    shouldBe("axPar2.isFocusable", "true");
+    shouldBe("axPar1.isFocused", "false");
+    shouldBe("axPar2.isFocused", "false");
+
+    // Set caret in the first line of the first paragraph
+    var par1 = document.getElementById("par1");
+    window.getSelection().setPosition(par1.childNodes.item(0), 10);
+    shouldBe("axPar1.isFocused", "true");
+    shouldBe("axPar2.isFocused", "false");
+
+    // Move the caret down to the second line (same paragraph)
+    eventSender.keyDown("downArrow");
+    shouldBe("axPar1.isFocused", "true");
+    shouldBe("axPar2.isFocused", "false");
+
+    // Move the caret down and up (across different paragraphs)
+    eventSender.keyDown("downArrow");
+    shouldBe("axPar1.isFocused", "false");
+    shouldBe("axPar2.isFocused", "true");
+    eventSender.keyDown("upArrow");
+    shouldBe("axPar1.isFocused", "true");
+    shouldBe("axPar2.isFocused", "false");
+
+    // Explicitly put the caret in the middle of the second paragraph
+    var par2 = document.getElementById("par2");
+    window.getSelection().setPosition(par2.childNodes.item(0), 10);
+    shouldBe("axPar1.isFocused", "false");
+    shouldBe("axPar2.isFocused", "true");
+  }
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -32,8 +32,8 @@
 #include <WebCore/LegacyCDMSession.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-class SharedBuffer;
+namespace IPC {
+class SharedBufferCopy;
 }
 
 namespace WebKit {
@@ -44,7 +44,7 @@ class RemoteLegacyCDMSession final
     : public WebCore::LegacyCDMSession
     , public IPC::MessageReceiver {
 public:
-    static std::unique_ptr<RemoteLegacyCDMSession> create(WeakPtr<RemoteLegacyCDMFactory>, RemoteLegacyCDMSessionIdentifier&&, WebCore::LegacyCDMSessionClient&);
+    static std::unique_ptr<RemoteLegacyCDMSession> create(WeakPtr<RemoteLegacyCDMFactory>, RemoteLegacyCDMSessionIdentifier&&);
     ~RemoteLegacyCDMSession();
 
     // MessageReceiver
@@ -53,10 +53,11 @@ public:
     const RemoteLegacyCDMSessionIdentifier& identifier() const { return m_identifier; }
 
 private:
-    RemoteLegacyCDMSession(WeakPtr<RemoteLegacyCDMFactory>, RemoteLegacyCDMSessionIdentifier&&, WebCore::LegacyCDMSessionClient&);
+    RemoteLegacyCDMSession(WeakPtr<RemoteLegacyCDMFactory>, RemoteLegacyCDMSessionIdentifier&&);
 
     // LegacyCDMSession
     WebCore::LegacyCDMSessionType type() final { return WebCore::CDMSessionTypeRemote; }
+    void setClient(WebCore::LegacyCDMSessionClient* client) final { m_client = client; }
     const String& sessionId() const final { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
     void releaseKeys() final;
@@ -64,12 +65,12 @@ private:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const final;
 
     // Messages
-    void sendMessage(RefPtr<WebCore::SharedBuffer>&& message, const String& destinationURL);
+    void sendMessage(std::optional<IPC::SharedBufferCopy>&& message, const String& destinationURL);
     void sendError(WebCore::LegacyCDMSessionClient::MediaKeyErrorCode, uint32_t systemCode);
 
     WeakPtr<RemoteLegacyCDMFactory> m_factory;
     RemoteLegacyCDMSessionIdentifier m_identifier;
-    WeakPtr<WebCore::LegacyCDMSessionClient> m_client;
+    WebCore::LegacyCDMSessionClient* m_client;
     String m_sessionId;
     mutable HashMap<String, RefPtr<ArrayBuffer>> m_cachedKeyCache;
 };

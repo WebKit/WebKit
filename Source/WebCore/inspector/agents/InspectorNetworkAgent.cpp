@@ -69,7 +69,6 @@
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoaderClient.h"
-#include "WebConsoleAgent.h"
 #include <wtf/URL.h>
 #include "WebSocket.h"
 #include "WebSocketChannel.h"
@@ -115,7 +114,7 @@ public:
         m_statusCode = response.httpStatusCode();
 
         // FIXME: This assumes text only responses. We should support non-text responses as well.
-        PAL::TextEncoding textEncoding(response.textEncodingName().string());
+        PAL::TextEncoding textEncoding(response.textEncodingName());
         bool useDetector = false;
         if (!textEncoding.isValid()) {
             textEncoding = PAL::UTF8Encoding();
@@ -133,7 +132,7 @@ public:
         m_responseText.append(m_decoder->decode(buffer.data(), buffer.size()));
     }
 
-    void didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&) override
+    void didFinishLoading(ResourceLoaderIdentifier) override
     {
         if (m_decoder)
             m_responseText.append(m_decoder->flush());
@@ -276,9 +275,7 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
             metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
         if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
             metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
-        metrics->setIsProxyConnection(additionalMetrics->isProxyConnection);
     }
-
     if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
         metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
     if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
@@ -1035,7 +1032,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorNetworkAg
 
     // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's and worker's WebSockets
     if (!is<Document>(webSocket->scriptExecutionContext()))
-        return makeUnexpected("Not supported"_s);
+        return makeUnexpected("Not supported");
 
     auto* document = downcast<Document>(webSocket->scriptExecutionContext());
     auto* frame = document->frame();
@@ -1048,7 +1045,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorNetworkAg
 
     auto object = injectedScript.wrapObject(webSocketAsScriptValue(globalObject, webSocket), objectGroup);
     if (!object)
-        return makeUnexpected("Internal error: unable to cast WebSocket"_s);
+        return makeUnexpected("Internal error: unable to cast WebSocket");
 
     return object.releaseNonNull();
 }
@@ -1109,17 +1106,12 @@ bool InspectorNetworkAgent::willIntercept(const ResourceRequest& request)
         || shouldIntercept(request.url(), Protocol::Network::NetworkStage::Response);
 }
 
-bool InspectorNetworkAgent::shouldInterceptRequest(const ResourceLoader& loader)
+bool InspectorNetworkAgent::shouldInterceptRequest(const ResourceRequest& request)
 {
     if (!m_interceptionEnabled)
         return false;
 
-#if ENABLE(SERVICE_WORKER)
-    if (loader.options().serviceWorkerRegistrationIdentifier)
-        return false;
-#endif
-
-    return shouldIntercept(loader.url(), Protocol::Network::NetworkStage::Request);
+    return shouldIntercept(request.url(), Protocol::Network::NetworkStage::Request);
 }
 
 bool InspectorNetworkAgent::shouldInterceptResponse(const ResourceResponse& response)
@@ -1201,10 +1193,10 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const 
         request.setHTTPMethod(method);
     if (headers) {
         HTTPHeaderMap explicitHeaders;
-        for (auto& [key, value] : *headers) {
-            auto headerValue = value->asString();
+        for (auto& header : *headers) {
+            auto headerValue = header.value->asString();
             if (!!headerValue)
-                explicitHeaders.add(key, headerValue);
+                explicitHeaders.add(header.key, headerValue);
         }
         request.setHTTPHeaderFields(WTFMove(explicitHeaders));
     }
@@ -1233,9 +1225,9 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const
     if (status)
         overrideResponse.setHTTPStatusCode(*status);
     if (!!statusText)
-        overrideResponse.setHTTPStatusText(AtomString { statusText });
+        overrideResponse.setHTTPStatusText(statusText);
     if (!!mimeType)
-        overrideResponse.setMimeType(AtomString { mimeType });
+        overrideResponse.setMimeType(mimeType);
     if (headers) {
         HTTPHeaderMap explicitHeaders;
         for (auto& header : *headers) {
@@ -1291,7 +1283,7 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     ResourceResponse response(pendingRequest->m_loader->url(), mimeType, data->size(), String());
     response.setSource(ResourceResponse::Source::InspectorOverride);
     response.setHTTPStatusCode(status);
-    response.setHTTPStatusText(AtomString { statusText });
+    response.setHTTPStatusText(statusText);
     HTTPHeaderMap explicitHeaders;
     for (auto& header : headers.get()) {
         auto headerValue = header.value->asString();
@@ -1301,35 +1293,12 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithRespons
     response.setHTTPHeaderFields(WTFMove(explicitHeaders));
     response.setHTTPHeaderField(HTTPHeaderName::ContentType, response.mimeType());
     loader->didReceiveResponse(response, [loader, buffer = data.releaseNonNull()]() {
-        if (loader->reachedTerminalState())
-            return;
-
         if (buffer->size())
             loader->didReceiveData(buffer, buffer->size(), DataPayloadWholeResource);
         loader->didFinishLoading(NetworkLoadMetrics());
     });
 
     return { };
-}
-
-static ResourceError::Type toResourceErrorType(Protocol::Network::ResourceErrorType protocolResourceErrorType)
-{
-    switch (protocolResourceErrorType) {
-    case Protocol::Network::ResourceErrorType::General:
-        return ResourceError::Type::General;
-
-    case Protocol::Network::ResourceErrorType::AccessControl:
-        return ResourceError::Type::AccessControl;
-
-    case Protocol::Network::ResourceErrorType::Cancellation:
-        return ResourceError::Type::Cancellation;
-
-    case Protocol::Network::ResourceErrorType::Timeout:
-        return ResourceError::Type::Timeout;
-    }
-
-    ASSERT_NOT_REACHED();
-    return ResourceError::Type::Null;
 }
 
 Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId& requestId, Protocol::Network::ResourceErrorType errorType)
@@ -1342,15 +1311,31 @@ Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithError(c
     if (loader.reachedTerminalState())
         return makeUnexpected("Unable to abort request, it has already been processed"_s);
 
-    addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Network, MessageType::Log, MessageLevel::Info, makeString("Web Inspector blocked ", loader.url().string(), " from loading"), loader.identifier().toUInt64()));
+    switch (errorType) {
+    case Protocol::Network::ResourceErrorType::General:
+        loader.didFail(ResourceError(errorDomainWebKitInternal, 0, loader.url(), "Request intercepted"_s, ResourceError::Type::General));
+        return { };
 
-    loader.didFail(ResourceError(InspectorNetworkAgent::errorDomain(), 0, loader.url(), "Blocked by Web Inspector"_s, toResourceErrorType(errorType)));
+    case Protocol::Network::ResourceErrorType::AccessControl:
+        loader.didFail(ResourceError(errorDomainWebKitInternal, 0, loader.url(), "Access denied"_s, ResourceError::Type::AccessControl));
+        return { };
+
+    case Protocol::Network::ResourceErrorType::Cancellation:
+        loader.didFail(ResourceError(errorDomainWebKitInternal, 0, loader.url(), "Request canceled"_s, ResourceError::Type::Cancellation));
+        return { };
+
+    case Protocol::Network::ResourceErrorType::Timeout:
+        loader.didFail(ResourceError(errorDomainWebKitInternal, 0, loader.url(), "Request timed out"_s, ResourceError::Type::Timeout));
+        return { };
+    }
+
+    ASSERT_NOT_REACHED();
     return { };
 }
 
 bool InspectorNetworkAgent::shouldTreatAsText(const String& mimeType)
 {
-    return startsWithLettersIgnoringASCIICase(mimeType, "text/"_s)
+    return startsWithLettersIgnoringASCIICase(mimeType, "text/")
         || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType)
         || MIMETypeRegistry::isSupportedJSONMIMEType(mimeType)
         || MIMETypeRegistry::isXMLMIMEType(mimeType)

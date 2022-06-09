@@ -28,7 +28,6 @@
 #include "FunctionExecutable.h"
 #include "JSBoundFunction.h"
 #include "JSFunction.h"
-#include "JSRemoteFunction.h"
 #include "NativeExecutable.h"
 
 namespace JSC {
@@ -37,7 +36,7 @@ inline JSFunction* JSFunction::createWithInvalidatedReallocationWatchpoint(
     VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
     ASSERT(executable->singleton().hasBeenInvalidated());
-    return createImpl(vm, executable, scope, selectStructureForNewFuncExp(scope->globalObject(), executable));
+    return createImpl(vm, executable, scope, selectStructureForNewFuncExp(scope->globalObject(vm), executable));
 }
 
 inline JSFunction::JSFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
@@ -79,11 +78,6 @@ inline bool JSFunction::isClassConstructorFunction() const
     return !isHostFunction() && jsExecutable()->isClassConstructorFunction();
 }
 
-inline bool JSFunction::isRemoteFunction() const
-{
-    return inherits<JSRemoteFunction>();
-}
-
 inline TaggedNativeFunction JSFunction::nativeFunction()
 {
     ASSERT(isHostFunctionNonInline());
@@ -104,11 +98,6 @@ inline bool isHostFunction(JSValue value, TaggedNativeFunction nativeFunction)
     return function->nativeFunction() == nativeFunction;
 }
 
-inline bool isRemoteFunction(JSValue value)
-{
-    return value.inherits<JSRemoteFunction>();
-}
-
 inline bool JSFunction::hasReifiedLength() const
 {
     if (FunctionRareData* rareData = this->rareData())
@@ -125,8 +114,6 @@ inline bool JSFunction::hasReifiedName() const
 
 inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
 {
-    // JSRemoteFunction never has a 'name' field, return true
-    // to avoid allocating a FunctionRareData.
     if (isHostFunction())
         return false;
     FunctionRareData* rareData = this->rareData();
@@ -170,9 +157,9 @@ inline FunctionRareData* JSFunction::ensureRareDataAndAllocationProfile(JSGlobal
     return rareData;
 }
 
-inline JSString* JSFunction::asStringConcurrently() const
+inline JSString* JSFunction::asStringConcurrently(VM& vm) const
 {
-    if (inherits<JSBoundFunction>() || inherits<JSRemoteFunction>())
+    if (inherits<JSBoundFunction>(vm))
         return nullptr;
     if (isHostFunction())
         return static_cast<NativeExecutable*>(executable())->asStringConcurrently();

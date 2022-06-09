@@ -737,7 +737,7 @@ void FrameLoader::HistoryController::recursiveSetProvisionalItem(HistoryItem& it
     m_provisionalItem = &item;
 
     for (auto& childItem : item.children()) {
-        auto& childFrameName = childItem->target();
+        const String& childFrameName = childItem->target();
 
         HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
         ASSERT(fromChildItem);
@@ -759,7 +759,7 @@ void FrameLoader::HistoryController::recursiveGoToItem(HistoryItem& item, Histor
 
     // Just iterate over the rest, looking for frames to navigate.
     for (auto& childItem : item.children()) {
-        auto& childFrameName = childItem->target();
+        const String& childFrameName = childItem->target();
 
         HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
         ASSERT(fromChildItem);

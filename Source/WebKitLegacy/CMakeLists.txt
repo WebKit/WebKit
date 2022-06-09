@@ -57,7 +57,7 @@ if (APPLE)
     set_target_properties(WebKitLegacy PROPERTIES LINK_FLAGS "-umbrella WebKit")
 endif ()
 
-if (MSVC AND NOT WTF_PLATFORM_WIN_CAIRO)
+if (MSVC)
     add_custom_command(
         TARGET WebKitLegacy
         POST_BUILD

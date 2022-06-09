@@ -27,22 +27,13 @@
 #include "DebugPageOverlays.h"
 
 #include "ColorHash.h"
-#include "Cursor.h"
 #include "ElementIterator.h"
-#include "FloatRoundedRect.h"
 #include "FrameView.h"
-#include "Gradient.h"
 #include "GraphicsContext.h"
-#include "InteractionRegion.h"
 #include "Page.h"
 #include "PageOverlay.h"
 #include "PageOverlayController.h"
-#include "PathUtilities.h"
-#include "PlatformMouseEvent.h"
 #include "Region.h"
-#include "RenderLayer.h"
-#include "RenderLayerBacking.h"
-#include "RenderView.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include <wtf/SortedArrayMap.h>
@@ -61,8 +52,6 @@ public:
 
     void setRegionChanged() { m_regionChanged = true; }
 
-    virtual bool shouldPaintOverlayIntoLayer() const { return true; }
-
 protected:
     RegionOverlay(Page&, Color);
 
@@ -70,8 +59,8 @@ private:
     void willMoveToPage(PageOverlay&, Page*) final;
     void didMoveToPage(PageOverlay&, Page*) final;
     void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) override;
-    bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) override;
-    void didScrollFrame(PageOverlay&, Frame&) override;
+    bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) final;
+    void didScrollFrame(PageOverlay&, Frame&) final;
 
 protected:
     // Returns true if the region changed.
@@ -84,10 +73,6 @@ protected:
     Color m_color;
     bool m_regionChanged { true };
 };
-
-#if COMPILER(CLANG)
-#pragma mark - MouseWheelRegionOverlay
-#endif
 
 class MouseWheelRegionOverlay final : public RegionOverlay {
 public:
@@ -129,10 +114,6 @@ bool MouseWheelRegionOverlay::updateRegion()
     return regionChanged;
 #endif
 }
-
-#if COMPILER(CLANG)
-#pragma mark - NonFastScrollableRegionOverlay
-#endif
 
 class NonFastScrollableRegionOverlay final : public RegionOverlay {
 public:
@@ -182,15 +163,15 @@ static void drawRightAlignedText(const String& text, GraphicsContext& context, c
 
 void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, GraphicsContext& context, const IntRect&)
 {
-    static constexpr std::pair<EventTrackingRegions::EventType, SRGBA<uint8_t>> colorMappings[] = {
-        { EventTrackingRegions::EventType::Mousedown, { 80, 245, 80, 50 } },
-        { EventTrackingRegions::EventType::Mousemove, { 245, 245, 80, 50 } },
-        { EventTrackingRegions::EventType::Mouseup, { 80, 245, 176, 50 } },
-        { EventTrackingRegions::EventType::Touchend, { 191, 63, 127, 50 } },
-        { EventTrackingRegions::EventType::Touchforcechange, { 63, 63, 191, 50 } },
-        { EventTrackingRegions::EventType::Touchmove, { 80, 204, 245, 50 } },
-        { EventTrackingRegions::EventType::Touchstart, { 191, 191, 63, 50 } },
-        { EventTrackingRegions::EventType::Wheel, { 255, 128, 0, 50 } },
+    static constexpr std::pair<ComparableASCIILiteral, SRGBA<uint8_t>> colorMappings[] = {
+        { "mousedown", { 80, 245, 80, 50 } },
+        { "mousemove", { 245, 245, 80, 50 } },
+        { "mouseup", { 80, 245, 176, 50 } },
+        { "touchend", { 191, 63, 127, 50 } },
+        { "touchforcechange", { 63, 63, 191, 50 } },
+        { "touchmove", { 80, 204, 245, 50 } },
+        { "touchstart", { 191, 191, 63, 50 } },
+        { "wheel", { 255, 128, 0, 50 } },
     };
     constexpr SortedArrayMap colors { colorMappings };
     constexpr auto defaultColor = Color::black.colorWithAlphaByte(64);
@@ -202,7 +183,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     FloatRect legendRect = { bounds.maxX() - 30.0f, 10, 20, 20 };
     
     FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica"_s);
+    fontDescription.setOneFamily("Helvetica");
     fontDescription.setSpecifiedSize(12);
     fontDescription.setComputedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
@@ -217,375 +198,26 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     };
 
 #if ENABLE(TOUCH_EVENTS)
-    auto drawEventLegend = [&](EventTrackingRegions::EventType eventType) {
-        drawLegend(colors.get(eventType), EventTrackingRegions::eventName(eventType));
+    auto drawEventLegend = [&] (ASCIILiteral color) {
+        drawLegend(colors.get(StringView { color }), color);
     };
-    drawEventLegend(EventTrackingRegions::EventType::Touchstart);
-    drawEventLegend(EventTrackingRegions::EventType::Touchmove);
-    drawEventLegend(EventTrackingRegions::EventType::Touchend);
-    drawEventLegend(EventTrackingRegions::EventType::Touchforcechange);
+    drawEventLegend("touchstart"_s);
+    drawEventLegend("touchmove"_s);
+    drawEventLegend("touchend"_s);
+    drawEventLegend("touchforcechange"_s);
     drawLegend(m_color, "passive listeners"_s);
-    drawEventLegend(EventTrackingRegions::EventType::Mousedown);
-    drawEventLegend(EventTrackingRegions::EventType::Mousemove);
-    drawEventLegend(EventTrackingRegions::EventType::Mouseup);
+    drawEventLegend("mousedown"_s);
+    drawEventLegend("mousemove"_s);
+    drawEventLegend("mouseup"_s);
 #else
     // On desktop platforms, the "wheel" region includes the non-fast scrollable region.
-    drawLegend(colors.get(EventTrackingRegions::EventType::Wheel), "non-fast region"_s);
+    drawLegend(colors.get("wheel"), "non-fast region"_s);
 #endif
 
     for (auto& region : m_eventTrackingRegions.eventSpecificSynchronousDispatchRegions)
         drawRegion(context, region.value, colors.get(region.key, defaultColor), bounds);
     drawRegion(context, m_eventTrackingRegions.asynchronousDispatchRegion, m_color, bounds);
 }
-
-#if COMPILER(CLANG)
-#pragma mark - InteractionRegionOverlay
-#endif
-
-class InteractionRegionOverlay final : public RegionOverlay {
-public:
-    static Ref<InteractionRegionOverlay> create(Page& page)
-    {
-        return adoptRef(*new InteractionRegionOverlay(page));
-    }
-
-private:
-    explicit InteractionRegionOverlay(Page& page)
-        : RegionOverlay(page, Color::green.colorWithAlphaByte(102))
-    {
-    }
-
-    bool updateRegion() final;
-    void drawRect(PageOverlay&, GraphicsContext&, const IntRect& dirtyRect) final;
-
-    void drawSettings(GraphicsContext&);
-
-    bool mouseEvent(PageOverlay&, const PlatformMouseEvent&) final;
-
-    FloatRect rectForSettingAtIndex(unsigned) const;
-    bool valueForSetting(ASCIILiteral) const;
-
-    std::optional<std::pair<RenderLayer&, GraphicsLayer&>> activeLayer() const;
-    std::optional<InteractionRegion> activeRegion() const;
-
-    bool shouldPaintOverlayIntoLayer() const override { return valueForSetting("regions"_s); }
-
-    struct Setting {
-        ASCIILiteral key;
-        ASCIILiteral name;
-        bool value { false };
-    };    
-
-    FixedVector<Setting> m_settings {
-        { "constrain"_s, "Constrain to Regions"_s, true },
-        { "clip"_s, "Clip to Regions"_s, true },
-        { "wash"_s, "Draw Wash"_s, false },
-        { "contextualColor"_s, "Contextual Color"_s, true },
-        { "contextualSize"_s, "Contextual Size"_s, true },
-        { "cursor"_s, "Show Cursor"_s, true },
-        { "hover"_s, "CSS Hover"_s, false },
-        { "regions"_s, "Show Regions"_s, false }
-    };
-
-    IntPoint m_mouseLocationInContentCoordinates;
-};
-
-bool InteractionRegionOverlay::updateRegion()
-{
-    m_overlay->setNeedsDisplay();
-    return true;
-}
-
-static Vector<Path> pathsForRegion(const InteractionRegion& region)
-{
-    static constexpr float radius = 4;
-
-    Vector<FloatRect> rects = region.regionInLayerCoordinates.rects().map([] (auto rect) -> FloatRect {
-        return rect;
-    });
-    return PathUtilities::pathsWithShrinkWrappedRects(rects, std::max(region.borderRadius, radius));
-}
-
-std::optional<std::pair<RenderLayer&, GraphicsLayer&>> InteractionRegionOverlay::activeLayer() const
-{
-    // FIXME: This should hit-test to find the correct layer, once we store InteractionRegions
-    // on each layer instead of keeping them all on the root.
-    auto* frameView = m_page.mainFrame().view();
-    if (!frameView || !frameView->renderView())
-        return std::nullopt;
-
-    auto* layer = frameView->renderView()->enclosingLayer();
-    if (!layer || !layer->backing())
-        return std::nullopt;
-
-    auto* graphicsLayer = layer->backing()->graphicsLayer();
-    if (!graphicsLayer)
-        return std::nullopt;
-
-    return { { *layer, *graphicsLayer } };
-}
-
-std::optional<InteractionRegion> InteractionRegionOverlay::activeRegion() const
-{
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    auto layerPair = activeLayer();
-    if (!layerPair)
-        return std::nullopt;
-    auto& [layer, graphicsLayer] = *layerPair;
-
-    std::optional<InteractionRegion> hitRegion;
-    float hitRegionArea = 0;
-    
-    FloatSize offset(layer.offsetFromAncestor(&layer.compositor().rootRenderLayer()));
-    FloatPoint mouseLocationInLayerCoordinates = m_mouseLocationInContentCoordinates - offset;
-
-    auto regions = graphicsLayer.eventRegion().interactionRegions();
-    for (const auto& region : regions) {
-        float area = 0;
-        FloatRect boundingRect;
-        for (const auto& rect : region.regionInLayerCoordinates.rects()) {
-            if (boundingRect.isEmpty())
-                boundingRect = rect;
-            else
-                boundingRect.unite(rect);
-            area += rect.area();
-        }
-
-        if (!boundingRect.contains(mouseLocationInLayerCoordinates))
-            continue;
-
-        auto paths = pathsForRegion(region);
-        bool didHitRegion = false;
-        for (const auto& path : paths) {
-            if (path.contains(mouseLocationInLayerCoordinates)) {
-                didHitRegion = true;
-                break;
-            }
-        }
-        
-        if (!didHitRegion)
-            continue;
-
-        if (area > m_page.mainFrame().view()->layoutSize().area() / 2)
-            continue;
-
-        if (didHitRegion && (!hitRegion || area < hitRegionArea)) {
-            hitRegion = region;
-            hitRegionArea = area;
-        }
-    }
-    
-    if (hitRegion)
-        hitRegion->regionInLayerCoordinates.translate(roundedIntSize(offset));
-
-    return hitRegion;
-#else
-    return std::nullopt;
-#endif
-}
-
-static void drawCheckbox(const String& text, GraphicsContext& context, const FontCascade& font, const FloatRect& box, bool state)
-{
-    static constexpr float lineHeight = 14;
-    static constexpr float checkboxVerticalPadding = 2;
-    static constexpr float textHorizontalPadding = 4;
-
-    FloatRect checkboxRect { box.location() + FloatSize { 0, checkboxVerticalPadding }, FloatSize { lineHeight, lineHeight } };
-
-    TextRun textRun = TextRun(text);
-    context.setFillColor(Color::black);
-    context.drawText(font, textRun, box.location() + FloatSize { checkboxRect.width() + textHorizontalPadding, lineHeight });
-
-    Path checkboxPath;
-    checkboxPath.addRoundedRect(FloatRoundedRect { checkboxRect, FloatRoundedRect::Radii { 3 } });
-
-    if (state) {
-        context.setFillColor(Color::darkGray);
-        context.fillPath(checkboxPath);
-    }
-
-    context.setStrokeColor(Color::black.colorWithAlphaByte(127));
-    context.setStrokeThickness(1);
-    context.strokePath(checkboxPath);
-}
-
-FloatRect InteractionRegionOverlay::rectForSettingAtIndex(unsigned index) const
-{
-    auto viewSize = m_page.mainFrame().view()->layoutSize();
-    static constexpr float settingsWidth = 150;
-    static constexpr float rowHeight = 16;
-    return {
-        FloatPoint { viewSize.width() - settingsWidth - 14, 10 }
-            + FloatSize { 4, rowHeight * index + 2 },
-        FloatSize { settingsWidth, rowHeight }
-    };
-}
-
-bool InteractionRegionOverlay::valueForSetting(ASCIILiteral name) const
-{
-    for (const auto& setting : m_settings) {
-        if (name == setting.key)
-            return setting.value;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
-{
-    GraphicsContextStateSaver stateSaver(context);
-
-    FloatRect rect = rectForSettingAtIndex(0);
-    for (unsigned i = 1; i < m_settings.size(); i++)
-        rect.unite(rectForSettingAtIndex(i));
-
-    rect.expand(FloatBoxExtent { 4, 4, 4, 4 });
-
-    {
-        GraphicsContextStateSaver stateSaver(context);
-        context.setShadow({ }, 5, Color(Color::black).colorWithAlpha(0.5));
-        context.fillRoundedRect(FloatRoundedRect { rect, FloatRoundedRect::Radii { 6 } }, Color(Color::white).colorWithAlpha(0.85));
-    }
-
-    FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily("Helvetica"_s);
-    fontDescription.setSpecifiedSize(12);
-    fontDescription.setComputedSize(12);
-    fontDescription.setWeight(FontSelectionValue(500));
-    FontCascade font(WTFMove(fontDescription), 0, 0);
-    font.update(nullptr);
-
-    for (unsigned i = 0; i < m_settings.size(); i++) {
-        const auto& setting = m_settings[i];
-        drawCheckbox(setting.name, context, font, rectForSettingAtIndex(i), setting.value);
-    }
-}
-
-void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, const IntRect& dirtyRect)
-{
-    GraphicsContextStateSaver stateSaver(context);
-    
-    context.clearRect(dirtyRect);
-
-    auto region = activeRegion();
-
-    if (region || !valueForSetting("constrain"_s)) {
-        auto gradientData = [&] (float radius) {
-            Gradient::RadialData gradientData;
-            gradientData.point0 = m_mouseLocationInContentCoordinates;
-            gradientData.point1 = m_mouseLocationInContentCoordinates;
-            gradientData.startRadius = 0;
-            gradientData.endRadius = radius;
-            gradientData.aspectRatio = 1;
-            return gradientData;
-        };
-
-        auto makeGradient = [&] (bool hasLightBackground, Gradient::RadialData gradientData) {
-            auto gradient = Gradient::create(WTFMove(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-            if (region && valueForSetting("wash"_s) && valueForSetting("clip"_s)) {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
-                gradient->addColorStop({ 1, hasLightBackground ? Color(Color::black).colorWithAlpha(0.05) : Color(Color::white).colorWithAlpha(0.1) });
-            } else if (!valueForSetting("clip"_s) || !valueForSetting("constrain"_s)) {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.2) });
-                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0) });
-            } else {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
-                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0) });
-            }
-
-            return gradient;
-        };
-        
-        constexpr float defaultRadius = 50;
-        bool shouldClip = valueForSetting("clip"_s);
-        Vector<Path> clipPaths;
-
-        if (shouldClip)
-            clipPaths = pathsForRegion(*region);
-
-        bool shouldUseBackdropGradient = !shouldClip || !region || (!valueForSetting("wash"_s) && valueForSetting("clip"_s));
-
-        if (shouldUseBackdropGradient) {
-            if (shouldClip) {
-                for (const auto& path : clipPaths) {
-                    float radius = valueForSetting("contextualSize"_s) ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
-                    auto backdropGradient = Gradient::create(gradientData(radius * 1.5), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-                    backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
-                    backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
-
-                    context.setFillGradient(WTFMove(backdropGradient));
-                    context.fillPath(path);
-                }
-            } else {
-                auto backdropGradient = Gradient::create(gradientData(defaultRadius * 2), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-                backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
-                backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
-
-                context.setFillGradient(WTFMove(backdropGradient));
-                context.fillRect(dirtyRect);    
-            }
-        }
-
-        bool hasLightBackground = false;
-        if (!shouldUseBackdropGradient && valueForSetting("contextualColor"_s))
-            hasLightBackground = region->hasLightBackground;
-
-        if (shouldClip) {
-            for (const auto& path : clipPaths) {
-                float radius = valueForSetting("contextualSize"_s) ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
-                context.setFillGradient(makeGradient(hasLightBackground, gradientData(radius)));
-                context.fillPath(path);
-            }
-        } else {
-            context.setFillGradient(makeGradient(hasLightBackground, gradientData(defaultRadius)));
-            context.fillRect(dirtyRect);
-        }
-    }
-
-    stateSaver.restore();
-
-    drawSettings(context);
-}
-
-bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMouseEvent& event)
-{
-    auto mainFrameView = m_page.mainFrame().view();
-
-    std::optional<Cursor> cursorToSet;
-
-    if (!valueForSetting("cursor"_s))
-        cursorToSet = noneCursor();
-    else if (!valueForSetting("hover"_s))
-        cursorToSet = pointerCursor();
-
-    auto eventInContentsCoordinates = mainFrameView->windowToContents(event.position());
-    for (unsigned i = 0; i < m_settings.size(); i++) {
-        if (!rectForSettingAtIndex(i).contains(eventInContentsCoordinates))
-            continue;
-        cursorToSet = handCursor();
-        if (event.button() == LeftButton && event.type() == PlatformEvent::MousePressed) {
-            m_settings[i].value = !m_settings[i].value;
-            m_page.forceRepaintAllFrames();
-            return true;
-        }
-    }
-
-    if (cursorToSet)
-        mainFrameView->setCursor(*cursorToSet);
-
-    m_mouseLocationInContentCoordinates = eventInContentsCoordinates;
-    overlay.setNeedsDisplay();
-
-    if (event.type() == PlatformEvent::MouseMoved && !event.buttons() && !valueForSetting("hover"_s))
-        return true;
-
-    return false;
-}
-
-#if COMPILER(CLANG)
-#pragma mark - RegionOverlay
-#endif
 
 Ref<RegionOverlay> RegionOverlay::create(Page& page, DebugPageOverlays::RegionType regionType)
 {
@@ -594,8 +226,6 @@ Ref<RegionOverlay> RegionOverlay::create(Page& page, DebugPageOverlays::RegionTy
         return MouseWheelRegionOverlay::create(page);
     case DebugPageOverlays::RegionType::NonFastScrollableRegion:
         return NonFastScrollableRegionOverlay::create(page);
-    case DebugPageOverlays::RegionType::InteractionRegion:
-        return InteractionRegionOverlay::create(page);
     }
     ASSERT_NOT_REACHED();
     return MouseWheelRegionOverlay::create(page);
@@ -665,10 +295,6 @@ void RegionOverlay::recomputeRegion()
 
     m_regionChanged = false;
 }
-
-#if COMPILER(CLANG)
-#pragma mark - DebugPageOverlays
-#endif
 
 DebugPageOverlays& DebugPageOverlays::singleton()
 {
@@ -753,11 +379,6 @@ void DebugPageOverlays::updateOverlayRegionVisibility(Page& page, OptionSet<Debu
         showRegionOverlay(page, RegionType::WheelEventHandlers);
     else
         hideRegionOverlay(page, RegionType::WheelEventHandlers);
-    
-    if (visibleRegions.contains(DebugOverlayRegions::InteractionRegion))
-        showRegionOverlay(page, RegionType::InteractionRegion);
-    else
-        hideRegionOverlay(page, RegionType::InteractionRegion);
 }
 
 void DebugPageOverlays::settingsChanged(Page& page)
@@ -767,13 +388,6 @@ void DebugPageOverlays::settingsChanged(Page& page)
         return;
 
     DebugPageOverlays::singleton().updateOverlayRegionVisibility(page, activeOverlayRegions);
-}
-
-bool DebugPageOverlays::shouldPaintOverlayIntoLayer(Page& page, RegionType regionType) const
-{
-    if (auto* overlay = regionOverlayForPage(page, regionType))
-        return overlay->shouldPaintOverlayIntoLayer();
-    return false;
 }
 
 }

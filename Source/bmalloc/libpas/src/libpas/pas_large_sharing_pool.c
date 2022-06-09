@@ -168,8 +168,7 @@ static pas_large_sharing_node* create_node(
     uint64_t use_epoch,
     pas_commit_mode is_committed,
     size_t num_live_bytes,
-    pas_physical_memory_synchronization_style synchronization_style,
-    pas_mmap_capability mmap_capability)
+    pas_physical_memory_synchronization_style synchronization_style)
 {
     pas_large_sharing_node* result;
     
@@ -187,7 +186,6 @@ static pas_large_sharing_node* create_node(
     result->is_committed = is_committed;
     result->num_live_bytes = num_live_bytes;
     result->synchronization_style = synchronization_style;
-    result->mmap_capability = mmap_capability;
 
     validate_node_if_asserting_aggressively(result);
     
@@ -199,13 +197,11 @@ static pas_large_sharing_node* create_and_insert(
     uint64_t use_epoch,
     pas_commit_mode is_committed,
     size_t num_live_bytes,
-    pas_physical_memory_synchronization_style synchronization_style,
-    pas_mmap_capability mmap_capability)
+    pas_physical_memory_synchronization_style synchronization_style)
 {
     pas_large_sharing_node* result;
     
-    result = create_node(range, use_epoch, is_committed, num_live_bytes, synchronization_style,
-                         mmap_capability);
+    result = create_node(range, use_epoch, is_committed, num_live_bytes, synchronization_style);
     
     pas_red_black_tree_insert(
         &pas_large_sharing_tree, &result->tree_node, node_compare_callback,
@@ -241,8 +237,7 @@ static void boot_tree()
         0,
         pas_committed,
         pas_range_size(range),
-        pas_physical_memory_is_locked_by_virtual_range_common_lock,
-        pas_may_mmap);
+        pas_physical_memory_is_locked_by_virtual_range_common_lock);
 }
 
 static void destroy_node(pas_large_sharing_node* node)
@@ -296,9 +291,6 @@ static bool states_match(pas_large_sharing_node* left,
         return false;
 
     if (left->synchronization_style != right->synchronization_style)
-        return false;
-
-    if (left->mmap_capability != right->mmap_capability)
         return false;
 
     both_empty =
@@ -387,8 +379,7 @@ split_node_and_get_right_impl(pas_large_sharing_node* node,
         node->use_epoch,
         node->is_committed,
         node->num_live_bytes ? node->range.end - split_point : 0,
-        node->synchronization_style,
-        node->mmap_capability);
+        node->synchronization_style);
     
     node->range.end = split_point;
     node->num_live_bytes = node->num_live_bytes ? split_point - node->range.begin : 0;
@@ -612,8 +603,7 @@ static bool try_splat_impl(pas_range range,
                            pas_large_free_heap_deferred_commit_log* commit_log,
                            pas_deferred_decommit_log* decommit_log,
                            pas_physical_memory_transaction* transaction,
-                           pas_physical_memory_synchronization_style synchronization_style,
-                           pas_mmap_capability mmap_capability)
+                           pas_physical_memory_synchronization_style synchronization_style)
 {
     pas_large_sharing_node* min_node;
     pas_large_sharing_node* max_node;
@@ -628,10 +618,9 @@ static bool try_splat_impl(pas_range range,
     
     if (verbose) {
         pas_log("Doing splat in range %p-%p, command = %s, epoch = %llu, "
-                "synchronization_style = %s, mmap_capability = %s\n",
+                "synchronization_style = %s\n",
                 (void*)range.begin, (void*)range.end, splat_command_get_string(command), (unsigned long long)epoch,
-                pas_physical_memory_synchronization_style_get_string(synchronization_style),
-                pas_mmap_capability_get_string(mmap_capability));
+                pas_physical_memory_synchronization_style_get_string(synchronization_style));
     }
     
     pas_heap_lock_assert_held();
@@ -780,7 +769,6 @@ static bool try_splat_impl(pas_range range,
                                                                      desired_commit_mode);
                  inner_node = successor(inner_node)) {
                 PAS_ASSERT(inner_node->synchronization_style == synchronization_style);
-                PAS_ASSERT(inner_node->mmap_capability == mmap_capability);
                 affected_end = inner_node->range.end;
             }
             
@@ -795,14 +783,12 @@ static bool try_splat_impl(pas_range range,
             case pas_physical_memory_is_locked_by_heap_lock: {
                 switch (desired_commit_mode) {
                 case pas_decommitted:
-                    pas_page_malloc_decommit((void*)affected_begin, affected_end - affected_begin,
-                                             mmap_capability);
+                    pas_page_malloc_decommit((void*)affected_begin, affected_end - affected_begin);
                     decommit_log->total += affected_end - affected_begin;
                     break;
                     
                 case pas_committed:
-                    pas_page_malloc_commit((void*)affected_begin, affected_end - affected_begin,
-                                           mmap_capability);
+                    pas_page_malloc_commit((void*)affected_begin, affected_end - affected_begin);
                     if (PAS_DEBUG_SPECTRUM_USE_FOR_COMMIT) {
                         pas_debug_spectrum_add(
                             dump_large_commit, dump_large_commit, affected_end - affected_begin);
@@ -821,15 +807,14 @@ static bool try_splat_impl(pas_range range,
                     was_added = pas_deferred_decommit_log_add(
                         decommit_log,
                         pas_virtual_range_create(affected_begin, affected_end,
-                                                 &pas_virtual_range_common_lock,
-                                                 mmap_capability),
+                                                 &pas_virtual_range_common_lock),
                         pas_lock_is_held);
                     break;
                     
                 case pas_committed:
                     was_added = pas_large_free_heap_deferred_commit_log_add(
                         commit_log,
-                        pas_large_virtual_range_create(affected_begin, affected_end, mmap_capability),
+                        pas_range_create(affected_begin, affected_end),
                         transaction);
                     break;
                 }
@@ -910,18 +895,13 @@ static bool try_splat_impl(pas_range range,
         case splat_allocate_and_commit:
         case splat_free:
             PAS_ASSERT(node->synchronization_style == synchronization_style);
-            PAS_ASSERT(node->mmap_capability == mmap_capability);
             break;
 
         case splat_boot_free:
             PAS_ASSERT(
                 node->synchronization_style
                 == pas_physical_memory_is_locked_by_virtual_range_common_lock);
-            PAS_ASSERT(
-                node->mmap_capability
-                == pas_may_mmap);
             node->synchronization_style = synchronization_style;
-            node->mmap_capability = mmap_capability;
             break;
         }
 
@@ -990,13 +970,12 @@ static bool try_splat(pas_range range,
                       pas_large_free_heap_deferred_commit_log* commit_log,
                       pas_deferred_decommit_log* decommit_log,
                       pas_physical_memory_transaction* transaction,
-                      pas_physical_memory_synchronization_style synchronization_style,
-                      pas_mmap_capability mmap_capability)
+                      pas_physical_memory_synchronization_style synchronization_style)
 {
     bool result;
     
     result = try_splat_impl(
-        range, command, epoch, commit_log, decommit_log, transaction, synchronization_style, mmap_capability);
+        range, command, epoch, commit_log, decommit_log, transaction, synchronization_style);
     
     if (pas_large_sharing_pool_validate_each_splat)
         pas_large_sharing_pool_validate();
@@ -1010,21 +989,19 @@ static void splat(pas_range range,
                   pas_large_free_heap_deferred_commit_log* commit_log,
                   pas_deferred_decommit_log* decommit_log,
                   pas_physical_memory_transaction* transaction,
-                  pas_physical_memory_synchronization_style synchronization_style,
-                  pas_mmap_capability mmap_capability)
+                  pas_physical_memory_synchronization_style synchronization_style)
 {
     bool result;
     
     result = try_splat(
-        range, command, epoch, commit_log, decommit_log, transaction, synchronization_style, mmap_capability);
+        range, command, epoch, commit_log, decommit_log, transaction, synchronization_style);
     
     PAS_ASSERT(result);
 }
 
 void pas_large_sharing_pool_boot_free(
     pas_range range,
-    pas_physical_memory_synchronization_style synchronization_style,
-    pas_mmap_capability mmap_capability)
+    pas_physical_memory_synchronization_style synchronization_style)
 {
     uint64_t epoch;
 
@@ -1032,12 +1009,11 @@ void pas_large_sharing_pool_boot_free(
         return;
     
     epoch = pas_get_epoch();
-    splat(range, splat_boot_free, epoch, NULL, NULL, NULL, synchronization_style, mmap_capability);
+    splat(range, splat_boot_free, epoch, NULL, NULL, NULL, synchronization_style);
 }
 
 void pas_large_sharing_pool_free(pas_range range,
-                                 pas_physical_memory_synchronization_style synchronization_style,
-                                 pas_mmap_capability mmap_capability)
+                                 pas_physical_memory_synchronization_style synchronization_style)
 {
     uint64_t epoch;
 
@@ -1046,14 +1022,13 @@ void pas_large_sharing_pool_free(pas_range range,
     
     epoch = pas_get_epoch();
     
-    splat(range, splat_free, epoch, NULL, NULL, NULL, synchronization_style, mmap_capability);
+    splat(range, splat_free, epoch, NULL, NULL, NULL, synchronization_style);
 }
 
 bool pas_large_sharing_pool_allocate_and_commit(
     pas_range range,
     pas_physical_memory_transaction* transaction,
-    pas_physical_memory_synchronization_style synchronization_style,
-    pas_mmap_capability mmap_capability)
+    pas_physical_memory_synchronization_style synchronization_style)
 {
     static const bool verbose = false;
     
@@ -1076,7 +1051,7 @@ bool pas_large_sharing_pool_allocate_and_commit(
     pas_large_free_heap_deferred_commit_log_construct(&commit_log);
 
     if (!try_splat(range, splat_allocate_and_commit, epoch,
-                   &commit_log, NULL, transaction, synchronization_style, mmap_capability)) {
+                   &commit_log, NULL, transaction, synchronization_style)) {
         pas_large_free_heap_deferred_commit_log_destruct(&commit_log);
         if (verbose)
             pas_log("Giving up on allocate and commit because the splat failed.\n");
@@ -1150,7 +1125,7 @@ pas_large_sharing_pool_decommit_least_recently_used(
     }
     
     if (try_splat(node->range, splat_decommit, 0, NULL, decommit_log, NULL,
-                  node->synchronization_style, node->mmap_capability)) {
+                  node->synchronization_style)) {
         if (verbose)
             pas_log("The splat worked.\n");
         return pas_page_sharing_pool_take_success;

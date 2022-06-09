@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,15 +105,31 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
     if (numBytes.hasOverflowed())
         return nullptr;
 
+    void* data = 0;
+    data = ShareableBitmapMalloc::tryMalloc(numBytes);
+    if (!data)
+        return nullptr;
+    return adoptRef(new ShareableBitmap(size, configuration, data));
+}
+
+RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Configuration configuration)
+{
+    validateConfiguration(configuration);
+    auto numBytes = numBytesForSize(size, configuration);
+    if (numBytes.hasOverflowed())
+        return nullptr;
+
     RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(numBytes);
     if (!sharedMemory)
         return nullptr;
 
-    return adoptRef(new ShareableBitmap(size, configuration, sharedMemory.releaseNonNull()));
+    return adoptRef(new ShareableBitmap(size, configuration, sharedMemory));
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configuration configuration, Ref<SharedMemory>&& sharedMemory)
+RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configuration configuration, RefPtr<SharedMemory> sharedMemory)
 {
+    ASSERT(sharedMemory);
+
     validateConfiguration(configuration);
     auto numBytes = numBytesForSize(size, configuration);
     if (numBytes.hasOverflowed())
@@ -123,7 +139,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
         return nullptr;
     }
     
-    return adoptRef(new ShareableBitmap(size, configuration, WTFMove(sharedMemory)));
+    return adoptRef(new ShareableBitmap(size, configuration, sharedMemory));
 }
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemory::Protection protection)
@@ -132,11 +148,13 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemo
     if (!sharedMemory)
         return nullptr;
 
-    return create(handle.m_size, handle.m_configuration, sharedMemory.releaseNonNull());
+    return create(handle.m_size, handle.m_configuration, WTFMove(sharedMemory));
 }
 
 bool ShareableBitmap::createHandle(Handle& handle, SharedMemory::Protection protection) const
 {
+    ASSERT(isBackedBySharedMemory());
+
     if (!m_sharedMemory->createHandle(handle.m_handle, protection))
         return false;
     handle.m_size = m_size;
@@ -144,16 +162,34 @@ bool ShareableBitmap::createHandle(Handle& handle, SharedMemory::Protection prot
     return true;
 }
 
-ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuration, Ref<SharedMemory>&& sharedMemory)
+ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuration, void* data)
     : m_size(size)
     , m_configuration(configuration)
-    , m_sharedMemory(WTFMove(sharedMemory))
+    , m_data(data)
 {
+}
+
+ShareableBitmap::ShareableBitmap(const IntSize& size, Configuration configuration, RefPtr<SharedMemory> sharedMemory)
+    : m_size(size)
+    , m_configuration(configuration)
+    , m_sharedMemory(sharedMemory)
+    , m_data(nullptr)
+{
+}
+
+ShareableBitmap::~ShareableBitmap()
+{
+    if (!isBackedBySharedMemory())
+        ShareableBitmapMalloc::free(m_data);
 }
 
 void* ShareableBitmap::data() const
 {
-    return m_sharedMemory->data();
+    if (isBackedBySharedMemory())
+        return m_sharedMemory->data();
+
+    ASSERT(m_data);
+    return m_data;
 }
 
 CheckedUint32 ShareableBitmap::numBytesForSize(WebCore::IntSize size, const ShareableBitmap::Configuration& configuration)

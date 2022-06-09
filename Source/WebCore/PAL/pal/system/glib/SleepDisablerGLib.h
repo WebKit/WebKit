@@ -29,7 +29,7 @@
 
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/CString.h>
 
 typedef struct _GDBusProxy GDBusProxy;
 
@@ -37,7 +37,7 @@ namespace PAL {
 
 class SleepDisablerGLib final : public SleepDisabler {
 public:
-    SleepDisablerGLib(const String&, Type);
+    SleepDisablerGLib(const char*, Type);
     virtual ~SleepDisablerGLib();
 
 private:
@@ -53,7 +53,7 @@ private:
     unsigned m_screenSaverCookie { 0 };
     GUniqueOutPtr<char> m_inhibitPortalRequestObjectPath;
     GRefPtr<GCancellable> m_cancellable;
-    String m_reason;
+    CString m_reason;
 };
 
 } // namespace PAL

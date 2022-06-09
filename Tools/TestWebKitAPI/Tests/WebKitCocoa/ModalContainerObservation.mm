@@ -27,12 +27,10 @@
 #import "Test.h"
 
 #import "PlatformUtilities.h"
-#import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
-#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/_WKModalContainerInfo.h>
@@ -317,29 +315,6 @@ TEST(ModalContainerObservation, ModalContainerInSubframe)
     [webView evaluate:@"show(`<p>subframe test</p><iframe srcdoc='<h2>hello world</h2><button>YES</button>'></iframe>`)" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
     EXPECT_FALSE([[webView contentsAsString] containsString:@"subframe test"]);
     EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive);
-}
-
-TEST(ModalContainerObservation, DetectModalContainerAfterSettingText)
-{
-    auto webView = createModalContainerWebView();
-    [webView loadBundlePage:@"modal-container-custom"];
-    [webView objectByEvaluatingJavaScript:@"show(`<div id='content'></div>`)"];
-    [webView waitForNextPresentationUpdate];
-    [webView evaluate:@"document.getElementById('content').innerHTML = `hello world <a href='#'>no</a>`" andDecidePolicy:_WKModalContainerDecisionHideAndIgnore];
-    EXPECT_FALSE([[webView contentsAsString] containsString:@"hello world"]);
-    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypeNegative);
-}
-
-TEST(ModalContainerObservation, DetectControlsWithEventListenersOnModalContainer)
-{
-    auto webView = createModalContainerWebView();
-    [webView loadBundlePage:@"modal-container-custom"];
-    auto script = @"showWithEventListener(`<div>Hello world <span style='cursor: pointer;'>yes</span></div>`, 'click', () => window.testPassed = true)";
-    [webView evaluate:script andDecidePolicy:_WKModalContainerDecisionHideAndAllow];
-    [webView waitForNextPresentationUpdate];
-    EXPECT_FALSE([[webView contentsAsString] containsString:@"Hello world"]);
-    EXPECT_EQ([webView lastModalContainerInfo].availableTypes, _WKModalContainerControlTypePositive);
-    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.testPassed"] boolValue]);
 }
 
 } // namespace TestWebKitAPI

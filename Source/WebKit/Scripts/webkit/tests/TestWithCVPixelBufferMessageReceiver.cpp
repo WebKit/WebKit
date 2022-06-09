@@ -38,39 +38,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if ENABLE(IPC_TESTING_API)
-#include "JSIPCBinding.h"
-#endif
-
-namespace Messages {
-
-namespace TestWithCVPixelBuffer {
-
-#if USE(AVFOUNDATION)
-
-void ReceiveCVPixelBuffer::callReply(IPC::Decoder& decoder, CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&& completionHandler)
-{
-    std::optional<RetainPtr<CVPixelBufferRef>> r0;
-    decoder >> r0;
-    if (!r0) {
-        ASSERT_NOT_REACHED();
-        cancelReply(WTFMove(completionHandler));
-        return;
-    }
-    completionHandler(WTFMove(*r0));
-}
-
-void ReceiveCVPixelBuffer::cancelReply(CompletionHandler<void(RetainPtr<CVPixelBufferRef>&&)>&& completionHandler)
-{
-    completionHandler(IPC::AsyncReplyError<RetainPtr<CVPixelBufferRef>>::create());
-}
-
-#endif
-
-} // namespace TestWithCVPixelBuffer
-
-} // namespace Messages
-
 namespace WebKit {
 
 void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -79,10 +46,6 @@ void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::
 #if USE(AVFOUNDATION)
     if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
         return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
-#endif
-#if USE(AVFOUNDATION)
-    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
-        return IPC::handleMessageAsync<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
@@ -93,28 +56,22 @@ void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
 }
 
-} // namespace WebKit
-
-#if ENABLE(IPC_TESTING_API)
-
-namespace IPC {
-
+bool TestWithCVPixelBuffer::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
+{
+    Ref protectedThis { *this };
 #if USE(AVFOUNDATION)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::ReplyArguments>(globalObject, decoder);
-}
+    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
+        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, *replyEncoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
 #endif
-
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(decoder);
+    UNUSED_PARAM(replyEncoder);
+#if ENABLE(IPC_TESTING_API)
+    if (connection.ignoreInvalidMessageForTesting())
+        return false;
+#endif // ENABLE(IPC_TESTING_API)
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
+    return false;
 }
 
-#endif
-
+} // namespace WebKit

@@ -558,8 +558,8 @@ public:
             Linkable = 0x1,
             Near = 0x2,
             Tail = 0x4,
-            LinkableNear = Linkable | Near,
-            LinkableNearTail = Linkable | Near | Tail,
+            LinkableNear = 0x3,
+            LinkableNearTail = 0x7,
         };
 
         Call()
@@ -917,7 +917,7 @@ public:
     {
         switch (nearCall.callMode()) {
         case NearCallMode::Tail:
-            AssemblerType::relinkTailCall(nearCall.dataLocation(), destination.dataLocation());
+            AssemblerType::relinkJump(nearCall.dataLocation(), destination.dataLocation());
             return;
         case NearCallMode::Regular:
             AssemblerType::relinkCall(nearCall.dataLocation(), destination.untaggedExecutableAddress());
@@ -936,11 +936,16 @@ public:
         case NearCallMode::Regular:
             return CodeLocationLabel<destTag>(tagCodePtr<destTag>(AssemblerType::prepareForAtomicRelinkCallConcurrently(nearCall.dataLocation(), destination.untaggedExecutableAddress())));
         }
-        RELEASE_ASSERT_NOT_REACHED();
 #else
         UNUSED_PARAM(nearCall);
         return destination;
 #endif
+    }
+
+    template<PtrTag tag>
+    static void repatchCompact(CodeLocationDataLabelCompact<tag> dataLabelCompact, int32_t value)
+    {
+        AssemblerType::repatchCompact(dataLabelCompact.template dataLocation(), value);
     }
 
     template<PtrTag tag>
@@ -1068,7 +1073,7 @@ protected:
 
         ALWAYS_INLINE RegisterID registerIDNoInvalidate() { return m_registerID; }
 
-        WARN_UNUSED_RETURN bool value(intptr_t& value)
+        bool value(intptr_t& value)
         {
             value = m_value;
             return m_masm->isTempRegisterValid(m_validBit);

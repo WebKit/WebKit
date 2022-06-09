@@ -48,14 +48,14 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncType);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table"_s, &Base::s_info, &prototypeTableWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(WebAssemblyTablePrototype) };
+const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table", &Base::s_info, &prototypeTableWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(WebAssemblyTablePrototype) };
 
 /* Source for WebAssemblyTablePrototype.lut.h
  @begin prototypeTableWebAssemblyTable
  length webAssemblyTableProtoGetterLength ReadOnly|CustomAccessor
  grow   webAssemblyTableProtoFuncGrow   Function 1
  get    webAssemblyTableProtoFuncGet    Function 1
- set    webAssemblyTableProtoFuncSet    Function 1
+ set    webAssemblyTableProtoFuncSet    Function 2
  type   webAssemblyTableProtoFuncType   Function 0
  @end
  */
@@ -63,7 +63,7 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table"_s, &Ba
 static ALWAYS_INLINE JSWebAssemblyTable* getTable(JSGlobalObject* globalObject, VM& vm, JSValue v)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    JSWebAssemblyTable* result = jsDynamicCast<JSWebAssemblyTable*>(v);
+    JSWebAssemblyTable* result = jsDynamicCast<JSWebAssemblyTable*>(vm, v);
     if (!result) {
         throwException(globalObject, throwScope, 
             createTypeError(globalObject, "expected |this| value to be an instance of WebAssembly.Table"_s));
@@ -99,7 +99,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow, (JSGlobalObject* globalO
     else
         defaultValue = callFrame->uncheckedArgument(1);
 
-    if (table->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(defaultValue))
+    if (table->table()->isFuncrefTable() && !defaultValue.isNull() && !isWebAssemblyHostFunction(vm, defaultValue))
         return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.grow expects the second argument to be null or an instance of WebAssembly.Function"_s);
     uint32_t oldLength = table->length();
 
@@ -146,13 +146,13 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
     if (table->table()->asFuncrefTable()) {
         WebAssemblyFunction* wasmFunction = nullptr;
         WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
-        if (!value.isNull() && !isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction))
+        if (!value.isNull() && !isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction))
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function"_s);
 
         if (value.isNull())
             table->clear(index);
         else {
-            ASSERT(value.isObject() && isWebAssemblyHostFunction(jsCast<JSObject*>(value), wasmFunction, wasmWrapperFunction));
+            ASSERT(value.isObject() && isWebAssemblyHostFunction(vm, jsCast<JSObject*>(value), wasmFunction, wasmWrapperFunction));
             ASSERT(!!wasmFunction || !!wasmWrapperFunction);
             if (wasmFunction)
                 table->set(index, wasmFunction);
@@ -190,7 +190,7 @@ Structure* WebAssemblyTablePrototype::createStructure(VM& vm, JSGlobalObject* gl
 void WebAssemblyTablePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

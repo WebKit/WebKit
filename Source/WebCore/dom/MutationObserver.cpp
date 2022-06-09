@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -45,7 +45,6 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RobinHoodHashSet.h>
 
 namespace WebCore {
 
@@ -91,7 +90,7 @@ ExceptionOr<void> MutationObserver::observe(Node& node, const Init& init)
     if (init.characterDataOldValue.value_or(false))
         options.add(OptionType::CharacterDataOldValue);
 
-    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> attributeFilter;
+    HashSet<AtomString> attributeFilter;
     if (init.attributeFilter) {
         for (auto& value : init.attributeFilter.value())
             attributeFilter.add(value);
@@ -159,7 +158,7 @@ void MutationObserver::enqueueSlotChangeEvent(HTMLSlotElement& slot)
     ASSERT(isMainThread());
     Ref eventLoop = slot.document().windowEventLoop();
     auto& list = eventLoop->signalSlotList();
-    ASSERT(list.findIf([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
+    ASSERT(list.findMatching([&slot](auto& entry) { return entry.ptr() == &slot; }) == notFound);
     list.append(slot);
 
     eventLoop->queueMutationObserverCompoundMicrotask();
@@ -193,7 +192,7 @@ void MutationObserver::deliver()
     // Calling takeTransientRegistrations() can modify m_registrations, so it's necessary
     // to make a copy of the transient registrations before operating on them.
     Vector<MutationObserverRegistration*, 1> transientRegistrations;
-    Vector<HashSet<GCReachableRef<Node>>, 1> nodesToKeepAlive;
+    Vector<std::unique_ptr<HashSet<GCReachableRef<Node>>>, 1> nodesToKeepAlive;
     HashSet<GCReachableRef<Node>> pendingTargets;
     pendingTargets.swap(m_pendingTargets);
     for (auto& registration : m_registrations) {

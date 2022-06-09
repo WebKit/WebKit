@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 #include "MediaRecorderPrivate.h"
 #include <wtf/Lock.h>
@@ -42,7 +42,7 @@ public:
 
 private:
     // MediaRecorderPrivate
-    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
     void fetchData(FetchDataCallback&&) final;
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void stopRecording(CompletionHandler<void()>&&) final;
@@ -61,4 +61,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

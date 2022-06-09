@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@ import contextlib
 import io
 import sys
 
-from webkitcorepy import StringIO, run
+from webkitcorepy import StringIO
 
 if sys.version_info > (3, 0):
     file = io.IOBase
@@ -33,15 +33,10 @@ if sys.version_info > (3, 0):
 class Terminal(object):
     _atty_overrides = {}
     colors = True
-    URL_PREFIXES = ('file://', 'http://', 'https://', 'radar://', 'rdar://')
 
     @classmethod
     def input(cls, *args, **kwargs):
-        try:
-            return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
-        except KeyboardInterrupt:
-            sys.stderr.write('\nUser interrupted program\n')
-            sys.exit(1)
+        return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
 
     @classmethod
     def choose(cls, prompt, options=None, default=None, strict=False, numbered=False):
@@ -65,7 +60,7 @@ class Terminal(object):
                 if index >= 0 and index < len(options):
                     response = options[index]
 
-            if not strict and len(response) > 0:
+            if not strict:
                 for option in options:
                     if option.lower().startswith(response.lower()):
                         response = option
@@ -119,32 +114,6 @@ class Terminal(object):
                 del cls._atty_overrides[key]
             else:
                 cls._atty_overrides[key] = previous
-
-    @classmethod
-    def open_url(cls, url, prompt=None):
-        if all(not url.startswith(prefix) for prefix in cls.URL_PREFIXES):
-            sys.stderr.write("'{}' is not a valid URL\n")
-            return False
-        if not cls.isatty(sys.stdout):
-            return False
-
-        if prompt:
-            try:
-                cls.input(prompt)
-            except SystemExit:
-                sys.stderr.write('User aborted URL open\n')
-                return False
-
-        if sys.platform.startswith('win'):
-            process = run(['explorer', url])
-        else:
-            # TODO: Use shutil directly when Python 2.7 is removed
-            from whichcraft import which
-            if sys.platform.startswith('linux') and which('xdg-open'):
-                process = run(['xdg-open', url])
-            else:
-                process = run(['open', url])
-        return True if process.returncode == 0 else False
 
     class Text(object):
         value = lambda value: '\033[{}m'.format(value)

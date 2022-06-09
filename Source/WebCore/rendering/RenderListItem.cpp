@@ -77,7 +77,7 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
     markerStyle.setFontDescription(WTFMove(fontDescription));
     markerStyle.fontCascade().update(&document().fontSelector());
-    markerStyle.setUnicodeBidi(UnicodeBidi::Isolate);
+    markerStyle.setUnicodeBidi(EUnicodeBidi::Isolate);
     markerStyle.setWhiteSpace(WhiteSpace::Pre);
     markerStyle.setTextTransform(TextTransform::None);
     return markerStyle;
@@ -213,7 +213,7 @@ unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& list)
 void RenderListItem::updateValueNow() const
 {
     auto* list = enclosingList(*this);
-    auto* orderedList = dynamicDowncast<HTMLOListElement>(list);
+    auto* orderedList = is<HTMLOListElement>(list) ? downcast<HTMLOListElement>(list) : nullptr;
 
     // The start item is either the closest item before this one in the list that already has a value,
     // or the first item in the list if none have before this have values yet.

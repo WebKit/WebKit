@@ -30,7 +30,6 @@
 
 #include "PlatformXRSystemProxy.h"
 #include "XRDeviceInfo.h"
-#include <WebCore/SecurityOriginData.h>
 
 using namespace PlatformXR;
 
@@ -49,7 +48,7 @@ XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& x
     m_supportsOrientationTracking = deviceInfo.supportsOrientationTracking;
     m_recommendedResolution = deviceInfo.recommendedResolution;
     if (!deviceInfo.features.isEmpty())
-        setSupportedFeatures(SessionMode::ImmersiveVr, deviceInfo.features);
+        setEnabledFeatures(SessionMode::ImmersiveVr, deviceInfo.features);
 }
 
 void XRDeviceProxy::sessionDidEnd()
@@ -58,32 +57,13 @@ void XRDeviceProxy::sessionDidEnd()
         trackingAndRenderingClient()->sessionDidEnd();
 }
 
-void XRDeviceProxy::updateSessionVisibilityState(PlatformXR::VisibilityState visibilityState)
-{
-    if (trackingAndRenderingClient())
-        trackingAndRenderingClient()->updateSessionVisibilityState(visibilityState);
-}
-
-void XRDeviceProxy::initializeTrackingAndRendering(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode sessionMode, const PlatformXR::Device::FeatureList& requestedFeatures)
+void XRDeviceProxy::initializeTrackingAndRendering(PlatformXR::SessionMode sessionMode)
 {
     if (sessionMode != PlatformXR::SessionMode::ImmersiveVr)
         return;
 
-    if (!m_xrSystem)
-        return;
-
-    m_xrSystem->initializeTrackingAndRendering(securityOriginData, sessionMode, requestedFeatures);
-
-    // This is called from the constructor of WebXRSession. Since sessionDidInitializeInputSources()
-    // ends up calling queueTaskKeepingObjectAlive() which refs the WebXRSession object, we
-    // should delay this call after the WebXRSession has finished construction.
-    callOnMainRunLoop([this, weakThis = WeakPtr { *this }]() {
-        if (!weakThis)
-            return;
-
-        if (trackingAndRenderingClient())
-            trackingAndRenderingClient()->sessionDidInitializeInputSources({ });
-    });    
+    if (m_xrSystem)
+        m_xrSystem->initializeTrackingAndRendering();
 }
 
 void XRDeviceProxy::shutDownTrackingAndRendering()

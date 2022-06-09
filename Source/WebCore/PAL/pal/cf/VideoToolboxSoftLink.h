@@ -26,12 +26,6 @@
 
 #if USE(AVFOUNDATION)
 
-#include <VideoToolbox/VTCompressionSession.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/VideoToolboxSPIAdditions.h>
-#endif
-
 #include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, VideoToolbox)
@@ -69,9 +63,5 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionPrepareToEn
 #define VTCompressionSessionPrepareToEncodeFrames softLink_VideoToolbox_VTCompressionSessionPrepareToEncodeFrames
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionInvalidate, void, (VTCompressionSessionRef session), (session))
 #define VTCompressionSessionInvalidate softLink_VideoToolbox_VTCompressionSessionInvalidate
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/VideoToolboxSoftLinkAdditions.h>
-#endif
 
 #endif // USE(AVFOUNDATION)

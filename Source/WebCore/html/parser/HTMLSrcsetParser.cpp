@@ -130,7 +130,7 @@ static bool parseDescriptors(Vector<StringView>& descriptors, DescriptorParsingR
             continue;
         unsigned descriptorCharPosition = descriptor.length() - 1;
         UChar descriptorChar = descriptor[descriptorCharPosition];
-        descriptor = descriptor.left(descriptorCharPosition);
+        descriptor = descriptor.substring(0, descriptorCharPosition);
         if (descriptorChar == 'x') {
             if (result.hasDensity() || result.hasHeight() || result.hasWidth())
                 return false;

@@ -43,7 +43,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
-#import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -147,14 +146,14 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
         case 1:
             connection.receiveHTTPRequest([connection] (Vector<char>&& request1) {
                 EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
-                constexpr auto redirect = "HTTP/1.1 302 Found\r\n"
+                const char* redirect = "HTTP/1.1 302 Found\r\n"
                     "Location: /.well-known/private-click-measurement/trigger-attribution/12\r\n"
-                    "Content-Length: 0\r\n\r\n"_s;
+                    "Content-Length: 0\r\n\r\n";
                 connection.send(redirect, [connection] {
                     connection.receiveHTTPRequest([connection] (Vector<char>&& request2) {
                         EXPECT_TRUE(strnstr(request2.data(), "GET /.well-known/private-click-measurement/trigger-attribution/12 HTTP/1.1\r\n", request2.size()));
-                        constexpr auto response = "HTTP/1.1 200 OK\r\n"
-                            "Content-Length: 0\r\n\r\n"_s;
+                        const char* response = "HTTP/1.1 200 OK\r\n"
+                            "Content-Length: 0\r\n\r\n";
                         connection.send(response);
                     });
                 });
@@ -202,13 +201,13 @@ static void triggerAttributionWithSubresourceRedirect(Connection& connection, co
     auto location = makeString("/.well-known/private-click-measurement/trigger-attribution/12", optionalQueryString);
     connection.receiveHTTPRequest([connection, location] (Vector<char>&& request1) {
         EXPECT_TRUE(strnstr(request1.data(), "GET /conversionRequestBeforeRedirect HTTP/1.1\r\n", request1.size()));
-        auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: ", location, "\r\nContent-Length: 0\r\n\r\n");
-        connection.send(WTFMove(redirect), [connection, location] {
+        auto redirect = makeString("HTTP/1.1 302 Found\r\nLocation: ", location, "\r\nContent-Length: 0\r\n\r\n").utf8().data();
+        connection.send(redirect, [connection, location] {
             connection.receiveHTTPRequest([connection, location] (Vector<char>&& request2) {
                 auto expectedHttpGetString = makeString("GET ", location, " HTTP/1.1\r\n").utf8().data();
                 EXPECT_TRUE(strnstr(request2.data(), expectedHttpGetString, request2.size()));
-                constexpr auto response = "HTTP/1.1 200 OK\r\n"
-                    "Content-Length: 0\r\n\r\n"_s;
+                const char* response = "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 0\r\n\r\n";
                 connection.send(response);
             });
         });
@@ -266,7 +265,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
         switch (++connectionCount) {
         case 1:
             EXPECT_TRUE(signingParty == TokenSigningParty::Destination);
-            triggerAttributionWithSubresourceRedirect(connection, "ABCDEFabcdef0123456789"_s);
+            triggerAttributionWithSubresourceRedirect(connection, "ABCDEFabcdef0123456789");
             break;
         case 2:
             connection.receiveHTTPRequest([signingParty, connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request1) {
@@ -282,7 +281,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                         EXPECT_TRUE(strnstr(request2.data(), "POST / HTTP/1.1\r\n", request2.size()));
 
                         auto request2String = String(request2.data(), request2.size());
-                        auto key = signingParty == TokenSigningParty::Source ? "source_unlinkable_token"_s : "destination_unlinkable_token"_s;
+                        auto key = signingParty == TokenSigningParty::Source ? String("source_unlinkable_token") : String("destination_unlinkable_token");
                         auto start = request2String.find(key);
                         start += key.length() + 3;
                         auto end = request2String.find('"', start);
@@ -320,7 +319,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
 
                                         auto request4String = String(request4.data(), request4.size());
 
-                                        auto key = signingParty == TokenSigningParty::Source ? "source_secret_token"_s : "destination_secret_token"_s;
+                                        auto key = signingParty == TokenSigningParty::Source ? String("source_secret_token") : String("destination_secret_token");
                                         auto start = request4String.find(key);
                                         start += key.length() + 3;
                                         auto end = request4String.find('"', start);
@@ -328,7 +327,7 @@ static void signUnlinkableTokenAndSendSecretToken(TokenSigningParty signingParty
                                         auto tokenVector = base64URLDecode(token);
                                         auto tokenData = adoptNS([[NSData alloc] initWithBytes:tokenVector->data() length:tokenVector->size()]);
 
-                                        key = signingParty == TokenSigningParty::Source ? "source_secret_token_signature"_s : "destination_secret_token_signature"_s;
+                                        key = signingParty == TokenSigningParty::Source ? String("source_secret_token_signature") : String("destination_secret_token_signature");
                                         start = request4String.find(key);
                                         start += key.length() + 3;
                                         end = request4String.find('"', start);
@@ -558,53 +557,6 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Debug Mode off.");
     cleanUpDaemon(tempDir);
-}
-
-TEST(PrivateClickMeasurement, SKAdNetwork)
-{
-    HTTPServer server({ { "/app/apple-store/id1234567890"_s, { "hello"_s } } }, HTTPServer::Protocol::HttpsProxy);
-
-    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    [storeConfiguration setProxyConfiguration:@{
-        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
-        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
-    }];
-
-    WKWebViewConfiguration *viewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
-    viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get();
-    auto webView = webViewWithOpenInspector(viewConfiguration);
-
-    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
-        if ([feature.key isEqualToString:@"SKAttributionEnabled"]) {
-            [[viewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
-            break;
-        }
-    }
-
-    Vector<String> consoleMessages;
-    setInjectedBundleClient(webView.get(), consoleMessages);
-    [viewConfiguration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:YES];
-
-    [webView synchronouslyLoadHTMLString:@"<body>"
-        "<a href='https://apps.apple.com/app/apple-store/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a>"
-        "</body>" baseURL:[NSURL URLWithString:@"https://example.com/"]];
-
-    while (consoleMessages.isEmpty())
-        Util::spinRunLoop();
-    EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Debug Mode on.");
-
-    auto delegate = adoptNS([TestNavigationDelegate new]);
-    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
-        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
-        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
-    }];
-    webView.get().navigationDelegate = delegate.get();
-
-    [webView clickOnElementID:@"anchorid"];
-
-    while (consoleMessages.size() < 2)
-        Util::spinRunLoop();
-    EXPECT_WK_STREQ(consoleMessages[1], "Submitting potential install attribution for AdamId: 1234567890, adNetworkRegistrableDomain: destination, impressionId: MTIzNDU2Nzg5MDEyMzQ1Ng, sourceWebRegistrableDomain: example.com, version: 3");
 }
 
 TEST(PrivateClickMeasurement, NetworkProcessDebugMode)

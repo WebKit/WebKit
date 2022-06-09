@@ -72,7 +72,7 @@ protected:
 
     String adjustForInheritance(SVGElement& targetElement, const String& value) const
     {
-        static MainThreadNeverDestroyed<const AtomString> inherit("inherit"_s);
+        static MainThreadNeverDestroyed<const AtomString> inherit("inherit", AtomString::ConstructFromLiteral);
         return value == inherit ? computeInheritedCSSPropertyValue(targetElement) : value;
     }
 
@@ -89,7 +89,7 @@ protected:
 
     String computeInheritedCSSPropertyValue(SVGElement& targetElement) const
     {
-        RefPtr<Element> parent = targetElement.parentElement();
+        auto* parent = targetElement.parentElement();
         if (!parent || !parent->isSVGElement())
             return emptyString();
         

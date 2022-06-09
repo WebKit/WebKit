@@ -1,7 +1,7 @@
 
-FAIL Property user-select value 'auto' assert_equals: expected "auto" but got "text"
-PASS Property user-select value 'text'
-PASS Property user-select value 'none'
-FAIL Property user-select value 'contain' assert_true: 'contain' is a supported value for user-select. expected true got false
-PASS Property user-select value 'all'
+FAIL Property user-select value 'auto' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
+FAIL Property user-select value 'text' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
+FAIL Property user-select value 'none' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
+FAIL Property user-select value 'contain' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
+FAIL Property user-select value 'all' assert_true: user-select doesn't seem to be supported in the computed style expected true got false
 

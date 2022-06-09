@@ -34,15 +34,14 @@
 #include "MutationObserver.h"
 #include "SecurityOrigin.h"
 #include "ThreadGlobalData.h"
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-static MemoryCompactRobinHoodHashMap<String, WindowEventLoop*>& windowEventLoopMap()
+static HashMap<String, WindowEventLoop*>& windowEventLoopMap()
 {
     RELEASE_ASSERT(isMainThread());
-    static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, WindowEventLoop*>> map;
+    static NeverDestroyed<HashMap<String, WindowEventLoop*>> map;
     return map.get();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
     } else {
         result = pas_immortal_heap_allocate_with_alignment(
             sizeof(pas_segregated_size_directory) + sizeof(pas_bitfit_size_class),
-            PAS_MAX(PAS_ALIGNOF(pas_segregated_size_directory), PAS_ALIGNOF(pas_bitfit_size_class)),
+            PAS_MAX(alignof(pas_segregated_size_directory), alignof(pas_bitfit_size_class)),
             "pas_segregated_size_directory+pas_bitfit_size_class",
             pas_object_allocation);
     }
@@ -131,7 +131,7 @@ pas_segregated_size_directory* pas_segregated_size_directory_create(
         bitfit_size_class = pas_segregated_size_directory_get_bitfit_size_class(result);
         
         pas_bitfit_heap_construct_and_insert_size_class(
-            bitfit_heap, bitfit_size_class, object_size, heap_config, heap->runtime_config);
+            bitfit_heap, bitfit_size_class, object_size, heap_config);
     }
     
     pas_compact_atomic_segregated_size_directory_ptr_store(&result->next_for_heap, NULL);
@@ -744,8 +744,7 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
         }
         pas_page_malloc_decommit(
             pas_segregated_page_boundary(page, my_page_config),
-            my_page_config.base.page_size,
-            my_page_config.base.heap_config_ptr->mmap_capability);
+            my_page_config.base.page_size);
         decommit_log->total += my_page_config.base.page_size;
         my_page_config.base.destroy_page_header(&page->base, pas_lock_is_held);
         pas_segregated_directory_view_did_become_eligible_at_index(directory, index);

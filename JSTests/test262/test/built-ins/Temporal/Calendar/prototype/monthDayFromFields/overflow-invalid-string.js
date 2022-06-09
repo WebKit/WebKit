@@ -17,11 +17,4 @@ features: [Temporal]
 ---*/
 
 const calendar = new Temporal.Calendar("iso8601");
-const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
-for (const overflow of badOverflows) {
-  assert.throws(
-    RangeError,
-    () => calendar.monthDayFromFields({ year: 2000, month: 5, day: 2 }, { overflow }),
-    `invalid overflow ("${overflow}")`
-  );
-}
+assert.throws(RangeError, () => calendar.monthDayFromFields({ year: 2000, month: 5, day: 2 }, { overflow: "other string" }));

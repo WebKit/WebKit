@@ -25,13 +25,12 @@
 #include "config.h"
 #include "CanvasCaptureMediaStreamTrack.h"
 
-#if ENABLE(MEDIA_STREAM)
-
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
-#include "VideoFrame.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
+
+#if ENABLE(MEDIA_STREAM)
 
 namespace WebCore {
 
@@ -193,13 +192,13 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     if (!m_canvas->originClean())
         return;
 
-    auto videoFrame = m_canvas->toVideoFrame();
-    if (!videoFrame)
+    auto sample = m_canvas->toMediaSample();
+    if (!sample)
         return;
 
-    VideoFrameTimeMetadata metadata;
+    VideoSampleMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
-    videoFrameAvailable(*videoFrame, metadata);
+    videoSampleAvailable(*sample, metadata);
 }
 
 RefPtr<MediaStreamTrack> CanvasCaptureMediaStreamTrack::clone()

@@ -35,13 +35,13 @@ using namespace WebCore;
 inline WebUserContentURLPattern::WebUserContentURLPattern()
 {
     ++gClassCount;
-    gClassNameCount().add("WebUserContentURLPattern"_s);
+    gClassNameCount().add("WebUserContentURLPattern");
 }
 
 WebUserContentURLPattern::~WebUserContentURLPattern()
 {
     --gClassCount;
-    gClassNameCount().remove("WebUserContentURLPattern"_s);
+    gClassNameCount().remove("WebUserContentURLPattern");
 }
 
 COMPtr<WebUserContentURLPattern> WebUserContentURLPattern::createInstance()

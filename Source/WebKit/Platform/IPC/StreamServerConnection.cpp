@@ -28,110 +28,46 @@
 
 #include "Connection.h"
 #include "StreamConnectionWorkQueue.h"
-#include <mutex>
-#include <wtf/NeverDestroyed.h>
+
 namespace IPC {
-namespace {
-// FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
-class DedicatedConnectionClient final : public Connection::Client {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(DedicatedConnectionClient);
-public:
-    DedicatedConnectionClient() = default;
-    // Connection::Client.
-    void didReceiveMessage(Connection& connection, Decoder& decoder) final { ASSERT_NOT_REACHED(); }
-    bool didReceiveSyncMessage(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder) final { ASSERT_NOT_REACHED(); return false; }
-    void didClose(Connection&) final { } // Client is expected to listen to Connection::didClose() from the connection it sent to the dedicated connection to.
-    void didReceiveInvalidMessage(Connection&, MessageName) final { ASSERT_NOT_REACHED(); } // The sender is expected to be trusted, so all invalid messages are programming errors.
-private:
-};
 
-}
-
-Ref<StreamServerConnection> StreamServerConnection::create(Connection& connection, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
-{
-    return adoptRef(*new StreamServerConnection(Ref { connection }, WTFMove(streamBuffer), workQueue, HasDedicatedConnection::No));
-}
-
-Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnection(Attachment&& connectionIdentifier, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
-{
-#if USE(UNIX_DOMAIN_SOCKETS)
-    IPC::Connection::Identifier connectionHandle { connectionIdentifier.release().release() };
-#elif OS(DARWIN)
-    IPC::Connection::Identifier connectionHandle { connectionIdentifier.port() };
-#elif OS(WINDOWS)
-    IPC::Connection::Identifier connectionHandle { connectionIdentifier.handle() };
-#else
-    notImplemented();
-    IPC::Connection::Identifier connectionHandle { };
-#endif
-    static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag, [] {
-        s_dedicatedConnectionClient.construct();
-    });
-    auto connection = IPC::Connection::createClientConnection(connectionHandle, s_dedicatedConnectionClient.get());
-    auto streamConnection = adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(streamBuffer), workQueue, HasDedicatedConnection::Yes));
-    return streamConnection;
-}
-
-StreamServerConnection::StreamServerConnection(Ref<Connection>&& connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue, HasDedicatedConnection hasDedicatedConnection)
-    : m_connection(WTFMove(connection))
+StreamServerConnectionBase::StreamServerConnectionBase(Connection& connection, StreamConnectionBuffer&& stream, StreamConnectionWorkQueue& workQueue)
+    : m_connection(connection)
     , m_workQueue(workQueue)
     , m_buffer(WTFMove(stream))
-    , m_hasDedicatedConnection(hasDedicatedConnection == HasDedicatedConnection::Yes)
 {
 }
 
-StreamServerConnection::~StreamServerConnection()
+void StreamServerConnectionBase::startReceivingMessagesImpl(ReceiverName receiverName, uint64_t destinationID)
 {
-    ASSERT(!m_hasDedicatedConnection || !m_connection->isValid());
-}
-
-void StreamServerConnection::open()
-{
-    if (m_hasDedicatedConnection) {
-        // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
-        m_connection->addMessageReceiveQueue(*this, { });
-        m_connection->open();
-    }
-}
-
-void StreamServerConnection::invalidate()
-{
-    if (m_hasDedicatedConnection) {
-        m_connection->removeMessageReceiveQueue({ });
-        m_connection->invalidate();
-    }
-}
-
-void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
-{
-    {
-        auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-        Locker locker { m_receiversLock };
-        ASSERT(!m_receivers.contains(key));
-        m_receivers.add(key, receiver);
-    }
-
-    if (!m_hasDedicatedConnection)
-        m_connection->addMessageReceiveQueue(*this, { receiverName, destinationID });
+    // FIXME: Can we avoid synchronous dispatch here by adjusting the assertion in `Connection::enqueueMatchingMessagesToMessageReceiveQueue`?
+    callOnMainRunLoopAndWait([&] {
+        m_connection->addMessageReceiveQueue(*this, receiverName, destinationID);
+    });
     m_workQueue.addStreamConnection(*this);
 }
 
-void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
+void StreamServerConnectionBase::startReceivingMessagesImpl(ReceiverName receiverName)
 {
-    if (!m_hasDedicatedConnection)
-        m_connection->removeMessageReceiveQueue({ receiverName, destinationID });
-    m_workQueue.removeStreamConnection(*this);
-
-    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-    Locker locker { m_receiversLock };
-    ASSERT(m_receivers.contains(key));
-    m_receivers.remove(key);
+    callOnMainRunLoopAndWait([&] {
+        m_connection->addMessageReceiveQueue(*this, receiverName);
+    });
+    m_workQueue.addStreamConnection(*this);
 }
 
-void StreamServerConnection::enqueueMessage(Connection&, std::unique_ptr<Decoder>&& message)
+void StreamServerConnectionBase::stopReceivingMessagesImpl(ReceiverName receiverName)
+{
+    m_connection->removeMessageReceiveQueue(receiverName);
+    m_workQueue.removeStreamConnection(*this);
+}
+
+void StreamServerConnectionBase::stopReceivingMessagesImpl(ReceiverName receiverName, uint64_t destinationID)
+{
+    m_connection->removeMessageReceiveQueue(receiverName, destinationID);
+    m_workQueue.removeStreamConnection(*this);
+}
+
+void StreamServerConnectionBase::enqueueMessage(Connection&, std::unique_ptr<Decoder>&& message)
 {
     {
         Locker locker { m_outOfStreamMessagesLock };
@@ -140,7 +76,7 @@ void StreamServerConnection::enqueueMessage(Connection&, std::unique_ptr<Decoder
     m_workQueue.wakeUp();
 }
 
-std::optional<StreamServerConnection::Span> StreamServerConnection::tryAcquire()
+std::optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAcquire()
 {
     ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
     if (serverLimit == ServerLimit::serverIsSleepingTag)
@@ -158,12 +94,12 @@ std::optional<StreamServerConnection::Span> StreamServerConnection::tryAcquire()
     return result;
 }
 
-StreamServerConnection::Span StreamServerConnection::acquireAll()
+StreamServerConnectionBase::Span StreamServerConnectionBase::acquireAll()
 {
     return alignedSpan(0, dataSize() - 1);
 }
 
-void StreamServerConnection::release(size_t readSize)
+void StreamServerConnectionBase::release(size_t readSize)
 {
     ASSERT(readSize);
     readSize = std::max(readSize, minimumMessageSize);
@@ -172,26 +108,26 @@ void StreamServerConnection::release(size_t readSize)
     ServerOffset oldServerOffset = sharedServerOffset().exchange(serverOffset, std::memory_order_acq_rel);
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
-        m_clientWaitSemaphore.signal();
+        m_buffer.clientWaitSemaphore().signal();
     else
         ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
 
     m_serverOffset = serverOffset;
 }
 
-void StreamServerConnection::releaseAll()
+void StreamServerConnectionBase::releaseAll()
 {
     sharedServerLimit().store(static_cast<ServerLimit>(0), std::memory_order_release);
     ServerOffset oldServerOffset = sharedServerOffset().exchange(static_cast<ServerOffset>(0), std::memory_order_acq_rel);
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
-        m_clientWaitSemaphore.signal();
+        m_buffer.clientWaitSemaphore().signal();
     else
         ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
     m_serverOffset = 0;
 }
 
-StreamServerConnection::Span StreamServerConnection::alignedSpan(size_t offset, size_t limit)
+StreamServerConnectionBase::Span StreamServerConnectionBase::alignedSpan(size_t offset, size_t limit)
 {
     ASSERT(offset < dataSize());
     ASSERT(limit < dataSize());
@@ -207,14 +143,14 @@ StreamServerConnection::Span StreamServerConnection::alignedSpan(size_t offset, 
     return { data() + aligned, resultSize };
 }
 
-size_t StreamServerConnection::size(size_t offset, size_t limit)
+size_t StreamServerConnectionBase::size(size_t offset, size_t limit)
 {
     if (offset <= limit)
         return limit - offset;
     return dataSize() - offset;
 }
 
-size_t StreamServerConnection::clampedLimit(ServerLimit serverLimit) const
+size_t StreamServerConnectionBase::clampedLimit(ServerLimit serverLimit) const
 {
     ASSERT(!(serverLimit & ServerLimit::serverIsSleepingTag));
     size_t limit = static_cast<size_t>(serverLimit);
@@ -222,7 +158,27 @@ size_t StreamServerConnection::clampedLimit(ServerLimit serverLimit) const
     return std::min(limit, dataSize() - 1);
 }
 
-StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit)
+void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& receiver, ReceiverName receiverName, uint64_t destinationID)
+{
+    {
+        auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
+        Locker locker { m_receiversLock };
+        ASSERT(!m_receivers.contains(key));
+        m_receivers.add(key, receiver);
+    }
+    StreamServerConnectionBase::startReceivingMessagesImpl(receiverName, destinationID);
+}
+
+void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
+{
+    StreamServerConnectionBase::stopReceivingMessagesImpl(receiverName, destinationID);
+    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
+    Locker locker { m_receiversLock };
+    ASSERT(m_receivers.contains(key));
+    m_receivers.remove(key);
+}
+
+StreamServerConnectionBase::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit)
 {
     RefPtr<StreamMessageReceiver> currentReceiver;
     // FIXME: Implement WTF::isValid(ReceiverName).

@@ -59,7 +59,7 @@ extern "C" {
     M(IPCMessages) \
     M(ITPDebug) \
     M(IconDatabase) \
-    M(ImageAnalysis) \
+    M(Images) \
     M(IncrementalPDF) \
     M(IncrementalPDFVerbose) \
     M(IndexedDB) \
@@ -69,6 +69,7 @@ extern "C" {
     M(Layers) \
     M(Layout) \
     M(Loading) \
+    M(LocalStorageDatabaseTracker) \
     M(Media) \
     M(MemoryPressure) \
     M(ModelElement) \
@@ -79,7 +80,6 @@ extern "C" {
     M(NetworkCacheStorage) \
     M(NetworkScheduling) \
     M(NetworkSession) \
-    M(Notifications) \
     M(PerformanceLogging) \
     M(Plugins) \
     M(Printing) \
@@ -88,18 +88,15 @@ extern "C" {
     M(ProcessSwapping) \
     M(ProximityNetworking) \
     M(Push) \
-    M(RemoteRenderingBufferVolatility) \
     M(RemoteLayerTree) \
     M(Resize) \
     M(ResourceLoadStatistics) \
-    M(Sandbox) \
     M(ScrollAnimations) \
     M(Scrolling) \
     M(Selection) \
     M(ServiceWorker) \
     M(SessionState) \
     M(SharedDisplayLists) \
-    M(SharedWorker) \
     M(Storage) \
     M(StorageAPI) \
     M(TextInput) \
@@ -114,7 +111,6 @@ extern "C" {
     M(WebGL) \
     M(WebRTC) \
     M(WheelEvents) \
-    M(Worker) \
     M(XR) \
 
 WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)

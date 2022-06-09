@@ -66,7 +66,7 @@ class TimingFunction;
 class TransformationMatrix;
 
 namespace DisplayList {
-enum class AsTextFlag : uint8_t;
+typedef unsigned AsTextFlags;
 }
 
 // Base class for animation values (also used for transitions). Here to
@@ -525,8 +525,7 @@ public:
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
 #if ENABLE(MODEL_ELEMENT)
-    enum class ModelInteraction : uint8_t { Enabled, Disabled };
-    virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
+    virtual void setContentsToModel(RefPtr<Model>&&) { }
     virtual PlatformLayerID contentsLayerIDForModel() const { return 0; }
 #endif
     virtual bool usesContentsLayer() const { return false; }
@@ -567,7 +566,9 @@ public:
     enum class CustomAppearance : uint8_t {
         None,
         ScrollingOverhang,
-        ScrollingShadow
+        ScrollingShadow,
+        LightBackdrop,
+        DarkBackdrop
     };
     virtual void setCustomAppearance(CustomAppearance customAppearance) { m_customAppearance = customAppearance; }
     CustomAppearance customAppearance() const { return m_customAppearance; }
@@ -587,9 +588,6 @@ public:
     // Whether this layer can throw away backing store to save memory. False for layers that can be revealed by async scrolling.
     virtual void setAllowsBackingStoreDetaching(bool) { }
     virtual bool allowsBackingStoreDetaching() const { return true; }
-
-    virtual void setAllowsTiling(bool allowsTiling) { m_allowsTiling = allowsTiling; }
-    virtual bool allowsTiling() const { return m_allowsTiling; }
 
     virtual void deviceOrPageScaleFactorChanged() { }
     WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
@@ -613,13 +611,13 @@ public:
     WEBCORE_EXPORT String layerTreeAsText(OptionSet<LayerTreeAsTextOptions> = { }) const;
 
     // For testing.
-    virtual String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return String(); }
+    virtual String displayListAsText(DisplayList::AsTextFlags) const { return String(); }
 
     virtual String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const { return String(); }
 
     virtual void setIsTrackingDisplayListReplay(bool isTracking) { m_isTrackingDisplayListReplay = isTracking; }
     virtual bool isTrackingDisplayListReplay() const { return m_isTrackingDisplayListReplay; }
-    virtual String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const { return String(); }
+    virtual String replayDisplayListAsText(DisplayList::AsTextFlags) const { return String(); }
 
     // Return an estimate of the backing store memory cost (in bytes). May be incorrect for tiled layers.
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const;
@@ -665,6 +663,13 @@ protected:
 
     // Given a KeyframeValueList containing filterOperations, return true if the operations are valid.
     static int validateFilterOperations(const KeyframeValueList&);
+
+    // Given a list of TransformAnimationValues, see if all the operations for each keyframe match. If so
+    // return the index of the KeyframeValueList entry that has that list of operations (it may not be
+    // the first entry because some keyframes might have an empty transform and those match any list).
+    // If the lists don't match return -1. On return, if hasBigRotation is true, functions contain 
+    // rotations of >= 180 degrees
+    static int validateTransformOperations(const KeyframeValueList&, bool& hasBigRotation);
 
     virtual bool shouldRepaintOnSizeChange() const { return drawsContent(); }
 
@@ -740,7 +745,6 @@ protected:
     bool m_contentsRectClipsDescendants : 1;
     bool m_acceleratesDrawing : 1;
     bool m_usesDisplayListDrawing : 1;
-    bool m_allowsTiling : 1;
     bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
     bool m_showDebugBorder : 1;
     bool m_showRepaintCounter : 1;
@@ -808,7 +812,9 @@ template<> struct EnumTraits<WebCore::GraphicsLayer::CustomAppearance> {
         WebCore::GraphicsLayer::CustomAppearance,
         WebCore::GraphicsLayer::CustomAppearance::None,
         WebCore::GraphicsLayer::CustomAppearance::ScrollingOverhang,
-        WebCore::GraphicsLayer::CustomAppearance::ScrollingShadow
+        WebCore::GraphicsLayer::CustomAppearance::ScrollingShadow,
+        WebCore::GraphicsLayer::CustomAppearance::LightBackdrop,
+        WebCore::GraphicsLayer::CustomAppearance::DarkBackdrop
     >;
 };
 

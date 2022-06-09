@@ -32,7 +32,6 @@
 #include "config.h"
 #include "BaseCheckableInputType.h"
 
-#include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "FormController.h"
 #include "HTMLInputElement.h"
@@ -47,13 +46,13 @@ using namespace HTMLNames;
 FormControlState BaseCheckableInputType::saveFormControlState() const
 {
     ASSERT(element());
-    return { element()->checked() ? onAtom() : offAtom() };
+    return { element()->checked() ? "on"_s : "off"_s };
 }
 
 void BaseCheckableInputType::restoreFormControlState(const FormControlState& state)
 {
     ASSERT(element());
-    element()->setChecked(state[0] == onAtom());
+    element()->setChecked(state[0] == "on");
 }
 
 bool BaseCheckableInputType::appendFormData(DOMFormData& formData) const
@@ -68,7 +67,7 @@ bool BaseCheckableInputType::appendFormData(DOMFormData& formData) const
 auto BaseCheckableInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseEventHandler
 {
     const String& key = event.keyIdentifier();
-    if (key == "U+0020"_s) {
+    if (key == "U+0020") {
         ASSERT(element());
         element()->setActive(true, true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
@@ -100,7 +99,8 @@ bool BaseCheckableInputType::accessKeyAction(bool sendMouseEvents)
 
 String BaseCheckableInputType::fallbackValue() const
 {
-    return onAtom();
+    static MainThreadNeverDestroyed<const AtomString> on("on", AtomString::ConstructFromLiteral);
+    return on.get();
 }
 
 bool BaseCheckableInputType::storesValueSeparateFromAttribute()
@@ -108,10 +108,10 @@ bool BaseCheckableInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
+void BaseCheckableInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
 {
     ASSERT(element());
-    element()->setAttributeWithoutSynchronization(valueAttr, AtomString { sanitizedValue });
+    element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
 }
 
 void BaseCheckableInputType::fireInputAndChangeEvents()

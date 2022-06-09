@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ElementAndTextDescendantIterator.h"
-#include "ElementRareData.h"
 #include "HTMLSlotElement.h"
 #include "ShadowRoot.h"
 
@@ -225,8 +224,8 @@ inline Node* firstChildInComposedTreeIgnoringUserAgentShadow(Node& node)
 {
     if (auto* shadowRoot = shadowRootIgnoringUserAgentShadow(node))
         return shadowRoot->firstChild();
-    if (auto slot = dynamicDowncast<HTMLSlotElement>(node)) {
-        if (auto* assignedNodes = slot->assignedNodes())
+    if (is<HTMLSlotElement>(node)) {
+        if (auto* assignedNodes = downcast<HTMLSlotElement>(node).assignedNodes())
             return assignedNodes->at(0).get();
     }
     return node.firstChild();

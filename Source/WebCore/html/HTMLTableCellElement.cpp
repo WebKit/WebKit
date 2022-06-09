@@ -103,11 +103,11 @@ void HTMLTableCellElement::collectPresentationalHintsForAttribute(const Qualifie
     if (name == nowrapAttr)
         addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
     else if (name == widthAttr) {
-        // width="0" is not allowed for compatibility with WinIE.
-        addHTMLLengthToStyle(style, CSSPropertyWidth, value, AllowZeroValue::No);
+        if (parseHTMLInteger(value).value_or(0) > 0) // width="0" is ignored for compatibility with WinIE.
+            addHTMLLengthToStyle(style, CSSPropertyWidth, value);
     } else if (name == heightAttr) {
-        // width="0" is not allowed for compatibility with WinIE.
-        addHTMLLengthToStyle(style, CSSPropertyHeight, value, AllowZeroValue::No);
+        if (parseHTMLInteger(value).value_or(0) > 0) // height="0" is ignored for compatibility with WinIE.
+            addHTMLLengthToStyle(style, CSSPropertyHeight, value);
     } else
         HTMLTablePartElement::collectPresentationalHintsForAttribute(name, value, style);
 }
@@ -164,10 +164,10 @@ void HTMLTableCellElement::setRowSpanForBindings(unsigned n)
 const AtomString& HTMLTableCellElement::scope() const
 {
     // https://html.spec.whatwg.org/multipage/tables.html#attr-th-scope
-    static MainThreadNeverDestroyed<const AtomString> row("row"_s);
-    static MainThreadNeverDestroyed<const AtomString> col("col"_s);
-    static MainThreadNeverDestroyed<const AtomString> rowgroup("rowgroup"_s);
-    static MainThreadNeverDestroyed<const AtomString> colgroup("colgroup"_s);
+    static MainThreadNeverDestroyed<const AtomString> row("row", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> col("col", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> rowgroup("rowgroup", AtomString::ConstructFromLiteral);
+    static MainThreadNeverDestroyed<const AtomString> colgroup("colgroup", AtomString::ConstructFromLiteral);
 
     const AtomString& value = attributeWithoutSynchronization(HTMLNames::scopeAttr);
 

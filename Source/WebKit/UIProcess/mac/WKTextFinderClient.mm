@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -191,7 +191,7 @@ private:
 - (void)replaceMatches:(NSArray *)matches withString:(NSString *)replacementText inSelectionOnly:(BOOL)selectionOnly resultCollector:(void (^)(NSUInteger replacementCount))resultCollector
 {
     Vector<uint32_t> matchIndices;
-    matchIndices.reserveInitialCapacity(matches.count);
+    matchIndices.reserveCapacity(matches.count);
     for (id match in matches) {
         if ([match isKindOfClass:WKTextFinderMatch.class])
             matchIndices.uncheckedAppend([(WKTextFinderMatch *)match index]);
@@ -294,15 +294,11 @@ private:
     if (_imageReplyCallbacks.isEmpty())
         return;
 
-    auto size = image->size();
+    WebCore::IntSize size = image->bitmap().size();
     size.scale(1 / _page->deviceScaleFactor());
-    
-    auto nativeImage = image->copyNativeImage(WebCore::DontCopyBackingStore);
-    if (!nativeImage)
-        return;
 
     auto imageCallback = _imageReplyCallbacks.takeFirst();
-    imageCallback(adoptNS([[NSImage alloc] initWithCGImage:nativeImage->platformImage().get() size:size]).get());
+    imageCallback(adoptNS([[NSImage alloc] initWithCGImage:image->bitmap().makeCGImage().get() size:size]).get());
 }
 
 #pragma mark - WKTextFinderMatch callbacks

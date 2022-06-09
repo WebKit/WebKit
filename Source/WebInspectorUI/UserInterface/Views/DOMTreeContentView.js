@@ -244,11 +244,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         return WI.canArchiveMainFrame();
     }
 
-    get saveMode()
-    {
-        return WI.FileUtilities.SaveMode.SingleFile;
-    }
-
     get saveData()
     {
         return {customSaveHandler: () => { WI.archiveMainFrame(); }};
@@ -588,13 +583,12 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
             // to see if the command key is down like it normally would. So we need to do that check
             // before calling WI.openURL.
             const options = {
-                alwaysOpenExternally: event?.metaKey ?? false,
-                frame: this._frame,
+                alwaysOpenExternally: event ? event.metaKey : false,
                 lineNumber: anchorElement.lineNumber,
                 ignoreNetworkTab: true,
                 ignoreSearchTab: true,
             };
-            WI.openURL(anchorElement.href, options);
+            WI.openURL(anchorElement.href, this._frame, options);
         }
 
         // Start a timeout since this is a single click, if the timeout is canceled before it fires,

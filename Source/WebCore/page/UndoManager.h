@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Document.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
@@ -35,6 +34,7 @@
 
 namespace WebCore {
 
+class Document;
 class UndoItem;
 
 class UndoManager : public RefCounted<UndoManager>, public CanMakeWeakPtr<UndoManager> {

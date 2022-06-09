@@ -28,14 +28,9 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include "Document.h"
 #include "JSDOMPromiseDeferred.h"
 #include "NotImplemented.h"
-#include "PaymentComplete.h"
-#include "PaymentCompleteDetails.h"
 #include "PaymentRequest.h"
-#include <JavaScriptCore/JSONObject.h>
-#include <JavaScriptCore/ThrowScope.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
 
@@ -68,7 +63,7 @@ void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
     m_cachedDetails.clear();
 }
 
-void PaymentResponse::complete(Document& document, std::optional<PaymentComplete>&& result, std::optional<PaymentCompleteDetails>&& details, DOMPromiseDeferred<void>&& promise)
+void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
 {
     if (m_state == State::Stopped || !m_request) {
         promise.reject(Exception { AbortError });
@@ -80,27 +75,12 @@ void PaymentResponse::complete(Document& document, std::optional<PaymentComplete
         return;
     }
 
-    String serializedData;
-    if (details) {
-        if (auto data = details->data) {
-            auto throwScope = DECLARE_THROW_SCOPE(document.globalObject()->vm());
+    ASSERT(hasPendingActivity());
+    ASSERT(m_state == State::Created);
+    m_pendingActivity = nullptr;
+    m_state = State::Completed;
 
-            serializedData = JSONStringify(document.globalObject(), data.get(), 0);
-            if (throwScope.exception()) {
-                promise.reject(Exception { ExistingExceptionError });
-                return;
-            }
-        }
-    }
-
-    auto exception = m_request->complete(document, WTFMove(result), WTFMove(serializedData));
-    if (!exception.hasException()) {
-        ASSERT(hasPendingActivity());
-        ASSERT(m_state == State::Created);
-        m_pendingActivity = nullptr;
-        m_state = State::Completed;
-    }
-    promise.settle(WTFMove(exception));
+    promise.settle(m_request->complete(WTFMove(result)));
 }
 
 void PaymentResponse::retry(PaymentValidationErrors&& errors, DOMPromiseDeferred<void>&& promise)

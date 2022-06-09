@@ -278,20 +278,19 @@ bool GetCompressedBufferSizeAndRowLengthForTextureWithFormat(const TextureRef &t
 {
     gl::Extents size = texture->size(index);
     GLuint bufferSizeInBytes;
-    GLuint bufferRowInBytes;
+    uint32_t bufferRowLength;
     if (!textureObjFormat.intendedInternalFormat().computeCompressedImageSize(size,
                                                                               &bufferSizeInBytes))
     {
         return false;
     }
-    size.height = 1;
-    if (!textureObjFormat.intendedInternalFormat().computeCompressedImageSize(size,
-                                                                              &bufferRowInBytes))
+    if (!textureObjFormat.intendedInternalFormat().computeBufferRowLength(size.width,
+                                                                          &bufferRowLength))
     {
         return false;
     }
     *bytesPerImageOut = bufferSizeInBytes;
-    *bytesPerRowOut   = bufferRowInBytes;
+    *bytesPerRowOut   = bufferRowLength;
     return true;
 }
 static angle::Result InitializeCompressedTextureContents(const gl::Context *context,

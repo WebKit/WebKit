@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 
 #include "GPUColorTargetState.h"
 #include "GPUProgrammableStage.h"
-#include <optional>
 #include <pal/graphics/WebGPU/WebGPUFragmentState.h>
 #include <wtf/Vector.h>
 
@@ -43,15 +42,13 @@ struct GPUFragmentState : public GPUProgrammableStage {
                 entryPoint,
                 constants,
             },
-            targets.map([] (auto& target) -> std::optional<PAL::WebGPU::ColorTargetState> {
-                if (target)
-                    return target->convertToBacking();
-                return std::nullopt;
+            targets.map([] (auto& target) {
+                return target.convertToBacking();
             }),
         };
     }
 
-    Vector<std::optional<GPUColorTargetState>> targets;
+    Vector<GPUColorTargetState> targets;
 };
 
 }

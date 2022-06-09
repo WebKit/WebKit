@@ -28,7 +28,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineDisplayContentBuilder.h"
 #include "LayoutBoxGeometry.h"
 
 namespace WebCore {
@@ -77,11 +76,12 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     return { enclosingTopAndBottom, scrollableOverflowRect };
 }
 
-InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight) const
+InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineLayoutUnit lineBoxLogicalHeight, size_t lineIndex) const
 {
+    auto& rootStyle = lineIndex ? root().firstLineStyle() : root().style();
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto& rootGeometry = layoutState().geometryForBox(root());
-    auto isLeftToRightDirection = lineContent.inlineBaseDirection == TextDirection::LTR;
+    auto isLeftToRightDirection = rootStyle.isLeftToRightDirection();
     auto lineOffsetFromContentBox = lineContent.lineLogicalTopLeft.x() - rootGeometry.contentBoxLeft();
 
     auto lineBoxVisualLeft = isLeftToRightDirection
@@ -94,33 +94,13 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
     auto lineBoxRect = InlineRect { lineContent.lineLogicalTopLeft.y(), lineBoxVisualLeft, lineContent.lineLogicalWidth, lineBoxLogicalHeight };
     auto enclosingLineGeometry = collectEnclosingLineGeometry(lineBox, lineBoxRect);
 
-    // FIXME: Figure out if properties like enclosingLineGeometry top and bottom needs to be flipped as well.
-    auto writingMode = root().style().writingMode();
-    return InlineDisplay::Line { flipLogicalLineRectToVisualForWritingMode(lineBoxRect, writingMode)
-        , flipLogicalLineRectToVisualForWritingMode(enclosingLineGeometry.scrollableOverflowRect, writingMode)
+    return InlineDisplay::Line { lineBoxRect
+        , enclosingLineGeometry.scrollableOverflowRect
         , enclosingLineGeometry.enclosingTopAndBottom
-        , rootInlineBox.logicalTop() + rootInlineBox.ascent()
-        , lineBox.baselineType()
+        , rootInlineBox.logicalTop() + rootInlineBox.baseline()
         , contentVisualLeft
         , rootInlineBox.logicalWidth()
-        , lineBox.isHorizontal()
     };
-}
-
-InlineRect InlineDisplayLineBuilder::flipLogicalLineRectToVisualForWritingMode(const InlineRect& lineLogicalRect, WritingMode writingMode) const
-{
-    switch (writingMode) {
-    case WritingMode::TopToBottom:
-        return lineLogicalRect;
-    case WritingMode::LeftToRight:
-    case WritingMode::RightToLeft:
-        // See InlineFormattingGeometry for more info.
-        return { lineLogicalRect.left(), lineLogicalRect.top(), lineLogicalRect.height(), lineLogicalRect.width() };
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    return lineLogicalRect;
 }
 
 }

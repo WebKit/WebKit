@@ -7,7 +7,8 @@ info: |
 es6id: 6.1.5.1
 author: Sam Mikes
 description: Promise[Symbol.species] exists per spec
-includes: [propertyHelper.js]
+includes:
+  - propertyHelper.js
 features: [Symbol.species]
 ---*/
 

@@ -26,18 +26,16 @@
 #include "config.h"
 #include "SleepDisabler.h"
 
-#include <wtf/text/WTFString.h>
-
 namespace PAL {
 
 #if !PLATFORM(COCOA) && !USE(GLIB)
-std::unique_ptr<SleepDisabler> SleepDisabler::create(const String& reason, Type type)
+std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason, Type type)
 {
     return std::unique_ptr<SleepDisabler>(new SleepDisabler(reason, type));
 }
 #endif // !PLATFORM(COCOA) && !USE(GLIB)
 
-SleepDisabler::SleepDisabler(const String&, Type type)
+SleepDisabler::SleepDisabler(const char*, Type type)
     : m_type(type)
 {
 }

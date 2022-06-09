@@ -291,8 +291,6 @@ TEST(WTF_Expected, void)
 
 template<typename T>
 struct NonCopyable {
-    NonCopyable(T&& t)
-        : value(std::forward<T>(t)) { }
     NonCopyable(NonCopyable&&) = default;
     NonCopyable(const NonCopyable&) = delete;
     NonCopyable& operator=(const NonCopyable&) = delete;

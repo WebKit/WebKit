@@ -80,8 +80,8 @@ TEST(WTF_UInt128, TrivialTraitsTest)
         "");
     static_assert(std::is_trivially_copy_constructible<WTF::UInt128Impl>::value,
         "");
-    static_assert(std::is_trivially_copy_assignable<WTF::UInt128Impl>::value);
-    static_assert(std::is_trivially_destructible<WTF::UInt128Impl>::value);
+    static_assert(std::is_trivially_copy_assignable<WTF::UInt128Impl>::value, "");
+    static_assert(std::is_trivially_destructible<WTF::UInt128Impl>::value, "");
 }
 
 TEST(WTF_UInt128, AllTests)
@@ -251,7 +251,7 @@ TEST(WTF_UInt128, ConversionTests)
     EXPECT_EQ(from_precise_double, from_precise_ints);
     EXPECT_DOUBLE_EQ(static_cast<double>(from_precise_ints), precise_double);
 
-    double approx_double = static_cast<double>(0xffffeeeeddddcccc) * std::pow(2.0, 64.0) + static_cast<double>(0xbbbbaaaa99998888);
+    double approx_double = 0xffffeeeeddddcccc * std::pow(2.0, 64.0) + 0xbbbbaaaa99998888;
     WTF::UInt128Impl from_approx_double(approx_double);
     EXPECT_DOUBLE_EQ(static_cast<double>(from_approx_double), approx_double);
 
@@ -436,9 +436,9 @@ TEST(WTF_UInt128, ConstexprTest)
 
 TEST(WTF_UInt128, NumericLimitsTest)
 {
-    static_assert(std::numeric_limits<WTF::UInt128Impl>::is_specialized);
-    static_assert(!std::numeric_limits<WTF::UInt128Impl>::is_signed);
-    static_assert(std::numeric_limits<WTF::UInt128Impl>::is_integer);
+    static_assert(std::numeric_limits<WTF::UInt128Impl>::is_specialized, "");
+    static_assert(!std::numeric_limits<WTF::UInt128Impl>::is_signed, "");
+    static_assert(std::numeric_limits<WTF::UInt128Impl>::is_integer, "");
     EXPECT_EQ(static_cast<int>(128 * std::log10(2)),
         std::numeric_limits<WTF::UInt128Impl>::digits10);
     EXPECT_EQ(0, std::numeric_limits<WTF::UInt128Impl>::min());
@@ -512,10 +512,10 @@ TYPED_TEST(WTF_Int128FloatTraitsTest, ConstructAssignTest)
 
 TEST(WTF_Int128, TrivialTraitsTest)
 {
-    static_assert(std::is_trivially_default_constructible<WTF::Int128Impl>::value);
-    static_assert(std::is_trivially_copy_constructible<WTF::Int128Impl>::value);
-    static_assert(std::is_trivially_copy_assignable<WTF::Int128Impl>::value);
-    static_assert(std::is_trivially_destructible<WTF::Int128Impl>::value);
+    static_assert(std::is_trivially_default_constructible<WTF::Int128Impl>::value, "");
+    static_assert(std::is_trivially_copy_constructible<WTF::Int128Impl>::value, "");
+    static_assert(std::is_trivially_copy_assignable<WTF::Int128Impl>::value, "");
+    static_assert(std::is_trivially_destructible<WTF::Int128Impl>::value, "");
 }
 
 TEST(WTF_Int128, BoolConversionTest)
@@ -1189,9 +1189,9 @@ TEST(WTF_Int128, BitwiseShiftTest)
 
 TEST(WTF_Int128, NumericLimitsTest)
 {
-    static_assert(std::numeric_limits<WTF::Int128Impl>::is_specialized);
-    static_assert(std::numeric_limits<WTF::Int128Impl>::is_signed);
-    static_assert(std::numeric_limits<WTF::Int128Impl>::is_integer);
+    static_assert(std::numeric_limits<WTF::Int128Impl>::is_specialized, "");
+    static_assert(std::numeric_limits<WTF::Int128Impl>::is_signed, "");
+    static_assert(std::numeric_limits<WTF::Int128Impl>::is_integer, "");
     EXPECT_EQ(static_cast<int>(127 * std::log10(2)),
         std::numeric_limits<WTF::Int128Impl>::digits10);
     EXPECT_EQ(WTF::Int128Min(), std::numeric_limits<WTF::Int128Impl>::min());

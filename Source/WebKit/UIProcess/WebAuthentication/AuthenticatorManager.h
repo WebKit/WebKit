@@ -71,6 +71,7 @@ public:
     virtual bool isMock() const { return false; }
     virtual bool isVirtual() const { return false; }
 
+    void enableModernWebAuthentication();
     void enableNativeSupport();
 
 protected:
@@ -79,15 +80,10 @@ protected:
     void clearState();
     void invokePendingCompletionHandler(Respond&&);
 
-    void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&);
-    TransportSet getTransports() const;
-    virtual void runPanel();
-    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&);
-    void startDiscovery(const TransportSet&);
-
 private:
     enum class Mode {
         Compatible,
+        Modern,
         Native,
     };
 
@@ -100,6 +96,8 @@ private:
     void downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator) final;
     void authenticatorStatusUpdated(WebAuthenticationStatus) final;
     void requestPin(uint64_t retries, CompletionHandler<void(const WTF::String&)>&&) final;
+    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) final;
+    void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) final;
     void requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&&) final;
     void cancelRequest() final;
 
@@ -110,10 +108,13 @@ private:
     virtual void filterTransports(TransportSet&) const;
     virtual void runPresenterInternal(const TransportSet&);
 
+    void startDiscovery(const TransportSet&);
     void initTimeOutTimer();
     void timeOutTimerFired();
+    void runPanel();
     void runPresenter();
     void restartDiscovery();
+    TransportSet getTransports() const;
     void dispatchPanelClientCall(Function<void(const API::WebAuthenticationPanel&)>&&) const;
 
     // Request: We only allow one request per time. A new request will cancel any pending ones.

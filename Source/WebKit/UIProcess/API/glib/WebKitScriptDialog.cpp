@@ -22,12 +22,6 @@
 
 #include "WebKitScriptDialogPrivate.h"
 
-/**
- * WebKitScriptDialog: (ref-func webkit_script_dialog_ref) (unref-func webkit_script_dialog_unref)
- *
- * Carries details to be shown in user-facing dialogs.
- */
-
 G_DEFINE_BOXED_TYPE(WebKitScriptDialog, webkit_script_dialog, webkit_script_dialog_ref, webkit_script_dialog_unref)
 
 WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const CString& message, const CString& defaultText, Function<void(bool, const String&)>&& completionHandler)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <oliver@nerget.com>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -50,13 +50,13 @@ struct SVGPropertyTraits<ChannelSelectorType> {
 
     static ChannelSelectorType fromString(const String& value)
     {
-        if (value == "R"_s)
+        if (value == "R")
             return CHANNEL_R;
-        if (value == "G"_s)
+        if (value == "G")
             return CHANNEL_G;
-        if (value == "B"_s)
+        if (value == "B")
             return CHANNEL_B;
-        if (value == "A"_s)
+        if (value == "A")
             return CHANNEL_A;
         return CHANNEL_UNKNOWN;
     }
@@ -91,8 +91,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
-    Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() }, AtomString { in2() } }; }
-    RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder&) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

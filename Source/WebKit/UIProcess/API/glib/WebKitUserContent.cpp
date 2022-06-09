@@ -27,6 +27,17 @@
 
 using namespace WebCore;
 
+/**
+ * SECTION:WebKitUserContent
+ * @short_description: Defines user content types which affect web pages.
+ * @title: User content
+ *
+ * See also: #WebKitUserContentManager
+ *
+ * Since: 2.6
+ */
+
+
 API::ContentWorld& webkitContentWorld(const char* worldName)
 {
     static NeverDestroyed<HashMap<CString, RefPtr<API::ContentWorld>>> map;
@@ -85,14 +96,6 @@ static inline Vector<String> toStringVector(const char* const* strv)
     return result;
 }
 
-/**
- * WebKitUserStyleSheet: (ref-func webkit_user_style_sheet_ref) (unref-func webkit_user_style_sheet_unref)
- *
- * A CSS style sheet which can be injected in loaded pages.
- *
- * Since: 2.6
- */
-
 struct _WebKitUserStyleSheet {
     _WebKitUserStyleSheet(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserStyleLevel level, const char* const* allowList, const char* const* blockList, API::ContentWorld& world)
         : userStyleSheet(adoptRef(new API::UserStyleSheet(UserStyleSheet {
@@ -147,7 +150,7 @@ void webkit_user_style_sheet_unref(WebKitUserStyleSheet* userStyleSheet)
 }
 
 /**
- * webkit_user_style_sheet_new: (constructor)
+ * webkit_user_style_sheet_new:
  * @source: Source code of the user style sheet.
  * @injected_frames: A #WebKitUserContentInjectedFrames value
  * @level: A #WebKitUserStyleLevel
@@ -175,7 +178,7 @@ WebKitUserStyleSheet* webkit_user_style_sheet_new(const gchar* source, WebKitUse
 }
 
 /**
- * webkit_user_style_sheet_new_for_world: (constructor)
+ * webkit_user_style_sheet_new_for_world:
  * @source: Source code of the user style sheet.
  * @injected_frames: A #WebKitUserContentInjectedFrames value
  * @level: A #WebKitUserStyleLevel
@@ -204,14 +207,6 @@ API::UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet*
 {
     return *userStyleSheet->userStyleSheet;
 }
-
-/**
- * WebKitUserScript: (ref-func webkit_user_script_ref) (unref-func webkit_user_script_unref)
- *
- * A JavaScript snippet which can be injected in loaded pages.
- *
- * Since: 2.6
- */
 
 struct _WebKitUserScript {
     _WebKitUserScript(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const gchar* const* allowList, const gchar* const* blockList, API::ContentWorld& world)
@@ -267,7 +262,7 @@ void webkit_user_script_unref(WebKitUserScript* userScript)
 }
 
 /**
- * webkit_user_script_new: (constructor)
+ * webkit_user_script_new:
  * @source: Source code of the user script.
  * @injected_frames: A #WebKitUserContentInjectedFrames value
  * @injection_time: A #WebKitUserScriptInjectionTime value
@@ -295,7 +290,7 @@ WebKitUserScript* webkit_user_script_new(const gchar* source, WebKitUserContentI
 }
 
 /**
- * webkit_user_script_new_for_world: (constructor)
+ * webkit_user_script_new_for_world:
  * @source: Source code of the user script.
  * @injected_frames: A #WebKitUserContentInjectedFrames value
  * @injection_time: A #WebKitUserScriptInjectionTime value
@@ -326,14 +321,6 @@ API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript* userScript)
 }
 
 
-/**
- * WebKitUserContentFilter: (ref-func webkit_user_content_filter_ref) (unref-func webkit_user_content_filter_unref)
- *
- * A compiled set of rules which applied to resource loads.
- *
- * Since: 2.24
- */
-
 struct _WebKitUserContentFilter {
     _WebKitUserContentFilter(RefPtr<API::ContentRuleList>&& contentRuleList)
         : identifier(contentRuleList->name().utf8())
@@ -355,8 +342,6 @@ G_DEFINE_BOXED_TYPE(WebKitUserContentFilter, webkit_user_content_filter, webkit_
  *
  * Atomically increments the reference count of @user_content_filter by one.
  * This function is MT-safe and may be called from any thread.
- *
- * Returns: the @user_content_filter passed in.
  *
  * Since: 2.24
  */

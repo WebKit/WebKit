@@ -49,10 +49,6 @@
 #include <usp10.h>
 #endif
 
-namespace WTF {
-class TextStream;
-}
-
 namespace WebCore {
 
 class FontCache;
@@ -142,19 +138,22 @@ public:
 
     FloatRect boundsForGlyph(Glyph) const;
 
-    // Should the result of this function include the results of synthetic bold?
-    enum class SyntheticBoldInclusion {
-        Incorporate,
-        Exclude
-    };
-    float widthForGlyph(Glyph, SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const;
+    // If you're calling this, you need to care about synthetic bold.
+    // This function returns the width before adding in the synthetic bold offset.
+    // This is because these widths are fed as an input to shaping, which needs to consume the true widths.
+    // Then, the synthetic bold offset is applied after shaping.
+    // If you're not going through WidthIterator or ComplexTextController (and thus potentially executing shaping yourself),
+    // then you need to decide whether or not you need to add syntheticBoldOffset() to the result of your widthForGlyph() call.
+    float widthForGlyph(Glyph) const;
 
     const Path& pathForGlyph(Glyph) const; // Don't store the result of this! The hash map is free to rehash at any point, leaving this reference dangling.
+    FloatRect platformBoundsForGlyph(Glyph) const;
+    float platformWidthForGlyph(Glyph) const;
+    Path platformPathForGlyph(Glyph) const;
 
-    float spaceWidth(SyntheticBoldInclusion SyntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const
-    {
-        return m_spaceWidth + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
-    }
+    // If you're calling this, you need to care about synthetic bold.
+    // See the comment just above widthForGlyph().
+    float spaceWidth() const { return m_spaceWidth; }
 
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 
@@ -236,10 +235,6 @@ private:
     FloatRect boundsForGDIGlyph(Glyph) const;
     float widthForGDIGlyph(Glyph) const;
 #endif
-
-    FloatRect platformBoundsForGlyph(Glyph) const;
-    float platformWidthForGlyph(Glyph) const;
-    Path platformPathForGlyph(Glyph) const;
 
 #if PLATFORM(COCOA)
     class ComplexColorFormatGlyphs {
@@ -329,6 +324,7 @@ private:
     Visibility m_visibility; // @font-face's internal timer can cause us to show fonts even when a font is being downloaded.
 
     float m_spaceWidth { 0 };
+    float m_adjustedSpaceWidth { 0 };
 
     float m_syntheticBoldOffset { 0 };
 
@@ -373,7 +369,7 @@ ALWAYS_INLINE FloatRect Font::boundsForGlyph(Glyph glyph) const
     return bounds;
 }
 
-ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion SyntheticBoldInclusion) const
+ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
 {
     // The optimization of returning 0 for the zero-width-space glyph is incorrect for the LastResort font,
     // used in place of the actual font when isLoading() is true on both macOS and iOS.
@@ -384,7 +380,7 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion Synt
 
     float width = m_glyphToWidthMap.metricsForGlyph(glyph);
     if (width != cGlyphSizeUnknown)
-        return width + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
+        return width;
 
 #if ENABLE(OPENTYPE_VERTICAL)
     if (m_verticalData)
@@ -394,12 +390,8 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion Synt
         width = platformWidthForGlyph(glyph);
 
     m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
-    return width + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
+    return width;
 }
-
-#if !LOG_DISABLED
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Font&);
-#endif
 
 } // namespace WebCore
 

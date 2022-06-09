@@ -567,7 +567,7 @@ void ApplicationCacheStorage::verifySchemaVersion()
     SQLiteTransaction setDatabaseVersion(m_database);
     setDatabaseVersion.begin();
 
-    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA user_version=", schemaVersion));
+    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA user_version=%", schemaVersion));
     if (!statement)
         return;
     
@@ -586,7 +586,7 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     if (m_cacheDirectory.isNull())
         return;
 
-    m_cacheFile = FileSystem::pathByAppendingComponent(m_cacheDirectory, "ApplicationCache.db"_s);
+    m_cacheFile = FileSystem::pathByAppendingComponent(m_cacheDirectory, "ApplicationCache.db");
     if (!createIfDoesNotExist && !FileSystem::fileExists(m_cacheFile))
         return;
 
@@ -798,12 +798,12 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         String flatFileDirectory = FileSystem::pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
         FileSystem::makeAllDirectories(flatFileDirectory);
 
-        StringView extension;
+        String extension;
         
         String fileName = resource->response().suggestedFilename();
         size_t dotIndex = fileName.reverseFind('.');
         if (dotIndex != notFound && dotIndex < (fileName.length() - 1))
-            extension = StringView(fileName).substring(dotIndex);
+            extension = fileName.substring(dotIndex);
 
         String path;
         if (!writeDataToUniqueFileInDirectory(resource->data(), flatFileDirectory, path, extension))
@@ -1054,8 +1054,8 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup& group)
 template<typename CharacterType>
 static inline void parseHeader(const CharacterType* header, unsigned headerLength, ResourceResponse& response)
 {
-    ASSERT(WTF::find(header, headerLength, ':') != notFound);
-    unsigned colonPosition = WTF::find(header, headerLength, ':');
+    ASSERT(find(header, headerLength, ':') != notFound);
+    unsigned colonPosition = find(header, headerLength, ':');
 
     // Save memory by putting the header names into atom strings so each is stored only once,
     // even though the setHTTPHeaderField function does not require an atom string.
@@ -1269,15 +1269,18 @@ void ApplicationCacheStorage::deleteTables()
 bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheResource* resource)
 {
     auto& type = resource->response().mimeType();
-    return startsWithLettersIgnoringASCIICase(type, "audio/"_s) || startsWithLettersIgnoringASCIICase(type, "video/"_s);
+    return startsWithLettersIgnoringASCIICase(type, "audio/") || startsWithLettersIgnoringASCIICase(type, "video/");
 }
     
-bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedBuffer& data, const String& directory, String& path, StringView fileExtension)
+bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedBuffer& data, const String& directory, String& path, const String& fileExtension)
 {
     String fullPath;
     
     do {
-        path = makeString(UUID::createVersion4(), fileExtension);
+        path = FileSystem::encodeForFileName(createCanonicalUUIDString()) + fileExtension;
+        // Guard against the above function being called on a platform which does not implement
+        // createCanonicalUUIDString().
+        ASSERT(!path.isEmpty());
         if (path.isEmpty())
             return false;
         
@@ -1492,7 +1495,7 @@ void ApplicationCacheStorage::deleteCacheForOrigin(const SecurityOriginData& sec
         return;
     }
 
-    URL originURL = securityOrigin.toURL();
+    URL originURL(URL(), securityOrigin.toString());
 
     for (const auto& url : *urls) {
         if (!protocolHostAndPortAreEqual(url, originURL))

@@ -27,8 +27,6 @@
 
 #include "ImageDecoder.h"
 
-#if USE(CG)
-
 namespace WebCore {
 
 class ImageDecoderCG final : public ImageDecoder {
@@ -70,20 +68,10 @@ public:
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final { }
 
-    WEBCORE_EXPORT static void enableDecodingHEIC();
-    static bool decodingHEICEnabled();
-
-    WEBCORE_EXPORT static void disableHardwareAcceleratedDecoding();
-    static bool hardwareAcceleratedDecodingDisabled();
-
 private:
     bool m_isAllDataReceived { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     RetainPtr<CGImageSourceRef> m_nativeDecoder;
-    static bool s_enableDecodingHEIC;
-    static bool s_hardwareAcceleratedDecodingDisabled;
 };
 
-} // namespace WebCore
-
-#endif // USE(CG)
+}

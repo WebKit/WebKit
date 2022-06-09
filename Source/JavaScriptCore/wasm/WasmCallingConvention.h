@@ -33,7 +33,7 @@
 #include "RegisterAtOffsetList.h"
 #include "RegisterSet.h"
 #include "WasmFormat.h"
-#include "WasmTypeDefinition.h"
+#include "WasmSignature.h"
 #include "WasmValueLocation.h"
 
 namespace JSC { namespace Wasm {
@@ -109,7 +109,6 @@ private:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-        case TypeKind::Rtt:
             return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:
@@ -121,9 +120,8 @@ private:
     }
 
 public:
-    CallInformation callInformationFor(const TypeDefinition& type, CallRole role = CallRole::Caller) const
+    CallInformation callInformationFor(const Signature& signature, CallRole role = CallRole::Caller) const
     {
-        const auto& signature = *type.as<FunctionSignature>();
         bool argumentsIncludeI64 = false;
         bool resultsIncludeI64 = false;
         size_t gpArgumentCount = 0;
@@ -134,8 +132,8 @@ public:
 
         Vector<ArgumentLocation> params(signature.argumentCount());
         for (size_t i = 0; i < signature.argumentCount(); ++i) {
-            argumentsIncludeI64 |= signature.argumentType(i).isI64();
-            params[i] = marshallLocation(role, signature.argumentType(i), gpArgumentCount, fpArgumentCount, argStackOffset);
+            argumentsIncludeI64 |= signature.argument(i).isI64();
+            params[i] = marshallLocation(role, signature.argument(i), gpArgumentCount, fpArgumentCount, argStackOffset);
         }
         gpArgumentCount = 0;
         fpArgumentCount = 0;
@@ -212,7 +210,7 @@ private:
     }
 
 public:
-    CallInformation callInformationFor(const TypeDefinition& signature, CallRole role = CallRole::Callee) const
+    CallInformation callInformationFor(const Signature& signature, CallRole role = CallRole::Callee) const
     {
         size_t gpArgumentCount = 0;
         size_t fpArgumentCount = 0;
@@ -221,8 +219,8 @@ public:
             stackOffset -= sizeof(CallerFrameAndPC);
 
         Vector<ArgumentLocation> params;
-        for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i)
-            params.append(marshallLocation(role, signature.as<FunctionSignature>()->argumentType(i), gpArgumentCount, fpArgumentCount, stackOffset));
+        for (size_t i = 0; i < signature.argumentCount(); ++i)
+            params.append(marshallLocation(role, signature.argument(i), gpArgumentCount, fpArgumentCount, stackOffset));
 
         Vector<ArgumentLocation, 1> results { ArgumentLocation::reg(GPRInfo::returnValueGPR) };
         return CallInformation(WTFMove(params), WTFMove(results), stackOffset);

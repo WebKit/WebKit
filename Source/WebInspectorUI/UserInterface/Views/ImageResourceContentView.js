@@ -178,8 +178,9 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         if (existingOverrides.length > 1)
             return false;
 
+        // Request overrides cannot be created/updated from a file as files don't have network info.
         let localResourceOverride = this.resource.localResourceOverride || existingOverrides[0];
-        if (localResourceOverride && !localResourceOverride.canMapToFile)
+        if (localResourceOverride?.type === WI.LocalResourceOverride.InterceptType.Request)
             return false;
 
         // Appear if the drop contains a file.
@@ -216,7 +217,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
             revision.updateRevisionContent(content, {base64Encoded, mimeType});
 
             if (!this.resource.localResourceOverride)
-                WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: this.resource});
+                WI.showLocalResourceOverride(localResourceOverride);
         });
     }
 

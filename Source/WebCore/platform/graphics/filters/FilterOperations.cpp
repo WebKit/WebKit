@@ -84,13 +84,12 @@ IntOutsets FilterOperations::outsets() const
             auto& dropShadowOperation = downcast<DropShadowFilterOperation>(*operation);
             float stdDeviation = dropShadowOperation.stdDeviation();
             IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ stdDeviation, stdDeviation });
-            
-            int top = std::max(0, outsetSize.height() - dropShadowOperation.y());
-            int right = std::max(0, outsetSize.width() + dropShadowOperation.x());
-            int bottom = std::max(0, outsetSize.height() + dropShadowOperation.y());
-            int left = std::max(0, outsetSize.width() - dropShadowOperation.x());
-            
-            auto outsets = IntOutsets { top, right, bottom, left };
+            IntOutsets outsets {
+                std::max(0, outsetSize.height() - dropShadowOperation.y()),
+                std::max(0, outsetSize.width() + dropShadowOperation.x()),
+                std::max(0, outsetSize.height() + dropShadowOperation.y()),
+                std::max(0, outsetSize.width() - dropShadowOperation.x())
+            };
             totalOutsets += outsets;
             break;
         }

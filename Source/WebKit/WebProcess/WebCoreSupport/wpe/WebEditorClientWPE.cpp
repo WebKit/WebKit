@@ -30,7 +30,6 @@
 #include <WebCore/Editor.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/Frame.h>
-#include <WebCore/FrameDestructionObserverInlines.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Node.h>
 #include <WebCore/PlatformKeyboardEvent.h>
@@ -169,7 +168,7 @@ static const char* interpretKeyEvent(const KeyboardEvent& event)
 
 static void handleKeyPress(Frame& frame, KeyboardEvent& event, const PlatformKeyboardEvent& platformEvent)
 {
-    auto commandName = String::fromLatin1(interpretKeyEvent(event));
+    String commandName = interpretKeyEvent(event);
 
     if (!commandName.isEmpty()) {
         frame.editor().command(commandName).execute();
@@ -191,7 +190,7 @@ static void handleKeyPress(Frame& frame, KeyboardEvent& event, const PlatformKey
 
 static void handleKeyDown(Frame& frame, KeyboardEvent& event, const PlatformKeyboardEvent&)
 {
-    auto commandName = String::fromLatin1(interpretKeyEvent(event));
+    String commandName = interpretKeyEvent(event);
     if (commandName.isEmpty())
         return;
 

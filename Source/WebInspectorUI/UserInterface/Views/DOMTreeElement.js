@@ -51,7 +51,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._highlightedAttributes = new Set;
         this._recentlyModifiedAttributes = new Map;
         this._closeTagTreeElement = null;
-        this._layoutBadgeElement = null;
+        this._gridBadgeElement = null;
 
         node.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._updatePseudoClassIndicator, this);
 
@@ -444,20 +444,20 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             this.listItemElement.addEventListener("dragstart", this);
         }
 
-        if (this.representedObject.layoutContextType) {
-            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
+        if (this.representedObject.layoutContextType === WI.DOMNode.LayoutContextType.Grid) {
+            WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayShown, this._updateGridBadgeStatus, this);
+            WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._updateGridBadgeStatus, this);
         }
         this.representedObject.addEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
 
-        this._updateLayoutBadge();
+        this._updateGridBadge();
     }
 
     ondetach()
     {
         if (this.representedObject.layoutContextType === WI.DOMNode.LayoutContextType.Grid) {
-            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
+            WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayShown, this._updateGridBadgeStatus, this);
+            WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._updateGridBadgeStatus, this);
         }
         this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutContextTypeChanged, this._handleLayoutContextTypeChanged, this);
     }
@@ -1334,7 +1334,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             this.title.appendChild(this._nodeTitleInfo().titleDOM);
             this._highlightResult = undefined;
         }
-        this._updateLayoutBadge();
+        this._updateGridBadge();
 
         // Setting this.title will implicitly remove all children. Clear the
         // selection element so that we properly recreate it if necessary.
@@ -2010,43 +2010,30 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         this._animatingHighlight = false;
     }
 
-    _updateLayoutBadge()
+    _updateGridBadge()
     {
         if (!this.listItemElement || this._elementCloseTag)
             return;
 
-        if (this._layoutBadgeElement) {
-            this._layoutBadgeElement.remove();
-            this._layoutBadgeElement = null;
+        if (this._gridBadgeElement) {
+            this._gridBadgeElement.remove();
+            this._gridBadgeElement = null;
         }
 
-        if (!this.representedObject.layoutContextType)
+        if (this.representedObject.layoutContextType !== WI.DOMNode.LayoutContextType.Grid)
             return;
 
-        this._layoutBadgeElement = this.title.appendChild(document.createElement("span"));
-        this._layoutBadgeElement.className = "layout-badge";
+        this._gridBadgeElement = document.createElement("span");
+        this._gridBadgeElement.className = "badge-css-grid";
+        this._gridBadgeElement.textContent = WI.unlocalizedString("grid");
+        this._updateGridBadgeStatus();
+        this.title.append(this._gridBadgeElement);
 
-        switch (this.representedObject.layoutContextType) {
-        case WI.DOMNode.LayoutContextType.Grid:
-            this._layoutBadgeElement.textContent = WI.unlocalizedString("grid");
-            break;
-
-        case WI.DOMNode.LayoutContextType.Flex:
-            this._layoutBadgeElement.textContent = WI.unlocalizedString("flex");
-            break;
-
-        default:
-            console.assert(false, this.representedObject.layoutContextType);
-            break;
-        }
-
-        this._updateLayoutBadgeStatus();
-
-        this._layoutBadgeElement.addEventListener("click", this._layoutBadgeClicked.bind(this), true);
-        this._layoutBadgeElement.addEventListener("dblclick", this._layoutBadgeDoubleClicked, true);
+        this._gridBadgeElement.addEventListener("click", this._gridBadgeClicked.bind(this), true);
+        this._gridBadgeElement.addEventListener("dblclick", this._gridBadgeDoubleClicked, true);
     }
 
-    _layoutBadgeClicked(event)
+    _gridBadgeClicked(event)
     {
         if (event.button !== 0 || event.ctrlKey)
             return;
@@ -2054,50 +2041,44 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         // Don't expand or collapse a tree element when clicking on the grid badge.
         event.stop();
 
-        if (this.representedObject.layoutOverlayShowing)
-            this.representedObject.hideLayoutOverlay();
-        else {
-            this.representedObject.showLayoutOverlay({
-                initiator: this.representedObject.layoutContextType === WI.DOMNode.LayoutContextType.Grid ? WI.GridOverlayDiagnosticEventRecorder.Initiator.Badge : null,
-            });
-        }
+        WI.overlayManager.toggleGridOverlay(this.representedObject, {initiator: WI.GridOverlayDiagnosticEventRecorder.Initiator.Badge});
     }
 
-    _layoutBadgeDoubleClicked(event)
+    _gridBadgeDoubleClicked(event)
     {
         event.stop();
     }
 
-    _updateLayoutBadgeStatus()
+    _updateGridBadgeStatus()
     {
-        if (!this._layoutBadgeElement)
+        if (!this._gridBadgeElement)
             return;
 
-        let hasVisibleOverlay = this.representedObject.layoutOverlayShowing;
-        this._layoutBadgeElement.classList.toggle("activated", hasVisibleOverlay);
+        let isGridVisible = WI.overlayManager.isGridOverlayVisible(this.representedObject);
+        this._gridBadgeElement.classList.toggle("activated", isGridVisible);
 
-        if (hasVisibleOverlay) {
-            let color = this.representedObject.layoutOverlayColor;
+        if (isGridVisible) {
+            let color = WI.overlayManager.getGridColorForNode(this.representedObject);
             let hue = color.hsl[0];
-            this._layoutBadgeElement.style.borderColor = color.toString();
-            this._layoutBadgeElement.style.backgroundColor = `hsl(${hue}, 90%, 95%)`;
-            this._layoutBadgeElement.style.setProperty("color", `hsl(${hue}, 55%, 40%)`);
+            this._gridBadgeElement.style.borderColor = color.toString();
+            this._gridBadgeElement.style.backgroundColor = `hsl(${hue}, 90%, 95%)`;
+            this._gridBadgeElement.style.setProperty("color", `hsl(${hue}, 55%, 40%)`);
         } else
-            this._layoutBadgeElement.removeAttribute("style");
+            this._gridBadgeElement.removeAttribute("style");
     }
 
     _handleLayoutContextTypeChanged(event)
     {
         let domNode = event.target;
-        if (domNode.layoutContextType && !this._layoutBadgeElement) {
-            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-            this.representedObject.addEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
-        } else if (!domNode.layoutContextType && this._layoutBadgeElement) {
-            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayShown, this._updateLayoutBadgeStatus, this);
-            this.representedObject.removeEventListener(WI.DOMNode.Event.LayoutOverlayHidden, this._updateLayoutBadgeStatus, this);
+        if (domNode.layoutContextType === WI.DOMNode.LayoutContextType.Grid) {
+            WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayShown, this._updateGridBadgeStatus, this);
+            WI.overlayManager.addEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._updateGridBadgeStatus, this);
+        } else {
+            WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayShown, this._updateGridBadgeStatus, this);
+            WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._updateGridBadgeStatus, this);
         }
 
-        this._updateLayoutBadge();
+        this._updateGridBadge();
     }
 };
 

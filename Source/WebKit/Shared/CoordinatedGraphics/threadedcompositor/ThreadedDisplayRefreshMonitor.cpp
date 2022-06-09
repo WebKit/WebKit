@@ -37,14 +37,14 @@
 
 namespace WebKit {
 
-constexpr unsigned defaultRefreshRate = 60000;
+// FIXME: Use the correct frame rate.
+constexpr WebCore::FramesPerSecond DefaultFramesPerSecond = 60;
 
 ThreadedDisplayRefreshMonitor::ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID displayID, Client& client)
     : WebCore::DisplayRefreshMonitor(displayID)
     , m_displayRefreshTimer(RunLoop::main(), this, &ThreadedDisplayRefreshMonitor::displayRefreshCallback)
     , m_client(&client)
-    , m_targetRefreshRate(defaultRefreshRate)
-    , m_currentUpdate({ 0, m_targetRefreshRate / 1000 })
+    , m_currentUpdate({ 0, DefaultFramesPerSecond })
 {
 #if USE(GLIB_EVENT_LOOP)
     m_displayRefreshTimer.setPriority(RunLoopSourcePriority::DisplayRefreshMonitorTimer);
@@ -131,16 +131,6 @@ void ThreadedDisplayRefreshMonitor::displayRefreshCallback()
     // the notification handling.
     if (m_client)
         m_client->handleDisplayRefreshMonitorUpdate(hasBeenRescheduled);
-}
-
-void ThreadedDisplayRefreshMonitor::setTargetRefreshRate(unsigned rate)
-{
-    if (!rate)
-        rate = defaultRefreshRate;
-    if (m_targetRefreshRate != rate) {
-        m_targetRefreshRate = rate;
-        m_currentUpdate = { 0, m_targetRefreshRate / 1000 };
-    }
 }
 
 } // namespace WebKit

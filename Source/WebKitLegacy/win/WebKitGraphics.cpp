@@ -30,7 +30,6 @@
 
 #include "WebPreferences.h"
 
-#include <WebCore/CommonAtomStrings.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/FontDescription.h>
 #include <WebCore/FontSelector.h>
@@ -47,7 +46,7 @@ using namespace WebCore;
 
 static FontCascade makeFont(const WebFontDescription& description)
 {
-    WebCore::initializeCommonAtomStrings();
+    AtomString::init();
 
     String fontFamilyString(description.family, description.familyLength);
 

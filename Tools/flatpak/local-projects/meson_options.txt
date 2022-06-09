@@ -1,1 +1,0 @@
-option('subprojects', type : 'string', value : '', description : 'Comma-separated project names')

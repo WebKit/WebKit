@@ -1,3 +1,0 @@
-
-PASS roundRect() with negative radius throws an exception
-

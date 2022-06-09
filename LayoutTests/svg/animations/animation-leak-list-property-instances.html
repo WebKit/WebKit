@@ -37,7 +37,6 @@
          return;
      }
 
-     jsTestIsAsync = true;
      testRunner.dumpAsText();
 
      // One gc() call is not enough and causes flakiness in some platforms.
@@ -49,15 +48,12 @@
      applyTransform();
      removeRect();
 
-     requestAnimationFrame(() => {
-         // One gc() call is not enough and causes flakiness in some platforms.
-         gc();
-         gc();
-         var delta = internals.numberOfLiveNodes() - originalLiveElements;
-         shouldBeZero(delta.toString());
-         var successfullyParsed = true;
-         testRunner.notifyDone();
-     });
+     // One gc() call is not enough and causes flakiness in some platforms.
+     gc();
+     gc();
+     var delta = internals.numberOfLiveNodes() - originalLiveElements;
+     shouldBeZero(delta.toString());
+     var successfullyParsed = true;
  }
 </script>
 <body onload="test()">

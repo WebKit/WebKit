@@ -27,7 +27,6 @@
 #include "SystemInfo.h"
 
 #include <windows.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -85,25 +84,25 @@ static String osVersionForUAString()
     case WindowsCE1:
     case WindowsCE2:
     case WindowsCE3:
-        return "Windows CE"_s;
+        return "Windows CE";
     case WindowsCE4:
-        return "Windows CE .NET"_s;
+        return "Windows CE .NET";
     case Windows3_1:
-        return "Windows 3.1"_s;
+        return "Windows 3.1";
     case Windows95:
-        return "Windows 95"_s;
+        return "Windows 95";
     case Windows98:
-        return "Windows 98"_s;
+        return "Windows 98";
     case WindowsME:
-        return "Windows 98; Win 9x 4.90"_s;
+        return "Windows 98; Win 9x 4.90";
     case WindowsNT4:
-        return "WinNT4.0"_s;
+        return "WinNT4.0";
     default:
         break;
     }
 
     const char* familyName = (version >= WindowsNT3) ? "Windows NT " : "Windows CE ";
-    return makeString(familyName, major, '.', minor);
+    return familyName + String::number(major) + '.' + String::number(minor);
 }
 
 static bool isWOW64()
@@ -153,11 +152,11 @@ static WORD processorArchitecture()
 static String architectureTokenForUAString()
 {
     if (isWOW64())
-        return "; WOW64"_s;
+        return "; WOW64";
     if (processorArchitecture() == PROCESSOR_ARCHITECTURE_AMD64)
-        return "; Win64; x64"_s;
+        return "; Win64; x64";
     if (processorArchitecture() == PROCESSOR_ARCHITECTURE_IA64)
-        return "; Win64; IA64"_s;
+        return "; Win64; IA64";
     return String();
 }
 

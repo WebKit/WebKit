@@ -29,8 +29,6 @@
 #include "WebSocketTaskCocoa.h"
 #elif USE(SOUP)
 #include "WebSocketTaskSoup.h"
-#elif USE(CURL)
-#include "WebSocketTaskCurl.h"
 #else
 
 #include "DataReference.h"

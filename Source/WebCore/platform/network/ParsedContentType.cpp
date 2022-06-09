@@ -347,7 +347,7 @@ ParsedContentType::ParsedContentType(const String& contentType)
 
 String ParsedContentType::charset() const
 {
-    return parameterValueForName("charset"_s);
+    return parameterValueForName("charset");
 }
 
 void ParsedContentType::setCharset(String&& charset)
@@ -365,11 +365,11 @@ size_t ParsedContentType::parameterCount() const
     return m_parameterValues.size();
 }
 
-void ParsedContentType::setContentType(String&& contentRange, Mode mode)
+void ParsedContentType::setContentType(StringView contentRange, Mode mode)
 {
-    m_mimeType = WTFMove(contentRange);
+    m_mimeType = contentRange.toString();
     if (mode == Mode::MimeSniff)
-        m_mimeType = stripLeadingAndTrailingHTTPSpaces(StringView(m_mimeType)).convertToASCIILowercase();
+        m_mimeType = stripLeadingAndTrailingHTTPSpaces(m_mimeType).convertToASCIILowercase();
     else
         m_mimeType = m_mimeType.stripWhiteSpace();
 }

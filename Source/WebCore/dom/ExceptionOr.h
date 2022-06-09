@@ -90,6 +90,8 @@ private:
 #endif
 };
 
+ExceptionOr<void> isolatedCopy(ExceptionOr<void>&&);
+
 template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(Exception&& exception)
     : m_value(makeUnexpected(WTFMove(exception)))
 {
@@ -191,6 +193,13 @@ inline Exception ExceptionOr<void>::releaseException()
     return WTFMove(m_value.error());
 }
 
+inline ExceptionOr<void> isolatedCopy(ExceptionOr<void>&& value)
+{
+    if (value.hasException())
+        return isolatedCopy(value.releaseException());
+    return { };
+}
+
 template <typename T> inline constexpr bool IsExceptionOr = WTF::IsTemplate<std::decay_t<T>, ExceptionOr>::value;
 
 template <typename T, bool isExceptionOr = IsExceptionOr<T>> struct TypeOrExceptionOrUnderlyingTypeImpl;
@@ -209,12 +218,6 @@ template<typename T> struct CrossThreadCopierBase<false, false, WebCore::Excepti
             return crossThreadCopy(source.exception());
         return crossThreadCopy(source.returnValue());
     }
-    static Type copy(Type&& source)
-    {
-        if (source.hasException())
-            return crossThreadCopy(source.releaseException());
-        return crossThreadCopy(source.releaseReturnValue());
-    }
 };
 
 template<> struct CrossThreadCopierBase<false, false, WebCore::ExceptionOr<void> > {
@@ -223,12 +226,6 @@ template<> struct CrossThreadCopierBase<false, false, WebCore::ExceptionOr<void>
     {
         if (source.hasException())
             return crossThreadCopy(source.exception());
-        return { };
-    }
-    static Type copy(Type&& source)
-    {
-        if (source.hasException())
-            return crossThreadCopy(source.releaseException());
         return { };
     }
 };

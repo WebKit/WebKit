@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #include "config.h"
@@ -42,7 +42,7 @@ namespace DisplayList {
 CString DisplayList::description() const
 {
     TextStream ts;
-    dump(ts);
+    ts << *this;
     return ts.release().utf8();
 }
 
@@ -83,21 +83,24 @@ void DisplayList::clear()
     m_resourceHeap.clear();
 }
 
-bool DisplayList::shouldDumpForFlags(OptionSet<AsTextFlag> flags, ItemHandle item)
+bool DisplayList::shouldDumpForFlags(AsTextFlags flags, ItemHandle item)
 {
     switch (item.type()) {
     case ItemType::SetState:
-        if (flags.contains(AsTextFlag::IncludePlatformOperations)) {
+        if (!(flags & AsTextFlag::IncludesPlatformOperations)) {
             const auto& stateItem = item.get<SetState>();
             // FIXME: for now, only drop the item if the only state-change flags are platform-specific.
-            if (stateItem.state().changes() == GraphicsContextState::Change::ShouldSubpixelQuantizeFonts)
+            if (stateItem.stateChange().m_changeFlags == GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
+                return false;
+
+            if (stateItem.stateChange().m_changeFlags == GraphicsContextState::ShouldSubpixelQuantizeFontsChange)
                 return false;
         }
         break;
 #if USE(CG)
     case ItemType::ApplyFillPattern:
     case ItemType::ApplyStrokePattern:
-        if (flags.contains(AsTextFlag::IncludePlatformOperations))
+        if (!(flags & AsTextFlag::IncludesPlatformOperations))
             return false;
         break;
 #endif
@@ -107,23 +110,19 @@ bool DisplayList::shouldDumpForFlags(OptionSet<AsTextFlag> flags, ItemHandle ite
     return true;
 }
 
-String DisplayList::asText(OptionSet<AsTextFlag> flags) const
+String DisplayList::asText(AsTextFlags flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
-#if !LOG_DISABLED
     for (auto displayListItem : *this) {
         auto [item, extent, itemSizeInBuffer] = displayListItem.value();
         if (!shouldDumpForFlags(flags, item))
             continue;
 
         TextStream::GroupScope group(stream);
-        dumpItemHandle(stream, item, flags);
+        stream << item;
         if (item.isDrawingItem())
             stream << " extent " << extent;
     }
-#else
-    UNUSED_PARAM(flags);
-#endif
     return stream.release();
 }
 
@@ -132,16 +131,13 @@ void DisplayList::dump(TextStream& ts) const
     TextStream::GroupScope group(ts);
     ts << "display list";
 
-#if !LOG_DISABLED
     for (auto displayListItem : *this) {
         auto [item, extent, itemSizeInBuffer] = displayListItem.value();
         TextStream::GroupScope group(ts);
-        dumpItemHandle(ts, item, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
+        ts << item;
         if (item.isDrawingItem())
             ts << " extent " << extent;
     }
-#endif
-
     ts.startGroup();
     ts << "size in bytes: " << sizeInBytes();
     ts.endGroup();
@@ -244,18 +240,18 @@ void DisplayList::append(ItemHandle item)
         return append<ClipOutToPath>(item.get<ClipOutToPath>());
     case ItemType::ClipPath:
         return append<ClipPath>(item.get<ClipPath>());
+    case ItemType::BeginClipToDrawingCommands:
+        return append<BeginClipToDrawingCommands>(item.get<BeginClipToDrawingCommands>());
+    case ItemType::EndClipToDrawingCommands:
+        return append<EndClipToDrawingCommands>(item.get<EndClipToDrawingCommands>());
     case ItemType::DrawFilteredImageBuffer:
         return append<DrawFilteredImageBuffer>(item.get<DrawFilteredImageBuffer>());
     case ItemType::DrawGlyphs:
         return append<DrawGlyphs>(item.get<DrawGlyphs>());
-    case ItemType::DrawDecomposedGlyphs:
-        return append<DrawDecomposedGlyphs>(item.get<DrawDecomposedGlyphs>());
     case ItemType::DrawImageBuffer:
         return append<DrawImageBuffer>(item.get<DrawImageBuffer>());
     case ItemType::DrawNativeImage:
         return append<DrawNativeImage>(item.get<DrawNativeImage>());
-    case ItemType::DrawSystemImage:
-        return append<DrawSystemImage>(item.get<DrawSystemImage>());
     case ItemType::DrawPattern:
         return append<DrawPattern>(item.get<DrawPattern>());
     case ItemType::DrawRect:
@@ -300,6 +296,12 @@ void DisplayList::append(ItemHandle item)
         return append<FillPath>(item.get<FillPath>());
     case ItemType::FillEllipse:
         return append<FillEllipse>(item.get<FillEllipse>());
+    case ItemType::FlushContext:
+        return append<FlushContext>(item.get<FlushContext>());
+    case ItemType::GetPixelBuffer:
+        return append<GetPixelBuffer>(item.get<GetPixelBuffer>());
+    case ItemType::PutPixelBuffer:
+        return append<PutPixelBuffer>(item.get<PutPixelBuffer>());
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return append<PaintFrameForMedia>(item.get<PaintFrameForMedia>());

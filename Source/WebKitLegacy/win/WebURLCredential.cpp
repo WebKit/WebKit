@@ -37,13 +37,13 @@ WebURLCredential::WebURLCredential(const Credential& credential)
     : m_credential(credential)
 {
     gClassCount++;
-    gClassNameCount().add("WebURLCredential"_s);
+    gClassNameCount().add("WebURLCredential");
 }
 
 WebURLCredential::~WebURLCredential()
 {
     gClassCount--;
-    gClassNameCount().remove("WebURLCredential"_s);
+    gClassNameCount().remove("WebURLCredential");
 }
 
 WebURLCredential* WebURLCredential::createInstance()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,53 +25,31 @@
 
 #pragma once
 
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
-struct WGPUBindGroupLayoutImpl {
-};
-
 namespace WebGPU {
 
-class Device;
-
-// https://gpuweb.github.io/gpuweb/#gpubindgrouplayout
-class BindGroupLayout : public WGPUBindGroupLayoutImpl, public RefCounted<BindGroupLayout> {
+class BindGroupLayout : public RefCounted<BindGroupLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroupLayout> create(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Device& device)
+    static Ref<BindGroupLayout> create()
     {
-        return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, device));
-    }
-    static Ref<BindGroupLayout> createInvalid(Device& device)
-    {
-        return adoptRef(*new BindGroupLayout(device));
+        return adoptRef(*new BindGroupLayout());
     }
 
     ~BindGroupLayout();
 
-    void setLabel(String&&);
-
-    bool isValid() const { return m_vertexArgumentEncoder || m_fragmentArgumentEncoder || m_computeArgumentEncoder; }
-
-    NSUInteger encodedLength() const;
-
-    id<MTLArgumentEncoder> vertexArgumentEncoder() const { return m_vertexArgumentEncoder; }
-    id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
-    id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
-
-    Device& device() const { return m_device; }
+    void setLabel(const char*);
 
 private:
-    BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Device&);
-    BindGroupLayout(Device&);
-
-    const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
-    const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
-    const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
-
-    const Ref<Device> m_device;
+    BindGroupLayout();
 };
 
 } // namespace WebGPU
+
+struct WGPUBindGroupLayoutImpl {
+    Ref<WebGPU::BindGroupLayout> bindGroupLayout;
+};

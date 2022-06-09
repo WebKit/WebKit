@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -170,13 +170,12 @@ std::optional<DragSourceState> DragDropInteractionState::activeDragSourceForItem
     return std::nullopt;
 }
 
-bool DragDropInteractionState::anyActiveDragSourceContainsSelection() const
+bool DragDropInteractionState::anyActiveDragSourceIs(WebCore::DragSourceAction action) const
 {
     for (auto& source : m_activeDragSources) {
-        if (source.containsSelection)
+        if (source.action.contains(action))
             return true;
     }
-
     return false;
 }
 
@@ -199,7 +198,7 @@ void DragDropInteractionState::setDefaultDropPreview(UIDragItem *item, UITargete
 
 UITargetedDragPreview *DragDropInteractionState::defaultDropPreview(UIDragItem *item) const
 {
-    auto matchIndex = m_defaultDropPreviews.findIf([&] (auto& itemAndPreview) {
+    auto matchIndex = m_defaultDropPreviews.findMatching([&] (auto& itemAndPreview) {
         return itemAndPreview.item == item;
     });
     return matchIndex == notFound ? nil : m_defaultDropPreviews[matchIndex].preview.get();
@@ -207,7 +206,7 @@ UITargetedDragPreview *DragDropInteractionState::defaultDropPreview(UIDragItem *
 
 BlockPtr<void(UITargetedDragPreview *)> DragDropInteractionState::dropPreviewProvider(UIDragItem *item)
 {
-    auto matchIndex = m_delayedItemPreviewProviders.findIf([&] (auto& itemAndProvider) {
+    auto matchIndex = m_delayedItemPreviewProviders.findMatching([&] (auto& itemAndProvider) {
         return itemAndProvider.item == item;
     });
 
@@ -358,7 +357,6 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
         item.title.isEmpty() ? nil : (NSString *)item.title,
         item.url.isEmpty() ? nil : (NSURL *)item.url,
         true, // We assume here that drag previews need to be updated until proven otherwise in updatePreviewsForActiveDragSources().
-        item.containsSelection,
         ++currentDragSourceItemIdentifier
     }};
 }

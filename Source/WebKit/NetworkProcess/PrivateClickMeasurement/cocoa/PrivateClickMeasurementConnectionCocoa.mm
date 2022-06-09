@@ -45,7 +45,7 @@ void Connection::newConnectionWasInitialized() const
     send(MessageType::SetDebugModeIsEnabled, encoder.takeBuffer());
 }
 
-void Connection::connectionReceivedEvent(xpc_object_t request)
+void Connection::connectionReceivedEvent(xpc_object_t request) const
 {
     if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
         return;

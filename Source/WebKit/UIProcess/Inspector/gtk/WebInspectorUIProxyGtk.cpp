@@ -140,21 +140,21 @@ static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef propose
 
 static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
 {
-    static constexpr auto versionedDirectory = "webkitgtk-" WEBKITGTK_API_VERSION_STRING G_DIR_SEPARATOR_S "WebInspector" G_DIR_SEPARATOR_S ""_s;
-    String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), versionedDirectory);
-    String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
+    static const char* versionedDirectory = "webkitgtk-" WEBKITGTK_API_VERSION_STRING G_DIR_SEPARATOR_S "WebInspector" G_DIR_SEPARATOR_S;
+    String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_cache_dir()), versionedDirectory);
+    String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), versionedDirectory);
 
     auto configuration = WebsiteDataStoreConfiguration::create(IsPersistent::Yes, WillCopyPathsFromExistingConfiguration::Yes);
-    configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "WebKitCache"_s));
-    configuration->setApplicationCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "applications"_s));
+    configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "WebKitCache"));
+    configuration->setApplicationCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "applications"));
     configuration->setHSTSStorageDirectory(String(baseCacheDirectory));
-    configuration->setCacheStorageDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "CacheStorage"_s));
-    configuration->setLocalStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "localstorage"_s));
-    configuration->setIndexedDBDatabaseDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "indexeddb"_s));
-    configuration->setWebSQLDatabaseDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "databases"_s));
-    configuration->setResourceLoadStatisticsDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "itp"_s));
-    configuration->setServiceWorkerRegistrationDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "serviceworkers"_s));
-    configuration->setDeviceIdHashSaltsStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "deviceidhashsalts"_s));
+    configuration->setCacheStorageDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "CacheStorage"));
+    configuration->setLocalStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "localstorage"));
+    configuration->setIndexedDBDatabaseDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "indexeddb"));
+    configuration->setWebSQLDatabaseDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "databases"));
+    configuration->setResourceLoadStatisticsDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "itp"));
+    configuration->setServiceWorkerRegistrationDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "serviceworkers"));
+    configuration->setDeviceIdHashSaltsStorageDirectory(FileSystem::pathByAppendingComponent(baseDataDirectory, "deviceidhashsalts"));
     return WebsiteDataStore::create(WTFMove(configuration), PAL::SessionID::generatePersistentSessionID());
 }
 
@@ -163,7 +163,7 @@ WebPageProxy* WebInspectorUIProxy::platformCreateFrontendPage()
     ASSERT(inspectedPage());
     ASSERT(!m_inspectorView);
 
-    auto preferences = WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s);
+    auto preferences = WebPreferences::create(String(), "WebKit2.", "WebKit2.");
 #if ENABLE(DEVELOPER_MODE)
     // Allow developers to inspect the Web Inspector in debug builds without changing settings.
     preferences->setDeveloperExtrasEnabled(true);
@@ -368,11 +368,6 @@ void WebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontend
     notImplemented();
 }
 
-void WebInspectorUIProxy::platformRevealFileExternally(const String&)
-{
-    notImplemented();
-}
-
 void WebInspectorUIProxy::platformInspectedURLChanged(const String& url)
 {
     m_inspectedURLString = url;
@@ -406,6 +401,16 @@ DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
     return data;
 }
 
+unsigned WebInspectorUIProxy::platformInspectedWindowHeight()
+{
+    return gtk_widget_get_allocated_height(inspectedPage()->viewWidget());
+}
+
+unsigned WebInspectorUIProxy::platformInspectedWindowWidth()
+{
+    return gtk_widget_get_allocated_width(inspectedPage()->viewWidget());
+}
+
 void WebInspectorUIProxy::platformAttach()
 {
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;
@@ -425,12 +430,10 @@ void WebInspectorUIProxy::platformAttach()
     static const unsigned minimumAttachedHeight = 250;
 
     if (m_attachmentSide == AttachmentSide::Bottom) {
-        unsigned inspectedWindowHeight = gtk_widget_get_allocated_height(inspectedPage()->viewWidget());
-        unsigned maximumAttachedHeight = inspectedWindowHeight * 3 / 4;
+        unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
         platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedSize, maximumAttachedHeight)));
     } else {
-        unsigned inspectedWindowWidth = gtk_widget_get_allocated_width(inspectedPage()->viewWidget());
-        unsigned maximumAttachedWidth = inspectedWindowWidth * 3 / 4;
+        unsigned maximumAttachedWidth = platformInspectedWindowWidth() * 3 / 4;
         platformSetAttachedWindowWidth(std::max(minimumAttachedWidth, std::min(defaultAttachedSize, maximumAttachedWidth)));
     }
 
@@ -501,13 +504,17 @@ void WebInspectorUIProxy::platformStartWindowDrag()
 static void fileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
 {
     GFile* file = G_FILE(sourceObject);
-    g_file_replace_contents_finish(file, result, nullptr, nullptr);
+    if (!g_file_replace_contents_finish(file, result, nullptr, nullptr))
+        return;
+
+    auto* page = static_cast<WebPageProxy*>(userData);
+    GUniquePtr<char> path(g_file_get_path(file));
+    page->send(Messages::WebInspectorUI::DidSave(path.get()));
 }
 
-void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&& saveDatas, bool forceSaveAs)
+void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
-    ASSERT(saveDatas.size() == 1);
-    UNUSED_PARAM(forceSaveAs);
+    UNUSED_PARAM(forceSaveDialog);
 
     GtkWidget* parent = gtk_widget_get_toplevel(m_inspectorView);
     if (!WebCore::widgetIsOnscreenToplevelWindow(parent))
@@ -524,7 +531,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     // Some inspector views (Audits for instance) use a custom URI scheme, such
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
     // unfortunately.
-    URL url { saveDatas[0].url };
+    URL url(URL(), suggestedURL);
     // Strip leading / character.
     gtk_file_chooser_set_current_name(chooser, url.path().substring(1).utf8().data());
 
@@ -533,14 +540,14 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
 
     Vector<uint8_t> dataVector;
     CString dataString;
-    if (saveDatas[0].base64Encoded) {
-        auto decodedData = base64Decode(saveDatas[0].content, Base64DecodeOptions::ValidatePadding);
+    if (base64Encoded) {
+        auto decodedData = base64Decode(content, Base64DecodeOptions::ValidatePadding);
         if (!decodedData)
             return;
         decodedData->shrinkToFit();
         dataVector = WTFMove(*decodedData);
     } else
-        dataString = saveDatas[0].content.utf8();
+        dataString = content.utf8();
 
     const char* data = !dataString.isNull() ? dataString.data() : reinterpret_cast<char*>(dataVector.data());
     size_t dataLength = !dataString.isNull() ? dataString.length() : dataVector.size();
@@ -550,16 +557,9 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
         G_FILE_CREATE_REPLACE_DESTINATION, nullptr, fileReplaceContentsCallback, m_inspectorPage);
 }
 
-void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+void WebInspectorUIProxy::platformAppend(const String&, const String&)
 {
     notImplemented();
-    completionHandler(nullString());
-}
-
-void WebInspectorUIProxy::platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&& completionHandler)
-{
-    notImplemented();
-    completionHandler({ });
 }
 
 void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool available)

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 #include "CAAudioStreamDescription.h"
 #include "MediaRecorderPrivate.h"
@@ -49,7 +49,7 @@ private:
     explicit MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&&);
 
     // MediaRecorderPrivate
-    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
     void fetchData(FetchDataCallback&&) final;
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void startRecording(StartRecordingCallback&&) final;
@@ -60,11 +60,12 @@ private:
     void resumeRecording(CompletionHandler<void()>&&) final;
 
     Ref<MediaRecorderPrivateWriter> m_writer;
-    RefPtr<VideoFrame> m_blackFrame;
+    RetainPtr<CVPixelBufferRef> m_blackFrame;
+    RetainPtr<CMFormatDescriptionRef> m_blackFrameDescription;
     CAAudioStreamDescription m_description;
     std::unique_ptr<WebAudioBufferList> m_audioBuffer;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

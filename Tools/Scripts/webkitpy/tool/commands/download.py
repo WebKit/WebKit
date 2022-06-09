@@ -57,11 +57,11 @@ class Clean(AbstractSequencedCommand):
         options.force_clean = True
 
 
-class LandUnsafe(AbstractSequencedCommand):
-    name = "land-unsafe"
+class Land(AbstractSequencedCommand):
+    name = "land"
     help_text = "Land the current working directory diff and updates the associated bug if any"
     argument_names = "[BUGID]"
-    show_in_main_help = False
+    show_in_main_help = True
     steps = [
         steps.AddSvnMimetypeForPng,
         steps.UpdateChangeLogsWithReviewer,
@@ -322,7 +322,7 @@ class AbstractRevertPrepCommand(AbstractSequencedCommand):
         state = {
             "revision": earliest_revision,
             "revision_list": revision_list,
-            "reason": ' '.join(args[1:]),
+            "reason": args[1],
             "bug_id": None,
             "bug_id_list": bug_id_list,
             "description_list": description_list,
@@ -333,9 +333,9 @@ class AbstractRevertPrepCommand(AbstractSequencedCommand):
                 # We use the earliest revision for the bug info
                 if revision == earliest_revision:
                     state["bug_blocked"] = commit_info.bug_id()
-                    cc_list = sorted([party.email
+                    cc_list = sorted([party.bugzilla_email()
                             for party in commit_info.responsible_parties()
-                            if getattr(party, 'email', None)])
+                            if party.bugzilla_email()])
                     # FIXME: We should used the list as the canonical representation.
                     state["bug_cc"] = ",".join(cc_list)
                 description_list.append(commit_info.bug_description())

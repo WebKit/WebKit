@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WKWebViewInternal.h"
 
-#import "APIDataTask.h"
 #import "APIFormClient.h"
 #import "APIFrameTreeNode.h"
 #import "APIPageConfiguration.h"
@@ -39,7 +38,6 @@
 #import "FullscreenClient.h"
 #import "GlobalFindInPageState.h"
 #import "IconLoadingDelegate.h"
-#import "ImageAnalysisUtilities.h"
 #import "LegacySessionStateCoding.h"
 #import "Logging.h"
 #import "MediaUtilities.h"
@@ -54,6 +52,7 @@
 #import "ResourceLoadDelegate.h"
 #import "SafeBrowsingWarning.h"
 #import "SessionStateCoding.h"
+#import "SharedBufferCopy.h"
 #import "UIDelegate.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
@@ -100,7 +99,6 @@
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKAppHighlightDelegate.h"
 #import "_WKAppHighlightInternal.h"
-#import "_WKDataTaskInternal.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
@@ -242,13 +240,13 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails& 
 
 static bool shouldAllowPictureInPictureMediaPlayback()
 {
-    static bool shouldAllowPictureInPictureMediaPlayback = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PictureInPictureMediaPlayback);
+    static bool shouldAllowPictureInPictureMediaPlayback = linkedOnOrAfter(SDKVersion::FirstWithPictureInPictureMediaPlayback);
     return shouldAllowPictureInPictureMediaPlayback;
 }
 
 static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 {
-    static bool shouldAllowSettingAnyXHRHeaderFromFileURLs = (WebCore::IOSApplication::isCardiogram() || WebCore::IOSApplication::isNike()) && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DisallowsSettingAnyXHRHeaderFromFileURLs);
+    static bool shouldAllowSettingAnyXHRHeaderFromFileURLs = (WebCore::IOSApplication::isCardiogram() || WebCore::IOSApplication::isNike()) && !linkedOnOrAfter(SDKVersion::FirstThatDisallowsSettingAnyXHRHeaderFromFileURLs);
     return shouldAllowSettingAnyXHRHeaderFromFileURLs;
 }
 
@@ -257,7 +255,7 @@ static bool shouldAllowSettingAnyXHRHeaderFromFileURLs()
 static bool shouldRequireUserGestureToLoadVideo()
 {
 #if PLATFORM(IOS_FAMILY)
-    static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RequiresUserGestureToLoadVideo);
+    static bool shouldRequireUserGestureToLoadVideo = linkedOnOrAfter(SDKVersion::FirstThatRequiresUserGestureToLoadVideo);
     return shouldRequireUserGestureToLoadVideo;
 #else
     return false;
@@ -266,7 +264,7 @@ static bool shouldRequireUserGestureToLoadVideo()
 
 static bool shouldRestrictBaseURLSchemes()
 {
-    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::RestrictsBaseURLSchemes);
+    static bool shouldRestrictBaseURLSchemes = linkedOnOrAfter(SDKVersion::FirstThatRestrictsBaseURLSchemes);
     return shouldRestrictBaseURLSchemes;
 }
 
@@ -335,8 +333,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     if (!configuration)
         [NSException raise:NSInvalidArgumentException format:@"Configuration cannot be nil"];
 
-    if (!configuration.websiteDataStore)
-        [NSException raise:NSInvalidArgumentException format:@"Configuration websiteDataStore cannot be nil"];
     _configuration = adoptNS([configuration copy]);
 
     if (WKWebView *relatedWebView = [_configuration _relatedWebView]) {
@@ -344,7 +340,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
         WKProcessPool *relatedWebViewProcessPool = [relatedWebView->_configuration processPool];
         if (processPool && processPool != relatedWebViewProcessPool)
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has process pool %@ but configuration specifies a different process pool %@", relatedWebView, relatedWebViewProcessPool, configuration.processPool];
-        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore] && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExceptionsForRelatedWebViewsUsingDifferentDataStores))
+        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore] && linkedOnOrAfter(SDKVersion::FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores))
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has data store %@ but configuration specifies a different data store %@", relatedWebView, [relatedWebView->_configuration websiteDataStore], [_configuration websiteDataStore]];
 
         [_configuration setProcessPool:relatedWebViewProcessPool];
@@ -368,8 +364,11 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     _viewportMetaTagWidth = WebCore::ViewportArguments::ValueAuto;
     _initialScaleFactor = 1;
     _allowsViewportShrinkToFit = defaultAllowsViewportShrinkToFit;
-    _allowsLinkPreview = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LinkPreviewEnabledByDefault);
+    _allowsLinkPreview = linkedOnOrAfter(SDKVersion::FirstWithLinkPreviewEnabledByDefault);
+
+#if HAVE(UIFINDINTERACTION)
     _findInteractionEnabled = NO;
+#endif
 
     auto fastClickingEnabled = []() {
         if (NSNumber *enabledValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFastClickingDisabled"])
@@ -512,7 +511,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setAllowSettingAnyXHRHeaderFromFileURLs(shouldAllowSettingAnyXHRHeaderFromFileURLs());
     pageConfiguration->preferences()->setShouldDecidePolicyBeforeLoadingQuickLookPreview(!![_configuration _shouldDecidePolicyBeforeLoadingQuickLookPreview]);
 #if ENABLE(DEVICE_ORIENTATION)
-    pageConfiguration->preferences()->setDeviceOrientationPermissionAPIEnabled(linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsDeviceOrientationAndMotionPermissionAPI));
+    pageConfiguration->preferences()->setDeviceOrientationPermissionAPIEnabled(linkedOnOrAfter(SDKVersion::FirstWithDeviceOrientationAndMotionPermissionAPI));
 #endif
 #if USE(SYSTEM_PREVIEW)
     pageConfiguration->preferences()->setSystemPreviewEnabled(!![_configuration _systemPreviewEnabled]);
@@ -558,7 +557,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(SERVICE_WORKER)
-    bool hasServiceWorkerEntitlement = (WTF::processHasEntitlement("com.apple.developer.WebKit.ServiceWorkers"_s) || WTF::processHasEntitlement("com.apple.developer.web-browser"_s)) && ![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting;
+    bool hasServiceWorkerEntitlement = (WTF::processHasEntitlement("com.apple.developer.WebKit.ServiceWorkers") || WTF::processHasEntitlement("com.apple.developer.web-browser")) && ![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting;
     if (!hasServiceWorkerEntitlement && ![_configuration limitsNavigationsToAppBoundDomains])
         pageConfiguration->preferences()->setServiceWorkersEnabled(false);
     pageConfiguration->preferences()->setServiceWorkerEntitlementDisabledForTesting(!![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting);
@@ -567,7 +566,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setSampledPageTopColorMaxDifference([_configuration _sampledPageTopColorMaxDifference]);
     pageConfiguration->preferences()->setSampledPageTopColorMinHeight([_configuration _sampledPageTopColorMinHeight]);
 
-    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SiteSpecificQuirksAreEnabledByDefault))
+    if (!linkedOnOrAfter(SDKVersion::FirstWhereSiteSpecificQuirksAreEnabledByDefault))
         pageConfiguration->preferences()->setNeedsSiteSpecificQuirks(false);
 
 #if PLATFORM(IOS_FAMILY)
@@ -602,10 +601,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     self.magnification = [coder decodeDoubleForKey:@"magnification"];
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
-    self.findInteractionEnabled = [coder decodeBoolForKey:@"findInteractionEnabled"];
-#endif
-
     return self;
 }
 
@@ -622,10 +617,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 #if PLATFORM(MAC)
     [coder encodeBool:self.allowsMagnification forKey:@"allowsMagnification"];
     [coder encodeDouble:self.magnification forKey:@"magnification"];
-#endif
-
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
-    [coder encodeBool:self.isFindInteractionEnabled forKey:@"findInteractionEnabled"];
 #endif
 }
 
@@ -656,10 +647,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     auto notificationName = adoptNS([[NSString alloc] initWithCString:kGSEventHardwareKeyboardAvailabilityChangedNotification encoding:NSUTF8StringEncoding]);
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (__bridge CFStringRef)notificationName.get(), nullptr);
-#endif
-
-#if HAVE(UIKIT_RESIZABLE_WINDOWS)
-    [self _invalidateResizeAssertions];
 #endif
 
     [super dealloc];
@@ -885,7 +872,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 {
     THROW_IF_SUSPENDED;
     OptionSet<WebCore::ReloadOption> reloadOptions;
-    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ExpiredOnlyReloadBehavior))
+    if (linkedOnOrAfter(SDKVersion::FirstWithExpiredOnlyReloadBehavior))
         reloadOptions.add(WebCore::ReloadOption::ExpiredOnly);
 
     return wrapper(_page->reload(reloadOptions));
@@ -1082,7 +1069,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         completionHandler = [] { };
 
     if (state == WKMediaCaptureStateNone) {
-        _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::Microphone, [completionHandler = makeBlockPtr(completionHandler)] {
+        _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::Audio, [completionHandler = makeBlockPtr(completionHandler)] {
             completionHandler();
         });
         return;
@@ -1104,7 +1091,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         completionHandler = [] { };
 
     if (state == WKMediaCaptureStateNone) {
-        _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::Camera, [completionHandler = makeBlockPtr(completionHandler)] {
+        _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::Video, [completionHandler = makeBlockPtr(completionHandler)] {
             completionHandler();
         });
         return;
@@ -1137,7 +1124,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
             break;
         }
 
-        argumentsMap->set(key, serializedValue->internalRepresentation().wireBytes());
+        argumentsMap->set(key, serializedValue->internalRepresentation().toWireBytes());
     }
 
     if (errorMessage && handler) {
@@ -1255,7 +1242,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         }];
     };
 
-    if ((snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SnapshotAfterScreenUpdates)) {
+    if ((snapshotConfiguration && !snapshotConfiguration.afterScreenUpdates) || !linkedOnOrAfter(SDKVersion::FirstWithSnapshotAfterScreenUpdates)) {
         callSnapshotRect();
         return;
     }
@@ -1433,52 +1420,10 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 #pragma mark - iOS API
 
 #if PLATFORM(IOS_FAMILY)
-
 - (UIScrollView *)scrollView
 {
     return _scrollView.get();
 }
-
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-
-- (BOOL)findInteractionEnabled
-{
-    return _findInteractionEnabled;
-}
-
-- (void)setFindInteractionEnabled:(BOOL)enabled
-{
-#if HAVE(UIFINDINTERACTION)
-    if (_findInteractionEnabled != enabled) {
-        _findInteractionEnabled = enabled;
-
-        if (enabled) {
-            if (!_findInteraction)
-                _findInteraction = adoptNS([[UIFindInteraction alloc] initWithSessionDelegate:self]);
-
-            [self addInteraction:_findInteraction.get()];
-        } else {
-            [self removeInteraction:_findInteraction.get()];
-            _findInteraction = nil;
-        }
-    }
-#else
-    UNUSED_PARAM(enabled);
-    UNUSED_VARIABLE(_findInteractionEnabled);
-#endif
-}
-
-- (UIFindInteraction *)findInteraction
-{
-#if HAVE(UIFINDINTERACTION)
-    return _findInteraction.get();
-#else
-    return nil;
-#endif
-}
-
-#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-
 #endif // PLATFORM(IOS_FAMILY)
 
 #pragma mark - macOS API
@@ -1602,33 +1547,25 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 {
     auto frame = WebCore::FloatSize(self.frame.size);
 
-    auto maximumViewportInsetSize = WebCore::FloatSize(maximumViewportInset.left + maximumViewportInset.right, maximumViewportInset.top + maximumViewportInset.bottom);
-    auto minimumUnobscuredSize = frame - maximumViewportInsetSize;
+    auto minimumUnobscuredSize = frame - WebCore::FloatSize(maximumViewportInset.left + maximumViewportInset.right, maximumViewportInset.top + maximumViewportInset.bottom);
     if (minimumUnobscuredSize.isEmpty()) {
-        if (!maximumViewportInsetSize.isEmpty()) {
-            if (throwOnInvalidInput) {
-                [NSException raise:NSInvalidArgumentException format:@"maximumViewportInset cannot be larger than frame"];
-                return;
-            }
-
-            RELEASE_LOG_ERROR(ViewportSizing, "maximumViewportInset cannot be larger than frame");
+        if (throwOnInvalidInput) {
+            [NSException raise:NSInvalidArgumentException format:@"maximumViewportInset cannot be larger than frame"];
+            return;
         }
 
+        RELEASE_LOG_ERROR(ViewportSizing, "maximumViewportInset cannot be larger than frame");
         minimumUnobscuredSize = frame;
     }
 
-    auto minimumViewportInsetSize = WebCore::FloatSize(minimumViewportInset.left + minimumViewportInset.right, minimumViewportInset.top + minimumViewportInset.bottom);
-    auto maximumUnobscuredSize = frame - minimumViewportInsetSize;
+    auto maximumUnobscuredSize = frame - WebCore::FloatSize(minimumViewportInset.left + minimumViewportInset.right, minimumViewportInset.top + minimumViewportInset.bottom);
     if (maximumUnobscuredSize.isEmpty()) {
-        if (!minimumViewportInsetSize.isEmpty()) {
-            if (throwOnInvalidInput) {
-                [NSException raise:NSInvalidArgumentException format:@"minimumViewportInset cannot be larger than frame"];
-                return;
-            }
-
-            RELEASE_LOG_ERROR(ViewportSizing, "minimumViewportInset cannot be larger than frame");
+        if (throwOnInvalidInput) {
+            [NSException raise:NSInvalidArgumentException format:@"minimumViewportInset cannot be larger than frame"];
+            return;
         }
 
+        RELEASE_LOG_ERROR(ViewportSizing, "minimumViewportInset cannot be larger than frame");
         maximumUnobscuredSize = frame;
     }
 
@@ -1740,13 +1677,13 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
         floatRect = WebCore::FloatRect(pdfConfiguration.rect);
 
-    _page->drawToPDF(frameID, floatRect, [handler = makeBlockPtr(completionHandler)](RefPtr<WebCore::SharedBuffer>&& pdfData) {
-        if (!pdfData || pdfData->isEmpty()) {
+    _page->drawToPDF(frameID, floatRect, [handler = makeBlockPtr(completionHandler)](const IPC::SharedBufferCopy& pdfData) {
+        if (pdfData.isEmpty()) {
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
 
-        auto data = pdfData->createCFData();
+        auto data = pdfData.buffer()->createCFData();
         handler((NSData *)data.get(), nil);
     });
 }
@@ -1922,6 +1859,8 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 #endif
 }
 
+#if PLATFORM(IOS_FAMILY)
+
 - (void)setMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset
 {
     if (minimumViewportInset.top < 0 || minimumViewportInset.left < 0 || minimumViewportInset.bottom < 0 || minimumViewportInset.right < 0)
@@ -1938,6 +1877,8 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     _minimumViewportInset = minimumViewportInset;
     _maximumViewportInset = maximumViewportInset;
 }
+
+#endif // PLATFORM(IOS_FAMILY)
 
 @end
 
@@ -2323,22 +2264,24 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     });
 }
 
-- (void)_startImageAnalysis:(NSString *)sourceLanguageIdentifier target:(NSString *)targetLanguageIdentifier
+- (void)_startImageAnalysis:(NSString *)identifier
 {
 #if ENABLE(IMAGE_ANALYSIS)
     THROW_IF_SUSPENDED;
 
-    if (!_page || !_page->preferences().visualTranslationEnabled() || !WebKit::languageIdentifierSupportsLiveText(sourceLanguageIdentifier))
+    if (!_page || !_page->preferences().textRecognitionEnhancementsEnabled())
         return;
 
-    _page->startVisualTranslation(sourceLanguageIdentifier, targetLanguageIdentifier);
+    _page->startImageAnalysis(identifier);
 #endif
 }
 
-- (void)_dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void(^)(_WKDataTask *))completionHandler
+- (void)_requestResource:(NSURLRequest *)request completionHandler:(void(^)(NSData *, NSURLResponse *, NSError *))completionHandler
 {
-    _page->dataTaskWithRequest(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<API::DataTask>&& task) {
-        completionHandler(wrapper(task));
+    _page->requestResource(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<WebCore::SharedBuffer>&& buffer, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) {
+        if (error.isNull())
+            return completionHandler(buffer->createNSData().get(), response.nsURLResponse(), nil);
+        completionHandler(nil, nil, error.nsError());
     });
 }
 
@@ -2445,7 +2388,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 - (void)_stopMediaCapture
 {
     THROW_IF_SUSPENDED;
-    _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::EveryKind);
+    _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::AudioVideo);
 }
 
 - (void)_stopAllMediaPlayback
@@ -2594,13 +2537,6 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         _page->revokeAccessToAssetServices();
 }
 
-- (void)_disableURLSchemeCheckInDataDetectors
-{
-    THROW_IF_SUSPENDED;
-    if (_page)
-        _page->disableURLSchemeCheckInDataDetectors();
-}
-
 - (void)_switchFromStaticFontRegistryToUserFontRegistry
 {
     THROW_IF_SUSPENDED;
@@ -2723,14 +2659,6 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         return 0;
 
     return provisionalPage->process().processIdentifier();
-}
-
-- (pid_t)_gpuProcessIdentifier
-{
-    if (![self _isValid])
-        return 0;
-
-    return _page->gpuProcessIdentifier();
 }
 
 - (BOOL)_webProcessIsResponsive
@@ -2868,7 +2796,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 {
     THROW_IF_SUSPENDED;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    auto identifier = createVersion4UUIDString();
+    auto identifier = createCanonicalUUIDString();
     auto attachment = API::Attachment::create(identifier, *_page);
     attachment->setFileWrapperAndUpdateContentType(fileWrapper, contentType);
     _page->insertAttachment(attachment.copyRef(), [capturedHandler = makeBlockPtr(completionHandler)] {
@@ -3423,7 +3351,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_serviceWorkersEnabled:(void(^)(BOOL))completionHandler
 {
-    auto enabled = [_configuration preferences]->_preferences.get()->serviceWorkersEnabled();
+    auto enabled = [_configuration preferences]->_preferences.get()->serviceWorkersEnabled() || WebCore::RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled();
     completionHandler(enabled);
 }
 
@@ -3438,7 +3366,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (void)_preconnectToServer:(NSURL *)url
 {
     THROW_IF_SUSPENDED;
-    _page->preconnectTo(url, _page->userAgent());
+    _page->preconnectTo(url);
 }
 
 - (BOOL)_canUseCredentialStorage
@@ -3698,6 +3626,13 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 #endif
 }
 
+- (void)_grantAccessToPreferenceService
+{
+    THROW_IF_SUSPENDED;
+    if (_page)
+        _page->grantAccessToPreferenceService();
+}
+
 #pragma mark - scrollPerformanceData
 
 - (void)_setScrollPerformanceDataCollectionEnabled:(BOOL)enabled
@@ -3825,95 +3760,6 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 {
     THROW_IF_SUSPENDED;
     [self _internalDoAfterNextPresentationUpdate:updateBlock withoutWaitingForPainting:YES withoutWaitingForAnimatedResize:NO];
-}
-
-- (void)_doAfterNextVisibleContentRectUpdate:(void (^)(void))updateBlock
-{
-#if PLATFORM(IOS_FAMILY)
-    _visibleContentRectUpdateCallbacks.append(makeBlockPtr(updateBlock));
-    [self _scheduleVisibleContentRectUpdate];
-#else
-    RunLoop::main().dispatch([updateBlock = makeBlockPtr(updateBlock)] {
-        updateBlock();
-    });
-#endif
-}
-
-- (WKDisplayCaptureSurfaces) _displayCaptureSurfaces
-{
-    auto pageState = _page->reportedMediaState();
-    WKDisplayCaptureSurfaces state = WKDisplayCaptureSurfaceNone;
-    if (pageState.containsAny(WebCore::MediaProducer::ScreenCaptureMask))
-        state |= WKDisplayCaptureSurfaceScreen;
-    if (pageState.containsAny(WebCore::MediaProducer::WindowCaptureMask))
-        state |= WKDisplayCaptureSurfaceWindow;
-    return state;
-}
-
-- (WKDisplayCaptureState) _displayCaptureState
-{
-    auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::ActiveDisplayCaptureMask)
-        return WKDisplayCaptureStateActive;
-    if (state & WebCore::MediaProducer::MutedDisplayCaptureMask)
-        return WKDisplayCaptureStateMuted;
-    return WKDisplayCaptureStateNone;
-}
-
-- (WKSystemAudioCaptureState)_systemAudioCaptureState
-{
-    auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducerMediaState::HasActiveSystemAudioCaptureDevice)
-        return WKSystemAudioCaptureStateActive;
-    if (state & WebCore::MediaProducerMediaState::HasMutedSystemAudioCaptureDevice)
-        return WKSystemAudioCaptureStateMuted;
-    return WKSystemAudioCaptureStateNone;
-}
-
-- (void)_setDisplayCaptureState:(WKDisplayCaptureState)state completionHandler:(void (^)(void))completionHandler
-{
-    THROW_IF_SUSPENDED;
-    if (!completionHandler)
-        completionHandler = [] { };
-
-    if (state == WKDisplayCaptureStateNone) {
-        _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::Display, [completionHandler = makeBlockPtr(completionHandler)] {
-            completionHandler();
-        });
-        return;
-    }
-
-    constexpr WebCore::MediaProducer::MutedStateFlags displayMutedFlags = { WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted, WebCore::MediaProducer::MutedState::WindowCaptureIsMuted };
-    auto mutedState = _page->mutedStateFlags();
-    if (state == WKDisplayCaptureStateActive)
-        mutedState.remove(displayMutedFlags);
-    else if (state == WKDisplayCaptureStateMuted)
-        mutedState.add(displayMutedFlags);
-    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler();
-    });
-}
-
-- (void)_setSystemAudioCaptureState:(WKSystemAudioCaptureState)state completionHandler:(void (^)(void))completionHandler
-{
-    THROW_IF_SUSPENDED;
-    if (!completionHandler)
-        completionHandler = [] { };
-
-    if (state == WKSystemAudioCaptureStateNone) {
-        _page->stopMediaCapture(WebCore::MediaProducerMediaCaptureKind::SystemAudio, [completionHandler = makeBlockPtr(completionHandler)] {
-            completionHandler();
-        });
-        return;
-    }
-    auto mutedState = _page->mutedStateFlags();
-    if (state == WKSystemAudioCaptureStateActive)
-        mutedState.remove(WebCore::MediaProducerMutedState::WindowCaptureIsMuted);
-    else if (state == WKSystemAudioCaptureStateMuted)
-        mutedState.add(WebCore::MediaProducerMutedState::WindowCaptureIsMuted);
-    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler();
-    });
 }
 
 @end

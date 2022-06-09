@@ -435,7 +435,7 @@ static void consumeAndAppendOptionalQuestionMarks(StringBuilder& builder, CSSPar
 
 static String consumeUnicodeRangeString(CSSParserTokenRange& range)
 {
-    if (!equalLettersIgnoringASCIICase(consumeIdentifier(range), "u"_s))
+    if (!equalLettersIgnoringASCIICase(consumeIdentifier(range), "u"))
         return { };
     StringBuilder builder;
     if (consumeAndAppendOptionalNumber(builder, range, DimensionToken))

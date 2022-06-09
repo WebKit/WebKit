@@ -35,7 +35,6 @@ class AlternativeTextUIController {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT DictationContext addAlternatives(NSTextAlternatives *);
-    WEBCORE_EXPORT void replaceAlternatives(NSTextAlternatives *, DictationContext);
     WEBCORE_EXPORT void removeAlternatives(DictationContext);
     WEBCORE_EXPORT void clear();
 

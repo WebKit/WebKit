@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: showModalDialog() is deprecated and will be removed. Please use the <dialog> element instead.
 Tests that document.cookie returns the right value after a showModalDialog() call
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

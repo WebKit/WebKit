@@ -33,25 +33,25 @@
 
 namespace JSC { namespace Wasm {
 
-void FunctionCodeBlockGenerator::setInstructions(std::unique_ptr<WasmInstructionStream> instructions)
+void FunctionCodeBlockGenerator::setInstructions(std::unique_ptr<InstructionStream> instructions)
 {
     m_instructions = WTFMove(instructions);
     m_instructionsRawPointer = m_instructions->rawPointer();
 }
 
-void FunctionCodeBlockGenerator::addOutOfLineJumpTarget(WasmInstructionStream::Offset bytecodeOffset, int target)
+void FunctionCodeBlockGenerator::addOutOfLineJumpTarget(InstructionStream::Offset bytecodeOffset, int target)
 {
     RELEASE_ASSERT(target);
     m_outOfLineJumpTargets.set(bytecodeOffset, target);
 }
 
-WasmInstructionStream::Offset FunctionCodeBlockGenerator::outOfLineJumpOffset(WasmInstructionStream::Offset bytecodeOffset)
+InstructionStream::Offset FunctionCodeBlockGenerator::outOfLineJumpOffset(InstructionStream::Offset bytecodeOffset)
 {
     ASSERT(m_outOfLineJumpTargets.contains(bytecodeOffset));
     return m_outOfLineJumpTargets.get(bytecodeOffset);
 }
 
-unsigned FunctionCodeBlockGenerator::addSignature(const FunctionSignature& signature)
+unsigned FunctionCodeBlockGenerator::addSignature(const Signature& signature)
 {
     unsigned index = m_signatures.size();
     m_signatures.append(&signature);

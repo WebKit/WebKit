@@ -34,19 +34,15 @@ namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InstructionStream);
 
-template<typename InstructionType>
 class InstructionStream {
     WTF_MAKE_FAST_ALLOCATED;
 
-    template<typename> friend class InstructionStreamWriter;
+    friend class InstructionStreamWriter;
     friend class CachedInstructionStream;
 public:
     using InstructionBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc>;
 
-    size_t sizeInBytes() const
-    {
-        return m_instructions.size();
-    }
+    size_t sizeInBytes() const;
 
     using Offset = unsigned;
 
@@ -55,7 +51,7 @@ private:
     class BaseRef {
         WTF_MAKE_FAST_ALLOCATED;
 
-        template<typename> friend class InstructionStream;
+        friend class InstructionStream;
 
     public:
         BaseRef(const BaseRef<InstructionBuffer>& other)
@@ -69,8 +65,8 @@ private:
             m_index = other.m_index;
         }
 
-        inline const InstructionType* operator->() const { return unwrap(); }
-        inline const InstructionType* ptr() const { return unwrap(); }
+        inline const Instruction* operator->() const { return unwrap(); }
+        inline const Instruction* ptr() const { return unwrap(); }
 
         bool operator!=(const BaseRef<InstructionBuffer>& other) const
         {
@@ -91,7 +87,7 @@ private:
         }
 
     private:
-        inline const InstructionType* unwrap() const { return reinterpret_cast<const InstructionType*>(&m_instructions[m_index]); }
+        inline const Instruction* unwrap() const { return reinterpret_cast<const Instruction*>(&m_instructions[m_index]); }
 
     protected:
         BaseRef(InstructionBuffer& instructions, size_t index)
@@ -107,36 +103,33 @@ public:
     using Ref = BaseRef<const InstructionBuffer>;
 
     class MutableRef : public BaseRef<InstructionBuffer> {
-        template<typename> friend class InstructionStreamWriter;
+        friend class InstructionStreamWriter;
 
     protected:
         using BaseRef<InstructionBuffer>::BaseRef;
-        using BaseRef<InstructionBuffer>::m_index;
-        using BaseRef<InstructionBuffer>::m_instructions;
 
     public:
         Ref freeze() const  { return Ref { m_instructions, m_index }; }
-        inline InstructionType* operator->() { return unwrap(); }
-        inline const InstructionType* operator->() const { return unwrap(); }
-        inline InstructionType* ptr() { return unwrap(); }
-        inline const InstructionType* ptr() const { return unwrap(); }
+        inline Instruction* operator->() { return unwrap(); }
+        inline const Instruction* operator->() const { return unwrap(); }
+        inline Instruction* ptr() { return unwrap(); }
+        inline const Instruction* ptr() const { return unwrap(); }
         inline operator Ref()
         {
             return Ref { m_instructions, m_index };
         }
 
     private:
-        inline InstructionType* unwrap() { return reinterpret_cast<InstructionType*>(&m_instructions[m_index]); }
-        inline const InstructionType* unwrap() const { return reinterpret_cast<const InstructionType*>(&m_instructions[m_index]); }
+        inline Instruction* unwrap() { return reinterpret_cast<Instruction*>(&m_instructions[m_index]); }
+        inline const Instruction* unwrap() const { return reinterpret_cast<const Instruction*>(&m_instructions[m_index]); }
     };
 
 private:
     class iterator : public Ref {
-        template<typename> friend class InstructionStream;
+        friend class InstructionStream;
 
     public:
         using Ref::Ref;
-        using Ref::m_index;
 
         Ref& operator*()
         {
@@ -151,7 +144,7 @@ private:
 
         iterator& operator++()
         {
-            return *this += this->ptr()->size();
+            return *this += ptr()->size();
         }
     };
 
@@ -183,32 +176,19 @@ public:
         return m_instructions.data();
     }
 
-    bool contains(InstructionType* instruction) const
-    {
-        const uint8_t* pointer = bitwise_cast<const uint8_t*>(instruction);
-        return pointer >= m_instructions.data() && pointer < (m_instructions.data() + m_instructions.size());
-    }
+    bool contains(Instruction*) const;
 
 protected:
-    explicit InstructionStream(InstructionBuffer&& instructions)
-        : m_instructions(WTFMove(instructions))
-    { }
+    explicit InstructionStream(InstructionBuffer&&);
 
     InstructionBuffer m_instructions;
 };
 
-template<typename InstructionType>
-class InstructionStreamWriter : public InstructionStream<InstructionType> {
+class InstructionStreamWriter : public InstructionStream {
     friend class BytecodeRewriter;
 public:
-    using InstructionStream<InstructionType>::InstructionStream;
-    using typename InstructionStream<InstructionType>::InstructionBuffer;
-    using typename InstructionStream<InstructionType>::MutableRef;
-    using typename InstructionStream<InstructionType>::Offset;
-    using InstructionStream<InstructionType>::m_instructions;
-
     InstructionStreamWriter()
-        : InstructionStream<InstructionType>({ })
+        : InstructionStream({ })
     { }
 
     void setInstructionBuffer(InstructionBuffer&& buffer)
@@ -281,14 +261,14 @@ public:
         m_position = ref.offset();
     }
 
-    std::unique_ptr<InstructionStream<InstructionType>> finalize()
+    std::unique_ptr<InstructionStream> finalize()
     {
         m_finalized = true;
         m_instructions.shrinkToFit();
-        return std::unique_ptr<InstructionStream<InstructionType>> { new InstructionStream<InstructionType>(WTFMove(m_instructions)) };
+        return std::unique_ptr<InstructionStream> { new InstructionStream(WTFMove(m_instructions)) };
     }
 
-    std::unique_ptr<InstructionStream<InstructionType>> finalize(InstructionBuffer& usedBuffer)
+    std::unique_ptr<InstructionStream> finalize(InstructionBuffer& usedBuffer)
     {
         m_finalized = true;
 
@@ -298,7 +278,7 @@ public:
 
         usedBuffer = WTFMove(m_instructions);
 
-        return std::unique_ptr<InstructionStream<InstructionType>> { new InstructionStream<InstructionType>(WTFMove(resultBuffer)) };
+        return std::unique_ptr<InstructionStream> { new InstructionStream(WTFMove(resultBuffer)) };
     }
 
     MutableRef ref()
@@ -306,7 +286,7 @@ public:
         return MutableRef { m_instructions, m_position };
     }
 
-    void swap(InstructionStreamWriter<InstructionType>& other)
+    void swap(InstructionStreamWriter& other)
     {
         std::swap(m_finalized, other.m_finalized);
         std::swap(m_position, other.m_position);
@@ -314,12 +294,11 @@ public:
     }
 
 private:
-    class iterator : public InstructionStream<InstructionType>::MutableRef {
-        template<typename> friend class InstructionStreamWriter;
+    class iterator : public MutableRef {
+        friend class InstructionStreamWriter;
 
     protected:
         using MutableRef::MutableRef;
-        using MutableRef::m_index;
 
     public:
         MutableRef& operator*()
@@ -335,7 +314,7 @@ private:
 
         iterator& operator++()
         {
-            return *this += this->ptr()->size();
+            return *this += ptr()->size();
         }
     };
 
@@ -355,8 +334,5 @@ private:
     bool m_finalized { false };
 };
 
-using JSInstructionStream = InstructionStream<JSInstruction>;
-using JSInstructionStreamWriter = InstructionStreamWriter<JSInstruction>;
-using WasmInstructionStream = InstructionStream<WasmInstruction>;
 
 } // namespace JSC

@@ -1,4 +1,4 @@
-# Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ from buildbot.worker import Worker
 from factories import *
 import wkbuild
 
-main_filter = ChangeFilter(branch=["main", None])
+trunk_filter = ChangeFilter(branch=["trunk", None])
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
@@ -75,8 +75,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     # Setup force schedulers
     builderNames = [str(builder['name']) for builder in config['builders']]
     reason = StringParameter(name='reason', default='', size=40)
-    properties = [StringParameter(name='user_provided_git_hash', label='git hash to build (optional)', required=False),
-                  BooleanParameter(name='is_clean', label='Force Clean build')]
+    properties = [BooleanParameter(name='is_clean', label='Force Clean build')]
     # Disable default enabled input fields: revision, repository, project and branch
     codebases = [CodebaseParameter("",
                  revision=FixedParameter(name="revision", default=""),

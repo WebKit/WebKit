@@ -32,7 +32,7 @@ GST_DEBUG_CATEGORY_STATIC(webkit_video_frame_meta_debug);
 using namespace WebCore;
 
 struct VideoFrameMetadataPrivate {
-    std::optional<VideoFrameTimeMetadata> videoSampleMetadata;
+    std::optional<VideoSampleMetadata> videoSampleMetadata;
     HashMap<String, std::pair<GstClockTime, GstClockTime>> processingTimes;
 };
 
@@ -99,7 +99,7 @@ const GstMetaInfo* videoFrameMetadataGetInfo()
     return metaInfo;
 }
 
-GstBuffer* webkitGstBufferSetVideoFrameTimeMetadata(GstBuffer* buffer, std::optional<VideoFrameTimeMetadata>&& metadata)
+GstBuffer* webkitGstBufferSetVideoSampleMetadata(GstBuffer* buffer, std::optional<VideoSampleMetadata>&& metadata)
 {
     if (!GST_IS_BUFFER(buffer))
         return nullptr;
@@ -123,7 +123,7 @@ void webkitGstTraceProcessingTimeForElement(GstElement* element)
     gst_pad_add_probe(sinkPad.get(), probeType, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto [modifiedBuffer, meta] = ensureVideoFrameMetadata(GST_PAD_PROBE_INFO_BUFFER(info));
         GST_PAD_PROBE_INFO_DATA(info) = modifiedBuffer;
-        meta->priv->processingTimes.set(String::fromLatin1(reinterpret_cast<char*>(userData)), std::make_pair(gst_util_get_timestamp(), GST_CLOCK_TIME_NONE));
+        meta->priv->processingTimes.set(reinterpret_cast<char*>(userData), std::make_pair(gst_util_get_timestamp(), GST_CLOCK_TIME_NONE));
         return GST_PAD_PROBE_OK;
     }, gst_element_get_name(element), g_free);
 
@@ -135,7 +135,7 @@ void webkitGstTraceProcessingTimeForElement(GstElement* element)
         if (!meta)
             return GST_PAD_PROBE_OK;
 
-        auto elementName = String::fromLatin1(reinterpret_cast<char*>(userData));
+        auto* elementName = reinterpret_cast<char*>(userData);
         auto value = meta->priv->processingTimes.get(elementName);
         meta->priv->processingTimes.set(elementName, std::make_pair(value.first, gst_util_get_timestamp()));
         return GST_PAD_PROBE_OK;

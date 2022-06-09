@@ -1,5 +1,4 @@
 //@ skip if not $jitTests
-//@ requireOptions("--forceUnlinkedDFG=0")
 //@ defaultNoEagerRun
 "use strict";
 

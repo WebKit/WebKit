@@ -37,9 +37,9 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * WebKitContextMenuItem:
- *
- * One item of a #WebKitContextMenu.
+ * SECTION: WebKitContextMenuItem
+ * @Short_description: One item of the #WebKitContextMenu
+ * @Title: WebKitContextMenuItem
  *
  * The #WebKitContextMenu is composed of #WebKitContextMenuItem<!--
  * -->s. These items can be created from a #GtkAction, from a

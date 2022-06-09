@@ -24,7 +24,6 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "ScriptExecutionContextIdentifier.h"
 #include "XMLDocument.h"
 
 namespace WebCore {
@@ -38,13 +37,13 @@ public:
     void deref() { m_document.deref(); }
     Document& document() { return m_document; }
 
-    WEBCORE_EXPORT ExceptionOr<Ref<DocumentType>> createDocumentType(const AtomString& qualifiedName, const String& publicId, const String& systemId);
-    WEBCORE_EXPORT ExceptionOr<Ref<XMLDocument>> createDocument(const AtomString& namespaceURI, const AtomString& qualifiedName, DocumentType*);
-    WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(String&& title);
+    WEBCORE_EXPORT ExceptionOr<Ref<DocumentType>> createDocumentType(const String& qualifiedName, const String& publicId, const String& systemId);
+    WEBCORE_EXPORT ExceptionOr<Ref<XMLDocument>> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentType*);
+    WEBCORE_EXPORT Ref<HTMLDocument> createHTMLDocument(const String& title);
     static bool hasFeature() { return true; }
     WEBCORE_EXPORT static Ref<CSSStyleSheet> createCSSStyleSheet(const String& title, const String& media);
 
-    static Ref<Document> createDocument(const String& contentType, Frame*, const Settings&, const URL&, ScriptExecutionContextIdentifier = { });
+    static Ref<Document> createDocument(const String& contentType, Frame*, const Settings&, const URL&);
 
 private:
     Document& m_document;

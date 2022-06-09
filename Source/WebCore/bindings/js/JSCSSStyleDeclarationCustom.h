@@ -27,10 +27,8 @@
 
 namespace WebCore {
 
-class WebCoreOpaqueRoot;
-
 class CSSStyleDeclaration;
 
-WebCoreOpaqueRoot root(CSSStyleDeclaration*);
+void* root(CSSStyleDeclaration*);
 
 } // namespace WebCore

@@ -31,15 +31,16 @@
 
 [
     EnabledBySetting=DataTransferItemsEnabled,
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface DataTransferItem {
     readonly attribute DOMString kind;
     readonly attribute DOMString type;
 
-    [CallWith=CurrentDocument] undefined getAsString(StringCallback? callback);
+    [CallWith=Document] undefined getAsString(StringCallback? callback);
     File getAsFile();
 
     // https://wicg.github.io/entries-api/#html-data
-    [CallWith=CurrentScriptExecutionContext, ImplementedAs=getAsEntry] FileSystemEntry? webkitGetAsEntry();
+    [CallWith=ScriptExecutionContext, ImplementedAs=getAsEntry] FileSystemEntry? webkitGetAsEntry();
 };
 

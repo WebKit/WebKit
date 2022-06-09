@@ -1,4 +1,0 @@
-
-PASS Calling `updateWith` with a new `shippingOptions` without `requestShipping` should not update any values.
-FAIL Calling `updateWith` with a new `shippingOptions` should not update any other values. assert_equals: shipping option 0 selected should change expected (boolean) false but got (undefined) undefined
-

@@ -53,6 +53,11 @@ StylePropertyShorthand transitionShorthandForParsing()
     return StylePropertyShorthand(CSSPropertyTransition, transitionProperties);
 }
 
+bool isShorthandCSSProperty(CSSPropertyID id)
+{
+    return shorthandForProperty(id).length();
+}
+
 unsigned indexOfShorthandForLonghand(CSSPropertyID shorthandID, const StylePropertyShorthandVector& shorthands)
 {
     for (unsigned i = 0, size = shorthands.size(); i < size; ++i) {

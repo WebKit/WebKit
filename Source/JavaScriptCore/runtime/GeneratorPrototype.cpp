@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo GeneratorPrototype::s_info = { "Generator"_s, &Base::s_info, &generatorPrototypeTable, nullptr, CREATE_METHOD_TABLE(GeneratorPrototype) };
+const ClassInfo GeneratorPrototype::s_info = { "Generator", &Base::s_info, &generatorPrototypeTable, nullptr, CREATE_METHOD_TABLE(GeneratorPrototype) };
 
 /* Source for GeneratorPrototype.lut.h
 @begin generatorPrototypeTable
@@ -47,7 +47,7 @@ const ClassInfo GeneratorPrototype::s_info = { "Generator"_s, &Base::s_info, &ge
 void GeneratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

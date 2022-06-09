@@ -779,101 +779,101 @@ String PlatformKeyboardEvent::keyIdentifierForGdkKeyCode(unsigned keyCode)
     case GDK_KEY_Menu:
     case GDK_KEY_Alt_L:
     case GDK_KEY_Alt_R:
-        return "Alt"_s;
+        return "Alt";
     case GDK_KEY_Clear:
-        return "Clear"_s;
+        return "Clear";
     case GDK_KEY_Down:
-        return "Down"_s;
+        return "Down";
         // "End"
     case GDK_KEY_End:
-        return "End"_s;
+        return "End";
         // "Enter"
     case GDK_KEY_ISO_Enter:
     case GDK_KEY_KP_Enter:
     case GDK_KEY_Return:
-        return "Enter"_s;
+        return "Enter";
     case GDK_KEY_Execute:
-        return "Execute"_s;
+        return "Execute";
     case GDK_KEY_F1:
-        return "F1"_s;
+        return "F1";
     case GDK_KEY_F2:
-        return "F2"_s;
+        return "F2";
     case GDK_KEY_F3:
-        return "F3"_s;
+        return "F3";
     case GDK_KEY_F4:
-        return "F4"_s;
+        return "F4";
     case GDK_KEY_F5:
-        return "F5"_s;
+        return "F5";
     case GDK_KEY_F6:
-        return "F6"_s;
+        return "F6";
     case GDK_KEY_F7:
-        return "F7"_s;
+        return "F7";
     case GDK_KEY_F8:
-        return "F8"_s;
+        return "F8";
     case GDK_KEY_F9:
-        return "F9"_s;
+        return "F9";
     case GDK_KEY_F10:
-        return "F10"_s;
+        return "F10";
     case GDK_KEY_F11:
-        return "F11"_s;
+        return "F11";
     case GDK_KEY_F12:
-        return "F12"_s;
+        return "F12";
     case GDK_KEY_F13:
-        return "F13"_s;
+        return "F13";
     case GDK_KEY_F14:
-        return "F14"_s;
+        return "F14";
     case GDK_KEY_F15:
-        return "F15"_s;
+        return "F15";
     case GDK_KEY_F16:
-        return "F16"_s;
+        return "F16";
     case GDK_KEY_F17:
-        return "F17"_s;
+        return "F17";
     case GDK_KEY_F18:
-        return "F18"_s;
+        return "F18";
     case GDK_KEY_F19:
-        return "F19"_s;
+        return "F19";
     case GDK_KEY_F20:
-        return "F20"_s;
+        return "F20";
     case GDK_KEY_F21:
-        return "F21"_s;
+        return "F21";
     case GDK_KEY_F22:
-        return "F22"_s;
+        return "F22";
     case GDK_KEY_F23:
-        return "F23"_s;
+        return "F23";
     case GDK_KEY_F24:
-        return "F24"_s;
+        return "F24";
     case GDK_KEY_Help:
-        return "Help"_s;
+        return "Help";
     case GDK_KEY_Home:
-        return "Home"_s;
+        return "Home";
     case GDK_KEY_Insert:
-        return "Insert"_s;
+        return "Insert";
     case GDK_KEY_Left:
-        return "Left"_s;
+        return "Left";
     case GDK_KEY_Page_Down:
-        return "PageDown"_s;
+        return "PageDown";
     case GDK_KEY_Page_Up:
-        return "PageUp"_s;
+        return "PageUp";
     case GDK_KEY_Pause:
-        return "Pause"_s;
+        return "Pause";
     case GDK_KEY_3270_PrintScreen:
     case GDK_KEY_Print:
-        return "PrintScreen"_s;
+        return "PrintScreen";
     case GDK_KEY_Right:
-        return "Right"_s;
+        return "Right";
     case GDK_KEY_Select:
-        return "Select"_s;
+        return "Select";
     case GDK_KEY_Up:
-        return "Up"_s;
+        return "Up";
         // Standard says that DEL becomes U+007F.
     case GDK_KEY_Delete:
-        return "U+007F"_s;
+        return "U+007F";
     case GDK_KEY_BackSpace:
-        return "U+0008"_s;
+        return "U+0008";
     case GDK_KEY_ISO_Left_Tab:
     case GDK_KEY_3270_BackTab:
     case GDK_KEY_Tab:
-        return "U+0009"_s;
+        return "U+0009";
     default:
         return makeString("U+", hex(gdk_keyval_to_unicode(gdk_keyval_to_upper(keyCode)), 4));
     }
@@ -1300,11 +1300,11 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
     case GDK_KEY_ISO_Enter:
     case GDK_KEY_KP_Enter:
     case GDK_KEY_Return:
-        return String("\r"_s);
+        return String("\r");
     case GDK_KEY_BackSpace:
-        return String("\x8"_s);
+        return String("\x8");
     case GDK_KEY_Tab:
-        return String("\t"_s);
+        return String("\t");
     default:
         gunichar c = gdk_keyval_to_unicode(val);
         glong nwc;

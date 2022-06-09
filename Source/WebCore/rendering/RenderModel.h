@@ -43,7 +43,7 @@ public:
 
 private:
     void element() const = delete;
-    ASCIILiteral renderName() const final { return "RenderModel"_s; }
+    const char* renderName() const final { return "RenderModel"; }
     bool isRenderModel() const final { return true; }
 
     bool requiresLayer() const final;

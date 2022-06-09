@@ -50,24 +50,19 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
     // Static
 
-    static show(breakpoint, targetElement)
-    {
-        const delegate = null;
-        let popover;
-        if (breakpoint instanceof WI.EventBreakpoint)
-            popover = new WI.EventBreakpointPopover(delegate, breakpoint);
-        else if (breakpoint instanceof WI.URLBreakpoint)
-            popover = new WI.URLBreakpointPopover(delegate, breakpoint);
-        else
-            popover = new WI.BreakpointPopover(delegate, breakpoint);
-        popover.show(targetElement);
-    }
-
     static appendContextMenuItems(contextMenu, breakpoint, targetElement)
     {
         if (breakpoint.editable && targetElement) {
             contextMenu.appendItem(WI.UIString("Edit Breakpoint\u2026"), () => {
-                WI.BreakpointPopover.show(breakpoint, targetElement);
+                const delegate = null;
+                let popover;
+                if (breakpoint instanceof WI.EventBreakpoint)
+                    popover = new WI.EventBreakpointPopover(delegate, breakpoint);
+                else if (breakpoint instanceof WI.URLBreakpoint)
+                    popover = new WI.URLBreakpointPopover(delegate, breakpoint);
+                else
+                    popover = new WI.BreakpointPopover(delegate, breakpoint);
+                popover.show(targetElement);
             });
         }
 
@@ -247,10 +242,7 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
             });
         }
 
-        let referencePage = this._breakpoint?.constructor.ReferencePage || this.constructor.ReferencePage;
-        if (this._breakpoint)
-            referencePage = referencePage.Configuration;
-        this._contentElement.appendChild(referencePage.createLinkElement());
+        this._contentElement.appendChild(WI.createReferencePageLink(this._breakpoint?.constructor.ReferencePage || this.constructor.ReferencePage, this._breakpoint ? "configuration" : ""));
 
         this.content = this._contentElement;
 

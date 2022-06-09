@@ -26,28 +26,16 @@
 #include "config.h"
 #include "PrivateClickMeasurementDebugInfo.h"
 
-#include <wtf/CrossThreadCopier.h>
-
 namespace WebKit::PCM {
 
-DebugInfo DebugInfo::isolatedCopy() const &
+DebugInfo DebugInfo::isolatedCopy() const
 {
-    return { crossThreadCopy(messages) };
+    return { messages.isolatedCopy() };
 }
 
-DebugInfo DebugInfo::isolatedCopy() &&
-{
-    return { crossThreadCopy(WTFMove(messages)) };
-}
-
-DebugInfo::Message DebugInfo::Message::isolatedCopy() const &
+DebugInfo::Message DebugInfo::Message::isolatedCopy() const
 {
     return { messageLevel, message.isolatedCopy() };
-}
-
-DebugInfo::Message DebugInfo::Message::isolatedCopy() &&
-{
-    return { messageLevel, WTFMove(message).isolatedCopy() };
 }
 
 } // namespace WebKit::PCM

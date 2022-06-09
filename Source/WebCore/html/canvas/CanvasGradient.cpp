@@ -27,43 +27,43 @@
 #include "config.h"
 #include "CanvasGradient.h"
 
-#include "CanvasRenderingContext.h"
+#include "CanvasBase.h"
 #include "CanvasStyle.h"
 #include "Gradient.h"
 
 namespace WebCore {
 
-CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1, CanvasRenderingContext& context)
+CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1, CanvasBase& canvasBase)
     : m_gradient(Gradient::create(Gradient::LinearData { p0, p1 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
-    , m_context(context)
+    , m_canvas(canvasBase)
 {
 }
 
-CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasRenderingContext& context)
+CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasBase& canvasBase)
     : m_gradient(Gradient::create(Gradient::RadialData { p0, p1, r0, r1, 1 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
-    , m_context(context)
+    , m_canvas(canvasBase)
 {
 }
 
-CanvasGradient::CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasRenderingContext& context)
+CanvasGradient::CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasBase& canvasBase)
     : m_gradient(Gradient::create(Gradient::ConicData { centerPoint, angleInRadians }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
-    , m_context(context)
+    , m_canvas(canvasBase)
 {
 }
 
-Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, const FloatPoint& p1, CanvasRenderingContext& context)
+Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, const FloatPoint& p1, CanvasBase& canvasBase)
 {
-    return adoptRef(*new CanvasGradient(p0, p1, context));
+    return adoptRef(*new CanvasGradient(p0, p1, canvasBase));
 }
 
-Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasRenderingContext& context)
+Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, CanvasBase& canvasBase)
 {
-    return adoptRef(*new CanvasGradient(p0, r0, p1, r1, context));
+    return adoptRef(*new CanvasGradient(p0, r0, p1, r1, canvasBase));
 }
 
-Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& centerPoint, float angleInRadians, CanvasRenderingContext& context)
+Ref<CanvasGradient> CanvasGradient::create(const FloatPoint& centerPoint, float angleInRadians, CanvasBase& canvasBase)
 {
-    return adoptRef(*new CanvasGradient(centerPoint, angleInRadians, context));
+    return adoptRef(*new CanvasGradient(centerPoint, angleInRadians, canvasBase));
 }
 
 CanvasGradient::~CanvasGradient() = default;
@@ -74,7 +74,7 @@ ExceptionOr<void> CanvasGradient::addColorStop(double value, const String& color
         return Exception { IndexSizeError };
 
     // Treat currentColor as black, as required by the standard.
-    Color color = isCurrentColorString(colorString) ? Color::black : parseColor(colorString, m_context->canvasBase());
+    Color color = isCurrentColorString(colorString) ? Color::black : parseColor(colorString, m_canvas);
     if (!color.isValid())
         return Exception { SyntaxError };
 

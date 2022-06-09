@@ -33,132 +33,132 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-static int testParseHTMLInteger(StringView input)
+static int testParseHTMLInteger(const String& input)
 {
     auto optionalResult = parseHTMLInteger(input);
     EXPECT_TRUE(!!optionalResult);
     return optionalResult.value_or(0);
 }
 
-static bool parseHTMLIntegerFails(StringView input)
+static bool parseHTMLIntegerFails(const String& input)
 {
     return !parseHTMLInteger(input);
 }
 
 TEST(WebCoreHTMLParserIdioms, parseHTMLInteger)
 {
-    EXPECT_EQ(0, testParseHTMLInteger("0"_s));
-    EXPECT_EQ(0, testParseHTMLInteger("-0"_s));
-    EXPECT_EQ(0, testParseHTMLInteger("+0"_s));
-    EXPECT_EQ(123, testParseHTMLInteger("123"_s));
-    EXPECT_EQ(123, testParseHTMLInteger("+123"_s));
-    EXPECT_EQ(-123, testParseHTMLInteger("-123"_s));
-    EXPECT_EQ(123, testParseHTMLInteger("  123"_s));
-    EXPECT_EQ(123, testParseHTMLInteger("123   "_s));
-    EXPECT_EQ(123, testParseHTMLInteger("   123   "_s));
-    EXPECT_EQ(123, testParseHTMLInteger("123abc"_s));
-    EXPECT_EQ(-123, testParseHTMLInteger("-123abc"_s));
-    EXPECT_EQ(123, testParseHTMLInteger("  +123"_s));
-    EXPECT_EQ(-123, testParseHTMLInteger("  -123"_s));
-    EXPECT_EQ(12, testParseHTMLInteger("   12 3"_s));
-    EXPECT_EQ(1, testParseHTMLInteger("1.0"_s));
-    EXPECT_EQ(1, testParseHTMLInteger("1."_s));
-    EXPECT_EQ(1, testParseHTMLInteger("1e1"_s));
+    EXPECT_EQ(0, testParseHTMLInteger("0"));
+    EXPECT_EQ(0, testParseHTMLInteger("-0"));
+    EXPECT_EQ(0, testParseHTMLInteger("+0"));
+    EXPECT_EQ(123, testParseHTMLInteger("123"));
+    EXPECT_EQ(123, testParseHTMLInteger("+123"));
+    EXPECT_EQ(-123, testParseHTMLInteger("-123"));
+    EXPECT_EQ(123, testParseHTMLInteger("  123"));
+    EXPECT_EQ(123, testParseHTMLInteger("123   "));
+    EXPECT_EQ(123, testParseHTMLInteger("   123   "));
+    EXPECT_EQ(123, testParseHTMLInteger("123abc"));
+    EXPECT_EQ(-123, testParseHTMLInteger("-123abc"));
+    EXPECT_EQ(123, testParseHTMLInteger("  +123"));
+    EXPECT_EQ(-123, testParseHTMLInteger("  -123"));
+    EXPECT_EQ(12, testParseHTMLInteger("   12 3"));
+    EXPECT_EQ(1, testParseHTMLInteger("1.0"));
+    EXPECT_EQ(1, testParseHTMLInteger("1."));
+    EXPECT_EQ(1, testParseHTMLInteger("1e1"));
 
     // All HTML whitespaces.
-    EXPECT_EQ(123, testParseHTMLInteger(" \t\r\n\f123"_s));
+    EXPECT_EQ(123, testParseHTMLInteger(" \t\r\n\f123"));
 
     // Boundaries.
-    EXPECT_EQ(-2147483648, testParseHTMLInteger("-2147483648"_s));
-    EXPECT_EQ(2147483647, testParseHTMLInteger("2147483647"_s));
+    EXPECT_EQ(-2147483648, testParseHTMLInteger("-2147483648"));
+    EXPECT_EQ(2147483647, testParseHTMLInteger("2147483647"));
 
     // Failure cases.
-    EXPECT_TRUE(parseHTMLIntegerFails("-2147483649"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("2147483648"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("111111111111111111"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails(""_s));
-    EXPECT_TRUE(parseHTMLIntegerFails(" "_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("   "_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("+"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("+ 123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("-"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("- 123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("a"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("-a"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("+-123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("-+123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("++123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("--123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("\v123"_s)); // '\v' is an ASCII space but not an HTML whitespace.
-    EXPECT_TRUE(parseHTMLIntegerFails("a123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("+a123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("-a123"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails(".1"_s));
-    EXPECT_TRUE(parseHTMLIntegerFails("infinity"_s));
+    EXPECT_TRUE(parseHTMLIntegerFails("-2147483649"));
+    EXPECT_TRUE(parseHTMLIntegerFails("2147483648"));
+    EXPECT_TRUE(parseHTMLIntegerFails("111111111111111111"));
+    EXPECT_TRUE(parseHTMLIntegerFails(""));
+    EXPECT_TRUE(parseHTMLIntegerFails(" "));
+    EXPECT_TRUE(parseHTMLIntegerFails("   "));
+    EXPECT_TRUE(parseHTMLIntegerFails("+"));
+    EXPECT_TRUE(parseHTMLIntegerFails("+ 123"));
+    EXPECT_TRUE(parseHTMLIntegerFails("-"));
+    EXPECT_TRUE(parseHTMLIntegerFails("- 123"));
+    EXPECT_TRUE(parseHTMLIntegerFails("a"));
+    EXPECT_TRUE(parseHTMLIntegerFails("-a"));
+    EXPECT_TRUE(parseHTMLIntegerFails("+-123"));
+    EXPECT_TRUE(parseHTMLIntegerFails("-+123"));
+    EXPECT_TRUE(parseHTMLIntegerFails("++123"));
+    EXPECT_TRUE(parseHTMLIntegerFails("--123"));
+    EXPECT_TRUE(parseHTMLIntegerFails("\v123")); // '\v' is an ASCII space but not an HTML whitespace.
+    EXPECT_TRUE(parseHTMLIntegerFails("a123"));
+    EXPECT_TRUE(parseHTMLIntegerFails("+a123"));
+    EXPECT_TRUE(parseHTMLIntegerFails("-a123"));
+    EXPECT_TRUE(parseHTMLIntegerFails(".1"));
+    EXPECT_TRUE(parseHTMLIntegerFails("infinity"));
 }
 
-static unsigned testParseHTMLNonNegativeInteger(StringView input)
+static unsigned testParseHTMLNonNegativeInteger(const String& input)
 {
     auto optionalResult = parseHTMLNonNegativeInteger(input);
     EXPECT_TRUE(!!optionalResult);
     return optionalResult.value_or(0);
 }
 
-static bool parseHTMLNonNegativeIntegerFails(StringView input)
+static bool parseHTMLNonNegativeIntegerFails(const String& input)
 {
     return !parseHTMLNonNegativeInteger(input);
 }
 
 TEST(WebCoreHTMLParserIdioms, parseHTMLNonNegativeInteger)
 {
-    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("123"_s));
-    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("+123"_s));
-    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("  123"_s));
-    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("123   "_s));
-    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("   123   "_s));
-    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("123abc"_s));
-    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("  +123"_s));
-    EXPECT_EQ(12u, testParseHTMLNonNegativeInteger("   12 3"_s));
-    EXPECT_EQ(1u, testParseHTMLNonNegativeInteger("1.0"_s));
-    EXPECT_EQ(1u, testParseHTMLNonNegativeInteger("1."_s));
-    EXPECT_EQ(1u, testParseHTMLNonNegativeInteger("1e1"_s));
+    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("123"));
+    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("+123"));
+    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("  123"));
+    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("123   "));
+    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("   123   "));
+    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("123abc"));
+    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger("  +123"));
+    EXPECT_EQ(12u, testParseHTMLNonNegativeInteger("   12 3"));
+    EXPECT_EQ(1u, testParseHTMLNonNegativeInteger("1.0"));
+    EXPECT_EQ(1u, testParseHTMLNonNegativeInteger("1."));
+    EXPECT_EQ(1u, testParseHTMLNonNegativeInteger("1e1"));
 
     // All HTML whitespaces.
-    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger(" \t\r\n\f123"_s));
+    EXPECT_EQ(123u, testParseHTMLNonNegativeInteger(" \t\r\n\f123"));
 
     // Boundaries.
-    EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("+0"_s));
-    EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("0"_s));
-    EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("-0"_s));
-    EXPECT_EQ(2147483647u, testParseHTMLNonNegativeInteger("2147483647"_s));
+    EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("+0"));
+    EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("0"));
+    EXPECT_EQ(0u, testParseHTMLNonNegativeInteger("-0"));
+    EXPECT_EQ(2147483647u, testParseHTMLNonNegativeInteger("2147483647"));
 
     // Failure cases.
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-1"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("2147483648"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("2147483649"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("111111111111111111"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("  -123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-123abc"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails(""_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails(" "_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("   "_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("+"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("+ 123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("- 123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("a"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-a"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("+-123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-+123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("++123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("--123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("\v123"_s)); // '\v' is an ASCII space but not an HTML whitespace.
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("a123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("+a123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-a123"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails(".1"_s));
-    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("infinity"_s));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-1"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("2147483648"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("2147483649"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("111111111111111111"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("  -123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-123abc"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails(""));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails(" "));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("   "));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("+"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("+ 123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("- 123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("a"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-a"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("+-123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-+123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("++123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("--123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("\v123")); // '\v' is an ASCII space but not an HTML whitespace.
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("a123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("+a123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("-a123"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails(".1"));
+    EXPECT_TRUE(parseHTMLNonNegativeIntegerFails("infinity"));
 }
 
 } // namespace TestWebKitAPI

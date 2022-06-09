@@ -30,14 +30,14 @@
 using namespace WebKit;
 
 /**
- * WebKitDeviceInfoPermissionRequest:
+ * SECTION: WebKitDeviceInfoPermissionRequest
+ * @Short_description: A permission request for accessing user's audio/video devices.
+ * @Title: WebKitDeviceInfoPermissionRequest
  * @See_also: #WebKitPermissionRequest, #WebKitWebView
- *
- * A permission request for accessing user's audio/video devices.
  *
  * WebKitUserMediaPermissionRequest represents a request for
  * permission to whether WebKit should be allowed to access the user's
- * devices information when requested through the enumerateDevices API.
+ * devices information when requested through the enumeraceDevices API.
  *
  * When a WebKitDeviceInfoPermissionRequest is not handled by the user,
  * it is denied by default.

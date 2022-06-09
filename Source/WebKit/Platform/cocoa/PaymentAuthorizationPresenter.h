@@ -43,7 +43,6 @@ class PaymentMerchantSession;
 class PaymentMethod;
 class PaymentSessionError;
 struct ApplePayCouponCodeUpdate;
-struct ApplePayPaymentAuthorizationResult;
 struct ApplePayPaymentMethodUpdate;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethod;
@@ -76,7 +75,7 @@ public:
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
-    void completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&&);
+    void completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
     void completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&);
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
 #if HAVE(PASSKIT_COUPON_CODE)

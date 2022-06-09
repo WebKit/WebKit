@@ -140,9 +140,9 @@ inline bool operator!=(const LegacyInlineIterator& it1, const LegacyInlineIterat
     return it1.offset() != it2.offset() || it1.renderer() != it2.renderer();
 }
 
-static inline UCharDirection embedCharFromDirection(TextDirection direction, UnicodeBidi unicodeBidi)
+static inline UCharDirection embedCharFromDirection(TextDirection direction, EUnicodeBidi unicodeBidi)
 {
-    if (unicodeBidi == UnicodeBidi::Embed)
+    if (unicodeBidi == Embed)
         return direction == TextDirection::RTL ? U_RIGHT_TO_LEFT_EMBEDDING : U_LEFT_TO_RIGHT_EMBEDDING;
     return direction == TextDirection::RTL ? U_RIGHT_TO_LEFT_OVERRIDE : U_LEFT_TO_RIGHT_OVERRIDE;
 }
@@ -154,8 +154,8 @@ static inline void notifyObserverEnteredObject(Observer* observer, RenderObject*
         return;
 
     const RenderStyle& style = object->style();
-    auto unicodeBidi = style.unicodeBidi();
-    if (unicodeBidi == UnicodeBidi::Normal) {
+    EUnicodeBidi unicodeBidi = style.unicodeBidi();
+    if (unicodeBidi == UBNormal) {
         // http://dev.w3.org/csswg/css3-writing-modes/#unicode-bidi
         // "The element does not open an additional level of embedding with respect to the bidirectional algorithm."
         // Thus we ignore any possible dir= attribute on the span.
@@ -180,8 +180,8 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
     if (!observer || !object || !object->isRenderInline())
         return;
 
-    auto unicodeBidi = object->style().unicodeBidi();
-    if (unicodeBidi == UnicodeBidi::Normal)
+    EUnicodeBidi unicodeBidi = object->style().unicodeBidi();
+    if (unicodeBidi == UBNormal)
         return; // Nothing to do for unicode-bidi: normal
     if (isIsolated(unicodeBidi)) {
         observer->exitIsolate();
@@ -196,7 +196,7 @@ static inline void notifyObserverWillExitObject(Observer* observer, RenderObject
 static inline bool isIteratorTarget(RenderObject* object)
 {
     ASSERT(object); // The iterator will of course return 0, but its not an expected argument to this function.
-    return object->isTextOrLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplacedOrInlineBlock();
+    return object->isTextOrLineBreak() || object->isFloating() || object->isOutOfFlowPositioned() || object->isReplaced();
 }
 
 template <class Observer>

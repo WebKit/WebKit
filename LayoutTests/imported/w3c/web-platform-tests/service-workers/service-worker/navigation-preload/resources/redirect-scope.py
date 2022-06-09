@@ -11,7 +11,6 @@ def main(request, response):
 
     if type == b"no-location":
         response.status = 302
-        response.headers.append(b"Content-Type", b"text/html")
         response.headers.append(b"Custom-Header", b"hello")
         return b""
 

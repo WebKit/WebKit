@@ -30,7 +30,6 @@
 #include "CommandResult.h"
 #include "SessionHost.h"
 #include <wtf/RunLoop.h>
-#include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
 
@@ -62,7 +61,7 @@ int WebDriverService::run(int argc, char** argv)
 #if USE(INSPECTOR_SOCKET_SERVER)
     String targetString;
     if (const char* targetEnvVar = getenv("WEBDRIVER_TARGET_ADDR"))
-        targetString = String::fromLatin1(targetEnvVar);
+        targetString = targetEnvVar;
 #endif
     for (int i = 1 ; i < argc; ++i) {
         const char* arg = argv[i];
@@ -76,19 +75,19 @@ int WebDriverService::run(int argc, char** argv)
                 printUsageStatement(argv[0]);
                 return EXIT_FAILURE;
             }
-            portString = String::fromLatin1(argv[i]);
+            portString = argv[i];
             continue;
         }
 
         static const unsigned portStrLength = strlen("--port=");
         if (!strncmp(arg, "--port=", portStrLength) && portString.isNull()) {
-            portString = String::fromLatin1(arg + portStrLength);
+            portString = String(arg + portStrLength);
             continue;
         }
 
         static const unsigned hostStrLength = strlen("--host=");
         if (!strncmp(arg, "--host=", hostStrLength) && !host) {
-            host = String::fromLatin1(arg + hostStrLength);
+            host = String(arg + hostStrLength);
             continue;
         }
 
@@ -98,13 +97,13 @@ int WebDriverService::run(int argc, char** argv)
                 printUsageStatement(argv[0]);
                 return EXIT_FAILURE;
             }
-            targetString = String::fromLatin1(argv[i]);
+            targetString = argv[i];
             continue;
         }
 
         static const unsigned targetStrLength = strlen("--target=");
         if (!strncmp(arg, "--target=", targetStrLength) && targetString.isNull()) {
-            targetString = String::fromLatin1(arg + targetStrLength);
+            targetString = String(arg + targetStrLength);
             continue;
         }
 #endif
@@ -117,7 +116,7 @@ int WebDriverService::run(int argc, char** argv)
 
 #if USE(INSPECTOR_SOCKET_SERVER)
     if (!targetString.isEmpty()) {
-        auto position = targetString.reverseFind(':');
+        auto position = targetString.reverseFind(":"_s);
         if (position != notFound) {
             m_targetAddress = targetString.left(position);
             m_targetPort = parseIntegerAllowingTrailingJunk<uint16_t>(StringView { targetString }.substring(position + 1)).value_or(0);
@@ -174,11 +173,8 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session/$sessionId/elements", &WebDriverService::findElements },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/element", &WebDriverService::findElementFromElement },
     { HTTPMethod::Post, "/session/$sessionId/element/$elementId/elements", &WebDriverService::findElementsFromElement },
-    { HTTPMethod::Post, "/session/$sessionId/shadow/$shadowId/element", &WebDriverService::findElementFromShadowRoot },
-    { HTTPMethod::Post, "/session/$sessionId/shadow/$shadowId/elements", &WebDriverService::findElementsFromShadowRoot },
     { HTTPMethod::Get, "/session/$sessionId/element/active", &WebDriverService::getActiveElement },
 
-    { HTTPMethod::Get, "/session/$sessionId/element/$elementId/shadow", &WebDriverService::getElementShadowRoot },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/selected", &WebDriverService::isElementSelected },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/attribute/$name", &WebDriverService::getElementAttribute },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/property/$name", &WebDriverService::getElementProperty },
@@ -219,16 +215,14 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
 
 std::optional<WebDriverService::HTTPMethod> WebDriverService::toCommandHTTPMethod(const String& method)
 {
-    static constexpr std::pair<ComparableLettersLiteral, WebDriverService::HTTPMethod> httpMethodMappings[] = {
-        { "delete", WebDriverService::HTTPMethod::Delete },
-        { "get", WebDriverService::HTTPMethod::Get },
-        { "post", WebDriverService::HTTPMethod::Post },
-        { "put", WebDriverService::HTTPMethod::Post },
-    };
-    static constexpr SortedArrayMap httpMethods { httpMethodMappings };
+    auto lowerCaseMethod = method.convertToASCIILowercase();
+    if (lowerCaseMethod == "get")
+        return WebDriverService::HTTPMethod::Get;
+    if (lowerCaseMethod == "post" || lowerCaseMethod == "put")
+        return WebDriverService::HTTPMethod::Post;
+    if (lowerCaseMethod == "delete")
+        return WebDriverService::HTTPMethod::Delete;
 
-    if (auto* methodValue = httpMethods.tryGet(method))
-        return *methodValue;
     return std::nullopt;
 }
 
@@ -370,10 +364,10 @@ static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject,
     Timeouts timeouts;
     auto end = timeoutsObject.end();
     for (auto it = timeoutsObject.begin(); it != end; ++it) {
-        if (it->key == "sessionId"_s)
+        if (it->key == "sessionId")
             continue;
 
-        if (it->key == "script"_s && it->value->isNull()) {
+        if (it->key == "script" && it->value->isNull()) {
             timeouts.script = std::numeric_limits<double>::infinity();
             continue;
         }
@@ -383,11 +377,11 @@ static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject,
         if (!timeoutMS)
             return std::nullopt;
 
-        if (it->key == "script"_s)
+        if (it->key == "script")
             timeouts.script = timeoutMS.value();
-        else if (it->key == "pageLoad"_s)
+        else if (it->key == "pageLoad")
             timeouts.pageLoad = timeoutMS.value();
-        else if (it->key == "implicit"_s)
+        else if (it->key == "implicit")
             timeouts.implicit = timeoutMS.value();
         else if (ignoreUnknownTimeout == IgnoreUnknownTimeout::No)
             return std::nullopt;
@@ -405,10 +399,10 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
     if (!proxy.type)
         return std::nullopt;
 
-    if (proxy.type == "direct"_s || proxy.type == "autodetect"_s || proxy.type == "system"_s)
+    if (proxy.type == "direct" || proxy.type == "autodetect" || proxy.type == "system")
         return proxy;
 
-    if (proxy.type == "pac"_s) {
+    if (proxy.type == "pac") {
         proxy.autoconfigURL = proxyObject.getString("proxyAutoconfigUrl"_s);
         if (!proxy.autoconfigURL)
             return std::nullopt;
@@ -416,7 +410,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
         return proxy;
     }
 
-    if (proxy.type == "manual"_s) {
+    if (proxy.type == "manual") {
         if (auto value = proxyObject.getValue("ftpProxy"_s)) {
             auto ftpProxy = value->asString();
             if (!ftpProxy)
@@ -444,7 +438,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
             if (!proxy.httpsURL->isValid())
                 return std::nullopt;
         }
-        if (auto value = proxyObject.getValue("socksProxy"_s)) {
+        if (auto value = proxyObject.getValue("socksProxy")) {
             auto socksProxy = value->asString();
             if (!socksProxy)
                 return std::nullopt;
@@ -453,7 +447,7 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
             if (!proxy.socksURL->isValid())
                 return std::nullopt;
 
-            auto socksVersionValue = proxyObject.getValue("socksVersion"_s);
+            auto socksVersionValue = proxyObject.getValue("socksVersion");
             if (!socksVersionValue)
                 return std::nullopt;
 
@@ -484,26 +478,26 @@ static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
 
 static std::optional<PageLoadStrategy> deserializePageLoadStrategy(const String& pageLoadStrategy)
 {
-    if (pageLoadStrategy == "none"_s)
+    if (pageLoadStrategy == "none")
         return PageLoadStrategy::None;
-    if (pageLoadStrategy == "normal"_s)
+    if (pageLoadStrategy == "normal")
         return PageLoadStrategy::Normal;
-    if (pageLoadStrategy == "eager"_s)
+    if (pageLoadStrategy == "eager")
         return PageLoadStrategy::Eager;
     return std::nullopt;
 }
 
 static std::optional<UnhandledPromptBehavior> deserializeUnhandledPromptBehavior(const String& unhandledPromptBehavior)
 {
-    if (unhandledPromptBehavior == "dismiss"_s)
+    if (unhandledPromptBehavior == "dismiss")
         return UnhandledPromptBehavior::Dismiss;
-    if (unhandledPromptBehavior == "accept"_s)
+    if (unhandledPromptBehavior == "accept")
         return UnhandledPromptBehavior::Accept;
-    if (unhandledPromptBehavior == "dismiss and notify"_s)
+    if (unhandledPromptBehavior == "dismiss and notify")
         return UnhandledPromptBehavior::DismissAndNotify;
-    if (unhandledPromptBehavior == "accept and notify"_s)
+    if (unhandledPromptBehavior == "accept and notify")
         return UnhandledPromptBehavior::AcceptAndNotify;
-    if (unhandledPromptBehavior == "ignore"_s)
+    if (unhandledPromptBehavior == "ignore")
         return UnhandledPromptBehavior::Ignore;
     return std::nullopt;
 }
@@ -569,7 +563,7 @@ bool WebDriverService::findSessionOrCompleteWithError(JSON::Object& parameters, 
 
     if (!m_session->isConnected()) {
         m_session = nullptr;
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSessionID, String("session deleted because of page crash or hang."_s)));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSessionID, String("session deleted because of page crash or hang.")));
         return false;
     }
 
@@ -585,42 +579,42 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
     for (auto it = capabilities.begin(); it != end; ++it) {
         if (it->value->isNull())
             continue;
-        if (it->key == "acceptInsecureCerts"_s) {
+        if (it->key == "acceptInsecureCerts") {
             auto acceptInsecureCerts = it->value->asBoolean();
             if (!acceptInsecureCerts)
                 return nullptr;
             result->setBoolean(it->key, *acceptInsecureCerts);
-        } else if (it->key == "browserName"_s || it->key == "browserVersion"_s || it->key == "platformName"_s) {
+        } else if (it->key == "browserName" || it->key == "browserVersion" || it->key == "platformName") {
             auto stringValue = it->value->asString();
             if (!stringValue)
                 return nullptr;
             result->setString(it->key, stringValue);
-        } else if (it->key == "pageLoadStrategy"_s) {
+        } else if (it->key == "pageLoadStrategy") {
             auto pageLoadStrategy = it->value->asString();
             if (!pageLoadStrategy || !deserializePageLoadStrategy(pageLoadStrategy))
                 return nullptr;
             result->setString(it->key, pageLoadStrategy);
-        } else if (it->key == "proxy"_s) {
+        } else if (it->key == "proxy") {
             auto proxy = it->value->asObject();
             if (!proxy || !deserializeProxy(*proxy))
                 return nullptr;
             result->setValue(it->key, *proxy);
-        } else if (it->key == "strictFileInteractability"_s) {
+        } else if (it->key == "strictFileInteractability") {
             auto strictFileInteractability = it->value->asBoolean();
             if (!strictFileInteractability)
                 return nullptr;
             result->setBoolean(it->key, *strictFileInteractability);
-        } else if (it->key == "timeouts"_s) {
+        } else if (it->key == "timeouts") {
             auto timeouts = it->value->asObject();
             if (!timeouts || !deserializeTimeouts(*timeouts, IgnoreUnknownTimeout::No))
                 return nullptr;
             result->setValue(it->key, *timeouts);
-        } else if (it->key == "unhandledPromptBehavior"_s) {
+        } else if (it->key == "unhandledPromptBehavior") {
             auto unhandledPromptBehavior = it->value->asString();
             if (!unhandledPromptBehavior || !deserializeUnhandledPromptBehavior(unhandledPromptBehavior))
                 return nullptr;
             result->setString(it->key, unhandledPromptBehavior);
-        } else if (it->key.find(':') != notFound) {
+        } else if (it->key.find(":") != notFound) {
             if (!platformValidateCapability(it->key, it->value))
                 return nullptr;
             result->setValue(it->key, it->value.copyRef());
@@ -670,23 +664,23 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
 
     auto end = mergedCapabilities.end();
     for (auto it = mergedCapabilities.begin(); it != end; ++it) {
-        if (it->key == "browserName"_s && platformCapabilities.browserName) {
+        if (it->key == "browserName" && platformCapabilities.browserName) {
             auto browserName = it->value->asString();
             if (!equalIgnoringASCIICase(platformCapabilities.browserName.value(), browserName))
                 return nullptr;
-        } else if (it->key == "browserVersion"_s && platformCapabilities.browserVersion) {
+        } else if (it->key == "browserVersion" && platformCapabilities.browserVersion) {
             auto browserVersion = it->value->asString();
             if (!platformCompareBrowserVersions(browserVersion, platformCapabilities.browserVersion.value()))
                 return nullptr;
-        } else if (it->key == "platformName"_s && platformCapabilities.platformName) {
+        } else if (it->key == "platformName" && platformCapabilities.platformName) {
             auto platformName = it->value->asString();
-            if (!equalLettersIgnoringASCIICase(platformName, "any"_s) && platformCapabilities.platformName.value() != platformName)
+            if (!equalLettersIgnoringASCIICase(platformName, "any") && platformCapabilities.platformName.value() != platformName)
                 return nullptr;
-        } else if (it->key == "acceptInsecureCerts"_s && platformCapabilities.acceptInsecureCerts) {
+        } else if (it->key == "acceptInsecureCerts" && platformCapabilities.acceptInsecureCerts) {
             auto acceptInsecureCerts = it->value->asBoolean();
             if (acceptInsecureCerts && !platformCapabilities.acceptInsecureCerts.value())
                 return nullptr;
-        } else if (it->key == "proxy"_s) {
+        } else if (it->key == "proxy") {
             auto proxyType = it->value->asObject()->getString("proxyType"_s);
             if (!platformSupportProxyType(proxyType))
                 return nullptr;
@@ -717,14 +711,14 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
         // 2.1. If required capabilities is undefined, set the value to an empty JSON Object.
         requiredCapabilities = JSON::Object::create();
     } else if (!(requiredCapabilities = requiredCapabilitiesValue->asObject())) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("alwaysMatch is invalid in capabilities"_s)));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("alwaysMatch is invalid in capabilities")));
         return { };
     }
 
     // 2.2. Let required capabilities be the result of trying to validate capabilities with argument required capabilities.
     requiredCapabilities = validatedCapabilities(*requiredCapabilities);
     if (!requiredCapabilities) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("Invalid alwaysMatch capabilities"_s)));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("Invalid alwaysMatch capabilities")));
         return { };
     }
 
@@ -739,7 +733,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
         firstMatchCapabilitiesList = firstMatchCapabilitiesValue->asArray();
         if (!firstMatchCapabilitiesList) {
             // 3.2. If all first match capabilities is not a JSON List, return error with error code invalid argument.
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("firstMatch is invalid in capabilities"_s)));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("firstMatch is invalid in capabilities")));
             return { };
         }
     }
@@ -752,13 +746,13 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
     for (unsigned i = 0; i < firstMatchCapabilitiesListLength; ++i) {
         auto firstMatchCapabilities = firstMatchCapabilitiesList->get(i)->asObject();
         if (!firstMatchCapabilities) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("Invalid capabilities found in firstMatch"_s)));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("Invalid capabilities found in firstMatch")));
             return { };
         }
         // 5.1. Let validated capabilities be the result of trying to validate capabilities with argument first match capabilities.
         firstMatchCapabilities = validatedCapabilities(*firstMatchCapabilities);
         if (!firstMatchCapabilities) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("Invalid firstMatch capabilities"_s)));
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("Invalid firstMatch capabilities")));
             return { };
         }
 
@@ -794,7 +788,7 @@ Vector<Capabilities> WebDriverService::processCapabilities(const JSON::Object& p
     }
 
     if (matchedCapabilitiesList.isEmpty()) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Failed to match capabilities"_s)));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Failed to match capabilities")));
         return { };
     }
 
@@ -806,7 +800,7 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
     // §8.1 New Session.
     // https://www.w3.org/TR/webdriver/#new-session
     if (m_session) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Maximum number of active sessions"_s)));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Maximum number of active sessions")));
         return;
     }
 
@@ -822,7 +816,7 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
 void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (capabilitiesList.isEmpty()) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Failed to match capabilities"_s)));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Failed to match capabilities")));
         return;
     }
 
@@ -875,30 +869,30 @@ void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, st
             capabilitiesObject->setBoolean("setWindowRect"_s, capabilities.setWindowRect.value_or(true));
             switch (capabilities.unhandledPromptBehavior.value_or(UnhandledPromptBehavior::DismissAndNotify)) {
             case UnhandledPromptBehavior::Dismiss:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss"_s);
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss");
                 break;
             case UnhandledPromptBehavior::Accept:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept"_s);
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept");
                 break;
             case UnhandledPromptBehavior::DismissAndNotify:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss and notify"_s);
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "dismiss and notify");
                 break;
             case UnhandledPromptBehavior::AcceptAndNotify:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept and notify"_s);
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "accept and notify");
                 break;
             case UnhandledPromptBehavior::Ignore:
-                capabilitiesObject->setString("unhandledPromptBehavior"_s, "ignore"_s);
+                capabilitiesObject->setString("unhandledPromptBehavior"_s, "ignore");
                 break;
             }
             switch (capabilities.pageLoadStrategy.value_or(PageLoadStrategy::Normal)) {
             case PageLoadStrategy::None:
-                capabilitiesObject->setString("pageLoadStrategy"_s, "none"_s);
+                capabilitiesObject->setString("pageLoadStrategy"_s, "none");
                 break;
             case PageLoadStrategy::Normal:
-                capabilitiesObject->setString("pageLoadStrategy"_s, "normal"_s);
+                capabilitiesObject->setString("pageLoadStrategy"_s, "normal");
                 break;
             case PageLoadStrategy::Eager:
-                capabilitiesObject->setString("pageLoadStrategy"_s, "eager"_s);
+                capabilitiesObject->setString("pageLoadStrategy"_s, "eager");
                 break;
             }
             if (!capabilities.proxy)
@@ -1225,7 +1219,7 @@ void WebDriverService::newWindow(RefPtr<JSON::Object>&& parameters, Function<voi
     if (auto value = parameters->getValue("type"_s)) {
         auto valueString = value->asString();
         if (!!valueString) {
-            if (valueString == "window"_s || valueString == "tab"_s)
+            if (valueString == "window" || valueString == "tab")
                 typeHint = valueString;
         } else if (!value->isNull()) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
@@ -1299,9 +1293,9 @@ void WebDriverService::switchToParentFrame(RefPtr<JSON::Object>&& parameters, Fu
     });
 }
 
-static std::optional<String> findElementOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, Session::ElementIsShadowRoot isShadowRoot = Session::ElementIsShadowRoot::No)
+static std::optional<String> findElementOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
 {
-    auto elementID = parameters.getString(isShadowRoot == Session::ElementIsShadowRoot::Yes ? "shadowId"_s : "elementId"_s);
+    auto elementID = parameters.getString("elementId"_s);
     if (elementID.isEmpty()) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return std::nullopt;
@@ -1313,14 +1307,14 @@ static inline bool isValidStrategy(const String& strategy)
 {
     // §12.1 Locator Strategies.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-table-of-location-strategies
-    return strategy == "css selector"_s
-        || strategy == "link text"_s
-        || strategy == "partial link text"_s
-        || strategy == "tag name"_s
-        || strategy == "xpath"_s;
+    return strategy == "css selector"
+        || strategy == "link text"
+        || strategy == "partial link text"
+        || strategy == "tag name"
+        || strategy == "xpath";
 }
 
-static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, Session::ElementIsShadowRoot isShadowRoot, String& strategy, String& selector)
+static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler, String& strategy, String& selector)
 {
     strategy = parameters.getString("using"_s);
     if (!isValidStrategy(strategy)) {
@@ -1332,17 +1326,6 @@ static bool findStrategyAndSelectorOrCompleteWithError(JSON::Object& parameters,
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
         return false;
     }
-
-    if (isShadowRoot == Session::ElementIsShadowRoot::Yes) {
-        // Currently there is an opened discussion about if the following values has to be supported for a Shadow Root
-        // because the current implementation doesn't support them. We have them disabled for now.
-        // https://github.com/w3c/webdriver/issues/1610
-        if (strategy == "tag name"_s || strategy == "xpath"_s) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidSelector));
-            return false;
-        }
-    }
-
     return true;
 }
 
@@ -1354,7 +1337,7 @@ void WebDriverService::findElement(RefPtr<JSON::Object>&& parameters, Function<v
         return;
 
     String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::No, strategy, selector))
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
     m_session->waitForNavigationToComplete([this, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
@@ -1362,7 +1345,7 @@ void WebDriverService::findElement(RefPtr<JSON::Object>&& parameters, Function<v
             completionHandler(WTFMove(result));
             return;
         }
-        m_session->findElements(strategy, selector, Session::FindElementsMode::Single, emptyString(), Session::ElementIsShadowRoot::No, WTFMove(completionHandler));
+        m_session->findElements(strategy, selector, Session::FindElementsMode::Single, emptyString(), WTFMove(completionHandler));
     });
 }
 
@@ -1374,7 +1357,7 @@ void WebDriverService::findElements(RefPtr<JSON::Object>&& parameters, Function<
         return;
 
     String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::No, strategy, selector))
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
     m_session->waitForNavigationToComplete([this, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
@@ -1382,7 +1365,7 @@ void WebDriverService::findElements(RefPtr<JSON::Object>&& parameters, Function<
             completionHandler(WTFMove(result));
             return;
         }
-        m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, emptyString(), Session::ElementIsShadowRoot::No, WTFMove(completionHandler));
+        m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, emptyString(), WTFMove(completionHandler));
     });
 }
 
@@ -1398,9 +1381,10 @@ void WebDriverService::findElementFromElement(RefPtr<JSON::Object>&& parameters,
         return;
 
     String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::No, strategy, selector))
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
-    m_session->findElements(strategy, selector, Session::FindElementsMode::Single, elementID.value(), Session::ElementIsShadowRoot::No, WTFMove(completionHandler));
+
+    m_session->findElements(strategy, selector, Session::FindElementsMode::Single, elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::findElementsFromElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -1415,42 +1399,10 @@ void WebDriverService::findElementsFromElement(RefPtr<JSON::Object>&& parameters
         return;
 
     String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::No, strategy, selector))
+    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
-    m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, elementID.value(), Session::ElementIsShadowRoot::No, WTFMove(completionHandler));
-}
-
-void WebDriverService::findElementFromShadowRoot(RefPtr<JSON::Object>&& parameters, Function<void(CommandResult&&)>&& completionHandler)
-{
-    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
-        return;
-
-    auto shadowID = findElementOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::Yes);
-    if (!shadowID)
-        return;
-
-    String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::Yes, strategy, selector))
-        return;
-
-    m_session->findElements(strategy, selector, Session::FindElementsMode::Single, shadowID.value(), Session::ElementIsShadowRoot::Yes, WTFMove(completionHandler));
-}
-
-void WebDriverService::findElementsFromShadowRoot(RefPtr<JSON::Object>&& parameters, Function<void(CommandResult&&)>&& completionHandler)
-{
-    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
-        return;
-
-    auto shadowID = findElementOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::Yes);
-    if (!shadowID)
-        return;
-
-    String strategy, selector;
-    if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, Session::ElementIsShadowRoot::Yes, strategy, selector))
-        return;
-
-    m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, shadowID.value(), Session::ElementIsShadowRoot::Yes, WTFMove(completionHandler));
+    m_session->findElements(strategy, selector, Session::FindElementsMode::Multiple, elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::getActiveElement(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -1467,18 +1419,6 @@ void WebDriverService::getActiveElement(RefPtr<JSON::Object>&& parameters, Funct
         }
         m_session->getActiveElement(WTFMove(completionHandler));
     });
-}
-
-void WebDriverService::getElementShadowRoot(RefPtr<JSON::Object>&& parameters, Function<void(CommandResult&&)>&& completionHandler)
-{
-    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
-        return;
-
-    auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
-    if (!elementID)
-        return;
-
-    m_session->getElementShadowRoot(elementID.value(), WTFMove(completionHandler));
 }
 
 void WebDriverService::isElementSelected(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -1904,7 +1844,7 @@ static bool processPauseAction(JSON::Object& actionItem, Action& action, std::op
 
     auto duration = unsignedValue(*durationValue);
     if (!duration) {
-        errorMessage = String("The parameter 'duration' is invalid in pause action"_s);
+        errorMessage = String("The parameter 'duration' is invalid in pause action");
         return false;
     }
 
@@ -1915,8 +1855,8 @@ static bool processPauseAction(JSON::Object& actionItem, Action& action, std::op
 static std::optional<Action> processNullAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
 {
     auto subtype = actionItem.getString("type"_s);
-    if (subtype != "pause"_s) {
-        errorMessage = String("The parameter 'type' in null action is invalid or missing"_s);
+    if (subtype != "pause") {
+        errorMessage = String("The parameter 'type' in null action is invalid or missing");
         return std::nullopt;
     }
 
@@ -1931,14 +1871,14 @@ static std::optional<Action> processKeyAction(const String& id, JSON::Object& ac
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
-    if (subtype == "pause"_s)
+    if (subtype == "pause")
         actionSubtype = Action::Subtype::Pause;
-    else if (subtype == "keyUp"_s)
+    else if (subtype == "keyUp")
         actionSubtype = Action::Subtype::KeyUp;
-    else if (subtype == "keyDown"_s)
+    else if (subtype == "keyDown")
         actionSubtype = Action::Subtype::KeyDown;
     else {
-        errorMessage = String("The parameter 'type' of key action is invalid"_s);
+        errorMessage = String("The parameter 'type' of key action is invalid");
         return std::nullopt;
     }
 
@@ -1953,12 +1893,12 @@ static std::optional<Action> processKeyAction(const String& id, JSON::Object& ac
     case Action::Subtype::KeyDown: {
         auto keyValue = actionItem.getValue("value"_s);
         if (!keyValue) {
-            errorMessage = String("The paramater 'value' is missing for key up/down action"_s);
+            errorMessage = String("The paramater 'value' is missing for key up/down action");
             return std::nullopt;
         }
         auto key = keyValue->asString();
         if (key.isEmpty()) {
-            errorMessage = String("The paramater 'value' is invalid for key up/down action"_s);
+            errorMessage = String("The paramater 'value' is invalid for key up/down action");
             return std::nullopt;
         }
         // FIXME: check single unicode code point.
@@ -1997,7 +1937,7 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
     if (auto durationValue = actionItem.getValue("duration"_s)) {
         auto duration = unsignedValue(*durationValue);
         if (!duration) {
-            errorMessage = String("The parameter 'duration' is invalid in action"_s);
+            errorMessage = String("The parameter 'duration' is invalid in action");
             return false;
         }
         action.duration = duration.value();
@@ -2007,18 +1947,18 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
         if (auto originObject = originValue->asObject()) {
             auto elementID = originObject->getString(Session::webElementIdentifier());
             if (!elementID) {
-                errorMessage = String("The parameter 'origin' is not a valid web element object in action"_s);
+                errorMessage = String("The parameter 'origin' is not a valid web element object in action");
                 return false;
             }
             action.origin = PointerOrigin { PointerOrigin::Type::Element, elementID };
         } else {
             auto origin = originValue->asString();
-            if (origin == "viewport"_s)
+            if (origin == "viewport")
                 action.origin = PointerOrigin { PointerOrigin::Type::Viewport, std::nullopt };
-            else if (origin == "pointer"_s)
+            else if (origin == "pointer")
                 action.origin = PointerOrigin { PointerOrigin::Type::Pointer, std::nullopt };
             else {
-                errorMessage = String("The parameter 'origin' is invalid in action"_s);
+                errorMessage = String("The parameter 'origin' is invalid in action");
                 return false;
             }
         }
@@ -2028,7 +1968,7 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
     if (auto xValue = actionItem.getValue("x"_s)) {
         auto x = valueAsNumberInRange(*xValue, INT_MIN);
         if (!x) {
-            errorMessage = String("The paramater 'x' is invalid for action"_s);
+            errorMessage = String("The paramater 'x' is invalid for action");
             return false;
         }
         action.x = x.value();
@@ -2037,7 +1977,7 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, s
     if (auto yValue = actionItem.getValue("y"_s)) {
         auto y = valueAsNumberInRange(*yValue, INT_MIN);
         if (!y) {
-            errorMessage = String("The paramater 'y' is invalid for action"_s);
+            errorMessage = String("The paramater 'y' is invalid for action");
             return false;
         }
         action.y = y.value();
@@ -2050,18 +1990,18 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
-    if (subtype == "pause"_s)
+    if (subtype == "pause")
         actionSubtype = Action::Subtype::Pause;
-    else if (subtype == "pointerUp"_s)
+    else if (subtype == "pointerUp")
         actionSubtype = Action::Subtype::PointerUp;
-    else if (subtype == "pointerDown"_s)
+    else if (subtype == "pointerDown")
         actionSubtype = Action::Subtype::PointerDown;
-    else if (subtype == "pointerMove"_s)
+    else if (subtype == "pointerMove")
         actionSubtype = Action::Subtype::PointerMove;
-    else if (subtype == "pointerCancel"_s)
+    else if (subtype == "pointerCancel")
         actionSubtype = Action::Subtype::PointerCancel;
     else {
-        errorMessage = String("The parameter 'type' of pointer action is invalid"_s);
+        errorMessage = String("The parameter 'type' of pointer action is invalid");
         return std::nullopt;
     }
 
@@ -2077,12 +2017,12 @@ static std::optional<Action> processPointerAction(const String& id, PointerParam
     case Action::Subtype::PointerDown: {
         auto buttonValue = actionItem.getValue("button"_s);
         if (!buttonValue) {
-            errorMessage = String("The paramater 'button' is missing for pointer up/down action"_s);
+            errorMessage = String("The paramater 'button' is missing for pointer up/down action");
             return std::nullopt;
         }
         auto button = unsignedValue(*buttonValue);
         if (!button) {
-            errorMessage = String("The paramater 'button' is invalid for pointer up/down action"_s);
+            errorMessage = String("The paramater 'button' is invalid for pointer up/down action");
             return std::nullopt;
         }
         action.button = actionMouseButton(button.value());
@@ -2107,12 +2047,12 @@ static std::optional<Action> processWheelAction(const String& id, JSON::Object& 
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
-    if (subtype == "pause"_s)
+    if (subtype == "pause")
         actionSubtype = Action::Subtype::Pause;
-    else if (subtype == "scroll"_s)
+    else if (subtype == "scroll")
         actionSubtype = Action::Subtype::Scroll;
     else {
-        errorMessage = String("The parameter 'type' of wheel action is invalid"_s);
+        errorMessage = String("The parameter 'type' of wheel action is invalid");
         return std::nullopt;
     }
 
@@ -2130,7 +2070,7 @@ static std::optional<Action> processWheelAction(const String& id, JSON::Object& 
         if (auto deltaXValue = actionItem.getValue("deltaX"_s)) {
             auto deltaX = valueAsNumberInRange(*deltaXValue, INT_MIN);
             if (!deltaX) {
-                errorMessage = String("The paramater 'deltaX' is invalid for action"_s);
+                errorMessage = String("The paramater 'deltaX' is invalid for action");
                 return std::nullopt;
             }
             action.deltaX = deltaX.value();
@@ -2139,7 +2079,7 @@ static std::optional<Action> processWheelAction(const String& id, JSON::Object& 
         if (auto deltaYValue = actionItem.getValue("deltaY"_s)) {
             auto deltaY = valueAsNumberInRange(*deltaYValue, INT_MIN);
             if (!deltaY) {
-                errorMessage = String("The paramater 'deltaY' is invalid for action"_s);
+                errorMessage = String("The paramater 'deltaY' is invalid for action");
                 return std::nullopt;
             }
             action.deltaY = deltaY.value();
@@ -2167,7 +2107,7 @@ static std::optional<PointerParameters> processPointerParameters(JSON::Object& a
 
     auto parametersData = parametersDataValue->asObject();
     if (!parametersData) {
-        errorMessage = String("Action sequence pointer parameters is not an object"_s);
+        errorMessage = String("Action sequence pointer parameters is not an object");
         return std::nullopt;
     }
 
@@ -2175,14 +2115,14 @@ static std::optional<PointerParameters> processPointerParameters(JSON::Object& a
     if (!pointerType)
         return parameters;
 
-    if (pointerType == "mouse"_s)
+    if (pointerType == "mouse")
         parameters.pointerType = PointerType::Mouse;
-    else if (pointerType == "pen"_s)
+    else if (pointerType == "pen")
         parameters.pointerType = PointerType::Pen;
-    else if (pointerType == "touch"_s)
+    else if (pointerType == "touch")
         parameters.pointerType = PointerType::Touch;
     else {
-        errorMessage = String("The parameter 'pointerType' in action sequence pointer parameters is invalid"_s);
+        errorMessage = String("The parameter 'pointerType' in action sequence pointer parameters is invalid");
         return std::nullopt;
     }
 
@@ -2193,28 +2133,28 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
 {
     auto actionSequence = actionSequenceValue.asObject();
     if (!actionSequence) {
-        errorMessage = String("The action sequence is not an object"_s);
+        errorMessage = String("The action sequence is not an object");
         return std::nullopt;
     }
 
     auto type = actionSequence->getString("type"_s);
     InputSource::Type inputSourceType;
-    if (type == "key"_s)
+    if (type == "key")
         inputSourceType = InputSource::Type::Key;
-    else if (type == "pointer"_s)
+    else if (type == "pointer")
         inputSourceType = InputSource::Type::Pointer;
-    else if (type == "wheel"_s)
+    else if (type == "wheel")
         inputSourceType = InputSource::Type::Wheel;
-    else if (type == "none"_s)
+    else if (type == "none")
         inputSourceType = InputSource::Type::None;
     else {
-        errorMessage = String("The parameter 'type' is invalid or missing in action sequence"_s);
+        errorMessage = String("The parameter 'type' is invalid or missing in action sequence");
         return std::nullopt;
     }
 
     auto id = actionSequence->getString("id"_s);
     if (!id) {
-        errorMessage = String("The parameter 'id' is invalid or missing in action sequence"_s);
+        errorMessage = String("The parameter 'id' is invalid or missing in action sequence");
         return std::nullopt;
     }
 
@@ -2230,18 +2170,18 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
 
     auto& inputSource = session.getOrCreateInputSource(id, inputSourceType, pointerType);
     if (inputSource.type != inputSourceType) {
-        errorMessage = String("Action sequence type doesn't match input source type"_s);
+        errorMessage = String("Action sequence type doesn't match input source type");
         return std::nullopt;
     }
 
     if (inputSource.type ==  InputSource::Type::Pointer && inputSource.pointerType != pointerType) {
-        errorMessage = String("Action sequence pointer type doesn't match input source pointer type"_s);
+        errorMessage = String("Action sequence pointer type doesn't match input source pointer type");
         return std::nullopt;
     }
 
     auto actionItems = actionSequence->getArray("actions"_s);
     if (!actionItems) {
-        errorMessage = String("The parameter 'actions' is invalid or not present in action sequence"_s);
+        errorMessage = String("The parameter 'actions' is invalid or not present in action sequence");
         return std::nullopt;
     }
 
@@ -2250,7 +2190,7 @@ static std::optional<Vector<Action>> processInputActionSequence(Session& session
     for (unsigned i = 0; i < actionItemsLength; ++i) {
         auto actionItem = actionItems->get(i)->asObject();
         if (!actionItem) {
-            errorMessage = String("An action in action sequence is not an object"_s);
+            errorMessage = String("An action in action sequence is not an object");
             return std::nullopt;
         }
 
@@ -2281,7 +2221,7 @@ void WebDriverService::performActions(RefPtr<JSON::Object>&& parameters, Functio
 
     auto actionsArray = parameters->getArray("actions"_s);
     if (!actionsArray) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("The paramater 'actions' is invalid or not present"_s)));
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("The paramater 'actions' is invalid or not present")));
         return;
     }
 

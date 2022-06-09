@@ -27,7 +27,6 @@
 #import "XPCEndpoint.h"
 
 #import <wtf/cocoa/Entitlements.h>
-#import <wtf/text/ASCIILiteral.h>
 
 #if PLATFORM(MAC)
 #import "CodeSigning.h"
@@ -51,12 +50,12 @@ XPCEndpoint::XPCEndpoint()
 #if USE(APPLE_INTERNAL_SDK)
             auto pid = xpc_connection_get_pid(connection.get());
 
-            if (pid != getpid() && !WTF::hasEntitlement(connection.get(), "com.apple.private.webkit.use-xpc-endpoint"_s)) {
+            if (pid != getpid() && !WTF::hasEntitlement(connection.get(), "com.apple.private.webkit.use-xpc-endpoint")) {
                 WTFLogAlways("Audit token does not have required entitlement com.apple.private.webkit.use-xpc-endpoint");
 #if PLATFORM(MAC)
                 auto [signingIdentifier, isPlatformBinary] = codeSigningIdentifierAndPlatformBinaryStatus(connection.get());
 
-                if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent"_s)) {
+                if (!isPlatformBinary || !signingIdentifier.startsWith("com.apple.WebKit.WebContent")) {
                     WTFLogAlways("XPC endpoint denied to connect with unknown client");
                     return;
                 }

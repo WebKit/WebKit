@@ -58,9 +58,6 @@ WebFrameProxy::~WebFrameProxy()
 #if PLATFORM(GTK)
     WebPasteboardProxy::singleton().didDestroyFrame(this);
 #endif
-
-    if (m_navigateCallback)
-        m_navigateCallback({ });
 }
 
 void WebFrameProxy::webProcessWillShutDown()
@@ -71,9 +68,6 @@ void WebFrameProxy::webProcessWillShutDown()
         m_activeListener->ignore();
         m_activeListener = nullptr;
     }
-
-    if (m_navigateCallback)
-        m_navigateCallback({ });
 }
 
 bool WebFrameProxy::isMainFrame() const
@@ -82,38 +76,6 @@ bool WebFrameProxy::isMainFrame() const
         return false;
 
     return this == m_page->mainFrame() || (m_page->provisionalPageProxy() && this == m_page->provisionalPageProxy()->mainFrame());
-}
-
-std::optional<PageIdentifier> WebFrameProxy::pageIdentifier() const
-{
-    if (!m_page)
-        return { };
-    return m_page->webPageID();
-}
-
-void WebFrameProxy::navigateServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(std::optional<PageIdentifier>)>&& callback)
-{
-    if (!m_page) {
-        callback({ });
-        return;
-    }
-
-    m_page->sendWithAsyncReply(Messages::WebPage::NavigateServiceWorkerClient { documentIdentifier, url }, [this, protectedThis = Ref { *this }, url, callback = WTFMove(callback)](bool result) mutable {
-        if (!result) {
-            callback({ });
-            return;
-        }
-
-        if (!m_activeListener) {
-            callback(pageIdentifier());
-            return;
-        }
-
-        if (m_navigateCallback)
-            m_navigateCallback({ });
-
-        m_navigateCallback = WTFMove(callback);
-    });
 }
 
 void WebFrameProxy::loadURL(const URL& url, const String& referrer)
@@ -133,7 +95,7 @@ void WebFrameProxy::loadData(const IPC::DataReference& data, const String& MIMET
     m_page->send(Messages::WebPage::LoadDataInFrame(data, MIMEType, encodingName, baseURL, m_frameID));
 }
 
-void WebFrameProxy::stopLoading()
+void WebFrameProxy::stopLoading() const
 {
     if (!m_page)
         return;
@@ -142,9 +104,6 @@ void WebFrameProxy::stopLoading()
         return;
 
     m_page->send(Messages::WebPage::StopLoadingFrame(m_frameID));
-
-    if (m_navigateCallback)
-        m_navigateCallback({ });
 }
     
 bool WebFrameProxy::canProvideSource() const
@@ -174,7 +133,7 @@ bool WebFrameProxy::isDisplayingMarkupDocument() const
 {
     // FIXME: This should be a call to a single MIMETypeRegistry function; adding a new one if needed.
     // FIXME: This is doing case sensitive comparisons on MIME types, should be using ASCII case insensitive instead.
-    return m_MIMEType == "text/html"_s || m_MIMEType == "image/svg+xml"_s || m_MIMEType == "application/x-webarchive"_s || MIMETypeRegistry::isXMLMIMEType(m_MIMEType);
+    return m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || m_MIMEType == "application/x-webarchive" || MIMETypeRegistry::isXMLMIMEType(m_MIMEType);
 }
 
 bool WebFrameProxy::isDisplayingPDFDocument() const
@@ -201,9 +160,6 @@ void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const URL& url)
 void WebFrameProxy::didFailProvisionalLoad()
 {
     m_frameLoadState.didFailProvisionalLoad();
-
-    if (m_navigateCallback)
-        m_navigateCallback({ });
 }
 
 void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo& certificateInfo, bool containsPluginDocument)
@@ -219,17 +175,11 @@ void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo&
 void WebFrameProxy::didFinishLoad()
 {
     m_frameLoadState.didFinishLoad();
-
-    if (m_navigateCallback)
-        m_navigateCallback(pageIdentifier());
 }
 
 void WebFrameProxy::didFailLoad()
 {
     m_frameLoadState.didFailLoad();
-
-    if (m_navigateCallback)
-        m_navigateCallback({ });
 }
 
 void WebFrameProxy::didSameDocumentNavigation(const URL& url)
@@ -247,9 +197,6 @@ WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(CompletionH
     if (m_activeListener)
         m_activeListener->ignore();
     m_activeListener = WebFramePolicyListenerProxy::create([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (PolicyAction action, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) mutable {
-        if (action != PolicyAction::Use && m_navigateCallback)
-            m_navigateCallback(pageIdentifier());
-
         completionHandler(action, policies, processSwapRequestedByClient, WTFMove(safeBrowsingWarning), isNavigatingToAppBoundDomain);
         m_activeListener = nullptr;
     }, expectSafeBrowsingResult, expectAppBoundDomainResult);
@@ -280,17 +227,6 @@ void WebFrameProxy::getResourceData(API::URL* resourceURL, CompletionHandler<voi
 void WebFrameProxy::setUnreachableURL(const URL& unreachableURL)
 {
     m_frameLoadState.setUnreachableURL(unreachableURL);
-}
-
-void WebFrameProxy::transferNavigationCallbackToFrame(WebFrameProxy& frame)
-{
-    frame.setNavigationCallback(WTFMove(m_navigateCallback));
-}
-
-void WebFrameProxy::setNavigationCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&& navigateCallback)
-{
-    ASSERT(!m_navigateCallback);
-    m_navigateCallback = WTFMove(navigateCallback);
 }
 
 #if ENABLE(CONTENT_FILTERING)

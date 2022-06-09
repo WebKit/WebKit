@@ -48,7 +48,7 @@ public:
     unsigned numTracks(GridTrackSizingDirection) const;
 
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);
-    GridArea insert(RenderBox&, const GridArea&);
+    void insert(RenderBox&, const GridArea&);
 
     // Note that each in flow child of a grid container becomes a grid item. This means that
     // this method will return false for a grid container with only out of flow children.
@@ -59,17 +59,13 @@ public:
 
     GridSpan gridItemSpan(const RenderBox&, GridTrackSizingDirection) const;
 
-    const GridCell& cell(unsigned row, unsigned column) const;
+    const GridCell& cell(unsigned row, unsigned column) const { return m_grid[row][column]; }
 
     unsigned explicitGridStart(GridTrackSizingDirection) const;
     void setExplicitGridStart(unsigned rowStart, unsigned columnStart);
 
     unsigned autoRepeatTracks(GridTrackSizingDirection) const;
     void setAutoRepeatTracks(unsigned autoRepeatRows, unsigned autoRepeatColumns);
-
-    void setClampingForSubgrid(unsigned maxRows, unsigned maxColumns);
-
-    void clampAreaToSubgridIfNeeded(GridArea&);
 
     void setAutoRepeatEmptyColumns(std::unique_ptr<OrderedTrackIndexSet>);
     void setAutoRepeatEmptyRows(std::unique_ptr<OrderedTrackIndexSet>);
@@ -86,7 +82,7 @@ public:
     bool needsItemsPlacement() const { return m_needsItemsPlacement; };
 
 private:
-    void ensureStorageForRow(unsigned row);
+    friend class GridIterator;
 
     OrderIterator m_orderIterator;
 
@@ -95,9 +91,6 @@ private:
 
     unsigned m_autoRepeatColumns { 0 };
     unsigned m_autoRepeatRows { 0 };
-
-    unsigned m_maxColumns { 0 };
-    unsigned m_maxRows { 0 };
 
     bool m_needsItemsPlacement { true };
 
@@ -116,19 +109,12 @@ public:
     // GridIterator(m_grid, ForColumns, 1) will walk over the rows of the 2nd column.
     GridIterator(const Grid&, GridTrackSizingDirection, unsigned fixedTrackIndex, unsigned varyingTrackIndex = 0);
 
-    static GridIterator createForSubgrid(const RenderGrid& subgrid, const GridIterator& outer);
-
     RenderBox* nextGridItem();
     bool isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const;
     std::unique_ptr<GridArea> nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan);
 
-    GridTrackSizingDirection direction() const
-    {
-        return m_direction;
-    }
-
 private:
-    const Grid& m_grid;
+    const GridAsMatrix& m_grid;
     GridTrackSizingDirection m_direction;
     unsigned m_rowIndex;
     unsigned m_columnIndex;

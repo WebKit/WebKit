@@ -309,6 +309,11 @@ void TileController::revalidateTiles()
     tileGrid().revalidateTiles();
 }
 
+void TileController::forceRepaint()
+{
+    setNeedsDisplay();
+}
+
 void TileController::setTileDebugBorderWidth(float borderWidth)
 {
     if (m_tileDebugBorderWidth == borderWidth)

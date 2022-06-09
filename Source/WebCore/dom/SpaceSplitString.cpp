@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-static_assert(!(sizeof(SpaceSplitStringData) % sizeof(uintptr_t)), "SpaceSplitStringDataTail is aligned to WordSize");
+COMPILE_ASSERT(!(sizeof(SpaceSplitStringData) % sizeof(uintptr_t)), SpaceSplitStringDataTailIsAlignedToWordSize);
 
 template <typename CharacterType, typename TokenProcessor>
 static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, const CharacterType* characters, unsigned length)
@@ -50,14 +50,15 @@ static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, cons
 }
 
 template<typename TokenProcessor>
-static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, StringView string)
+static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, const String& string)
 {
     ASSERT(!string.isNull());
 
-    if (string.is8Bit())
-        tokenizeSpaceSplitString(tokenProcessor, string.characters8(), string.length());
+    const StringImpl& stringImpl = *string.impl();
+    if (stringImpl.is8Bit())
+        tokenizeSpaceSplitString(tokenProcessor, stringImpl.characters8(), stringImpl.length());
     else
-        tokenizeSpaceSplitString(tokenProcessor, string.characters16(), string.length());
+        tokenizeSpaceSplitString(tokenProcessor, stringImpl.characters16(), stringImpl.length());
 }
 
 bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
@@ -91,28 +92,28 @@ static SpaceSplitStringTable& spaceSplitStringTable()
     return table;
 }
 
-void SpaceSplitString::set(const AtomString& inputString, ShouldFoldCase shouldFoldCase)
+void SpaceSplitString::set(const AtomString& inputString, bool shouldFoldCase)
 {
     if (inputString.isNull()) {
         clear();
         return;
     }
-    m_data = SpaceSplitStringData::create(shouldFoldCase == ShouldFoldCase::Yes ? inputString.convertToASCIILowercase() : inputString);
+    m_data = SpaceSplitStringData::create(shouldFoldCase ? inputString.convertToASCIILowercase() : inputString);
 }
 
-template<typename ReferenceCharacterType>
-class TokenIsEqualToCharactersTokenProcessor {
+class TokenIsEqualToCStringTokenProcessor {
 public:
-    explicit TokenIsEqualToCharactersTokenProcessor(const ReferenceCharacterType* referenceCharacters, unsigned length)
-        : m_referenceCharacters(referenceCharacters)
-        , m_referenceLength(length)
+    explicit TokenIsEqualToCStringTokenProcessor(const char* referenceString, unsigned referenceStringLength)
+        : m_referenceString(referenceString)
+        , m_referenceStringLength(referenceStringLength)
+        , m_referenceStringWasFound(false)
     {
     }
 
-    template <typename TokenCharacterType>
-    bool processToken(const TokenCharacterType* characters, unsigned length)
+    template <typename CharacterType>
+    bool processToken(const CharacterType* characters, unsigned length)
     {
-        if (length == m_referenceLength && equal(characters, m_referenceCharacters, length)) {
+        if (length == m_referenceStringLength && equal(characters, reinterpret_cast<const LChar*>(m_referenceString), length)) {
             m_referenceStringWasFound = true;
             return false;
         }
@@ -122,27 +123,19 @@ public:
     bool referenceStringWasFound() const { return m_referenceStringWasFound; }
 
 private:
-    const ReferenceCharacterType* m_referenceCharacters;
-    unsigned m_referenceLength;
-    bool m_referenceStringWasFound { false };
+    const char* m_referenceString;
+    unsigned m_referenceStringLength;
+    bool m_referenceStringWasFound;
 };
 
-template <typename ValueCharacterType>
-static bool spaceSplitStringContainsValueInternal(StringView spaceSplitString, StringView value)
+bool SpaceSplitString::spaceSplitStringContainsValue(const String& inputString, const char* value, unsigned valueLength, bool shouldFoldCase)
 {
-    TokenIsEqualToCharactersTokenProcessor<ValueCharacterType> tokenProcessor(value.characters<ValueCharacterType>(), value.length());
-    tokenizeSpaceSplitString(tokenProcessor, spaceSplitString);
-    return tokenProcessor.referenceStringWasFound();
-}
-
-bool SpaceSplitString::spaceSplitStringContainsValue(StringView spaceSplitString, StringView value, ShouldFoldCase shouldFoldCase)
-{
-    if (spaceSplitString.isNull())
+    if (inputString.isNull())
         return false;
 
-    if (value.is8Bit())
-        return spaceSplitStringContainsValueInternal<LChar>(shouldFoldCase == ShouldFoldCase::Yes ? StringView { spaceSplitString.convertToASCIILowercase() } : spaceSplitString, value);
-    return spaceSplitStringContainsValueInternal<UChar>(shouldFoldCase == ShouldFoldCase::Yes ? StringView { spaceSplitString.convertToASCIILowercase() } : spaceSplitString, value);
+    TokenIsEqualToCStringTokenProcessor tokenProcessor(value, valueLength);
+    tokenizeSpaceSplitString(tokenProcessor, shouldFoldCase ? inputString.impl()->convertToASCIILowercase() : inputString);
+    return tokenProcessor.referenceStringWasFound();
 }
 
 class TokenCounter {

@@ -14,7 +14,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "common/angleutils.h"
 #include "common/string_utils.h"
 
 // The main function of the program to be wrapped as a test apk.
@@ -31,7 +30,7 @@ const int kExceptionSignals[] = {SIGSEGV, SIGABRT, SIGFPE, SIGILL, SIGBUS, -1};
 
 struct sigaction g_old_sa[NSIG];
 
-class ANGLE_NO_DISCARD ScopedMainEntryLogger
+class ScopedMainEntryLogger
 {
   public:
     ScopedMainEntryLogger() { printf(">>ScopedMainEntryLogger\n"); }

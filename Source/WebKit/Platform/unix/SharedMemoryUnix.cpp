@@ -44,7 +44,6 @@
 #include <wtf/SafeStrerror.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(LINUX_MEMFD_H)
@@ -76,7 +75,7 @@ void SharedMemory::Handle::clear()
 
 bool SharedMemory::Handle::isNull() const
 {
-    return m_attachment.isNull();
+    return m_attachment.fileDescriptor() == -1;
 }
 
 void SharedMemory::IPCHandle::encode(IPC::Encoder& encoder) const
@@ -147,14 +146,9 @@ static int createSharedMemory()
     }
 #endif
 
-#if HAVE(SHM_ANON)
-    do {
-        fileDescriptor = shm_open(SHM_ANON, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-    } while (fileDescriptor == -1 && errno == EINTR);
-#else
     CString tempName;
     for (int tries = 0; fileDescriptor == -1 && tries < 10; ++tries) {
-        auto name = makeString("/WK2SharedMemory.", static_cast<unsigned>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)));
+        String name = String("/WK2SharedMemory.") + String::number(static_cast<unsigned>(WTF::randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)));
         tempName = name.utf8();
 
         do {
@@ -164,7 +158,6 @@ static int createSharedMemory()
 
     if (fileDescriptor != -1)
         shm_unlink(tempName.data());
-#endif
 
     return fileDescriptor;
 }
@@ -201,9 +194,9 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
 {
     ASSERT(!handle.isNull());
 
-    UnixFileDescriptor fd = handle.m_attachment.release();
-    void* data = mmap(0, handle.m_attachment.size(), accessModeMMap(protection), MAP_SHARED, fd.value(), 0);
-    fd = { };
+    int fd = handle.m_attachment.releaseFileDescriptor();
+    void* data = mmap(0, handle.m_attachment.size(), accessModeMMap(protection), MAP_SHARED, fd, 0);
+    closeWithRetry(fd);
     if (data == MAP_FAILED)
         return nullptr;
 
@@ -241,13 +234,23 @@ bool SharedMemory::createHandle(Handle& handle, Protection)
     // FIXME: Handle the case where the passed Protection is ReadOnly.
     // See https://bugs.webkit.org/show_bug.cgi?id=131542.
 
-    UnixFileDescriptor duplicate { m_fileDescriptor.value(), UnixFileDescriptor::Duplicate };
-    if (!duplicate) {
+    int duplicatedHandle = dupCloseOnExec(m_fileDescriptor.value());
+    if (duplicatedHandle == -1) {
         ASSERT_NOT_REACHED();
         return false;
     }
-    handle.m_attachment = IPC::Attachment(WTFMove(duplicate), m_size);
+    handle.m_attachment = IPC::Attachment(duplicatedHandle, m_size);
     return true;
+}
+
+unsigned SharedMemory::systemPageSize()
+{
+    static unsigned pageSize = 0;
+
+    if (!pageSize)
+        pageSize = getpagesize();
+
+    return pageSize;
 }
 
 } // namespace WebKit

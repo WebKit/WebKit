@@ -27,7 +27,6 @@
 
 #if ENABLE(MODEL_ELEMENT)
 
-#include "ActiveDOMObject.h"
 #include "CachedRawResource.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
@@ -43,7 +42,6 @@
 namespace WebCore {
 
 class Event;
-class LayoutSize;
 class Model;
 class ModelPlayer;
 class MouseEvent;
@@ -51,7 +49,7 @@ class MouseEvent;
 template<typename IDLType> class DOMPromiseDeferred;
 template<typename IDLType> class DOMPromiseProxyWithResolveCallback;
 
-class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient, public ActiveDOMObject {
+class HTMLModelElement final : public HTMLElement, private CachedRawResourceClient, public ModelPlayerClient {
     WTF_MAKE_ISO_ALLOCATED(HTMLModelElement);
 public:
     static Ref<HTMLModelElement> create(const QualifiedName&, Document&);
@@ -59,7 +57,6 @@ public:
 
     void sourcesChanged();
     const URL& currentSrc() const { return m_sourceURL; }
-    bool complete() const { return m_dataComplete; }
 
     // MARK: DOM Functions and Attributes
 
@@ -98,41 +95,25 @@ public:
     void isMuted(IsMutedPromise&&);
     void setIsMuted(bool, DOMPromiseDeferred<void>&&);
 
-    bool supportsDragging() const;
-    bool isDraggableIgnoringAttributes() const final;
-
-    bool isInteractive() const;
+    bool isDraggableIgnoringAttributes() const final { return true; }
 
 #if PLATFORM(COCOA)
     Vector<RetainPtr<id>> accessibilityChildren();
 #endif
-
-    void sizeMayHaveChanged();
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    WEBCORE_EXPORT String inlinePreviewUUIDForTesting() const;
-#endif
-
+    
 private:
     HTMLModelElement(const QualifiedName&, Document&);
 
     void setSourceURL(const URL&);
     void modelDidChange();
-    void createModelPlayer();
 
     HTMLModelElement& readyPromiseResolve();
 
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final;
-    bool virtualHasPendingActivity() const final;
-
     // DOM overrides.
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
-    void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
 
     // Rendering overrides.
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
-    void didAttachRenderers() final;
 
     // CachedRawResourceClient overrides.
     void dataReceived(CachedResource&, const SharedBuffer&) final;
@@ -148,11 +129,7 @@ private:
     void dragDidChange(MouseEvent&);
     void dragDidEnd(MouseEvent&);
 
-    LayoutPoint flippedLocationInElementForMouseEvent(MouseEvent&);
-
     void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
-
-    LayoutSize contentSize() const;
 
     URL m_sourceURL;
     CachedResourceHandle<CachedRawResource> m_resource;
@@ -161,7 +138,6 @@ private:
     UniqueRef<ReadyPromise> m_readyPromise;
     bool m_dataComplete { false };
     bool m_isDragging { false };
-    bool m_shouldCreateModelPlayerUponRendererAttachment { false };
 
     RefPtr<ModelPlayer> m_modelPlayer;
 };

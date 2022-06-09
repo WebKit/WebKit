@@ -24,6 +24,7 @@
 
 #include "MediaPlayerPrivateGStreamer.h"
 #include "TextureMapperPlatformLayerBuffer.h"
+#include "TextureMapperPlatformLayerProxy.h"
 
 namespace WebCore {
 

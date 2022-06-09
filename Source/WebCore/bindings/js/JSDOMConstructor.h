@@ -65,7 +65,7 @@ template<typename JSClass> inline JSC::Structure* JSDOMConstructor<JSClass>::cre
 template<typename JSClass> inline void JSDOMConstructor<JSClass>::finishCreation(JSC::VM& vm, JSDOMGlobalObject& globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     initializeProperties(vm, globalObject);
 }
 

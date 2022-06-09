@@ -37,13 +37,14 @@ static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 using namespace WebCore;
 
 /**
- * WebKitURIRequest:
- *
- * Represents a URI request.
+ * SECTION: WebKitURIRequest
+ * @Short_description: Represents a URI request
+ * @Title: WebKitURIRequest
  *
  * A #WebKitURIRequest can be created with a URI using the
  * webkit_uri_request_new() method, and you can get the URI of an
  * existing request with the webkit_uri_request_get_uri() one.
+ *
  */
 
 struct _WebKitURIRequestPrivate {
@@ -122,9 +123,7 @@ WebKitURIRequest* webkit_uri_request_new(const gchar* uri)
  * webkit_uri_request_get_uri:
  * @request: a #WebKitURIRequest
  *
- * Obtains the request URI.
- *
- * Returns: request URI, as a string.
+ * Returns: the uri of the #WebKitURIRequest
  */
 const gchar* webkit_uri_request_get_uri(WebKitURIRequest* request)
 {
@@ -146,7 +145,7 @@ void webkit_uri_request_set_uri(WebKitURIRequest* request, const char* uri)
     g_return_if_fail(WEBKIT_IS_URI_REQUEST(request));
     g_return_if_fail(uri);
 
-    URL url { String::fromLatin1(uri) };
+    URL url(URL(), uri);
     if (url == request->priv->resourceRequest.url())
         return;
 

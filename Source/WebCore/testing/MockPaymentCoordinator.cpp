@@ -29,7 +29,6 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayCouponCodeUpdate.h"
-#include "ApplePayPaymentAuthorizationResult.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "ApplePayShippingContactEditingMode.h"
@@ -55,15 +54,15 @@ namespace WebCore {
 MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     : m_page { page }
 {
-    m_availablePaymentNetworks.add("amex"_s);
-    m_availablePaymentNetworks.add("carteBancaire"_s);
-    m_availablePaymentNetworks.add("chinaUnionPay"_s);
-    m_availablePaymentNetworks.add("discover"_s);
-    m_availablePaymentNetworks.add("interac"_s);
-    m_availablePaymentNetworks.add("jcb"_s);
-    m_availablePaymentNetworks.add("masterCard"_s);
-    m_availablePaymentNetworks.add("privateLabel"_s);
-    m_availablePaymentNetworks.add("visa"_s);
+    m_availablePaymentNetworks.add("amex");
+    m_availablePaymentNetworks.add("carteBancaire");
+    m_availablePaymentNetworks.add("chinaUnionPay");
+    m_availablePaymentNetworks.add("discover");
+    m_availablePaymentNetworks.add("interac");
+    m_availablePaymentNetworks.add("jcb");
+    m_availablePaymentNetworks.add("masterCard");
+    m_availablePaymentNetworks.add("privateLabel");
+    m_availablePaymentNetworks.add("visa");
 }
 
 std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
@@ -127,7 +126,7 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
     ASSERT(showCount == hideCount);
     ++showCount;
     dispatchIfShowing([page = &m_page]() {
-        page->paymentCoordinator().validateMerchant(URL { "https://webkit.org/"_str });
+        page->paymentCoordinator().validateMerchant({ URL(), "https://webkit.org/"_s });
     });
     return true;
 }
@@ -249,10 +248,10 @@ void MockPaymentCoordinator::cancelPayment()
     });
 }
 
-void MockPaymentCoordinator::completePaymentSession(ApplePayPaymentAuthorizationResult&& result)
+void MockPaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
 {
-    auto isFinalState = result.isFinalState();
-    m_errors = convert(WTFMove(result.errors));
+    auto isFinalState = isFinalStateResult(result);
+    m_errors = convert(WTFMove(result->errors));
 
     if (!isFinalState)
         return;

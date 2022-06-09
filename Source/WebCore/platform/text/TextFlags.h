@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2017, 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,6 @@
 #include <optional>
 #include <wtf/EnumTraits.h>
 
-namespace WTF {
-class TextStream;
-}
-
 namespace WebCore {
 
 enum class TextRenderingMode : uint8_t {
@@ -58,63 +54,20 @@ enum class NonCJKGlyphOrientation : uint8_t {
     Upright
 };
 
-struct ExpansionBehavior {
-    enum class Behavior : uint8_t {
-        Forbid,
-        Allow,
-        Force
-    };
+enum ExpansionBehaviorFlags {
+    ForbidRightExpansion = 0 << 0,
+    AllowRightExpansion = 1 << 0,
+    ForceRightExpansion = 2 << 0,
+    RightExpansionMask = 3 << 0,
 
-    ExpansionBehavior()
-        : left(Behavior::Forbid)
-        , right(Behavior::Allow)
-    {
+    ForbidLeftExpansion = 0 << 2,
+    AllowLeftExpansion = 1 << 2,
+    ForceLeftExpansion = 2 << 2,
+    LeftExpansionMask = 3 << 2,
 
-    }
-
-    ExpansionBehavior(Behavior left, Behavior right)
-        : left(left)
-        , right(right)
-    {
-    }
-
-    bool operator==(const ExpansionBehavior& other) const
-    {
-        return left == other.left && right == other.right;
-    }
-
-    static ExpansionBehavior defaultBehavior()
-    {
-        return { };
-    }
-
-    static ExpansionBehavior allowRightOnly()
-    {
-        return { Behavior::Forbid, Behavior::Allow };
-    }
-
-    static ExpansionBehavior allowLeftOnly()
-    {
-        return { Behavior::Allow, Behavior::Forbid };
-    }
-
-    static ExpansionBehavior forceLeftOnly()
-    {
-        return { Behavior::Force, Behavior::Forbid };
-    }
-
-    static ExpansionBehavior forbidAll()
-    {
-        return { Behavior::Forbid, Behavior::Forbid };
-    }
-
-    static constexpr unsigned bitsOfKind = 2;
-    Behavior left : bitsOfKind;
-    Behavior right : bitsOfKind;
+    DefaultExpansion = AllowRightExpansion | ForbidLeftExpansion,
 };
-
-WTF::TextStream& operator<<(WTF::TextStream&, ExpansionBehavior::Behavior);
-WTF::TextStream& operator<<(WTF::TextStream&, ExpansionBehavior);
+typedef unsigned ExpansionBehavior;
 
 enum FontSynthesisValues {
     FontSynthesisNone = 0x0,
@@ -129,8 +82,6 @@ const unsigned FontSynthesisWidth = 3;
 enum class FontVariantLigatures : uint8_t { Normal, Yes, No };
 enum class FontVariantPosition : uint8_t { Normal, Subscript, Superscript };
 
-WTF::TextStream& operator<<(WTF::TextStream&, FontVariantPosition);
-
 enum class FontVariantCaps : uint8_t {
     Normal,
     Small,
@@ -140,8 +91,6 @@ enum class FontVariantCaps : uint8_t {
     Unicase,
     Titling
 };
-
-WTF::TextStream& operator<<(WTF::TextStream&, FontVariantCaps);
 
 enum class FontVariantNumericFigure : uint8_t {
     Normal,
@@ -164,8 +113,6 @@ enum class FontVariantNumericFraction : uint8_t {
 enum class FontVariantNumericOrdinal : bool { Normal, Yes };
 enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
 enum class FontVariantAlternates : bool { Normal, HistoricalForms };
-
-WTF::TextStream& operator<<(WTF::TextStream&, FontVariantAlternates);
 
 enum class FontVariantEastAsianVariant : uint8_t {
     Normal,
@@ -620,7 +567,7 @@ enum class FontWidthVariant : uint8_t {
 
 const unsigned FontWidthVariantWidth = 2;
 
-static_assert(!(static_cast<unsigned>(FontWidthVariant::LastFontWidthVariant) >> FontWidthVariantWidth), "FontWidthVariantWidth is correct");
+COMPILE_ASSERT(!(static_cast<unsigned>(FontWidthVariant::LastFontWidthVariant) >> FontWidthVariantWidth), FontWidthVariantWidth_is_correct);
 
 enum class FontSmallCaps : uint8_t {
     Off = 0,
@@ -632,8 +579,6 @@ enum class Kerning : uint8_t {
     Normal,
     NoShift
 };
-
-WTF::TextStream& operator<<(WTF::TextStream&, Kerning);
 
 enum class FontOpticalSizing : uint8_t {
     Enabled,

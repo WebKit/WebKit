@@ -60,6 +60,11 @@ String CSSMediaRule::conditionText() const
     return mediaQueries().mediaText();
 }
 
+void CSSMediaRule::setConditionText(const String& text)
+{
+    mediaQueries().set(text);
+}
+
 MediaList* CSSMediaRule::media() const
 {
     if (!m_mediaCSSOMWrapper)

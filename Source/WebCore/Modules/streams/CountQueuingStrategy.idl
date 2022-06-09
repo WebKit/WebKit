@@ -29,7 +29,7 @@
 
 [
     JSBuiltin,
-    Exposed=*,
+    Exposed=(Window,Worker),
 ] interface CountQueuingStrategy {
     constructor(object init);
 

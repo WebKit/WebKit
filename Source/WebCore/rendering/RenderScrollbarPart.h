@@ -39,7 +39,7 @@ public:
     
     virtual ~RenderScrollbarPart();
 
-    ASCIILiteral renderName() const override { return "RenderScrollbarPart"_s; }
+    const char* renderName() const override { return "RenderScrollbarPart"; }
     
     bool requiresLayer() const override { return false; }
 

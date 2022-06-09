@@ -28,8 +28,10 @@
 
 #import "DestinationColorSpace.h"
 #import "GraphicsContextCG.h"
+#import "GraphicsContextGL.h"
 #import "HostWindow.h"
 #import "IOSurfacePool.h"
+#import "ImageBuffer.h"
 #import "Logging.h"
 #import "PlatformScreen.h"
 #import "ProcessIdentity.h"
@@ -43,18 +45,29 @@
 
 namespace WebCore {
 
-std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, const DestinationColorSpace& colorSpace, Format pixelFormat)
+inline std::unique_ptr<IOSurface> IOSurface::surfaceFromPool(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format pixelFormat)
 {
-    if (pool) {
-        if (auto cachedSurface = pool->takeSurface(size, colorSpace, pixelFormat)) {
-            cachedSurface->releaseGraphicsContext();
-            LOG_WITH_STREAM(IOSurface, stream << "IOSurface::create took from pool: " << *cachedSurface);
-            return cachedSurface;
-        }
-    }
+    auto cachedSurface = IOSurfacePool::sharedPool().takeSurface(size, colorSpace, pixelFormat);
+    if (!cachedSurface)
+        return nullptr;
 
+    cachedSurface->setContextSize(contextSize);
+    return cachedSurface;
+}
+
+std::unique_ptr<IOSurface> IOSurface::create(IntSize size, const DestinationColorSpace& colorSpace, Format pixelFormat)
+{
+    return IOSurface::create(size, size, colorSpace, pixelFormat);
+}
+
+std::unique_ptr<IOSurface> IOSurface::create(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format pixelFormat)
+{
+    if (auto cachedSurface = surfaceFromPool(size, contextSize, colorSpace, pixelFormat)) {
+        LOG_WITH_STREAM(IOSurface, stream << "IOSurface::create took from pool: " << *cachedSurface);
+        return cachedSurface;
+    }
     bool success = false;
-    auto surface = std::unique_ptr<IOSurface>(new IOSurface(size, colorSpace, pixelFormat, success));
+    auto surface = std::unique_ptr<IOSurface>(new IOSurface(size, contextSize, colorSpace, pixelFormat, success));
     if (!success) {
         LOG(IOSurface, "IOSurface::create failed to create %dx%d surface", size.width(), size.height());
         return nullptr;
@@ -75,7 +88,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, co
     return std::unique_ptr<IOSurface>(new IOSurface(surface, colorSpace));
 }
 
-std::unique_ptr<IOSurface> IOSurface::createFromImage(IOSurfacePool* pool, CGImageRef image)
+std::unique_ptr<IOSurface> IOSurface::createFromImage(CGImageRef image)
 {
     if (!image)
         return nullptr;
@@ -83,7 +96,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(IOSurfacePool* pool, CGIma
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    auto surface = IOSurface::create(pool, IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) });
+    auto surface = IOSurface::create(IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) });
     if (!surface)
         return nullptr;
     auto surfaceContext = surface->ensurePlatformContext();
@@ -92,10 +105,9 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(IOSurfacePool* pool, CGIma
     return surface;
 }
 
-void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface, IOSurfacePool* pool)
+void IOSurface::moveToPool(std::unique_ptr<IOSurface>&& surface)
 {
-    if (pool)
-        pool->addSurface(WTFMove(surface));
+    IOSurfacePool::sharedPool().addSurface(WTFMove(surface));
 }
 
 static NSDictionary *optionsForBiplanarSurface(IntSize size, unsigned pixelFormat, size_t firstPlaneBytesPerPixel, size_t secondPlaneBytesPerPixel)
@@ -170,11 +182,14 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat)
 
 }
 
-IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, Format format, bool& success)
+IOSurface::IOSurface(IntSize size, IntSize contextSize, const DestinationColorSpace& colorSpace, Format format, bool& success)
     : m_colorSpace(colorSpace)
     , m_size(size)
+    , m_contextSize(contextSize)
 {
     ASSERT(!success);
+    ASSERT(contextSize.width() <= size.width());
+    ASSERT(contextSize.height() <= size.height());
     ASSERT(!size.isEmpty());
 
     NSDictionary *options;
@@ -213,30 +228,22 @@ IOSurface::IOSurface(IOSurfaceRef surface, const DestinationColorSpace& colorSpa
 
 IOSurface::~IOSurface() = default;
 
-static constexpr IntSize maxSurfaceDimensionCA()
-{
-    // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
-#if PLATFORM(IOS_FAMILY)
-    constexpr int maxSurfaceDimension = 8 * 1024;
-#else
-    // IOSurface::maximumSize() can return { INT_MAX, INT_MAX } when hardware acceleration is unavailable.
-    constexpr int maxSurfaceDimension = 32 * 1024;
-#endif
-    return { maxSurfaceDimension, maxSurfaceDimension };
-}
-
 static IntSize computeMaximumSurfaceSize()
 {
-#if PLATFORM(IOS)
-    return maxSurfaceDimensionCA();
-#else
     IntSize maxSize(clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceWidth)), clampToInteger(IOSurfaceGetPropertyMaximum(kIOSurfaceHeight)));
 
     // Protect against maxSize being { 0, 0 }.
-    constexpr int maxSurfaceDimensionLowerBound = 1024;
+    const int maxSurfaceDimensionLowerBound = 1024;
 
-    return maxSize.constrainedBetween({ maxSurfaceDimensionLowerBound, maxSurfaceDimensionLowerBound }, maxSurfaceDimensionCA() );
+#if PLATFORM(IOS_FAMILY)
+    // Match limits imposed by Core Animation. FIXME: should have API for this <rdar://problem/25454148>
+    const int maxSurfaceDimension = 8 * 1024;
+#else
+    // IOSurface::maximumSize() can return { INT_MAX, INT_MAX } when hardware acceleration is unavailable.
+    const int maxSurfaceDimension = 32 * 1024;
 #endif
+
+    return maxSize.constrainedBetween({ maxSurfaceDimensionLowerBound, maxSurfaceDimensionLowerBound }, { maxSurfaceDimension, maxSurfaceDimension });
 }
 
 static WTF::Atomic<IntSize>& surfaceMaximumSize()
@@ -307,6 +314,17 @@ RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surfac
     return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
 }
 
+void IOSurface::setContextSize(IntSize contextSize)
+{
+    if (contextSize == m_contextSize)
+        return;
+
+    // Release the graphics context and update the context size. Next time the graphics context is
+    // accessed, we will construct it again with the right size.
+    releaseGraphicsContext();
+    m_contextSize = contextSize;
+}
+
 CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
 {
     if (m_cgContext)
@@ -327,7 +345,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         // but for an IOSurface-to-IOSurface copy, there should be no conversion.
         bitsPerComponent = 16;
         bitsPerPixel = 64;
-        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+        bitmapInfo = kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder16Host | kCGBitmapFloatComponents;
         break;
 #endif
     case Format::YUV422:
@@ -335,7 +353,7 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         break;
     }
     
-    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.platformColorSpace(), bitmapInfo));
+    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_contextSize.width(), m_contextSize.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.platformColorSpace(), bitmapInfo));
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
@@ -363,12 +381,12 @@ GraphicsContext& IOSurface::ensureGraphicsContext()
     return *m_graphicsContext;
 }
 
-SetNonVolatileResult IOSurface::state() const
+VolatilityState IOSurface::state() const
 {
     uint32_t previousState = 0;
     IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), kIOSurfacePurgeableKeepCurrent, &previousState);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
-    return previousState == kIOSurfacePurgeableEmpty ? SetNonVolatileResult::Empty : SetNonVolatileResult::Valid;
+    return previousState == kIOSurfacePurgeableEmpty ? VolatilityState::Empty : VolatilityState::Valid;
 }
 
 IOSurfaceSeed IOSurface::seed() const
@@ -384,16 +402,16 @@ bool IOSurface::isVolatile() const
     return previousState != kIOSurfacePurgeableNonVolatile;
 }
 
-SetNonVolatileResult IOSurface::setVolatile(bool isVolatile)
+VolatilityState IOSurface::setVolatile(bool isVolatile)
 {
     uint32_t previousState = 0;
     IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), isVolatile ? kIOSurfacePurgeableVolatile : kIOSurfacePurgeableNonVolatile, &previousState);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
 
     if (previousState == kIOSurfacePurgeableEmpty)
-        return SetNonVolatileResult::Empty;
+        return VolatilityState::Empty;
 
-    return SetNonVolatileResult::Valid;
+    return VolatilityState::Valid;
 }
 
 IOSurface::Format IOSurface::format() const
@@ -456,7 +474,7 @@ bool IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, Format de
     return true;
 }
 
-void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&& inSurface, Format format, WTF::Function<void(std::unique_ptr<IOSurface>)>&& callback)
+void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format format, WTF::Function<void(std::unique_ptr<IOSurface>)>&& callback)
 {
     static IOSurfaceAcceleratorRef accelerator;
     if (!accelerator) {
@@ -471,7 +489,7 @@ void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&
         return;
     }
 
-    auto destinationSurface = IOSurface::create(pool, inSurface->size(), inSurface->colorSpace(), format);
+    auto destinationSurface = IOSurface::create(inSurface->size(), inSurface->colorSpace(), format);
     if (!destinationSurface) {
         callback(nullptr);
         return;
@@ -569,13 +587,13 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, SetNonVolatileResult state)
+static TextStream& operator<<(TextStream& ts, VolatilityState state)
 {
     switch (state) {
-    case SetNonVolatileResult::Valid:
+    case VolatilityState::Valid:
         ts << "valid";
         break;
-    case SetNonVolatileResult::Empty:
+    case VolatilityState::Empty:
         ts << "empty";
         break;
     }

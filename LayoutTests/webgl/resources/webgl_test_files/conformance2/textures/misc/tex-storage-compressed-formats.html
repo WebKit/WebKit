@@ -98,7 +98,7 @@ function runTexCompressedFormatsTest(texCompressedFormats)
         // Test a 2D texture.
         var tex = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.texStorage2D(gl.TEXTURE_2D, 1, internalformat, 4, 4);
+        gl.texStorage2D(gl.TEXTURE_2D, 1, internalformat, 1, 1);
         wtu.glErrorShouldBe(gl, gl.NO_ERROR,
                             "texStorage2D should succeed for " + enumToString(internalformat));
         gl.deleteTexture(tex);
@@ -111,14 +111,14 @@ function runTexCompressedFormatsTest(texCompressedFormats)
         // Test the 3D texture targets.
         var tex3d = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_3D, tex3d);
-        gl.texStorage3D(gl.TEXTURE_3D, 1, internalformat, 4, 4, 1);
+        gl.texStorage3D(gl.TEXTURE_3D, 1, internalformat, 1, 1, 1);
         wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION,
                             "texStorage3D(TEXTURE_3D) should fail for " + enumToString(internalformat));
         gl.deleteTexture(tex3d);
 
         var tex2dArr = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex2dArr);
-        gl.texStorage3D(gl.TEXTURE_2D_ARRAY, 1, internalformat, 4, 4, 1);
+        gl.texStorage3D(gl.TEXTURE_2D_ARRAY, 1, internalformat, 1, 1, 1);
         wtu.glErrorShouldBe(gl, gl.NO_ERROR,
                             "texStorage3D(TEXTURE_2D_ARRAY) should succeed for " + enumToString(internalformat));
         wtu.clearAndDrawUnitQuad(gl);

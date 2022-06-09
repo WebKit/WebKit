@@ -29,7 +29,6 @@
 #include "config.h"
 #include "PageRuleCollector.h"
 
-#include "CommonAtomStrings.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
 #include "UserAgentStyle.h"
@@ -85,9 +84,8 @@ void PageRuleCollector::matchPageRules(RuleSet* rules, bool isLeftPage, bool isF
 
     std::stable_sort(matchedPageRules.begin(), matchedPageRules.end(), comparePageRules);
 
-    m_result.authorDeclarations.reserveCapacity(m_result.authorDeclarations.size() + matchedPageRules.size());
-    for (auto* pageRule : matchedPageRules)
-        m_result.authorDeclarations.uncheckedAppend({ &pageRule->properties() });
+    for (unsigned i = 0; i < matchedPageRules.size(); i++)
+        m_result.authorDeclarations.append({ &matchedPageRules[i]->properties() });
 }
 
 static bool checkPageSelectorComponents(const CSSSelector* selector, bool isLeftPage, bool isFirstPage, const String& pageName)

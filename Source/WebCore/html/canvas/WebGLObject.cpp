@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebCoreOpaqueRoot.h"
 #include "WebGLCompressedTextureS3TC.h"
 #include "WebGLContextGroup.h"
 #include "WebGLDebugRendererInfo.h"
@@ -93,11 +92,6 @@ void WebGLObject::onDetached(const AbstractLocker& locker, GraphicsContextGL* co
         deleteObject(locker, context3d);
 }
 
-WebCoreOpaqueRoot root(WebGLObject* object)
-{
-    return WebCoreOpaqueRoot { object };
 }
-
-} // namespace WebCore
 
 #endif // ENABLE(WEBGL)

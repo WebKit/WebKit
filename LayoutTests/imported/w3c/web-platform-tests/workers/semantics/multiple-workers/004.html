@@ -28,17 +28,10 @@ function check_result() {
     setTimeout(function() {
       assert_equals(load_count, 2);
       assert_equals(i, 3);
-      clearTimeout(timeoutHandle);
       done();
     }, 500);
   }
 }
-
-timeoutHandle = setTimeout(() => {
-    assert_equals(load_count, 2, 'Frame Load Count');
-    assert_equals(i, 3, 'Worker Message Count');
-    done();
-}, 10000);
 </script>
 <iframe src=004-1.html onload="iframe_loaded()"></iframe>
 <iframe src=004-1.html onload="iframe_loaded()"></iframe>

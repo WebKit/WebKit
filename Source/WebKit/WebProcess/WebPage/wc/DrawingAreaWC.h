@@ -36,7 +36,8 @@ namespace WebKit {
 
 class DrawingAreaWC final
     : public DrawingArea
-    , public GraphicsLayerWC::Observer {
+    , public GraphicsLayerWC::Observer
+    , public RemoteWCLayerTreeHostProxy::Client {
 public:
     DrawingAreaWC(WebPage&, const WebPageCreationParameters&);
     ~DrawingAreaWC() override;
@@ -47,7 +48,7 @@ private:
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
-    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
+    void forceRepaintAsync(WebPage&, CompletionHandler<void()>&&) override { }
     void triggerRenderingUpdate() override;
     void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override { }
     void deviceOrPageScaleFactorChanged() override { }
@@ -56,14 +57,13 @@ private:
     void updateGeometry(uint64_t, WebCore::IntSize) override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
-    void updatePreferences(const WebPreferencesStore&) override;
-    bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) const override;
-    void didUpdate() override;
     // GraphicsLayerWC::Observer
     void graphicsLayerAdded(GraphicsLayerWC&) override;
     void graphicsLayerRemoved(GraphicsLayerWC&) override;
     void commitLayerUpateInfo(WCLayerUpateInfo&&) override;
     RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize) override;
+    // RemoteWCLayerTreeHostProxy::Client
+    void didUpdate() override;
 
     bool isCompositingMode();
     void updateRendering();
@@ -71,7 +71,16 @@ private:
     void sendUpdateNonAC();
     void updateRootLayers();
 
-    WebCore::GraphicsLayerClient m_rootLayerClient;
+    class RootLayerClient : public WebCore::GraphicsLayerClient {
+    public:
+        RootLayerClient(WebPage&);
+    private:
+        void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect& rectToPaint, WebCore::GraphicsLayerPaintBehavior) override;
+        float deviceScaleFactor() const override;
+        WebPage& m_webPage;
+    };
+
+    RootLayerClient m_rootLayerClient;
     std::unique_ptr<RemoteWCLayerTreeHostProxy> m_remoteWCLayerTreeHostProxy;
     WCLayerFactory m_layerFactory;
     DoublyLinkedList<GraphicsLayerWC> m_liveGraphicsLayers;
@@ -80,7 +89,6 @@ private:
     bool m_hasDeferredRenderingUpdate { false };
     bool m_inUpdateRendering { false };
     bool m_waitDidUpdate { false };
-    bool m_isForceRepaintCompletionHandlerDeferred { false };
     WCUpateInfo m_updateInfo;
     Ref<WebCore::GraphicsLayer> m_rootLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentLayer;
@@ -90,7 +98,6 @@ private:
     WebCore::Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;
     WebCore::IntSize m_scrollOffset;
-    CompletionHandler<void()> m_forceRepaintCompletionHandler;
 };
 
 } // namespace WebKit

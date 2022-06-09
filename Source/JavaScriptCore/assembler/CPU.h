@@ -42,15 +42,6 @@ constexpr bool isARMv7IDIVSupported()
 #endif
 }
 
-constexpr bool isARM()
-{
-#if CPU(ARM)
-    return true;
-#else
-    return false;
-#endif
-}
-
 constexpr bool isARM64()
 {
 #if CPU(ARM64)
@@ -87,24 +78,6 @@ constexpr bool isX86_64()
 #endif
 }
 
-constexpr bool isMIPS()
-{
-#if CPU(MIPS)
-    return true;
-#else
-    return false;
-#endif
-}
-
-constexpr bool isRISCV64()
-{
-#if CPU(RISCV64)
-    return true;
-#else
-    return false;
-#endif
-}
-
 constexpr bool is64Bit()
 {
 #if USE(JSVALUE64)
@@ -127,6 +100,15 @@ constexpr bool isAddress64Bit()
 constexpr bool isAddress32Bit()
 {
     return !isAddress64Bit();
+}
+
+constexpr bool isMIPS()
+{
+#if CPU(MIPS)
+    return true;
+#else
+    return false;
+#endif
 }
 
 inline bool optimizeForARMv7IDIVSupported()
@@ -167,24 +149,6 @@ ALWAYS_INLINE int kernTCSMAwareNumberOfProcessorCores() { return WTF::numberOfPr
 ALWAYS_INLINE int64_t hwL3CacheSize() { return 0; }
 ALWAYS_INLINE int32_t hwPhysicalCPUMax() { return kernTCSMAwareNumberOfProcessorCores(); }
 #endif
-
-constexpr size_t prologueStackPointerDelta()
-{
-#if ENABLE(C_LOOP)
-    // Prologue saves the framePointerRegister and linkRegister
-    return 2 * sizeof(CPURegister);
-#elif CPU(X86_64)
-    // Prologue only saves the framePointerRegister
-    return sizeof(CPURegister);
-#elif CPU(ARM_THUMB2) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)
-    // Prologue saves the framePointerRegister and linkRegister
-    return 2 * sizeof(CPURegister);
-#else
-#error unsupported architectures
-#endif
-}
-
-
 
 } // namespace JSC
 

@@ -48,10 +48,6 @@ struct DateTimeChooserParameters;
 
 // A super class of date, datetime, datetime-local, month, time, and week types.
 class BaseDateAndTimeInputType : public InputType, private DateTimeChooserClient, private DateTimeEditElement::EditControlOwner {
-public:
-    bool typeMismatchFor(const String&) const final;
-    bool valueMissing(const String&) const final;
-
 protected:
     enum class DateTimeFormatValidationResults : uint8_t {
         HasYear = 1 << 0,
@@ -73,13 +69,14 @@ protected:
     ~BaseDateAndTimeInputType();
 
     Decimal parseToNumber(const String&, const Decimal&) const override;
-    String serialize(const Decimal&) const final;
+    String serialize(const Decimal&) const override;
     String serializeWithComponents(const DateComponents&) const;
 
     bool shouldHaveSecondField(const DateComponents&) const;
     bool shouldHaveMillisecondField(const DateComponents&) const;
-
+    bool typeMismatchFor(const String&) const final;
     bool typeMismatch() const final;
+    bool valueMissing(const String&) const final;
 
 private:
     class DateTimeFormatValidator final : public DateTimeFormat::TokenHandler {
@@ -87,7 +84,7 @@ private:
         DateTimeFormatValidator() { }
 
         void visitField(DateTimeFormat::FieldType, int);
-        void visitLiteral(String&&) { }
+        void visitLiteral(const String&) { }
 
         bool validateFormat(const String& format, const BaseDateAndTimeInputType&);
 
@@ -104,7 +101,7 @@ private:
     // InputType functions:
     String visibleValue() const final;
     String sanitizeValue(const String&) const override;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
     WallTime valueAsDate() const override;
     ExceptionOr<void> setValueAsDate(WallTime) const override;
     double valueAsDouble() const final;
@@ -126,11 +123,11 @@ private:
     void elementDidBlur() final;
     void detach() final;
 
-    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
-    void handleKeypressEvent(KeyboardEvent&) final;
-    void handleKeyupEvent(KeyboardEvent&) final;
+    ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
+    void handleKeypressEvent(KeyboardEvent&) override;
+    void handleKeyupEvent(KeyboardEvent&) override;
     void handleFocusEvent(Node* oldFocusedNode, FocusDirection) final;
-    bool accessKeyAction(bool sendMouseEvents) final;
+    bool accessKeyAction(bool sendMouseEvents) override;
 
     // DateTimeEditElement::EditControlOwner functions:
     void didBlurFromControl() final;

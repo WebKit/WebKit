@@ -27,7 +27,6 @@
 
 #include "JSExportMacros.h"
 #include <cstddef>
-#include <wtf/Atomics.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/VectorTraits.h>
@@ -38,7 +37,7 @@ class WeakImpl;
 class WeakHandleOwner;
 
 // This is a free function rather than a Weak<T> member function so we can put it in Weak.cpp.
-JS_EXPORT_PRIVATE void weakClearSlowCase(WeakImpl*);
+JS_EXPORT_PRIVATE void weakClearSlowCase(WeakImpl*&);
 
 template<typename T> class Weak {
     WTF_MAKE_NONCOPYABLE(Weak);
@@ -54,7 +53,7 @@ public:
 
     bool isHashTableDeletedValue() const;
     Weak(WTF::HashTableDeletedValueType);
-    constexpr bool isHashTableEmptyValue() const { return !impl(); }
+    constexpr bool isHashTableEmptyValue() const { return !m_impl; }
 
     Weak(Weak&&);
 
@@ -77,19 +76,16 @@ public:
     inline explicit operator bool() const;
 
     inline WeakImpl* leakImpl() WARN_UNUSED_RETURN;
-    WeakImpl* unsafeImpl() const { return impl(); }
+    WeakImpl* unsafeImpl() const { return m_impl; }
     void clear()
     {
-        auto* pointer = impl();
-        if (!pointer)
+        if (!m_impl)
             return;
-        weakClearSlowCase(pointer);
-        m_impl = nullptr;
+        weakClearSlowCase(m_impl);
     }
     
 private:
     static inline WeakImpl* hashTableDeletedValue();
-    WeakImpl* impl() const { return m_impl; }
 
     WeakImpl* m_impl { nullptr };
 };

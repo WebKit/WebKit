@@ -30,9 +30,6 @@
 #include "ModelIdentifier.h"
 #include <WebCore/ElementContext.h>
 #include <WebCore/GraphicsLayer.h>
-#include <WebCore/HTMLModelElementCamera.h>
-#include <WebCore/ResourceError.h>
-#include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
@@ -69,18 +66,13 @@ public:
     void setIsMutedForModelElement(ModelIdentifier, bool, CompletionHandler<void(bool)>&&);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
-    void takeModelElementFullscreen(ModelIdentifier, const URL&);
-    void setInteractionEnabledForModelElement(ModelIdentifier, bool);
+    void takeModelElementFullscreen(ModelIdentifier);
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    void modelElementCreateRemotePreview(String, WebCore::FloatSize, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&&);
-    void modelElementLoadRemotePreview(String, URL, CompletionHandler<void(std::optional<WebCore::ResourceError>&&)>&&);
-    void modelElementDestroyRemotePreview(String);
-    void modelElementSizeDidChange(const String& uuid, WebCore::FloatSize, CompletionHandler<void(Expected<MachSendRight, WebCore::ResourceError>)>&&);
+    void modelElementDidCreatePreview(URL, String, WebCore::FloatSize, CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)>&&);
     void handleMouseDownForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
     void handleMouseMoveForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
     void handleMouseUpForModelElement(const String&, const WebCore::LayoutPoint&, MonotonicTime);
-    void inlinePreviewUUIDs(CompletionHandler<void(Vector<String>&&)>&&);
 #endif
 
 private:
@@ -99,6 +91,6 @@ private:
 #endif
 };
 
-} // namespace WebKit
+}
 
 #endif

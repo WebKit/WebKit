@@ -263,17 +263,6 @@ DisablePageBalancing::DisablePageBalancing()
 {
 }
 
-DecommitZeroFill::DecommitZeroFill()
-    : TestScope(
-        "decommit-zero-fill",
-        [] () {
-#if PAS_OS(DARWIN)
-            pas_page_malloc_decommit_zero_fill = true;
-#endif // PAS_OS(DARWIN)
-        })
-{
-}
-
 namespace {
 
 template<typename Func>
@@ -353,7 +342,6 @@ int resultPipe[2];
 void addBitfieldVectorTests();
 void addBitfitTests();
 void addBitvectorTests();
-void addBmallocTests();
 void addCartesianTreeTests();
 void addCoalignTests();
 void addExpendableMemoryTests();
@@ -370,16 +358,13 @@ void addLargeFreeHeapTests();
 void addLargeSharingPoolTests();
 void addLockFreeReadPtrPtrHashtableTests();
 void addLotsOfHeapsAndThreadsTests();
-void addMemalignTests();
 void addMinHeapTests();
 void addPGMTests();
 void addRaceTests();
 void addRedBlackTreeTests();
-void addTLCDecommitTests();
 void addTSDTests();
 void addThingyAndUtilityHeapAllocationTests();
 void addUtilsTests();
-void addViewCacheTests();
 
 void testSucceeded()
 {
@@ -722,7 +707,6 @@ int main(int argc, char** argv)
     ADD_SUITE(BitfieldVector);
     ADD_SUITE(Bitfit);
     ADD_SUITE(Bitvector);
-    ADD_SUITE(Bmalloc);
     ADD_SUITE(CartesianTree);
     ADD_SUITE(Coalign);
     ADD_SUITE(ExpendableMemory);
@@ -739,15 +723,12 @@ int main(int argc, char** argv)
     ADD_SUITE(LargeSharingPool);
     ADD_SUITE(LockFreeReadPtrPtrHashtable);
     ADD_SUITE(LotsOfHeapsAndThreads);
-    ADD_SUITE(Memalign);
     ADD_SUITE(MinHeap);
     ADD_SUITE(PGM);
     ADD_SUITE(Race);
     ADD_SUITE(RedBlackTree);
-    ADD_SUITE(TLCDecommit);
     ADD_SUITE(TSD);
     ADD_SUITE(Utils);
-    ADD_SUITE(ViewCache);
     
     string filter;
     

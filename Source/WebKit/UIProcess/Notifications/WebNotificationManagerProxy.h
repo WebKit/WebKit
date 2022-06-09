@@ -30,7 +30,6 @@
 #include "WebContextSupplement.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/NotificationClient.h>
-#include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
@@ -58,18 +57,14 @@ public:
 
     static Ref<WebNotificationManagerProxy> create(WebProcessPool*);
 
-    static WebNotificationManagerProxy& sharedServiceWorkerManager();
-
     void setProvider(std::unique_ptr<API::NotificationProvider>&&);
     HashMap<String, bool> notificationPermissions();
 
-    void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&);
+    void show(WebPageProxy*, const WebCore::NotificationData&);
     void cancel(WebPageProxy*, const UUID& pageNotificationID);
     void clearNotifications(WebPageProxy*);
     void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs);
     void didDestroyNotification(WebPageProxy*, const UUID& pageNotificationID);
-
-    void getNotifications(const URL&, const String&, PAL::SessionID, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
 
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
@@ -83,6 +78,9 @@ public:
 
 private:
     explicit WebNotificationManagerProxy(WebProcessPool*);
+
+    typedef bool (*NotificationFilterFunction)(WebPageProxyIdentifier pageID, const UUID& pageNotificationID, WebPageProxyIdentifier desiredPageID, const Vector<UUID>& desiredPageNotificationIDs);
+    void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs, NotificationFilterFunction);
 
     // WebContextSupplement
     void processPoolDestroyed() override;

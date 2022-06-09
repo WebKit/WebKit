@@ -76,6 +76,7 @@ TestsController::TestsController()
     // ThreadSafeRefCounted so that we don't have to initialize threading at all here.
     WTF::initializeMainThread();
     WTF::setProcessPrivileges(allPrivileges());
+    AtomString::init();
 }
 
 bool TestsController::run(int argc, char** argv)

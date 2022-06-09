@@ -25,6 +25,7 @@
 
 [
     Conditional=VIDEO,
+    ImplementationLacksVTable,
     Exposed=(Window,Worker),
 ] interface VideoTrackConfiguration {
     readonly attribute DOMString codec;

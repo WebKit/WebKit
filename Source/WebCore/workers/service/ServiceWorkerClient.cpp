@@ -39,8 +39,11 @@
 
 namespace WebCore {
 
-Ref<ServiceWorkerClient> ServiceWorkerClient::create(ServiceWorkerGlobalScope& context, ServiceWorkerClientData&& data)
+Ref<ServiceWorkerClient> ServiceWorkerClient::getOrCreate(ServiceWorkerGlobalScope& context, ServiceWorkerClientData&& data)
 {
+    if (auto* client = context.serviceWorkerClient(data.identifier))
+        return *client;
+
     if (data.type == ServiceWorkerClientType::Window)
         return ServiceWorkerWindowClient::create(context, WTFMove(data));
 
@@ -51,10 +54,13 @@ ServiceWorkerClient::ServiceWorkerClient(ServiceWorkerGlobalScope& context, Serv
     : ContextDestructionObserver(&context)
     , m_data(WTFMove(data))
 {
+    context.addServiceWorkerClient(*this);
 }
 
 ServiceWorkerClient::~ServiceWorkerClient()
 {
+    if (auto* context = scriptExecutionContext())
+        downcast<ServiceWorkerGlobalScope>(*context).removeServiceWorkerClient(*this);
 }
 
 const URL& ServiceWorkerClient::url() const

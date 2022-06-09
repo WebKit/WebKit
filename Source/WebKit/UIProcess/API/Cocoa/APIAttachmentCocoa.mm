@@ -41,7 +41,7 @@ namespace API {
 static WTF::String mimeTypeInferredFromFileExtension(const API::Attachment& attachment)
 {
     if (NSString *fileExtension = [(NSString *)attachment.fileName() pathExtension])
-        return WebCore::MIMETypeRegistry::mimeTypeForExtension(WTF::String(fileExtension));
+        return WebCore::MIMETypeRegistry::mimeTypeForExtension(fileExtension);
 
     return { };
 }
@@ -111,7 +111,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             contentType = (NSString *)kUTTypeDirectory;
         else if (fileWrapper.regularFile) {
             if (NSString *pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
-                contentType = WebCore::MIMETypeRegistry::mimeTypeForExtension(WTF::String(pathExtension));
+                contentType = WebCore::MIMETypeRegistry::mimeTypeForExtension(pathExtension);
             if (!contentType.length)
                 contentType = (NSString *)kUTTypeData;
         }
@@ -152,16 +152,6 @@ RefPtr<WebCore::FragmentedSharedBuffer> Attachment::enclosingImageData() const
         return nullptr;
 
     return WebCore::SharedBuffer::create(data);
-}
-
-NSData *Attachment::enclosingImageNSData() const
-{
-    auto fileWrapper = this->fileWrapper();
-
-    if (![fileWrapper isRegularFile])
-        return nil;
-
-    return fileWrapper.regularFileContents;
 }
 
 bool Attachment::isEmpty() const

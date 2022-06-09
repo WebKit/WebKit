@@ -27,20 +27,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from mod_pywebsocket.extensions import PerMessageDeflateExtensionProcessor
+import urlparse
+from mod_pywebsocket.extensions import DeflateFrameExtensionProcessor
 from mod_pywebsocket.extensions import ExtensionProcessorInterface
 from mod_pywebsocket.common import ExtensionParameter
-from urllib import parse as urlparse
 
 
-_GOODBYE_MESSAGE = 'Goodbye'
-_ENABLE_MESSAGE = 'EnableCompression'
-_DISABLE_MESSAGE = 'DisableCompression'
+_GOODBYE_MESSAGE = u'Goodbye'
+_ENABLE_MESSAGE = u'EnableCompression'
+_DISABLE_MESSAGE = u'DisableCompression'
 
 
 def _get_deflate_frame_extension_processor(request):
     for extension_processor in request.ws_extension_processors:
-        if isinstance(extension_processor, PerMessageDeflateExtensionProcessor):
+        if isinstance(extension_processor, DeflateFrameExtensionProcessor):
             return extension_processor
     return None
 
@@ -55,14 +55,11 @@ def web_socket_do_extra_handshake(request):
     parameters = urlparse.parse_qs(r[1], keep_blank_values=True)
     if 'max_window_bits' in parameters:
         window_bits = int(parameters['max_window_bits'][0])
-        processor.set_client_max_window_bits(window_bits)
+        processor.set_response_window_bits(window_bits)
     if 'no_context_takeover' in parameters:
-        processor.set_client_no_context_takeover(True)
+        processor.set_response_no_context_takeover(True)
     if 'set_bfinal' in parameters:
-        try:
-            processor.set_bfinal(True)
-        except AttributeError:
-            pass
+        processor.set_bfinal(True)
 
 
 def web_socket_transfer_data(request):
@@ -71,7 +68,7 @@ def web_socket_transfer_data(request):
         line = request.ws_stream.receive_message()
         if line is None:
             return
-        if isinstance(line, str):
+        if isinstance(line, unicode):
             if processor:
                 if line == _ENABLE_MESSAGE:
                     processor.enable_outgoing_compression()

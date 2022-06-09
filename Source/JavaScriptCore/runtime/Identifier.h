@@ -86,18 +86,17 @@ ALWAYS_INLINE std::optional<uint32_t> parseIndex(StringImpl& impl)
 class Identifier {
     friend class Structure;
 public:
-    Identifier() = default;
+    Identifier() { }
     enum EmptyIdentifierFlag { EmptyIdentifier };
     Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { ASSERT(m_string.impl()->isAtom()); }
 
-    const AtomString& string() const { return m_string; }
-
+    const String& string() const { return m_string; }
     UniquedStringImpl* impl() const { return static_cast<UniquedStringImpl*>(m_string.impl()); }
 
     int length() const { return m_string.length(); }
 
-    CString ascii() const { return m_string.string().ascii(); }
-    CString utf8() const { return m_string.string().utf8(); }
+    CString ascii() const { return m_string.ascii(); }
+    CString utf8() const { return m_string.utf8(); }
 
     // There's 2 functions to construct Identifier from string, (1) fromString and (2) fromUid.
     // They have different meanings in keeping or discarding symbol-ness of strings.
@@ -110,6 +109,9 @@ public:
     // fromUid keeps symbol-ness of provided StringImpl* while fromString discards it.
     // Use fromUid when constructing Identifier from StringImpl* which may represent symbols.
 
+    // Only to be used with string literals.
+    template<unsigned charactersCount>
+    static Identifier fromString(VM&, const char (&characters)[charactersCount]);
     static Identifier fromString(VM&, ASCIILiteral);
     static Identifier fromString(VM&, const LChar*, int length);
     static Identifier fromString(VM&, const UChar*, int length);
@@ -118,8 +120,8 @@ public:
     static Identifier fromString(VM&, Ref<AtomStringImpl>&&);
     static Identifier fromString(VM&, const AtomString&);
     static Identifier fromString(VM& vm, SymbolImpl*);
+    static Identifier fromString(VM&, const char*);
     static Identifier fromString(VM& vm, const Vector<LChar>& characters) { return fromString(vm, characters.data(), characters.size()); }
-    static Identifier fromLatin1(VM&, const char*);
 
     static Identifier fromUid(VM&, UniquedStringImpl* uid);
     static Identifier fromUid(const PrivateName&);
@@ -163,11 +165,14 @@ public:
     void dump(PrintStream&) const;
 
 private:
-    AtomString m_string;
+    String m_string;
+
+    // Only to be used with string literals.
+    template<unsigned charactersCount>
+    Identifier(VM& vm, const char (&characters)[charactersCount]) : m_string(add(vm, characters)) { ASSERT(m_string.impl()->isAtom()); }
 
     Identifier(VM& vm, const LChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
     Identifier(VM& vm, const UChar* s, int length) : m_string(add(vm, s, length)) { ASSERT(m_string.impl()->isAtom()); }
-    ALWAYS_INLINE Identifier(VM& vm, ASCIILiteral literal) : m_string(add(vm, literal)) { ASSERT(m_string.impl()->isAtom()); }
     Identifier(VM&, AtomStringImpl*);
     Identifier(VM&, const AtomString&);
     Identifier(VM& vm, const String& string) : m_string(add(vm, string.impl())) { ASSERT(m_string.impl()->isAtom()); }
@@ -192,7 +197,6 @@ private:
     template <typename T> ALWAYS_INLINE static constexpr bool canUseSingleCharacterString(T);
 
     static Ref<AtomStringImpl> add(VM&, StringImpl*);
-    static Ref<AtomStringImpl> add(VM&, ASCIILiteral);
 
 #ifndef NDEBUG
     JS_EXPORT_PRIVATE static void checkCurrentAtomStringTable(VM&);
@@ -224,13 +228,6 @@ Ref<AtomStringImpl> Identifier::add(VM& vm, const T* s, int length)
         return *static_cast<AtomStringImpl*>(StringImpl::empty());
 
     return *AtomStringImpl::add(s, length);
-}
-
-inline Ref<AtomStringImpl> Identifier::add(VM& vm, ASCIILiteral literal)
-{
-    if (literal.length() == 1)
-        return vm.smallStrings.singleCharacterStringRep(literal.characterAt(0));
-    return AtomStringImpl::add(literal);
 }
 
 inline bool operator==(const Identifier& a, const Identifier& b)

@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,16 +30,12 @@ from buildbot.schedulers.trysched import Try_Userpass
 from buildbot.schedulers.forcesched import ForceScheduler, StringParameter, FixedParameter, CodebaseParameter
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
-from buildbot.changes.filter import ChangeFilter
-from datetime import datetime, timezone
-from twisted.internet import defer
 
 from factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
-                       GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, StressTestFactory,
+                       GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, StressTestFactory,
                        StyleFactory, TestFactory, tvOSBuildFactory, WPEFactory, WebKitPerlFactory, WebKitPyFactory,
                        WinCairoFactory, WindowsFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory,
-                       macOSBuildFactory, macOSBuildOnlyFactory, macOSWK1Factory, macOSWK2Factory, ServicesFactory,
-                       UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
+                       macOSBuildFactory, macOSBuildOnlyFactory, macOSWK1Factory, macOSWK2Factory, ServicesFactory, WatchListFactory, watchOSBuildFactory)
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
@@ -84,64 +80,33 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     c['schedulers'] = []
     for scheduler in config['schedulers']:
         schedulerClassName = scheduler.pop('type')
-        schedulerName = scheduler.get('name')
         schedulerClass = globals()[schedulerClassName]
-
-        def filter_fn(change, schedulerName=schedulerName):
-            return change.properties.getProperty('event') == schedulerName
-
         if (schedulerClassName == 'Try_Userpass'):
             # FIXME: Read the credentials from local file on disk.
-            scheduler['userpass'] = [(passwords.get('BUILDBOT_TRY_USERNAME', 'sampleuser'), passwords.get('BUILDBOT_TRY_PASSWORD', 'samplepass'))]
-        if schedulerClassName == 'AnyBranchScheduler' and schedulerName:
-            scheduler['change_filter'] = ChangeFilter(filter_fn=filter_fn)
+            scheduler['userpass'] = [(os.getenv('BUILDBOT_TRY_USERNAME', 'sampleuser'), os.getenv('BUILDBOT_TRY_PASSWORD', 'samplepass'))]
         c['schedulers'].append(schedulerClass(**scheduler))
 
-    forceScheduler = ForceScheduler(
-        name='try_build',
-        buttonName='Try Build',
-        reason=StringParameter(name='reason', default='Trying patch', size=20),
-        builderNames=[str(builder['name']) for builder in config['builders']],
-        # Disable default enabled input fields: branch, repository, project, additional properties
-        codebases=[CodebaseParameter('',
-                   revision=FixedParameter(name='revision', default=''),
-                   repository=FixedParameter(name='repository', default=''),
-                   project=FixedParameter(name='project', default=''),
-                   branch=FixedParameter(name='branch', default=''))],
-        # Add custom properties needed
-        properties=[StringParameter(name='patch_id', label='Patch id (not bug number)', regex='^[4-9]\d{5}$', required=True, maxsize=6),
-                    StringParameter(name='ews_revision', label='WebKit git hash to checkout before trying patch (optional)', required=False, maxsize=40)],
-    )
-    c['schedulers'].append(forceScheduler)
-
-
-# Copied from https://github.com/buildbot/buildbot/blob/master/master/buildbot/util/async_sort.py
-@defer.inlineCallbacks
-def async_sort(l, key, max_parallel=10):
-    sem = defer.DeferredSemaphore(max_parallel)
-    try:
-        keys = yield defer.gatherResults([sem.run(key, i) for i in l])
-    except defer.FirstError as e:
-        raise e.subFailure.value
-
-    keys = {id(l[i]): v for i, v in enumerate(keys)}
-    l.sort(key=lambda x: keys[id(x)])
+    if is_test_mode_enabled:
+        forceScheduler = ForceScheduler(
+            name="force_build",
+            buttonName="Force Build",
+            builderNames=[str(builder['name']) for builder in config['builders']],
+            # Disable default enabled input fields: branch, repository, project, additional properties
+            codebases=[CodebaseParameter("",
+                       revision=FixedParameter(name="revision", default=""),
+                       repository=FixedParameter(name="repository", default=""),
+                       project=FixedParameter(name="project", default=""),
+                       branch=FixedParameter(name="branch", default=""))],
+            # Add custom properties needed
+            properties=[StringParameter(name="patch_id", label="Patch attachment id number (not bug number)", required=True, maxsize=7),
+                        StringParameter(name="ews_revision", label="WebKit git sha1 hash to checkout before trying patch (optional)", required=False, maxsize=40)],
+        )
+        c['schedulers'].append(forceScheduler)
 
 
 def prioritizeBuilders(buildmaster, builders):
-    # Prioritize builder queues over tester queues.
-    # Otherwise, prioritize older requests.
-    # Inspired by https://docs.buildbot.net/latest/manual/customization.html#builder-priority-functions
-    @defer.inlineCallbacks
-    def key(b):
-        request_time = yield b.getOldestRequestTime()
-        return (
-            'build' not in b.name.lower(),
-            bool(b.building) or bool(b.old_building),
-            request_time or datetime.now(timezone.utc),
-        )
-
-    async_sort(builders, key)
+    # Prioritize builder queues over tester queues
+    builders.sort(key=lambda b: 'build' in b.name.lower(), reverse=True)
     return builders
 
 

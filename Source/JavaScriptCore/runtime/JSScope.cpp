@@ -39,7 +39,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSScope);
 
-const ClassInfo JSScope::s_info = { "Scope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSScope) };
+const ClassInfo JSScope::s_info = { "Scope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSScope) };
 
 template<typename Visitor>
 void JSScope::visitChildrenImpl(JSCell* cell, Visitor& visitor)
@@ -166,7 +166,7 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
             return true;
         }
 
-        Structure* structure = globalObject->structure();
+        Structure* structure = globalObject->structure(vm);
         if (!slot.isCacheableValue()
             || !structure->propertyAccessesAreCacheable()
             || (structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && getOrPut == Put)) {
@@ -236,7 +236,7 @@ ALWAYS_INLINE JSObject* JSScope::resolve(JSGlobalObject* globalObject, JSScope* 
 
         // Global scope.
         if (++it == end) {
-            JSScope* globalScopeExtension = scope->globalObject()->globalScopeExtension();
+            JSScope* globalScopeExtension = scope->globalObject(vm)->globalScopeExtension();
             if (UNLIKELY(globalScopeExtension)) {
                 bool hasProperty = object->hasProperty(globalObject, ident);
                 RETURN_IF_EXCEPTION(throwScope, nullptr);
@@ -283,8 +283,8 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(JSGlobalObject* globalObj
     RETURN_IF_EXCEPTION(throwScope, { });
 
     bool result = false;
-    if (JSScope* scope = jsDynamicCast<JSScope*>(object)) {
-        if (SymbolTable* scopeSymbolTable = scope->symbolTable()) {
+    if (JSScope* scope = jsDynamicCast<JSScope*>(vm, object)) {
+        if (SymbolTable* scopeSymbolTable = scope->symbolTable(vm)) {
             result = scope->isGlobalObject()
                 ? JSObject::isExtensible(object, globalObject)
                 : scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
@@ -408,9 +408,9 @@ JSScope* JSScope::constantScopeForCodeBlock(ResolveType type, CodeBlock* codeBlo
     return nullptr;
 }
 
-SymbolTable* JSScope::symbolTable()
+SymbolTable* JSScope::symbolTable(VM& vm)
 {
-    if (JSSymbolTableObject* symbolTableObject = jsDynamicCast<JSSymbolTableObject*>(this))
+    if (JSSymbolTableObject* symbolTableObject = jsDynamicCast<JSSymbolTableObject*>(vm, this))
         return symbolTableObject->symbolTable();
 
     return nullptr;

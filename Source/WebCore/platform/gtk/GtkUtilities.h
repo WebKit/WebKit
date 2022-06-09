@@ -57,6 +57,4 @@ WEBCORE_EXPORT GdkDragAction dragOperationToSingleGdkDragAction(OptionSet<DragOp
 
 void monitorWorkArea(GdkMonitor*, GdkRectangle*);
 
-bool shouldUseOverlayScrollbars();
-
 } // namespace WebCore

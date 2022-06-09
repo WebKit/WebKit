@@ -1186,14 +1186,14 @@ bool WebFrameLoaderClient::canShowMIMETypeAsHTML(const String& MIMEType) const
     return [WebView canShowMIMETypeAsHTML:MIMEType];
 }
 
-bool WebFrameLoaderClient::representationExistsForURLScheme(StringView URLScheme) const
+bool WebFrameLoaderClient::representationExistsForURLScheme(const String& URLScheme) const
 {
-    return [WebView _representationExistsForURLScheme:URLScheme.createNSString().get()];
+    return [WebView _representationExistsForURLScheme:URLScheme];
 }
 
-String WebFrameLoaderClient::generatedMIMETypeForURLScheme(StringView URLScheme) const
+String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& URLScheme) const
 {
-    return [WebView _generatedMIMETypeForURLScheme:URLScheme.createNSString().get()];
+    return [WebView _generatedMIMETypeForURLScheme:URLScheme];
 }
 
 void WebFrameLoaderClient::frameLoadCompleted()
@@ -1393,7 +1393,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 #if PLATFORM(IOS_FAMILY)
     bool willProduceHTMLView;
     // Fast path that skips initialization of objc class objects.
-    if ([dataSource _documentLoader]->responseMIMEType() == "text/html"_s)
+    if ([dataSource _documentLoader]->responseMIMEType() == "text/html")
         willProduceHTMLView = true;
     else
         willProduceHTMLView = [m_webFrame->_private->webFrameView _viewClassForMIMEType:[dataSource _responseMIMEType]] == [WebHTMLView class];
@@ -1586,7 +1586,7 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement& ownerElement)
+RefPtr<WebCore::Frame> WebFrameLoaderClient::createFrame(const String& name, WebCore::HTMLFrameOwnerElement& ownerElement)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -1653,7 +1653,7 @@ WebCore::ObjectContentType WebFrameLoaderClient::objectContentType(const URL& ur
     return WebCore::ObjectContentType::None;
 }
 
-static AtomString parameterValue(const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, ASCIILiteral name)
+static String parameterValue(const Vector<String>& paramNames, const Vector<String>& paramValues, const char* name)
 {
     size_t size = paramNames.size();
     ASSERT(size == paramValues.size());
@@ -1661,7 +1661,7 @@ static AtomString parameterValue(const Vector<AtomString>& paramNames, const Vec
         if (equalIgnoringASCIICase(paramNames[i], name))
             return paramValues[i];
     }
-    return nullAtom();
+    return String();
 }
 
 static NSView *pluginView(WebFrame *frame, WebPluginPackage *pluginPackage,
@@ -1777,7 +1777,7 @@ static bool shouldBlockPlugin(WebBasePluginPackage *pluginPackage)
 }
 
 RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSize& size, WebCore::HTMLPlugInElement& element, const URL& url,
-    const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues, const String& mimeType, bool loadManually)
+    const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -1857,7 +1857,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(const WebCore::IntSiz
     if (errorCode && m_webFrame) {
         WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
         if (implementations->plugInFailedWithErrorFunc) {
-            URL pluginPageURL = document->completeURL(WebCore::stripLeadingAndTrailingHTMLSpaces(parameterValue(paramNames, paramValues, "pluginspage"_s)));
+            URL pluginPageURL = document->completeURL(WebCore::stripLeadingAndTrailingHTMLSpaces(parameterValue(paramNames, paramValues, "pluginspage")));
             if (!pluginPageURL.protocolIsInHTTPFamily())
                 pluginPageURL = URL();
             NSString *pluginName = pluginPackage ? (NSString *)[pluginPackage pluginInfo].name : nil;

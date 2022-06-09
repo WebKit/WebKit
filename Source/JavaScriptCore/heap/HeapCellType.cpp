@@ -36,12 +36,12 @@ namespace JSC {
 // the function's type and it would have indirect calls to that function. And unlike a lambda, it's
 // possible to mark this ALWAYS_INLINE.
 struct DefaultDestroyFunc {
-    ALWAYS_INLINE void operator()(VM&, JSCell* cell) const
+    ALWAYS_INLINE void operator()(VM& vm, JSCell* cell) const
     {
         ASSERT(cell->structureID());
-        Structure* structure = cell->structure();
+        Structure* structure = cell->structure(vm);
         ASSERT(structure->typeInfo().structureIsImmortal());
-        const ClassInfo* classInfo = structure->classInfoForCells();
+        const ClassInfo* classInfo = structure->classInfo();
         MethodTable::DestroyFunctionPtr destroy = classInfo->methodTable.destroy;
         destroy(cell);
     }

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,7 +21,8 @@
 #include "config.h"
 #include "SVGFEMorphologyElement.h"
 
-#include "FEMorphology.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
@@ -52,7 +53,7 @@ void SVGFEMorphologyElement::setRadius(float x, float y)
 {
     m_radiusX->setBaseValInternal(x);
     m_radiusY->setBaseValInternal(y);
-    updateSVGRendererForElementChange();
+    setSVGResourcesInAncestorChainAreDirty();
 }
 
 void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -98,26 +99,35 @@ bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, cons
 
 void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::operatorAttr || attrName == SVGNames::radiusAttr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::inAttr)
-            updateSVGRendererForElementChange();
-        else {
-            ASSERT(attrName == SVGNames::operatorAttr || attrName == SVGNames::radiusAttr);
-            primitiveAttributeChanged(attrName);
-        }
+        primitiveAttributeChanged(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
+        InstanceInvalidationGuard guard(*this);
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEMorphologyElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    if (radiusX() < 0 || radiusY() < 0)
+    auto input1 = filterBuilder.getEffectById(in1());
+    if (!input1)
         return nullptr;
 
-    return FEMorphology::create(svgOperator(), radiusX(), radiusY());
+    float xRadius = radiusX();
+    float yRadius = radiusY();
+    if (xRadius < 0 || yRadius < 0)
+        return nullptr;
+
+    auto effect = FEMorphology::create(svgOperator(), xRadius, yRadius);
+    effect->inputEffects() = { input1.releaseNonNull() };
+    return effect;
 }
 
 } // namespace WebCore

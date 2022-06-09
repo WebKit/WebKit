@@ -61,11 +61,6 @@ IOSurfacePool& IOSurfacePool::sharedPool()
     return pool;
 }
 
-Ref<IOSurfacePool> IOSurfacePool::create()
-{
-    return adoptRef(*new IOSurfacePool);
-}
-
 static bool surfaceMatchesParameters(IOSurface& surface, IntSize requestedSize, const DestinationColorSpace& colorSpace, IOSurface::Format format)
 {
     if (format != surface.format())
@@ -175,7 +170,7 @@ bool IOSurfacePool::shouldCacheSurface(const IOSurface& surface) const
     return true;
 }
 
-void IOSurfacePool::addSurface(std::unique_ptr<IOSurface>&& surface)
+void IOSurfacePool::addSurface(std::unique_ptr<IOSurface> surface)
 {
     Locker locker { m_lock };
     if (!shouldCacheSurface(*surface))
@@ -375,7 +370,7 @@ String IOSurfacePool::poolStatistics() const
         totalSize += queueSize;
         totalPurgeableSize += queuePurgeableSize;
 
-        stream << "   " << keyAndSurfaces.key << ": " << keyAndSurfaces.value.size() << " surfaces for " << queueSize / (1024.0 * 1024.0) << " MB (" << queuePurgeableSize / (1024.0 * 1024.0) << " MB purgeable)\n";
+        stream << "   " << keyAndSurfaces.key << ": " << keyAndSurfaces.value.size() << " surfaces for " << queueSize / (1024.0 * 1024.0) << " MB (" << queuePurgeableSize / (1024.0 * 1024.0) << " MB purgeable)";
     }
 
     size_t inUseSize = 0;

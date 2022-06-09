@@ -218,14 +218,17 @@ void CompactTDZEnvironment::sortCompact(Compact& compact)
 
 CompactTDZEnvironment::CompactTDZEnvironment(const TDZEnvironment& env)
 {
-    m_hash = 0; // Note: XOR is commutative so order doesn't matter here.
-    Compact variables = WTF::map(env, [this](auto& key) -> PackedRefPtr<UniquedStringImpl> {
-        m_hash ^= key->hash();
-        return key.get();
-    });
+    Compact compactVariables;
+    compactVariables.reserveCapacity(env.size());
 
-    sortCompact(variables);
-    m_variables = WTFMove(variables);
+    m_hash = 0; // Note: XOR is commutative so order doesn't matter here.
+    for (auto& key : env) {
+        compactVariables.append(key.get());
+        m_hash ^= key->hash();
+    }
+
+    sortCompact(compactVariables);
+    m_variables = WTFMove(compactVariables);
 }
 
 bool CompactTDZEnvironment::operator==(const CompactTDZEnvironment& other) const

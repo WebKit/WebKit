@@ -67,13 +67,13 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCueBox);
 
 static const QualifiedName& cueAttributName()
 {
-    static NeverDestroyed<QualifiedName> cueTag(nullAtom(), "cue"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> cueTag(nullAtom(), "cue", nullAtom());
     return cueTag;
 }
 
 static const QualifiedName& cueBackgroundAttributName()
 {
-    static NeverDestroyed<QualifiedName> cueBackgroundTag(nullAtom(), "cuebackground"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> cueBackgroundTag(nullAtom(), "cuebackground", nullAtom());
     return cueBackgroundTag;
 }
 
@@ -182,7 +182,7 @@ static void removePseudoAttributes(Node& node)
 ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double start, double end, DocumentFragment& cueFragment)
 {
     if (!cueFragment.firstChild())
-        return Exception { InvalidNodeTypeError, "Empty cue fragment"_s };
+        return Exception { InvalidNodeTypeError, "Empty cue fragment" };
 
     for (Node* node = cueFragment.firstChild(); node; node = node->nextSibling()) {
         auto result = checkForInvalidNodeTypes(*node);
@@ -268,7 +268,7 @@ void TextTrackCue::setTrack(TextTrack* track)
     m_track = track;
 }
 
-void TextTrackCue::setId(const AtomString& id)
+void TextTrackCue::setId(const String& id)
 {
     if (m_id == id)
         return;
@@ -521,8 +521,8 @@ void TextTrackCue::rebuildDisplayTree()
         if (const auto& styleSheets = track()->styleSheets()) {
             for (const auto& cssString : *styleSheets) {
                 auto style = HTMLStyleElement::create(HTMLNames::styleTag, m_displayTree->document(), false);
-                style->setTextContent(String { cssString });
-                m_displayTree->appendChild(WTFMove(style));
+                style->setTextContent(cssString);
+                m_displayTree->appendChild(style);
             }
         }
     }

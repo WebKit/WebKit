@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyGlobalConstructor::s_info = { "Function"_s, &Base::s_info, &constructorGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalConstructor) };
+const ClassInfo WebAssemblyGlobalConstructor::s_info = { "Function", &Base::s_info, &constructorGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyGlobal);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyGlobal);
@@ -66,22 +66,22 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         globalDescriptor = jsCast<JSObject*>(argument);
     }
 
-    Wasm::Mutability mutability;
+    Wasm::GlobalInformation::Mutability mutability;
     {
-        Identifier mutableIdent = Identifier::fromString(vm, "mutable"_s);
+        Identifier mutableIdent = Identifier::fromString(vm, "mutable");
         JSValue mutableValue = globalDescriptor->get(globalObject, mutableIdent);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         bool mutableBoolean = mutableValue.toBoolean(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (mutableBoolean)
-            mutability = Wasm::Mutable;
+            mutability = Wasm::GlobalInformation::Mutable;
         else
-            mutability = Wasm::Immutable;
+            mutability = Wasm::GlobalInformation::Immutable;
     }
 
     Wasm::Type type;
     {
-        Identifier valueIdent = Identifier::fromString(vm, "value"_s);
+        Identifier valueIdent = Identifier::fromString(vm, "value");
         JSValue valueValue = globalDescriptor->get(globalObject, valueIdent);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String valueString = valueValue.toWTFString(globalObject);
@@ -141,8 +141,8 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         if (Wasm::isFuncref(type)) {
             if (argument.isUndefined())
                 argument = defaultValueForReferenceType(type);
-            if (!isWebAssemblyHostFunction(argument) && !argument.isNull()) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
+            if (!isWebAssemblyHostFunction(vm, argument) && !argument.isNull()) {
+                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
                 return { };
             }
             initialValue = JSValue::encode(argument);

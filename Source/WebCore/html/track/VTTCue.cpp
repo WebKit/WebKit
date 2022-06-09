@@ -36,7 +36,6 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "CommonAtomStrings.h"
 #include "DocumentFragment.h"
 #include "ElementInlines.h"
 #include "Event.h"
@@ -72,12 +71,12 @@ constexpr double DEFAULTCAPTIONFONTSIZEPERCENTAGE = 5;
 static const CSSValueID displayWritingModeMap[] = {
     CSSValueHorizontalTb, CSSValueVerticalRl, CSSValueVerticalLr
 };
-static_assert(WTF_ARRAY_LENGTH(displayWritingModeMap) == VTTCue::NumberOfWritingDirections, "displayWritingModeMap has wrong size");
+COMPILE_ASSERT(WTF_ARRAY_LENGTH(displayWritingModeMap) == VTTCue::NumberOfWritingDirections, displayWritingModeMap_has_wrong_size);
 
 static const CSSValueID displayAlignmentMap[] = {
     CSSValueStart, CSSValueCenter, CSSValueEnd, CSSValueLeft, CSSValueRight
 };
-static_assert(WTF_ARRAY_LENGTH(displayAlignmentMap) == VTTCue::NumberOfAlignments, "displayAlignmentMap has wrong size");
+COMPILE_ASSERT(WTF_ARRAY_LENGTH(displayAlignmentMap) == VTTCue::NumberOfAlignments, displayAlignmentMap_has_wrong_size);
 
 static const String& startKeyword()
 {
@@ -136,6 +135,12 @@ static const String& lineRightKeyword()
 {
     static NeverDestroyed<const String> lineRight(MAKE_STATIC_STRING_IMPL("line-right"));
     return lineRight;
+}
+
+static const String& autoKeyword()
+{
+    static NeverDestroyed<const String> autoX(MAKE_STATIC_STRING_IMPL("auto"));
+    return autoX;
 }
 
 // ----------------------------
@@ -213,14 +218,14 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     if (cue->vertical() == horizontalKeyword()) {
         setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSUnitType::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
-        setInlineStyleProperty(CSSPropertyMinWidth, "min-content"_s);
+        setInlineStyleProperty(CSSPropertyMinWidth, "min-content");
         setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSUnitType::CSS_PERCENTAGE);
         if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0 && position.first)
             setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(*position.first - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyHeight, newCueSize, CSSUnitType::CSS_PERCENTAGE);
-        setInlineStyleProperty(CSSPropertyMinHeight, "min-content"_s);
+        setInlineStyleProperty(CSSPropertyMinHeight, "min-content");
         setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSUnitType::CSS_PERCENTAGE);
         if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0 && position.second)
             setInlineStyleProperty(CSSPropertyTop, static_cast<double>(*position.second - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
@@ -474,7 +479,7 @@ const String& VTTCue::positionAlign() const
     case PositionAlignmentLignRight:
         return lineRightKeyword();
     case PositionAlignmentLignAuto:
-        return autoAtom();
+        return autoKeyword();
     default:
         ASSERT_NOT_REACHED();
         return emptyString();
@@ -490,7 +495,7 @@ ExceptionOr<void> VTTCue::setPositionAlign(const String& value)
         positionAlignment = PositionAlignmentLignCenter;
     else if (value == lineRightKeyword())
         positionAlignment = PositionAlignmentLignRight;
-    else if (value == autoAtom())
+    else if (value == autoKeyword())
         positionAlignment = PositionAlignmentLignAuto;
     else
         return { };
@@ -1006,16 +1011,16 @@ RefPtr<TextTrackCueBox> VTTCue::getDisplayTree(const IntSize& videoSize, int fon
     if (displayTree->document().page()) {
         auto cssString = displayTree->document().page()->captionUserPreferencesStyleSheet();
         auto style = HTMLStyleElement::create(HTMLNames::styleTag, displayTree->document(), false);
-        style->setTextContent(WTFMove(cssString));
-        displayTree->appendChild(WTFMove(style));
+        style->setTextContent(cssString);
+        displayTree->appendChild(style);
     }
 
     const auto& styleSheets = track()->styleSheets();
     if (styleSheets) {
         for (const auto& cssString : *styleSheets) {
             auto style = HTMLStyleElement::create(HTMLNames::styleTag, displayTree->document(), false);
-            style->setTextContent(String { cssString });
-            displayTree->appendChild(WTFMove(style));
+            style->setTextContent(cssString);
+            displayTree->appendChild(style);
         }
     }
 
@@ -1338,13 +1343,13 @@ void VTTCue::toJSON(JSON::Object& object) const
     object.setString("vertical"_s, vertical());
     object.setBoolean("snapToLines"_s, snapToLines());
     if (m_linePosition)
-        object.setString("line"_s, autoAtom());
+        object.setString("line"_s, "auto"_s);
     else
         object.setDouble("line"_s, *m_linePosition);
     if (m_textPosition)
         object.setDouble("position"_s, *m_textPosition);
     else
-        object.setString("position"_s, autoAtom());
+        object.setString("position"_s, "auto"_s);
     object.setInteger("size"_s, m_cueSize);
     object.setString("align"_s, align());
 }

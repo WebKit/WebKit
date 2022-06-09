@@ -62,15 +62,13 @@ LibWebRTCRtpSenderBackend::~LibWebRTCRtpSenderBackend()
 void LibWebRTCRtpSenderBackend::startSource()
 {
     // We asynchronously start the sources to guarantee media goes through the transform if a transform is set when creating the track.
-    callOnMainThread([this, weakThis = WeakPtr { *this }, source = m_source]() mutable {
-        if (!weakThis)
+    callOnMainThread([weakThis = WeakPtr { *this }, source = m_source]() mutable {
+        if (!weakThis || weakThis->m_source != source)
             return;
-        switchOn(source, [this](Ref<RealtimeOutgoingAudioSource>& source) {
-            if (auto* currentSource = std::get_if<Ref<RealtimeOutgoingAudioSource>>(&m_source); currentSource && currentSource->ptr() == source.ptr())
-                source->start();
-        }, [this](Ref<RealtimeOutgoingVideoSource>& source) {
-            if (auto* currentSource = std::get_if<Ref<RealtimeOutgoingVideoSource>>(&m_source); currentSource && currentSource->ptr() == source.ptr())
-                source->start();
+        switchOn(source, [](Ref<RealtimeOutgoingAudioSource>& source) {
+            source->start();
+        }, [](Ref<RealtimeOutgoingVideoSource>& source) {
+            source->start();
         }, [](std::nullptr_t&) {
         });
     });

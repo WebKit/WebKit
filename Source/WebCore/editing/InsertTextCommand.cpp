@@ -58,7 +58,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
 {
     Position pos = p;
     if (isTabSpanTextNode(pos.anchorNode())) {
-        auto textNode = document().createEditingTextNode(String { emptyString() });
+        auto textNode = document().createEditingTextNode(emptyString());
         insertNodeAtTabSpanPosition(textNode.copyRef(), pos);
         return firstPositionInNode(textNode.ptr());
     }
@@ -66,7 +66,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
     if (!pos.containerNode()->isTextNode()) {
-        auto textNode = document().createEditingTextNode(String { emptyString() });
+        auto textNode = document().createEditingTextNode(emptyString());
         insertNodeAt(textNode.copyRef(), pos);
         return firstPositionInNode(textNode.ptr());
     }
@@ -92,7 +92,7 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     if (!endingSelection().isRange())
         return false;
 
-    if (text.contains([](UChar c) { return c == '\t' || c == ' ' || c == '\n'; }))
+    if (text.contains('\t') || text.contains(' ') || text.contains('\n'))
         return false;
 
     Position start = endingSelection().start();
@@ -182,12 +182,10 @@ void InsertTextCommand::doApply()
         startPosition = startPosition.downstream();
     
     startPosition = positionAvoidingSpecialElementBoundary(startPosition);
-    if (endingSelection().isNoneOrOrphaned())
-        return;
-
+    
     Position endPosition;
     
-    if (m_text == "\t"_s) {
+    if (m_text == "\t") {
         endPosition = insertTab(startPosition);
         startPosition = endPosition.previous();
         if (placeholder.isNotNull())
@@ -250,7 +248,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {
         Ref<Text> textNode = downcast<Text>(*node);
-        insertTextIntoNode(textNode, offset, "\t"_s);
+        insertTextIntoNode(textNode, offset, "\t");
         return Position(textNode.ptr(), offset + 1);
     }
     

@@ -15,5 +15,5 @@ def web_socket_transfer_data(request):
         return
 
     opcode = int(match.group(1))
-    payload = f'This text should be ignored. (opcode = {opcode})'.encode()
+    payload = 'This text should be ignored. (opcode = %d)' % opcode
     request.connection.write(stream.create_header(opcode, len(payload), 1, 0, 0, 0, 0) + payload)

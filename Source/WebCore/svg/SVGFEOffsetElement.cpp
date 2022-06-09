@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,8 @@
 #include "SVGFEOffsetElement.h"
 
 #include "FEOffset.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -72,22 +74,22 @@ void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-IntOutsets SVGFEOffsetElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
+RefPtr<FilterEffect> SVGFEOffsetElement::build(SVGFilterBuilder& filterBuilder) const
 {
-    auto offset = SVGFilter::calculateResolvedSize({ dx(), dy() }, targetBoundingBox, primitiveUnits);
-    return FEOffset::calculateOutsets(offset);
+    auto input1 = filterBuilder.getEffectById(in1());
+    if (!input1)
+        return nullptr;
+
+    auto effect = FEOffset::create(dx(), dy());
+    effect->inputEffects() = { input1.releaseNonNull() };
+    return effect;
 }
 
-RefPtr<FilterEffect> SVGFEOffsetElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
-{
-    return FEOffset::create(dx(), dy());
 }
-
-} // namespace WebCore

@@ -32,15 +32,14 @@
 namespace WebCore {
 
 enum class ServiceWorkerUpdateViaCache : uint8_t;
-enum class WorkerType : bool;
+enum class WorkerType : uint8_t;
 
 struct ServiceWorkerRegistrationOptions {
     String scope;
     WorkerType type;
     ServiceWorkerUpdateViaCache updateViaCache;
 
-    ServiceWorkerRegistrationOptions isolatedCopy() const &;
-    ServiceWorkerRegistrationOptions isolatedCopy() &&;
+    ServiceWorkerRegistrationOptions isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerRegistrationOptions> decode(Decoder&);

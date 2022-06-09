@@ -34,7 +34,6 @@
 
 #include "JSDOMConvert.h"
 #include "JSDocumentFragment.h"
-#include "WebCoreOpaqueRoot.h"
 
 namespace WebCore {
 using namespace JSC;
@@ -43,7 +42,7 @@ template<typename Visitor>
 void JSHTMLTemplateElement::visitAdditionalChildren(Visitor& visitor)
 {
     if (auto* content = wrapped().contentIfAvailable())
-        addWebCoreOpaqueRoot(visitor, *content);
+        visitor.addOpaqueRoot(root(content));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSHTMLTemplateElement);

@@ -21,8 +21,6 @@
 #include "config.h"
 #include "MediaFeatureNames.h"
 
-#include "CommonAtomStrings.h"
-
 namespace WebCore {
 namespace MediaFeatureNames {
 
@@ -34,8 +32,8 @@ void init()
 {
     static bool initialized;
     if (!initialized) {
-        initializeCommonAtomStrings();
-#define INITIALIZE_GLOBAL(name, string) name.construct(string ## _s);
+        AtomString::init();
+#define INITIALIZE_GLOBAL(name, string) name.construct(string, AtomString::ConstructFromLiteral);
         CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(INITIALIZE_GLOBAL)
 #undef INITIALIZE_GLOBAL
         initialized = true;

@@ -1,4 +1,6 @@
 CONSOLE MESSAGE: ReferenceError: Can't find variable: Worker
 
-FAIL creating 3 nested dedicated workers assert_unreached: error Reached unreachable code
+Harness Error (FAIL), message = ReferenceError: Can't find variable: Worker
+
+TIMEOUT creating 3 nested dedicated workers Test timed out
 

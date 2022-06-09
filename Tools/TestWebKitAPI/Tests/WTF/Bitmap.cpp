@@ -103,15 +103,6 @@ constexpr size_t expectedNumberOfSetBits2 = countBits(expectedBits2, size);
     Bitmap<smallSize, WordType> smallBitmapOnes; \
     Bitmap<smallSize, WordType> smallBitmap1; /* Will hold values specified in expectedSmallBits1. */ \
     Bitmap<smallSize, WordType> smallBitmap2; /* Will hold values specified in expectedSmallBits2. */ \
-    UNUSED_VARIABLE(bitmapZeroes); \
-    UNUSED_VARIABLE(bitmap1); \
-    UNUSED_VARIABLE(bitmap2); \
-    UNUSED_VARIABLE(bitmap2Clone); \
-    UNUSED_VARIABLE(bitmapOnes); \
-    UNUSED_VARIABLE(smallBitmapZeroes); \
-    UNUSED_VARIABLE(smallBitmapOnes); \
-    UNUSED_VARIABLE(smallBitmap1); \
-    UNUSED_VARIABLE(smallBitmap2);
 
 #define DECLARE_AND_INIT_BITMAPS_FOR_TEST() \
     DECLARE_BITMAPS_FOR_TEST() \
@@ -418,22 +409,6 @@ void testBitmapCount()
     EXPECT_EQ(bitmapOnes.count(), size);
     EXPECT_EQ(smallBitmapZeroes.count(), zeroSize);
     EXPECT_EQ(smallBitmapOnes.count(), smallSize);
-}
-
-template<typename WordType>
-void testBitmapCountAfterSetAll()
-{
-    Bitmap<9, WordType> smallBitmap;
-    smallBitmap.setAll();
-    EXPECT_EQ(smallBitmap.count(), 9ull);
-
-    Bitmap<32, WordType> completeBitmap;
-    completeBitmap.setAll();
-    EXPECT_EQ(completeBitmap.count(), 32ull);
-
-    Bitmap<1008, WordType> largeBitmap;
-    largeBitmap.setAll();
-    EXPECT_EQ(largeBitmap.count(), 1008ull);
 }
 
 template<typename WordType>
@@ -1169,7 +1144,7 @@ void testBitmapOperatorBitOrAssignmentImpl(size_t size, const Bitmap& bitmap1, c
 
     temp |= bitmap2;
     for (size_t i = 0; i < size; ++i)
-        EXPECT_EQ(temp.get(i), bitmap1.get(i) || bitmap2.get(i));
+        EXPECT_EQ(temp.get(i), bitmap1.get(i) | bitmap2.get(i));
 
     temp1 = temp;
     EXPECT_TRUE(temp1 == temp);
@@ -1237,7 +1212,7 @@ void testBitmapOperatorBitAndAssignmentImpl(size_t size, const Bitmap& bitmap1, 
 
     temp &= bitmap2;
     for (size_t i = 0; i < size; ++i)
-        EXPECT_EQ(temp.get(i), bitmap1.get(i) && bitmap2.get(i));
+        EXPECT_EQ(temp.get(i), bitmap1.get(i) & bitmap2.get(i));
 
     EXPECT_TRUE(!temp.isEmpty());
     temp1 = temp;
@@ -1406,7 +1381,6 @@ TEST(WTF_Bitmap, ClearAll_uint32_t) { testBitmapClearAll<uint32_t>(); }
 TEST(WTF_Bitmap, Invert_uint32_t) { testBitmapInvert<uint32_t>(); }
 TEST(WTF_Bitmap, FindRunOfZeros_uint32_t) { testBitmapFindRunOfZeros<uint32_t>(); }
 TEST(WTF_Bitmap, Count_uint32_t) { testBitmapCount<uint32_t>(); }
-TEST(WTF_Bitmap, CountAfterSetAll_uint32_t) { testBitmapCountAfterSetAll<uint32_t>(); }
 TEST(WTF_Bitmap, IsEmpty_uint32_t) { testBitmapIsEmpty<uint32_t>(); }
 TEST(WTF_Bitmap, IsFull_uint32_t) { testBitmapIsFull<uint32_t>(); }
 TEST(WTF_Bitmap, Merge_uint32_t) { testBitmapMerge<uint32_t>(); }
@@ -1442,7 +1416,6 @@ TEST(WTF_Bitmap, ClearAll_uint64_t) { testBitmapClearAll<uint64_t>(); }
 TEST(WTF_Bitmap, Invert_uint64_t) { testBitmapInvert<uint64_t>(); }
 TEST(WTF_Bitmap, FindRunOfZeros_uint64_t) { testBitmapFindRunOfZeros<uint64_t>(); }
 TEST(WTF_Bitmap, Count_uint64_t) { testBitmapCount<uint64_t>(); }
-TEST(WTF_Bitmap, CountAfterSetAll_uint64_t) { testBitmapCountAfterSetAll<uint64_t>(); }
 TEST(WTF_Bitmap, IsEmpty_uint64_t) { testBitmapIsEmpty<uint64_t>(); }
 TEST(WTF_Bitmap, IsFull_uint64_t) { testBitmapIsFull<uint64_t>(); }
 TEST(WTF_Bitmap, Merge_uint64_t) { testBitmapMerge<uint64_t>(); }

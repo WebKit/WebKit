@@ -64,7 +64,7 @@ PDFDocumentImage::~PDFDocumentImage() = default;
 
 String PDFDocumentImage::filenameExtension() const
 {
-    return "pdf"_s;
+    return "pdf";
 }
 
 FloatSize PDFDocumentImage::size(ImageOrientation) const
@@ -232,15 +232,14 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
 
     // Cache the PDF image only if the size of the new image won't exceed the cache threshold.
     if (m_pdfImageCachingPolicy == PDFImageCachingPolicy::BelowMemoryLimit) {
-        auto scaledSize = context.compatibleImageBufferSize(cachedImageSize);
+        IntSize scaledSize = ImageBuffer::compatibleBufferSize(cachedImageSize, context);
         if (s_allDecodedDataSize + scaledSize.unclampedArea() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
             destroyDecodedData();
             return;
         }
     }
 
-    // Create a local ImageBuffer because decoding the PDF images has to happen in WebProcess.
-    m_cachedImageBuffer = context.createAlignedImageBuffer(cachedImageSize, DestinationColorSpace::SRGB(), RenderingMethod::Local);
+    m_cachedImageBuffer = ImageBuffer::createCompatibleBuffer(cachedImageSize, context);
     if (!m_cachedImageBuffer) {
         destroyDecodedData();
         return;
@@ -293,7 +292,7 @@ ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect
             // scalar = sqrt(max number of pixels / (width * height))
             auto scalar = std::min(1.f, std::sqrt(static_cast<float>(s_maxCachedImageArea) / (dstRect.width() * dstRect.height())));
             FloatRect localDestinationRect(FloatPoint(), dstRect.size() * scalar);
-            if (auto imageBuffer = context.createAlignedImageBuffer(localDestinationRect.size(), DestinationColorSpace::SRGB(), RenderingMethod::Local)) {
+            if (auto imageBuffer = ImageBuffer::createCompatibleBuffer(localDestinationRect.size(), context)) {
                 auto& bufferContext = imageBuffer->context();
                 transformContextForPainting(bufferContext, localDestinationRect, srcRect);
                 drawPDFPage(bufferContext);

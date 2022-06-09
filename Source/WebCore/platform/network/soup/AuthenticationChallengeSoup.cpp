@@ -37,11 +37,11 @@ namespace WebCore {
 
 static ProtectionSpace::ServerType protectionSpaceServerTypeFromURL(const URL& url, bool isForProxy)
 {
-    if (url.protocolIs("https"_s))
+    if (url.protocolIs("https"))
         return isForProxy ? ProtectionSpace::ServerType::ProxyHTTPS : ProtectionSpace::ServerType::HTTPS;
-    if (url.protocolIs("http"_s))
+    if (url.protocolIs("http"))
         return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
-    if (url.protocolIs("ftp"_s))
+    if (url.protocolIs("ftp"))
         return isForProxy ? ProtectionSpace::ServerType::ProxyFTP : ProtectionSpace::ServerType::FTP;
     return isForProxy ? ProtectionSpace::ServerType::ProxyHTTP : ProtectionSpace::ServerType::HTTP;
 }

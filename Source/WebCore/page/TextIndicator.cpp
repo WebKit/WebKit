@@ -119,7 +119,7 @@ static bool hasNonInlineOrReplacedElements(const SimpleRange& range)
 {
     for (auto& node : intersectingNodes(range)) {
         auto renderer = node.renderer();
-        if (renderer && (!renderer->isInline() || renderer->isReplacedOrInlineBlock()))
+        if (renderer && (!renderer->isInline() || renderer->isReplaced()))
             return true;
     }
     return false;
@@ -175,6 +175,11 @@ static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapsho
     return true;
 }
 
+static bool styleContainsComplexBackground(const RenderStyle& style)
+{
+    return style.hasBlendMode() || style.hasBackgroundImage() || style.hasBackdropFilter();
+}
+
 static HashSet<Color> estimatedTextColorsForRange(const SimpleRange& range)
 {
     HashSet<Color> colors;
@@ -196,6 +201,42 @@ static FloatRect absoluteBoundingRectForRange(const SimpleRange& range)
         RenderObject::BoundingRectBehavior::UseVisibleBounds,
         RenderObject::BoundingRectBehavior::IgnoreTinyRects,
     }));
+}
+
+static Color estimatedBackgroundColorForRange(const SimpleRange& range, const Frame& frame)
+{
+    auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparentBlack;
+
+    RenderElement* renderer = nullptr;
+    auto commonAncestor = commonInclusiveAncestor<ComposedTree>(range);
+    while (commonAncestor) {
+        if (is<RenderElement>(commonAncestor->renderer())) {
+            renderer = downcast<RenderElement>(commonAncestor->renderer());
+            break;
+        }
+        commonAncestor = commonAncestor->parentOrShadowHostElement();
+    }
+
+    auto boundingRectForRange = enclosingIntRect(absoluteBoundingRectForRange(range));
+    Vector<Color> parentRendererBackgroundColors;
+    for (; !!renderer; renderer = renderer->parent()) {
+        auto absoluteBoundingBox = renderer->absoluteBoundingBoxRect();
+        auto& style = renderer->style();
+        if (!absoluteBoundingBox.contains(boundingRectForRange) || !style.hasBackground())
+            continue;
+
+        if (styleContainsComplexBackground(style))
+            return estimatedBackgroundColor;
+
+        auto visitedDependentBackgroundColor = style.visitedDependentColor(CSSPropertyBackgroundColor);
+        if (visitedDependentBackgroundColor != Color::transparentBlack)
+            parentRendererBackgroundColors.append(visitedDependentBackgroundColor);
+    }
+    parentRendererBackgroundColors.reverse();
+    for (const auto& backgroundColor : parentRendererBackgroundColors)
+        estimatedBackgroundColor = blendSourceOver(estimatedBackgroundColor, backgroundColor);
+
+    return estimatedBackgroundColor;
 }
 
 static bool hasAnyIllegibleColors(TextIndicatorData& data, const Color& backgroundColor, HashSet<Color>&& textColors)
@@ -228,7 +269,7 @@ static bool containsOnlyWhiteSpaceText(const SimpleRange& range)
         if (!is<RenderText>(node.renderer()))
             return false;
     }
-    return plainTextReplacingNoBreakSpace(range).find(isNotSpaceOrNewline) == notFound;
+    return plainTextReplacingNoBreakSpace(range).stripWhiteSpace().isEmpty();
 }
 
 static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const SimpleRange& range, FloatSize margin, bool indicatesCurrentSelection)
@@ -320,16 +361,17 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
         textBoundingRectInRootViewCoordinates.unite(textRectInRootViewCoordinates);
     }
 
-    auto textRectsInBoundingRectCoordinates = textRectsInRootViewCoordinates.map([&](auto rect) {
+    Vector<FloatRect> textRectsInBoundingRectCoordinates;
+    for (auto rect : textRectsInRootViewCoordinates) {
         rect.moveBy(-textBoundingRectInRootViewCoordinates.location());
-        return rect;
-    });
+        textRectsInBoundingRectCoordinates.append(rect);
+    }
 
     // Store the selection rect in window coordinates, to be used subsequently
     // to determine if the indicator and selection still precisely overlap.
     data.selectionRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(frame.selection().selectionBounds(FrameSelection::ClipToVisibleContent::No)));
     data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates;
-    data.textRectsInBoundingRectCoordinates = WTFMove(textRectsInBoundingRectCoordinates);
+    data.textRectsInBoundingRectCoordinates = textRectsInBoundingRectCoordinates;
 
     return takeSnapshots(data, frame, enclosingIntRect(textBoundingRectInDocumentCoordinates), clippedTextRectsInDocumentCoordinates);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,7 +178,8 @@ void InspectorFrontendAPIDispatcher::evaluateOrQueueExpression(const String& exp
     
     JSC::JSLockHolder lock(globalObject);
     
-    auto* castedPromise = JSC::jsDynamicCast<JSC::JSPromise*>(result.value());
+    auto& vm = globalObject->vm();
+    auto* castedPromise = JSC::jsDynamicCast<JSC::JSPromise*>(vm, result.value());
     if (!castedPromise) {
         // Simple case: result is NOT a promise, just return the JSValue.
         optionalResultHandler(result);
@@ -258,7 +259,7 @@ ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String
     ASSERT(!m_suspended);
     ASSERT(m_queuedEvaluations.isEmpty());
 
-    JSC::SuspendExceptionScope scope(m_frontendPage->inspectorController().vm());
+    JSC::SuspendExceptionScope scope(&m_frontendPage->inspectorController().vm());
     return m_frontendPage->mainFrame().script().evaluateInWorld(ScriptSourceCode(expression), mainThreadNormalWorld());
 }
 

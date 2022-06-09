@@ -59,7 +59,7 @@ struct SameSizeAsElementData : public RefCounted<SameSizeAsElementData> {
     void* refPtrs[3];
 };
 
-static_assert(sizeof(ElementData) == sizeof(SameSizeAsElementData), "element attribute data should stay small");
+COMPILE_ASSERT(sizeof(ElementData) == sizeof(SameSizeAsElementData), element_attribute_data_should_stay_small);
 
 static size_t sizeForShareableElementDataWithAttributeCount(unsigned count)
 {
@@ -140,11 +140,15 @@ UniqueElementData::UniqueElementData(const UniqueElementData& other)
 
 UniqueElementData::UniqueElementData(const ShareableElementData& other)
     : ElementData(other, true)
-    , m_attributeVector(other.m_attributeArray, other.length())
 {
     // An ShareableElementData should never have a mutable inline StyleProperties attached.
     ASSERT(!other.m_inlineStyle || !other.m_inlineStyle->isMutable());
     m_inlineStyle = other.m_inlineStyle;
+
+    unsigned otherLength = other.length();
+    m_attributeVector.reserveCapacity(otherLength);
+    for (unsigned i = 0; i < otherLength; ++i)
+        m_attributeVector.uncheckedAppend(other.m_attributeArray[i]);
 }
 
 Ref<UniqueElementData> ElementData::makeUniqueCopy() const

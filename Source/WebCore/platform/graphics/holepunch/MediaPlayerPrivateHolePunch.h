@@ -51,9 +51,9 @@ public:
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
-    void load(const String&) final;
+    void load(const String&) final { };
 #if ENABLE(MEDIA_SOURCE)
-    void load(const URL&, const ContentType&, MediaSourcePrivateClient&) final { };
+    void load(const URL&, const ContentType&, MediaSourcePrivateClient*) final { };
 #endif
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) final { };
@@ -76,7 +76,7 @@ public:
 
     bool paused() const final { return false; };
 
-    MediaPlayer::NetworkState networkState() const final { return m_networkState; };
+    MediaPlayer::NetworkState networkState() const final { return MediaPlayer::NetworkState::Empty; };
     MediaPlayer::ReadyState readyState() const final { return MediaPlayer::ReadyState::HaveMetadata; };
 
     std::unique_ptr<PlatformTimeRanges> buffered() const final { return makeUnique<PlatformTimeRanges>(); };
@@ -95,7 +95,6 @@ public:
 
     void pushNextHolePunchBuffer();
     void swapBuffersIfNeeded() final;
-    void setNetworkState(MediaPlayer::NetworkState);
 #if !USE(NICOSIA)
     RefPtr<TextureMapperPlatformLayerProxy> proxy() const final;
 #endif
@@ -110,7 +109,6 @@ private:
     MediaPlayer* m_player;
     IntSize m_size;
     RunLoop::Timer<MediaPlayerPrivateHolePunch> m_readyTimer;
-    MediaPlayer::NetworkState m_networkState;
 #if USE(TEXTURE_MAPPER_GL)
 #if USE(NICOSIA)
     Ref<Nicosia::ContentLayer> m_nicosiaLayer;

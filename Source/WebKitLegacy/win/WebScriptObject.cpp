@@ -34,13 +34,13 @@
 WebScriptObject::WebScriptObject()
 {
     gClassCount++;
-    gClassNameCount().add("WebScriptObject"_s);
+    gClassNameCount().add("WebScriptObject");
 }
 
 WebScriptObject::~WebScriptObject()
 {
     gClassCount--;
-    gClassNameCount().remove("WebScriptObject"_s);
+    gClassNameCount().remove("WebScriptObject");
 }
 
 // IUnknown -------------------------------------------------------------------

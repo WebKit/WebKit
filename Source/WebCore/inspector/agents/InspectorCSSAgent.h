@@ -85,8 +85,6 @@ public:
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
     static std::optional<Inspector::Protocol::CSS::LayoutContextType> layoutContextTypeForRenderer(RenderObject*);
 
-    static std::optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId);
-
     // InspectorAgentBase
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*);
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason);
@@ -177,7 +175,7 @@ private:
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
 
-    HashMap<Inspector::Protocol::DOM::NodeId, WeakPtr<RenderObject>> m_nodesWithPendingLayoutContextTypeChanges;
+    HashMap<Inspector::Protocol::DOM::NodeId, std::optional<Inspector::Protocol::CSS::LayoutContextType>> m_nodesWithPendingLayoutContextTypeChanges;
     Timer m_layoutContextTypeChangedTimer;
     Inspector::Protocol::CSS::LayoutContextTypeChangedMode m_layoutContextTypeChangedMode { Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed };
 };

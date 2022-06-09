@@ -47,7 +47,7 @@ enum XMLHttpRequestResponseType {
     JSGenerateToNativeObject,
     ReportExtraMemoryCost,
 ] interface XMLHttpRequest : XMLHttpRequestEventTarget {
-    [CallWith=CurrentScriptExecutionContext] constructor();
+    [CallWith=ScriptExecutionContext] constructor();
 
     // event handler
     attribute EventHandler onreadystatechange;

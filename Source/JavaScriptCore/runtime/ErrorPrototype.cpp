@@ -38,7 +38,7 @@ static JSC_DECLARE_HOST_FUNCTION(errorProtoFuncToString);
 
 namespace JSC {
 
-const ClassInfo ErrorPrototype::s_info = { "Object"_s, &Base::s_info, &errorPrototypeTable, nullptr, CREATE_METHOD_TABLE(ErrorPrototype) };
+const ClassInfo ErrorPrototype::s_info = { "Object", &Base::s_info, &errorPrototypeTable, nullptr, CREATE_METHOD_TABLE(ErrorPrototype) };
 
 /* Source for ErrorPrototype.lut.h
 @begin errorPrototypeTable
@@ -54,7 +54,7 @@ ErrorPrototypeBase::ErrorPrototypeBase(VM& vm, Structure* structure)
 void ErrorPrototypeBase::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     putDirectWithoutTransition(vm, vm.propertyNames->name, jsString(vm, name), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->message, jsEmptyString(vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
@@ -79,7 +79,7 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
     if (!thisValue.isObject())
         return throwVMTypeError(globalObject, scope);
     JSObject* thisObj = asObject(thisValue);
-    Integrity::auditStructureID(thisObj->structureID());
+    Integrity::auditStructureID(vm, thisObj->structureID());
 
     // Guard against recursion!
     StringRecursionChecker checker(globalObject, thisObj);
@@ -117,11 +117,11 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
 
     // 8. If name is the empty String, return msg.
     if (!nameString.length())
-        return JSValue::encode(message.isString() ? message : jsString(vm, WTFMove(messageString)));
+        return JSValue::encode(message.isString() ? message : jsString(vm, messageString));
 
     // 9. If msg is the empty String, return name.
     if (!messageString.length())
-        return JSValue::encode(name.isString() ? name : jsString(vm, WTFMove(nameString)));
+        return JSValue::encode(name.isString() ? name : jsString(vm, nameString));
 
     // 10. Return the result of concatenating name, ":", a single space character, and msg.
     RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, nameString, ": ", messageString)));

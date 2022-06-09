@@ -31,12 +31,10 @@
 #include "CDATASection.h"
 #include "Comment.h"
 #include "CachedResourceLoader.h"
-#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLEntityParser.h"
 #include "HTMLHtmlElement.h"
@@ -422,19 +420,19 @@ static bool shouldAllowExternalLoad(const URL& url)
     String urlString = url.string();
 
     // On non-Windows platforms libxml asks for this URL, the "XML_XML_DEFAULT_CATALOG", on initialization.
-    if (urlString == "file:///etc/xml/catalog"_s)
+    if (urlString == "file:///etc/xml/catalog")
         return false;
 
     // On Windows, libxml computes a URL relative to where its DLL resides.
-    if (startsWithLettersIgnoringASCIICase(urlString, "file:///"_s) && urlString.endsWithIgnoringASCIICase("/etc/catalog"_s))
+    if (startsWithLettersIgnoringASCIICase(urlString, "file:///") && urlString.endsWithIgnoringASCIICase("/etc/catalog"))
         return false;
 
     // The most common DTD. There isn't much point in hammering www.w3c.org by requesting this for every XHTML document.
-    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/tr/xhtml"_s))
+    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/tr/xhtml"))
         return false;
 
     // Similarly, there isn't much point in requesting the SVG DTD.
-    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/graphics/svg"_s))
+    if (startsWithLettersIgnoringASCIICase(urlString, "http://www.w3.org/graphics/svg"))
         return false;
 
     // The libxml doesn't give us a lot of context for deciding whether to
@@ -460,7 +458,7 @@ static void* openFunc(const char* uri)
     Document* document = cachedResourceLoader.document();
     // Same logic as HTMLBaseElement::href(). Keep them in sync.
     auto* encoding = (document && document->decoder()) ? document->decoder()->encodingForURLParsing() : nullptr;
-    URL url(document ? document->fallbackBaseURL() : URL(), stripLeadingAndTrailingHTMLSpaces(String::fromLatin1(uri)), encoding);
+    URL url(document ? document->fallbackBaseURL() : URL(), stripLeadingAndTrailingHTMLSpaces(uri), encoding);
 
     if (!shouldAllowExternalLoad(url))
         return &globalDescriptor;
@@ -590,7 +588,7 @@ RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr h
 
 bool XMLDocumentParser::supportsXMLVersion(const String& version)
 {
-    return version == "1.0"_s;
+    return version == "1.0";
 }
 
 XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
@@ -700,7 +698,7 @@ static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
         AtomString namespaceQName = xmlnsAtom();
         AtomString namespaceURI = toAtomString(namespaces[i].uri);
         if (namespaces[i].prefix)
-            namespaceQName = makeAtomString("xmlns:", toString(namespaces[i].prefix));
+            namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
 
         auto result = Element::parseAttributeName(XMLNSNames::xmlnsNamespaceURI, namespaceQName);
         if (result.hasException())
@@ -728,7 +726,7 @@ static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes
         AtomString attrValue = toAtomString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
         AtomString attrURI = attrPrefix.isEmpty() ? nullAtom() : toAtomString(attributes[i].uri);
-        AtomString attrQName = attrPrefix.isEmpty() ? toAtomString(attributes[i].localname) : makeAtomString(attrPrefix, ':', toString(attributes[i].localname));
+        AtomString attrQName = attrPrefix.isEmpty() ? toAtomString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
 
         auto result = Element::parseAttributeName(attrURI, attrQName);
         if (result.hasException())
@@ -1255,17 +1253,17 @@ static void internalSubsetHandler(void* closure, const xmlChar* name, const xmlC
 static void externalSubsetHandler(void* closure, const xmlChar*, const xmlChar* externalId, const xmlChar*)
 {
     String extId = toString(externalId);
-    if ((extId == "-//W3C//DTD XHTML 1.0 Transitional//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.1//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.0 Strict//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.0 Frameset//EN"_s)
-        || (extId == "-//W3C//DTD XHTML Basic 1.0//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"_s)
-        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"_s)
-        || (extId == "-//W3C//DTD MathML 2.0//EN"_s)
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"_s)
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN"_s)
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"_s))
+    if ((extId == "-//W3C//DTD XHTML 1.0 Transitional//EN")
+        || (extId == "-//W3C//DTD XHTML 1.1//EN")
+        || (extId == "-//W3C//DTD XHTML 1.0 Strict//EN")
+        || (extId == "-//W3C//DTD XHTML 1.0 Frameset//EN")
+        || (extId == "-//W3C//DTD XHTML Basic 1.0//EN")
+        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
+        || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN")
+        || (extId == "-//W3C//DTD MathML 2.0//EN")
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN")
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN")
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"))
         getParser(closure)->setIsXHTMLDocument(true); // controls if we replace entities or not.
 }
 

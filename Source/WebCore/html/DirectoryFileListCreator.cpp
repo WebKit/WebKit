@@ -44,8 +44,10 @@ struct FileInformation {
     String relativePath;
     String displayName;
 
-    FileInformation isolatedCopy() const & { return { path.isolatedCopy(), relativePath.isolatedCopy(), displayName.isolatedCopy() }; }
-    FileInformation isolatedCopy() && { return { WTFMove(path).isolatedCopy(), relativePath.isolatedCopy(), WTFMove(displayName).isolatedCopy() }; }
+    FileInformation isolatedCopy() const
+    {
+        return FileInformation { path.isolatedCopy(), relativePath.isolatedCopy(), displayName.isolatedCopy() };
+    }
 };
 
 static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<FileInformation>& files)
@@ -84,11 +86,13 @@ static Vector<FileInformation> gatherFileInformation(const Vector<FileChooserFil
 static Ref<FileList> toFileList(Document* document, const Vector<FileInformation>& files)
 {
     ASSERT(isMainThread());
-    auto fileObjects = files.map([document](auto& file) {
+    Vector<Ref<File>> fileObjects;
+    for (auto& file : files) {
         if (file.relativePath.isNull())
-            return File::create(document, file.path, { }, file.displayName);
-        return File::createWithRelativePath(document, file.path, file.relativePath);
-    });
+            fileObjects.append(File::create(document, file.path, { }, file.displayName));
+        else
+            fileObjects.append(File::createWithRelativePath(document, file.path, file.relativePath));
+    }
     return FileList::create(WTFMove(fileObjects));
 }
 

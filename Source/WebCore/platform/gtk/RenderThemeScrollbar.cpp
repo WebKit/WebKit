@@ -28,7 +28,6 @@
 
 #if !USE(GTK4)
 
-#include "GtkUtilities.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -78,7 +77,8 @@ RenderThemeScrollbar::RenderThemeScrollbar(GtkOrientation orientation, Mode mode
         info.classList.append("horizontal");
         info.classList.append("bottom");
     }
-    if (shouldUseOverlayScrollbars())
+    static bool usesOverlayScrollbars = g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0");
+    if (usesOverlayScrollbars)
         info.classList.append("overlay-indicator");
     if (mode == Mode::Full)
         info.classList.append("hovering");
@@ -107,7 +107,7 @@ RenderThemeScrollbar::RenderThemeScrollbar(GtkOrientation orientation, Mode mode
     info.type = RenderThemeGadget::Type::Generic;
     info.name = "contents";
     info.classList.clear();
-    m_contents = makeUnique<RenderThemeBoxGadget>(info, orientation, children, m_scrollbar.get());
+    m_contents = makeUnique<RenderThemeBoxGadget>(info, GTK_ORIENTATION_VERTICAL, children, m_scrollbar.get());
     info.name = "slider";
     m_slider = RenderThemeGadget::create(info, m_contents->child(m_troughPosition));
 }

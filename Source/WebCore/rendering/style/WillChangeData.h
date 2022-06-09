@@ -79,7 +79,7 @@ private:
 
     struct AnimatableFeature {
         static const int numCSSPropertyIDBits = 14;
-        static_assert(numCSSProperties < (1 << numCSSPropertyIDBits), "CSSPropertyID should fit in 14_bits");
+        COMPILE_ASSERT(numCSSProperties < (1 << numCSSPropertyIDBits), CSSPropertyID_should_fit_in_14_bits);
 
         unsigned m_feature : 2;
         unsigned m_cssPropertyID : numCSSPropertyIDBits;

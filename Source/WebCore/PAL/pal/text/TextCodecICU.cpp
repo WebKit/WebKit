@@ -208,7 +208,7 @@ public:
         if (m_shouldStopOnEncodingErrors) {
             UErrorCode err = U_ZERO_ERROR;
             ucnv_setToUCallBack(&m_converter, UCNV_TO_U_CALLBACK_SUBSTITUTE, UCNV_SUB_STOP_ON_ILLEGAL, &m_savedAction, &m_savedContext, &err);
-            ASSERT(U_SUCCESS(err));
+            ASSERT(err == U_ZERO_ERROR);
         }
     }
     ~ErrorCallbackSetter()
@@ -220,7 +220,7 @@ public:
             ucnv_setToUCallBack(&m_converter, m_savedAction, m_savedContext, &oldAction, &oldContext, &err);
             ASSERT(oldAction == UCNV_TO_U_CALLBACK_SUBSTITUTE);
             ASSERT(!strcmp(static_cast<const char*>(oldContext), UCNV_SUB_STOP_ON_ILLEGAL));
-            ASSERT(U_SUCCESS(err));
+            ASSERT(err == U_ZERO_ERROR);
         }
     }
 
@@ -302,7 +302,8 @@ Vector<uint8_t> TextCodecICU::encode(StringView string, UnencodableHandling hand
     // Encoding will change the yen sign back into a backslash.
     String copy;
     if (shouldShowBackslashAsCurrencySymbolIn(m_encodingName)) {
-        copy = makeStringByReplacingAll(string, '\\', yenSign);
+        copy = string.toStringWithoutCopying();
+        copy.replace('\\', yenSign);
         string = copy;
     }
 

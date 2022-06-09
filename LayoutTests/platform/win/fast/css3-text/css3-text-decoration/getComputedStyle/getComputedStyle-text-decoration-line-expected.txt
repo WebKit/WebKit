@@ -1,0 +1,93 @@
+Test to make sure -webkit-text-decoration-line property returns values properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial value:
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line') is null
+FAIL computedStyle.webkitTextDecorationLine should be none (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be none. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Initial value (explicit):
+PASS e.style.webkitTextDecorationLine is 'initial'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be initial. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be none (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be none. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Value 'none':
+FAIL e.style.webkitTextDecorationLine should be initial. Was none.
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be initial. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be none (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be none. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Value 'underline':
+PASS e.style.webkitTextDecorationLine is 'underline'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be underline (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Value 'overline':
+PASS e.style.webkitTextDecorationLine is 'overline'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be overline. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be overline (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be overline. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Value 'line-through':
+PASS e.style.webkitTextDecorationLine is 'line-through'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be line-through. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be line-through (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be line-through. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Value 'underline overline line-through':
+PASS e.style.webkitTextDecorationLine is 'underline overline line-through'
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline overline line-through. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be underline overline line-through (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline overline line-through. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Value 'blink' (invalid, last valid value is used):
+FAIL e.style.webkitTextDecorationLine should be underline overline line-through. Was blink.
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline overline line-through. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be underline overline line-through (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline overline line-through. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Value '':
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line') is null
+FAIL computedStyle.webkitTextDecorationLine should be none (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSPrimitiveValue]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be none. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Parent gets 'underline' value:
+FAIL e.style.webkitTextDecorationLine should be underline (of type string). Was undefined (of type undefined).
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be underline (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+Ancestor should explicitly inherit value from parent when 'inherit' value is used:
+FAIL e.style.webkitTextDecorationLine should be inherit (of type string). Was undefined (of type undefined).
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValue]. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be inherit. Threw exception TypeError: 'null' is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+FAIL computedStyle.webkitTextDecorationLine should be underline (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString() should be [object CSSValueList]. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').toString')
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText should be underline. Threw exception TypeError: 'null' is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText')
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

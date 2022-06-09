@@ -53,9 +53,9 @@ RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderM
 {
 }
 
-ASCIILiteral RenderMultiColumnSpannerPlaceholder::renderName() const
+const char* RenderMultiColumnSpannerPlaceholder::renderName() const
 {
-    return "RenderMultiColumnSpannerPlaceholder"_s;
+    return "RenderMultiColumnSpannerPlaceholder";
 }
 
 } // namespace WebCore

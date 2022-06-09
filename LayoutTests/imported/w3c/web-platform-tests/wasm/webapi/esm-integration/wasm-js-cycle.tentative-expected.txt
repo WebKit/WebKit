@@ -1,3 +1,0 @@
-
-PASS Check bindings in JavaScript and WebAssembly cycle (Wasm higher)
-

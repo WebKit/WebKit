@@ -40,7 +40,7 @@ public:
     InlineTextBox(String, bool canUseSimplifiedContentMeasuring, bool canUseSimpleFontCodePath, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
-    const String& content() const { return m_content; }
+    String content() const { return m_content; }
     // FIXME: This should not be a box's property.
     bool canUseSimplifiedContentMeasuring() const { return m_canUseSimplifiedContentMeasuring; }
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }

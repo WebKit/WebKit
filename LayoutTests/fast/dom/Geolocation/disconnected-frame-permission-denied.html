@@ -15,13 +15,12 @@ if (window.testRunner) {
 } else
     debug('This test can not be run without the testRunner');
 
-
 var error;
 function onIframeLoaded() {
     iframeGeolocation = iframe.contentWindow.navigator.geolocation;
     iframeGeolocation.getCurrentPosition(function() {
-       testFailed('Success callback invoked unexpectedly');
-       finishJSTest();
+        testFailed('Success callback invoked unexpectedly');
+        finishJSTest();
     }, function(e) {
         error = e;
         shouldBe('error.code', 'error.PERMISSION_DENIED');
@@ -35,15 +34,15 @@ function onIframeUnloaded() {
     // Make another request, with permission already denied.
     iframeGeolocation.getCurrentPosition(function () {
         testFailed('Success callback invoked unexpectedly');
-        finishJSTest();        
+        finishJSTest();
     }, function(e) {
-        testFailed('Error callback invoked');
+        testPassed('Error callback invoked');
         finishJSTest();
     });
     setTimeout(function() {
-        testPassed('No callbacks invoked');
+        testFailed('No callbacks invoked');
         finishJSTest();
-    }, 100);
+    }, 1000);
 }
 
 var iframe = document.createElement('iframe');

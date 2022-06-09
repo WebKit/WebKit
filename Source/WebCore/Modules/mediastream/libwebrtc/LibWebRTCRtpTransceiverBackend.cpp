@@ -84,14 +84,14 @@ bool LibWebRTCRtpTransceiverBackend::stopped() const
 static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const RTCRtpCodecCapability& codec)
 {
     webrtc::RtpCodecCapability rtcCodec;
-    if (codec.mimeType.startsWith("video/"_s))
+    if (codec.mimeType.startsWith("video/"))
         rtcCodec.kind = cricket::MEDIA_TYPE_VIDEO;
-    else if (codec.mimeType.startsWith("audio/"_s))
+    else if (codec.mimeType.startsWith("audio/"))
         rtcCodec.kind = cricket::MEDIA_TYPE_AUDIO;
     else
-        return Exception { InvalidModificationError, "RTCRtpCodecCapability bad mimeType"_s };
+        return Exception { InvalidModificationError, "RTCRtpCodecCapability bad mimeType" };
 
-    rtcCodec.name = StringView(codec.mimeType).substring(6).utf8().toStdString();
+    rtcCodec.name = codec.mimeType.substring(6).utf8().data();
     rtcCodec.clock_rate = codec.clockRate;
     if (codec.channels)
         rtcCodec.num_channels = *codec.channels;
@@ -99,8 +99,8 @@ static inline ExceptionOr<webrtc::RtpCodecCapability> toRtpCodecCapability(const
     for (auto parameter : StringView(codec.sdpFmtpLine).split(';')) {
         auto position = parameter.find('=');
         if (position == notFound)
-            return Exception { InvalidModificationError, "RTCRtpCodecCapability sdpFmtLine badly formated"_s };
-        rtcCodec.parameters.emplace(parameter.left(position).utf8().data(), parameter.substring(position + 1).utf8().data());
+            return Exception { InvalidModificationError, "RTCRtpCodecCapability sdpFmtLine badly formated" };
+        rtcCodec.parameters.emplace(parameter.substring(0, position).utf8().data(), parameter.substring(position + 1).utf8().data());
     }
 
     return rtcCodec;

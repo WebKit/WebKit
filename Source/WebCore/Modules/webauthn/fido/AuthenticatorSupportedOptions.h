@@ -51,11 +51,6 @@ public:
         kNotSupported
     };
 
-    enum class ResidentKeyAvailability : bool {
-        kSupported,
-        kNotSupported
-    };
-
     enum class ClientPinAvailability {
         kSupportedAndPinSet,
         kSupportedButPinNotSet,
@@ -67,14 +62,14 @@ public:
     AuthenticatorSupportedOptions& operator=(AuthenticatorSupportedOptions&&) = default;
 
     AuthenticatorSupportedOptions& setIsPlatformDevice(bool);
-    AuthenticatorSupportedOptions& setResidentKeyAvailability(ResidentKeyAvailability);
+    AuthenticatorSupportedOptions& setSupportsResidentKey(bool);
     AuthenticatorSupportedOptions& setUserVerificationAvailability(UserVerificationAvailability);
     AuthenticatorSupportedOptions& setUserPresenceRequired(bool);
     AuthenticatorSupportedOptions& setClientPinAvailability(ClientPinAvailability);
 
     bool isPlatformDevice() const { return m_isPlatformDevice; }
-    ResidentKeyAvailability residentKeyAvailability() const { return m_residentKeyAvailability; };
-    UserVerificationAvailability userVerificationAvailability() const { return m_userVerificationAvailability; };
+    bool supportsResidentKey() const { return m_supportsResidentKey; }
+    UserVerificationAvailability userVerificationAvailability() const { return m_userVerificationAvailability; }
     bool userPresenceRequired() const { return m_userPresenceRequired; }
     ClientPinAvailability clientPinAvailability() const { return m_clientPinAvailability; }
 
@@ -85,7 +80,7 @@ private:
     // Indicates that the device is capable of storing keys on the device itself
     // and therefore can satisfy the authenticatorGetAssertion request with
     // allowList parameter not specified or empty.
-    ResidentKeyAvailability m_residentKeyAvailability { ResidentKeyAvailability::kNotSupported };
+    bool m_supportsResidentKey { false };
     // Indicates whether the device is capable of verifying the user on its own.
     UserVerificationAvailability m_userVerificationAvailability { UserVerificationAvailability::kNotSupported };
     bool m_userPresenceRequired { true };

@@ -38,7 +38,7 @@
 #include <JavaScriptCore/Options.h>
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(COCOA)
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
 #include "MediaSessionManagerCocoa.h"
 #endif
 
@@ -88,14 +88,6 @@ void RuntimeEnabledFeatures::setMediaSourceInlinePaintingEnabled(bool isEnabled)
 #if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
     MediaSessionManagerCocoa::setMediaSourceInlinePaintingEnabled(isEnabled);
 #endif
-}
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-void RuntimeEnabledFeatures::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
-{
-    m_sampleBufferContentKeySessionSupportEnabled = enabled;
-    MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(enabled);
 }
 #endif
 

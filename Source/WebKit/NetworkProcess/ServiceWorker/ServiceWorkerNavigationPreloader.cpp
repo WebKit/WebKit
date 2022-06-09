@@ -154,10 +154,8 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
 
 void ServiceWorkerNavigationPreloader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&& response)
 {
-    didReceiveResponse(WTFMove(response), PrivateRelayed::No, [weakThis = WeakPtr { *this }](auto) {
-        if (weakThis)
-            weakThis->didComplete();
-    });
+    didReceiveResponse(WTFMove(response), PrivateRelayed::No, [](auto) { });
+    didComplete();
 }
 
 void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)

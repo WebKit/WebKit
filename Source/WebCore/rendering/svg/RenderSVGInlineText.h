@@ -51,7 +51,7 @@ public:
     SVGInlineTextBox* firstTextBox() const;
 
 private:
-    ASCIILiteral renderName() const override { return "RenderSVGInlineText"_s; }
+    const char* renderName() const override { return "RenderSVGInlineText"; }
 
     String originalText() const override;
     void setRenderedText(const String&) override;

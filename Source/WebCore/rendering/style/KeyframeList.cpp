@@ -88,7 +88,7 @@ bool KeyframeList::hasImplicitKeyframes() const
 
 void KeyframeList::copyKeyframes(KeyframeList& other)
 {
-    for (auto& keyframe : other) {
+    for (auto& keyframe : other.keyframes()) {
         KeyframeValue keyframeValue(keyframe.key(), RenderStyle::clonePtr(*keyframe.style()));
         for (auto propertyId : keyframe.properties())
             keyframeValue.addProperty(propertyId);
@@ -148,8 +148,8 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         if (!timingFunction)
             return true;
 
-        if (auto* cssAnimation = dynamicDowncast<CSSAnimation>(effect.animation())) {
-            auto* animationWideTimingFunction = cssAnimation->backingAnimation().defaultTimingFunctionForKeyframes();
+        if (is<CSSAnimation>(effect.animation())) {
+            auto* animationWideTimingFunction = downcast<CSSAnimation>(effect.animation())->backingAnimation().defaultTimingFunctionForKeyframes();
             // If we're dealing with a CSS Animation and if that CSS Animation's backing animation
             // has a default timing function set, then if that keyframe's timing function matches,
             // that keyframe is suitable.
@@ -189,7 +189,10 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         keyframeValue.setStyle(styleResolver.styleForKeyframe(element, underlyingStyle, { nullptr }, keyframeRule, keyframeValue));
         for (auto cssPropertyId : implicitProperties)
             keyframeValue.addProperty(cssPropertyId);
-        insert(WTFMove(keyframeValue));
+        if (!key)
+            m_keyframes.insert(0, WTFMove(keyframeValue));
+        else
+            m_keyframes.append(WTFMove(keyframeValue));
     };
 
     if (!zeroKeyframeImplicitProperties.isEmpty())

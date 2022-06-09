@@ -101,11 +101,6 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
     if (currentTokenValue === ")" || tokenBeforeCaret?.value === ")")
         return {prefix: "", completions: []};
 
-    // The CodeMirror CSS-mode tokenizer splits a string like `-name` into two tokens: `-` and `name`.
-    if (currentTokenValue.length && tokenBeforeCaret?.value === "-") {
-        currentTokenValue = tokenBeforeCaret.value + currentTokenValue;
-    }
-
     let functionName = null;
     let preceedingFunctionDepth = 0;
     for (let i = indexOfTokenAtCaret; i >= 0; --i) {
@@ -125,9 +120,10 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
     }
 
     let valueCompletions;
-    if (functionName)
-        valueCompletions = WI.CSSKeywordCompletions.forFunction(functionName, {additionalFunctionValueCompletionsProvider});
-    else
+    if (functionName) {
+        valueCompletions = WI.CSSKeywordCompletions.forFunction(functionName);
+        valueCompletions.addValues(additionalFunctionValueCompletionsProvider?.(functionName) ?? []);
+    } else
         valueCompletions = WI.CSSKeywordCompletions.forProperty(propertyName);
 
     let completions;
@@ -208,7 +204,7 @@ WI.CSSKeywordCompletions.isTimingFunctionAwareProperty = function(name)
     return false;
 };
 
-WI.CSSKeywordCompletions.forFunction = function(functionName, {additionalFunctionValueCompletionsProvider} = {})
+WI.CSSKeywordCompletions.forFunction = function(functionName)
 {
     let suggestions = ["var()"];
 
@@ -228,9 +224,6 @@ WI.CSSKeywordCompletions.forFunction = function(functionName, {additionalFunctio
         suggestions.push("to", "left", "right", "top", "bottom");
         suggestions.pushAll(WI.CSSKeywordCompletions._colors);
     }
-
-    if (additionalFunctionValueCompletionsProvider)
-        suggestions.pushAll(additionalFunctionValueCompletionsProvider(functionName));
 
     return new WI.CSSCompletions(suggestions, {acceptEmptyPrefix: true});
 };
@@ -311,6 +304,7 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "-webkit-overflow-scrolling",
     "-webkit-rtl-ordering",
     "-webkit-ruby-position",
+    "-webkit-text-align-last",
     "-webkit-text-combine",
     "-webkit-text-decoration-skip",
     "-webkit-text-decorations-in-effect",
@@ -319,6 +313,7 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "-webkit-text-emphasis-position",
     "-webkit-text-emphasis-style",
     "-webkit-text-fill-color",
+    "-webkit-text-justify",
     "-webkit-text-orientation",
     "-webkit-text-security",
     "-webkit-text-size-adjust",
@@ -398,10 +393,8 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "stroke-width",
     "tab-size",
     "text-align",
-    "text-align-last",
     "text-anchor",
     "text-indent",
-    "text-justify",
     "text-rendering",
     "text-shadow",
     "text-transform",
@@ -1126,11 +1119,17 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "-webkit-ruby-position": [
         "after", "before", "inter-character",
     ],
+    "-webkit-text-align-last": [
+        "auto", "start", "end", "left", "right", "center", "justify",
+    ],
     "-webkit-text-combine": [
         "none", "horizontal",
     ],
     "-webkit-text-decoration-style": [
         "dotted", "dashed", "solid", "double", "wavy",
+    ],
+    "-webkit-text-justify": [
+        "auto", "none", "inter-word", "inter-ideograph", "inter-cluster", "distribute", "kashida",
     ],
     "-webkit-text-orientation": [
         "sideways", "sideways-right", "upright", "mixed",
@@ -1333,14 +1332,8 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     "text-align": [
         "-webkit-auto", "left", "right", "center", "justify", "match-parent", "-webkit-left", "-webkit-right", "-webkit-center", "-webkit-match-parent", "start", "end",
     ],
-    "text-align-last": [
-        "auto", "start", "end", "left", "right", "center", "justify", "match-parent",
-    ],
     "text-anchor": [
         "middle", "start", "end",
-    ],
-    "text-justify": [
-        "auto", "none", "inter-word", "inter-character", "distribute",
     ],
     "text-line-through": [
         "none", "dotted", "dashed", "solid", "double", "dot-dash", "dot-dot-dash", "wave", "continuous", "skip-white-space",

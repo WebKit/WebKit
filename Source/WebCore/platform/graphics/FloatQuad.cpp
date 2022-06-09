@@ -273,9 +273,11 @@ bool FloatQuad::isEmpty() const
 
 Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>& quads)
 {
-    return quads.map([](auto& quad) {
-        return quad.boundingBox();
-    });
+    Vector<FloatRect> boxes;
+    boxes.reserveInitialCapacity(quads.size());
+    for (const auto& quad : quads)
+        boxes.uncheckedAppend(quad.boundingBox());
+    return boxes;
 }
 
 FloatRect unitedBoundingBoxes(const Vector<FloatQuad>& quads)

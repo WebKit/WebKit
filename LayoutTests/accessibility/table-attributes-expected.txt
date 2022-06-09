@@ -1,3 +1,13 @@
+Example #1: Nested Stubs
+Ruritanian
+Population
+Survey	All
+Genders	By Gender
+Males	Females
+All Regions	North	3333	1111	2222
+South	3333	1111	2222
+--------------------------
+
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
 AXRole: AXCell
@@ -199,6 +209,9 @@ AXRequired: 0
 
 ------------
 
+
+--------------------------
+
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
 AXRole: AXCell
@@ -279,6 +292,9 @@ AXElementBusy: 0
 AXRequired: 0
 
 ------------
+
+
+--------------------------
 
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
@@ -466,6 +482,9 @@ AXElementBusy: 0
 
 ------------
 
+
+--------------------------
+
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
 AXRole: AXRow
@@ -602,6 +621,9 @@ AXIndex: 3
 AXElementBusy: 0
 
 ------------
+
+
+--------------------------
 
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
@@ -1164,6 +1186,9 @@ AXRequired: 0
 
 ------------
 
+
+--------------------------
+
 AXHasDocumentRoleAncestor: 0
 AXHasWebApplicationAncestor: 0
 AXRole: AXGroup
@@ -1173,7 +1198,7 @@ AXChildren: <array of size 5>
 AXChildrenInNavigationOrder: <array of size 5>
 AXHelp:
 AXParent: <AXGroup>
-AXSize: NSSize: {336, 66}
+AXSize: NSSize: {335, 66}
 AXTitle:
 AXDescription:
 AXValue:
@@ -1199,14 +1224,6 @@ AXElementBusy: 0
 ------------
 
 
-PASS successfullyParsed is true
+--------------------------
 
-TEST COMPLETE
-Example #1: Nested Stubs
-Ruritanian
-Population
-Survey	All
-Genders	By Gender
-Males	Females
-All Regions	North	3333	1111	2222
-South	3333	1111	2222
+

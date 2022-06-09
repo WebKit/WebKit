@@ -127,7 +127,7 @@ ExceptionOr<void> VTTRegion::setViewportAnchorY(double value)
 
 static const AtomString& upKeyword()
 {
-    static MainThreadNeverDestroyed<const AtomString> upKeyword("up"_s);
+    static MainThreadNeverDestroyed<const AtomString> upKeyword("up", AtomString::ConstructFromLiteral);
     return upKeyword;
 }
 
@@ -212,7 +212,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
     switch (setting) {
     case Id: {
         String stringValue = input.extractString(valueRun);
-        if (stringValue.find("-->"_s) == notFound)
+        if (stringValue.find("-->") == notFound)
             m_id = stringValue;
         break;
     }
@@ -263,7 +263,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
 
 const AtomString& VTTRegion::textTrackCueContainerScrollingClass()
 {
-    static MainThreadNeverDestroyed<const AtomString> trackRegionCueContainerScrollingClass("scrolling"_s);
+    static MainThreadNeverDestroyed<const AtomString> trackRegionCueContainerScrollingClass("scrolling", AtomString::ConstructFromLiteral);
 
     return trackRegionCueContainerScrollingClass;
 }

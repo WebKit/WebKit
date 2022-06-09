@@ -30,12 +30,12 @@
 
 namespace WebCore {
     
-String CSSFunctionValue::customCSSText(Document* document) const
+String CSSFunctionValue::customCSSText() const
 {
     StringBuilder result;
     result.append(getValueName(m_name));
     result.append('(');
-    result.append(CSSValueList::customCSSText(document));
+    result.append(CSSValueList::customCSSText());
     result.append(')');
     return result.toString();
 }

@@ -26,7 +26,7 @@
 .popover .edit-breakpoint-popover-content .url .editor {
     width: 180px;
     padding: 4px 0 2px;
-    appearance: textfield;
+    -webkit-appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
     background: var(--background-color-content);
 }
@@ -48,7 +48,7 @@
 
 @media (prefers-color-scheme: dark) {
     .popover .edit-breakpoint-popover-content .url .editor {
-        appearance: unset;
+        -webkit-appearance: unset;
         border-color: var(--text-color-quaternary);
     }
 }

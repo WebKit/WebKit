@@ -52,6 +52,7 @@
 #include <wtf/Scope.h>
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+#include "ANGLEHeaders.h"
 #include "GraphicsContextGLCocoa.h"
 #endif
 
@@ -275,12 +276,12 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     auto stencilFormat = GL::STENCIL_INDEX8;
 #elif USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
-    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil"_s);
+    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil");
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT16;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #else
     auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
-    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_EXT_packed_depth_stencil"_s);
+    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_EXT_packed_depth_stencil");
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_COMPONENT;
 #endif
@@ -336,11 +337,7 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         m_multisampleColorBuffer = gl.createRenderbuffer();
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
         gl.bindRenderbuffer(GL::RENDERBUFFER, m_multisampleColorBuffer);
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-        gl.renderbufferStorageMultisample(GL::RENDERBUFFER, m_sampleCount, GL::SRGB8_ALPHA8, m_width, m_height);
-#else
         gl.renderbufferStorageMultisample(GL::RENDERBUFFER, m_sampleCount, GL::RGBA8, m_width, m_height);
-#endif
         gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_multisampleColorBuffer);
         if (hasDepthOrStencil) {
             m_depthStencilBuffer = gl.createRenderbuffer();

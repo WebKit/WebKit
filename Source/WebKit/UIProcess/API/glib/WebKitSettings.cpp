@@ -57,7 +57,7 @@ using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
     _WebKitSettingsPrivate()
-        : preferences(WebPreferences::create(String(), "WebKit2."_s, "WebKit2."_s))
+        : preferences(WebPreferences::create(String(), "WebKit2.", "WebKit2."))
     {
         defaultFontFamily = preferences->standardFontFamily().utf8();
         monospaceFontFamily = preferences->fixedFontFamily().utf8();
@@ -88,20 +88,20 @@ struct _WebKitSettingsPrivate {
 };
 
 /**
- * WebKitSettings:
- *
- * Control the behaviour of a #WebKitWebView.
+ * SECTION:WebKitSettings
+ * @short_description: Control the behaviour of a #WebKitWebView
  *
  * #WebKitSettings can be applied to a #WebKitWebView to control text charset,
  * color, font sizes, printing mode, script support, loading of images and various
  * other things on a #WebKitWebView. After creation, a #WebKitSettings object
  * contains default settings.
  *
- * ```c
- * // Disable JavaScript
+ * <informalexample><programlisting>
+ * /<!-- -->* Disable JavaScript. *<!-- -->/
  * WebKitSettings *settings = webkit_web_view_group_get_settings (my_view_group);
  * webkit_settings_set_enable_javascript (settings, FALSE);
- * ```
+ *
+ * </programlisting></informalexample>
  */
 
 WEBKIT_DEFINE_TYPE(WebKitSettings, webkit_settings, G_TYPE_OBJECT)
@@ -229,6 +229,7 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         webkit_settings_set_enable_html5_database(settings, g_value_get_boolean(value));
         break;
     case PROP_ENABLE_XSS_AUDITOR:
+        webkit_settings_set_enable_xss_auditor(settings, g_value_get_boolean(value));
         break;
     case PROP_ENABLE_FRAME_FLATTENING:
         webkit_settings_set_enable_frame_flattening(settings, g_value_get_boolean(value));
@@ -236,6 +237,7 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_PLUGINS:
         break;
     case PROP_ENABLE_JAVA:
+        webkit_settings_set_enable_java(settings, g_value_get_boolean(value));
         break;
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
         webkit_settings_set_javascript_can_open_windows_automatically(settings, g_value_get_boolean(value));
@@ -429,7 +431,7 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         g_value_set_boolean(value, webkit_settings_get_enable_html5_database(settings));
         break;
     case PROP_ENABLE_XSS_AUDITOR:
-        g_value_set_boolean(value, FALSE);
+        g_value_set_boolean(value, webkit_settings_get_enable_xss_auditor(settings));
         break;
     case PROP_ENABLE_FRAME_FLATTENING:
         g_value_set_boolean(value, webkit_settings_get_enable_frame_flattening(settings));
@@ -438,7 +440,7 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         g_value_set_boolean(value, FALSE);
         break;
     case PROP_ENABLE_JAVA:
-        g_value_set_boolean(value, FALSE);
+        g_value_set_boolean(value, webkit_settings_get_enable_java(settings));
         break;
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
         g_value_set_boolean(value, webkit_settings_get_javascript_can_open_windows_automatically(settings));
@@ -708,8 +710,6 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      *
      * Whether to enable the XSS auditor. This feature filters some kinds of
      * reflective XSS attacks on vulnerable web sites.
-     *
-     * Deprecated: 2.38
      */
     sObjProperties[PROP_ENABLE_XSS_AUDITOR] =
         g_param_spec_boolean(
@@ -717,7 +717,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable XSS auditor"),
             _("Whether to enable the XSS auditor."),
             TRUE,
-            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
+            readWriteConstructParamFlags);
 
     /**
      * WebKitSettings:enable-frame-flattening:
@@ -747,21 +747,19 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable plugins"),
             _("Enable embedded plugin objects."),
             FALSE,
-            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
+            readWriteConstructParamFlags);
 
     /**
      * WebKitSettings:enable-java:
      *
      * Determines whether or not Java is enabled on the page.
-     *
-     * Deprecated: 2.38
      */
     sObjProperties[PROP_ENABLE_JAVA] =
         g_param_spec_boolean(
             "enable-java",
             _("Enable Java"),
             _("Whether Java support should be enabled."),
-            FALSE,
+            TRUE,
             readWriteConstructParamFlags);
 
     /**
@@ -1275,7 +1273,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable accelerated 2D canvas"),
             _("Whether to enable accelerated 2D canvas"),
             FALSE,
-            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
+            readWriteConstructParamFlags);
 
     /**
      * WebKitSettings:enable-write-console-messages-to-stdout:
@@ -1815,17 +1813,15 @@ void webkit_settings_set_enable_html5_database(WebKitSettings* settings, gboolea
  * webkit_settings_get_enable_xss_auditor:
  * @settings: a #WebKitSettings
  *
- * The XSS auditor has been removed. This function returns %FALSE.
+ * Get the #WebKitSettings:enable-xss-auditor property.
  *
- * Returns: %FALSE
- *
- * Deprecated: 2.38. This function does nothing.
+ * Returns: %TRUE If XSS auditing is enabled or %FALSE otherwise.
  */
 gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return FALSE;
+    return settings->priv->preferences->xssAuditorEnabled();
 }
 
 /**
@@ -1833,13 +1829,19 @@ gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
  * @settings: a #WebKitSettings
  * @enabled: Value to be set
  *
- * The XSS auditor has been removed. This function does nothing.
- *
- * Deprecated: 2.38. This function does nothing.
+ * Set the #WebKitSettings:enable-xss-auditor property.
  */
 void webkit_settings_set_enable_xss_auditor(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->xssAuditorEnabled();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setXSSAuditorEnabled(enabled);
+    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_XSS_AUDITOR]);
 }
 
 /**
@@ -1919,17 +1921,13 @@ void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabl
  *
  * Get the #WebKitSettings:enable-java property.
  *
- * Returns: %FALSE always.
- *
- * Deprecated: 2.38. This function always returns %FALSE.
+ * Returns: %TRUE If Java is enabled or %FALSE otherwise.
  */
 gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    g_warning("webkit_settings_get_enable_java is deprecated and always returns FALSE. Java is no longer supported.");
-
-    return FALSE;
+    return settings->priv->preferences->javaEnabled();
 }
 
 /**
@@ -1937,16 +1935,19 @@ gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
  * @settings: a #WebKitSettings
  * @enabled: Value to be set
  *
- * Set the #WebKitSettings:enable-java property. Deprecated function that does nothing.
- *
- * Deprecated: 2.38. This function does nothing.
+ * Set the #WebKitSettings:enable-java property.
  */
 void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    if (enabled)
-        g_warning("webkit_settings_set_enable_java is deprecated and does nothing. Java is no longer supported.");
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->javaEnabled();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setJavaEnabled(enabled);
+    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_JAVA]);
 }
 
 /**
@@ -2020,7 +2021,7 @@ void webkit_settings_set_enable_hyperlink_auditing(WebKitSettings* settings, gbo
 }
 
 /**
- * webkit_settings_get_default_font_family:
+ * webkit_web_settings_get_default_font_family:
  * @settings: a #WebKitSettings
  *
  * Gets the #WebKitSettings:default-font-family property.
@@ -3088,7 +3089,7 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
         userAgentString = String::fromUTF8(userAgent);
         g_return_if_fail(WebCore::isValidUserAgentHeaderValue(userAgentString));
     } else
-        userAgentString = WebCore::standardUserAgent(emptyString());
+        userAgentString = WebCore::standardUserAgent("");
 
     CString newUserAgent = userAgentString.utf8();
     if (newUserAgent == priv->userAgent)
@@ -3824,12 +3825,6 @@ void webkitSettingsSetMediaCaptureRequiresSecureConnection(WebKitSettings* setti
 {
     WebKitSettingsPrivate* priv = settings->priv;
     priv->preferences->setMediaCaptureRequiresSecureConnection(required);
-}
-
-void webkitSettingsSetGetUserMediaRequiresFocus(WebKitSettings* settings, bool required)
-{
-    WebKitSettingsPrivate* priv = settings->priv;
-    priv->preferences->setGetUserMediaRequiresFocus(required);
 }
 
 /**

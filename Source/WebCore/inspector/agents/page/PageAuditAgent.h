@@ -39,8 +39,6 @@ public:
     PageAuditAgent(PageAgentContext&);
     ~PageAuditAgent();
 
-    Page& inspectedPage() const { return m_inspectedPage; }
-
 private:
     Inspector::InjectedScript injectedScriptForEval(std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);

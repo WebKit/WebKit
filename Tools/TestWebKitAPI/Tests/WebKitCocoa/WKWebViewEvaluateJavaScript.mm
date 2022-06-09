@@ -336,12 +336,14 @@ TEST(WebKit, EvaluateJavaScriptInAttachments)
     // Evaluating JavaScript in such a document should fail and result in an error.
 
     using namespace TestWebKitAPI;
-    HTTPServer server(HTTPServer::UseCoroutines::Yes, [](Connection connection) -> Task {
-        co_await connection.awaitableReceiveHTTPRequest();
-        co_await connection.awaitableSend("HTTP/1.1 200 OK\r\n"
-            "Content-Length: 12\r\n"
-            "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
-            "Hello world!"_s);
+    HTTPServer server([](Connection connection) {
+        connection.receiveHTTPRequest([=](Vector<char>&&) {
+            constexpr auto response = "HTTP/1.1 200 OK\r\n"
+                "Content-Length: 12\r\n"
+                "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
+                "Hello world!";
+            connection.send(response);
+        });
     });
     auto webView = adoptNS([TestWKWebView new]);
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
@@ -386,7 +388,7 @@ TEST(WebKit, AllowsContentJavaScript)
     TestWebKitAPI::Util::run(&done);
 
     TestWebKitAPI::HTTPServer server({
-        { "/script"_s, { "var foo = 'bar'"_s } }
+        { "/script", { "var foo = 'bar'" } }
     });
     preferences.get().allowsContentJavaScript = YES;
     [webView synchronouslyLoadHTMLString:[NSString stringWithFormat:@"<script src='http://127.0.0.1:%d/script'></script>", server.port()] preferences:preferences.get()];

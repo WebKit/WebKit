@@ -71,11 +71,7 @@ TEST(WebKit, AccessibilityHasPreferencesServiceAccess)
 
     [webView synchronouslyLoadTestPageNamed:@"simple"];
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    ASSERT_FALSE(sandboxAccess());
-#else
     ASSERT_TRUE(sandboxAccess());
-#endif
 
     [NSApp accessibilitySetEnhancedUserInterfaceAttribute:@(NO)];
 }

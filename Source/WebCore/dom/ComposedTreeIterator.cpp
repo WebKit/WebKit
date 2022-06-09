@@ -27,7 +27,6 @@
 #include "ComposedTreeIterator.h"
 
 #include "ElementInlines.h"
-#include "ElementRareData.h"
 #include "HTMLSlotElement.h"
 #include <wtf/text/TextStream.h>
 

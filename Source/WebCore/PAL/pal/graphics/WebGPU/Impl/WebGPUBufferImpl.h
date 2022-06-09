@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@ public:
 
 private:
     friend class DowncastConvertToBackingContext;
+    friend void mapCallback(WGPUBufferMapAsyncStatus, void* userdata);
 
     BufferImpl(WGPUBuffer, ConvertToBackingContext&);
 
@@ -57,13 +58,16 @@ private:
 
     WGPUBuffer backing() const { return m_backing; }
 
-    void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64> sizeForMap, CompletionHandler<void()>&&) final;
-    MappedRange getMappedRange(Size64 offset, std::optional<Size64>) final;
+    void mapCallback(WGPUBufferMapAsyncStatus);
+    void mapAsync(MapModeFlags, std::optional<Size64> offset, std::optional<Size64> sizeForMap, WTF::Function<void()>&&) final;
+    MappedRange getMappedRange(std::optional<Size64> offset, std::optional<Size64>) final;
     void unmap() final;
 
     void destroy() final;
 
     void setLabelInternal(const String&) final;
+
+    Deque<WTF::Function<void()>> m_callbacks;
 
     WGPUBuffer m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

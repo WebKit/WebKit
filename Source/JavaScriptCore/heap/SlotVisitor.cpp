@@ -57,20 +57,21 @@ static void validate(JSCell* cell)
 
     // Both the cell's structure, and the cell's structure's structure should be the Structure Structure.
     // I hate this sentence.
-    if (cell->structure()->structure()->JSCell::classInfo() != cell->structure()->JSCell::classInfo()) {
+    VM& vm = cell->vm();
+    if (cell->structure()->structure()->JSCell::classInfo(vm) != cell->structure()->JSCell::classInfo(vm)) {
         const char* parentClassName = 0;
         const char* ourClassName = 0;
-        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo())
-            parentClassName = cell->structure()->structure()->JSCell::classInfo()->className;
-        if (cell->structure()->JSCell::classInfo())
-            ourClassName = cell->structure()->JSCell::classInfo()->className;
+        if (cell->structure()->structure() && cell->structure()->structure()->JSCell::classInfo(vm))
+            parentClassName = cell->structure()->structure()->JSCell::classInfo(vm)->className;
+        if (cell->structure()->JSCell::classInfo(vm))
+            ourClassName = cell->structure()->JSCell::classInfo(vm)->className;
         dataLogF("parent structure (%p <%s>) of cell at %p doesn't match cell's structure (%p <%s>)\n",
             cell->structure()->structure(), parentClassName, cell, cell->structure(), ourClassName);
         CRASH();
     }
 
     // Make sure we can walk the ClassInfo chain
-    const ClassInfo* info = cell->classInfo();
+    const ClassInfo* info = cell->classInfo(vm);
     do { } while ((info = info->parentClass));
 }
 #endif
@@ -151,9 +152,10 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
                     out.print("GC type: ", heap()->collectionScope(), "\n");
                     out.print("Object at: ", RawPointer(jsCell), "\n");
 #if USE(JSVALUE64)
-                    out.print("Structure ID: ", structureID.bits(), " (", RawPointer(structureID.decode()), ")\n");
+                    out.print("Structure ID: ", structureID, " (0x", format("%x", structureID), ")\n");
+                    out.print("Structure ID table size: ", heap()->structureIDTable().size(), "\n");
 #else
-                    out.print("Structure: ", RawPointer(structureID.decode()), "\n");
+                    out.print("Structure: ", RawPointer(structureID), "\n");
 #endif
                     out.print("Object contents:");
                     for (unsigned i = 0; i < 2; ++i)
@@ -184,13 +186,13 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
             die("GC scan found corrupt object: structureID is zero!\n");
         
         // It's not OK for the structure to be nuked at any GC scan point.
-        if (structureID.isNuked())
+        if (isNuked(structureID))
             die("GC scan found object in bad state: structureID is nuked!\n");
-
+        
         // This detects the worst of the badness.
-        Integrity::auditStructureID(structureID);
+        Integrity::auditStructureID(heap()->structureIDTable(), structureID);
     };
-
+    
     // In debug mode, we validate before marking since this makes it clearer what the problem
     // was. It's also slower, so we don't do it normally.
     if (ASSERT_ENABLED && isJSCellKind(heapCell->cellKind()))
@@ -382,16 +384,16 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
         // https://bugs.webkit.org/show_bug.cgi?id=162462
 #if CPU(X86_64)
         if (UNLIKELY(Options::dumpZappedCellCrashData())) {
-            Structure* structure = cell->structure();
+            Structure* structure = cell->structure(vm());
             if (LIKELY(structure)) {
-                const MethodTable* methodTable = &structure->classInfoForCells()->methodTable;
+                const MethodTable* methodTable = &structure->classInfo()->methodTable;
                 methodTable->visitChildren(const_cast<JSCell*>(cell), *this);
                 break;
             }
             reportZappedCellAndCrash(m_heap, const_cast<JSCell*>(cell));
         }
 #endif
-        cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
+        cell->methodTable(vm())->visitChildren(const_cast<JSCell*>(cell), *this);
         break;
     }
 

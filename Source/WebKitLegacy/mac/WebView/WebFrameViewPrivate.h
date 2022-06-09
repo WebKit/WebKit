@@ -27,9 +27,6 @@
  */
 
 #import <WebKitLegacy/WebFrameView.h>
-#if TARGET_OS_IPHONE
-#import <WebKitLegacy/WAKAppKitStubs.h>
-#endif
 
 @interface WebFrameView (WebPrivate)
 
@@ -71,11 +68,7 @@
     @method _contentView
     @result The content view (NSClipView) of the WebFrameView's scroll view.
  */
-#if TARGET_OS_IPHONE
-- (WAKClipView *)_contentView;
-#else
 - (NSClipView *)_contentView;
-#endif
 
 /*!
     @method _customScrollViewClass

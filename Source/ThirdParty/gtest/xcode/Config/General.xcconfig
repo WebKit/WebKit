@@ -17,6 +17,8 @@ USE_INTERNAL_SDK_Release = $(HAVE_INTERNAL_SDK);
 
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 
+ARCHS = $(ARCHS_STANDARD_32_64_BIT);
+
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include ../ ../include/
 
 // Zerolink prevents link warnings so turn it off
@@ -50,7 +52,7 @@ SEPARATE_STRIP = YES
 GCC_C_LANGUAGE_STANDARD = c99
 
 // Force C++14
-CLANG_CXX_LANGUAGE_STANDARD = c++2a;
+CLANG_CXX_LANGUAGE_STANDARD = gnu++1z;
 
 // not sure why apple defaults this on, but it's pretty risky
 ALWAYS_SEARCH_USER_PATHS = NO

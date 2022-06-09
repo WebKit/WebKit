@@ -35,7 +35,6 @@
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 namespace Style {
@@ -110,18 +109,6 @@ void RuleSetBuilder::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules)
             m_mediaQueryCollector.pop(&mediaRule.mediaQueries());
             continue;
         }
-        if (is<StyleRuleContainer>(*rule)) {
-            auto& containerRule = downcast<StyleRuleContainer>(*rule);
-            auto previousContainerQueryIdentifier = m_currentContainerQueryIdentifier;
-            if (m_ruleSet) {
-                m_ruleSet->m_containerQueries.append({ containerRule, previousContainerQueryIdentifier });
-                m_currentContainerQueryIdentifier = m_ruleSet->m_containerQueries.size();
-            }
-            addChildRules(containerRule.childRules());
-            if (m_ruleSet)
-                m_currentContainerQueryIdentifier = previousContainerQueryIdentifier;
-            continue;
-        }
         if (is<StyleRuleLayer>(*rule)) {
             disallowDynamicMediaQueryEvaluationIfNeeded();
 
@@ -188,7 +175,7 @@ void RuleSetBuilder::addStyleRule(const StyleRule& rule)
         RuleData ruleData(rule, selectorIndex, selectorListIndex, m_ruleSet->ruleCount());
         m_mediaQueryCollector.addRuleIfNeeded(ruleData);
 
-        m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier, m_currentContainerQueryIdentifier);
+        m_ruleSet->addRule(WTFMove(ruleData), m_currentCascadeLayerIdentifier);
 
         ++selectorListIndex;
     }
@@ -225,7 +212,7 @@ void RuleSetBuilder::pushCascadeLayer(const CascadeLayerName& name)
         if (name.isEmpty()) {
             // Make unique name for an anonymous layer.
             unsigned long long random = randomNumber() * std::numeric_limits<unsigned long long>::max();
-            return CascadeLayerName { makeAtomString("anon_"_s, random) };
+            return CascadeLayerName { "anon_"_s + String::number(random) };
         }
         return name;
     };
@@ -290,14 +277,8 @@ void RuleSetBuilder::updateCascadeLayerPriorities()
 
     std::sort(layersInPriorityOrder.begin(), layersInPriorityOrder.end(), compare);
 
-    // Priorities matter only relative to each other, so assign them enforcing these constraints:
-    // - Layers must get a priority greater than RuleSet::cascadeLayerPriorityForPresentationalHints.
-    // - Layers must get a priority smaller than RuleSet::cascadeLayerPriorityForUnlayered.
-    // - A layer must get at least the same priority as the previous one.
-    // - A layer should get more priority than the previous one, but this may be impossible if there are too many layers.
-    //   In that case, the last layers will get the maximum priority for layers, RuleSet::cascadeLayerPriorityForUnlayered - 1.
     for (unsigned i = 0; i < layerCount; ++i) {
-        auto priority = std::min<unsigned>(i + RuleSet::cascadeLayerPriorityForPresentationalHints + 1, RuleSet::cascadeLayerPriorityForUnlayered - 1);
+        auto priority = std::min<unsigned>(i, RuleSet::cascadeLayerPriorityForUnlayered - 1);
         m_ruleSet->cascadeLayerForIdentifier(layersInPriorityOrder[i]).priority = priority;
     }
 }
@@ -385,9 +366,8 @@ void RuleSetBuilder::MediaQueryCollector::pop(const MediaQuerySet* set)
 
     if (!dynamicContextStack.last().affectedRulePositions.isEmpty() || !collectDynamic) {
         RuleSet::DynamicMediaQueryRules rules;
-        rules.mediaQuerySets.reserveCapacity(rules.mediaQuerySets.size() + dynamicContextStack.size());
         for (auto& context : dynamicContextStack)
-            rules.mediaQuerySets.uncheckedAppend(context.set.get());
+            rules.mediaQuerySets.append(context.set.get());
 
         if (collectDynamic) {
             rules.affectedRulePositions.appendVector(dynamicContextStack.last().affectedRulePositions);

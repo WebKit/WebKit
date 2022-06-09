@@ -32,7 +32,15 @@ WI.StackTraceView = class StackTraceView extends WI.Object
         var element = this._element = document.createElement("div");
         element.classList.add("stack-trace");
 
-        WI.CallFrameTreeController.groupBlackboxedCallFrames(element, stackTrace.callFrames);
+        for (var callFrame of stackTrace.callFrames) {
+            if (!callFrame.sourceCodeLocation && callFrame.functionName === null)
+                continue;
+            if (callFrame.isConsoleEvaluation && !WI.settings.debugShowConsoleEvaluations.value)
+                continue;
+
+            let callFrameElement = new WI.CallFrameView(callFrame, {showFunctionName: true, indicateIfBlackboxed: true});
+            element.appendChild(callFrameElement);
+        }
     }
 
     get element()

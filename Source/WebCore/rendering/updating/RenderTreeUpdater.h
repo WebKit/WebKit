@@ -58,24 +58,24 @@ private:
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&, const Style::TextUpdate*);
     void createTextRenderer(Text&, const Style::TextUpdate*);
-    void updateElementRenderer(Element&, const Style::ElementUpdate&);
+    void updateElementRenderer(Element&, const Style::ElementUpdates&);
     void updateRendererStyle(RenderElement&, RenderStyle&&, StyleDifference);
     void createRenderer(Element&, RenderStyle&&);
-    void updateBeforeDescendants(Element&, const Style::ElementUpdate*);
-    void updateAfterDescendants(Element&, const Style::ElementUpdate*);
+    void updateBeforeDescendants(Element&, const Style::ElementUpdates*);
+    void updateAfterDescendants(Element&, const Style::ElementUpdates*);
     bool textRendererIsNeeded(const Text& textNode);
     void storePreviousRenderer(Node&);
 
     struct Parent {
         Element* element { nullptr };
-        const Style::ElementUpdate* update { nullptr };
+        const Style::ElementUpdates* updates { nullptr };
         std::optional<RenderTreePosition> renderTreePosition;
 
         bool didCreateOrDestroyChildRenderer { false };
         RenderObject* previousChildRenderer { nullptr };
 
         Parent(ContainerNode& root);
-        Parent(Element&, const Style::ElementUpdate*);
+        Parent(Element&, const Style::ElementUpdates*);
     };
     Parent& parent() { return m_parentStack.last(); }
     Parent& renderingParent();
@@ -83,7 +83,7 @@ private:
 
     GeneratedContent& generatedContent() { return *m_generatedContent; }
 
-    void pushParent(Element&, const Style::ElementUpdate*);
+    void pushParent(Element&, const Style::ElementUpdates*);
     void popParent();
     void popParentsToDepth(unsigned depth);
 

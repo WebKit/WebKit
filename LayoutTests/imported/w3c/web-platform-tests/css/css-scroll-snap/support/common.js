@@ -41,7 +41,7 @@ function waitForAnimationEnd(getValue) {
     // MAX_UNCHANGED_FRAMES with no change have been observed.
       if (time - start_time > TIMEOUT ||
           frames - last_changed_frame >= MAX_UNCHANGED_FRAMES) {
-        resolve(time);
+        resolve();
       } else {
         current_value = getValue();
         if (last_value != current_value) {
@@ -55,38 +55,22 @@ function waitForAnimationEnd(getValue) {
   });
 }
 
-
-function waitForEvent(eventTarget, type) {
+function waitForScrollEvent(eventTarget) {
   return new Promise((resolve, reject) => {
-    const eventListener = (evt) => {
-      eventTarget.removeEventListener('scroll', eventListener);
-      resolve(evt);
+    const scrollListener = () => {
+      eventTarget.removeEventListener('scroll', scrollListener);
+      resolve();
     };
-    eventTarget.addEventListener(type, eventListener);
+    eventTarget.addEventListener('scroll', scrollListener);
   });
 }
 
-function waitForScrollEvent(eventTarget) {
-  return waitForEvent(eventTarget, 'scroll');
-}
-
-function waitForWheelEvent(eventTarget) {
-  return waitForEvent(eventTarget, 'wheel');
-}
-
-// TODO: Update tests to replace call to this method with calls to
-// waitForScrollTo, since this method does not test that scrolling has in fact
-// stopped.
 function waitForScrollEnd(eventTarget, getValue, targetValue) {
-  return waitForScrollTo(eventTarget, getValue, targetValue);
-}
-
-function waitForScrollTo(eventTarget, getValue, targetValue) {
   return new Promise((resolve, reject) => {
-    const scrollListener = (evt) => {
+    const scrollListener = () => {
       if (getValue() == targetValue) {
         eventTarget.removeEventListener('scroll', scrollListener);
-        resolve(evt);
+        resolve();
       }
     };
     if (getValue() == targetValue)
@@ -95,3 +79,4 @@ function waitForScrollTo(eventTarget, getValue, targetValue) {
       eventTarget.addEventListener('scroll', scrollListener);
   });
 }
+

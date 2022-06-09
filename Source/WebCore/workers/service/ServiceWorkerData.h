@@ -41,8 +41,8 @@ struct ServiceWorkerData {
     WorkerType type;
     ServiceWorkerRegistrationIdentifier registrationIdentifier;
 
-    WEBCORE_EXPORT ServiceWorkerData isolatedCopy() const &;
-    WEBCORE_EXPORT ServiceWorkerData isolatedCopy() &&;
+    ServiceWorkerData isolatedCopy() const &;
+    ServiceWorkerData isolatedCopy() &&;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerData> decode(Decoder&);

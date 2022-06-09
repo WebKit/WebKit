@@ -387,25 +387,6 @@ ShadingModel FromGLenum<ShadingModel>(GLenum from);
 GLenum ToGLenum(ShadingModel from);
 std::ostream &operator<<(std::ostream &os, ShadingModel value);
 
-enum class ShadingRate : uint8_t
-{
-    Undefined = 0,
-    _1x1      = 1,
-    _1x2      = 2,
-    _2x1      = 3,
-    _2x2      = 4,
-    _4x2      = 5,
-    _4x4      = 6,
-
-    InvalidEnum = 7,
-    EnumCount   = 7,
-};
-
-template <>
-ShadingRate FromGLenum<ShadingRate>(GLenum from);
-GLenum ToGLenum(ShadingRate from);
-std::ostream &operator<<(std::ostream &os, ShadingRate value);
-
 enum class TextureCombine : uint8_t
 {
     Add         = 0,

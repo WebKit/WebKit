@@ -36,18 +36,17 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class WebXRHand : public RefCounted<WebXRHand>, public CanMakeWeakPtr<WebXRHand> {
+class WebXRHand : public RefCounted<WebXRHand> {
     WTF_MAKE_ISO_ALLOCATED(WebXRHand);
 public:
 
     static Ref<WebXRHand> create(const WebXRInputSource&);
     ~WebXRHand();
 
-    unsigned size() const { return m_joints.size(); }
+    unsigned size() { return m_size; }
 
     RefPtr<WebXRJointSpace> get(const XRHandJoint& key);
 
@@ -62,17 +61,16 @@ public:
     };
     Iterator createIterator() { return Iterator(*this); }
 
-    // For GC reachability.
+    // For GC reachablitiy.
     WebXRSession* session();
-
-    bool hasMissingPoses() const { return m_hasMissingPoses; }
-    void updateFromInputSource(const PlatformXR::Device::FrameData::InputSource&);
 
 private:
     WebXRHand(const WebXRInputSource&);
 
-    FixedVector<Ref<WebXRJointSpace>> m_joints;
-    bool m_hasMissingPoses { true };
+    unsigned m_size { 0 };
+    using HandJointToSpaceMap = HashMap<XRHandJoint, Ref<WebXRJointSpace>, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+    HandJointToSpaceMap m_joints;
+
     WeakPtr<WebXRInputSource> m_inputSource;
 };
 

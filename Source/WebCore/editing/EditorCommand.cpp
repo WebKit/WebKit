@@ -116,7 +116,7 @@ static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAc
     return false;
 }
 
-static bool isStylePresent(Editor& editor, CSSPropertyID propertyID, ASCIILiteral onValue)
+static bool isStylePresent(Editor& editor, CSSPropertyID propertyID, const char* onValue)
 {
     // Style is considered present when
     // Mac: present at the beginning of selection
@@ -136,7 +136,7 @@ static bool executeApplyStyle(Frame& frame, EditorCommandSource source, EditActi
     return applyCommandToFrame(frame, source, action, EditingStyle::create(propertyID, propertyValue));
 }
 
-static bool executeToggleStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, ASCIILiteral offValue, ASCIILiteral onValue)
+static bool executeToggleStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const char* offValue, const char* onValue)
 {
     bool styleIsPresent = isStylePresent(frame.editor(), propertyID, onValue);
     return applyCommandToFrame(frame, source, action, EditingStyle::create(propertyID, styleIsPresent ? offValue : onValue));
@@ -191,7 +191,7 @@ static bool expandSelectionToGranularity(Frame& frame, TextGranularity granulari
     return true;
 }
 
-static TriState stateStyle(Frame& frame, CSSPropertyID propertyID, ASCIILiteral desiredValue)
+static TriState stateStyle(Frame& frame, CSSPropertyID propertyID, const char* desiredValue)
 {
     if (frame.editor().behavior().shouldToggleStyleBasedOnStartOfSelection())
         return frame.editor().selectionStartHasStyle(propertyID, desiredValue) ? TriState::True : TriState::False;
@@ -276,9 +276,9 @@ static bool executeClearText(Frame& frame, Event*, EditorCommandSource, const St
 
 static bool executeDefaultParagraphSeparator(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    if (equalLettersIgnoringASCIICase(value, "div"_s))
+    if (equalLettersIgnoringASCIICase(value, "div"))
         frame.editor().setDefaultParagraphSeparator(EditorParagraphSeparatorIsDiv);
-    else if (equalLettersIgnoringASCIICase(value, "p"_s))
+    else if (equalLettersIgnoringASCIICase(value, "p"))
         frame.editor().setDefaultParagraphSeparator(EditorParagraphSeparatorIsP);
 
     return true;
@@ -408,12 +408,9 @@ static bool executeForeColor(Frame& frame, Event*, EditorCommandSource source, c
 
 static bool executeFormatBlock(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    String lowercaseValue = value.convertToASCIILowercase();
-    AtomString tagName;
-    if (lowercaseValue[0] == '<' && lowercaseValue[lowercaseValue.length() - 1] == '>')
-        tagName = StringView(lowercaseValue).substring(1, lowercaseValue.length() - 2).toAtomString();
-    else
-        tagName = AtomString { WTFMove(lowercaseValue) };
+    String tagName = value.convertToASCIILowercase();
+    if (tagName[0] == '<' && tagName[tagName.length() - 1] == '>')
+        tagName = tagName.substring(1, tagName.length() - 2);
 
     auto qualifiedTagName = Document::parseQualifiedName(xhtmlNamespaceURI, tagName);
     if (qualifiedTagName.hasException())
@@ -465,7 +462,7 @@ static bool executeInsertHorizontalRule(Frame& frame, Event*, EditorCommandSourc
 {
     Ref<HTMLHRElement> rule = HTMLHRElement::create(*frame.document());
     if (!value.isEmpty())
-        rule->setIdAttribute(AtomString { value });
+        rule->setIdAttribute(value);
     return executeInsertNode(frame, WTFMove(rule));
 }
 
@@ -479,7 +476,7 @@ static bool executeInsertImage(Frame& frame, Event*, EditorCommandSource, const 
     // FIXME: If userInterface is true, we should display a dialog box and let the user choose a local image.
     Ref<HTMLImageElement> image = HTMLImageElement::create(*frame.document());
     if (!value.isEmpty())
-        image->setSrc(AtomString { value });
+        image->setSrc(value);
     return executeInsertNode(frame, WTFMove(image));
 }
 
@@ -1088,7 +1085,7 @@ static bool executeSetMark(Frame& frame, Event*, EditorCommandSource, const Stri
     return true;
 }
 
-static TextDecorationChange textDecorationChangeForToggling(Editor& editor, CSSPropertyID propertyID, ASCIILiteral onValue)
+static TextDecorationChange textDecorationChangeForToggling(Editor& editor, CSSPropertyID propertyID, const char* onValue)
 {
     return isStylePresent(editor, propertyID, onValue) ? TextDecorationChange::Remove : TextDecorationChange::Add;
 }
@@ -1102,13 +1099,13 @@ static bool executeStrikethrough(Frame& frame, Event*, EditorCommandSource sourc
 
 static bool executeStyleWithCSS(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    frame.editor().setShouldStyleWithCSS(!equalLettersIgnoringASCIICase(value, "false"_s));
+    frame.editor().setShouldStyleWithCSS(!equalLettersIgnoringASCIICase(value, "false"));
     return true;
 }
 
 static bool executeUseCSS(Frame& frame, Event*, EditorCommandSource, const String& value)
 {
-    frame.editor().setShouldStyleWithCSS(equalLettersIgnoringASCIICase(value, "false"_s));
+    frame.editor().setShouldStyleWithCSS(equalLettersIgnoringASCIICase(value, "false"));
     return true;
 }
 

@@ -76,12 +76,12 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!globalObject)
         return;
 
-    auto callData = JSC::getCallData(jsFunction);
+    auto callData = getCallData(vm, jsFunction);
     if (callData.type != CallData::Type::None) {
         Ref<JSErrorHandler> protectedThis(*this);
 
         RefPtr<Event> savedEvent;
-        auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(jsFunction->globalObject());
+        auto* jsFunctionWindow = jsDynamicCast<JSDOMWindow*>(vm, jsFunction->globalObject());
         if (jsFunctionWindow) {
             savedEvent = jsFunctionWindow->currentEvent();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,10 @@ enum class RenderingPurpose : uint8_t {
     Unspecified,
     Canvas,
     DOM,
-    LayerBacking,
-    Snapshot,
-    ShareableSnapshot,
     MediaPainting
 };
 
+enum class ShouldUseDisplayList : bool { No, Yes };
 enum class RenderingMode : bool { Unaccelerated, Accelerated };
-enum class RenderingMethod : bool { Local, DisplayList };
 
 } // namespace WebCore

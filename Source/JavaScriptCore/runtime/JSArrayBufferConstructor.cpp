@@ -41,13 +41,13 @@ static JSC_DECLARE_HOST_FUNCTION(constructSharedArrayBuffer);
 
 template<>
 const ClassInfo JSArrayBufferConstructor::s_info = {
-    "Function"_s, &Base::s_info, nullptr, nullptr,
+    "Function", &Base::s_info, nullptr, nullptr,
     CREATE_METHOD_TABLE(JSArrayBufferConstructor)
 };
 
 template<>
 const ClassInfo JSSharedArrayBufferConstructor::s_info = {
-    "Function"_s, &Base::s_info, nullptr, nullptr,
+    "Function", &Base::s_info, nullptr, nullptr,
     CREATE_METHOD_TABLE(JSSharedArrayBufferConstructor)
 };
 
@@ -136,9 +136,9 @@ JSC_DEFINE_HOST_FUNCTION(constructSharedArrayBuffer, (JSGlobalObject* globalObje
 // ------------------------------ Functions --------------------------------
 
 // ECMA 24.1.3.1
-JSC_DEFINE_HOST_FUNCTION(arrayBufferFuncIsView, (JSGlobalObject*, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(arrayBufferFuncIsView, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(callFrame->argument(0))));
+    return JSValue::encode(jsBoolean(jsDynamicCast<JSArrayBufferView*>(globalObject->vm(), callFrame->argument(0))));
 }
 
 // Instantiate JSGenericArrayBufferConstructors.

@@ -101,17 +101,18 @@ WI.DOMDetailsSidebarPanel = class DOMDetailsSidebarPanel extends WI.DetailsSideb
 
     _mouseWasClicked(event)
     {
-        let options = {
-            ignoreNetworkTab: true,
-            ignoreSearchTab: true,
-        };
+        let parentFrame = null;
 
         if (this._domNode && this._domNode.ownerDocument) {
             let mainResource = WI.networkManager.resourcesForURL(this._domNode.ownerDocument.documentURL).firstValue;
             if (mainResource)
-                options.frame = mainResource.parentFrame;
+                parentFrame = mainResource.parentFrame;
         }
 
-        WI.handlePossibleLinkClick(event, options);
+        const options = {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        };
+        WI.handlePossibleLinkClick(event, parentFrame, options);
     }
 };

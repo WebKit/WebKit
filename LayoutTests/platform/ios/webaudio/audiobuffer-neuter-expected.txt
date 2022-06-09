@@ -1,0 +1,3 @@
+Tests that neutered AudioBuffers do not produce garbage
+PASS Output matches expectations.
+

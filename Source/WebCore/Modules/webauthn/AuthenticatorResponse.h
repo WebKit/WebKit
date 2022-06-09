@@ -35,7 +35,6 @@
 namespace WebCore {
 
 enum class AuthenticatorAttachment;
-enum class AuthenticatorTransport;
 
 struct AuthenticatorResponseData;
 
@@ -54,7 +53,7 @@ public:
 
     WEBCORE_EXPORT ArrayBuffer* rawId() const;
     WEBCORE_EXPORT void setExtensions(AuthenticationExtensionsClientOutputs&&);
-    WEBCORE_EXPORT AuthenticationExtensionsClientOutputs extensions() const;
+    AuthenticationExtensionsClientOutputs extensions() const;
     void setClientDataJSON(Ref<ArrayBuffer>&&);
     ArrayBuffer* clientDataJSON() const;
     WEBCORE_EXPORT AuthenticatorAttachment attachment() const;

@@ -52,20 +52,18 @@
 
 namespace WebCore {
 
-Ref<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRequest&& request, TrackConstraints&& audioConstraints, TrackConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
+Ref<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
 {
-    auto result = adoptRef(*new UserMediaRequest(document, WTFMove(request), WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise)));
+    auto result = adoptRef(*new UserMediaRequest(document, WTFMove(request), WTFMove(promise)));
     result->suspendIfNeeded();
     return result;
 }
 
-UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& request, TrackConstraints&& audioConstraints, TrackConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
+UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
     : ActiveDOMObject(document)
     , m_identifier(UserMediaRequestIdentifier::generate())
     , m_promise(makeUniqueRef<DOMPromiseDeferred<IDLInterface<MediaStream>>>(WTFMove(promise)))
     , m_request(WTFMove(request))
-    , m_audioConstraints(WTFMove(audioConstraints))
-    , m_videoConstraints(WTFMove(videoConstraints))
 {
 }
 
@@ -87,12 +85,99 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
     return context ? &context->topOrigin() : nullptr;
 }
 
+static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constraints)
+{
+    // https://w3c.github.io/mediacapture-screen-share/#navigator-additions
+    // 1. Let constraints be the method's first argument.
+    // 2. For each member present in constraints whose value, value, is a dictionary, run the following steps:
+    //     1. If value contains a member named advanced, return a promise rejected with a newly created TypeError.
+    //     2. If value contains a member which in turn is a dictionary containing a member named either min or
+    //        exact, return a promise rejected with a newly created TypeError.
+    if (!constraints.isValid)
+        return false;
+
+    if (!constraints.advancedConstraints.isEmpty())
+        return true;
+
+    bool invalid = false;
+    constraints.mandatoryConstraints.filter([&invalid] (const MediaConstraint& constraint) mutable {
+        switch (constraint.constraintType()) {
+        case MediaConstraintType::Width:
+        case MediaConstraintType::Height: {
+            auto& intConstraint = downcast<IntConstraint>(constraint);
+            int value;
+            invalid = intConstraint.getExact(value) || intConstraint.getMin(value);
+            break;
+        }
+
+        case MediaConstraintType::AspectRatio:
+        case MediaConstraintType::FrameRate: {
+            auto& doubleConstraint = downcast<DoubleConstraint>(constraint);
+            double value;
+            invalid = doubleConstraint.getExact(value) || doubleConstraint.getMin(value);
+            break;
+        }
+
+        case MediaConstraintType::DisplaySurface:
+        case MediaConstraintType::LogicalSurface: {
+            auto& boolConstraint = downcast<BooleanConstraint>(constraint);
+            bool value;
+            invalid = boolConstraint.getExact(value);
+            break;
+        }
+
+        case MediaConstraintType::FacingMode:
+        case MediaConstraintType::DeviceId:
+        case MediaConstraintType::GroupId: {
+            auto& stringConstraint = downcast<StringConstraint>(constraint);
+            Vector<String> values;
+            invalid = stringConstraint.getExact(values);
+            break;
+        }
+
+        case MediaConstraintType::SampleRate:
+        case MediaConstraintType::SampleSize:
+        case MediaConstraintType::Volume:
+        case MediaConstraintType::EchoCancellation:
+            // Ignored.
+            break;
+
+        case MediaConstraintType::Unknown:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        return invalid;
+    });
+
+    return invalid;
+}
+
 void UserMediaRequest::start()
 {
     auto* context = scriptExecutionContext();
     ASSERT(context);
     if (!context) {
         deny(MediaAccessDenialReason::UserMediaDisabled);
+        return;
+    }
+
+    if (m_request.type == MediaStreamRequest::Type::DisplayMedia) {
+        if (hasInvalidGetDisplayMediaConstraint(m_request.videoConstraints)) {
+            deny(MediaAccessDenialReason::IllegalConstraint);
+            return;
+        }
+    }
+
+    // https://w3c.github.io/mediacapture-main/getusermedia.html#dom-mediadevices-getusermedia()
+    // 1. Let constraints be the method's first argument.
+    // 2. Let requestedMediaTypes be the set of media types in constraints with either a dictionary
+    //    value or a value of "true".
+    // 3. If requestedMediaTypes is the empty set, return a promise rejected with a TypeError. The word
+    //    "optional" occurs in the WebIDL due to WebIDL rules, but the argument must be supplied in order
+    //    for the call to succeed.
+    if (!m_request.audioConstraints.isValid && !m_request.videoConstraints.isValid) {
+        deny(MediaAccessDenialReason::NoConstraints);
         return;
     }
 
@@ -114,7 +199,6 @@ void UserMediaRequest::start()
 
     switch (m_request.type) {
     case MediaStreamRequest::Type::DisplayMedia:
-    case MediaStreamRequest::Type::DisplayMediaWithAudio:
         if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::DisplayCapture, document)) {
             deny(MediaAccessDenialReason::PermissionDenied);
             controller->logGetDisplayMediaDenial(document);
@@ -180,15 +264,6 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
                 return;
             }
 
-            if (auto* audioTrack = stream->getFirstAudioTrack()) {
-                if (std::holds_alternative<MediaTrackConstraints>(m_audioConstraints))
-                    audioTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_audioConstraints)));
-            }
-            if (auto* videoTrack = stream->getFirstVideoTrack()) {
-                if (std::holds_alternative<MediaTrackConstraints>(m_videoConstraints))
-                    videoTrack->setConstraints(std::get<MediaTrackConstraints>(WTFMove(m_videoConstraints)));
-            }
-
             ASSERT(document.isCapturing());
             stream->document()->setHasCaptureMediaStreamTrack();
             m_promise->resolve(WTFMove(stream));
@@ -214,6 +289,10 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& messag
 
     ExceptionCode code;
     switch (reason) {
+    case MediaAccessDenialReason::IllegalConstraint:
+        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid constraints");
+        code = TypeError;
+        break;
     case MediaAccessDenialReason::NoConstraints:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - no constraints");
         code = TypeError;
@@ -269,6 +348,24 @@ const char* UserMediaRequest::activeDOMObjectName() const
 Document* UserMediaRequest::document() const
 {
     return downcast<Document>(scriptExecutionContext());
+}
+
+void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
+{
+    RELEASE_LOG(MediaStream, "UserMediaRequest::mediaStreamDidFail");
+    const char* typeDescription = "";
+    switch (type) {
+    case RealtimeMediaSource::Type::Audio:
+        typeDescription = "audio";
+        break;
+    case RealtimeMediaSource::Type::Video:
+        typeDescription = "video";
+        break;
+    case RealtimeMediaSource::Type::None:
+        typeDescription = "unknown";
+        break;
+    }
+    m_promise->reject(NotReadableError, makeString("Failed starting capture of a "_s, typeDescription, " track"_s));
 }
 
 } // namespace WebCore

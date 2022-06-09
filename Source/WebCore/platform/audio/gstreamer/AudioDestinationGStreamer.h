@@ -38,7 +38,7 @@ public:
     float sampleRate() const override { return m_sampleRate; }
     unsigned framesPerBuffer() const final;
 
-    bool handleMessage(GstMessage*);
+    gboolean handleMessage(GstMessage*);
     void notifyIsPlaying(bool);
 
 protected:

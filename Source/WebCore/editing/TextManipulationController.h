@@ -115,8 +115,9 @@ public:
     using ManipulationItemCallback = Function<void(Document&, const Vector<ManipulationItem>&)>;
     WEBCORE_EXPORT void startObservingParagraphs(ManipulationItemCallback&&, Vector<ExclusionRule>&& = { });
 
-    void didUpdateContentForNode(Node&);
-    void didAddOrCreateRendererForNode(Node&);
+    void didCreateRendererForElement(Element&);
+    void didCreateRendererForTextNode(Text&);
+    void didUpdateContentForText(Text&);
     void removeNode(Node&);
 
     enum class ManipulationFailureType : uint8_t {
@@ -180,10 +181,9 @@ private:
 
     WeakPtr<Document> m_document;
     WeakHashSet<Element> m_elementsWithNewRenderer;
+    WeakHashSet<Text> m_manipulatedTextsWithNewContent;
     WeakHashSet<Node> m_textNodesWithNewRenderer;
     WeakHashSet<Node> m_manipulatedNodes;
-    WeakHashSet<Node> m_manipulatedNodesWithNewContent;
-    WeakHashSet<Node> m_addedOrNewlyRenderedNodes;
 
     HashMap<String, bool> m_cachedFontFamilyExclusionResults;
 

@@ -40,7 +40,7 @@ idl_test(
       idl_array.add_objects({
         Clients: ['clients'],
         ExtendableEvent: ['new ExtendableEvent("type")'],
-        FetchEvent: ['new FetchEvent("type", { request: new Request("") })'],
+        FetchEvent: ['new FetchEvent("type")'],
         ServiceWorkerGlobalScope: ['self'],
         ServiceWorkerRegistration: ['registration'],
         ServiceWorker: ['serviceWorker'],

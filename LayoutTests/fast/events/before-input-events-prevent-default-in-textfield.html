@@ -11,6 +11,7 @@
             if (!window.eventSender || !window.internals || !window.testRunner)
                 return;
 
+            internals.settings.setInputEventsEnabled(true);
             testRunner.dumpAsText();
             let input = document.querySelector("#foo");
             input.focus();

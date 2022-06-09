@@ -30,7 +30,6 @@
 #import "SceneKitModelLoaderUSD.h"
 
 #import "Model.h"
-#import "ResourceError.h"
 #import "SceneKitModel.h"
 #import "SceneKitModelLoader.h"
 #import "SceneKitModelLoaderClient.h"
@@ -102,7 +101,7 @@ static RetainPtr<NSURL> writeToTemporaryFile(WebCore::Model& modelSource)
     // initializer but currently that does not work.
 
     FileSystem::PlatformFileHandle fileHandle;
-    auto filePath = FileSystem::openTemporaryFile("ModelFile"_s, fileHandle, ".usdz"_s);
+    auto filePath = FileSystem::openTemporaryFile("ModelFile", fileHandle, ".usdz");
     ASSERT(FileSystem::isHandleValid(fileHandle));
 
     size_t byteCount = FileSystem::writeToFile(fileHandle, modelSource.data()->makeContiguous()->data(), modelSource.data()->size());

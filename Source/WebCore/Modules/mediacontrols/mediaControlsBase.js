@@ -1035,8 +1035,6 @@ Controller.prototype = {
             return false;
 
         var panel = this.controls.panel;
-        if (!panel.parentElement)
-            return true;
         return (!panel.classList.contains(this.ClassNames.show) || panel.classList.contains(this.ClassNames.hidden))
             && (panel.parentElement.querySelector(':hover') !== panel);
     },

@@ -32,6 +32,8 @@
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
 #include "FilterOperations.h"
+#include "GraphicsContext.h"
+#include "LengthFunctions.h"
 #include "Logging.h"
 #include "ReferencedSVGResources.h"
 #include "RenderElement.h"
@@ -42,18 +44,15 @@
 
 namespace WebCore {
 
-RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<CSSFilter> CSSFilter::create(RenderElement& renderer, const FilterOperations& operations, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& targetBoundingBox)
 {
     bool hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     bool hasFilterThatShouldBeRestrictedBySecurityOrigin = operations.hasFilterThatShouldBeRestrictedBySecurityOrigin();
 
     auto filter = adoptRef(*new CSSFilter(renderingMode, filterScale, clipOperation, hasFilterThatMovesPixels, hasFilterThatShouldBeRestrictedBySecurityOrigin));
 
-    if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox, destinationContext))
+    if (!filter->buildFilterFunctions(renderer, operations, targetBoundingBox))
         return nullptr;
-
-    if (renderingMode == RenderingMode::Accelerated && !filter->supportsAcceleratedRendering())
-        filter->setRenderingMode(RenderingMode::Unaccelerated);
 
     return filter;
 }
@@ -74,12 +73,6 @@ CSSFilter::CSSFilter(Vector<Ref<FilterFunction>>&& functions)
     : Filter(Type::CSSFilter)
     , m_functions(WTFMove(functions))
 {
-}
-
-static IntOutsets calculateBlurEffectOutsets(const BlurFilterOperation& blurOperation)
-{
-    float stdDeviation = floatValueForLength(blurOperation.stdDeviation(), 0);
-    return FEGaussianBlur::calculateOutsets({ stdDeviation, stdDeviation });
 }
 
 static RefPtr<FilterEffect> createBlurEffect(const BlurFilterOperation& blurOperation, Filter::ClipOperation clipOperation)
@@ -109,12 +102,6 @@ static RefPtr<FilterEffect> createContrastEffect(const BasicComponentTransferFil
 
     ComponentTransferFunction nullFunction;
     return FEComponentTransfer::create(transferFunction, transferFunction, transferFunction, nullFunction);
-}
-
-static IntOutsets calculateDropShadowEffectOutsets(const DropShadowFilterOperation& dropShadowOperation)
-{
-    float stdDeviation = dropShadowOperation.stdDeviation();
-    return FEDropShadow::calculateOutsets(FloatSize(dropShadowOperation.x(), dropShadowOperation.y()), { stdDeviation, stdDeviation });
 }
 
 static RefPtr<FilterEffect> createDropShadowEffect(const DropShadowFilterOperation& dropShadowOperation)
@@ -231,7 +218,7 @@ static RefPtr<FilterEffect> createSepiaEffect(const BasicColorMatrixFilterOperat
     return FEColorMatrix::create(FECOLORMATRIX_TYPE_MATRIX, WTFMove(inputParameters));
 }
 
-static SVGFilterElement* referenceFilterElement(const ReferenceFilterOperation& filterOperation, RenderElement& renderer)
+static RefPtr<SVGFilter> createSVGFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox, FilterEffect& previousEffect)
 {
     auto& referencedSVGResources = renderer.ensureReferencedSVGResources();
     auto* filterElement = referencedSVGResources.referencedFilterElement(renderer.document(), filterOperation);
@@ -244,95 +231,94 @@ static SVGFilterElement* referenceFilterElement(const ReferenceFilterOperation& 
         return nullptr;
     }
 
-    return filterElement;
-}
-
-static IntOutsets calculateReferenceFilterOutsets(const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox)
-{
-    auto filterElement = referenceFilterElement(filterOperation, renderer);
-    if (!filterElement)
-        return { };
-
-    return SVGFilterBuilder::calculateFilterOutsets(*filterElement, targetBoundingBox);
-}
-
-static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
-{
-    auto filterElement = referenceFilterElement(filterOperation, renderer);
-    if (!filterElement)
-        return nullptr;
-
-    auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
-
     SVGFilterBuilder builder;
-    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
+    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), targetBoundingBox, previousEffect);
 }
 
-bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox)
 {
-    RefPtr<FilterFunction> function;
+    m_functions.clear();
+    m_outsets = { };
 
+    RefPtr<FilterEffect> previousEffect = SourceGraphic::create();
+    RefPtr<SVGFilter> filter;
+    
     for (auto& operation : operations.operations()) {
+        RefPtr<FilterEffect> effect;
+
         switch (operation->type()) {
         case FilterOperation::APPLE_INVERT_LIGHTNESS:
             ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
             break;
 
         case FilterOperation::BLUR:
-            function = createBlurEffect(downcast<BlurFilterOperation>(*operation), clipOperation());
+            effect = createBlurEffect(downcast<BlurFilterOperation>(*operation), clipOperation());
             break;
 
         case FilterOperation::BRIGHTNESS:
-            function = createBrightnessEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
+            effect = createBrightnessEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
         case FilterOperation::CONTRAST:
-            function = createContrastEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
+            effect = createContrastEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
         case FilterOperation::DROP_SHADOW:
-            function = createDropShadowEffect(downcast<DropShadowFilterOperation>(*operation));
+            effect = createDropShadowEffect(downcast<DropShadowFilterOperation>(*operation));
             break;
 
         case FilterOperation::GRAYSCALE:
-            function = createGrayScaleEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
+            effect = createGrayScaleEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
         case FilterOperation::HUE_ROTATE:
-            function = createHueRotateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
+            effect = createHueRotateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
         case FilterOperation::INVERT:
-            function = createInvertEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
+            effect = createInvertEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
         case FilterOperation::OPACITY:
-            function = createOpacityEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
+            effect = createOpacityEffect(downcast<BasicComponentTransferFilterOperation>(*operation));
             break;
 
         case FilterOperation::SATURATE:
-            function = createSaturateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
+            effect = createSaturateEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
         case FilterOperation::SEPIA:
-            function = createSepiaEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
+            effect = createSepiaEffect(downcast<BasicColorMatrixFilterOperation>(*operation));
             break;
 
         case FilterOperation::REFERENCE:
-            function = createReferenceFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox, destinationContext);
+            filter = createSVGFilter(*this, downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox, *previousEffect);
+            effect = nullptr;
             break;
 
         default:
             break;
         }
 
-        if (!function)
+        if ((filter || effect) && m_functions.isEmpty()) {
+            ASSERT(previousEffect->filterType() == FilterEffect::Type::SourceGraphic);
+            m_functions.append({ *previousEffect });
+        }
+        
+        if (filter) {
+            effect = filter->lastEffect();
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
+            m_functions.append(filter.releaseNonNull());
+            previousEffect = WTFMove(effect);
             continue;
+        }
 
-        if (m_functions.isEmpty())
-            m_functions.append(SourceGraphic::create());
-
-        m_functions.append(function.releaseNonNull());
+        if (effect) {
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB());
+            effect->inputEffects() = { previousEffect.releaseNonNull() };
+            m_functions.append({ *effect });
+            previousEffect = WTFMove(effect);
+        }
     }
 
     // If we didn't make any effects, tell our caller we are not valid.
@@ -340,7 +326,25 @@ bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperat
         return false;
 
     m_functions.shrinkToFit();
+
+#if USE(CORE_IMAGE)
+    if (!supportsCoreImageRendering())
+        setRenderingMode(RenderingMode::Unaccelerated);
+#endif
+
     return true;
+}
+
+RefPtr<FilterEffect> CSSFilter::lastEffect() const
+{
+    if (m_functions.isEmpty())
+        return nullptr;
+
+    auto& function = m_functions.last();
+    if (function->isSVGFilter())
+        return downcast<SVGFilter>(function.ptr())->lastEffect();
+
+    return downcast<FilterEffect>(function.ptr());
 }
 
 FilterEffectVector CSSFilter::effectsOfType(FilterFunction::Type filterType) const
@@ -362,18 +366,20 @@ FilterEffectVector CSSFilter::effectsOfType(FilterFunction::Type filterType) con
     return effects;
 }
 
-bool CSSFilter::supportsAcceleratedRendering() const
+#if USE(CORE_IMAGE)
+bool CSSFilter::supportsCoreImageRendering() const
 {
     if (renderingMode() == RenderingMode::Unaccelerated)
         return false;
 
     for (auto& function : m_functions) {
-        if (!function->supportsAcceleratedRendering())
+        if (!function->supportsCoreImageRendering())
             return false;
     }
 
     return true;
 }
+#endif
 
 RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& results)
 {
@@ -394,33 +400,26 @@ RefPtr<FilterImage> CSSFilter::apply(FilterImage* sourceImage, FilterResults& re
 void CSSFilter::setFilterRegion(const FloatRect& filterRegion)
 {
     Filter::setFilterRegion(filterRegion);
+
+    for (auto& function : m_functions) {
+        if (function->isSVGFilter())
+            downcast<SVGFilter>(function.ptr())->setFilterRegion(filterRegion);
+    }
+
     clampFilterRegionIfNeeded();
 }
 
-IntOutsets CSSFilter::calculateOutsets(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox)
+IntOutsets CSSFilter::outsets() const
 {
-    IntOutsets outsets;
+    if (!m_hasFilterThatMovesPixels)
+        return { };
 
-    for (auto& operation : operations.operations()) {
-        switch (operation->type()) {
-        case FilterOperation::BLUR:
-            outsets += calculateBlurEffectOutsets(downcast<BlurFilterOperation>(*operation));
-            break;
+    if (!m_outsets.isZero())
+        return m_outsets;
 
-        case FilterOperation::DROP_SHADOW:
-            outsets += calculateDropShadowEffectOutsets(downcast<DropShadowFilterOperation>(*operation));
-            break;
-
-        case FilterOperation::REFERENCE:
-            outsets += calculateReferenceFilterOutsets(downcast<ReferenceFilterOperation>(*operation), renderer, targetBoundingBox);
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    return outsets;
+    for (auto& function : m_functions)
+        m_outsets += function->outsets();
+    return m_outsets;
 }
 
 TextStream& CSSFilter::externalRepresentation(TextStream& ts, FilterRepresentation representation) const

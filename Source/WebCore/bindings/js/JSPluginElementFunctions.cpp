@@ -24,6 +24,8 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "JSHTMLElement.h"
+#include "PluginViewBase.h"
+
 
 namespace WebCore {
 using namespace JSC;
@@ -47,29 +49,60 @@ Instance* pluginInstance(HTMLElement& element)
     return instance;
 }
 
-JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement* jsHTMLElement)
+static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement& pluginElement, JSGlobalObject* globalObject)
 {
-    auto* element = dynamicDowncast<HTMLPlugInElement>(jsHTMLElement->wrapped());
-    if (!element)
+    Widget* pluginWidget = pluginElement.pluginWidget();
+    if (!is<PluginViewBase>(pluginWidget))
         return nullptr;
 
+    return downcast<PluginViewBase>(*pluginWidget).scriptObject(globalObject);
+}
+
+static JSObject* pluginScriptObjectFromPluginViewBase(JSHTMLElement* jsHTMLElement)
+{
+    HTMLElement& element = jsHTMLElement->wrapped();
+    if (!is<HTMLPlugInElement>(element))
+        return nullptr;
+
+    HTMLPlugInElement& pluginElement = downcast<HTMLPlugInElement>(element);
+    return pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject());
+}
+
+JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement* jsHTMLElement)
+{
+    HTMLElement& element = jsHTMLElement->wrapped();
+    if (!is<HTMLPlugInElement>(element))
+        return nullptr;
+
+    auto& pluginElement = downcast<HTMLPlugInElement>(element);
+
     // Choke point for script/plugin interaction; notify DOMTimer of the event.
-    DOMTimer::scriptDidInteractWithPlugin();
+    DOMTimer::scriptDidInteractWithPlugin(pluginElement);
+
+    // First, see if the element has a plug-in replacement with a script.
+    if (auto* scriptObject = pluginElement.scriptObjectForPluginReplacement())
+        return scriptObject;
+    
+    // Next, see if we can ask the plug-in view for its script object.
+    if (auto* scriptObject = pluginScriptObjectFromPluginViewBase(pluginElement, jsHTMLElement->globalObject()))
+        return scriptObject;
+
+    // Otherwise, fall back to getting the object from the instance.
 
     // The plugin element holds an owning reference, so we don't have to.
-    auto* instance = element->bindingsInstance();
+    auto* instance = pluginElement.bindingsInstance();
     if (!instance || !instance->rootObject())
         return nullptr;
 
     return instance->createRuntimeObject(lexicalGlobalObject);
 }
-
+    
 JSC_DEFINE_CUSTOM_GETTER(pluginElementPropertyGetter, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName propertyName))
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSHTMLElement* thisObject = jsDynamicCast<JSHTMLElement*>(JSValue::decode(thisValue));
+    JSHTMLElement* thisObject = jsDynamicCast<JSHTMLElement*>(vm, JSValue::decode(thisValue));
     if (!thisObject)
         return throwVMTypeError(lexicalGlobalObject, scope);
     JSObject* scriptObject = pluginScriptObject(lexicalGlobalObject, thisObject);
@@ -88,7 +121,7 @@ bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, JSGlobalObjec
         return false;
 
     if (!element->globalObject()->world().isNormal()) {
-        JSValue proto = element->getPrototypeDirect();
+        JSValue proto = element->getPrototypeDirect(vm);
         if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(lexicalGlobalObject, propertyName))
             return false;
     }
@@ -116,7 +149,7 @@ bool pluginElementCustomPut(JSHTMLElement* element, JSGlobalObject* lexicalGloba
         return false;
     if (!scriptObject->hasProperty(lexicalGlobalObject, propertyName))
         return false;
-    putResult = scriptObject->methodTable()->put(scriptObject, lexicalGlobalObject, propertyName, value, slot);
+    putResult = scriptObject->methodTable(lexicalGlobalObject->vm())->put(scriptObject, lexicalGlobalObject, propertyName, value, slot);
     return true;
 }
 
@@ -134,7 +167,7 @@ JSC_DEFINE_HOST_FUNCTION(callPlugin, (JSGlobalObject* lexicalGlobalObject, CallF
         argumentList.append(callFrame->argument(i));
     ASSERT(!argumentList.hasOverflowed());
 
-    auto callData = JSC::getCallData(scriptObject);
+    auto callData = getCallData(lexicalGlobalObject->vm(), scriptObject);
     ASSERT(callData.type == CallData::Type::Native);
 
     // Call the object.
@@ -146,10 +179,20 @@ CallData pluginElementCustomGetCallData(JSHTMLElement* element)
 {
     CallData callData;
 
-    Instance* instance = pluginInstance(element->wrapped());
-    if (instance && instance->supportsInvokeDefaultMethod()) {
-        callData.type = CallData::Type::Native;
-        callData.native.function = callPlugin;
+    // First, ask the plug-in view base for its runtime object.
+    if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(element)) {
+        VM& vm = scriptObject->vm();
+        auto scriptObjectCallData = getCallData(vm, scriptObject);
+        if (scriptObjectCallData.type != CallData::Type::None) {
+            callData.type = CallData::Type::Native;
+            callData.native.function = callPlugin;
+        }
+    } else {
+        Instance* instance = pluginInstance(element->wrapped());
+        if (instance && instance->supportsInvokeDefaultMethod()) {
+            callData.type = CallData::Type::Native;
+            callData.native.function = callPlugin;
+        }
     }
 
     return callData;

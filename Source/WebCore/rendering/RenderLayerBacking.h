@@ -283,10 +283,10 @@ public:
     
     // For testing only.
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool);
-    WEBCORE_EXPORT String displayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
+    WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const;
 
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool);
-    WEBCORE_EXPORT String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
+    WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const;
 
 private:
     friend class PaintedContentsInfo;
@@ -331,6 +331,9 @@ private:
     void setBackgroundLayerPaintsFixedRootBackground(bool);
 
     LayoutSize contentOffsetInCompositingLayer() const;
+    // Result is transform origin in device pixels.
+    FloatPoint3D computeTransformOriginForPainting(const LayoutRect& borderBox) const;
+
     LayoutSize offsetRelativeToRendererOriginForDescendantLayers() const;
     
     void ensureClippingStackLayers(LayerAncestorClippingStack&);
@@ -351,6 +354,7 @@ private:
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
 #endif
+    void updateCustomAppearance(const RenderStyle&);
     void updateContentsScalingFilters(const RenderStyle&);
 
     // Return the opacity value that this layer should use for compositing.

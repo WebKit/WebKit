@@ -36,7 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensions:(RetainPtr<_WKAuthenticationExtensionsClientOutputs>&&)extensions attachment:(_WKAuthenticatorAttachment)attachment;
 
-- (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensionOutputsCBOR:(NSData *)extensionOutputsCBOR attachment:(_WKAuthenticatorAttachment)attachment;
 @end
 
 NS_ASSUME_NONNULL_END

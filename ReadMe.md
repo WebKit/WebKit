@@ -27,6 +27,12 @@ On Windows, follow the [instructions on our website](https://webkit.org/webkit-o
 Run the following command to clone WebKit's Git SVN repository:
 
 ```
+git clone git@github.com:WebKit/WebKit.git WebKit
+```
+
+or
+
+```
 git clone https://github.com/WebKit/WebKit.git WebKit
 ```
 
@@ -37,6 +43,14 @@ Tools/Scripts/git-webkit setup-git-svn
 ```
 
 For information about this, and other aspects of using Git with WebKit, read [the wiki page](https://trac.webkit.org/wiki/UsingGitWithWebKit).
+
+### Checking out the Subversion Repository
+
+If you don't want to use Git, run the following command to check out WebKit's Subversion repository:
+
+```
+svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit
+```
 
 ## Building WebKit
 
@@ -71,7 +85,7 @@ sudo Tools/Scripts/configure-xcode-for-embedded-development
 
 Without this step, you will see the error message: "`target specifies product type ‘com.apple.product-type.tool’, but there’s no such product type for the ‘iphonesimulator’ platform.`" when building target `JSCLLIntOffsetsExtractor` of project `JavaScriptCore`.
 
-Run the following command to build a debug build with debugging symbols and assertions for embedded simulators:
+Run the following command to build a debug build with debugging symbols and assertions for embededded simulators:
 
 ```
 Tools/Scripts/build-webkit --debug --<platform>-simulator

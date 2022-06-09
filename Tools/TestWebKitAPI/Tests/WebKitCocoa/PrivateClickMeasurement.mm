@@ -120,7 +120,7 @@ static void addAttributedPCMv2(WebCore::SQLiteDatabase& database)
 
     constexpr auto insertAttributedPrivateClickMeasurementQueryV2 = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, attributeOnSiteDomainID, "
         "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSend, token, signature, keyID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
-    addValuesToTable<10>(database, insertAttributedPrivateClickMeasurementQueryV2, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token"_s, "test signature"_s, "test key id"_s });
+    addValuesToTable<10>(database, insertAttributedPrivateClickMeasurementQueryV2, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token", "test signature", "test key id" });
 }
 
 static void addUnattributedPCMv2(WebCore::SQLiteDatabase& database)
@@ -134,7 +134,7 @@ static void addUnattributedPCMv2(WebCore::SQLiteDatabase& database)
 
     constexpr auto insertUnattributedPrivateClickMeasurementQueryV2 = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, attributeOnSiteDomainID, "
         "sourceID, timeOfAdClick, token, signature, keyID) VALUES (?, ?, ?, ?, ?, ?, ?)"_s;
-    addValuesToTable<7>(database, insertUnattributedPrivateClickMeasurementQueryV2, { 2, 3, 43, 1.0, "test token"_s, "test signature"_s, "test key id"_s });
+    addValuesToTable<7>(database, insertUnattributedPrivateClickMeasurementQueryV2, { 2, 3, 43, 1.0, "test token", "test signature", "test key id" });
 }
 
 static void addAttributedPCMv3(WebCore::SQLiteDatabase& database)
@@ -149,7 +149,7 @@ static void addAttributedPCMv3(WebCore::SQLiteDatabase& database)
 
     constexpr auto insertAttributedPrivateClickMeasurementQueryV3 = "INSERT OR REPLACE INTO AttributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
         "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
-    addValuesToTable<11>(database, insertAttributedPrivateClickMeasurementQueryV3, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token"_s, "test signature"_s, "test key id"_s, earliestTimeToSend() });
+    addValuesToTable<11>(database, insertAttributedPrivateClickMeasurementQueryV3, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token", "test signature", "test key id", earliestTimeToSend() });
 }
 
 static void addUnattributedPCMv3(WebCore::SQLiteDatabase& database)
@@ -163,7 +163,7 @@ static void addUnattributedPCMv3(WebCore::SQLiteDatabase& database)
 
     constexpr auto insertUnattributedPrivateClickMeasurementQueryV3 = "INSERT OR REPLACE INTO UnattributedPrivateClickMeasurement (sourceSiteDomainID, destinationSiteDomainID, "
         "sourceID, timeOfAdClick, token, signature, keyID) VALUES (?, ?, ?, ?, ?, ?, ?)"_s;
-    addValuesToTable<7>(database, insertUnattributedPrivateClickMeasurementQueryV3, { 2, 3, 43, 1.0, "test token"_s, "test signature"_s, "test key id"_s });
+    addValuesToTable<7>(database, insertUnattributedPrivateClickMeasurementQueryV3, { 2, 3, 43, 1.0, "test token", "test signature", "test key id" });
 }
 
 static void addUnattributedPCMv4(WebCore::SQLiteDatabase& database)
@@ -180,11 +180,11 @@ static void addUnattributedPCMv4(WebCore::SQLiteDatabase& database)
         "sourceID, timeOfAdClick, token, signature, keyID, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"_s;
     
 #if PLATFORM(MAC)
-    auto bundleID = "com.apple.Safari"_s;
+    auto bundleID = "com.apple.Safari";
 #else
-    auto bundleID = "com.apple.mobilesafari"_s;
+    auto bundleID = "com.apple.mobilesafari";
 #endif
-    addValuesToTable<8>(database, insertUnattributedPrivateClickMeasurementQueryV4, { 2, 3, 43, 1.0, "test token"_s, "test signature"_s, "test key id"_s, bundleID });
+    addValuesToTable<8>(database, insertUnattributedPrivateClickMeasurementQueryV4, { 2, 3, 43, 1.0, "test token", "test signature", "test key id", bundleID });
 }
 
 static void addAttributedPCMv4(WebCore::SQLiteDatabase& database)
@@ -202,11 +202,11 @@ static void addAttributedPCMv4(WebCore::SQLiteDatabase& database)
         "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination, sourceApplicationBundleID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
 
 #if PLATFORM(MAC)
-    auto bundleID = "com.apple.Safari"_s;
+    auto bundleID = "com.apple.Safari";
 #else
-    auto bundleID = "com.apple.mobilesafari"_s;
+    auto bundleID = "com.apple.mobilesafari";
 #endif
-    addValuesToTable<12>(database, insertAttributedPrivateClickMeasurementQueryV4, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token"_s, "test signature"_s, "test key id"_s, earliestTimeToSend(), bundleID });
+    addValuesToTable<12>(database, insertAttributedPrivateClickMeasurementQueryV4, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token", "test signature", "test key id", earliestTimeToSend(), bundleID });
 }
 
 static void addAttributedPCMv5(WebCore::SQLiteDatabase& database)
@@ -223,11 +223,11 @@ static void addAttributedPCMv5(WebCore::SQLiteDatabase& database)
         "sourceID, attributionTriggerData, priority, timeOfAdClick, earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination, sourceApplicationBundleID, destinationToken, destinationSignature, destinationKeyID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
 
 #if PLATFORM(MAC)
-    auto bundleID = "com.apple.Safari"_s;
+    auto bundleID = "com.apple.Safari";
 #else
-    auto bundleID = "com.apple.mobilesafari"_s;
+    auto bundleID = "com.apple.mobilesafari";
 #endif
-    addValuesToTable<15>(database, insertAttributedPrivateClickMeasurementQueryV5, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token"_s, "test signature"_s, "test key id"_s, earliestTimeToSend(), bundleID, "test destination token"_s, "test destination signature"_s, "test destination key id"_s });
+    addValuesToTable<15>(database, insertAttributedPrivateClickMeasurementQueryV5, { 1, 2, 42, 14, 7, 1.0, earliestTimeToSend(), "test token", "test signature", "test key id", earliestTimeToSend(), bundleID, "test destination token", "test destination signature", "test destination key id" });
 }
 
 static RetainPtr<NSString> dumpedPCM(WKWebView *webView)
@@ -292,8 +292,7 @@ static void pollUntilPCMIsMigrated(WKWebView *webView, MigratingFromResourceLoad
 static NSString *emptyObservationsDBPath()
 {
     NSFileManager *defaultFileManager = NSFileManager.defaultManager;
-    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    NSURL *itpRootURL = dataStoreConfiguration.get()._resourceLoadStatisticsDirectory;
+    NSURL *itpRootURL = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory;
     NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"observations.db"];
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
@@ -304,8 +303,7 @@ static NSString *emptyObservationsDBPath()
 static NSString *emptyPcmDBPath()
 {
     NSFileManager *defaultFileManager = NSFileManager.defaultManager;
-    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    NSURL *itpRootURL = dataStoreConfiguration.get()._resourceLoadStatisticsDirectory;
+    NSURL *itpRootURL = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory;
     NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"pcm.db"];
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
@@ -318,8 +316,7 @@ static void cleanUp(RetainPtr<WKWebView> webView)
     static bool isDone = false;
     [[webView.get() configuration].websiteDataStore _closeDatabases:^{
         NSFileManager *defaultFileManager = NSFileManager.defaultManager;
-        auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-        NSString *itpRoot = dataStoreConfiguration.get()._resourceLoadStatisticsDirectory.path;
+        NSString *itpRoot = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory.path;
         [defaultFileManager removeItemAtPath:itpRoot error:nil];
         while ([defaultFileManager fileExistsAtPath:itpRoot])
             usleep(10000);
@@ -330,7 +327,7 @@ static void cleanUp(RetainPtr<WKWebView> webView)
 
 static void createAndPopulateObservedDomainTable(WebCore::SQLiteDatabase& database)
 {
-    auto addObservedDomain = [&](ASCIILiteral domain) {
+    auto addObservedDomain = [&](const char* domain) {
         constexpr auto insertObservedDomainQuery = "INSERT INTO ObservedDomains (registrableDomain, lastSeen, hadUserInteraction,"
         "mostRecentUserInteractionTime, grandfathered, isPrevalent, isVeryPrevalent, dataRecordsRemoved, timesAccessedAsFirstPartyDueToUserInteraction,"
         "timesAccessedAsFirstPartyDueToStorageAccessAPI, isScheduledForAllButCookieDataRemoval) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s;
@@ -345,14 +342,14 @@ static void createAndPopulateObservedDomainTable(WebCore::SQLiteDatabase& databa
     "isScheduledForAllButCookieDataRemoval INTEGER NOT NULL)"_s;
 
     EXPECT_TRUE(database.executeCommand(createObservedDomain));
-    addObservedDomain("example.com"_s);
-    addObservedDomain("webkit.org"_s);
-    addObservedDomain("www.webkit.org"_s);
+    addObservedDomain("example.com");
+    addObservedDomain("webkit.org");
+    addObservedDomain("www.webkit.org");
 }
 
 static void createAndPopulatePCMObservedDomainTable(WebCore::SQLiteDatabase& database)
 {
-    auto addObservedDomain = [&](ASCIILiteral domain) {
+    auto addObservedDomain = [&](const char* domain) {
         constexpr auto insertObservedDomainQuery = "INSERT INTO PCMObservedDomains (registrableDomain) VALUES (?)"_s;
         addValuesToTable<1>(database, insertObservedDomainQuery, { domain });
     };
@@ -361,9 +358,9 @@ static void createAndPopulatePCMObservedDomainTable(WebCore::SQLiteDatabase& dat
         "domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL)"_s;
 
     EXPECT_TRUE(database.executeCommand(createPCMObservedDomain));
-    addObservedDomain("example.com"_s);
-    addObservedDomain("webkit.org"_s);
-    addObservedDomain("www.webkit.org"_s);
+    addObservedDomain("example.com");
+    addObservedDomain("webkit.org");
+    addObservedDomain("www.webkit.org");
 }
 
 void setUpFromResourceLoadStatisticsDatabase(void(*addUnattributedPCM)(WebCore::SQLiteDatabase&), void(*addAttributedPCM)(WebCore::SQLiteDatabase&))

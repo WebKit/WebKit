@@ -334,7 +334,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
     if (!view.frameView().layoutContext().isInRenderTreeLayout()) {
         // If we're in the middle of layout, we'll just update layers once layout has finished.
-        m_layer.updateLayerPositionsAfterOverflowScroll();
+        updateLayerPositionsAfterOverflowScroll();
 
         view.frameView().scheduleUpdateWidgetPositions();
 
@@ -361,7 +361,7 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     }
 
     Frame& frame = renderer.frame();
-    auto* repaintContainer = renderer.containerForRepaint().renderer;
+    RenderLayerModelObject* repaintContainer = renderer.containerForRepaint();
     // The caret rect needs to be invalidated after scrolling
     frame.selection().setCaretRectNeedsUpdate();
 
@@ -483,7 +483,7 @@ bool RenderLayerScrollableArea::canUseCompositedScrolling() const
         return isVisible && scrollsOverflow() && !m_layer.isInsideSVGForeignObject();
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(OVERFLOW_SCROLLING_TOUCH)
-    return isVisible && scrollsOverflow() && renderer.style().useTouchOverflowScrolling();
+    return isVisible && scrollsOverflow() && (renderer.style().useTouchOverflowScrolling() || renderer.settings().alwaysUseAcceleratedOverflowScroll());
 #else
     return false;
 #endif
@@ -1192,7 +1192,7 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
 
         if (renderer.style().overflowX() == Overflow::Auto || renderer.style().overflowY() == Overflow::Auto) {
             if (!m_inOverflowRelayout) {
-                SetForScope inOverflowRelayoutScope(m_inOverflowRelayout, true);
+                SetForScope<bool> inOverflowRelayoutScope(m_inOverflowRelayout, true);
                 renderer.setNeedsLayout(MarkOnlyThis);
                 if (is<RenderBlock>(renderer)) {
                     auto& block = downcast<RenderBlock>(renderer);
@@ -1556,11 +1556,6 @@ bool RenderLayerScrollableArea::isScrollSnapInProgress() const
     return false;
 }
 
-bool RenderLayerScrollableArea::scrollAnimatorEnabled() const
-{
-    return m_layer.page().settings().scrollAnimatorEnabled();
-}
-
 void RenderLayerScrollableArea::paintOverlayScrollbars(GraphicsContext& context, const LayoutRect& damageRect, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRoot)
 {
     if (!m_containsDirtyOverlayScrollbars)
@@ -1835,6 +1830,27 @@ void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, Scroll
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement?
         // https://bugs.webkit.org/show_bug.cgi?id=28237
     }
+}
+
+void RenderLayerScrollableArea::updateLayerPositionsAfterDocumentScroll()
+{
+    ASSERT(&m_layer == m_layer.renderer().view().layer());
+
+    LOG(Scrolling, "RenderLayerScrollableArea::updateLayerPositionsAfterDocumentScroll");
+
+    RenderGeometryMap geometryMap(UseTransforms);
+    m_layer.updateLayerPositionsAfterScroll(&geometryMap);
+}
+
+void RenderLayerScrollableArea::updateLayerPositionsAfterOverflowScroll()
+{
+    RenderGeometryMap geometryMap(UseTransforms);
+    if (&m_layer != m_layer.renderer().view().layer())
+        geometryMap.pushMappingsToAncestor(m_layer.parent(), nullptr);
+
+    // FIXME: why is it OK to not check the ancestors of this layer in order to
+    // initialize the HasSeenViewportConstrainedAncestor and HasSeenAncestorWithOverflowClip flags?
+    m_layer.updateLayerPositionsAfterScroll(&geometryMap, RenderLayer::IsOverflowScroll);
 }
 
 bool RenderLayerScrollableArea::mockScrollbarsControllerEnabled() const

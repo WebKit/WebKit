@@ -29,10 +29,9 @@
 
 #include "MediaPlayer.h"
 #include "MediaPlayerIdentifier.h"
+#include "MediaSampleVideoFrame.h"
 #include "NativeImage.h"
 #include "PlatformTimeRanges.h"
-#include "ProcessIdentity.h"
-#include "VideoFrame.h"
 #include <optional>
 #include <wtf/CompletionHandler.h>
 
@@ -52,7 +51,7 @@ public:
     virtual void load(const URL& url, const ContentType&, const String&) { load(url.string()); }
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const URL&, const ContentType&, MediaSourcePrivateClient&) = 0;
+    virtual void load(const URL&, const ContentType&, MediaSourcePrivateClient*) = 0;
 #endif
 #if ENABLE(MEDIA_STREAM)
     virtual void load(MediaStreamPrivate&) = 0;
@@ -182,10 +181,9 @@ public:
 #if !USE(AVFOUNDATION)
     virtual bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) { return false; }
 #endif
-    virtual RefPtr<VideoFrame> videoFrameForCurrentTime() { return nullptr; }
+    virtual std::optional<MediaSampleVideoFrame> videoFrameForCurrentTime() { return std::nullopt; }
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
     virtual DestinationColorSpace colorSpace() = 0;
-    virtual bool shouldGetNativeImageForCanvasDrawing() const { return true; }
 
     virtual void setPreload(MediaPlayer::Preload) { }
 
@@ -248,7 +246,7 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    virtual std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient&) { return nullptr; }
+    virtual std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient*) { return nullptr; }
     virtual void setCDM(LegacyCDM*) { }
     virtual void setCDMSession(LegacyCDMSession*) { }
     virtual void keyAdded() { }
@@ -326,12 +324,7 @@ public:
     virtual std::optional<VideoFrameMetadata> videoFrameMetadata() { return { }; }
     virtual void startVideoFrameMetadataGathering() { }
     virtual void stopVideoFrameMetadataGathering() { }
-
     virtual void playerContentBoxRectChanged(const LayoutRect&) { }
-
-    virtual void setResourceOwner(const ProcessIdentity&) { }
-
-    virtual String errorMessage() const { return { }; }
 };
 
 }

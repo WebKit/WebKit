@@ -1,3 +1,0 @@
-
-PASS EventSource message events are trusted
-

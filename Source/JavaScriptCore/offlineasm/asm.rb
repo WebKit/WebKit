@@ -33,7 +33,6 @@ require 'optparse'
 require "parser"
 require "self_hash"
 require "settings"
-require "shellwords"
 require "transform"
 
 class Assembler
@@ -348,7 +347,7 @@ variants = ARGV.shift.split(/[,\s]+/)
 
 $options = {}
 OptionParser.new do |opts|
-    opts.banner = "Usage: asm.rb asmFile offsetsFile outputFileName [--assembler=<ASM>] [--webkit-additions-path=<path>] [--binary-format=<format>] [--depfile=<depfile>]"
+    opts.banner = "Usage: asm.rb asmFile offsetsFile outputFileName [--assembler=<ASM>] [--webkit-additions-path=<path>] [--binary-format=<format>]"
     # This option is currently only used to specify the masm assembler
     opts.on("--assembler=[ASM]", "Specify an assembler to use.") do |assembler|
         $options[:assembler] = assembler
@@ -358,9 +357,6 @@ OptionParser.new do |opts|
     end
     opts.on("--binary-format=FORMAT", "Specify the binary format used by the target system.") do |format|
         $options[:binary_format] = format
-    end
-    opts.on("--depfile=DEPFILE", "Path to write Makefile-style discovered dependencies to.") do |path|
-        $options[:depfile] = path
     end
 end.parse!
 
@@ -388,7 +384,7 @@ inputHash =
     " " + selfHash +
     " " + Digest::SHA1.hexdigest($options.has_key?(:assembler) ? $options[:assembler] : "")
 
-if FileTest.exist?(outputFlnm) and (not $options[:depfile] or FileTest.exist?($options[:depfile]))
+if FileTest.exist? outputFlnm
     lastLine = nil
     File.open(outputFlnm, "r") {
         | file |
@@ -411,16 +407,9 @@ File.open(outputFlnm, "w") {
     $output = outp
 
     $asm = Assembler.new($output)
-
-    sources = Set.new
-    ast = parse(asmFile, $options, sources)
-    settingsCombinations = computeSettingsCombinations(ast)
     
-    if $options[:depfile]
-        depfile = File.open($options[:depfile], "w")
-        depfile.print(Shellwords.escape(outputFlnm), ": ")
-        depfile.puts(Shellwords.join(sources.sort))
-    end
+    ast = parse(asmFile, $options)
+    settingsCombinations = computeSettingsCombinations(ast)
 
     configurationList.each {
         | configuration |

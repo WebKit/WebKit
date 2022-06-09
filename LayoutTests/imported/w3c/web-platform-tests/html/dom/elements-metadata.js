@@ -35,7 +35,6 @@ var metadataElements = {
     name: "string",
     httpEquiv: {type: "string", domAttrName: "http-equiv"},
     content: "string",
-    media: "string",
 
     // Obsolete
     scheme: "string",

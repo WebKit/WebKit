@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL2)
 #include "WebGLTransformFeedback.h"
 
-#include "WebCoreOpaqueRoot.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLContextGroup.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>
@@ -96,9 +95,9 @@ bool WebGLTransformFeedback::hasEnoughBuffers(GCGLuint numRequired) const
 void WebGLTransformFeedback::addMembersToOpaqueRoots(const AbstractLocker& locker, JSC::AbstractSlotVisitor& visitor)
 {
     for (auto& buffer : m_boundIndexedTransformFeedbackBuffers)
-        addWebCoreOpaqueRoot(visitor, buffer.get());
+        visitor.addOpaqueRoot(buffer.get());
 
-    addWebCoreOpaqueRoot(visitor, m_program.get());
+    visitor.addOpaqueRoot(m_program.get());
     if (m_program)
         m_program->addMembersToOpaqueRoots(locker, visitor);
 }

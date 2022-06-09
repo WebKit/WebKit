@@ -11,35 +11,46 @@
 
 #include "util/capture/frame_capture_test_utils.h"
 
+// Build the right context header based on replay ID
+// This will expand to "angle_capture_context<#>.h"
+#include ANGLE_MACRO_STRINGIZE(ANGLE_CAPTURE_REPLAY_SAMPLE_HEADER)
+
+// Assign the context numbered functions based on GN arg selecting replay ID
+std::function<void()> SetupContextReplay = reinterpret_cast<void (*)()>(
+    ANGLE_MACRO_CONCAT(SetupContext,
+                       ANGLE_MACRO_CONCAT(ANGLE_CAPTURE_REPLAY_SAMPLE_CONTEXT_ID, Replay)));
+std::function<void(int)> ReplayContextFrame = reinterpret_cast<void (*)(int)>(
+    ANGLE_MACRO_CONCAT(ReplayContext,
+                       ANGLE_MACRO_CONCAT(ANGLE_CAPTURE_REPLAY_SAMPLE_CONTEXT_ID, Frame)));
+std::function<void()> ResetContextReplay = reinterpret_cast<void (*)()>(
+    ANGLE_MACRO_CONCAT(ResetContext,
+                       ANGLE_MACRO_CONCAT(ANGLE_CAPTURE_REPLAY_SAMPLE_CONTEXT_ID, Replay)));
+
 class CaptureReplaySample : public SampleApplication
 {
   public:
-    CaptureReplaySample(int argc, char **argv, const angle::TraceInfo &traceInfo)
+    CaptureReplaySample(int argc, char **argv)
         : SampleApplication("CaptureReplaySample",
                             argc,
                             argv,
                             3,
                             0,
-                            traceInfo.drawSurfaceWidth,
-                            traceInfo.drawSurfaceHeight),
-          mTraceInfo(traceInfo)
+                            kReplayDrawSurfaceWidth,
+                            kReplayDrawSurfaceHeight)
     {}
 
     bool initialize() override
     {
-        mTraceLibrary.reset(new angle::TraceLibrary("capture_replay_sample_trace"));
-        assert(mTraceLibrary->valid());
-
-        if (mTraceInfo.isBinaryDataCompressed)
+        // Set CWD to executable directory.
+        std::string exeDir = angle::GetExecutableDirectory();
+        if (!angle::SetCWD(exeDir.c_str()))
+            return false;
+        if (kIsBinaryDataCompressed)
         {
-            mTraceLibrary->setBinaryDataDecompressCallback(angle::DecompressBinaryData);
+            SetBinaryDataDecompressCallback(angle::DecompressBinaryData);
         }
-
-        std::stringstream binaryPathStream;
-        binaryPathStream << angle::GetExecutableDirectory() << angle::GetPathSeparator()
-                         << ANGLE_CAPTURE_REPLAY_SAMPLE_DATA_DIR;
-        mTraceLibrary->setBinaryDataDir(binaryPathStream.str().c_str());
-        mTraceLibrary->setupReplay();
+        SetBinaryDataDir(ANGLE_CAPTURE_REPLAY_SAMPLE_DATA_DIR);
+        SetupContextReplay();
         return true;
     }
 
@@ -47,14 +58,14 @@ class CaptureReplaySample : public SampleApplication
 
     void draw() override
     {
-        // Compute the current frame, looping from frameStart to frameEnd.
-        uint32_t frame = mTraceInfo.frameStart +
-                         (mCurrentFrame % ((mTraceInfo.frameEnd - mTraceInfo.frameStart) + 1));
+        // Compute the current frame, looping from kReplayFrameStart to kReplayFrameEnd.
+        uint32_t frame =
+            kReplayFrameStart + (mCurrentFrame % ((kReplayFrameEnd - kReplayFrameStart) + 1));
         if (mPreviousFrame > frame)
         {
-            mTraceLibrary->resetReplay();
+            ResetContextReplay();
         }
-        mTraceLibrary->replayFrame(frame);
+        ReplayContextFrame(frame);
         mPreviousFrame = frame;
         mCurrentFrame++;
     }
@@ -62,28 +73,10 @@ class CaptureReplaySample : public SampleApplication
   private:
     uint32_t mCurrentFrame  = 0;
     uint32_t mPreviousFrame = 0;
-    const angle::TraceInfo mTraceInfo;
-    std::unique_ptr<angle::TraceLibrary> mTraceLibrary;
 };
 
 int main(int argc, char **argv)
 {
-    std::string exeDir = angle::GetExecutableDirectory();
-
-    std::stringstream traceJsonPathStream;
-    traceJsonPathStream << exeDir << angle::GetPathSeparator()
-                        << ANGLE_CAPTURE_REPLAY_SAMPLE_DATA_DIR << angle::GetPathSeparator()
-                        << "angle_capture.json";
-
-    std::string traceJsonPath = traceJsonPathStream.str();
-
-    angle::TraceInfo traceInfo = {};
-    if (!angle::LoadTraceInfoFromJSON("capture_replay_sample_trace", traceJsonPath, &traceInfo))
-    {
-        std::cout << "Unable to load trace data: " << traceJsonPath << "\n";
-        return 1;
-    }
-
-    CaptureReplaySample app(argc, argv, traceInfo);
+    CaptureReplaySample app(argc, argv);
     return app.run();
 }

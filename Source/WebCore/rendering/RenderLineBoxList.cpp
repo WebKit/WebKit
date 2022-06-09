@@ -310,7 +310,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
     if (!container.parent() || (is<RenderBlockFlow>(container) && container.selfNeedsLayout()))
         return;
 
-    auto* inlineContainer = dynamicDowncast<RenderInline>(container);
+    RenderInline* inlineContainer = is<RenderInline>(container) ? &downcast<RenderInline>(container) : nullptr;
     LegacyInlineBox* firstBox = inlineContainer ? inlineContainer->firstLineBox() : firstLineBox();
 
     // If we have no first line box, then just bail early.
@@ -332,7 +332,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         if (current->isFloatingOrOutOfFlowPositioned())
             continue;
 
-        if (current->isReplacedOrInlineBlock()) {
+        if (current->isReplaced()) {
             if (auto wrapper = downcast<RenderBox>(*current).inlineBoxWrapper())
                 box = &wrapper->root();
         } if (is<RenderLineBreak>(*current)) {

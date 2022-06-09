@@ -10,7 +10,7 @@ depends:
 # replaced (patched) elements:
 - sdk/adwaita-icon-theme.bst
 - sdk/apitrace.bst
-- sdk/breakpad.bst
+- sdk/bubblewrap.bst
 - sdk/capnp.bst
 - sdk/cargo-c.bst
 - sdk/ccls.bst
@@ -19,7 +19,6 @@ depends:
 - sdk/eigen.bst
 - sdk/enchant-2.bst
 - sdk/ffmpeg.bst
-- sdk/gi-docgen.bst
 - sdk/glib-networking.bst
 - sdk/glib.bst
 - sdk/graphviz.bst
@@ -43,21 +42,28 @@ depends:
 - sdk/libkate.bst
 - sdk/libmanette.bst
 - sdk/libnotify.bst
+- sdk/libsecret.bst
 - sdk/libsoup3.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
-- sdk/mold.bst
 - sdk/monado.bst
 - sdk/openxr.bst
 - sdk/os-release.bst
 - sdk/patchelf.bst
+- sdk/perl-term-readkey.bst
 - sdk/psmisc.bst
 - sdk/pygls.bst
-- sdk/ruby-json.bst
+- sdk/python2-pycairo.bst
+- sdk/python2-pygobject.bst
+- sdk/python2-six.bst
+- sdk/python2-subprocess32.bst
+- sdk/python2.bst
 - sdk/ruby-highline.bst
+- sdk/ruby-json.bst
 - sdk/ruby-webrick.bst
 - sdk/sccache.bst
-- sdk/sparkle-cdm.bst
+- sdk/shared-mime-info.bst
+- sdk/subversion.bst
 - sdk/woff2.bst
 - sdk/wpebackend-fdo.bst
 - sdk/x264.bst
@@ -72,7 +78,6 @@ depends:
 - freedesktop-sdk.bst:components/at-spi2-core.bst
 - freedesktop-sdk.bst:components/atk.bst
 - freedesktop-sdk.bst:components/brotli.bst
-- freedesktop-sdk.bst:components/bubblewrap.bst
 - freedesktop-sdk.bst:components/ca-certificates.bst
 - freedesktop-sdk.bst:components/cairo.bst
 - freedesktop-sdk.bst:components/ccache.bst
@@ -201,7 +206,6 @@ depends:
 - freedesktop-sdk.bst:components/sdl2-net.bst
 - freedesktop-sdk.bst:components/sdl2-ttf.bst
 - freedesktop-sdk.bst:components/sdl2.bst
-- freedesktop-sdk.bst:components/shared-mime-info.bst
 - freedesktop-sdk.bst:components/sndfile.bst
 - freedesktop-sdk.bst:components/speex.bst
 - freedesktop-sdk.bst:components/speexdsp.bst

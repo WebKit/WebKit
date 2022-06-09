@@ -4,24 +4,44 @@
 /*---
 esid: sec-temporal.timezone.prototype.tojson
 description: toJSON() calls toString() and returns its value
-includes: [compareArray.js, temporalHelpers.js]
+includes: [compareArray.js]
 features: [Temporal]
 ---*/
 
 const actual = [];
 const expected = [
-  'get [Symbol.toPrimitive]',
-  'get toString',
+  'get timeZone[@@toPrimitive]',
+  'get timeZone.toString',
   'call timeZone.toString',
 ];
 
-const timeZone = new Temporal.TimeZone("UTC");
-TemporalHelpers.observeProperty(actual, timeZone, Symbol.toPrimitive, undefined);
-TemporalHelpers.observeProperty(actual, timeZone, "toString", function () {
-  actual.push("call timeZone.toString");
-  return "Etc/TAI";
-});
+const timeZone = new Proxy(
+  {
+    toString() {
+      actual.push(`call timeZone.toString`);
+      return 'Etc/TAI';
+    }
+  },
+  {
+    has(target, property) {
+      if (property === Symbol.toPrimitive) {
+        actual.push('has timeZone[@@toPrimitive]');
+      } else {
+        actual.push(`has timeZone.${property}`);
+      }
+      return property in target;
+    },
+    get(target, property) {
+      if (property === Symbol.toPrimitive) {
+        actual.push('get timeZone[@@toPrimitive]');
+      } else {
+        actual.push(`get timeZone.${property}`);
+      }
+      return target[property];
+    }
+  }
+);
 
-const result = timeZone.toJSON();
+const result = Temporal.TimeZone.prototype.toJSON.call(timeZone);
 assert.sameValue(result, 'Etc/TAI', 'toString');
 assert.compareArray(actual, expected);

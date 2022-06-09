@@ -35,7 +35,6 @@
 #include "Decimal.h"
 #include "DocumentInlines.h"
 #include "ElementChildIterator.h"
-#include "ElementRareData.h"
 #include "EventNames.h"
 #include "HTMLCollection.h"
 #include "HTMLInputElement.h"
@@ -76,9 +75,9 @@ static const int rangeDefaultStepBase = 0;
 static const int rangeStepScaleFactor = 1;
 static const StepRange::StepDescription rangeStepDescription { rangeDefaultStep, rangeDefaultStepBase, rangeStepScaleFactor };
 
-static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimum)
+static Decimal ensureMaximum(const Decimal& proposedValue, const Decimal& minimum, const Decimal& fallbackValue)
 {
-    return proposedValue >= minimum ? proposedValue : minimum;
+    return proposedValue >= minimum ? proposedValue : std::max(minimum, fallbackValue);
 }
 
 RangeInputType::RangeInputType(HTMLInputElement& element)
@@ -119,11 +118,11 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
 {
     ASSERT(element());
     const Decimal minimum = parseToNumber(element()->attributeWithoutSynchronization(minAttr), rangeDefaultMinimum);
-    const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum);
+    const Decimal maximum = ensureMaximum(parseToNumber(element()->attributeWithoutSynchronization(maxAttr), rangeDefaultMaximum), minimum, rangeDefaultMaximum);
 
     const AtomString& precisionValue = element()->attributeWithoutSynchronization(precisionAttr);
     if (!precisionValue.isNull()) {
-        const Decimal step = equalLettersIgnoringASCIICase(precisionValue, "float"_s) ? Decimal::nan() : 1;
+        const Decimal step = equalLettersIgnoringASCIICase(precisionValue, "float") ? Decimal::nan() : 1;
         return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
     }
 
@@ -214,29 +213,31 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
 
     // FIXME: We can't use stepUp() for the step value "any". So, we increase
     // or decrease the value by 1/100 of the value range. Is it reasonable?
-    const Decimal step = equalLettersIgnoringASCIICase(element()->attributeWithoutSynchronization(stepAttr), "any"_s) ? (stepRange.maximum() - stepRange.minimum()) / 100 : stepRange.step();
+    const Decimal step = equalLettersIgnoringASCIICase(element()->attributeWithoutSynchronization(stepAttr), "any") ? (stepRange.maximum() - stepRange.minimum()) / 100 : stepRange.step();
     const Decimal bigStep = std::max((stepRange.maximum() - stepRange.minimum()) / 10, step);
 
     bool isVertical = false;
-    if (auto* renderer = element()->renderer())
-        isVertical = renderer->style().effectiveAppearance() == SliderVerticalPart;
+    if (auto* renderer = element()->renderer()) {
+        ControlPart part = renderer->style().effectiveAppearance();
+        isVertical = part == SliderVerticalPart || part == MediaVolumeSliderPart;
+    }
 
     Decimal newValue;
-    if (key == "Up"_s)
+    if (key == "Up")
         newValue = current + step;
-    else if (key == "Down"_s)
+    else if (key == "Down")
         newValue = current - step;
-    else if (key == "Left"_s)
+    else if (key == "Left")
         newValue = isVertical ? current + step : current - step;
-    else if (key == "Right"_s)
+    else if (key == "Right")
         newValue = isVertical ? current - step : current + step;
-    else if (key == "PageUp"_s)
+    else if (key == "PageUp")
         newValue = current + bigStep;
-    else if (key == "PageDown"_s)
+    else if (key == "PageDown")
         newValue = current - bigStep;
-    else if (key == "Home"_s)
+    else if (key == "Home")
         newValue = isVertical ? stepRange.maximum() : stepRange.minimum();
-    else if (key == "End"_s)
+    else if (key == "End")
         newValue = isVertical ? stepRange.minimum() : stepRange.maximum();
     else
         return ShouldCallBaseEventHandler::Yes; // Did not match any key binding.
@@ -344,9 +345,9 @@ void RangeInputType::attributeChanged(const QualifiedName& name)
     InputType::attributeChanged(name);
 }
 
-void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
+void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
-    InputType::setValue(value, valueChanged, eventBehavior, selection);
+    InputType::setValue(value, valueChanged, eventBehavior);
 
     if (!valueChanged)
         return;

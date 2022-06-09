@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,7 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
-import subprocess
 import sys
 import time
 
@@ -30,9 +29,8 @@ from .command import Command
 from .branch import Branch
 from .pull_request import PullRequest
 from argparse import Namespace
-from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, string_utils, Terminal
-from webkitscmpy import Commit, local, log, remote
+from webkitscmpy import local, log, remote
 
 
 class Land(Command):
@@ -42,18 +40,8 @@ class Land(Command):
 
     OOPS_RE = re.compile(r'\(O+P+S!*\)')
     REVIEWED_BY_RE = re.compile('Reviewed by (?P<approver>.+)')
-    GIT_SVN_COMMITTED_RE = re.compile(r'Committed r(?P<revision>\d+)')
     REMOTE = 'origin'
     MIRROR_TIMEOUT = 60
-
-    @classmethod
-    def revert_branch(cls, repository, remote, branch):
-        if run(
-            [repository.executable(), 'branch', '-f', branch, 'remotes/{}/{}'.format(remote, branch)],
-            cwd=repository.root_path,
-        ).returncode:
-            return False
-        return True
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -76,10 +64,6 @@ class Land(Command):
 
     @classmethod
     def main(cls, args, repository, identifier_template=None, canonical_svn=False, **kwargs):
-        if not repository:
-            sys.stderr.write('No repository provided\n')
-            return 1
-
         if not repository.path:
             sys.stderr.write("Cannot 'land' change in remote repository\n")
             return 1
@@ -158,12 +142,6 @@ class Land(Command):
                     sys.stderr.write("Found '(OOPS!)' in commit diff, please resolve before committing\n")
                     return 1
 
-        issue = None
-        for line in commits[0].message.split() if commits[0] and commits[0].message else []:
-            issue = Tracker.from_string(line)
-            if issue:
-                break
-
         target = pull_request.base if pull_request else branch_point.branch
         log.info("Rebasing '{}' from '{}' to '{}'...".format(source_branch, branch_point.branch, target))
         if repository.fetch(branch=target, remote=cls.REMOTE):
@@ -176,7 +154,7 @@ class Land(Command):
 
         if run([repository.executable(), 'branch', '-f', target, source_branch], cwd=repository.root_path).returncode:
             sys.stderr.write("Failed to move '{}' ref\n".format(target))
-            return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
+            return 1
 
         if identifier_template:
             repository.checkout(target)
@@ -184,10 +162,9 @@ class Land(Command):
                 identifier=True, remote=cls.REMOTE, number=len(commits),
             ), repository, identifier_template=identifier_template):
                 sys.stderr.write("Failed to embed identifiers to '{}'\n".format(target))
-                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
+                return 1
             if run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to move '{}' ref to the canonicalized head of '{}'\n".format(source, target))
-                cls.revert_branch(repository, cls.REMOTE, target)
                 return -1
 
         # Need to compute the remote source
@@ -196,54 +173,27 @@ class Land(Command):
         if canonical_svn:
             if run([repository.executable(), 'svn', 'fetch'], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to update subversion refs\n".format(target))
-                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
-
-            dcommit = run(
-                [repository.executable(), 'svn', 'dcommit'],
-                cwd=repository.root_path,
-                stdout=subprocess.PIPE,
-                encoding='utf-8',
-            )
-            if dcommit.returncode:
-                sys.stderr.write(dcommit.stdout)
-                sys.stderr.write(dcommit.stderr)
+                return 1
+            if run([repository.executable(), 'svn', 'dcommit'], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to commit '{}' to Subversion remote\n".format(target))
-                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
-            revisions = []
-            for line in dcommit.stdout.splitlines():
-                match = cls.GIT_SVN_COMMITTED_RE.match(line)
-                if not match:
-                    continue
-                revisions.append(int(match.group('revision')))
-            if not revisions:
-                sys.stderr.write(dcommit.stdout)
-                sys.stderr.write(dcommit.stderr)
-                sys.stderr.write("Failed to find revision in '{}' when committing to Subversion remote\n".format(target))
-                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
-
+                return 1
             run([repository.executable(), 'reset', 'HEAD~{}'.format(len(commits)), '--hard'], cwd=repository.root_path)
 
             # Verify the mirror processed our change
             started = time.time()
-            latest = repository.find('HEAD', include_log=True, include_identifier=False)
-            while latest.revision < revisions[-1]:
+            original = repository.find('HEAD', include_log=False, include_identifier=False)
+            latest = original
+            while original.hash == latest.hash:
                 if time.time() - started > cls.MIRROR_TIMEOUT:
                     sys.stderr.write("Timed out waiting for the git-svn mirror, '{}' landed but not closed\n".format(pull_request or source_branch))
                     return 1
                 log.info('    Verifying mirror processesed change')
                 time.sleep(5)
                 run([repository.executable(), 'pull'], cwd=repository.root_path)
-                latest = repository.find('HEAD', include_log=True, include_identifier=False)
-            if repository.cache and target in repository.cache._last_populated:
-                del repository.cache._last_populated[target]
-
-            commits = []
-            for revision in revisions:
-                commits.append(repository.commit(revision=revision, include_log=True))
-            commit = commits[-1]
-
+                latest = repository.find('HEAD', include_log=False, include_identifier=False)
             if pull_request:
                 run([repository.executable(), 'branch', '-f', source_branch, target], cwd=repository.root_path)
+                commits = list(repository.commits(begin=dict(argument='{}~{}'.format(source_branch, len(commits))), end=dict(branch=source_branch)))
                 run([repository.executable(), 'push', '-f', remote_target, source_branch], cwd=repository.root_path)
                 rmt.pull_requests.update(
                     pull_request=pull_request,
@@ -268,27 +218,20 @@ class Land(Command):
 
             if run([repository.executable(), 'push', cls.REMOTE, target], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to push '{}' to '{}'\n".format(target, cls.REMOTE))
-                return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
+                return 1
             repository.checkout(target)
-            commit = repository.commit(branch=target, include_log=False)
 
+        commit = repository.commit(branch=target, include_log=False)
         if identifier_template and commit.identifier:
-            land_message = 'Landed {} ({})!'.format(identifier_template.format(commit).split(': ')[-1], commit.hash[:Commit.HASH_LABEL_SIZE])
+            land_message = 'Landed {} ({})!'.format(identifier_template.format(commit).split(': ')[-1], commit.hash)
         else:
-            land_message = 'Landed {}!'.format(commit.hash[:Commit.HASH_LABEL_SIZE])
+            land_message = 'Landed {}!'.format(commit.hash)
         print(land_message)
 
         if pull_request:
             pull_request.comment(land_message)
-        if issue:
-            if canonical_svn and commit.revision:
-                land_message = land_message.replace(commit.hash[:Commit.HASH_LABEL_SIZE], 'r{}'.format(commit.revision))
-            issue.close(why=land_message)
 
         if args.defaults or Terminal.choose("Delete branch '{}'?".format(source_branch), default='Yes') == 'Yes':
-            regex = re.compile(r'^{}-(?P<count>\d+)$'.format(source_branch))
-            for to_delete in repository.branches_for(remote=remote_target):
-                if to_delete == source_branch or regex.match(to_delete) and remote_target == 'fork':
-                    run([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path)
-                    run([repository.executable(), 'push', remote_target, '--delete', to_delete], cwd=repository.root_path)
+            run([repository.executable(), 'branch', '-D', source_branch], cwd=repository.root_path)
+            run([repository.executable(), 'push', remote_target, '--delete', source_branch], cwd=repository.root_path)
         return 0

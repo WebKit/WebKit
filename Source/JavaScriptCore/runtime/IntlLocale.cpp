@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlLocale::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlLocale) };
+const ClassInfo IntlLocale::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlLocale) };
 
 namespace IntlLocaleInternal {
 static constexpr bool verbose = false;
@@ -66,7 +66,7 @@ IntlLocale::IntlLocale(VM& vm, Structure* structure)
 void IntlLocale::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 template<typename Visitor>
@@ -214,11 +214,11 @@ String IntlLocale::keywordValue(ASCIILiteral key, bool isBoolean) const
     }
     ASSERT(U_SUCCESS(status));
     if (isBoolean)
-        return String::fromLatin1(buffer.data());
+        return String(buffer.data());
     const char* value = uloc_toUnicodeLocaleType(key.characters(), buffer.data());
     if (!value)
         return nullString();
-    auto result = String::fromLatin1(value);
+    String result(value);
     if (result == "true"_s)
         return emptyString();
     return result;
@@ -230,7 +230,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String tag = tagValue.inherits<IntlLocale>() ? jsCast<IntlLocale*>(tagValue)->toString() : tagValue.toWTFString(globalObject);
+    String tag = tagValue.inherits<IntlLocale>(vm) ? jsCast<IntlLocale*>(tagValue)->toString() : tagValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
     scope.release();
     initializeLocale(globalObject, tag, optionsValue);
@@ -251,21 +251,21 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         return;
     }
 
-    String language = intlStringOption(globalObject, options, vm.propertyNames->language, { }, { }, { });
+    String language = intlStringOption(globalObject, options, vm.propertyNames->language, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!language.isNull() && !isUnicodeLanguageSubtag(language)) {
         throwRangeError(globalObject, scope, "language is not a well-formed language value"_s);
         return;
     }
 
-    String script = intlStringOption(globalObject, options, vm.propertyNames->script, { }, { }, { });
+    String script = intlStringOption(globalObject, options, vm.propertyNames->script, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!script.isNull() && !isUnicodeScriptSubtag(script)) {
         throwRangeError(globalObject, scope, "script is not a well-formed script value"_s);
         return;
     }
 
-    String region = intlStringOption(globalObject, options, vm.propertyNames->region, { }, { }, { });
+    String region = intlStringOption(globalObject, options, vm.propertyNames->region, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!region.isNull() && !isUnicodeRegionSubtag(region)) {
         throwRangeError(globalObject, scope, "region is not a well-formed region value"_s);
@@ -275,7 +275,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     if (!language.isNull() || !script.isNull() || !region.isNull())
         localeID.overrideLanguageScriptRegion(language, script, region);
 
-    String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, { }, { });
+    String calendar = intlStringOption(globalObject, options, vm.propertyNames->calendar, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!calendar.isNull()) {
         if (!isUnicodeLocaleIdentifierType(calendar)) {
@@ -285,7 +285,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         localeID.setKeywordValue("calendar"_s, calendar);
     }
 
-    String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, { }, { });
+    String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!collation.isNull()) {
         if (!isUnicodeLocaleIdentifierType(collation)) {
@@ -295,12 +295,12 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
         localeID.setKeywordValue("collation"_s, collation);
     }
 
-    String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11"_s, "h12"_s, "h23"_s, "h24"_s }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\""_s, { });
+    String hourCycle = intlStringOption(globalObject, options, vm.propertyNames->hourCycle, { "h11", "h12", "h23", "h24" }, "hourCycle must be \"h11\", \"h12\", \"h23\", or \"h24\"", nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!hourCycle.isNull())
         localeID.setKeywordValue("hours"_s, hourCycle);
 
-    String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper"_s, "lower"_s, "false"_s }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, { });
+    String caseFirst = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!caseFirst.isNull())
         localeID.setKeywordValue("colcasefirst"_s, caseFirst);
@@ -308,9 +308,9 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     TriState numeric = intlBooleanOption(globalObject, options, vm.propertyNames->numeric);
     RETURN_IF_EXCEPTION(scope, void());
     if (numeric != TriState::Indeterminate)
-        localeID.setKeywordValue("colnumeric"_s, numeric == TriState::True ? "yes"_s : "no"_s);
+        localeID.setKeywordValue("colnumeric"_s, numeric == TriState::True ? "yes" : "no");
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
+    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!numberingSystem.isNull()) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
@@ -691,7 +691,7 @@ JSArray* IntlLocale::numberingSystems(JSGlobalObject* globalObject)
         throwTypeError(globalObject, scope, "invalid locale"_s);
         return nullptr;
     }
-    elements.append(String::fromLatin1(unumsys_getName(numberingSystem.get())));
+    elements.append(unumsys_getName(numberingSystem.get()));
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
@@ -743,21 +743,21 @@ JSObject* IntlLocale::textInfo(JSGlobalObject* globalObject)
     switch (layout) {
     default:
     case ULOC_LAYOUT_LTR:
-        layoutString = jsNontrivialString(vm, "ltr"_s);
+        layoutString = jsString(vm, "ltr"_s);
         break;
     case ULOC_LAYOUT_RTL:
-        layoutString = jsNontrivialString(vm, "rtl"_s);
+        layoutString = jsString(vm, "rtl"_s);
         break;
     case ULOC_LAYOUT_TTB:
-        layoutString = jsNontrivialString(vm, "ttb"_s);
+        layoutString = jsString(vm, "ttb"_s);
         break;
     case ULOC_LAYOUT_BTT:
-        layoutString = jsNontrivialString(vm, "btt"_s);
+        layoutString = jsString(vm, "btt"_s);
         break;
     }
 
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, Identifier::fromString(vm, "direction"_s), layoutString);
+    result->putDirect(vm, Identifier::fromString(vm, "direction"), layoutString);
     return result;
 }
 
@@ -840,9 +840,9 @@ JSObject* IntlLocale::weekInfo(JSGlobalObject* globalObject)
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, Identifier::fromString(vm, "firstDay"_s), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(firstDayOfWeek)));
-    result->putDirect(vm, Identifier::fromString(vm, "weekend"_s), weekendArray);
-    result->putDirect(vm, Identifier::fromString(vm, "minimalDays"_s), jsNumber(minimalDays));
+    result->putDirect(vm, Identifier::fromString(vm, "firstDay"), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(firstDayOfWeek)));
+    result->putDirect(vm, Identifier::fromString(vm, "weekend"), weekendArray);
+    result->putDirect(vm, Identifier::fromString(vm, "minimalDays"), jsNumber(minimalDays));
     return result;
 }
 

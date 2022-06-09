@@ -36,7 +36,7 @@ async function test() {
     }
     gc();
 
-    if (weakRefs.find((weak) => weak.deref() === undefined) === undefined)
+    if (weakRefs.find((weak) => weak.deref() === null) === undefined)
         throw new Error("No weak ref value was collected");
     asyncTestPassed();
 }

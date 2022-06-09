@@ -98,7 +98,7 @@ protected:
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
-    bool willRespondToMouseClickEventsWithEditability(Editability) const override;
+    bool willRespondToMouseClickEvents() override;
     void defaultEventHandler(Event&) override;
 
 private:

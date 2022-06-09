@@ -69,7 +69,7 @@ Exception convertToExceptionAndLog(ScriptExecutionContext* context, Error error)
 
 static inline bool matchURLs(const ResourceRequest& request, const URL& cachedURL, const CacheQueryOptions& options)
 {
-    ASSERT(options.ignoreMethod || request.httpMethod() == "GET"_s);
+    ASSERT(options.ignoreMethod || request.httpMethod() == "GET");
 
     URL requestURL = request.url();
     URL cachedRequestURL = cachedURL;
@@ -98,11 +98,12 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
         if (isVarying)
             return;
         auto nameView = stripLeadingAndTrailingHTTPSpaces(view);
-        if (nameView == "*"_s) {
+        if (nameView == "*") {
             isVarying = true;
             return;
         }
-        isVarying = cachedRequest.httpHeaderField(nameView) != request.httpHeaderField(nameView);
+        auto name = nameView.toStringWithoutCopying();
+        isVarying = cachedRequest.httpHeaderField(name) != request.httpHeaderField(name);
     });
 
     return !isVarying;
@@ -151,6 +152,16 @@ ResponseBody copyResponseBody(const ResponseBody& body)
 Record Record::copy() const
 {
     return Record { identifier, updateResponseCounter, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody), responseBodySize };
+}
+
+static inline CacheInfo isolateCacheInfo(const CacheInfo& info)
+{
+    return CacheInfo { info.identifier, info.name.isolatedCopy() };
+}
+
+CacheInfos CacheInfos::isolatedCopy()
+{
+    return { WTF::map(infos, isolateCacheInfo), updateCounter };
 }
 
 } // namespace DOMCacheEngine

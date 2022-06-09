@@ -56,7 +56,6 @@ private:
 
     // ModelPlayer overrides.
     void load(Model&, LayoutSize) override;
-    void sizeDidChange(LayoutSize) override;
     CALayer *layer() override;
     void enterFullscreen() override;
     void handleMouseDown(const LayoutPoint&, MonotonicTime) override;

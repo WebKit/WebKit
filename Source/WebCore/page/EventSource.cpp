@@ -95,10 +95,9 @@ void EventSource::connect()
     ASSERT(!m_requestInFlight);
 
     ResourceRequest request { m_url };
-    request.setRequester(ResourceRequest::Requester::EventSource);
-    request.setHTTPMethod("GET"_s);
-    request.setHTTPHeaderField(HTTPHeaderName::Accept, "text/event-stream"_s);
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache"_s);
+    request.setHTTPMethod("GET");
+    request.setHTTPHeaderField(HTTPHeaderName::Accept, "text/event-stream");
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");
     if (!m_lastEventId.isEmpty())
         request.setHTTPHeaderField(HTTPHeaderName::LastEventID, m_lastEventId);
 
@@ -171,7 +170,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     if (response.httpStatusCode() != 200)
         return false;
 
-    if (!equalLettersIgnoringASCIICase(response.mimeType(), "text/event-stream"_s)) {
+    if (!equalLettersIgnoringASCIICase(response.mimeType(), "text/event-stream")) {
         auto message = makeString("EventSource's response has a MIME type (\"", response.mimeType(), "\") that is not \"text/event-stream\". Aborting the connection.");
         // FIXME: Console message would be better with a source code location; where would we get that?
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, WTFMove(message));
@@ -181,7 +180,7 @@ bool EventSource::responseIsValid(const ResourceResponse& response) const
     // The specification states we should always decode as UTF-8. If there is a provided charset and it is not UTF-8, then log a warning
     // message but keep going anyway.
     auto& charset = response.textEncodingName();
-    if (!charset.isEmpty() && !equalLettersIgnoringASCIICase(charset, "utf-8"_s)) {
+    if (!charset.isEmpty() && !equalLettersIgnoringASCIICase(charset, "utf-8")) {
         auto message = makeString("EventSource's response has a charset (\"", charset, "\") that is not UTF-8. The response will be decoded as UTF-8.");
         // FIXME: Console message would be better with a source code location; where would we get that?
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, WTFMove(message));
@@ -222,7 +221,7 @@ void EventSource::didReceiveData(const SharedBuffer& buffer)
     parseEventStream();
 }
 
-void EventSource::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoadMetrics&)
+void EventSource::didFinishLoading(ResourceLoaderIdentifier)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);
@@ -292,7 +291,7 @@ bool EventSource::virtualHasPendingActivity() const
 void EventSource::doExplicitLoadCancellation()
 {
     ASSERT(m_requestInFlight);
-    SetForScope explicitLoadCancellation(m_isDoingExplicitCancellation, true);
+    SetForScope<bool> explicitLoadCancellation(m_isDoingExplicitCancellation, true);
     m_loader->cancel();
 }
 
@@ -368,17 +367,17 @@ void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned
     position += step;
     unsigned valueLength = lineLength - step;
 
-    if (field == "data"_s) {
+    if (field == "data") {
         m_data.append(&m_receiveBuffer[position], valueLength);
         m_data.append('\n');
-    } else if (field == "event"_s)
+    } else if (field == "event")
         m_eventName = { &m_receiveBuffer[position], valueLength };
-    else if (field == "id"_s) {
+    else if (field == "id") {
         StringView parsedEventId = { &m_receiveBuffer[position], valueLength };
         constexpr UChar nullCharacter = '\0';
         if (!parsedEventId.contains(nullCharacter))
             m_currentlyParsedEventId = parsedEventId.toString();
-    } else if (field == "retry"_s) {
+    } else if (field == "retry") {
         if (!valueLength)
             m_reconnectDelay = defaultReconnectDelay;
         else {
@@ -432,13 +431,14 @@ void EventSource::dispatchMessageEvent()
 
     auto& name = m_eventName.isEmpty() ? eventNames().messageEvent : m_eventName;
 
-    ASSERT(!m_data.isEmpty());
-
     // Omit the trailing "\n" character.
-    String data(m_data.data(), m_data.size() - 1);
+    ASSERT(!m_data.isEmpty());
+    unsigned size = m_data.size() - 1;
+    auto data = SerializedScriptValue::create({ m_data.data(), size });
+    RELEASE_ASSERT(data);
     m_data = { };
 
-    dispatchEvent(MessageEvent::create(name, WTFMove(data), m_eventStreamOrigin, m_lastEventId));
+    dispatchEvent(MessageEvent::create(name, data.releaseNonNull(), m_eventStreamOrigin, m_lastEventId));
 }
 
 } // namespace WebCore

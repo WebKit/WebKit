@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,18 +27,29 @@
 
 namespace WebCore {
 
-Ref<SourceAlpha> SourceAlpha::create(const DestinationColorSpace& colorSpace)
+Ref<SourceAlpha> SourceAlpha::create()
 {
-    return adoptRef(*new SourceAlpha(colorSpace));
+    return adoptRef(*new SourceAlpha());
 }
 
-SourceAlpha::SourceAlpha(const DestinationColorSpace& colorSpace)
+Ref<SourceAlpha> SourceAlpha::create(FilterEffect& sourceEffect)
+{
+    return adoptRef(*new SourceAlpha(sourceEffect));
+}
+
+SourceAlpha::SourceAlpha()
     : FilterEffect(FilterEffect::Type::SourceAlpha)
 {
-    setOperatingColorSpace(colorSpace);
 }
 
-std::unique_ptr<FilterEffectApplier> SourceAlpha::createSoftwareApplier() const
+SourceAlpha::SourceAlpha(FilterEffect& sourceEffect)
+    : FilterEffect(FilterEffect::Type::SourceAlpha)
+{
+    setOperatingColorSpace(sourceEffect.operatingColorSpace());
+    inputEffects().append(sourceEffect);
+}
+
+std::unique_ptr<FilterEffectApplier> SourceAlpha::createApplier(const Filter&) const
 {
     return FilterEffectApplier::create<SourceAlphaSoftwareApplier>(*this);
 }

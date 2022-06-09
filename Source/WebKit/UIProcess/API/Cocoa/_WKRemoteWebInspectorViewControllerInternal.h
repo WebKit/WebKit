@@ -24,7 +24,6 @@
  */
 
 #import "_WKRemoteWebInspectorViewControllerPrivate.h"
-#import <wtf/RefPtr.h>
 
 #if !TARGET_OS_IPHONE
 

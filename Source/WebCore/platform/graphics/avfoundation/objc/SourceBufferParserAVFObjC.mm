@@ -57,12 +57,6 @@
 #pragma mark -
 #pragma mark WebAVStreamDataParserListener
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-@interface AVContentKeySpecifier (WebCorePrivate)
-@property (readonly) NSData *initializationData;
-@end
-#endif
-
 @interface WebAVStreamDataParserListener : NSObject<AVStreamDataParserOutputHandling> {
     WebCore::SourceBufferParserAVFObjC* _parent;
     AVStreamDataParser* _parser;
@@ -139,22 +133,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
     _parent->didProvideContentKeyRequestInitializationDataForTrackID(initData, trackID);
 }
-
 @end
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-@interface WebAVStreamDataParserWithKeySpecifierListener : WebAVStreamDataParserListener
-@end
-
-@implementation WebAVStreamDataParserWithKeySpecifierListener
-- (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeySpecifier:(AVContentKeySpecifier *)keySpecifier forTrackID:(CMPersistentTrackID)trackID
-{
-    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
-    if ([keySpecifier respondsToSelector:@selector(initializationData)])
-        _parent->didProvideContentKeyRequestSpecifierForTrackID(keySpecifier.initializationData, trackID);
-}
-@end
-#endif
 
 namespace WebCore {
 
@@ -177,7 +156,7 @@ public:
         // which is presumably on the main thread.
         ASSERT(isMainThread());
         if (!m_codec)
-            m_codec = AtomString::fromLatin1(m_originalCodec.string().data());
+            m_codec = AtomString(reinterpret_cast<const LChar*>(&m_originalCodec), 4);
         return *m_codec;
     }
 
@@ -193,11 +172,11 @@ private:
             m_originalCodec = PAL::softLink_CoreMedia_CMFormatDescriptionGetMediaSubType(description);
             CFStringRef originalFormatKey = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() ? PAL::get_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() : CFSTR("CommonEncryptionOriginalFormat");
             if (auto originalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, originalFormatKey)))
-                CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &m_originalCodec.value);
+                CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &m_originalCodec);
         }
     }
 
-    FourCC m_originalCodec;
+    FourCharCode m_originalCodec;
     mutable std::optional<AtomString> m_codec;
     bool m_isVideo;
     bool m_isAudio;
@@ -221,13 +200,8 @@ MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported
 
 SourceBufferParserAVFObjC::SourceBufferParserAVFObjC()
     : m_parser(adoptNS([PAL::allocAVStreamDataParserInstance() init]))
+    , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]))
 {
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    if (MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled())
-        m_delegate = adoptNS([[WebAVStreamDataParserWithKeySpecifierListener alloc] initWithParser:m_parser.get() parent:this]);
-    else
-#endif
-        m_delegate = adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]);
 }
 
 SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()
@@ -307,14 +281,16 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 
             if ([track hasMediaCharacteristic:AVMediaCharacteristicVisual]) {
                 SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
-                info.track = VideoTrackPrivateMediaSourceAVFObjC::create(track);
+                auto videoTrack = VideoTrackPrivateMediaSourceAVFObjC::create(track);
+                info.track = videoTrack.copyRef();
                 info.description = MediaDescriptionAVFObjC::create(track);
-                segment.videoTracks.append(WTFMove(info));
+                segment.videoTracks.append(info);
             } else if ([track hasMediaCharacteristic:AVMediaCharacteristicAudible]) {
                 SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
-                info.track = AudioTrackPrivateMediaSourceAVFObjC::create(track);
+                auto audioTrack = AudioTrackPrivateMediaSourceAVFObjC::create(track);
+                info.track = audioTrack.copyRef();
                 info.description = MediaDescriptionAVFObjC::create(track);
-                segment.audioTracks.append(WTFMove(info));
+                segment.audioTracks.append(info);
             }
 
             // FIXME(125161)    : Add TextTrack support
@@ -358,14 +334,10 @@ void SourceBufferParserAVFObjC::willProvideContentKeyRequestInitializationDataFo
 
 void SourceBufferParserAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID(NSData* nsInitData, uint64_t trackID)
 {
-    m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(SharedBuffer::create(nsInitData), trackID);
-}
+    auto initData = Uint8Array::create(nsInitData.length);
+    [nsInitData getBytes:initData->data() length:initData->length()];
 
-void SourceBufferParserAVFObjC::didProvideContentKeyRequestSpecifierForTrackID(NSData* nsInitData, uint64_t trackID)
-{
-    m_callOnClientThreadCallback([this, strongThis = Ref { *this }, nsInitData = retainPtr(nsInitData), trackID] {
-        m_didProvideContentKeyRequestIdentifierForTrackIDCallback(SharedBuffer::create(nsInitData.get()), trackID);
-    });
+    m_didProvideContentKeyRequestInitializationDataForTrackIDCallback(WTFMove(initData), trackID);
 }
 
 }

@@ -46,13 +46,13 @@ WebError::WebError(const ResourceError& error, IPropertyBag* userInfo)
     , m_error(error)
 {
     gClassCount++;
-    gClassNameCount().add("WebError"_s);
+    gClassNameCount().add("WebError");
 }
 
 WebError::~WebError()
 {
     gClassCount--;
-    gClassNameCount().remove("WebError"_s);
+    gClassNameCount().remove("WebError");
 }
 
 WebError* WebError::createInstance(const ResourceError& error, IPropertyBag* userInfo)
@@ -107,7 +107,7 @@ ULONG WebError::Release()
 
 HRESULT WebError::init(_In_ BSTR domain, int code, _In_ BSTR url)
 {
-    m_error = ResourceError(String(domain, SysStringLen(domain)), code, URL { String(url, SysStringLen(url)) }, String());
+    m_error = ResourceError(String(domain, SysStringLen(domain)), code, URL(URL(), String(url, SysStringLen(url))), String());
     return S_OK;
 }
   

@@ -29,6 +29,7 @@
     EnabledBySetting=ContactPickerAPIEnabled,
     Exposed=Window,
     GenerateIsReachable=ReachableFromNavigator,
+    ImplementationLacksVTable,
     SecureContext
 ] interface ContactsManager {
     Promise<sequence<ContactProperty>> getProperties();

@@ -197,7 +197,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (!srcList.length())
         return;
 
-    SetForScope creatingFont(m_creatingFont, true);
+    SetForScope<bool> creatingFont(m_creatingFont, true);
     auto fontFace = CSSFontFace::create(*this, &fontFaceRule);
 
     if (!fontFace->setFamilies(*fontFamily))
@@ -355,7 +355,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
 
     if (resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    auto* document = dynamicDowncast<Document>(m_context.get());
+    Document* document = is<Document>(m_context) ? &downcast<Document>(*m_context) : nullptr;
     auto* face = m_cssFontFaceSet->fontFace(fontDescriptionForLookup->fontSelectionRequest(), familyForLookup);
     if (face) {
         if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())

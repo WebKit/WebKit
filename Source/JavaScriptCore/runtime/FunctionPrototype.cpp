@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionPrototype);
 
-const ClassInfo FunctionPrototype::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionPrototype) };
+const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(callFunctionPrototype);
@@ -55,7 +55,7 @@ FunctionPrototype::FunctionPrototype(VM& vm, Structure* structure)
 void FunctionPrototype::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm, 0, name, PropertyAdditionMode::WithoutStructureTransition);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction, JSFunction** hasInstanceSymbolFunction)
@@ -79,23 +79,23 @@ JSC_DEFINE_HOST_FUNCTION(functionProtoFuncToString, (JSGlobalObject* globalObjec
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    if (thisValue.inherits<JSFunction>()) {
+    if (thisValue.inherits<JSFunction>(vm)) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
-        Integrity::auditStructureID(function->structureID());
+        Integrity::auditStructureID(vm, function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(function->toString(globalObject)));
     }
 
-    if (thisValue.inherits<InternalFunction>()) {
+    if (thisValue.inherits<InternalFunction>(vm)) {
         InternalFunction* function = jsCast<InternalFunction*>(thisValue);
-        Integrity::auditStructureID(function->structureID());
+        Integrity::auditStructureID(vm, function->structureID());
         RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", function->name(), "() {\n    [native code]\n}")));
     }
 
     if (thisValue.isObject()) {
         JSObject* object = asObject(thisValue);
-        Integrity::auditStructureID(object->structureID());
-        if (object->isCallable())
-            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", object->classInfo()->className, "() {\n    [native code]\n}")));
+        Integrity::auditStructureID(vm, object->structureID());
+        if (object->isCallable(vm))
+            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "function ", object->classInfo(vm)->className, "() {\n    [native code]\n}")));
     }
 
     return throwVMTypeError(globalObject, scope);
@@ -122,17 +122,17 @@ public:
 
     JSValue result() const { return m_result; }
 
-    IterationStatus operator()(StackVisitor& visitor) const
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!visitor->callee().isCell())
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
 
         JSCell* callee = visitor->callee().asCell();
         if (callee != m_targetCallee)
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
 
         m_result = JSValue(visitor->createArguments(m_vm));
-        return IterationStatus::Done;
+        return StackVisitor::Done;
     }
 
 private:
@@ -155,7 +155,7 @@ JSC_DEFINE_CUSTOM_GETTER(argumentsGetter, (JSGlobalObject* globalObject, Encoded
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicCast<JSFunction*>(vm, JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         return throwVMTypeError(globalObject, scope, RestrictedPropertyAccessError);
 
@@ -174,28 +174,28 @@ public:
 
     JSValue result() const { return m_result; }
 
-    IterationStatus operator()(StackVisitor& visitor) const
+    StackVisitor::Status operator()(StackVisitor& visitor) const
     {
         if (!visitor->callee().isCell())
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
 
         JSCell* callee = visitor->callee().asCell();
 
-        if (callee && (callee->inherits<JSBoundFunction>() || callee->inherits<JSRemoteFunction>() || callee->type() == ProxyObjectType))
-            return IterationStatus::Continue;
+        if (callee && (callee->inherits<JSBoundFunction>(callee->vm()) || callee->type() == ProxyObjectType))
+            return StackVisitor::Continue;
 
         if (!m_hasFoundFrame && callee != m_targetCallee)
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
 
         m_hasFoundFrame = true;
         if (!m_hasSkippedToCallerFrame) {
             m_hasSkippedToCallerFrame = true;
-            return IterationStatus::Continue;
+            return StackVisitor::Continue;
         }
 
         if (callee)
             m_result = callee;
-        return IterationStatus::Done;
+        return StackVisitor::Done;
     }
 
 private:
@@ -219,7 +219,7 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicCast<JSFunction*>(vm, JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         return throwVMTypeError(globalObject, scope, RestrictedPropertyAccessError);
 
@@ -228,7 +228,7 @@ JSC_DEFINE_CUSTOM_GETTER(callerGetter, (JSGlobalObject* globalObject, EncodedJSV
         return JSValue::encode(jsNull());
 
     // 11. If caller is not an ECMAScript function object, return null.
-    JSFunction* function = jsDynamicCast<JSFunction*>(caller);
+    JSFunction* function = jsDynamicCast<JSFunction*>(vm, caller);
     if (!function || function->isHostOrBuiltinFunction())
         return JSValue::encode(jsNull());
 
@@ -251,7 +251,7 @@ JSC_DEFINE_CUSTOM_SETTER(callerAndArgumentsSetter, (JSGlobalObject* globalObject
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSFunction* thisObj = jsDynamicCast<JSFunction*>(JSValue::decode(thisValue));
+    JSFunction* thisObj = jsDynamicCast<JSFunction*>(vm, JSValue::decode(thisValue));
     if (!thisObj || !isAllowedReceiverFunctionForCallerAndArguments(thisObj))
         throwTypeError(globalObject, scope, RestrictedPropertyAccessError);
 

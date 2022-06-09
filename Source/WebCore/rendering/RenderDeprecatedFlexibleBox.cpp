@@ -179,17 +179,9 @@ static LayoutUnit contentHeightForChild(RenderBox* child)
 void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    if (oldStyle) {
-        auto hadLineClamp = !oldStyle->lineClamp().isNone();
-        auto hasLineClamp = !newStyle.lineClamp().isNone(); 
-        if (hasLineClamp != hadLineClamp) {
-            for (auto& child : childrenOfType<RenderBlockFlow>(*this))
-                child.invalidateLineLayoutPath();
+    if (oldStyle && !oldStyle->lineClamp().isNone() && newStyle.lineClamp().isNone())
+        clearLineClamp();
 
-            if (hadLineClamp)
-                clearLineClamp();
-        }
-    }
     RenderBlock::styleWillChange(diff, newStyle);
 }
 
@@ -201,7 +193,7 @@ void RenderDeprecatedFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minL
         minLogicalWidth += scrollbarWidth;
     };
 
-    if (shouldApplySizeContainment()) {
+    if (shouldApplySizeContainment(*this)) {
         addScrollbarWidth();
         return;
     }
@@ -945,29 +937,6 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         setHeight(oldHeight);
 }
 
-static bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow& blockFlow)
-{
-    return !blockFlow.isFloatingOrOutOfFlowPositioned() && blockFlow.style().height().isAuto();
-}
-
-static void clearTruncation(RenderBlockFlow& blockFlow)
-{
-    if (blockFlow.style().visibility() != Visibility::Visible)
-        return;
-
-    if (blockFlow.childrenInline() && blockFlow.hasMarkupTruncation()) {
-        blockFlow.setHasMarkupTruncation(false);
-        for (auto* box = blockFlow.firstRootBox(); box; box = box->nextRootBox())
-            box->clearTruncation();
-        return;
-    }
-
-    for (auto& child : childrenOfType<RenderBlockFlow>(blockFlow)) {
-        if (shouldIncludeLinesForParentLineCount(child))
-            clearTruncation(child);
-    }
-}
-
 static LegacyRootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
 {
     ASSERT(i >= 0);
@@ -993,10 +962,10 @@ static LegacyRootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
     return nullptr;
 }
 
-static std::optional<LayoutUnit> getHeightForLineCount(const RenderBlockFlow& block, size_t lineCount, bool includeBottom, size_t& count)
+static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bool includeBottom, int& count)
 {
     if (block.style().visibility() != Visibility::Visible)
-        return { };
+        return -1;
 
     if (block.childrenInline()) {
         for (auto* box = block.firstRootBox(); box; box = box->nextRootBox()) {
@@ -1007,8 +976,9 @@ static std::optional<LayoutUnit> getHeightForLineCount(const RenderBlockFlow& bl
         RenderBox* normalFlowChildWithoutLines = nullptr;
         for (auto* obj = block.firstChildBox(); obj; obj = obj->nextSiblingBox()) {
             if (is<RenderBlockFlow>(*obj) && shouldIncludeLinesForParentLineCount(downcast<RenderBlockFlow>(*obj))) {
-                if (auto height = getHeightForLineCount(downcast<RenderBlockFlow>(*obj), lineCount, false, count))
-                    return *height + obj->y() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : 0_lu);
+                int result = getHeightForLineCount(downcast<RenderBlockFlow>(*obj), lineCount, false, count);
+                if (result != -1)
+                    return result + obj->y() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : 0_lu);
             } else if (!obj->isFloatingOrOutOfFlowPositioned())
                 normalFlowChildWithoutLines = obj;
         }
@@ -1016,67 +986,42 @@ static std::optional<LayoutUnit> getHeightForLineCount(const RenderBlockFlow& bl
             return normalFlowChildWithoutLines->y() + normalFlowChildWithoutLines->height();
     }
 
-    return { };
+    return -1;
 }
 
-static LayoutUnit heightForLineCount(const RenderBlockFlow& flow, size_t lineCount)
+static int heightForLineCount(const RenderBlockFlow& flow, int lineCount)
 {
-    size_t count = 0;
-    if (auto height = getHeightForLineCount(flow, lineCount, true, count))
-        return *height;
-    return { };
-}
-
-static size_t lineCountFor(const RenderBlockFlow& blockFlow)
-{
-    if (blockFlow.style().visibility() != Visibility::Visible)
-        return 0;
-
-    if (blockFlow.childrenInline())
-        return blockFlow.lineCount();
-
-    size_t count = 0;
-    for (auto& child : childrenOfType<RenderBlockFlow>(blockFlow)) {
-        if (blockFlow.isFloatingOrOutOfFlowPositioned() || !blockFlow.style().height().isAuto())
-            continue;
-        count += lineCountFor(child);
-    }
-    return count;
+    int count = 0;
+    return getHeightForLineCount(flow, lineCount, true, count);
 }
 
 void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutChildren)
 {
-    size_t maxLineCount = 0;
+    int maxLineCount = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
         if (childDoesNotAffectWidthOrFlexing(child))
             continue;
 
         child->clearOverridingContentSize();
-        if (relayoutChildren || (child->isReplacedOrInlineBlock() && (child->style().width().isPercentOrCalculated() || child->style().height().isPercentOrCalculated()))
+        if (relayoutChildren || (child->isReplaced() && (child->style().width().isPercentOrCalculated() || child->style().height().isPercentOrCalculated()))
             || (child->style().height().isAuto() && is<RenderBlockFlow>(*child))) {
             child->setChildNeedsLayout(MarkOnlyThis);
 
             // Dirty all the positioned objects.
             if (is<RenderBlockFlow>(*child)) {
                 downcast<RenderBlockFlow>(*child).markPositionedObjectsForLayout();
-                clearTruncation(downcast<RenderBlockFlow>(*child));
+                downcast<RenderBlockFlow>(*child).clearTruncation();
             }
         }
         child->layoutIfNeeded();
         if (child->style().height().isAuto() && is<RenderBlockFlow>(*child))
-            maxLineCount = std::max(maxLineCount, lineCountFor(downcast<RenderBlockFlow>(*child)));
+            maxLineCount = std::max(maxLineCount, downcast<RenderBlockFlow>(*child).lineCount());
     }
 
     // Get the number of lines and then alter all block flow children with auto height to use the
     // specified height. We always try to leave room for at least one line.
-    auto lineClamp = style().lineClamp();
-    ASSERT(!lineClamp.isNone());
-
-    size_t numVisibleLines = lineClamp.value();
-    if (lineClamp.isPercentage()) {
-        float percentValue = lineClamp.value();
-        numVisibleLines = std::max<size_t>(1, (maxLineCount + 1) * percentValue / 100.f);
-    }
+    LineClampValue lineClamp = style().lineClamp();
+    int numVisibleLines = lineClamp.isPercentage() ? std::max(1, (maxLineCount + 1) * lineClamp.value() / 100) : lineClamp.value();
     if (numVisibleLines >= maxLineCount)
         return;
 
@@ -1085,11 +1030,11 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         RenderBlockFlow& blockChild = downcast<RenderBlockFlow>(*child);
-        auto lineCount = lineCountFor(blockChild);
+        int lineCount = blockChild.lineCount();
         if (lineCount <= numVisibleLines)
             continue;
 
-        auto newHeight = heightForLineCount(blockChild, numVisibleLines);
+        LayoutUnit newHeight = heightForLineCount(blockChild, numVisibleLines);
         if (newHeight == child->height())
             continue;
 
@@ -1159,13 +1104,13 @@ void RenderDeprecatedFlexibleBox::clearLineClamp()
             continue;
 
         child->clearOverridingContentSize();
-        if ((child->isReplacedOrInlineBlock() && (child->style().width().isPercentOrCalculated() || child->style().height().isPercentOrCalculated()))
+        if ((child->isReplaced() && (child->style().width().isPercentOrCalculated() || child->style().height().isPercentOrCalculated()))
             || (child->style().height().isAuto() && is<RenderBlockFlow>(*child))) {
             child->setChildNeedsLayout();
 
             if (is<RenderBlockFlow>(*child)) {
                 downcast<RenderBlockFlow>(*child).markPositionedObjectsForLayout();
-                clearTruncation(downcast<RenderBlockFlow>(*child));
+                downcast<RenderBlockFlow>(*child).clearTruncation();
             }
         }
     }
@@ -1238,20 +1183,20 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
     return 0;
 }
 
-ASCIILiteral RenderDeprecatedFlexibleBox::renderName() const
+const char* RenderDeprecatedFlexibleBox::renderName() const
 {
     if (isFloating())
-        return "RenderDeprecatedFlexibleBox (floating)"_s;
+        return "RenderDeprecatedFlexibleBox (floating)";
     if (isOutOfFlowPositioned())
-        return "RenderDeprecatedFlexibleBox (positioned)"_s;
+        return "RenderDeprecatedFlexibleBox (positioned)";
     // FIXME: Temporary hack while the new generated content system is being implemented.
     if (isPseudoElement())
-        return "RenderDeprecatedFlexibleBox (generated)"_s;
+        return "RenderDeprecatedFlexibleBox (generated)";
     if (isAnonymous())
-        return "RenderDeprecatedFlexibleBox (generated)"_s;
+        return "RenderDeprecatedFlexibleBox (generated)";
     if (isRelativelyPositioned())
-        return "RenderDeprecatedFlexibleBox (relative positioned)"_s;
-    return "RenderDeprecatedFlexibleBox"_s;
+        return "RenderDeprecatedFlexibleBox (relative positioned)";
+    return "RenderDeprecatedFlexibleBox";
 }
 
 } // namespace WebCore

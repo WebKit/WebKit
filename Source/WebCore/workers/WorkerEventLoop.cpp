@@ -47,13 +47,10 @@ WorkerEventLoop::~WorkerEventLoop()
 
 void WorkerEventLoop::scheduleToRun()
 {
-    auto* globalScope = downcast<WorkerOrWorkletGlobalScope>(scriptExecutionContext());
-    ASSERT(globalScope);
-    // Post this task with a special event mode, so that it can be separated from other
-    // kinds of tasks so that queued microtasks can run even if other tasks are ignored.
-    globalScope->postTaskForMode([eventLoop = Ref { *this }] (ScriptExecutionContext&) {
+    ASSERT(scriptExecutionContext());
+    scriptExecutionContext()->postTask([eventLoop = Ref { *this }] (ScriptExecutionContext&) {
         eventLoop->run();
-    }, WorkerEventLoop::taskMode());
+    });
 }
 
 bool WorkerEventLoop::isContextThread() const
@@ -74,9 +71,5 @@ void WorkerEventLoop::clearMicrotaskQueue()
     m_microtaskQueue = nullptr;
 }
 
-const String WorkerEventLoop::taskMode()
-{
-    return "workerEventLoopTaskMode"_s;
-}
-
 } // namespace WebCore
+

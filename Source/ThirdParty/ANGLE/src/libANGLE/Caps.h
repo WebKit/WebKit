@@ -694,9 +694,6 @@ struct ClientExtensions
     // EGL_EXT_platform_device
     bool platformDevice = false;
 
-    // EGL_KHR_platform_gbm
-    bool platformGbmKHR = false;
-
     // EGL_ANGLE_platform_angle
     bool platformANGLE = false;
 

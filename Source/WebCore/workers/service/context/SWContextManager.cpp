@@ -40,11 +40,9 @@ SWContextManager& SWContextManager::singleton()
     return *sharedManager;
 }
 
-void SWContextManager::setConnection(Ref<Connection>&& connection)
+void SWContextManager::setConnection(std::unique_ptr<Connection>&& connection)
 {
     ASSERT(!m_connection || m_connection->isClosed());
-    if (m_connection)
-        m_connection->stop();
     m_connection = WTFMove(connection);
 }
 
@@ -55,27 +53,21 @@ auto SWContextManager::connection() const -> Connection*
 
 void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&& serviceWorkerThreadProxy)
 {
-    ASSERT(isMainThread());
-
     auto serviceWorkerIdentifier = serviceWorkerThreadProxy->identifier();
     auto jobDataIdentifier = serviceWorkerThreadProxy->thread().jobDataIdentifier();
     auto* threadProxy = serviceWorkerThreadProxy.ptr();
-
-    {
-        Locker locker { m_workerMapLock };
-        auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorkerThreadProxy));
-        ASSERT_UNUSED(result, result.isNewEntry);
-    }
-
+    auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorkerThreadProxy));
+    ASSERT_UNUSED(result, result.isNewEntry);
+    
     threadProxy->thread().start([jobDataIdentifier, serviceWorkerIdentifier](const String& exceptionMessage, bool doesHandleFetch) {
         SWContextManager::singleton().startedServiceWorker(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage, doesHandleFetch);
     });
-    if (m_serviceWorkerCreationCallback)
-        m_serviceWorkerCreationCallback(serviceWorkerIdentifier.toUInt64());
 }
 
 void SWContextManager::startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage, bool doesHandleFetch)
 {
+    if (m_serviceWorkerCreationCallback)
+        m_serviceWorkerCreationCallback(serviceWorkerIdentifier.toUInt64());
     if (!exceptionMessage.isEmpty()) {
         connection()->serviceWorkerFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
         return;
@@ -85,21 +77,22 @@ void SWContextManager::startedServiceWorker(std::optional<ServiceWorkerJobDataId
 
 ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWorkerIdentifier identifier) const
 {
-    ASSERT(isMainThread());
-    Locker locker { m_workerMapLock };
     return m_workerMap.get(identifier);
 }
 
-RefPtr<ServiceWorkerThreadProxy> SWContextManager::serviceWorkerThreadProxyFromBackgroundThread(ServiceWorkerIdentifier identifier) const
+void SWContextManager::postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
 {
-    Locker locker { m_workerMapLock };
-    RefPtr result = m_workerMap.get(identifier);
-    return result;
+    auto* serviceWorker = m_workerMap.get(destination);
+    if (!serviceWorker)
+        return;
+
+    // FIXME: We should pass valid MessagePortChannels.
+    serviceWorker->postMessageToServiceWorker(WTFMove(message), WTFMove(sourceData));
 }
 
 void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    auto* serviceWorker = m_workerMap.get(identifier);
     if (!serviceWorker)
         return;
 
@@ -108,7 +101,7 @@ void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
 
 void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    auto* serviceWorker = m_workerMap.get(identifier);
     if (!serviceWorker)
         return;
 
@@ -117,7 +110,7 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
 
 void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::optional<Vector<uint8_t>>&& data, CompletionHandler<void(bool)>&& callback)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    auto* serviceWorker = m_workerMap.get(identifier);
     if (!serviceWorker) {
         callback(false);
         return;
@@ -128,38 +121,29 @@ void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::op
 
 void SWContextManager::firePushSubscriptionChangeEvent(ServiceWorkerIdentifier identifier, std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    auto* serviceWorker = m_workerMap.get(identifier);
     if (!serviceWorker)
         return;
 
     serviceWorker->firePushSubscriptionChangeEvent(WTFMove(newSubscriptionData), WTFMove(oldSubscriptionData));
 }
 
-void SWContextManager::fireNotificationEvent(ServiceWorkerIdentifier identifier, NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
-{
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
-    if (!serviceWorker)
-        return;
-
-    serviceWorker->fireNotificationEvent(WTFMove(data), eventType, WTFMove(callback));
-}
 
 void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Seconds timeout, Function<void()>&& completionHandler)
 {
-    RELEASE_LOG(ServiceWorker, "SWContextManager::terminateWorker");
-
-    RefPtr<ServiceWorkerThreadProxy> serviceWorker;
-    {
-        Locker locker { m_workerMapLock };
-        serviceWorker = m_workerMap.take(identifier);
-    }
-
+    auto serviceWorker = m_workerMap.take(identifier);
     if (!serviceWorker) {
         if (completionHandler)
             completionHandler();
         return;
     }
     stopWorker(*serviceWorker, timeout, WTFMove(completionHandler));
+}
+
+void SWContextManager::didSaveScriptsToDisk(ServiceWorkerIdentifier identifier, ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
+{
+    if (auto serviceWorker = m_workerMap.get(identifier))
+        serviceWorker->didSaveScriptsToDisk(WTFMove(script), WTFMove(importedScripts));
 }
 
 void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Seconds timeout, Function<void()>&& completionHandler)
@@ -185,16 +169,15 @@ void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Secon
     });
 }
 
-void SWContextManager::forEachServiceWorker(const Function<Function<void(ScriptExecutionContext&)>()>& createTask)
+void SWContextManager::forEachServiceWorkerThread(const Function<void(ServiceWorkerThreadProxy&)>& apply)
 {
-    Locker locker { m_workerMapLock };
-    for (auto& worker : m_workerMap.values())
-        worker->thread().runLoop().postTask(createTask());
+    for (auto& workerThread : m_workerMap.values())
+        apply(workerThread);
 }
 
 bool SWContextManager::postTaskToServiceWorker(ServiceWorkerIdentifier identifier, Function<void(ServiceWorkerGlobalScope&)>&& task)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    auto* serviceWorker = m_workerMap.get(identifier);
     if (!serviceWorker)
         return false;
 
@@ -220,19 +203,9 @@ SWContextManager::ServiceWorkerTerminationRequest::ServiceWorkerTerminationReque
 
 void SWContextManager::stopAllServiceWorkers()
 {
-    HashMap<ServiceWorkerIdentifier, Ref<ServiceWorkerThreadProxy>> workerMap;
-    {
-        Locker locker { m_workerMapLock };
-        workerMap = WTFMove(m_workerMap);
-    }
-    for (auto& serviceWorker : workerMap.values())
+    auto serviceWorkers = WTFMove(m_workerMap);
+    for (auto& serviceWorker : serviceWorkers.values())
         stopWorker(serviceWorker, workerTerminationTimeout, [] { });
-}
-
-void SWContextManager::setAsInspected(ServiceWorkerIdentifier identifier, bool isInspected)
-{
-    if (m_connection)
-        m_connection->setAsInspected(identifier, isInspected);
 }
 
 } // namespace WebCore

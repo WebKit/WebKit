@@ -1,4 +1,0 @@
-
-PASS Border width responsive to border style changes
-PASS Border width responsive to font size changes
-

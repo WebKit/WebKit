@@ -1,3 +1,4 @@
+//@ skip if $architecture == "arm"
 //@ defaultRunNoisyTest
 var sab = new SharedArrayBuffer(100 * 4);
 

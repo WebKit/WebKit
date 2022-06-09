@@ -35,7 +35,7 @@ class SVGAElement final : public SVGGraphicsElement, public SVGURIReference {
 public:
     static Ref<SVGAElement> create(const QualifiedName&, Document&);
 
-    AtomString target() const final { return AtomString { m_target->currentValue() }; }
+    String target() const final { return m_target->currentValue(); }
     Ref<SVGAnimatedString>& targetAnimated() { return m_target; }
 
     SharedStringHash visitedLinkHash() const;
@@ -65,7 +65,7 @@ private:
     bool canStartSelection() const final;
     int defaultTabIndex() const final;
 
-    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool willRespondToMouseClickEvents() final;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_target { SVGAnimatedString::create(this) };

@@ -249,11 +249,6 @@ void LayerTreeHost::sizeDidChange(const IntSize& size)
     didChangeViewport();
 }
 
-void LayerTreeHost::targetRefreshRateDidChange(uint32_t rate)
-{
-    m_compositor->targetRefreshRateDidChange(rate);
-}
-
 void LayerTreeHost::pauseRendering()
 {
     m_isSuspended = true;

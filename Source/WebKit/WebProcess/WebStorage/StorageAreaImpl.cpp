@@ -70,7 +70,7 @@ String StorageAreaImpl::item(const String& key)
     return m_storageAreaMap ? m_storageAreaMap->item(key) : nullString();
 }
 
-void StorageAreaImpl::setItem(Frame& sourceFrame, const String& key, const String& value, bool& quotaException)
+void StorageAreaImpl::setItem(Frame* sourceFrame, const String& key, const String& value, bool& quotaException)
 {
     ASSERT(!value.isNull());
 
@@ -78,13 +78,13 @@ void StorageAreaImpl::setItem(Frame& sourceFrame, const String& key, const Strin
         m_storageAreaMap->setItem(sourceFrame, this, key, value, quotaException);
 }
 
-void StorageAreaImpl::removeItem(Frame& sourceFrame, const String& key)
+void StorageAreaImpl::removeItem(Frame* sourceFrame, const String& key)
 {
     if (m_storageAreaMap)
         m_storageAreaMap->removeItem(sourceFrame, this, key);
 }
 
-void StorageAreaImpl::clear(Frame& sourceFrame)
+void StorageAreaImpl::clear(Frame* sourceFrame)
 {
     if (m_storageAreaMap)
         m_storageAreaMap->clear(sourceFrame, this);
@@ -112,10 +112,20 @@ size_t StorageAreaImpl::memoryBytesUsedByCache()
     return 0;
 }
 
-void StorageAreaImpl::prewarm()
+void StorageAreaImpl::incrementAccessCount()
 {
-    if (m_storageAreaMap)
-        m_storageAreaMap->connect();
+    // Storage access is handled in the network process, so there's nothing to do here.
+}
+
+void StorageAreaImpl::decrementAccessCount()
+{
+    // Storage access is handled in the network process, so there's nothing to do here.
+}
+
+void StorageAreaImpl::closeDatabaseIfIdle()
+{
+    // FIXME: Implement this.
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

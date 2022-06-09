@@ -53,7 +53,7 @@ protected:
 private:
     void installFragmentedFlow() final;
 
-    ASCIILiteral renderName() const override = 0;
+    const char* renderName() const override = 0;
     
     bool isRenderFragmentContainerSet() const final { return true; }
 };

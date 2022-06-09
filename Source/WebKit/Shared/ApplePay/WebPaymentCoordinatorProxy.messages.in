@@ -27,8 +27,8 @@
 messages -> WebPaymentCoordinatorProxy NotRefCounted {
 
     CanMakePayments() -> (bool result) Synchronous
-    CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName) -> (bool canMakePayments)
-    OpenPaymentSetup(String merchantIdentifier, String domainName) -> (bool result)
+    CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName) -> (bool canMakePayments) Async
+    OpenPaymentSetup(String merchantIdentifier, String domainName) -> (bool result) Async
 
     ShowPaymentUI(WebCore::PageIdentifier destinationID, WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String originatingURLString, Vector<String> linkIconURLStrings, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) Synchronous
     CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession)
@@ -38,12 +38,12 @@ messages -> WebPaymentCoordinatorProxy NotRefCounted {
 #if ENABLE(APPLE_PAY_COUPON_CODE)
     CompleteCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate> update)
 #endif
-    CompletePaymentSession(struct WebCore::ApplePayPaymentAuthorizationResult result)
+    CompletePaymentSession(std::optional<WebCore::PaymentAuthorizationResult> result)
     AbortPaymentSession()
     CancelPaymentSession()
 
-    GetSetupFeatures(WebKit::PaymentSetupConfiguration configuration) -> (WebKit::PaymentSetupFeatures features)
-    BeginApplePaySetup(WebKit::PaymentSetupConfiguration configuration, WebKit::PaymentSetupFeatures features) -> (bool result)
+    GetSetupFeatures(WebKit::PaymentSetupConfiguration configuration) -> (WebKit::PaymentSetupFeatures features) Async
+    BeginApplePaySetup(WebKit::PaymentSetupConfiguration configuration, WebKit::PaymentSetupFeatures features) -> (bool result) Async
     EndApplePaySetup()
 }
 

@@ -152,7 +152,7 @@ bool CookieJarDB::openDatabase()
 
     verifySchemaVersion();
 
-    if (!existsDatabaseFile || !m_database.tableExists("Cookie"_s)) {
+    if (!existsDatabaseFile || !m_database.tableExists("Cookie")) {
         bool ok = executeSQLStatement(m_database.prepareStatement(CREATE_COOKIE_TABLE_SQL))
             && executeSQLStatement(m_database.prepareStatement(CREATE_DOMAIN_INDEX_SQL))
             && executeSQLStatement(m_database.prepareStatement(CREATE_PATH_INDEX_SQL));
@@ -270,7 +270,7 @@ bool CookieJarDB::checkDatabaseValidity()
 {
     ASSERT(m_database.isOpen());
 
-    if (!m_database.tableExists("Cookie"_s))
+    if (!m_database.tableExists("Cookie"))
         return false;
 
     auto integrity = m_database.prepareStatement("PRAGMA quick_check;"_s);
@@ -293,7 +293,7 @@ bool CookieJarDB::checkDatabaseValidity()
 
     String resultText = integrity->columnText(0);
 
-    if (resultText != "ok"_s) {
+    if (resultText != "ok") {
         LOG_ERROR("Cookie database integrity check failed - %s", resultText.ascii().data());
         return false;
     }
@@ -382,7 +382,7 @@ std::optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, 
 
     String requestPath = requestUrl.path().toString();
     if (requestPath.isEmpty())
-        requestPath = "/"_s;
+        requestPath = "/";
 
     RegistrableDomain registrableDomain { requestUrl };
 
@@ -596,7 +596,7 @@ bool CookieJarDB::deleteCookie(const String& url, const String& name)
 
     String urlCopied = String(url);
     if (urlCopied.startsWith('.'))
-        urlCopied = urlCopied.substring(1);
+        urlCopied.remove(0, 1);
 
     URL urlObj({ }, urlCopied);
     if (urlObj.isValid()) {

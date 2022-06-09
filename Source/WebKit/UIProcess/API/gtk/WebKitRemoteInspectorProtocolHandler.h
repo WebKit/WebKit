@@ -44,8 +44,6 @@ private:
     static void userContentManagerDestroyed(RemoteInspectorProtocolHandler*, WebKitUserContentManager*);
 
     void handleRequest(WebKitURISchemeRequest*);
-    void updateTargetList(WebKitWebView*);
-    static void webViewLoadChanged(WebKitWebView*, WebKitLoadEvent, RemoteInspectorProtocolHandler*);
 
     // RemoteInspectorObserver.
     void targetListChanged(RemoteInspectorClient&) override;
@@ -53,7 +51,7 @@ private:
 
     HashMap<String, std::unique_ptr<RemoteInspectorClient>> m_inspectorClients;
     HashSet<WebKitUserContentManager*> m_userContentManagers;
-    HashMap<WebKitWebView*, RemoteInspectorClient*> m_webViews;
+    HashSet<WebKitWebView*> m_webViews;
 };
 
 } // namespace WebKit

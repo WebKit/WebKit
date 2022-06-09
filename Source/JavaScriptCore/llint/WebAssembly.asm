@@ -147,7 +147,7 @@ macro checkSwitchToJITForPrologue(codeBlockRegister)
                 jmp ws0, WasmEntryPtrTag
             end
         .recover:
-            loadp CodeBlock[cfr], codeBlockRegister
+            notFunctionCodeBlockGetter(codeBlockRegister)
         end)
     end
 end
@@ -283,7 +283,7 @@ macro restoreStackPointerAfterCall()
     subp cfr, ws1, sp
 end
 
-macro wasmPrologue(loadWasmInstance)
+macro wasmPrologue(codeBlockGetter, codeBlockSetter, loadWasmInstance)
     # Set up the call frame and check if we should OSR.
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
@@ -293,9 +293,8 @@ macro wasmPrologue(loadWasmInstance)
     loadp Wasm::Instance::m_owner[wasmInstance], ws0
     storep ws0, ThisArgumentOffset[cfr]
 
-    loadp Callee[cfr], ws0
-    andp ~3, ws0
-    storep ws0, CodeBlock[cfr]
+    codeBlockGetter(ws0)
+    codeBlockSetter(ws0)
 
     # Get new sp in ws1 and check stack height.
     loadi Wasm::LLIntCallee::m_numCalleeLocals[ws0], ws1
@@ -461,7 +460,7 @@ end
 # Wasm wrapper of get/getu that operate on ctx
 macro wgets(ctx, field, dst)
     ctx(macro(opcodeName, opcodeStruct, size)
-        size(getOperandNarrow, getOperandWide16Wasm, getOperandWide32Wasm, macro (get)
+        size(getOperandNarrow, getOperandWide16, getOperandWide32, macro (get)
             get(opcodeStruct, field, dst)
         end)
     end)
@@ -469,7 +468,7 @@ end
 
 macro wgetu(ctx, field, dst)
     ctx(macro(opcodeName, opcodeStruct, size)
-        size(getuOperandNarrow, getuOperandWide16Wasm, getuOperandWide32Wasm, macro (getu)
+        size(getuOperandNarrow, getuOperandWide16, getuOperandWide32, macro (getu)
             getu(opcodeStruct, field, dst)
         end)
     end)
@@ -479,7 +478,7 @@ end
 
 macro dispatch(ctx)
     ctx(macro(opcodeName, opcodeStruct, size)
-        genericDispatchOpWasm(wasmDispatch, size, opcodeName)
+        genericDispatchOp(wasmDispatch, size, opcodeName)
     end)
 end
 
@@ -515,7 +514,7 @@ op(wasm_function_prologue, macro ()
         error
     end
 
-    wasmPrologue(loadWasmInstanceFromTLS)
+    wasmPrologue(wasmCodeBlockGetter, functionCodeBlockSetter, loadWasmInstanceFromTLS)
     wasmNextInstruction()
 end)
 
@@ -524,7 +523,7 @@ op(wasm_function_prologue_no_tls, macro ()
         error
     end
 
-    wasmPrologue(macro () end)
+    wasmPrologue(wasmCodeBlockGetter, functionCodeBlockSetter, macro () end)
     wasmNextInstruction()
 end)
 
@@ -602,7 +601,6 @@ slowWasmOp(set_global_ref_portable_binding)
 slowWasmOp(memory_atomic_wait32)
 slowWasmOp(memory_atomic_wait64)
 slowWasmOp(memory_atomic_notify)
-slowWasmOp(rtt_canon)
 
 wasmOp(grow_memory, WasmGrowMemory, macro(ctx)
     callWasmSlowPath(_slow_path_wasm_grow_memory)

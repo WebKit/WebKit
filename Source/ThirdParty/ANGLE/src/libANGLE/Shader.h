@@ -91,7 +91,7 @@ class ShaderState final : angle::NonCopyable
 
     const sh::WorkGroupSize &getLocalSize() const { return mLocalSize; }
 
-    bool enablesPerSampleShading() const { return mEnablesPerSampleShading; }
+    bool getEarlyFragmentTestsOptimization() const { return mEarlyFragmentTestsOptimization; }
     rx::SpecConstUsageBits getSpecConstUsageBits() const { return mSpecConstUsageBits; }
 
     int getNumViews() const { return mNumViews; }
@@ -134,7 +134,7 @@ class ShaderState final : angle::NonCopyable
     std::vector<sh::ShaderVariable> mActiveAttributes;
     std::vector<sh::ShaderVariable> mActiveOutputVariables;
 
-    bool mEnablesPerSampleShading;
+    bool mEarlyFragmentTestsOptimization;
     BlendEquationBitSet mAdvancedBlendEquations;
     rx::SpecConstUsageBits mSpecConstUsageBits;
 
@@ -200,7 +200,10 @@ class Shader final : angle::NonCopyable, public LabeledObject
     unsigned int getRefCount() const;
     bool isFlaggedForDeletion() const;
     void flagForDeletion();
-    bool enablesPerSampleShading() const { return mState.mEnablesPerSampleShading; }
+    bool hasEarlyFragmentTestsOptimization() const
+    {
+        return mState.mEarlyFragmentTestsOptimization;
+    }
     BlendEquationBitSet getAdvancedBlendEquations() const { return mState.mAdvancedBlendEquations; }
     rx::SpecConstUsageBits getSpecConstUsageBits() const { return mState.mSpecConstUsageBits; }
 

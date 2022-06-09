@@ -30,7 +30,6 @@
 
 #if ENABLE(MATHML)
 
-#include "CommonAtomStrings.h"
 #include "ElementIterator.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLMapElement.h"
@@ -44,7 +43,6 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -114,6 +112,7 @@ bool MathMLPresentationElement::isPhrasingContent(const Node& node)
             || htmlElement.hasTagName(HTMLNames::inputTag)
             || htmlElement.hasTagName(HTMLNames::insTag)
             || htmlElement.hasTagName(HTMLNames::kbdTag)
+            || htmlElement.hasTagName(HTMLNames::keygenTag)
             || htmlElement.hasTagName(HTMLNames::labelTag)
             || htmlElement.hasTagName(HTMLNames::mapTag)
             || htmlElement.hasTagName(HTMLNames::markTag)
@@ -183,7 +182,7 @@ bool MathMLPresentationElement::isFlowContent(const Node& node)
         || htmlElement.hasTagName(HTMLNames::pTag)
         || htmlElement.hasTagName(HTMLNames::preTag)
         || htmlElement.hasTagName(HTMLNames::sectionTag)
-        || (htmlElement.hasTagName(HTMLNames::styleTag) && htmlElement.hasAttribute(HTMLNames::scopedAttr))
+        || (htmlElement.hasTagName(HTMLNames::styleTag) && htmlElement.hasAttribute("scoped"))
         || htmlElement.hasTagName(HTMLNames::tableTag)
         || htmlElement.hasTagName(HTMLNames::ulTag);
 }
@@ -195,9 +194,9 @@ const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttri
 
     // In MathML, attribute values are case-sensitive.
     const AtomString& value = attributeWithoutSynchronization(name);
-    if (value == trueAtom())
+    if (value == "true")
         attribute = BooleanValue::True;
-    else if (value == falseAtom())
+    else if (value == "false")
         attribute = BooleanValue::False;
     else
         attribute = BooleanValue::Default;
@@ -237,7 +236,7 @@ MathMLElement::Length MathMLPresentationElement::parseNumberAndUnit(StringView s
     }
 
     bool ok;
-    float lengthValue = string.left(stringLength).toFloat(ok);
+    float lengthValue = string.substring(0, stringLength).toFloat(ok);
     if (!ok)
         return Length();
 
@@ -251,33 +250,33 @@ MathMLElement::Length MathMLPresentationElement::parseNamedSpace(StringView stri
 {
     // Named space values are case-sensitive.
     int namedSpaceValue;
-    if (string == "veryverythinmathspace"_s)
+    if (string == "veryverythinmathspace")
         namedSpaceValue = 1;
-    else if (string == "verythinmathspace"_s)
+    else if (string == "verythinmathspace")
         namedSpaceValue = 2;
-    else if (string == "thinmathspace"_s)
+    else if (string == "thinmathspace")
         namedSpaceValue = 3;
-    else if (string == "mediummathspace"_s)
+    else if (string == "mediummathspace")
         namedSpaceValue = 4;
-    else if (string == "thickmathspace"_s)
+    else if (string == "thickmathspace")
         namedSpaceValue = 5;
-    else if (string == "verythickmathspace"_s)
+    else if (string == "verythickmathspace")
         namedSpaceValue = 6;
-    else if (string == "veryverythickmathspace"_s)
+    else if (string == "veryverythickmathspace")
         namedSpaceValue = 7;
-    else if (string == "negativeveryverythinmathspace"_s)
+    else if (string == "negativeveryverythinmathspace")
         namedSpaceValue = -1;
-    else if (string == "negativeverythinmathspace"_s)
+    else if (string == "negativeverythinmathspace")
         namedSpaceValue = -2;
-    else if (string == "negativethinmathspace"_s)
+    else if (string == "negativethinmathspace")
         namedSpaceValue = -3;
-    else if (string == "negativemediummathspace"_s)
+    else if (string == "negativemediummathspace")
         namedSpaceValue = -4;
-    else if (string == "negativethickmathspace"_s)
+    else if (string == "negativethickmathspace")
         namedSpaceValue = -5;
-    else if (string == "negativeverythickmathspace"_s)
+    else if (string == "negativeverythickmathspace")
         namedSpaceValue = -6;
-    else if (string == "negativeveryverythickmathspace"_s)
+    else if (string == "negativeveryverythickmathspace")
         namedSpaceValue = -7;
     else
         return Length();
@@ -324,28 +323,43 @@ const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const
 MathMLElement::MathVariant MathMLPresentationElement::parseMathVariantAttribute(const AtomString& attributeValue)
 {
     // The mathvariant attribute values is case-sensitive.
-    static constexpr std::pair<ComparableASCIILiteral, MathVariant> mappings[] = {
-        { "bold", MathVariant::Bold },
-        { "bold-fraktur", MathVariant::BoldFraktur },
-        { "bold-italic", MathVariant::BoldItalic },
-        { "bold-sans-serif", MathVariant::BoldSansSerif },
-        { "bold-script", MathVariant::BoldScript },
-        { "double-struck", MathVariant::DoubleStruck },
-        { "fraktur", MathVariant::Fraktur },
-        { "initial", MathVariant::Initial },
-        { "italic", MathVariant::Italic },
-        { "looped", MathVariant::Looped },
-        { "monospace", MathVariant::Monospace },
-        { "normal", MathVariant::Normal },
-        { "sans-serif", MathVariant::SansSerif },
-        { "sans-serif-bold-italic", MathVariant::SansSerifBoldItalic },
-        { "sans-serif-italic", MathVariant::SansSerifItalic },
-        { "script", MathVariant::Script },
-        { "stretched", MathVariant::Stretched },
-        { "tailed", MathVariant::Tailed },
-    };
-    static constexpr SortedArrayMap map { mappings };
-    return map.get(attributeValue, MathVariant::None);
+    if (attributeValue == "normal")
+        return MathVariant::Normal;
+    if (attributeValue == "bold")
+        return MathVariant::Bold;
+    if (attributeValue == "italic")
+        return MathVariant::Italic;
+    if (attributeValue == "bold-italic")
+        return MathVariant::BoldItalic;
+    if (attributeValue == "double-struck")
+        return MathVariant::DoubleStruck;
+    if (attributeValue == "bold-fraktur")
+        return MathVariant::BoldFraktur;
+    if (attributeValue == "script")
+        return MathVariant::Script;
+    if (attributeValue == "bold-script")
+        return MathVariant::BoldScript;
+    if (attributeValue == "fraktur")
+        return MathVariant::Fraktur;
+    if (attributeValue == "sans-serif")
+        return MathVariant::SansSerif;
+    if (attributeValue == "bold-sans-serif")
+        return MathVariant::BoldSansSerif;
+    if (attributeValue == "sans-serif-italic")
+        return MathVariant::SansSerifItalic;
+    if (attributeValue == "sans-serif-bold-italic")
+        return MathVariant::SansSerifBoldItalic;
+    if (attributeValue == "monospace")
+        return MathVariant::Monospace;
+    if (attributeValue == "initial")
+        return MathVariant::Initial;
+    if (attributeValue == "tailed")
+        return MathVariant::Tailed;
+    if (attributeValue == "looped")
+        return MathVariant::Looped;
+    if (attributeValue == "stretched")
+        return MathVariant::Stretched;
+    return MathVariant::None;
 }
 
 std::optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMathVariant()

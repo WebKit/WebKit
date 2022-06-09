@@ -39,14 +39,14 @@ void WebDriverService::platformInit()
 Capabilities WebDriverService::platformCapabilities()
 {
     Capabilities capabilities;
-    capabilities.platformName = String("linux"_s);
+    capabilities.platformName = String("linux");
     capabilities.setWindowRect = false;
     return capabilities;
 }
 
 bool WebDriverService::platformValidateCapability(const String& name, const Ref<JSON::Value>& value) const
 {
-    if (name != "wpe:browserOptions"_s)
+    if (name != "wpe:browserOptions")
         return true;
 
     auto browserOptions = value->asObject();
@@ -105,7 +105,7 @@ bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Va
 
 void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
 {
-    capabilities.browserBinary = String("MiniBrowser"_s);
+    capabilities.browserBinary = String("MiniBrowser");
     capabilities.browserArguments = Vector<String> { "--automation"_s };
 
     auto browserOptions = matchedCapabilities.getObject("wpe:browserOptions"_s);

@@ -176,7 +176,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     InputElementClickState clickHandlingState;
 
     bool isActivationEvent = event.type() == eventNames().clickEvent;
-    RefPtr inputForLegacyPreActivationBehavior = dynamicDowncast<HTMLInputElement>(node);
+    RefPtr<HTMLInputElement> inputForLegacyPreActivationBehavior = is<HTMLInputElement>(node) ? &downcast<HTMLInputElement>(node) : nullptr;
     if (!inputForLegacyPreActivationBehavior && isActivationEvent && event.bubbles())
         inputForLegacyPreActivationBehavior = findInputElementInEventPath(eventPath);
     if (inputForLegacyPreActivationBehavior)

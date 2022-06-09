@@ -57,14 +57,14 @@ namespace WebCore::ContentExtensions {
 #else
 static void makeSecureIfNecessary(ContentRuleListResults& results, const URL& url, const URL& redirectFrom = { })
 {
-    if (redirectFrom.host() == url.host() && redirectFrom.protocolIs("https"_s))
+    if (redirectFrom.host() == url.host() && redirectFrom.protocolIs("https"))
         return;
 
-    if (!url.protocolIs("http"_s))
+    if (!url.protocolIs("http"))
         return;
-    if (url.host() == "www.opengl.org"_s
-        || url.host() == "webkit.org"_s
-        || url.host() == "download"_s)
+    if (url.host() == "www.opengl.org"
+        || url.host() == "webkit.org"
+        || url.host() == "download")
         results.summary.madeHTTPS = true;
 }
 #endif
@@ -237,7 +237,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 results.summary.hasNotifications = true;
                 result.notifications.append(actionData.string);
             }, [&](const MakeHTTPSAction&) {
-                if ((url.protocolIs("http"_s) || url.protocolIs("ws"_s))
+                if ((url.protocolIs("http") || url.protocolIs("ws"))
                     && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol()))) {
                     results.summary.madeHTTPS = true;
                     result.madeHTTPS = true;
@@ -271,8 +271,8 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
 
     if (currentDocument) {
         if (results.summary.madeHTTPS) {
-            ASSERT(url.protocolIs("http"_s) || url.protocolIs("ws"_s));
-            String newProtocol = url.protocolIs("http"_s) ? "https"_s : "wss"_s;
+            ASSERT(url.protocolIs("http") || url.protocolIs("ws"));
+            String newProtocol = url.protocolIs("http") ? "https"_s : "wss"_s;
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from ", url.string(), " to ", newProtocol));
         }
         if (results.summary.blockedLoad) {
@@ -281,8 +281,8 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             // Quirk for content-blocker interference with Google's anti-flicker optimization (rdar://problem/45968770).
             // https://developers.google.com/optimize/
             if (currentDocument->settings().googleAntiFlickerOptimizationQuirkEnabled()
-                && ((equalLettersIgnoringASCIICase(url.host(), "www.google-analytics.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/analytics.js"_s))
-                    || (equalLettersIgnoringASCIICase(url.host(), "www.googletagmanager.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/gtm.js"_s)))) {
+                && ((equalLettersIgnoringASCIICase(url.host(), "www.google-analytics.com") && equalLettersIgnoringASCIICase(url.path(), "/analytics.js"))
+                    || (equalLettersIgnoringASCIICase(url.host(), "www.googletagmanager.com") && equalLettersIgnoringASCIICase(url.path(), "/gtm.js")))) {
                 if (auto* frame = currentDocument->frame())
                     frame->script().evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s });
             }
@@ -309,7 +309,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
             }, [&](const NotifyAction&) {
                 // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
             }, [&](const MakeHTTPSAction&) {
-                if ((url.protocolIs("http"_s) || url.protocolIs("ws"_s)) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
+                if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
                     results.summary.madeHTTPS = true;
             }, [&](const IgnorePreviousRulesAction&) {
                 RELEASE_ASSERT_NOT_REACHED();
@@ -337,13 +337,13 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
 
     if (results.summary.madeHTTPS) {
         const URL& originalURL = request.url();
-        ASSERT(originalURL.protocolIs("http"_s));
+        ASSERT(originalURL.protocolIs("http"));
         ASSERT(!originalURL.port() || WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()));
 
         URL newURL = originalURL;
-        newURL.setProtocol("https"_s);
+        newURL.setProtocol("https");
         if (originalURL.port())
-            newURL.setPort(WTF::defaultPortForProtocol("https"_s).value());
+            newURL.setPort(WTF::defaultPortForProtocol("https").value());
         request.setURL(newURL);
     }
 

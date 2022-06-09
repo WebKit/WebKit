@@ -130,7 +130,7 @@ bool WebSocketChannel::increaseBufferedAmount(size_t byteLength)
     CheckedSize checkedNewBufferedAmount = m_bufferedAmount;
     checkedNewBufferedAmount += byteLength;
     if (UNLIKELY(checkedNewBufferedAmount.hasOverflowed())) {
-        fail("Failed to send WebSocket frame: buffer has no more space"_s);
+        fail("Failed to send WebSocket frame: buffer has no more space");
         return false;
     }
 
@@ -159,12 +159,13 @@ template<typename T> void WebSocketChannel::sendMessage(T&& message, size_t byte
     sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler));
 }
 
-WebSocketChannel::SendResult WebSocketChannel::send(CString&& message)
+WebSocketChannel::SendResult WebSocketChannel::send(const String& message)
 {
-    if (!increaseBufferedAmount(message.length()))
+    auto utf8 = message.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
+    if (!increaseBufferedAmount(utf8.length()))
         return SendFail;
 
-    m_messageQueue.enqueue(WTFMove(message));
+    m_messageQueue.enqueue(WTFMove(utf8));
     return SendSuccess;
 }
 
@@ -212,14 +213,14 @@ void WebSocketChannel::close(int code, const String& reason)
     MessageSender::send(Messages::NetworkSocketChannel::Close { code, reason });
 }
 
-void WebSocketChannel::fail(String&& reason)
+void WebSocketChannel::fail(const String& reason)
 {
     // The client can close the channel, potentially removing the last reference.
     Ref protectedThis { *this };
 
     logErrorMessage(reason);
     if (m_client)
-        m_client->didReceiveMessageError(String { reason });
+        m_client->didReceiveMessageError(reason);
 
     if (m_isClosing)
         return;
@@ -260,7 +261,7 @@ void WebSocketChannel::didReceiveText(String&& message)
     if (!m_client)
         return;
 
-    m_client->didReceiveMessage(WTFMove(message));
+    m_client->didReceiveMessage(message);
 }
 
 void WebSocketChannel::didReceiveBinaryData(IPC::DataReference&& data)
@@ -308,7 +309,7 @@ void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
         return;
 
     logErrorMessage(errorMessage);
-    m_client->didReceiveMessageError(WTFMove(errorMessage));
+    m_client->didReceiveMessageError(errorMessage);
 }
 
 void WebSocketChannel::networkProcessCrashed()

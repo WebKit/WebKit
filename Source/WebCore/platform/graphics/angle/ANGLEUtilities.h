@@ -27,125 +27,185 @@
 
 #if ENABLE(WEBGL) && USE(ANGLE)
 
-#include "GraphicsContextGL.h"
+#include "ANGLEHeaders.h"
 #include "GraphicsTypesGL.h"
-#include <optional>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class ScopedRestoreTextureBinding {
     WTF_MAKE_NONCOPYABLE(ScopedRestoreTextureBinding);
-
 public:
-    ScopedRestoreTextureBinding(GCGLenum bindingPointQuery, GCGLenum bindingPoint, bool condition = true);
-    ~ScopedRestoreTextureBinding();
+    ScopedRestoreTextureBinding(GLenum bindingPointQuery, GLenum bindingPoint, bool condition = true)
+    {
+        ASSERT(bindingPoint != static_cast<GLenum>(0u));
+        if (condition) {
+            m_bindingPoint = bindingPoint;
+            GL_GetIntegerv(bindingPointQuery, reinterpret_cast<GLint*>(&m_bindingValue));
+        }
+    }
+
+    ~ScopedRestoreTextureBinding()
+    {
+        if (m_bindingPoint)
+            GL_BindTexture(m_bindingPoint, m_bindingValue);
+    }
 
 private:
-    GCGLenum m_bindingPoint { 0 };
-    GCGLuint m_bindingValue { 0u };
+    GLenum m_bindingPoint { 0 };
+    GLuint m_bindingValue { 0u };
 };
+
 
 class ScopedBufferBinding {
     WTF_MAKE_NONCOPYABLE(ScopedBufferBinding);
-
 public:
-    ScopedBufferBinding(GCGLenum bindingPoint, GCGLuint bindingValue, bool condition = true);
-    ~ScopedBufferBinding();
+    ScopedBufferBinding(GLenum bindingPoint, GLuint bindingValue, bool condition = true)
+    {
+        if (!condition)
+            return;
+        GL_GetIntegerv(query(bindingPoint), reinterpret_cast<GLint*>(&m_bindingValue));
+        if (bindingValue == m_bindingValue)
+            return;
+        m_bindingPoint = bindingPoint;
+        GL_BindBuffer(m_bindingPoint, bindingValue);
+    }
+
+    ~ScopedBufferBinding()
+    {
+        if (m_bindingPoint)
+            GL_BindBuffer(m_bindingPoint, m_bindingValue);
+    }
 
 private:
-    static constexpr GCGLenum query(GCGLenum bindingPoint)
+    static constexpr GLenum query(GLenum bindingPoint)
     {
-        if (bindingPoint == GraphicsContextGL::PIXEL_PACK_BUFFER)
-            return GraphicsContextGL::PIXEL_PACK_BUFFER_BINDING;
-        ASSERT(bindingPoint == GraphicsContextGL::PIXEL_UNPACK_BUFFER);
-        return GraphicsContextGL::PIXEL_UNPACK_BUFFER_BINDING;
+        if (bindingPoint == GL_PIXEL_PACK_BUFFER)
+            return GL_PIXEL_PACK_BUFFER_BINDING;
+        ASSERT(bindingPoint == GL_PIXEL_UNPACK_BUFFER);
+        return GL_PIXEL_UNPACK_BUFFER_BINDING;
     }
-    GCGLint m_bindingPoint { 0 };
-    GCGLuint m_bindingValue { 0u };
+    GLint m_bindingPoint { 0 };
+    GLuint m_bindingValue { 0u };
 };
-
 class ScopedRestoreReadFramebufferBinding {
     WTF_MAKE_NONCOPYABLE(ScopedRestoreReadFramebufferBinding);
-
 public:
-    ScopedRestoreReadFramebufferBinding(bool isForWebGL2, GCGLuint restoreValue)
-        : m_framebufferTarget(isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER)
+    ScopedRestoreReadFramebufferBinding(bool isForWebGL2, GLuint restoreValue)
+        : m_framebufferTarget(isForWebGL2 ? GL_READ_FRAMEBUFFER : GL_FRAMEBUFFER)
         , m_bindingValue(restoreValue)
     {
     }
-    ScopedRestoreReadFramebufferBinding(bool isForWebGL2, GCGLuint restoreValue, GCGLuint value)
-        : m_framebufferTarget(isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER)
+    ScopedRestoreReadFramebufferBinding(bool isForWebGL2, GLuint restoreValue, GLuint value)
+        : m_framebufferTarget(isForWebGL2 ? GL_READ_FRAMEBUFFER : GL_FRAMEBUFFER)
         , m_bindingValue(restoreValue)
     {
         bindFramebuffer(value);
     }
-    ~ScopedRestoreReadFramebufferBinding();
     void markBindingChanged()
     {
         m_bindingChanged = true;
     }
-    void bindFramebuffer(GCGLuint bindingValue);
-    GCGLuint framebufferTarget() const { return m_framebufferTarget; }
-
+    void bindFramebuffer(GLuint bindingValue)
+    {
+        if (!m_bindingChanged && m_bindingValue == bindingValue)
+            return;
+        GL_BindFramebuffer(m_framebufferTarget, bindingValue);
+        m_bindingChanged = m_bindingValue != bindingValue;
+    }
+    GLuint framebufferTarget() const { return m_framebufferTarget; }
+    ~ScopedRestoreReadFramebufferBinding()
+    {
+        if (m_bindingChanged)
+            GL_BindFramebuffer(m_framebufferTarget, m_bindingValue);
+    }
 private:
-    const GCGLenum m_framebufferTarget;
-    GCGLuint m_bindingValue { 0u };
+    const GLenum m_framebufferTarget;
+    GLuint m_bindingValue { 0u };
     bool m_bindingChanged { false };
 };
 
 class ScopedPixelStorageMode {
     WTF_MAKE_NONCOPYABLE(ScopedPixelStorageMode);
-
 public:
-    explicit ScopedPixelStorageMode(GCGLenum name, bool condition = true);
-    ScopedPixelStorageMode(GCGLenum name, GCGLint value, bool condition = true);
-    ~ScopedPixelStorageMode();
-    void pixelStore(GCGLint value);
-    operator GCGLint() const
+    explicit ScopedPixelStorageMode(GLenum name, bool condition = true)
+        : m_name(condition ? name : 0)
+    {
+        if (m_name)
+            GL_GetIntegerv(m_name, &m_originalValue);
+    }
+    ScopedPixelStorageMode(GLenum name, GLint value, bool condition = true)
+        : m_name(condition ? name : 0)
+    {
+        if (m_name) {
+            GL_GetIntegerv(m_name, &m_originalValue);
+            pixelStore(value);
+        }
+    }
+    ~ScopedPixelStorageMode()
+    {
+        if (m_name && m_valueChanged)
+            GL_PixelStorei(m_name, m_originalValue);
+    }
+    void pixelStore(GLint value)
+    {
+        ASSERT(m_name);
+        if (!m_valueChanged && m_originalValue == value)
+            return;
+        GL_PixelStorei(m_name, value);
+        m_valueChanged = m_originalValue != value;
+    }
+    operator GLint() const
     {
         ASSERT(m_name && !m_valueChanged);
         return m_originalValue;
     }
-
 private:
-    const GCGLenum m_name;
+    const GLenum m_name;
     bool m_valueChanged { false };
-    GCGLint m_originalValue { 0 };
+    GLint m_originalValue { 0 };
 };
 
 class ScopedTexture {
     WTF_MAKE_NONCOPYABLE(ScopedTexture);
-
 public:
-    ScopedTexture();
-    ~ScopedTexture();
-    operator GCGLuint() const
+    ScopedTexture()
+    {
+        GL_GenTextures(1, &m_object);
+    }
+    ~ScopedTexture()
+    {
+        GL_DeleteTextures(1, &m_object);
+    }
+    operator GLuint() const
     {
         return m_object;
     }
-
 private:
-    GCGLuint m_object { 0u };
+    GLuint m_object { 0u };
 };
 
 class ScopedFramebuffer {
     WTF_MAKE_NONCOPYABLE(ScopedFramebuffer);
-
 public:
-    ScopedFramebuffer();
-    ~ScopedFramebuffer();
-    operator GCGLuint() const
+    ScopedFramebuffer()
+    {
+        GL_GenFramebuffers(1, &m_object);
+    }
+    ~ScopedFramebuffer()
+    {
+        GL_DeleteFramebuffers(1, &m_object);
+    }
+    operator GLuint() const
     {
         return m_object;
     }
 private:
-    GCGLuint m_object { 0 };
+    GLuint m_object { 0 };
 };
 
 class ScopedGLFence {
     WTF_MAKE_NONCOPYABLE(ScopedGLFence);
-
 public:
     ScopedGLFence() = default;
     ScopedGLFence(ScopedGLFence&& other)
@@ -161,26 +221,23 @@ public:
         }
         return *this;
     }
-    void reset();
+    void reset()
+    {
+        if (m_object) {
+            GL_DeleteSync(m_object);
+            m_object = { };
+        }
+    }
     void abandon() { m_object = { }; }
-    void fenceSync();
-    GCGLsync get() const { return m_object; }
-    operator GCGLsync() const { return m_object; }
+    void fenceSync()
+    {
+        reset();
+        m_object = GL_FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    }
+    operator GLsync() const { return m_object; }
     operator bool() const { return m_object; }
-
 private:
-    GCGLsync m_object { };
-};
-
-class ScopedGLCapability {
-    WTF_MAKE_NONCOPYABLE(ScopedGLCapability);
-public:
-    ScopedGLCapability(GCGLenum capability, bool enable);
-    ~ScopedGLCapability();
-
-private:
-    const GCGLenum m_capability;
-    const std::optional<bool> m_original;
+    GLsync m_object { };
 };
 
 bool platformIsANGLEAvailable();

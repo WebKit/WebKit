@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebKitWebViewAccessible.h"
 
-#if ENABLE(ACCESSIBILITY) && !USE(GTK4)
+#if ENABLE(ACCESSIBILITY)
 
 #include <wtf/glib/WTFGType.h>
 

@@ -257,7 +257,7 @@ static bool canCreateRevealItems()
     static bool result;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        result = PAL::isRevealCoreFrameworkAvailable() && PAL::getRVItemClass();
+        result = PAL::isRevealFrameworkAvailable() && PAL::isRevealCoreFrameworkAvailable() && PAL::getRVItemClass();
     });
     return result;
 }
@@ -427,7 +427,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
 #if PLATFORM(MAC)
-    if (!PAL::isRevealFrameworkAvailable() || !canCreateRevealItems() || !PAL::getRVPresenterClass())
+    if (!canCreateRevealItems() || !PAL::getRVPresenterClass())
         return nil;
 
     auto mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);

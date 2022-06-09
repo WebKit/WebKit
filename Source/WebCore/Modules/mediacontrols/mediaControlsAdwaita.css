@@ -1,0 +1,527 @@
+/*
+ * Copyright (C) 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009 Google Inc.
+ * Copyright (C) 2012 Zan Dobersek <zandobersek@gmail.com>
+ * Copyright (C) 2012, 2020 Igalia S.L.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* These are based on the Chromium media controls and using the Adwaita icons */
+
+audio::-webkit-media-controls-panel.hidden,
+video::-webkit-media-controls-panel.hidden {
+    display: none !important;
+}
+
+body:-webkit-full-page-media {
+    background-color: rgb(0, 0, 0);
+}
+
+audio {
+    width: 300px;
+    height: 30px;
+}
+
+audio:-webkit-full-page-media,
+video:-webkit-full-page-media {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+audio:-webkit-full-page-media::-webkit-media-controls-panel,
+video:-webkit-full-page-media::-webkit-media-controls-panel {
+    bottom: 0px;
+}
+
+::-webkit-media-controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+audio::-webkit-media-controls-enclosure,
+video::-webkit-media-controls-enclosure {
+    width: 100%;
+    max-width: 800px;
+    height: 30px;
+    bottom: 0;
+    text-indent: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+video::-webkit-media-controls-enclosure {
+    padding: 5px;
+    height: 40px;
+}
+
+audio::-webkit-media-controls-panel,
+video::-webkit-media-controls-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    bottom: auto;
+    height: 30px;
+    background-color: rgba(20, 20, 20, 0.8);
+    border-radius: 5px;
+    overflow: visible;
+    transition: opacity 0.25s linear;
+}
+
+video::-webkit-media-controls-panel {
+    opacity: 0;
+}
+
+audio::-webkit-media-controls-panel,
+video:-webkit-full-page-media::-webkit-media-controls-panel.no-video,
+video::-webkit-media-controls-panel:hover,
+video::-webkit-media-controls-panel.show,
+video::-webkit-media-controls-panel.paused {
+    opacity: 1;
+}
+
+video::-webkit-media-controls-panel div.mute-box,
+audio::-webkit-media-controls-panel div.mute-box {
+    display: flex;
+    flex: none;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    margin: 0 9px 0 -7px;
+}
+
+audio::-webkit-media-controls-panel div.mute-box.hidden,
+video::-webkit-media-controls-panel div.mute-box.hidden {
+    display: none !important;
+}
+
+audio::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-mute-button {
+    display: flex;
+    flex: none;
+    border: none;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    outline: none;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url("data:image/svg+xml;utf-8, \
+        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'> \
+          <g fill='%23FFFFFF'> \
+            <path d='M0 5h2.484l2.97-3H6v12h-.475l-3.04-3H0z' style='marker:none' color='%23bebebe' overflow='visible'/> \
+            <path d='M15 8c0-2.814-1-5.172-2.586-7H11v1.48C12.265 4 13 5.7 13 8c0 2.3-.78 4-2 5.52V15h1.381C13.847 13.36 15 10.814 15 8z' style='marker:none' color='%23000' overflow='visible'/> \
+            <path d='M12 8c0-2.166-.739-4.02-2-5H9v2c.607.789 1 1.76 1 3 0 1.241-.393 2.22-1 3v2h1c1.223-.995 2-2.873 2-5z' style='marker:none' color='%23000' overflow='visible'/> \
+            <path d='M9 8c0-1.257-.312-2.216-1-3H7v6h1c.672-.837 1-1.742 1-3z' style='line-height:normal;-inkscape-font-specification:Sans;text-indent:0;text-align:start;text-decoration-line:none;text-transform:none;marker:none' color='%23000' font-weight='400' font-family='Sans' overflow='visible'/> \
+          </g> \
+        </svg>");
+}
+
+audio::-webkit-media-controls-mute-button.muted,
+video::-webkit-media-controls-mute-button.muted {
+    background-image: url("data:image/svg+xml;utf-8, \
+        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'> \
+          <g fill='%23FFFFFF'> \
+            <path d='M11 11h1.375l1.125 1.094L14.594 11H16v1.469l-1.094 1.062L16 14.594V16h-1.438L13.5 14.937 12.437 16H11v-1.406l1.062-1.063L11 12.47zM0 5h2.484l2.97-3H6v12h-.475l-3.04-3H0z' style='marker:none' color='%23bebebe' overflow='visible'/> \
+            <path d='M11 1v1.48C12.265 4 13 5.7 13 8c0 .723-.085 1.382-.229 2h2.034c.124-.645.195-1.314.195-2 0-2.814-1-5.172-2.586-7z' style='marker:none' color='%23000' overflow='visible' opacity='.35'/> \
+            <path d='M9 3v2c.607.789 1 1.759 1 3s-.393 2.22-1 3v2h1v-3h1.75c.158-.626.25-1.297.25-2 0-2.167-.739-4.02-2-5z' style='marker:none' color='%23000' overflow='visible' opacity='.35'/> \
+            <path d='M9 8c0-1.257-.312-2.216-1-3H7v6h1c.672-.837 1-1.742 1-3z' style='line-height:normal;-inkscape-font-specification:Sans;text-indent:0;text-align:start;text-decoration-line:none;text-transform:none;marker:none' color='%23000' font-weight='400' font-family='Sans' overflow='visible' opacity='.35'/> \
+          </g> \
+        </svg>");
+}
+
+audio::-webkit-media-controls-play-button,
+video::-webkit-media-controls-play-button {
+    display: flex;
+    flex: none;
+    border: none;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 9px;
+    outline: none;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url("data:image/svg+xml;utf-8, \
+        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'> \
+          <g color='%23000' fill='%23FFFFFF'> \
+            <path d='M4.002 4h3v8h-3zM9.002 4h3v8h-3z' style='marker:none' overflow='visible'/> \
+          </g> \
+        </svg>");
+}
+
+/* Paused classes for audio/video controls should be defined to make a difference in style from not having this class. Otherwise a repaint would not happen. */
+audio::-webkit-media-controls-play-button.paused,
+video::-webkit-media-controls-play-button.paused {
+    position: relative;
+    background-image: url("data:image/svg+xml;utf-8, \
+        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'> \
+          <g color='%23000' fill='%23FFFFFF'> \
+            <path d='M5.022 3a1 1 0 0 0-1.02 1v8a1 1 0 0 0 1.496.87l6.999-4a1 1 0 0 0 0-1.74l-6.999-4A1 1 0 0 0 5.022 3zm.98 2.725L9.982 8l-3.98 2.275z' style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none' font-weight='400' font-family='sans-serif' white-space='normal' overflow='visible'/> \
+            <path d='M5.002 12h-1v1h1zM5.002 3h-1v1h1zM5.002 4L12 8l-6.998 4z' style='marker:none' overflow='visible'/> \
+          </g> \
+        </svg>");
+}
+
+audio::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-current-time-display {
+    -webkit-user-select: none;
+    flex: none;
+    display: block;
+    border: none;
+    cursor: default;
+
+    height: 30px;
+    margin: 0 15px 0 0;
+
+    line-height: 30px;
+    font-family: -webkit-system-font;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    font-weight: normal;
+    font-style: normal;
+    color: white;
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    text-decoration: none;
+}
+
+audio::-webkit-media-controls-current-time-display.no-duration,
+video::-webkit-media-controls-current-time-display.no-duration {
+    filter: brightness(50%);
+}
+
+audio::-webkit-media-controls-current-time-display.hidden,
+video::-webkit-media-controls-current-time-display.hidden {
+    display: none !important;
+}
+
+audio::-webkit-media-controls-timeline,
+video::-webkit-media-controls-timeline {
+    -webkit-appearance: media-slider !important;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    height: 4px !important;
+    margin: 0 15px 0 1px !important;
+    padding: 0 !important;
+    min-width: 25px !important;
+    outline: none !important;
+}
+
+input[type="range"][disabled]::-webkit-media-slider-thumb,
+input[type="range"][disabled]::-webkit-media-slider-thumb:hover,
+input[type="range"][disabled]::-webkit-media-slider-thumb:active {
+    filter: brightness(50%);
+}
+
+audio::-webkit-media-controls-timeline.hidden,
+video::-webkit-media-controls-timeline.hidden {
+    display: none !important;
+}
+
+audio::-webkit-media-controls-volume-slider-container,
+video::-webkit-media-controls-volume-slider-container {
+    -webkit-appearance: media-volume-slider-container;
+    display: flex;
+    overflow: hidden;
+    position: absolute;
+    padding: 0;
+    height: 100px;
+    width: 30px;
+    bottom: 30px;
+    z-index: 2;
+    background-color: rgba(20, 20, 20, 0.8);
+    border-radius: 5px 5px 0px 0px;
+    transition: height 0.10s linear;
+}
+
+audio::-webkit-media-controls-volume-slider-container.hiding,
+video::-webkit-media-controls-volume-slider-container.hiding {
+    height: 0;
+}
+
+audio::-webkit-media-controls-volume-slider-container.down,
+video::-webkit-media-controls-volume-slider-container.down {
+    bottom: -100px;
+    border-radius: 0px 0px 5px 5px;
+    transition: height 0.10s linear, bottom 0.10s linear;
+}
+
+audio::-webkit-media-controls-panel .hiding.down,
+video::-webkit-media-controls-panel .hiding.down {
+    bottom: 0;
+}
+
+audio::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-volume-slider {
+    -webkit-appearance: media-volume-slider !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+    height: 80px !important;
+    width: 4px !important;
+    margin: 10px auto !important;
+    outline: none !important;
+}
+
+audio::-webkit-media-controls-volume-slider-container input[type="range"]::-webkit-media-slider-container > div,
+video::-webkit-media-controls-volume-slider-container input[type="range"]::-webkit-media-slider-container > div {
+    margin: -7px 0;
+}
+
+input[type="range"]::-webkit-media-slider-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row; /* This property is updated by C++ code. */
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+}
+
+/* The negative right margin causes the track to overflow its container. */
+input[type="range"]::-webkit-media-slider-container > div {
+    margin-right: -14px;
+}
+
+input[type="range"]::-webkit-media-slider-thumb {
+    -webkit-appearance: none !important;
+    width: 14px;
+    height: 14px;
+    border-radius: 7px;
+    color: white;
+    margin-left: -7px;
+    margin-right: -7px;
+    background-color: white;
+}
+
+audio::-webkit-media-controls-toggle-closed-captions-button,
+video::-webkit-media-controls-toggle-closed-captions-button {
+    display: flex;
+    flex: none;
+    border: none;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 9px 0 -7px;
+    outline: none;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url("data:image/svg+xml;utf-8, \
+        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'> \
+          <path d='M3.5 2A2.495 2.495 0 0 0 1 4.5v5c0 1.385 1.115 2.52 2.5 2.5h6.375L13 15v-3.063A2.486 2.486 0 0 0 15 9.5v-5C15 3.115 13.885 2 12.5 2zM3 7h4v1H3zm5 0h5v1H8zM3 9h2v1H3zm3 0h5v1H6zm6 0h1v1h-1z' fill='%23FFFFFF'/> \
+        </svg>");
+}
+
+audio::-webkit-media-controls-toggle-closed-captions-button.hidden,
+video::-webkit-media-controls-toggle-closed-captions-button.hidden {
+    display: none !important;
+}
+
+video::-webkit-media-controls-closed-captions-container {
+    -webkit-appearance: media-closed-captions-container;
+    display: flex;
+    position: absolute;
+    bottom: 35px;
+    z-index: 2;
+    background-color: rgba(20, 20, 20, 0.8);
+    border-radius: 5px 5px 0px 0px;
+    overflow: hidden;
+    max-width: -webkit-calc(100% - 48px); /* right + 10px */
+    max-height: -webkit-calc(100% - 35px); /* bottom + 10px */
+    cursor: default;
+    font-family: -webkit-system-font;
+    font-size: 10pt;
+    font-weight: normal;
+    font-style: normal;
+    color: white;
+    -webkit-user-select: none;
+    transition: height 0.10s linear;
+}
+
+video::-webkit-media-controls-closed-captions-container.out {
+    border-radius: 5px;
+}
+
+video::-webkit-media-controls-closed-captions-container.hidden {
+    display: none !important;
+}
+
+video::-webkit-media-controls-closed-captions-container h3 {
+    padding-top: 8px;
+    margin: 0;
+    padding-left: 17px;
+    padding-right: 15px;
+    font-size: 10pt;
+    font-weight: bold;
+    font-style: normal;
+}
+
+video::-webkit-media-controls-closed-captions-container ul {
+    list-style-type: none;
+    margin: 0 0 4px 0;
+    padding: 4px 0 0 0;
+}
+
+video::-webkit-media-controls-closed-captions-container li {
+    position: relative;
+    color: white;
+    margin: 0;
+    padding-left: 17px;
+    padding-right: 15px;
+    padding-top: 0.15em;
+    padding-bottom: 0.2em;
+    box-sizing: border-box;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    outline: none;
+}
+video::-webkit-media-controls-closed-captions-container li.selected {
+    background-color: rgba(230, 230, 230, 0.15);
+}
+
+video::-webkit-media-controls-fullscreen-button {
+    display: flex;
+    flex: none;
+    border: none;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 9px 0 -7px;
+    outline: none;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url("data:image/svg+xml;utf-8, \
+        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'> \
+          <g color='%23000' fill='%23FFFFFF'> \
+            <path d='M1.984 8.986A1 1 0 0 0 1 10v4a1 1 0 0 0 1 1h4a1 1 0 1 0 0-2H3v-3a1 1 0 0 0-1.016-1.014z' style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none' font-weight='400' font-family='sans-serif' white-space='normal' overflow='visible'/> \
+            <path d='M6.48 8.49a1 1 0 0 0-.687.303l-4.5 4.5a1 1 0 1 0 1.414 1.414l4.5-4.5A1 1 0 0 0 6.48 8.49z' style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none' font-weight='400' font-family='sans-serif' white-space='normal' overflow='visible'/> \
+            <path d='M1 14h1v1H1z' style='marker:none' overflow='visible'/> \
+            <path d='M10 1a1 1 0 1 0 0 2h3v3a1 1 0 1 0 2 0V2a1 1 0 0 0-1-1z' style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none' font-weight='400' font-family='sans-serif' white-space='normal' overflow='visible'/> \
+            <path d='M14 1h1v1h-1z' style='marker:none' overflow='visible'/> \
+            <path d='M13.984.99a1 1 0 0 0-.69.301l-4.5 4.469a1 1 0 1 0 1.411 1.418l4.5-4.469a1 1 0 0 0-.72-1.719z' style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none' font-weight='400' font-family='sans-serif' white-space='normal' overflow='visible'/> \
+            <path d='M1 9h1v1H1zM6 14h1v1H6zM14 6h1v1h-1zM9 1h1v1H9z' style='marker:none' overflow='visible'/> \
+          </g> \
+        </svg>");
+}
+
+video::-webkit-media-controls-fullscreen-button.exit {
+    background-image: url("data:image/svg+xml;utf-8, \
+        <svg xmlns='http://www.w3.org/2000/svg' width='16.014' height='16.01'> \
+          <g color='%23000' fill='%23FFFFFF'> \
+            <path d='M12 1.006l-2 .008.018 4.996H15v-2h-2.99z' style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none' font-weight='400' font-family='sans-serif' white-space='normal' overflow='visible'/> \
+            <path d='M14.979 0a1 1 0 0 0-.688.305l-3.984 4a1 1 0 1 0 1.416 1.41l3.986-4A1 1 0 0 0 14.979 0zM1.014 6.01a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1zm1 2h6v6h-6z' style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none' font-weight='400' font-family='sans-serif' white-space='normal' overflow='visible'/> \
+            <path d='M1.014 8.01a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2z' style='line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:%23000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;marker:none' font-weight='400' font-family='sans-serif' white-space='normal' overflow='visible' fill-rule='evenodd'/> \
+            <path d='M15 5.01h1v1h-1zM10 .01h1v1h-1zM9.014 15.01h1v1h-1zM.014 15.01h1v1h-1z' style='marker:none' overflow='visible'/> \
+            <path d='M11 .01c.554 0 1 .446 1 1s-.446 1-1 1-1-.446-1-1 .446-1 1-1zM15 4.01c.554 0 1 .446 1 1s-.446 1-1 1-1-.446-1-1 .446-1 1-1z' style='marker:none' overflow='visible'/> \
+          </g> \
+        </svg>");
+}
+
+video::-webkit-media-controls-fullscreen-button.hidden {
+    display: none !important;
+}
+
+audio::-webkit-media-controls-panel button:hover,
+video::-webkit-media-controls-panel button:hover,
+input[type="range"]::-webkit-media-slider-thumb:hover {
+    filter: brightness(90%);
+}
+
+audio::-webkit-media-controls-panel button:active,
+video::-webkit-media-controls-panel button:active,
+input[type="range"]::-webkit-media-slider-thumb:active {
+    filter: brightness(80%);
+}
+
+audio::-webkit-media-controls-panel button[disabled],
+video::-webkit-media-controls-panel button[disabled] {
+    filter: brightness(50%);
+}
+
+video::-webkit-media-text-track-container,
+audio::-webkit-media-text-track-container {
+    position: relative;
+    -webkit-flex: 1 1 auto;
+}
+
+video::-webkit-media-text-track-container {
+    overflow: hidden;
+    padding-bottom: 5px;
+    z-index: 0;
+
+    text-align: center;
+    color: rgba(255, 255, 255, 1);
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-decoration: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+
+    flex: 1 1 auto;
+
+    -webkit-line-box-contain: block inline-box replaced;
+}
+
+video::cue {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+video::cue(:future) {
+    color: gray;
+}
+
+video::-webkit-media-text-track-display-backdrop {
+    display: inline-block;
+}
+
+video::-webkit-media-text-track-container b {
+    font-weight: bold;
+}
+
+video::-webkit-media-text-track-container u {
+    text-decoration: underline;
+}
+
+video::-webkit-media-text-track-container i {
+    font-style: italic;
+}
+
+video::-webkit-media-text-track-container .hidden,
+audio::-webkit-media-text-track-container .hidden {
+    display: none;
+}

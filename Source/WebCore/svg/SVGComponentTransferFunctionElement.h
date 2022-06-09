@@ -23,7 +23,6 @@
 
 #include "FEComponentTransfer.h"
 #include "SVGElement.h"
-#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 
@@ -54,15 +53,17 @@ struct SVGPropertyTraits<ComponentTransferType> {
 
     static ComponentTransferType fromString(const String& value)
     {
-        static constexpr std::pair<ComparableASCIILiteral, ComponentTransferType> mappings[] = {
-            { "discrete", FECOMPONENTTRANSFER_TYPE_DISCRETE },
-            { "gamma", FECOMPONENTTRANSFER_TYPE_GAMMA },
-            { "identity", FECOMPONENTTRANSFER_TYPE_IDENTITY },
-            { "linear", FECOMPONENTTRANSFER_TYPE_LINEAR },
-            { "table", FECOMPONENTTRANSFER_TYPE_TABLE }
-        };
-        static constexpr SortedArrayMap map { mappings };
-        return  map.get(value, FECOMPONENTTRANSFER_TYPE_UNKNOWN);
+        if (value == "identity")
+            return FECOMPONENTTRANSFER_TYPE_IDENTITY;
+        if (value == "table")
+            return FECOMPONENTTRANSFER_TYPE_TABLE;
+        if (value == "discrete")
+            return FECOMPONENTTRANSFER_TYPE_DISCRETE;
+        if (value == "linear")
+            return FECOMPONENTTRANSFER_TYPE_LINEAR;
+        if (value == "gamma")
+            return FECOMPONENTTRANSFER_TYPE_GAMMA;
+        return FECOMPONENTTRANSFER_TYPE_UNKNOWN;
     }
 };
 

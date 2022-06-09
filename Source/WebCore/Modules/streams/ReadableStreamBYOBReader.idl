@@ -25,7 +25,7 @@
  */
 
 [
-    Exposed=*,
+    Exposed=(Window,Worker),
     JSBuiltin,
     PrivateIdentifier
 ] interface ReadableStreamBYOBReader {

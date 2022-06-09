@@ -3,7 +3,6 @@
 <head>
     <script src="../../resources/js-test-pre.js"></script>
     <script src="../../media/media-file.js"></script>
-    <script src="../../media/utilities.js"></script>
     <script src="../../resources/platform-helper.js"></script>
 </head>
 <body>
@@ -33,12 +32,12 @@
     document.body.appendChild(canvases);
 
     var video = document.createElement("video");
+    video.addEventListener("loadeddata", loadeddata);
+    video.addEventListener("playing", playing);
 
     shouldBeNull("document.createElement('canvas').getContext('2d').createPattern(video, 'repeat')");
 
-    waitForVideoFrame(video, firstframe);
     video.src = findMediaFile("video", "../../media/content/test");
-
 
     function checkPixels(context, x, y, r, g, b, tolerance)
     {
@@ -64,13 +63,16 @@
         });
     }
 
-    async function firstframe()
+    function loadeddata()
     {
         drawImageToCanvasAndCheckPixels();
 
         video.currentTime = 1;
         video.play();
-        await waitForVideoFrameUntil(video, 1);
+    }
+
+    function playing()
+    {
         video.pause();
 
         drawImageToCanvasAndCheckPixels();

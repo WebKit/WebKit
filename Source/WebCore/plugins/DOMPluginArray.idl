@@ -21,12 +21,13 @@
 [
     GenerateIsReachable=ReachableFromNavigator,
     LegacyUnenumerableNamedProperties,
+    ImplementationLacksVTable,
     InterfaceName=PluginArray,
     Exposed=Window
 ] interface DOMPluginArray {
     readonly attribute unsigned long length;
     getter DOMPlugin? item(unsigned long index);
-    getter DOMPlugin? namedItem([AtomString] DOMString name);
+    getter DOMPlugin? namedItem(DOMString name);
 
     undefined refresh(optional boolean reload = false);
 };

@@ -133,7 +133,7 @@ void CachedImage::didAddClient(CachedResourceClient& client)
 
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
     if (m_image && !m_image->isNull())
-        downcast<CachedImageClient>(client).imageChanged(this);
+        static_cast<CachedImageClient&>(client).imageChanged(this);
 
     if (m_image)
         m_image->startAnimationAsynchronously();
@@ -145,15 +145,15 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
 {
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
 
-    m_pendingContainerContextRequests.remove(&downcast<CachedImageClient>(client));
-    m_clientsWaitingForAsyncDecoding.remove(&downcast<CachedImageClient>(client));
+    m_pendingContainerContextRequests.remove(&static_cast<CachedImageClient&>(client));
+    m_clientsWaitingForAsyncDecoding.remove(&static_cast<CachedImageClient&>(client));
 
     if (m_svgImageCache)
-        m_svgImageCache->removeClientFromCache(&downcast<CachedImageClient>(client));
+        m_svgImageCache->removeClientFromCache(&static_cast<CachedImageClient&>(client));
 
     CachedResource::didRemoveClient(client);
 
-    downcast<CachedImageClient>(client).didRemoveCachedImageClient(*this);
+    static_cast<CachedImageClient&>(client).didRemoveCachedImageClient(*this);
 }
 
 bool CachedImage::isClientWaitingForAsyncDecoding(CachedImageClient& client) const
@@ -471,9 +471,9 @@ inline void CachedImage::clearImage()
     m_updateImageDataCount = 0;
 }
 
-void CachedImage::updateBufferInternal(const FragmentedSharedBuffer& data)
+void CachedImage::updateBufferInternal(const SharedBuffer& data)
 {
-    m_data = const_cast<FragmentedSharedBuffer*>(&data);
+    m_data = data.makeContiguous();
     setEncodedSize(m_data->size());
     createImage();
 
@@ -553,7 +553,7 @@ EncodedDataStatus CachedImage::updateImageData(bool allDataReceived)
 void CachedImage::updateBuffer(const FragmentedSharedBuffer& buffer)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
-    updateBufferInternal(buffer);
+    updateBufferInternal(buffer.makeContiguous());
 }
 
 void CachedImage::updateData(const SharedBuffer& data)

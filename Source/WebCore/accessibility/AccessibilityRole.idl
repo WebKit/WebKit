@@ -24,6 +24,8 @@
  */
 
 // https://wicg.github.io/aom/spec/aria-reflection.html#AccessibilityRole
-interface mixin AccessibilityRole {
+[
+    EnabledAtRuntime=AriaReflectionEnabled
+] interface mixin AccessibilityRole {
     [Reflect] attribute DOMString? role;
 };

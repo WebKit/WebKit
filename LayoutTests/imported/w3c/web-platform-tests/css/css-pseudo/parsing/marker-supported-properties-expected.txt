@@ -2,15 +2,12 @@
 PASS Property font value 'italic small-caps 900 expanded 25px / 50px Ahem' in ::marker
 PASS Property font-family value 'Ahem' in ::marker
 PASS Property font-feature-settings value '"smcp"' in ::marker
-PASS Property font-kerning value 'none' in ::marker
+FAIL Property font-kerning value 'none' in ::marker assert_equals: expected "none" but got "auto"
 PASS Property font-size value '25px' in ::marker
 FAIL Property font-size-adjust value '1' in ::marker assert_true: font-size-adjust doesn't seem to be supported in the computed style expected true got false
 PASS Property font-stretch value 'expanded' in ::marker
 PASS Property font-style value 'italic' in ::marker
 PASS Property font-synthesis value 'none' in ::marker
-FAIL Property font-synthesis-small-caps value 'none' in ::marker assert_true: font-synthesis-small-caps doesn't seem to be supported in the computed style expected true got false
-FAIL Property font-synthesis-style value 'none' in ::marker assert_true: font-synthesis-style doesn't seem to be supported in the computed style expected true got false
-FAIL Property font-synthesis-weight value 'none' in ::marker assert_true: font-synthesis-weight doesn't seem to be supported in the computed style expected true got false
 PASS Property font-variant value 'small-caps' in ::marker
 PASS Property font-variant-caps value 'small-caps' in ::marker
 PASS Property font-variant-east-asian value 'full-width' in ::marker
@@ -34,7 +31,6 @@ PASS Property animation-iteration-count value 'infinite' in ::marker
 PASS Property animation-name value 'anim' in ::marker
 PASS Property animation-play-state value 'paused' in ::marker
 PASS Property animation-timing-function value 'linear' in ::marker
-PASS Property animation-composition value 'add' in ::marker
 PASS Property transition value 'display 1s linear 2s' in ::marker
 PASS Property transition-delay value '1s' in ::marker
 PASS Property transition-duration value '2s' in ::marker
@@ -49,15 +45,15 @@ PASS Property text-transform value 'uppercase' in ::marker
 PASS Property word-break value 'break-word' in ::marker
 PASS Property word-spacing value '10px' in ::marker
 PASS Property text-decoration-skip-ink value 'none' in ::marker
-PASS Property text-emphasis value 'dot rgb(0, 255, 0)' in ::marker
+FAIL Property text-emphasis value 'dot rgb(0, 255, 0)' in ::marker assert_equals: expected "dot rgb(0, 255, 0)" but got ""
 PASS Property text-emphasis-color value 'rgb(0, 255, 0)' in ::marker
 PASS Property text-emphasis-position value 'under left' in ::marker
-PASS Property text-emphasis-style value 'dot' in ::marker
+FAIL Property text-emphasis-style value 'dot' in ::marker assert_equals: expected "dot" but got "filled dot"
 PASS Property text-shadow value 'rgb(0, 255, 0) 1px 2px 3px' in ::marker
 PASS Property display value 'none' in ::marker
 PASS Property position value 'absolute' in ::marker
 PASS Property float value 'right' in ::marker
-PASS Property list-style value 'inside url('foo') decimal' in ::marker
+FAIL Property list-style value 'inside url('foo') decimal' in ::marker assert_equals: expected "outside none disc" but got "disc outside none"
 PASS Property list-style-image value 'url('foo')' in ::marker
 PASS Property list-style-position value 'inside' in ::marker
 PASS Property list-style-type value 'decimal' in ::marker

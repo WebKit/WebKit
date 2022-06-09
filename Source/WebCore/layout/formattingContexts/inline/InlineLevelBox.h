@@ -48,7 +48,7 @@ public:
     static InlineLevelBox createLineBreakBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
     static InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
 
-    InlineLayoutUnit ascent() const { return m_ascent; }
+    InlineLayoutUnit baseline() const { return m_baseline; }
     std::optional<InlineLayoutUnit> descent() const { return m_descent; }
     // See https://www.w3.org/TR/css-inline-3/#layout-bounds
     struct LayoutBounds {
@@ -70,14 +70,13 @@ public:
     VerticalAlignment verticalAlign() const;
     InlineLayoutUnit preferredLineHeight() const;
     bool isPreferredLineHeightFontMetricsBased() const;
-    const FontMetrics& primarymetricsOfPrimaryFont() const;
+    const FontMetrics& primaryFontMetrics() const;
     InlineLayoutUnit fontSize() const;
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
     bool isLineSpanningInlineBox() const { return m_type == Type::LineSpanningInlineBox; }
     bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
-    bool isListMarker() const { return isAtomicInlineLevelBox() && layoutBox().isListMarker(); }
     bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
     bool hasLineBoxRelativeAlignment() const;
 
@@ -119,7 +118,7 @@ private:
     void setLogicalWidth(InlineLayoutUnit logicalWidth) { m_logicalRect.setWidth(logicalWidth); }
     void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_logicalRect.setHeight(roundToInt(logicalHeight)); }
     void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(roundToInt(logicalTop)); }
-    void setAscent(InlineLayoutUnit ascent) { m_ascent = roundToInt(ascent); }
+    void setBaseline(InlineLayoutUnit baseline) { m_baseline = roundToInt(baseline); }
     void setDescent(InlineLayoutUnit descent) { m_descent = roundToInt(descent); }
     void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
 
@@ -131,7 +130,7 @@ private:
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
     InlineRect m_logicalRect;
     LayoutBounds m_layoutBounds;
-    InlineLayoutUnit m_ascent { 0 };
+    InlineLayoutUnit m_baseline { 0 };
     std::optional<InlineLayoutUnit> m_descent;
     bool m_hasContent { false };
     // These bits are about whether this inline level box is the first/last generated box of the associated Layout::Box
@@ -155,7 +154,7 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
+    , m_style({ style.fontCascade().primaryFont().fontMetrics(), style.lineHeight(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
 {
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)
@@ -173,7 +172,7 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
 {
     // FIXME: Remove integral flooring when legacy line layout stops using it.
     if (isPreferredLineHeightFontMetricsBased())
-        return primarymetricsOfPrimaryFont().lineSpacing();
+        return primaryFontMetrics().lineSpacing();
 
     if (m_style.lineHeight.isPercentOrCalculated())
         return floorf(minimumValueForLength(m_style.lineHeight, fontSize()));
@@ -196,7 +195,7 @@ inline bool InlineLevelBox::isPreferredLineHeightFontMetricsBased() const
     return m_style.lineHeight.isNegative();
 }
 
-inline const FontMetrics& InlineLevelBox::primarymetricsOfPrimaryFont() const
+inline const FontMetrics& InlineLevelBox::primaryFontMetrics() const
 {
     return m_style.primaryFontMetrics;
 }

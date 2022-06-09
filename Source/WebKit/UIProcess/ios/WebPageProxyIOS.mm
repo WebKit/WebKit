@@ -48,7 +48,6 @@
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteScrollingCoordinatorProxy.h"
-#import "RevealItem.h"
 #import "ShareableResource.h"
 #import "TapHandlingResult.h"
 #import "UIKitSPI.h"
@@ -245,24 +244,24 @@ void WebPageProxy::adjustLayersForLayoutViewport(const FloatRect& layoutViewport
     m_scrollingCoordinatorProxy->viewportChangedViaDelegatedScrolling(unobscuredContentRect().location(), layoutViewport, displayedContentScale());
 }
 
-void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID nodeID)
+void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture()
 {
-    pageClient().scrollingNodeScrollViewWillStartPanGesture(nodeID);
+    pageClient().scrollingNodeScrollViewWillStartPanGesture();
 }
 
-void WebPageProxy::scrollingNodeScrollViewDidScroll(ScrollingNodeID nodeID)
+void WebPageProxy::scrollingNodeScrollViewDidScroll()
 {
-    pageClient().scrollingNodeScrollViewDidScroll(nodeID);
+    pageClient().scrollingNodeScrollViewDidScroll();
 }
 
-void WebPageProxy::scrollingNodeScrollWillStartScroll(ScrollingNodeID nodeID)
+void WebPageProxy::scrollingNodeScrollWillStartScroll()
 {
-    pageClient().scrollingNodeScrollWillStartScroll(nodeID);
+    pageClient().scrollingNodeScrollWillStartScroll();
 }
 
-void WebPageProxy::scrollingNodeScrollDidEndScroll(ScrollingNodeID nodeID)
+void WebPageProxy::scrollingNodeScrollDidEndScroll()
 {
-    pageClient().scrollingNodeScrollDidEndScroll(nodeID);
+    pageClient().scrollingNodeScrollDidEndScroll();
 }
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& minimumUnobscuredSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, double minimumEffectiveDeviceWidth, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
@@ -392,16 +391,6 @@ void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, Sel
 
     sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart), WTFMove(callback));
 }
-
-void WebPageProxy::willInsertFinalDictationResult()
-{
-    m_process->send(Messages::WebPage::WillInsertFinalDictationResult(), m_webPageID);
-}
-
-void WebPageProxy::didInsertFinalDictationResult()
-{
-    m_process->send(Messages::WebPage::DidInsertFinalDictationResult(), m_webPageID);
-}
     
 void WebPageProxy::replaceDictatedText(const String& oldText, const String& newText)
 {
@@ -523,27 +512,9 @@ void WebPageProxy::requestDictationContext(CompletionHandler<void(const String&,
     sendWithAsyncReply(Messages::WebPage::RequestDictationContext(), WTFMove(callbackFunction));
 }
 
-#if ENABLE(REVEAL)
-void WebPageProxy::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const WebKit::RevealItem&)>&& callbackFunction)
-{
-    if (!hasRunningProcess())
-        return callbackFunction(RevealItem());
-
-    sendWithAsyncReply(Messages::WebPage::RequestRVItemInCurrentSelectedRange(), WTFMove(callbackFunction));
-}
-
-void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& callbackFunction)
-{
-    if (!hasRunningProcess())
-        return callbackFunction(false, RevealItem());
-
-    sendWithAsyncReply(Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView(point), WTFMove(callbackFunction));
-}
-#endif
-
 void WebPageProxy::requestAutocorrectionContext()
 {
-    m_process->send(Messages::WebPage::HandleAutocorrectionContextRequest(), m_webPageID);
+    m_process->send(Messages::WebPage::RequestAutocorrectionContext(), m_webPageID);
 }
 
 void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& context)
@@ -598,7 +569,7 @@ bool WebPageProxy::isValidPerformActionOnElementAuthorizationToken(const String&
 
 void WebPageProxy::performActionOnElement(uint32_t action)
 {
-    auto authorizationToken = createVersion4UUIDString();
+    auto authorizationToken = createCanonicalUUIDString();
 
     m_performActionOnElementAuthTokens.add(authorizationToken);
     
@@ -707,11 +678,6 @@ void WebPageProxy::extendSelection(WebCore::TextGranularity granularity, Complet
 void WebPageProxy::selectWordBackward()
 {
     m_process->send(Messages::WebPage::SelectWordBackward(), m_webPageID);
-}
-
-void WebPageProxy::extendSelectionForReplacement(CompletionHandler<void()>&& completion)
-{
-    sendWithAsyncReply(Messages::WebPage::ExtendSelectionForReplacement(), WTFMove(completion));
 }
 
 void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, uint32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& callback)
@@ -1046,26 +1012,22 @@ void WebPageProxy::handleSmartMagnificationInformationForPotentialTap(WebKit::Ta
     pageClient().handleSmartMagnificationInformationForPotentialTap(requestID, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel);
 }
 
-size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const PrintInfo& printInfo)
-{
-    ASSERT_WITH_MESSAGE(!printInfo.snapshotFirstPage, "If we are just snapshotting the first page, we don't need a synchronous message to determine the page count, which is 1.");
-
-    if (!hasRunningProcess())
-        return 0;
-
-    size_t pageCount = 0;
-    sendSync(Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Messages::WebPage::ComputePagesForPrintingiOS::Reply(pageCount), Seconds::infinity());
-    return pageCount;
-}
-
-uint64_t WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+std::pair<size_t, uint64_t> WebPageProxy::computePagesForPrintingAndDrawToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& callback)
 {
     if (!hasRunningProcess()) {
-        completionHandler({ });
-        return 0;
+        callback({ });
+        return { 0, 0 };
     }
 
-    return sendWithAsyncReply(Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
+    size_t pageCount = 0;
+    if (printInfo.snapshotFirstPage)
+        pageCount = 1;
+    else
+        sendSync(Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Messages::WebPage::ComputePagesForPrintingiOS::Reply(pageCount), Seconds::infinity());
+
+    auto callbackID = sendWithAsyncReply(Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(callback));
+    
+    return { pageCount, callbackID };
 }
 
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
@@ -1092,10 +1054,10 @@ void WebPageProxy::didUpdateEditorState(const EditorState& oldEditorState, const
     if (newEditorState.shouldIgnoreSelectionChanges)
         return;
     
-    updateFontAttributesAfterEditorStateChange();
     // We always need to notify the client on iOS to make sure the selection is redrawn,
     // even during composition to support phrase boundary gesture.
     pageClient().selectionDidChange();
+    updateFontAttributesAfterEditorStateChange();
 }
 
 void WebPageProxy::dispatchDidUpdateEditorState()
@@ -1315,79 +1277,80 @@ static RecommendDesktopClassBrowsingForRequest desktopClassBrowsingRecommendedFo
     // disabled by default in WKWebView, so we would need a new preference for controlling site-specific quirks that are on-by-default
     // in all apps, but may be turned off via SPI (or via Web Inspector). See also: <rdar://problem/50035167>.
     auto host = request.url().host();
-    if (equalLettersIgnoringASCIICase(host, "tv.kakao.com"_s) || host.endsWithIgnoringASCIICase(".tv.kakao.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "tv.kakao.com") || host.endsWithIgnoringASCIICase(".tv.kakao.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "tving.com"_s) || host.endsWithIgnoringASCIICase(".tving.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "tving.com") || host.endsWithIgnoringASCIICase(".tving.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "live.iqiyi.com"_s) || host.endsWithIgnoringASCIICase(".live.iqiyi.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "live.iqiyi.com") || host.endsWithIgnoringASCIICase(".live.iqiyi.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "jsfiddle.net"_s) || host.endsWithIgnoringASCIICase(".jsfiddle.net"_s))
+    if (equalLettersIgnoringASCIICase(host, "jsfiddle.net") || host.endsWithIgnoringASCIICase(".jsfiddle.net"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "video.sina.com.cn"_s) || host.endsWithIgnoringASCIICase(".video.sina.com.cn"_s))
+    if (equalLettersIgnoringASCIICase(host, "video.sina.com.cn") || host.endsWithIgnoringASCIICase(".video.sina.com.cn"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "huya.com"_s) || host.endsWithIgnoringASCIICase(".huya.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "huya.com") || host.endsWithIgnoringASCIICase(".huya.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "video.tudou.com"_s) || host.endsWithIgnoringASCIICase(".video.tudou.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "video.tudou.com") || host.endsWithIgnoringASCIICase(".video.tudou.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "cctv.com"_s) || host.endsWithIgnoringASCIICase(".cctv.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "cctv.com") || host.endsWithIgnoringASCIICase(".cctv.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "v.china.com.cn"_s))
+    if (equalLettersIgnoringASCIICase(host, "v.china.com.cn"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "trello.com"_s) || host.endsWithIgnoringASCIICase(".trello.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "trello.com") || host.endsWithIgnoringASCIICase(".trello.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (equalLettersIgnoringASCIICase(host, "ted.com"_s) || host.endsWithIgnoringASCIICase(".ted.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "ted.com") || host.endsWithIgnoringASCIICase(".ted.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
-    if (host.containsIgnoringASCIICase("hsbc."_s)) {
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.au"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.au"_s))
+    if (host.containsIgnoringASCIICase("hsbc.")) {
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.au") || host.endsWithIgnoringASCIICase(".hsbc.com.au"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.eg"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.eg"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.eg") || host.endsWithIgnoringASCIICase(".hsbc.com.eg"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.lk"_s) || host.endsWithIgnoringASCIICase(".hsbc.lk"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.lk") || host.endsWithIgnoringASCIICase(".hsbc.lk"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.co.uk"_s) || host.endsWithIgnoringASCIICase(".hsbc.co.uk"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.co.uk") || host.endsWithIgnoringASCIICase(".hsbc.co.uk"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.hk"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.hk"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.hk") || host.endsWithIgnoringASCIICase(".hsbc.com.hk"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.mx"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.mx"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.mx") || host.endsWithIgnoringASCIICase(".hsbc.com.mx"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.ca"_s) || host.endsWithIgnoringASCIICase(".hsbc.ca"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.ca") || host.endsWithIgnoringASCIICase(".hsbc.ca"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.ar"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.ar"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.ar") || host.endsWithIgnoringASCIICase(".hsbc.com.ar"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.ph"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.ph"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.ph") || host.endsWithIgnoringASCIICase(".hsbc.com.ph"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com"_s) || host.endsWithIgnoringASCIICase(".hsbc.com"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com") || host.endsWithIgnoringASCIICase(".hsbc.com"))
             return RecommendDesktopClassBrowsingForRequest::No;
-        if (equalLettersIgnoringASCIICase(host, "hsbc.com.cn"_s) || host.endsWithIgnoringASCIICase(".hsbc.com.cn"_s))
+        if (equalLettersIgnoringASCIICase(host, "hsbc.com.cn") || host.endsWithIgnoringASCIICase(".hsbc.com.cn"))
             return RecommendDesktopClassBrowsingForRequest::No;
     }
 
-    if (equalLettersIgnoringASCIICase(host, "nhl.com"_s) || host.endsWithIgnoringASCIICase(".nhl.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "nhl.com") || host.endsWithIgnoringASCIICase(".nhl.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
     // FIXME: Remove this quirk when <rdar://problem/59480381> is complete.
-    if (equalLettersIgnoringASCIICase(host, "fidelity.com"_s) || host.endsWithIgnoringASCIICase(".fidelity.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "fidelity.com") || host.endsWithIgnoringASCIICase(".fidelity.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
     // FIXME: Remove this quirk when <rdar://problem/61733101> is complete.
-    if (equalLettersIgnoringASCIICase(host, "roblox.com"_s) || host.endsWithIgnoringASCIICase(".roblox.com"_s))
+    if (equalLettersIgnoringASCIICase(host, "roblox.com") || host.endsWithIgnoringASCIICase(".roblox.com"))
         return RecommendDesktopClassBrowsingForRequest::No;
 
     return RecommendDesktopClassBrowsingForRequest::Auto;
 }
 
-bool WebPageProxy::isDesktopClassBrowsingRecommended(const WebCore::ResourceRequest& request) const
+enum class IgnoreAppCompatibilitySafeguards : bool { No, Yes };
+static bool desktopClassBrowsingRecommended(const WebCore::ResourceRequest& request, WebCore::IntSize viewSize, IgnoreAppCompatibilitySafeguards ignoreSafeguards)
 {
     auto desktopClassBrowsingRecommendation = desktopClassBrowsingRecommendedForRequest(request);
     if (desktopClassBrowsingRecommendation == RecommendDesktopClassBrowsingForRequest::Yes)
@@ -1397,7 +1360,7 @@ bool WebPageProxy::isDesktopClassBrowsingRecommended(const WebCore::ResourceRequ
         return false;
 
 #if !PLATFORM(MACCATALYST)
-    if (!pageClient().hasResizableWindows() && webViewSizeIsNarrow(viewSize()))
+    if (webViewSizeIsNarrow(viewSize))
         return false;
 #endif
 
@@ -1411,49 +1374,13 @@ bool WebPageProxy::isDesktopClassBrowsingRecommended(const WebCore::ResourceRequ
         auto screenClass = MGGetSInt32Answer(kMGQMainScreenClass, MGScreenClassPad2);
         shouldRecommendDesktopClassBrowsing = screenClass != MGScreenClassPad3 && screenClass != MGScreenClassPad4 && desktopClassBrowsingSupported();
 #endif
-        if (!m_navigationClient->shouldBypassContentModeSafeguards() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ModernCompabilityModeByDefault)) {
+        if (ignoreSafeguards == IgnoreAppCompatibilitySafeguards::No && !linkedOnOrAfter(SDKVersion::FirstWithModernCompabilityModeByDefault)) {
             // Opt out apps that haven't yet built against the iOS 13 SDK to limit any incompatibilities as a result of enabling desktop-class browsing by default in
             // WKWebView on appropriately-sized iPad models.
             shouldRecommendDesktopClassBrowsing = false;
         }
     });
     return shouldRecommendDesktopClassBrowsing;
-}
-
-bool WebPageProxy::useDesktopClassBrowsing(const API::WebsitePolicies& policies, const WebCore::ResourceRequest& request) const
-{
-    switch (policies.preferredContentMode()) {
-    case WebContentMode::Recommended: {
-        return isDesktopClassBrowsingRecommended(request);
-    }
-    case WebContentMode::Mobile:
-        return false;
-    case WebContentMode::Desktop:
-        return !policies.allowSiteSpecificQuirksToOverrideContentMode() || desktopClassBrowsingRecommendedForRequest(request) != RecommendDesktopClassBrowsingForRequest::No;
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-}
-
-String WebPageProxy::predictedUserAgentForRequest(const WebCore::ResourceRequest& request) const
-{
-    if (!customUserAgent().isEmpty())
-        return customUserAgent();
-    if (!m_configuration->defaultWebsitePolicies())
-        return userAgent();
-
-    const API::WebsitePolicies& policies = *m_configuration->defaultWebsitePolicies();
-    if (!policies.customUserAgent().isEmpty())
-        return policies.customUserAgent();
-
-    if (policies.applicationNameForDesktopUserAgent().isEmpty())
-        return userAgent();
-
-    if (!useDesktopClassBrowsing(policies, request))
-        return userAgent();
-
-    return standardUserAgentWithApplicationName(policies.applicationNameForDesktopUserAgent(), emptyString(), UserAgentType::Desktop);
 }
 
 WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::WebsitePolicies& policies, const WebCore::ResourceRequest& request)
@@ -1463,7 +1390,25 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         policies.setMediaSourcePolicy(WebsiteMediaSourcePolicy::Enable);
     }
 
-    bool useDesktopBrowsingMode = useDesktopClassBrowsing(policies, request);
+    auto viewSize = this->viewSize();
+    bool useDesktopBrowsingMode;
+    switch (policies.preferredContentMode()) {
+    case WebContentMode::Recommended: {
+        auto ignoreSafeguards = m_navigationClient->shouldBypassContentModeSafeguards() ? IgnoreAppCompatibilitySafeguards::Yes : IgnoreAppCompatibilitySafeguards::No;
+        useDesktopBrowsingMode = desktopClassBrowsingRecommended(request, viewSize, ignoreSafeguards);
+        break;
+    }
+    case WebContentMode::Mobile:
+        useDesktopBrowsingMode = false;
+        break;
+    case WebContentMode::Desktop:
+        useDesktopBrowsingMode = !policies.allowSiteSpecificQuirksToOverrideContentMode() || desktopClassBrowsingRecommendedForRequest(request) != RecommendDesktopClassBrowsingForRequest::No;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        useDesktopBrowsingMode = false;
+        break;
+    }
 
     m_preferFasterClickOverDoubleTap = false;
 
@@ -1619,7 +1564,11 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
     if (auto contentViewBackgroundColor = pageClient().contentViewBackgroundColor(); contentViewBackgroundColor.isValid())
         return contentViewBackgroundColor;
 
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    return WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
+#else
     return WebCore::Color::white;
+#endif
 }
 
 } // namespace WebKit

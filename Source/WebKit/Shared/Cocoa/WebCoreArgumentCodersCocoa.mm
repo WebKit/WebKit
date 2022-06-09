@@ -58,6 +58,7 @@
 
 #if ENABLE(APPLE_PAY)
 #import "DataReference.h"
+#import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 #endif
 
@@ -72,8 +73,6 @@
 #if USE(AVFOUNDATION)
 #import <WebCore/CoreVideoSoftLink.h>
 #endif
-
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 namespace IPC {
 
@@ -125,6 +124,27 @@ std::optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder&
         return std::nullopt;
 
     return WebCore::Payment { WTFMove(*payment) };
+}
+
+void ArgumentCoder<WebCore::PaymentAuthorizationResult>::encode(Encoder& encoder, const WebCore::PaymentAuthorizationResult& result)
+{
+    encoder << result.status;
+    encoder << result.errors;
+}
+
+std::optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode(Decoder& decoder)
+{
+    std::optional<WebCore::PaymentAuthorizationStatus> status;
+    decoder >> status;
+    if (!status)
+        return std::nullopt;
+
+    std::optional<Vector<RefPtr<WebCore::ApplePayError>>> errors;
+    decoder >> errors;
+    if (!errors)
+        return std::nullopt;
+
+    return {{ WTFMove(*status), WTFMove(*errors) }};
 }
 
 void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebCore::PaymentContact& paymentContact)
@@ -420,9 +440,9 @@ bool ArgumentCoder<WebCore::DictionaryPopupInfo>::decodePlatformData(Decoder& de
     return true;
 }
 
-void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder& encoder, const WebCore::Font& font)
+void ArgumentCoder<Ref<WebCore::Font>>::encodePlatformData(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
-    const auto& platformData = font.platformData();
+    const auto& platformData = font->platformData();
     encoder << platformData.orientation();
     encoder << platformData.widthVariant();
     encoder << platformData.textRenderingMode();
@@ -491,7 +511,7 @@ static RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size,
     return adoptCF(CTFontCreateWithFontDescriptorAndOptions(fontDescriptor.get(), size, nullptr, options));
 }
 
-std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePlatformData(Decoder& decoder)
+std::optional<WebCore::FontPlatformData> ArgumentCoder<Ref<WebCore::Font>>::decodePlatformData(Decoder& decoder)
 {
     std::optional<WebCore::FontOrientation> orientation;
     decoder >> orientation;
@@ -731,26 +751,6 @@ bool ArgumentCoder<WebCore::TextRecognitionDataDetector>::decodePlatformData(Dec
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-void ArgumentCoder<RetainPtr<VKCImageAnalysis>>::encode(Encoder& encoder, const RetainPtr<VKCImageAnalysis>& data)
-{
-    if (!PAL::isVisionKitCoreFrameworkAvailable())
-        return;
-
-    encoder << data.get();
-}
-
-std::optional<RetainPtr<VKCImageAnalysis>> ArgumentCoder<RetainPtr<VKCImageAnalysis>>::decode(Decoder& decoder)
-{
-    if (!PAL::isVisionKitCoreFrameworkAvailable())
-        return nil;
-
-    return IPC::decode<VKCImageAnalysis>(decoder, @[ PAL::getVKCImageAnalysisClass() ]);
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if USE(AVFOUNDATION)
 

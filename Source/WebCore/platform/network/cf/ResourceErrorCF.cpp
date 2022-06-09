@@ -102,15 +102,15 @@ void ResourceError::platformLazyInit()
 
     CFStringRef domain = CFErrorGetDomain(m_platformError.get());
     if (domain == kCFErrorDomainMach || domain == kCFErrorDomainCocoa)
-        m_domain ="NSCustomErrorDomain"_s;
+        m_domain ="NSCustomErrorDomain";
     else if (domain == kCFErrorDomainCFNetwork)
-        m_domain = "CFURLErrorDomain"_s;
+        m_domain = "CFURLErrorDomain";
     else if (domain == kCFErrorDomainPOSIX)
-        m_domain = "NSPOSIXErrorDomain"_s;
+        m_domain = "NSPOSIXErrorDomain";
     else if (domain == kCFErrorDomainOSStatus)
-        m_domain = "NSOSStatusErrorDomain"_s;
+        m_domain = "NSOSStatusErrorDomain";
     else if (domain == kCFErrorDomainWinSock)
-        m_domain = "kCFErrorDomainWinSock"_s;
+        m_domain = "kCFErrorDomainWinSock";
     else
         m_domain = domain;
 
@@ -120,7 +120,7 @@ void ResourceError::platformLazyInit()
     if (userInfo.get()) {
         CFStringRef failingURLString = (CFStringRef) CFDictionaryGetValue(userInfo.get(), failingURLStringKey);
         if (failingURLString)
-            m_failingURL = URL { failingURLString };
+            m_failingURL = URL(URL(), failingURLString);
         else {
             CFURLRef failingURL = (CFURLRef) CFDictionaryGetValue(userInfo.get(), failingURLKey);
             if (failingURL) {
@@ -190,13 +190,13 @@ ResourceError::ResourceError(CFStreamError error)
 
     switch(error.domain) {
     case kCFStreamErrorDomainCustom:
-        m_domain ="NSCustomErrorDomain"_s;
+        m_domain ="NSCustomErrorDomain";
         break;
     case kCFStreamErrorDomainPOSIX:
-        m_domain = "NSPOSIXErrorDomain"_s;
+        m_domain = "NSPOSIXErrorDomain";
         break;
     case kCFStreamErrorDomainMacOSStatus:
-        m_domain = "NSOSStatusErrorDomain"_s;
+        m_domain = "NSOSStatusErrorDomain";
         break;
     }
 }
@@ -208,11 +208,11 @@ CFStreamError ResourceError::cfStreamError() const
     CFStreamError result;
     result.error = m_errorCode;
 
-    if (m_domain == "NSCustomErrorDomain"_s)
+    if (m_domain == "NSCustomErrorDomain")
         result.domain = kCFStreamErrorDomainCustom;
-    else if (m_domain == "NSPOSIXErrorDomain"_s)
+    else if (m_domain == "NSPOSIXErrorDomain")
         result.domain = kCFStreamErrorDomainPOSIX;
-    else if (m_domain == "NSOSStatusErrorDomain"_s)
+    else if (m_domain == "NSOSStatusErrorDomain")
         result.domain = kCFStreamErrorDomainMacOSStatus;
     else {
         result.domain = kCFStreamErrorDomainCustom;

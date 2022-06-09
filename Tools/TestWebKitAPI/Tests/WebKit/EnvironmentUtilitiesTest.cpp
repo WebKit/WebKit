@@ -33,53 +33,53 @@
 namespace TestWebKitAPI {
 
 #define PROCESS_DYLIB "Process.dylib"
-constexpr auto stripValue = "/" PROCESS_DYLIB ""_s;
+const char* const stripValue = "/" PROCESS_DYLIB;
 
-static void testStrip(ASCIILiteral input, ASCIILiteral expected)
+static void testStrip(const char* input, const char* expected)
 {
     auto actual = WebKit::EnvironmentUtilities::stripEntriesEndingWith(input, stripValue);
-    EXPECT_STREQ(actual.utf8().data(), expected.characters());
+    EXPECT_STREQ(actual.utf8().data(), expected);
 }
 
 TEST(WebKit, StripEntriesEndingWith)
 {
-    testStrip(""_s, ""_s);
-    testStrip(":"_s, ":"_s);
-    testStrip("::"_s, "::"_s);
-    testStrip(":::"_s, ":::"_s);
-    testStrip("::::"_s, "::::"_s);
-    testStrip(":::::"_s, ":::::"_s);
+    testStrip("", "");
+    testStrip(":", ":");
+    testStrip("::", "::");
+    testStrip(":::", ":::");
+    testStrip("::::", "::::");
+    testStrip(":::::", ":::::");
 
-    testStrip(PROCESS_DYLIB ""_s, PROCESS_DYLIB ""_s);
-    testStrip(":" PROCESS_DYLIB ""_s, ":" PROCESS_DYLIB ""_s);
-    testStrip(PROCESS_DYLIB ":"_s, PROCESS_DYLIB ":"_s);
-    testStrip(":" PROCESS_DYLIB ":"_s, ":" PROCESS_DYLIB ":"_s);
+    testStrip(PROCESS_DYLIB, PROCESS_DYLIB);
+    testStrip(":" PROCESS_DYLIB, ":" PROCESS_DYLIB);
+    testStrip(PROCESS_DYLIB ":", PROCESS_DYLIB ":");
+    testStrip(":" PROCESS_DYLIB ":", ":" PROCESS_DYLIB ":");
 
-    testStrip("/" PROCESS_DYLIB ""_s, ""_s);
-    testStrip(":/" PROCESS_DYLIB ""_s, ""_s);
-    testStrip("/" PROCESS_DYLIB ":"_s, ""_s);
-    testStrip(":/" PROCESS_DYLIB ":"_s, ":"_s);
+    testStrip("/" PROCESS_DYLIB, "");
+    testStrip(":/" PROCESS_DYLIB, "");
+    testStrip("/" PROCESS_DYLIB ":", "");
+    testStrip(":/" PROCESS_DYLIB ":", ":");
 
-    testStrip(PROCESS_DYLIB "/"_s, PROCESS_DYLIB "/"_s);
-    testStrip(":" PROCESS_DYLIB "/"_s, ":" PROCESS_DYLIB "/"_s);
-    testStrip(PROCESS_DYLIB "/:"_s, PROCESS_DYLIB "/:"_s);
-    testStrip(":" PROCESS_DYLIB "/:"_s, ":" PROCESS_DYLIB "/:"_s);
+    testStrip(PROCESS_DYLIB "/", PROCESS_DYLIB "/");
+    testStrip(":" PROCESS_DYLIB "/", ":" PROCESS_DYLIB "/");
+    testStrip(PROCESS_DYLIB "/:", PROCESS_DYLIB "/:");
+    testStrip(":" PROCESS_DYLIB "/:", ":" PROCESS_DYLIB "/:");
 
-    testStrip("/" PROCESS_DYLIB "/"_s, "/" PROCESS_DYLIB "/"_s);
-    testStrip(":/" PROCESS_DYLIB "/"_s, ":/" PROCESS_DYLIB "/"_s);
-    testStrip("/" PROCESS_DYLIB "/:"_s, "/" PROCESS_DYLIB "/:"_s);
-    testStrip(":/" PROCESS_DYLIB "/:"_s, ":/" PROCESS_DYLIB "/:"_s);
+    testStrip("/" PROCESS_DYLIB "/", "/" PROCESS_DYLIB "/");
+    testStrip(":/" PROCESS_DYLIB "/", ":/" PROCESS_DYLIB "/");
+    testStrip("/" PROCESS_DYLIB "/:", "/" PROCESS_DYLIB "/:");
+    testStrip(":/" PROCESS_DYLIB "/:", ":/" PROCESS_DYLIB "/:");
 
-    testStrip("/Before.dylib:/" PROCESS_DYLIB ""_s, "/Before.dylib"_s);
-    testStrip("/" PROCESS_DYLIB ":/After.dylib"_s, "/After.dylib"_s);
-    testStrip("/Before.dylib:/" PROCESS_DYLIB ":/After.dylib"_s, "/Before.dylib:/After.dylib"_s);
-    testStrip("/Before.dylib:/" PROCESS_DYLIB ":/Middle.dylib:/" PROCESS_DYLIB ":/After.dylib"_s, "/Before.dylib:/Middle.dylib:/After.dylib"_s);
+    testStrip("/Before.dylib:/" PROCESS_DYLIB, "/Before.dylib");
+    testStrip("/" PROCESS_DYLIB ":/After.dylib", "/After.dylib");
+    testStrip("/Before.dylib:/" PROCESS_DYLIB ":/After.dylib", "/Before.dylib:/After.dylib");
+    testStrip("/Before.dylib:/" PROCESS_DYLIB ":/Middle.dylib:/" PROCESS_DYLIB ":/After.dylib", "/Before.dylib:/Middle.dylib:/After.dylib");
 
-    testStrip("/" PROCESS_DYLIB ":/" PROCESS_DYLIB ""_s, ""_s);
-    testStrip("/" PROCESS_DYLIB ":/" PROCESS_DYLIB ":/" PROCESS_DYLIB ""_s, ""_s);
+    testStrip("/" PROCESS_DYLIB ":/" PROCESS_DYLIB, "");
+    testStrip("/" PROCESS_DYLIB ":/" PROCESS_DYLIB ":/" PROCESS_DYLIB, "");
 
-    testStrip("/usr/lib/" PROCESS_DYLIB ""_s, ""_s);
-    testStrip("/" PROCESS_DYLIB "/" PROCESS_DYLIB ""_s, ""_s);
+    testStrip("/usr/lib/" PROCESS_DYLIB, "");
+    testStrip("/" PROCESS_DYLIB "/" PROCESS_DYLIB, "");
 }
 
 }

@@ -35,8 +35,8 @@
 #include "SecurityOriginHash.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
-#include <wtf/RobinHoodHashSet.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 
@@ -90,7 +90,7 @@ public:
     WEBCORE_EXPORT uint64_t usage(const SecurityOriginData&);
     WEBCORE_EXPORT uint64_t quota(const SecurityOriginData&);
     WEBCORE_EXPORT void setQuota(const SecurityOriginData&, uint64_t);
-    Ref<OriginLock> originLockFor(const SecurityOriginData&);
+    RefPtr<OriginLock> originLockFor(const SecurityOriginData&);
 
     WEBCORE_EXPORT void deleteAllDatabasesImmediately();
     WEBCORE_EXPORT void deleteDatabasesModifiedSince(WallTime);
@@ -169,15 +169,15 @@ private:
     Lock m_databaseGuard;
     SQLiteDatabase m_database WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
-    using OriginLockMap = HashMap<String, Ref<OriginLock>>;
+    using OriginLockMap = HashMap<String, RefPtr<OriginLock>>;
     OriginLockMap m_originLockMap WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
     String m_databaseDirectoryPath;
 
     DatabaseManagerClient* m_client { nullptr };
 
-    HashMap<SecurityOriginData, HashCountedSet<String>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
-    HashMap<SecurityOriginData, MemoryCompactRobinHoodHashSet<String>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    HashMap<SecurityOriginData, std::unique_ptr<HashCountedSet<String>>> m_beingCreated WTF_GUARDED_BY_LOCK(m_databaseGuard);
+    HashMap<SecurityOriginData, std::unique_ptr<HashSet<String>>> m_beingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
     HashSet<SecurityOriginData> m_originsBeingDeleted WTF_GUARDED_BY_LOCK(m_databaseGuard);
     bool isDeletingDatabaseOrOriginFor(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);
     void recordCreatingDatabase(const SecurityOriginData&, const String& name) WTF_REQUIRES_LOCK(m_databaseGuard);

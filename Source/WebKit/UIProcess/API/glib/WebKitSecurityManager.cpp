@@ -29,9 +29,9 @@
 using namespace WebKit;
 
 /**
- * WebKitSecurityManager:
- *
- * Controls security settings in a #WebKitWebContext.
+ * SECTION: WebKitSecurityManager
+ * @Short_description: Controls security settings in a #WebKitWebContext
+ * @Title: WebKitSecurityManager
  *
  * The #WebKitSecurityManager defines security settings for URI
  * schemes in a #WebKitWebContext. Get it from the context with

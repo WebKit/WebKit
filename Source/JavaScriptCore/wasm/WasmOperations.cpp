@@ -192,14 +192,14 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     // pop(framePointerRegister);
     context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
     context.sp() = framePointer + 1;
-    static_assert(prologueStackPointerDelta() == sizeof(void*) * 1);
+    static_assert(AssemblyHelpers::prologueStackPointerDelta() == sizeof(void*) * 1);
 #elif CPU(ARM64E) || CPU(ARM64)
     // move(framePointerRegister, stackPointerRegister);
     // popPair(framePointerRegister, linkRegister);
     context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
     context.gpr(ARM64Registers::lr) = bitwise_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
-    static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
+    static_assert(AssemblyHelpers::prologueStackPointerDelta() == sizeof(void*) * 2);
 #if CPU(ARM64E)
     // LR needs to be untagged since OSR entry function prologue will tag it with SP. This is similar to tail-call.
     context.gpr(ARM64Registers::lr) = bitwise_cast<UCPURegister>(untagCodePtrWithStackPointerForJITCall(context.gpr<void*>(ARM64Registers::lr), context.sp()));
@@ -210,7 +210,7 @@ static void doOSREntry(Instance* instance, Probe::Context& context, BBQCallee& c
     context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
     context.gpr(RISCV64Registers::ra) = bitwise_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
-    static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
+    static_assert(AssemblyHelpers::prologueStackPointerDelta() == sizeof(void*) * 2);
 #else
 #error Unsupported architecture.
 #endif
@@ -514,7 +514,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame* c
 }
 
 // https://webassembly.github.io/multi-value/js-api/index.html#run-a-host-function
-JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, Instance* instance, const TypeDefinition* type, JSValue result, uint64_t* registerResults, uint64_t* calleeFramePointer))
+JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, Instance* instance, const Signature* signature, JSValue result, uint64_t* registerResults, uint64_t* calleeFramePointer))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
     // https://bugs.webkit.org/show_bug.cgi?id=203206
@@ -524,9 +524,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
     NativeCallFrameTracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const FunctionSignature* signature = type->as<FunctionSignature>();
-
-    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*type, CallRole::Callee);
+    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature, CallRole::Callee);
     RegisterAtOffsetList registerResultOffsets = wasmCallInfo.computeResultsOffsetList();
 
     unsigned iterationCount = 0;
@@ -539,12 +537,12 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
     RETURN_IF_EXCEPTION(scope, void());
 
     if (buffer.hasOverflowed()) {
-        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large"_s);
+        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large");
         return;
     }
 
     if (iterationCount != signature->returnCount()) {
-        throwVMTypeError(globalObject, scope, "Incorrect number of values returned to Wasm from JS"_s);
+        throwVMTypeError(globalObject, scope, "Incorrect number of values returned to Wasm from JS");
         return;
     }
 
@@ -568,7 +566,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
             break;
         default: {
             if (isFuncref(returnType) || isExternref(returnType)) {
-                if (isFuncref(returnType) && !value.isCallable()) {
+                if (isFuncref(returnType) && !value.isCallable(vm)) {
                     throwTypeError(globalObject, scope, "Funcref value is not a function"_s);
                     return;
                 }
@@ -590,7 +588,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
 // FIXME: It would be much easier to inline this when we have a global GC, which could probably mean we could avoid
 // spilling the results onto the stack.
 // Saved result registers should be placed on the stack just above the last stack result.
-JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* callFrame, Wasm::Instance* instance, const TypeDefinition* type, IndexingType indexingType, JSValue* stackPointerFromCallee))
+JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* callFrame, Wasm::Instance* instance, const Signature* signature, IndexingType indexingType, JSValue* stackPointerFromCallee))
 {
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     VM& vm = jsInstance->vm();
@@ -598,13 +596,12 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* ca
 
     JSGlobalObject* globalObject = jsInstance->globalObject();
     ObjectInitializationScope initializationScope(globalObject->vm());
-    const FunctionSignature* signature = type->as<FunctionSignature>();
     JSArray* result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType), signature->returnCount());
 
     // FIXME: Handle allocation failure...
     RELEASE_ASSERT(result);
 
-    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*type);
+    auto wasmCallInfo = wasmCallingConvention().callInformationFor(*signature);
     RegisterAtOffsetList registerResults = wasmCallInfo.computeResultsOffsetList();
 
     static_assert(sizeof(JSValue) == sizeof(CPURegister), "The code below relies on this.");
@@ -699,7 +696,7 @@ static bool setWasmTableElement(Instance* instance, unsigned tableIndex, uint32_
         WebAssemblyFunction* wasmFunction;
         WebAssemblyWrapperFunction* wasmWrapperFunction;
 
-        if (isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction)) {
+        if (isWebAssemblyHostFunction(instance->owner<JSObject>()->vm(), value, wasmFunction, wasmWrapperFunction)) {
             ASSERT(!!wasmFunction || !!wasmWrapperFunction);
             if (wasmFunction)
                 instance->table(tableIndex)->asFuncrefTable()->setFunction(index, jsCast<JSObject*>(value), wasmFunction->importableFunction(), &wasmFunction->instance()->instance());
@@ -817,14 +814,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableCopy, size_t, (Instance* instance, un
 JSC_DEFINE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance* instance, uint32_t index))
 {
     JSValue value = instance->getFunctionWrapper(index);
-    ASSERT(value.isCallable());
+    ASSERT(value.isCallable(instance->owner<JSObject>()->vm()));
     return JSValue::encode(value);
-}
-
-JSC_DEFINE_JIT_OPERATION(operationWasmRttCanon, EncodedJSValue, (Instance*, uint32_t))
-{
-    // FIXME: We don't need real RTT values right now, so let's use jsNull.
-    return JSValue::encode(jsNull());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetWasmTableSize, int32_t, (Instance* instance, unsigned tableIndex))
@@ -1036,7 +1027,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, Poin
     throwScope.clearException();
 
     void* payload = nullptr;
-    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
+    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(vm, thrownValue))
         payload = bitwise_cast<void*>(wasmException->payload().data());
     return PointerPair { bitwise_cast<void*>(JSValue::encode(thrownValue)), payload };
 }

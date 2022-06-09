@@ -63,6 +63,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SliderThumbElement);
 WTF_MAKE_ISO_ALLOCATED_IMPL(SliderContainerElement);
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSliderThumb);
 
 inline static Decimal sliderPosition(HTMLInputElement& element)
 {
@@ -74,7 +75,44 @@ inline static Decimal sliderPosition(HTMLInputElement& element)
 inline static bool hasVerticalAppearance(HTMLInputElement& input)
 {
     ASSERT(input.renderer());
-    return input.renderer()->style().effectiveAppearance() == SliderVerticalPart;
+    const RenderStyle& sliderStyle = input.renderer()->style();
+
+#if ENABLE(VIDEO)
+    if (sliderStyle.effectiveAppearance() == MediaVolumeSliderPart && input.renderer()->theme().usesVerticalVolumeSlider())
+        return true;
+#endif
+
+    return sliderStyle.effectiveAppearance() == SliderVerticalPart;
+}
+
+// --------------------------------
+
+RenderSliderThumb::RenderSliderThumb(SliderThumbElement& element, RenderStyle&& style)
+    : RenderBlockFlow(element, WTFMove(style))
+{
+}
+
+void RenderSliderThumb::updateAppearance(const RenderStyle* parentStyle)
+{
+    if (parentStyle->effectiveAppearance() == SliderVerticalPart)
+        mutableStyle().setEffectiveAppearance(SliderThumbVerticalPart);
+    else if (parentStyle->effectiveAppearance() == SliderHorizontalPart)
+        mutableStyle().setEffectiveAppearance(SliderThumbHorizontalPart);
+    else if (parentStyle->effectiveAppearance() == MediaSliderPart)
+        mutableStyle().setEffectiveAppearance(MediaSliderThumbPart);
+    else if (parentStyle->effectiveAppearance() == MediaVolumeSliderPart)
+        mutableStyle().setEffectiveAppearance(MediaVolumeSliderThumbPart);
+    else if (parentStyle->effectiveAppearance() == MediaFullScreenVolumeSliderPart)
+        mutableStyle().setEffectiveAppearance(MediaFullScreenVolumeSliderThumbPart);
+    if (style().hasEffectiveAppearance()) {
+        ASSERT(element());
+        theme().adjustSliderThumbSize(mutableStyle(), element());
+    }
+}
+
+bool RenderSliderThumb::isSliderThumb() const
+{
+    return true;
 }
 
 // --------------------------------
@@ -170,13 +208,6 @@ void RenderSliderContainer::layout()
 
 // --------------------------------
 
-Ref<SliderThumbElement> SliderThumbElement::create(Document& document)
-{
-    auto element = adoptRef(*new SliderThumbElement(document));
-    element->setPseudo(ShadowPseudoIds::webkitSliderThumb());
-    return element;
-}
-
 SliderThumbElement::SliderThumbElement(Document& document)
     : HTMLDivElement(HTMLNames::divTag, document)
 {
@@ -190,6 +221,11 @@ void SliderThumbElement::setPositionFromValue()
     // renderer directly to trigger layout.
     if (renderer())
         renderer()->setNeedsLayout();
+}
+
+RenderPtr<RenderElement> SliderThumbElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+{
+    return createRenderer<RenderSliderThumb>(*this, WTFMove(style));
 }
 
 bool SliderThumbElement::isDisabledFormControl() const
@@ -341,7 +377,7 @@ void SliderThumbElement::defaultEventHandler(Event& event)
     HTMLDivElement::defaultEventHandler(mouseEvent);
 }
 
-bool SliderThumbElement::willRespondToMouseMoveEvents() const
+bool SliderThumbElement::willRespondToMouseMoveEvents()
 {
     const auto input = hostInput();
     if (input && !input->isDisabledFormControl() && m_inDragMode)
@@ -350,14 +386,15 @@ bool SliderThumbElement::willRespondToMouseMoveEvents() const
     return HTMLDivElement::willRespondToMouseMoveEvents();
 }
 
-bool SliderThumbElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
+bool SliderThumbElement::willRespondToMouseClickEvents()
 {
     const auto input = hostInput();
     if (input && !input->isDisabledFormControl())
         return true;
 
-    return HTMLDivElement::willRespondToMouseClickEventsWithEditability(editability);
+    return HTMLDivElement::willRespondToMouseClickEvents();
 }
+
 
 void SliderThumbElement::willDetachRenderers()
 {
@@ -483,16 +520,15 @@ void SliderThumbElement::handleTouchEvent(TouchEvent& touchEvent)
     }
 
     const AtomString& eventType = touchEvent.type();
-    auto& eventNames = WebCore::eventNames();
-    if (eventType == eventNames.touchstartEvent) {
+    if (eventType == eventNames().touchstartEvent) {
         handleTouchStart(touchEvent);
         return;
     }
-    if (eventType == eventNames.touchendEvent || eventType == eventNames.touchcancelEvent) {
+    if (eventType == eventNames().touchendEvent || eventType == eventNames().touchcancelEvent) {
         handleTouchEndAndCancel(touchEvent);
         return;
     }
-    if (eventType == eventNames.touchmoveEvent) {
+    if (eventType == eventNames().touchmoveEvent) {
         handleTouchMove(touchEvent);
         return;
     }
@@ -550,24 +586,32 @@ RefPtr<HTMLInputElement> SliderThumbElement::hostInput() const
     return downcast<HTMLInputElement>(shadowHost());
 }
 
-std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle* hostStyle)
+std::optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* hostStyle)
 {
+    // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
+
     if (!hostStyle)
         return std::nullopt;
 
-    auto elementStyle = resolveStyle(resolutionContext);
     switch (hostStyle->effectiveAppearance()) {
-    case SliderVerticalPart:
-        elementStyle.renderStyle->setEffectiveAppearance(SliderThumbVerticalPart);
-        break;
-    case SliderHorizontalPart:
-        elementStyle.renderStyle->setEffectiveAppearance(SliderThumbHorizontalPart);
+    case MediaSliderPart:
+    case MediaSliderThumbPart:
+    case MediaVolumeSliderPart:
+    case MediaVolumeSliderThumbPart:
+    case MediaFullScreenVolumeSliderPart:
+    case MediaFullScreenVolumeSliderThumbPart:
+        m_shadowPseudoId = ShadowPseudoIds::webkitMediaSliderThumb();
         break;
     default:
-        break;
+        m_shadowPseudoId = ShadowPseudoIds::webkitSliderThumb();
     }
 
-    return elementStyle;
+    return std::nullopt;
+}
+
+const AtomString& SliderThumbElement::shadowPseudoId() const
+{
+    return m_shadowPseudoId;
 }
 
 Ref<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
@@ -585,14 +629,40 @@ inline SliderContainerElement::SliderContainerElement(Document& document)
 
 Ref<SliderContainerElement> SliderContainerElement::create(Document& document)
 {
-    auto element = adoptRef(*new SliderContainerElement(document));
-    element->setPseudo(ShadowPseudoIds::webkitSliderContainer());
-    return element;
+    return adoptRef(*new SliderContainerElement(document));
 }
 
 RenderPtr<RenderElement> SliderContainerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderSliderContainer>(*this, WTFMove(style));
+}
+
+std::optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(const Style::ResolutionContext&, const RenderStyle* hostStyle)
+{
+    // This doesn't actually compute style. This is just a hack to pick shadow pseudo id when host style is known.
+
+    if (!hostStyle)
+        return std::nullopt;
+
+    switch (hostStyle->effectiveAppearance()) {
+    case MediaSliderPart:
+    case MediaSliderThumbPart:
+    case MediaVolumeSliderPart:
+    case MediaVolumeSliderThumbPart:
+    case MediaFullScreenVolumeSliderPart:
+    case MediaFullScreenVolumeSliderThumbPart:
+        m_shadowPseudoId = ShadowPseudoIds::webkitMediaSliderContainer();
+        break;
+    default:
+        m_shadowPseudoId = ShadowPseudoIds::webkitSliderContainer();
+    }
+
+    return std::nullopt;
+}
+
+const AtomString& SliderContainerElement::shadowPseudoId() const
+{
+    return m_shadowPseudoId;
 }
 
 }

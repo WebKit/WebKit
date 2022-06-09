@@ -36,6 +36,7 @@ namespace WebCore {
 
 class FloatPoint;
 class GraphicsContextStateSaver;
+class RenderSVGContainer;
 class RenderSVGPath;
 class RenderSVGResource;
 class SVGGraphicsElement;
@@ -102,7 +103,7 @@ private:
 
     bool isLegacySVGShape() const final { return true; }
     bool canHaveChildren() const final { return false; }
-    ASCIILiteral renderName() const override { return "RenderSVGShape"_s; }
+    const char* renderName() const override { return "RenderSVGShape"; }
 
     void layout() final;
     void paint(PaintInfo&, const LayoutPoint&) final;

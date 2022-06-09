@@ -98,7 +98,7 @@ public:
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
     WEBCORE_EXPORT void setHTTPHeaderFields(HTTPHeaderMap);
 
-    WEBCORE_EXPORT String httpHeaderField(StringView name) const;
+    WEBCORE_EXPORT String httpHeaderField(const String& name) const;
     WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
     WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);
@@ -111,9 +111,9 @@ public:
     WEBCORE_EXPORT bool hasHTTPHeaderField(HTTPHeaderName) const;
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String httpHeaderField(ASCIILiteral) const = delete;
-    template<size_t length> void setHTTPHeaderField(ASCIILiteral, const String&) = delete;
-    template<size_t length> void addHTTPHeaderField(ASCIILiteral, const String&) = delete;
+    template<size_t length> String httpHeaderField(const char (&)[length]) const = delete;
+    template<size_t length> void setHTTPHeaderField(const char (&)[length], const String&) = delete;
+    template<size_t length> void addHTTPHeaderField(const char (&)[length], const String&) = delete;
 
     WEBCORE_EXPORT void clearHTTPAuthorization();
 
@@ -167,7 +167,7 @@ public:
     bool hiddenFromInspector() const { return m_hiddenFromInspector; }
     void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 
-    enum class Requester : uint8_t { Unspecified, Main, XHR, Fetch, Media, Model, ImportScripts, Ping, Beacon, EventSource };
+    enum class Requester : uint8_t { Unspecified, Main, XHR, Fetch, Media, Model, ImportScripts, Ping, Beacon };
     Requester requester() const { return m_requester; }
     void setRequester(Requester requester) { m_requester = requester; }
 
@@ -432,8 +432,7 @@ template<> struct EnumTraits<WebCore::ResourceRequestBase::Requester> {
         WebCore::ResourceRequestBase::Requester::Media,
         WebCore::ResourceRequestBase::Requester::ImportScripts,
         WebCore::ResourceRequestBase::Requester::Ping,
-        WebCore::ResourceRequestBase::Requester::Beacon,
-        WebCore::ResourceRequestBase::Requester::EventSource
+        WebCore::ResourceRequestBase::Requester::Beacon
     >;
 };
 

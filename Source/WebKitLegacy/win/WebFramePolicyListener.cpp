@@ -39,13 +39,13 @@ WebFramePolicyListener::WebFramePolicyListener(RefPtr<Frame>&& frame)
     : m_frame(WTFMove(frame))
 {
     gClassCount++;
-    gClassNameCount().add("WebFramePolicyListener"_s);
+    gClassNameCount().add("WebFramePolicyListener");
 }
 
 WebFramePolicyListener::~WebFramePolicyListener()
 {
     gClassCount--;
-    gClassNameCount().remove("WebFramePolicyListener"_s);
+    gClassNameCount().remove("WebFramePolicyListener");
 }
 
 WebFramePolicyListener* WebFramePolicyListener::createInstance(RefPtr<Frame>&& frame)

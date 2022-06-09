@@ -29,7 +29,6 @@
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
@@ -96,7 +95,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     JSLockHolder lock(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-    auto callData = JSC::getCallData(m_function.get());
+    auto callData = getCallData(vm, m_function.get());
     if (callData.type == CallData::Type::None)
         return;
 

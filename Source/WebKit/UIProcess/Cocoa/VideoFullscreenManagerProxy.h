@@ -30,7 +30,6 @@
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
-#include "ShareableBitmap.h"
 #include <WebCore/AudioSession.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -152,12 +151,6 @@ public:
 
     void forEachSession(Function<void(VideoFullscreenModelContext&, PlatformVideoFullscreenInterface&)>&&);
 
-    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
-
-#if PLATFORM(IOS_FAMILY)
-    AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
-#endif
-
 private:
     friend class VideoFullscreenModelContext;
 
@@ -169,7 +162,7 @@ private:
     ModelInterfaceTuple& ensureModelAndInterface(PlaybackSessionContextIdentifier);
     VideoFullscreenModelContext& ensureModel(PlaybackSessionContextIdentifier);
     PlatformVideoFullscreenInterface& ensureInterface(PlaybackSessionContextIdentifier);
-    PlatformVideoFullscreenInterface* findInterface(PlaybackSessionContextIdentifier) const;
+    PlatformVideoFullscreenInterface* findInterface(PlaybackSessionContextIdentifier);
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
@@ -214,6 +207,7 @@ private:
     WebPageProxy* m_page;
     Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
+    PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;

@@ -28,7 +28,7 @@
 #include "config.h"
 #include "AccessibilityController.h"
 
-#if USE(ATSPI)
+#if HAVE(ACCESSIBILITY) && USE(ATSPI)
 #include "AccessibilityNotificationHandler.h"
 #include "AccessibilityUIElement.h"
 #include "InjectedBundle.h"
@@ -52,7 +52,12 @@ static WebCore::AccessibilityObjectAtspi* findAccessibleObjectById(WebCore::Acce
     if (axObject.id() == elementID)
         return &axObject;
 
-    for (const auto& child : axObject.children()) {
+    Vector<RefPtr<WebCore::AccessibilityObjectAtspi>> children;
+    InjectedBundle::singleton().accessibilityController()->executeOnAXThreadAndWait([axObject = Ref { axObject }, &children] {
+        axObject->updateBackingStore();
+        children = axObject->children();
+    });
+    for (const auto& child : children) {
         if (auto* element = findAccessibleObjectById(*child, elementID))
             return element;
     }
@@ -75,7 +80,10 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
 
 JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 {
-    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("atspi"));
+    // FIXME: Use atk as platform name for now, because the expected behavior is the same.
+    // Once we replace the atk implementation with the atspi one we can use atspi and
+    // update the tests helper scripts. https://bugs.webkit.org/show_bug.cgi?id=232227.
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("atk"));
     return platformName;
 }
 
@@ -120,6 +128,53 @@ bool AccessibilityController::removeNotificationListener()
     return true;
 }
 
+void AccessibilityController::updateIsolatedTreeMode()
+{
+}
+
+RunLoop& AccessibilityController::axRunLoop()
+{
+    if (!m_axRunLoop) {
+        WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+        auto* element = static_cast<WebCore::AccessibilityObjectAtspi*>(WKAccessibilityRootObject(page));
+        RELEASE_ASSERT(element);
+        m_axRunLoop = &element->root().atspi().runLoop();
+    }
+
+    return *m_axRunLoop;
+}
+
+void AccessibilityController::executeOnAXThreadAndWait(Function<void()>&& function)
+{
+    RELEASE_ASSERT(isMainThread());
+    std::atomic<bool> done = false;
+    axRunLoop().dispatch([this, function = WTFMove(function), &done] {
+        function();
+        done.store(true);
+    });
+    while (!done.load())
+        g_main_context_iteration(nullptr, FALSE);
+}
+
+void AccessibilityController::executeOnAXThread(Function<void()>&& function)
+{
+    axRunLoop().dispatch([this, function = WTFMove(function)] {
+        function();
+    });
+}
+
+void AccessibilityController::executeOnMainThread(Function<void()>&& function)
+{
+    if (isMainThread()) {
+        function();
+        return;
+    }
+
+    axRunLoop().dispatch([this, function = WTFMove(function)]() mutable {
+        callOnMainThread(WTFMove(function));
+    });
+}
+
 } // namespace WTR
 
-#endif // USE(ATSPI)
+#endif // HAVE(ACCESSIBILITY) && USE(ATSPI)

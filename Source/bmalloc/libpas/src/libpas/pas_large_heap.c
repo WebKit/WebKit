@@ -38,7 +38,6 @@
 #include "pas_large_sharing_pool.h"
 #include "pas_large_map.h"
 #include "pas_page_malloc.h"
-#include "pas_probabilistic_guard_malloc_allocator.h"
 #include <stdio.h>
 
 void pas_large_heap_construct(pas_large_heap* heap)
@@ -139,8 +138,7 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
         !pas_large_sharing_pool_allocate_and_commit(
             pas_range_create(result.begin, result.begin + *size),
             transaction,
-            pas_physical_memory_is_locked_by_virtual_range_common_lock,
-            heap_config->mmap_capability)) {
+            pas_physical_memory_is_locked_by_virtual_range_common_lock)) {
         pas_fast_large_free_heap_deallocate(
             &heap->free_heap, result.begin, result.begin + *size,
             result.zero_mode, &config);
@@ -185,24 +183,6 @@ pas_large_heap_try_allocate(pas_large_heap* heap,
     return result;
 }
 
-pas_allocation_result
-pas_large_heap_try_allocate_pgm(pas_large_heap* heap,
-                            size_t size,
-                            size_t alignment,
-                            pas_heap_config* heap_config,
-                            pas_physical_memory_transaction* transaction)
-{
-    pas_allocation_result result;
-    result = pas_probabilistic_guard_malloc_allocate(heap, size, heap_config, transaction);
-
-    /* PGM may not succeed for a variety of reasons. We will give it a last ditch effort to try to do a
-       regular allocation instead. */
-    if (!result.did_succeed)
-        result = pas_large_heap_try_allocate(heap, size, alignment, heap_config, transaction);
-
-    return result;
-}
-
 bool pas_large_heap_try_deallocate(uintptr_t begin,
                                    pas_heap_config* heap_config)
 {
@@ -223,8 +203,7 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
     if (heap_config->aligned_allocator_talks_to_sharing_pool) {
         pas_large_sharing_pool_free(
             pas_range_create(map_entry.begin, map_entry.end),
-            pas_physical_memory_is_locked_by_virtual_range_common_lock,
-            heap_config->mmap_capability);
+            pas_physical_memory_is_locked_by_virtual_range_common_lock);
     }
 
     initialize_config(&config, NULL, map_entry.heap, heap_config);
@@ -276,8 +255,7 @@ bool pas_large_heap_try_shrink(uintptr_t begin,
     if (heap_config->aligned_allocator_talks_to_sharing_pool) {
         pas_large_sharing_pool_free(
             pas_range_create(map_entry.begin + new_size, map_entry.end),
-            pas_physical_memory_is_locked_by_virtual_range_common_lock,
-            heap_config->mmap_capability);
+            pas_physical_memory_is_locked_by_virtual_range_common_lock);
     }
 
     initialize_config(&config, NULL, heap, heap_config);

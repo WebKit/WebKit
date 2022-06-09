@@ -1,18 +1,6 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 
 XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $${COLOR_DIAGNOSTICS_ARG} $(ARGS)
-ifeq (ON,$(ENABLE_LLVM_PROFILE_GENERATION))
-	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=ENABLE_LLVM_PROFILE_GENERATION
-endif
-
-ifeq ($(USE_WORKSPACE),YES)
-SCHEME ?= $(notdir $(CURDIR))
-WORKSPACE_PATH ?= $(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace
-XCODE_TARGET = -workspace $(WORKSPACE_PATH) -scheme "$(SCHEME)"
-XCODE_OPTIONS += WK_VALIDATE_DEPENDENCIES=YES_ERROR
-else
-USE_WORKSPACE =
-endif
 
 ifneq (,$(SDKROOT))
 	ifneq (,$(OVERRIDE_SDKROOT))
@@ -48,11 +36,15 @@ ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
 	endif
 endif
 
-ifneq (,$(EXPORT_COMPILE_COMMANDS))
-		XCODE_OPTIONS += OTHER_CFLAGS='$$(inherited) -gen-cdb-fragment-path $$(BUILT_PRODUCTS_DIR)/compile_commands'
-		XCODE_OPTIONS += GCC_PRECOMPILE_PREFIX_HEADER=NO
-		XCODE_OPTIONS += CLANG_ENABLE_MODULE_DEBUGGING=NO
-		XCODE_OPTIONS += COMPILER_INDEX_STORE_ENABLE=NO
+ifeq ($(findstring UseNewBuildSystem,$(ARGS)),)
+	CAN_USE_XCBUILD = $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print canUseXCBuild()')
+	ifeq ($(CAN_USE_XCBUILD),1)
+		# Temporarily disable default use of XCBuild until issues with it are ironed out.
+		#XCODE_OPTIONS += -UseNewBuildSystem=YES
+		XCODE_OPTIONS += -UseNewBuildSystem=NO
+	else
+		XCODE_OPTIONS += -UseNewBuildSystem=NO
+	endif
 endif
 
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
@@ -70,35 +62,35 @@ endif
 endif
 
 ifeq ($(ASAN),YES)
-CONFIG_OPTIONS += --asan
+ASAN_OPTION=--asan
 else
 ifeq ($(ASAN),NO)
-CONFIG_OPTIONS += --no-asan
+ASAN_OPTION=--no-asan
 endif
 endif
 
 ifeq ($(TSAN),YES)
-CONFIG_OPTIONS += --tsan
+TSAN_OPTION=--tsan
 else
 ifeq ($(TSAN),NO)
-CONFIG_OPTIONS += --no-tsan
+TSAN_OPTION=--no-tsan
 endif
 endif
 
 ifeq ($(UBSAN),YES)
-CONFIG_OPTIONS += --ubsan
+UBSAN_OPTION=--ubsan
 else
 ifeq ($(UBSAN),NO)
-CONFIG_OPTIONS += --no-ubsan
+UBSAN_OPTION=--no-ubsan
 endif
 endif
 
 ifeq ($(WK_LTO_MODE),full)
-CONFIG_OPTIONS += --lto-mode=full
+WK_LTO_OPTION=--lto-mode=full
 else ifeq ($(WK_LTO_MODE),thin)
-CONFIG_OPTIONS += --lto-mode=thin
+WK_LTO_OPTION=--lto-mode=thin
 else ifeq ($(WK_LTO_MODE),none)
-CONFIG_OPTIONS += --lto-mode=none
+WK_LTO_OPTION=--lto-mode=none
 endif
 
 export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
@@ -109,21 +101,23 @@ export PATH = $(shell getconf PATH)
 
 
 define set_webkit_configuration
-	$(SCRIPTS_PATH)/set-webkit-configuration $1 $(CONFIG_OPTIONS)
+	$(SCRIPTS_PATH)/set-webkit-configuration $1 $(ASAN_OPTION) $(TSAN_OPTION) $(UBSAN_OPTION) $(WK_LTO_OPTION)
 endef
 
 define invoke_xcode
 	( \
 		[[ -t 1 ]] && COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; \
 		echo; \
-		echo "===== BUILDING $(if $(USE_WORKSPACE),$(SCHEME),$(notdir $(CURDIR))) ====="; \
+		echo "===== BUILDING $$(basename "$$(pwd)") ====="; \
 		echo; \
 		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 
 all:
+ifneq (,$(strip $(ASAN_OPTION) $(TSAN_OPTION) $(UBSAN_OPTION) $(WK_LTO_OPTION)))
 	@$(call set_webkit_configuration,)
+endif
 	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 debug d: force
@@ -144,7 +138,7 @@ testing t: force
 
 analyze:
 	@$(call set_webkit_configuration,--debug)
-	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),build analyze,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
+	@$(call invoke_xcode,$(PATH_TO_SCAN_BUILD),analyze,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 
 clean:
 ifndef XCODE_TARGET

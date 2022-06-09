@@ -29,10 +29,8 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
-#include "RenderSVGBlock.h"
 #include "RenderSVGModelObject.h"
 #include "RenderView.h"
-#include "SVGGraphicsElement.h"
 #include "Settings.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformState.h"
@@ -130,14 +128,11 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             layer()->willRemoveChildWithBlendMode();
 #endif
         setHasTransformRelatedProperty(false); // All transform-related properties force layers, so we know we don't have one or the object doesn't support them.
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        setHasSVGTransform(false); // Same reason as for setHasTransformRelatedProperty().
-#endif
         setHasReflection(false);
 
         // Repaint the about to be destroyed self-painting layer when style change also triggers repaint.
         if (layer()->isSelfPaintingLayer() && layer()->repaintStatus() == NeedsFullRepaint && layer()->repaintRects())
-            repaintUsingContainer(containerForRepaint().renderer, layer()->repaintRects()->clippedOverflowRect);
+            repaintUsingContainer(containerForRepaint(), layer()->repaintRects()->clippedOverflowRect);
 
         layer()->removeOnlyThisLayer(RenderLayer::LayerChangeTiming::StyleChange); // calls destroyLayer() which clears m_layer
         if (s_wasFloating && isFloating())
@@ -236,17 +231,13 @@ void RenderLayerModelObject::suspendAnimations(MonotonicTime time)
     layer()->backing()->suspendAnimations(time);
 }
 
-void RenderLayerModelObject::updateLayerTransform()
-{
-    // Transform-origin depends on box size, so we need to update the layer transform after layout.
-    if (hasLayer())
-        layer()->updateTransform();
-}
-
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContainer(const LayoutRect& rect, const RenderLayerModelObject* container, RenderObject::VisibleRectContext context) const
 {
-    ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
+    // FIXME: [LBSE] Upstream RenderSVGBlock changes
+    // ASSERT(is<RenderSVGModelObject>(this) || is<RenderSVGBlock>(this));
+    ASSERT(is<RenderSVGModelObject>(this));
+
     ASSERT(!style().hasInFlowPosition());
     ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
 
@@ -276,7 +267,7 @@ std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContain
     */
 
     if (moveToOrigin)
-        adjustedRect.moveBy(nominalSVGLayoutLocation());
+        adjustedRect.moveBy(flooredLayoutPoint(objectBoundingBox().minXMinYCorner()));
 
     if (auto* transform = layer()->transform())
         adjustedRect = transform->mapRect(adjustedRect);
@@ -325,74 +316,7 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
 
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
-
-void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, SVGGraphicsElement& graphicsElement, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
-{
-    // This check does not use style.hasTransformRelatedProperty() on purpose -- we only want to know if either the 'transform' property, an
-    // offset path, or the individual transform operations are set (perspective / transform-style: preserve-3d are not relevant here).
-    bool hasCSSTransform = style.hasTransform() || style.rotate() || style.translate() || style.scale();
-
-    bool affectedByTransformOrigin = false;
-    std::optional<AffineTransform> svgTransform;
-
-    if (hasCSSTransform)
-        affectedByTransformOrigin = style.affectedByTransformOrigin();
-    else if (auto affineTransform = graphicsElement.animatedLocalTransform(); !affineTransform.isIdentity()) {
-        svgTransform = affineTransform;
-        affectedByTransformOrigin = affineTransform.a() != 1 || affineTransform.b() || affineTransform.c() || affineTransform.d() != 1;
-    }
-
-    if (!hasCSSTransform && !svgTransform.has_value())
-        return;
-
-    FloatPoint3D originTranslate;
-    if (options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && affectedByTransformOrigin)
-        originTranslate = style.computeTransformOrigin(boundingBox);
-
-    style.applyTransformOrigin(transform, originTranslate);
-
-    // CSS transforms take precedence over SVG transforms.
-    if (hasCSSTransform)
-        style.applyCSSTransform(transform, boundingBox, options);
-    else
-        transform.multiplyAffineTransform(svgTransform.value());
-
-    style.unapplyTransformOrigin(transform, originTranslate);
-}
-
-void RenderLayerModelObject::updateHasSVGTransformFlags(const SVGGraphicsElement& graphicsElement)
-{
-    bool hasSVGTransform = !graphicsElement.animatedLocalTransform().isIdentity();
-    setHasTransformRelatedProperty(style().hasTransformRelatedProperty() || hasSVGTransform);
-    setHasSVGTransform(hasSVGTransform);
-}
 #endif
-
-bool rendererNeedsPixelSnapping(const RenderLayerModelObject& renderer)
-{
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled() && renderer.isSVGLayerAwareRenderer() && !renderer.isSVGRoot())
-        return false;
-#else
-    UNUSED_PARAM(renderer);
-#endif
-
-    return true;
-}
-
-FloatRect snapRectToDevicePixelsIfNeeded(const LayoutRect& rect, const RenderLayerModelObject& renderer)
-{
-    if (!rendererNeedsPixelSnapping(renderer))
-        return rect;
-    return snapRectToDevicePixels(rect, renderer.document().deviceScaleFactor());
-}
-
-FloatRect snapRectToDevicePixelsIfNeeded(const FloatRect& rect, const RenderLayerModelObject& renderer)
-{
-    if (!rendererNeedsPixelSnapping(renderer))
-        return rect;
-    return snapRectToDevicePixels(LayoutRect { rect }, renderer.document().deviceScaleFactor());
-}
 
 } // namespace WebCore
 

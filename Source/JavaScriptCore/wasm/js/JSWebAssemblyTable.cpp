@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWebAssemblyTable::s_info = { "WebAssembly.Table"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyTable) };
+const ClassInfo JSWebAssemblyTable::s_info = { "WebAssembly.Table", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyTable) };
 
 JSWebAssemblyTable* JSWebAssemblyTable::tryCreate(JSGlobalObject* globalObject, VM& vm, Structure* structure, Ref<Wasm::Table>&& table)
 {
@@ -65,7 +65,7 @@ JSWebAssemblyTable::JSWebAssemblyTable(VM& vm, Structure* structure, Ref<Wasm::T
 void JSWebAssemblyTable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 void JSWebAssemblyTable::destroy(JSCell* cell)
@@ -127,10 +127,10 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     JSString* elementString = nullptr;
     switch (element) {
     case Wasm::TableElementType::Funcref:
-        elementString = jsNontrivialString(vm, "anyfunc"_s);
+        elementString = jsNontrivialString(vm, "funcref");
         break;
     case Wasm::TableElementType::Externref:
-        elementString = jsNontrivialString(vm, "externref"_s);
+        elementString = jsNontrivialString(vm, "externref");
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -140,13 +140,13 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     auto maximum = m_table->maximum();
     if (maximum) {
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-        result->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(*maximum));
+        result->putDirect(vm, Identifier::fromString(vm, "maximum"), jsNumber(*maximum));
     } else
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
     uint32_t minimum = m_table->length();
-    result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(minimum));
-    result->putDirect(vm, Identifier::fromString(vm, "element"_s), elementString);
+    result->putDirect(vm, Identifier::fromString(vm, "minimum"), jsNumber(minimum));
+    result->putDirect(vm, Identifier::fromString(vm, "element"), elementString);
     return result;
 }
 

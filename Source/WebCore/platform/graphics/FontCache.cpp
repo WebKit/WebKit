@@ -86,11 +86,6 @@ struct FontPlatformDataCacheKey {
     FontCreationContext fontCreationContext;
 };
 
-inline void add(Hasher& hasher, const FontPlatformDataCacheKey& key)
-{
-    add(hasher, key.descriptionKey, key.family, key.fontCreationContext);
-}
-
 static bool operator==(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
 {
     return a.descriptionKey == b.descriptionKey
@@ -99,7 +94,7 @@ static bool operator==(const FontPlatformDataCacheKey& a, const FontPlatformData
 }
 
 struct FontPlatformDataCacheKeyHash {
-    static unsigned hash(const FontPlatformDataCacheKey& key) { return computeHash(key); }
+    static unsigned hash(const FontPlatformDataCacheKey& key) { return computeHash(key.descriptionKey, key.family, key.fontCreationContext); }
     static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
@@ -180,17 +175,17 @@ std::optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyN
 
     switch (familyName.length()) {
     case 5:
-        if (equalLettersIgnoringASCIICase(familyName, "arial"_s))
+        if (equalLettersIgnoringASCIICase(familyName, "arial"))
             return "Helvetica"_s;
-        if (equalLettersIgnoringASCIICase(familyName, "times"_s))
+        if (equalLettersIgnoringASCIICase(familyName, "times"))
             return "Times New Roman"_s;
         break;
     case 7:
-        if (equalLettersIgnoringASCIICase(familyName, "courier"_s))
+        if (equalLettersIgnoringASCIICase(familyName, "courier"))
             return "Courier New"_s;
         break;
     case 9:
-        if (equalLettersIgnoringASCIICase(familyName, "helvetica"_s))
+        if (equalLettersIgnoringASCIICase(familyName, "helvetica"))
             return "Arial"_s;
         break;
 #if !OS(WINDOWS)
@@ -200,12 +195,12 @@ std::optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyN
     // FIXME: Not sure why this is harmful on Windows, since the alternative will
     // only be tried if Courier New is not found.
     case 11:
-        if (equalLettersIgnoringASCIICase(familyName, "courier new"_s))
+        if (equalLettersIgnoringASCIICase(familyName, "courier new"))
             return "Courier"_s;
         break;
 #endif
     case 15:
-        if (equalLettersIgnoringASCIICase(familyName, "times new roman"_s))
+        if (equalLettersIgnoringASCIICase(familyName, "times new roman"))
             return "Times"_s;
         break;
     }
@@ -223,9 +218,9 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
     // Leading "@" in the font name enables Windows vertical flow flag for the font.
     // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
     // IE disregards "@" regardless of the orientation, so we follow the behavior.
-    auto familyName = StringView(passedFamilyName).substring(passedFamilyName[0] == '@' ? 1 : 0).toAtomString();
+    const String& familyName = passedFamilyName.substring(passedFamilyName[0] == '@' ? 1 : 0);
 #else
-    AtomString familyName { passedFamilyName };
+    const String& familyName = passedFamilyName;
 #endif
 
     static std::once_flag onceFlag;
@@ -365,6 +360,11 @@ bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
         && a.fontSelectorId == b.fontSelectorId
         && a.fontSelectorVersion == b.fontSelectorVersion
         && a.families == b.families;
+}
+
+unsigned FontCascadeCacheKeyHash::hash(const FontCascadeCacheKey& key)
+{
+    return computeHash(key.fontDescriptionKey, key.fontSelectorId, key.fontSelectorVersion, key.families);
 }
 
 void FontCache::invalidateFontCascadeCache()
@@ -522,7 +522,7 @@ void FontCache::prewarmGlobally()
 {
 }
 
-void FontCache::prewarm(PrewarmInformation&&)
+void FontCache::prewarm(const PrewarmInformation&)
 {
 }
 

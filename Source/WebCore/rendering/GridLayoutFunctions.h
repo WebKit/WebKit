@@ -31,29 +31,19 @@
 namespace WebCore {
 
 class RenderBox;
-class RenderElement;
 class RenderGrid;
 
-enum GridAxis {
-    GridRowAxis = 1 << 0,
-    GridColumnAxis = 1 << 1
-};
+enum GridAxis { GridRowAxis, GridColumnAxis };
 
 namespace GridLayoutFunctions {
 
 LayoutUnit computeMarginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
 LayoutUnit marginLogicalSizeForChild(const RenderGrid&, GridTrackSizingDirection, const RenderBox&);
 bool isOrthogonalChild(const RenderGrid&, const RenderBox&);
-bool isOrthogonalParent(const RenderGrid&, const RenderElement& parent);
 bool isAspectRatioBlockSizeDependentChild(const RenderBox&);
 GridTrackSizingDirection flowAwareDirectionForChild(const RenderGrid&, const RenderBox&, GridTrackSizingDirection);
-GridTrackSizingDirection flowAwareDirectionForParent(const RenderGrid&, const RenderElement& parent, GridTrackSizingDirection);
 bool hasOverridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
 std::optional<LayoutUnit> overridingContainingBlockContentSizeForChild(const RenderBox&, GridTrackSizingDirection);
-
-bool isFlippedDirection(const RenderGrid&, GridTrackSizingDirection);
-bool isSubgridReversedDirection(const RenderGrid&, GridTrackSizingDirection outerDirection, const RenderGrid& subgrid);
-LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection, const RenderBox& child);
 
 }
 

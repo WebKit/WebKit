@@ -209,7 +209,7 @@ void AudioSessionMac::setIsPlayingToBluetoothOverride(std::optional<bool> value)
 #endif
 }
 
-void AudioSessionMac::setCategory(CategoryType category, RouteSharingPolicy policy)
+void AudioSessionMac::setCategory(CategoryType category, RouteSharingPolicy)
 {
 #if ENABLE(ROUTING_ARBITRATION)
     bool playingToBluetooth = defaultDeviceTransportIsBluetooth();
@@ -217,7 +217,6 @@ void AudioSessionMac::setCategory(CategoryType category, RouteSharingPolicy poli
         return;
 
     m_category = category;
-    m_policy = policy;
 
     if (m_setupArbitrationOngoing) {
         RELEASE_LOG_ERROR(Media, "AudioSessionMac::setCategory() - a beginArbitrationWithCategory is still ongoing");
@@ -255,7 +254,6 @@ void AudioSessionMac::setCategory(CategoryType category, RouteSharingPolicy poli
     });
 #else
     m_category = category;
-    m_policy = policy;
 #endif
 }
 
@@ -368,6 +366,11 @@ bool AudioSessionMac::tryToSetActiveInternal(bool)
 {
     notImplemented();
     return true;
+}
+
+RouteSharingPolicy AudioSessionMac::routeSharingPolicy() const
+{
+    return RouteSharingPolicy::Default;
 }
 
 String AudioSessionMac::routingContextUID() const

@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -193,8 +192,7 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
     if (inputIndex >= destination.numberOfInputs())
         return Exception { IndexSizeError, "Input index exceeds number of inputs"_s };
 
-    auto& context = this->context();
-    if (&context != &destination.context())
+    if (&context() != &destination.context())
         return Exception { InvalidAccessError, "Source and destination nodes belong to different audio contexts"_s };
 
     auto* input = destination.input(inputIndex);
@@ -202,9 +200,6 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
 
     if (!output->numberOfChannels())
         return Exception { InvalidAccessError, "Node has zero output channels"_s };
-
-    if (is<AudioContext>(context) && &destination == &context.destination() && !downcast<AudioContext>(context).destination().isConnected())
-        downcast<AudioContext>(context).defaultDestinationWillBecomeConnected();
 
     input->connect(output);
 
@@ -488,7 +483,7 @@ void AudioNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
     ASSERT(context().isAudioThread() && context().isGraphOwner());
 
-    ASSERT(m_inputs.findIf([&](auto& associatedInput) { return associatedInput.get() == input; }) != notFound);
+    ASSERT(m_inputs.findMatching([&](auto& associatedInput) { return associatedInput.get() == input; }) != notFound);
     input->updateInternalBus();
 }
 

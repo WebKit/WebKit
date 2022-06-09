@@ -49,7 +49,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        static_assert(!CellType::needsDestruction);
+        static_assert(!CellType::needsDestruction, "");
         return &vm.variableSizedCellSpace();
     }
 
@@ -185,7 +185,7 @@ private:
     using MappedArguments = CagedBarrierPtr<Gigacage::Primitive, bool>;
     MappedArguments m_mappedArguments; // If non-null, it means that length, callee, and caller are fully materialized properties.
 
-    friend size_t cellSize(JSCell*);
+    friend size_t cellSize(VM&, JSCell*);
 };
 
 } // namespace JSC

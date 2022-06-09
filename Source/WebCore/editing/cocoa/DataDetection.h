@@ -41,7 +41,6 @@ namespace WebCore {
 
 class Document;
 class HTMLDivElement;
-class HTMLElement;
 class HitTestResult;
 class QualifiedName;
 struct TextRecognitionDataDetector;
@@ -66,7 +65,6 @@ public:
     WEBCORE_EXPORT static bool canPresentDataDetectorsUIForElement(Element&);
     WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
 #endif
-    WEBCORE_EXPORT static std::optional<std::pair<Ref<HTMLElement>, IntRect>> findDataDetectionResultElementInImageOverlay(const FloatPoint& location, const HTMLElement& imageOverlayHost);
 
 #if ENABLE(IMAGE_ANALYSIS)
     static Ref<HTMLDivElement> createElementForImageOverlay(Document&, const TextRecognitionDataDetector&);

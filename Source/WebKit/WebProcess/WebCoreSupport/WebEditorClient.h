@@ -107,12 +107,12 @@ private:
     void handleKeyboardEvent(WebCore::KeyboardEvent&) final;
     void handleInputMethodKeydown(WebCore::KeyboardEvent&) final;
     
-    void textFieldDidBeginEditing(WebCore::Element&) final;
-    void textFieldDidEndEditing(WebCore::Element&) final;
-    void textDidChangeInTextField(WebCore::Element&) final;
-    bool doTextFieldCommandFromEvent(WebCore::Element&, WebCore::KeyboardEvent*) final;
-    void textWillBeDeletedInTextField(WebCore::Element&) final;
-    void textDidChangeInTextArea(WebCore::Element&) final;
+    void textFieldDidBeginEditing(WebCore::Element*) final;
+    void textFieldDidEndEditing(WebCore::Element*) final;
+    void textDidChangeInTextField(WebCore::Element*) final;
+    bool doTextFieldCommandFromEvent(WebCore::Element*, WebCore::KeyboardEvent*) final;
+    void textWillBeDeletedInTextField(WebCore::Element*) final;
+    void textDidChangeInTextArea(WebCore::Element*) final;
     void overflowScrollPositionChanged() final;
     void subFrameScrollPositionChanged() final;
 
@@ -155,6 +155,7 @@ private:
     void ignoreWordInSpellDocument(const String&) final;
     void learnWord(const String&) final;
     void checkSpellingOfString(StringView, int* misspellingLocation, int* misspellingLength) final;
+    String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord) final;
     void checkGrammarOfString(StringView, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) final;
 
 #if USE(UNIFIED_TEXT_CHECKING)

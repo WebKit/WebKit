@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaRecorderPrivateWriterCocoa.h"
 
-#if ENABLE(MEDIA_RECORDER)
+#if ENABLE(MEDIA_STREAM)
 
 #include "AudioSampleBufferCompressor.h"
 #include "AudioStreamDescription.h"
@@ -35,7 +35,6 @@
 #include "MediaRecorderPrivateOptions.h"
 #include "MediaStreamTrackPrivate.h"
 #include "MediaUtilities.h"
-#include "VideoFrame.h"
 #include "VideoSampleBufferCompressor.h"
 #include "WebAudioBufferList.h"
 #include <AVFoundation/AVAssetWriter.h>
@@ -132,7 +131,7 @@ MediaRecorderPrivateWriter::MediaRecorderPrivateWriter(bool hasAudio, bool hasVi
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 {
     m_pendingAudioSampleQueue.clear();
-    m_pendingVideoFrameQueue.clear();
+    m_pendingVideoSampleQueue.clear();
     if (m_writer) {
         [m_writer cancelWriting];
         m_writer.clear();
@@ -283,15 +282,15 @@ bool MediaRecorderPrivateWriter::appendCompressedVideoSampleBufferIfPossible()
         return false;
 
     if (m_isFlushingSamples) {
-        m_pendingVideoFrameQueue.append(WTFMove(buffer));
+        m_pendingVideoSampleQueue.append(WTFMove(buffer));
         return true;
     }
 
-    while (!m_pendingVideoFrameQueue.isEmpty() && [m_videoAssetWriterInput isReadyForMoreMediaData])
-        appendCompressedVideoSampleBuffer(m_pendingVideoFrameQueue.takeFirst().get());
+    while (!m_pendingVideoSampleQueue.isEmpty() && [m_videoAssetWriterInput isReadyForMoreMediaData])
+        appendCompressedVideoSampleBuffer(m_pendingVideoSampleQueue.takeFirst().get());
 
     if (![m_videoAssetWriterInput isReadyForMoreMediaData]) {
-        m_pendingVideoFrameQueue.append(WTFMove(buffer));
+        m_pendingVideoSampleQueue.append(WTFMove(buffer));
         return true;
     }
 
@@ -334,7 +333,7 @@ static inline void appendEndsPreviousSampleDurationMarker(AVAssetWriterInput *as
 void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&& callback)
 {
     bool hasPendingAudioSamples = !m_pendingAudioSampleQueue.isEmpty();
-    bool hasPendingVideoSamples = !m_pendingVideoFrameQueue.isEmpty();
+    bool hasPendingVideoSamples = !m_pendingVideoSampleQueue.isEmpty();
 
     if (m_hasEncodedVideoSamples) {
         hasPendingVideoSamples |= ![m_videoAssetWriterInput isReadyForMoreMediaData];
@@ -349,7 +348,7 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
 
     ASSERT(!m_isFlushingSamples);
     m_isFlushingSamples = true;
-    auto block = makeBlockPtr([this, weakThis = WeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoFrameQueue), callback = WTFMove(callback)]() mutable {
+    auto block = makeBlockPtr([this, weakThis = WeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), callback = WTFMove(callback)]() mutable {
         if (!weakThis) {
             callback();
             return;
@@ -381,21 +380,42 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
         [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:block.get()];
 }
 
-void MediaRecorderPrivateWriter::appendVideoFrame(VideoFrame& frame)
+static inline RetainPtr<CMSampleBufferRef> copySampleBufferWithCurrentTimeStamp(CMSampleBufferRef originalBuffer, CMTime startTime)
+{
+    CMItemCount count = 0;
+    PAL::CMSampleBufferGetSampleTimingInfoArray(originalBuffer, 0, nil, &count);
+
+    Vector<CMSampleTimingInfo> timeInfo(count);
+    PAL::CMSampleBufferGetSampleTimingInfoArray(originalBuffer, count, timeInfo.data(), &count);
+
+    for (auto i = 0; i < count; i++) {
+        timeInfo[i].decodeTimeStamp = PAL::kCMTimeInvalid;
+        timeInfo[i].presentationTimeStamp = startTime;
+    }
+
+    CMSampleBufferRef newBuffer = nullptr;
+    if (auto error = PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, originalBuffer, count, timeInfo.data(), &newBuffer)) {
+        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter CMSampleBufferCreateCopyWithNewTiming failed with %d", error);
+        return nullptr;
+    }
+    return adoptCF(newBuffer);
+}
+
+void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
 {
     if (!m_firstVideoFrame) {
         m_firstVideoFrame = true;
         m_resumedVideoTime = PAL::CMClockGetTime(PAL::CMClockGetHostTimeClock());
-        if (frame.rotation() != VideoFrame::Rotation::None || frame.isMirrored()) {
-            m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(frame.rotation()) * M_PI / 180);
-            if (frame.isMirrored())
+        if (sample.videoRotation() != MediaSample::VideoRotation::None || sample.videoMirrored()) {
+            m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(sample.videoRotation()) * M_PI / 180);
+            if (sample.videoMirrored())
                 m_videoTransform = CGAffineTransformScale(*m_videoTransform, -1, 1);
         }
     }
 
-    auto frameTime = PAL::CMTimeSubtract(PAL::CMClockGetTime(PAL::CMClockGetHostTimeClock()), m_resumedVideoTime);
-    frameTime = PAL::CMTimeAdd(frameTime, m_currentVideoDuration);
-    if (auto bufferWithCurrentTime = createVideoSampleBuffer(frame.pixelBuffer(), frameTime))
+    auto sampleTime = PAL::CMTimeSubtract(PAL::CMClockGetTime(PAL::CMClockGetHostTimeClock()), m_resumedVideoTime);
+    sampleTime = PAL::CMTimeAdd(sampleTime, m_currentVideoDuration);
+    if (auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sample.platformSample().sample.cmSampleBuffer, sampleTime))
         m_videoCompressor->addSampleBuffer(bufferWithCurrentTime.get());
 }
 
@@ -555,4 +575,4 @@ unsigned MediaRecorderPrivateWriter::videoBitRate() const
 
 } // namespace WebCore
 
-#endif // ENABLE(MEDIA_RECORDER)
+#endif // ENABLE(MEDIA_STREAM)

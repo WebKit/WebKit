@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#
 # Copyright (C) 2018 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,10 @@ namespace WebCore {
 
 using namespace JSC;
 
-DOMGCOutputConstraint::DOMGCOutputConstraint(VM& vm, JSHeapData& heapData)
+DOMGCOutputConstraint::DOMGCOutputConstraint(VM& vm, JSVMClientData& clientData)
     : MarkingConstraint("Domo", "DOM Output", ConstraintVolatility::SeldomGreyed, ConstraintConcurrency::Concurrent, ConstraintParallelism::Parallel)
     , m_vm(vm)
-    , m_heapData(heapData)
+    , m_clientData(clientData)
     , m_lastExecutionVersion(vm.heap.mutatorExecutionVersion())
 {
 }
@@ -59,12 +59,12 @@ void DOMGCOutputConstraint::executeImplImpl(Visitor& visitor)
     
     m_lastExecutionVersion = heap.mutatorExecutionVersion();
     
-    m_heapData.forEachOutputConstraintSpace(
+    m_clientData.forEachOutputConstraintSpace(
         [&] (Subspace& subspace) {
             auto func = [] (Visitor& visitor, HeapCell* heapCell, HeapCell::Kind) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::DOMGCOutput);
                 JSCell* cell = static_cast<JSCell*>(heapCell);
-                cell->methodTable()->visitOutputConstraints(cell, visitor);
+                cell->methodTable(visitor.vm())->visitOutputConstraints(cell, visitor);
             };
             
             RefPtr<SharedTask<void(Visitor&)>> task = subspace.template forEachMarkedCellInParallel<Visitor>(func);

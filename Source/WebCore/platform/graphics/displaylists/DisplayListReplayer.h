@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,15 @@
 
 #pragma once
 
-#include "GraphicsContext.h"
 #include "InMemoryDisplayList.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+enum class AlphaPremultiplication : uint8_t;
 class FloatRect;
+class GraphicsContext;
 
 namespace DisplayList {
 
@@ -41,6 +42,7 @@ class ResourceHeap;
 enum class StopReplayReason : uint8_t {
     ReplayedAllItems,
     MissingCachedResource,
+    ChangeDestinationImageBuffer,
     InvalidItemOrExtent,
     OutOfMemory
 };
@@ -48,6 +50,7 @@ enum class StopReplayReason : uint8_t {
 struct ReplayResult {
     std::unique_ptr<InMemoryDisplayList> trackedDisplayList;
     size_t numberOfBytesRead { 0 };
+    std::optional<RenderingResourceIdentifier> nextDestinationImageBuffer;
     std::optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
     StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
 };
@@ -55,21 +58,30 @@ struct ReplayResult {
 class Replayer {
     WTF_MAKE_NONCOPYABLE(Replayer);
 public:
-    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ResourceHeap* = nullptr);
-    ~Replayer() = default;
+    class Delegate;
+    WEBCORE_EXPORT Replayer(GraphicsContext&, const DisplayList&, const ResourceHeap* = nullptr, WebCore::ImageBuffer* maskImageBuffer = nullptr, Delegate* = nullptr);
+    WEBCORE_EXPORT ~Replayer();
 
     WEBCORE_EXPORT ReplayResult replay(const FloatRect& initialClip = { }, bool trackReplayList = false);
 
-private:
-    struct ApplyItemResult {
-        std::optional<StopReplayReason> stopReason;
-        std::optional<RenderingResourceIdentifier> resourceIdentifier;
+    class Delegate {
+    public:
+        virtual ~Delegate() { }
+        virtual bool apply(ItemHandle, GraphicsContext&) { return false; }
+        virtual void didCreateMaskImageBuffer(WebCore::ImageBuffer&) { }
+        virtual void didResetMaskImageBuffer() { }
+        virtual void recordResourceUse(RenderingResourceIdentifier) { }
     };
-    ApplyItemResult applyItem(ItemHandle);
+    
+private:
+    GraphicsContext& context() const;
+    std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
 
     GraphicsContext& m_context;
+    RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;
     const DisplayList& m_displayList;
     const ResourceHeap& m_resourceHeap;
+    Delegate* m_delegate;
 };
 
 }

@@ -49,18 +49,11 @@ public:
     WKDictionaryRef notificationPermissions();
 
     void simulateWebNotificationClick(WKPageRef, WKDataRef notificationID);
-    void simulateWebNotificationClickForServiceWorkerNotifications();
-
     void reset();
-
-    void setPermission(const String& origin, bool allowed);
 
 private:
     HashSet<WKRetainPtr<WKNotificationManagerRef>> m_knownManagers;
     HashMap<UUID, WKNotificationManagerRef> m_owningManager;
-    WKRetainPtr<WKMutableDictionaryRef> m_permissions;
-
-    HashSet<WKRetainPtr<WKNotificationRef>> m_knownPersistentNotifications;
 };
 
 }

@@ -44,23 +44,13 @@ namespace WebCore {
 struct CDMKeySystemConfiguration;
 struct CDMMediaCapability;
 struct CDMRestrictions;
-class SharedBuffer;
-
-class CDMPrivateClient {
-public:
-    virtual ~CDMPrivateClient() = default;
-
-#if !RELEASE_LOG_DISABLED
-    virtual const Logger& logger() const = 0;
-#endif
-};
 
 class CDMPrivate : public CanMakeWeakPtr<CDMPrivate> {
 public:
     WEBCORE_EXPORT virtual ~CDMPrivate();
 
 #if !RELEASE_LOG_DISABLED
-    virtual void setLogIdentifier(const void*) { };
+    virtual void setLogger(Logger&, const void*) { };
 #endif
 
     enum class LocalStorageAccess : bool {
@@ -83,8 +73,8 @@ public:
     virtual void loadAndInitialize() = 0;
     virtual bool supportsServerCertificates() const = 0;
     virtual bool supportsSessions() const = 0;
-    virtual bool supportsInitData(const AtomString&, const SharedBuffer&) const = 0;
-    virtual RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const = 0;
+    virtual bool supportsInitData(const AtomString&, const FragmentedSharedBuffer&) const = 0;
+    virtual RefPtr<FragmentedSharedBuffer> sanitizeResponse(const FragmentedSharedBuffer&) const = 0;
     virtual std::optional<String> sanitizeSessionId(const String&) const = 0;
 
 protected:

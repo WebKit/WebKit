@@ -43,19 +43,19 @@ template<typename T, typename U, std::size_t size> inline std::array<T, size> co
 
 static inline std::optional<SystemFontKind> matchSystemFontUse(const AtomString& string)
 {
-    if (equalLettersIgnoringASCIICase(string, "-webkit-system-font"_s)
-        || equalLettersIgnoringASCIICase(string, "-apple-system"_s)
-        || equalLettersIgnoringASCIICase(string, "-apple-system-font"_s)
-        || equalLettersIgnoringASCIICase(string, "system-ui"_s)
-        || equalLettersIgnoringASCIICase(string, "ui-sans-serif"_s))
+    if (equalLettersIgnoringASCIICase(string, "-webkit-system-font")
+        || equalLettersIgnoringASCIICase(string, "-apple-system")
+        || equalLettersIgnoringASCIICase(string, "-apple-system-font")
+        || equalLettersIgnoringASCIICase(string, "system-ui")
+        || equalLettersIgnoringASCIICase(string, "ui-sans-serif"))
         return SystemFontKind::SystemUI;
 
 #if HAVE(DESIGN_SYSTEM_UI_FONTS)
-    if (equalLettersIgnoringASCIICase(string, "ui-serif"_s))
+    if (equalLettersIgnoringASCIICase(string, "ui-serif"))
         return SystemFontKind::UISerif;
-    if (equalLettersIgnoringASCIICase(string, "ui-monospace"_s))
+    if (equalLettersIgnoringASCIICase(string, "ui-monospace"))
         return SystemFontKind::UIMonospace;
-    if (equalLettersIgnoringASCIICase(string, "ui-rounded"_s))
+    if (equalLettersIgnoringASCIICase(string, "ui-rounded"))
         return SystemFontKind::UIRounded;
 #endif
 
@@ -145,15 +145,15 @@ AtomString FontDescription::platformResolveGenericFamily(UScriptCode script, con
 
     // FIXME: Use the system font database to handle standardFamily
     if (familyName == serifFamily)
-        return AtomString { SystemFontDatabaseCoreText::singleton().serifFamily(locale.string()) };
+        return SystemFontDatabaseCoreText::singleton().serifFamily(locale.string());
     if (familyName == sansSerifFamily)
-        return AtomString { SystemFontDatabaseCoreText::singleton().sansSerifFamily(locale.string()) };
+        return SystemFontDatabaseCoreText::singleton().sansSerifFamily(locale.string());
     if (familyName == cursiveFamily)
-        return AtomString { SystemFontDatabaseCoreText::singleton().cursiveFamily(locale.string()) };
+        return SystemFontDatabaseCoreText::singleton().cursiveFamily(locale.string());
     if (familyName == fantasyFamily)
-        return AtomString { SystemFontDatabaseCoreText::singleton().fantasyFamily(locale.string()) };
+        return SystemFontDatabaseCoreText::singleton().fantasyFamily(locale.string());
     if (familyName == monospaceFamily)
-        return AtomString { SystemFontDatabaseCoreText::singleton().monospaceFamily(locale.string()) };
+        return SystemFontDatabaseCoreText::singleton().monospaceFamily(locale.string());
 
     return nullAtom();
 }

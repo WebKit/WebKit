@@ -184,7 +184,8 @@ void webkit_dom_html_li_element_set_type_attr(WebKitDOMHTMLLIElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LI_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLIElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
 }
 
 glong webkit_dom_html_li_element_get_value(WebKitDOMHTMLLIElement* self)

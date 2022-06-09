@@ -34,7 +34,6 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ScreenProperties.h>
-#import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sysexits.h>
 #import <wtf/MemoryPressureHandler.h>
@@ -54,9 +53,7 @@ void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
     [userDefaults registerDefaults:@{ @"pluginformatreader_unsigned": @YES }];
 #endif
 
-#if HAVE(CSCHECKFIXDISABLE)
-    _CSCheckFixDisable();
-#endif
+    launchServicesCheckIn();
 }
 
 void GPUProcess::initializeProcessName(const AuxiliaryProcessInitializationParameters& parameters)
@@ -97,12 +94,6 @@ void GPUProcess::setScreenProperties(const ScreenProperties& screenProperties)
     setShouldOverrideScreenSupportsHighDynamicRange(true, allScreensAreHDR);
 #endif
 }
-
-void GPUProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)
-{
-    AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
-}
-
 #endif
 
 } // namespace WebKit

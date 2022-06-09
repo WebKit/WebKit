@@ -26,31 +26,27 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "PageAuditAgent.h"
+#include <JavaScriptCore/InspectorAuditAgent.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Document;
 class Node;
-class VoidCallback;
 
 class InspectorAuditDOMObject : public RefCounted<InspectorAuditDOMObject> {
 public:
-    static Ref<InspectorAuditDOMObject> create(PageAuditAgent& auditAgent)
+    static Ref<InspectorAuditDOMObject> create(Inspector::InspectorAuditAgent& auditAgent)
     {
         return adoptRef(*new InspectorAuditDOMObject(auditAgent));
     }
 
     ExceptionOr<bool> hasEventListeners(Node&, const String& type);
 
-    ExceptionOr<void> simulateUserInteraction(Document&, Ref<VoidCallback>&&);
-
 private:
-    explicit InspectorAuditDOMObject(PageAuditAgent&);
+    explicit InspectorAuditDOMObject(Inspector::InspectorAuditAgent&);
 
-    PageAuditAgent& m_auditAgent;
+    Inspector::InspectorAuditAgent& m_auditAgent;
 };
 
 } // namespace WebCore

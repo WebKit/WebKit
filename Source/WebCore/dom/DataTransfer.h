@@ -94,7 +94,7 @@ public:
     static Ref<DataTransfer> createForDrop(const Document&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
     static Ref<DataTransfer> createForUpdatingDropTarget(const Document&, std::unique_ptr<Pasteboard>&&, OptionSet<DragOperation>, bool draggingFiles);
 
-    bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"_s; }
+    bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
 
     OptionSet<DragOperation> sourceOperationMask() const;
     OptionSet<DragOperation> destinationOperationMask() const;
@@ -108,8 +108,6 @@ public:
 
     void moveDragState(Ref<DataTransfer>&&);
     bool hasDragImage() const;
-
-    IntPoint dragLocation() const { return m_dragLocation; }
 #endif
 
     void didAddFileToItemList();

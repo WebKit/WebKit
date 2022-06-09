@@ -26,7 +26,6 @@
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/CompactPtr.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/Expected.h>
 #include <wtf/MathExtras.h>
@@ -49,12 +48,6 @@ typedef const struct __CFString * CFStringRef;
 @class NSString;
 #endif
 
-#if HAVE(36BIT_ADDRESS)
-#define STRING_IMPL_ALIGNMENT alignas(16)
-#else
-#define STRING_IMPL_ALIGNMENT
-#endif
-
 namespace JSC {
 namespace LLInt { class Data; }
 class LLIntOffsetsExtractor;
@@ -67,7 +60,6 @@ class SymbolRegistry;
 
 struct CStringTranslator;
 struct HashAndUTF8CharactersTranslator;
-struct HashTranslatorASCIILiteral;
 struct LCharBufferTranslator;
 struct SubstringTranslator;
 struct UCharBufferTranslator;
@@ -139,7 +131,7 @@ struct StringStats {
 
 #endif
 
-class STRING_IMPL_ALIGNMENT StringImplShape {
+class StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImplShape);
 public:
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
@@ -186,7 +178,6 @@ class StringImpl : private StringImplShape {
 
     friend struct WTF::CStringTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
-    friend struct WTF::HashTranslatorASCIILiteral;
     friend struct WTF::LCharBufferTranslator;
     friend struct WTF::SubstringTranslator;
     friend struct WTF::UCharBufferTranslator;
@@ -244,27 +235,29 @@ public:
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const UChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const LChar*, unsigned length);
-    ALWAYS_INLINE static Ref<StringImpl> create(const char* characters, unsigned length) { return create(reinterpret_cast<const LChar*>(characters), length); }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*, unsigned length);
     template<size_t inlineCapacity> static Ref<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity>&);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*);
 
-    // Not using create() naming to encourage developers to call create(ASCIILiteral) when they have a string literal.
-    ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(characters, strlen(characters)); }
+    ALWAYS_INLINE static Ref<StringImpl> create(const char* characters, unsigned length) { return create(reinterpret_cast<const LChar*>(characters), length); }
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> create(const LChar*);
+    ALWAYS_INLINE static Ref<StringImpl> create(const char* string) { return create(reinterpret_cast<const LChar*>(string)); }
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
 
-    ALWAYS_INLINE static Ref<StringImpl> create(ASCIILiteral literal) { return createWithoutCopying(literal.characters8(), literal.length()); }
+    template<unsigned characterCount> static Ref<StringImpl> createFromLiteral(const char (&)[characterCount]);
 
-    static Ref<StringImpl> createWithoutCopying(const UChar* characters, unsigned length) { return length ? createWithoutCopyingNonEmpty(characters, length) : Ref { *empty() }; }
-    static Ref<StringImpl> createWithoutCopying(const LChar* characters, unsigned length) { return length ? createWithoutCopyingNonEmpty(characters, length) : Ref { *empty() }; }
-    ALWAYS_INLINE static Ref<StringImpl> createWithoutCopying(const char* characters, unsigned length) { return createWithoutCopying(reinterpret_cast<const LChar*>(characters), length); }
+    // FIXME: Replace calls to these overloads of createFromLiteral to createWithoutCopying instead.
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(const char*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(const char*);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(ASCIILiteral);
 
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopying(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopying(const LChar*, unsigned length);
+    static Ref<StringImpl> createWithoutCopying(const char* characters, unsigned length) { return createWithoutCopying(reinterpret_cast<const LChar*>(characters), length); }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(unsigned length, LChar*&);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(unsigned length, UChar*&);
     template<typename CharacterType> static RefPtr<StringImpl> tryCreateUninitialized(unsigned length, CharacterType*&);
-
-    static Ref<StringImpl> createByReplacingInCharacters(const LChar*, unsigned length, UChar target, UChar replacement, unsigned indexOfFirstTargetCharacter);
-    static Ref<StringImpl> createByReplacingInCharacters(const UChar*, unsigned length, UChar target, UChar replacement, unsigned indexOfFirstTargetCharacter);
 
     static Ref<StringImpl> createStaticStringImpl(const char* characters, unsigned length)
     {
@@ -423,7 +416,7 @@ public:
 
     Ref<StringImpl> foldCase();
 
-    WTF_EXPORT_PRIVATE Ref<StringImpl> stripWhiteSpace();
+    Ref<StringImpl> stripWhiteSpace();
     WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace();
     Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 
@@ -437,37 +430,44 @@ public:
     size_t find(LChar character, unsigned start = 0);
     size_t find(char character, unsigned start = 0);
     size_t find(UChar character, unsigned start = 0);
-    template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
-    size_t find(CodeUnitMatchFunction, unsigned start = 0);
-    ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) { return find(literal.characters8(), literal.length(), start); }
-    WTF_EXPORT_PRIVATE size_t find(StringView);
-    WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start);
-    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView) const;
-    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView, unsigned start) const;
+    WTF_EXPORT_PRIVATE size_t find(CodeUnitMatchFunction, unsigned index = 0);
+    size_t find(const LChar*, unsigned index = 0);
+    ALWAYS_INLINE size_t find(const char* string, unsigned index = 0) { return find(reinterpret_cast<const LChar*>(string), index); }
+    WTF_EXPORT_PRIVATE size_t find(StringImpl*);
+    WTF_EXPORT_PRIVATE size_t find(StringImpl*, unsigned index);
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl&) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl&, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl*) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl*, unsigned startOffset) const;
 
-    WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned start = MaxLength);
-    WTF_EXPORT_PRIVATE size_t reverseFind(StringView, unsigned start = MaxLength);
-    ALWAYS_INLINE size_t reverseFind(ASCIILiteral literal, unsigned start = MaxLength) { return reverseFind(literal.characters8(), literal.length(), start); }
+    WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned index = MaxLength);
+    WTF_EXPORT_PRIVATE size_t reverseFind(StringImpl*, unsigned index = MaxLength);
 
-    WTF_EXPORT_PRIVATE bool startsWith(StringView) const;
-    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(StringView) const;
+    WTF_EXPORT_PRIVATE bool startsWith(const StringImpl*) const;
+    WTF_EXPORT_PRIVATE bool startsWith(const StringImpl&) const;
+    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringImpl*) const;
+    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringImpl&) const;
     WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool startsWith(const char*, unsigned matchLength) const;
-    WTF_EXPORT_PRIVATE bool hasInfixStartingAt(StringView, unsigned start) const;
+    template<unsigned matchLength> bool startsWith(const char (&prefix)[matchLength]) const { return startsWith(prefix, matchLength - 1); }
+    WTF_EXPORT_PRIVATE bool hasInfixStartingAt(const StringImpl&, unsigned startOffset) const;
 
-    WTF_EXPORT_PRIVATE bool endsWith(StringView);
-    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(StringView) const;
+    WTF_EXPORT_PRIVATE bool endsWith(StringImpl*);
+    WTF_EXPORT_PRIVATE bool endsWith(StringImpl&);
+    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringImpl*) const;
+    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringImpl&) const;
     WTF_EXPORT_PRIVATE bool endsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool endsWith(const char*, unsigned matchLength) const;
-    WTF_EXPORT_PRIVATE bool hasInfixEndingAt(StringView, unsigned end) const;
+    template<unsigned matchLength> bool endsWith(const char (&prefix)[matchLength]) const { return endsWith(prefix, matchLength - 1); }
+    WTF_EXPORT_PRIVATE bool hasInfixEndingAt(const StringImpl&, unsigned endOffset) const;
 
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, UChar);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, StringView);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, StringImpl*);
     ALWAYS_INLINE Ref<StringImpl> replace(UChar pattern, const char* replacement, unsigned replacementLength) { return replace(pattern, reinterpret_cast<const LChar*>(replacement), replacementLength); }
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, const LChar*, unsigned replacementLength);
     Ref<StringImpl> replace(UChar, const UChar*, unsigned replacementLength);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(StringView, StringView);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(unsigned start, unsigned length, StringView);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(StringImpl*, StringImpl*);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(unsigned index, unsigned length, StringImpl*);
 
     WTF_EXPORT_PRIVATE UCharDirection defaultWritingDirection(bool* hasStrongDirectionality = nullptr);
 
@@ -503,9 +503,6 @@ private:
     template<typename> static size_t maxInternalLength();
     template<typename> static size_t tailOffset();
 
-    WTF_EXPORT_PRIVATE size_t find(const LChar*, unsigned length, unsigned start);
-    WTF_EXPORT_PRIVATE size_t reverseFind(const LChar*, unsigned length, unsigned start);
-
     bool requiresCopy() const;
     template<typename T> const T* tailPointer() const;
     template<typename T> T* tailPointer();
@@ -514,9 +511,6 @@ private:
 
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType, typename CharacterType> static Ref<StringImpl> convertASCIICase(StringImpl&, const CharacterType*, unsigned);
-
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(const LChar*, unsigned length);
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(const UChar*, unsigned length);
 
     template<class CodeUnitPredicate> Ref<StringImpl> stripMatchedCharacters(CodeUnitPredicate);
     template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(const CharacterType* characters, const Predicate&);
@@ -542,7 +536,7 @@ public:
 
 using StaticStringImpl = StringImpl::StaticStringImpl;
 
-static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl));
+static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl), "");
 
 template<typename CharacterType>
 struct HashTranslatorCharBuffer {
@@ -581,7 +575,6 @@ WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);
 inline bool equal(const StringImpl* a, const char* b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*, unsigned);
 WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const UChar*, unsigned);
-ALWAYS_INLINE bool equal(const StringImpl* a, ASCIILiteral b) { return equal(a, b.characters8(), b.length()); }
 inline bool equal(const StringImpl* a, const char* b, unsigned length) { return equal(a, reinterpret_cast<const LChar*>(b), length); }
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
@@ -592,21 +585,21 @@ WTF_EXPORT_PRIVATE bool equalIgnoringNullity(const UChar*, size_t length, String
 
 bool equalIgnoringASCIICase(const StringImpl&, const StringImpl&);
 WTF_EXPORT_PRIVATE bool equalIgnoringASCIICase(const StringImpl*, const StringImpl*);
-bool equalIgnoringASCIICase(const StringImpl&, ASCIILiteral);
-bool equalIgnoringASCIICase(const StringImpl*, ASCIILiteral);
+bool equalIgnoringASCIICase(const StringImpl&, const char*);
+bool equalIgnoringASCIICase(const StringImpl*, const char*);
 
 WTF_EXPORT_PRIVATE bool equalIgnoringASCIICaseNonNull(const StringImpl*, const StringImpl*);
 
-bool equalLettersIgnoringASCIICase(const StringImpl&, ASCIILiteral);
-bool equalLettersIgnoringASCIICase(const StringImpl*, ASCIILiteral);
+template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl&, const char (&lowercaseLetters)[length]);
+template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl*, const char (&lowercaseLetters)[length]);
 
 template<typename CodeUnit, typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, CodeUnit>>* = nullptr>
-size_t find(const CodeUnit*, unsigned length, CodeUnitMatchFunction&&, unsigned start = 0);
+size_t find(const CodeUnit*, unsigned length, CodeUnitMatchFunction&&, unsigned index = 0);
 
-template<typename CharacterType> size_t reverseFindLineTerminator(const CharacterType*, unsigned length, unsigned start = StringImpl::MaxLength);
-template<typename CharacterType> size_t reverseFind(const CharacterType*, unsigned length, CharacterType matchCharacter, unsigned start = StringImpl::MaxLength);
-size_t reverseFind(const UChar*, unsigned length, LChar matchCharacter, unsigned start = StringImpl::MaxLength);
-size_t reverseFind(const LChar*, unsigned length, UChar matchCharacter, unsigned start = StringImpl::MaxLength);
+template<typename CharacterType> size_t reverseFindLineTerminator(const CharacterType*, unsigned length, unsigned index = StringImpl::MaxLength);
+template<typename CharacterType> size_t reverseFind(const CharacterType*, unsigned length, CharacterType matchCharacter, unsigned index = StringImpl::MaxLength);
+size_t reverseFind(const UChar*, unsigned length, LChar matchCharacter, unsigned index = StringImpl::MaxLength);
+size_t reverseFind(const LChar*, unsigned length, UChar matchCharacter, unsigned index = StringImpl::MaxLength);
 
 template<size_t inlineCapacity> bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>&, StringImpl*);
 
@@ -616,7 +609,8 @@ int codePointCompare(const StringImpl*, const StringImpl*);
 // FIXME: Should rename this to make clear it uses the Unicode definition of whitespace.
 // Most WebKit callers don't want that would use isASCIISpace or isHTMLSpace instead.
 bool isSpaceOrNewline(UChar32);
-bool isNotSpaceOrNewline(UChar32);
+
+template<typename CharacterType> unsigned lengthOfNullTerminatedString(const CharacterType*);
 
 // StringHashd is the default hash for StringImpl* and RefPtr<StringImpl>
 template<typename> struct DefaultHash;
@@ -650,54 +644,54 @@ template<> ALWAYS_INLINE const UChar* StringImpl::characters<UChar>() const
 }
 
 template<typename CodeUnit, typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, CodeUnit>>*>
-inline size_t find(const CodeUnit* characters, unsigned length, CodeUnitMatchFunction&& matchFunction, unsigned start)
+inline size_t find(const CodeUnit* characters, unsigned length, CodeUnitMatchFunction&& matchFunction, unsigned index)
 {
-    while (start < length) {
-        if (matchFunction(characters[start]))
-            return start;
-        ++start;
+    while (index < length) {
+        if (matchFunction(characters[index]))
+            return index;
+        ++index;
     }
     return notFound;
 }
 
-template<typename CharacterType> inline size_t reverseFindLineTerminator(const CharacterType* characters, unsigned length, unsigned start)
+template<typename CharacterType> inline size_t reverseFindLineTerminator(const CharacterType* characters, unsigned length, unsigned index)
 {
     if (!length)
         return notFound;
-    if (start >= length)
-        start = length - 1;
-    auto character = characters[start];
+    if (index >= length)
+        index = length - 1;
+    auto character = characters[index];
     while (character != '\n' && character != '\r') {
-        if (!start--)
+        if (!index--)
             return notFound;
-        character = characters[start];
+        character = characters[index];
     }
-    return start;
+    return index;
 }
 
-template<typename CharacterType> inline size_t reverseFind(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned start)
+template<typename CharacterType> inline size_t reverseFind(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index)
 {
     if (!length)
         return notFound;
-    if (start >= length)
-        start = length - 1;
-    while (characters[start] != matchCharacter) {
-        if (!start--)
+    if (index >= length)
+        index = length - 1;
+    while (characters[index] != matchCharacter) {
+        if (!index--)
             return notFound;
     }
-    return start;
+    return index;
 }
 
-ALWAYS_INLINE size_t reverseFind(const UChar* characters, unsigned length, LChar matchCharacter, unsigned start)
+ALWAYS_INLINE size_t reverseFind(const UChar* characters, unsigned length, LChar matchCharacter, unsigned index)
 {
-    return reverseFind(characters, length, static_cast<UChar>(matchCharacter), start);
+    return reverseFind(characters, length, static_cast<UChar>(matchCharacter), index);
 }
 
-inline size_t reverseFind(const LChar* characters, unsigned length, UChar matchCharacter, unsigned start)
+inline size_t reverseFind(const LChar* characters, unsigned length, UChar matchCharacter, unsigned index)
 {
     if (!isLatin1(matchCharacter))
         return notFound;
-    return reverseFind(characters, length, static_cast<LChar>(matchCharacter), start);
+    return reverseFind(characters, length, static_cast<LChar>(matchCharacter), index);
 }
 
 inline size_t StringImpl::find(LChar character, unsigned start)
@@ -717,14 +711,6 @@ inline size_t StringImpl::find(UChar character, unsigned start)
     if (is8Bit())
         return WTF::find(characters8(), m_length, character, start);
     return WTF::find(characters16(), m_length, character, start);
-}
-
-template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>*>
-size_t StringImpl::find(CodeUnitMatchFunction matchFunction, unsigned start)
-{
-    if (is8Bit())
-        return WTF::find(characters8(), m_length, matchFunction, start);
-    return WTF::find(characters16(), m_length, matchFunction, start);
 }
 
 template<size_t inlineCapacity> inline bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>& a, StringImpl* b)
@@ -777,9 +763,15 @@ inline bool isSpaceOrNewline(UChar32 character)
     return isLatin1(character) ? isASCIISpace(character) : u_charDirection(character) == U_WHITE_SPACE_NEUTRAL;
 }
 
-inline bool isNotSpaceOrNewline(UChar32 character)
+template<typename CharacterType> inline unsigned lengthOfNullTerminatedString(const CharacterType* string)
 {
-    return !isSpaceOrNewline(character);
+    ASSERT(string);
+    size_t length = 0;
+    while (string[length])
+        ++length;
+
+    RELEASE_ASSERT(length < StringImpl::MaxLength);
+    return static_cast<unsigned>(length);
 }
 
 inline StringImplShape::StringImplShape(unsigned refCount, unsigned length, const LChar* data8, unsigned hashAndFlags)
@@ -988,6 +980,14 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
     if (rep.is8Bit())
         return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data8 + offset, length, *ownerRep));
     return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data16 + offset, length, *ownerRep));
+}
+
+template<unsigned characterCount> ALWAYS_INLINE Ref<StringImpl> StringImpl::createFromLiteral(const char (&characters)[characterCount])
+{
+    COMPILE_ASSERT(characterCount > 1, StringImplFromLiteralNotEmpty);
+    COMPILE_ASSERT((characterCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), StringImplFromLiteralCannotOverflow);
+
+    return createWithoutCopying(reinterpret_cast<const LChar*>(characters), characterCount - 1);
 }
 
 template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tryCreateUninitialized(unsigned length, CharacterType*& output)
@@ -1252,34 +1252,34 @@ inline bool equalIgnoringASCIICase(const StringImpl& a, const StringImpl& b)
     return equalIgnoringASCIICaseCommon(a, b);
 }
 
-inline bool equalIgnoringASCIICase(const StringImpl& a, ASCIILiteral b)
+inline bool equalIgnoringASCIICase(const StringImpl& a, const char* b)
 {
-    return equalIgnoringASCIICaseCommon(a, b.characters());
+    return equalIgnoringASCIICaseCommon(a, b);
 }
 
-inline bool equalIgnoringASCIICase(const StringImpl* a, ASCIILiteral b)
+inline bool equalIgnoringASCIICase(const StringImpl* a, const char* b)
 {
     return a && equalIgnoringASCIICase(*a, b);
 }
 
-inline bool startsWithLettersIgnoringASCIICase(const StringImpl& string, ASCIILiteral literal)
+template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const StringImpl& string, const char (&lowercaseLetters)[length])
 {
-    return startsWithLettersIgnoringASCIICaseCommon(string, literal);
+    return startsWithLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
 }
 
-inline bool startsWithLettersIgnoringASCIICase(const StringImpl* string, ASCIILiteral literal)
+template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const StringImpl* string, const char (&lowercaseLetters)[length])
 {
-    return string && startsWithLettersIgnoringASCIICase(*string, literal);
+    return string && startsWithLettersIgnoringASCIICase(*string, lowercaseLetters);
 }
 
-inline bool equalLettersIgnoringASCIICase(const StringImpl& string, ASCIILiteral literal)
+template<unsigned length> inline bool equalLettersIgnoringASCIICase(const StringImpl& string, const char (&lowercaseLetters)[length])
 {
-    return equalLettersIgnoringASCIICaseCommon(string, literal);
+    return equalLettersIgnoringASCIICaseCommon(string, lowercaseLetters);
 }
 
-inline bool equalLettersIgnoringASCIICase(const StringImpl* string, ASCIILiteral literal)
+template<unsigned length> inline bool equalLettersIgnoringASCIICase(const StringImpl* string, const char (&lowercaseLetters)[length])
 {
-    return string && equalLettersIgnoringASCIICase(*string, literal);
+    return string && equalLettersIgnoringASCIICase(*string, lowercaseLetters);
 }
 
 template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> StringImpl::removeCharactersImpl(const CharacterType* characters, const Predicate& findMatch)
@@ -1320,48 +1320,8 @@ inline Ref<StringImpl> StringImpl::removeCharacters(const Predicate& findMatch)
     return removeCharactersImpl(characters16(), findMatch);
 }
 
-inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(const LChar* characters, unsigned length, UChar target, UChar replacement, unsigned indexOfFirstTargetCharacter)
-{
-    ASSERT(indexOfFirstTargetCharacter < length);
-    if (isLatin1(replacement)) {
-        LChar* data;
-        LChar oldChar = target;
-        LChar newChar = replacement;
-        auto newImpl = createUninitializedInternalNonEmpty(length, data);
-        memcpy(data, characters, indexOfFirstTargetCharacter);
-        for (unsigned i = indexOfFirstTargetCharacter; i != length; ++i) {
-            LChar character = characters[i];
-            data[i] = character == oldChar ? newChar : character;
-        }
-        return newImpl;
-    }
-
-    UChar* data;
-    auto newImpl = createUninitializedInternalNonEmpty(length, data);
-    for (unsigned i = 0; i != length; ++i) {
-        UChar character = characters[i];
-        data[i] = character == target ? replacement : character;
-    }
-    return newImpl;
-}
-
-inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(const UChar* characters, unsigned length, UChar target, UChar replacement, unsigned indexOfFirstTargetCharacter)
-{
-    ASSERT(indexOfFirstTargetCharacter < length);
-    UChar* data;
-    auto newImpl = createUninitializedInternalNonEmpty(length, data);
-    copyCharacters(data, characters, indexOfFirstTargetCharacter);
-    for (unsigned i = indexOfFirstTargetCharacter; i != length; ++i) {
-        UChar character = characters[i];
-        data[i] = character == target ? replacement : character;
-    }
-    return newImpl;
-}
-
 } // namespace WTF
 
 using WTF::StaticStringImpl;
 using WTF::StringImpl;
 using WTF::equal;
-using WTF::isNotSpaceOrNewline;
-using WTF::isSpaceOrNewline;

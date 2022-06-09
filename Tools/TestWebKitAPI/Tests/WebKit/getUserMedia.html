@@ -51,22 +51,14 @@
                 navigator.mediaDevices.getUserMedia({audio: true, video: true});
             }
 
-            function captureAudio(notifySuccess)
+            function captureAudio()
             {
-                navigator.mediaDevices.getUserMedia({audio: true}).then(s => {
-                    if (notifySuccess)
-                        window.webkit.messageHandlers.gum.postMessage("PASS");
-                    stream = s;
-                });
+                navigator.mediaDevices.getUserMedia({audio: true}).then(s => stream = s);
             }
 
-            function captureVideo(notifySuccess)
+            function captureVideo()
             {
-                navigator.mediaDevices.getUserMedia({video: true}).then(s => {
-                    if (notifySuccess)
-                        window.webkit.messageHandlers.gum.postMessage("PASS");
-                    video.srcObject = s;
-                });
+                navigator.mediaDevices.getUserMedia({video: true}).then(s => video.srcObject = s);
             }
 
             function captureAudioAndVideo(notifySuccess)

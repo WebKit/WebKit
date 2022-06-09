@@ -41,7 +41,7 @@ using namespace WebKit;
 
 static void encodeImage(Encoder& encoder, Image& image)
 {
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(IntSize(image.size()), { });
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image.size()), { });
     bitmap->createGraphicsContext()->drawImage(image, IntPoint());
 
     ShareableBitmap::Handle handle;
@@ -132,7 +132,7 @@ std::optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decod
         String url;
         if (!decoder.decode(url))
             return std::nullopt;
-        selection.setURL(URL { url }, String());
+        selection.setURL(URL(URL(), url), String());
     }
 
     bool hasURIList;

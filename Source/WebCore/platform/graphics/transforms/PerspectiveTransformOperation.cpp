@@ -41,7 +41,7 @@ bool PerspectiveTransformOperation::operator==(const TransformOperation& other) 
 
 Ref<TransformOperation> PerspectiveTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (!sharedPrimitiveType(from))
+    if (from && !from->isSameType(*this))
         return *this;
 
     // https://drafts.csswg.org/css-transforms-2/#interpolation-of-transform-functions

@@ -100,6 +100,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << overrideViewportArguments;
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    encoder << attachmentElementExtensionHandles;
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     encoder << screenSize;
     encoder << availableScreenSize;
@@ -113,6 +117,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
     encoder << additionalSupportedImageTypes;
+    // FIXME(207716): The following should be removed when the GPU process is complete.
+    encoder << mediaExtensionHandles;
+    encoder << mediaIOKitExtensionHandles;
     encoder << gpuIOKitExtensionHandles;
     encoder << gpuMachExtensionHandles;
 #endif
@@ -127,9 +134,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 #if PLATFORM(WIN)
     encoder << nativeWindowHandle;
-#endif
-#if USE(GRAPHICS_LAYER_WC)
-    encoder << usesOffscreenRendering;
 #endif
     encoder << shouldScaleViewToFitDocument;
     encoder << userInterfaceLayoutDirection;
@@ -160,7 +164,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldCaptureVideoInUIProcess;
     encoder << shouldCaptureVideoInGPUProcess;
     encoder << shouldCaptureDisplayInUIProcess;
-    encoder << shouldCaptureDisplayInGPUProcess;
     encoder << shouldRenderCanvasInGPUProcess;
     encoder << shouldRenderDOMInGPUProcess;
     encoder << shouldPlayMediaInGPUProcess;
@@ -177,6 +180,10 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldRelaxThirdPartyCookieBlocking;
     encoder << canUseCredentialStorage;
 
+#if PLATFORM(GTK)
+    encoder << gtkSettings;
+#endif
+    
     encoder << httpsUpgradeEnabled;
 #if PLATFORM(IOS)
     encoder << allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
@@ -189,12 +196,6 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(TOUCH_BAR)
     encoder << requiresUserActionForEditingControlsManager;
 #endif
-
-#if HAVE(UIKIT_RESIZABLE_WINDOWS)
-    encoder << hasResizableWindows;
-#endif
-
-    encoder << contentSecurityPolicyModeForExtension;
 }
 
 std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -343,7 +344,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     parameters.hasResourceLoadClient = WTFMove(*hasResourceLoadClient);
 
 #if PLATFORM(MAC)
-    std::optional<std::optional<WebCore::DestinationColorSpace>> colorSpace;
+    std::optional<std::optional<DestinationColorSpace>> colorSpace;
     decoder >> colorSpace;
     if (!colorSpace)
         return std::nullopt;
@@ -370,6 +371,14 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     parameters.overrideViewportArguments = WTFMove(*overrideViewportArguments);
 #endif
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    std::optional<std::optional<Vector<SandboxExtension::Handle>>> attachmentElementExtensionHandles;
+    decoder >> attachmentElementExtensionHandles;
+    if (!attachmentElementExtensionHandles)
+        return std::nullopt;
+    parameters.attachmentElementExtensionHandles = WTFMove(*attachmentElementExtensionHandles);
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     if (!decoder.decode(parameters.screenSize))
         return std::nullopt;
@@ -394,6 +403,20 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.additionalSupportedImageTypes))
         return std::nullopt;
+
+    // FIXME(207716): The following should be removed when the GPU process is complete.
+    std::optional<Vector<SandboxExtension::Handle>> mediaExtensionHandles;
+    decoder >> mediaExtensionHandles;
+    if (!mediaExtensionHandles)
+        return std::nullopt;
+    parameters.mediaExtensionHandles = WTFMove(*mediaExtensionHandles);
+
+    std::optional<Vector<SandboxExtension::Handle>> mediaIOKitExtensionHandles;
+    decoder >> mediaIOKitExtensionHandles;
+    if (!mediaIOKitExtensionHandles)
+        return std::nullopt;
+    parameters.mediaIOKitExtensionHandles = WTFMove(*mediaIOKitExtensionHandles);
+    // FIXME(207716): End region to remove.
 
     std::optional<Vector<SandboxExtension::Handle>> gpuIOKitExtensionHandles;
     decoder >> gpuIOKitExtensionHandles;
@@ -428,10 +451,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 
 #if PLATFORM(WIN)
     if (!decoder.decode(parameters.nativeWindowHandle))
-        return std::nullopt;
-#endif
-#if USE(GRAPHICS_LAYER_WC)
-    if (!decoder.decode(parameters.usesOffscreenRendering))
         return std::nullopt;
 #endif
 
@@ -510,7 +529,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     parameters.loadsSubresources = *loadsSubresources;
 
-    std::optional<std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<String>>> allowedNetworkHosts;
+    std::optional<std::optional<HashSet<String>>> allowedNetworkHosts;
     decoder >> allowedNetworkHosts;
     if (!allowedNetworkHosts)
         return std::nullopt;
@@ -549,9 +568,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.shouldCaptureDisplayInUIProcess))
         return std::nullopt;
 
-    if (!decoder.decode(parameters.shouldCaptureDisplayInGPUProcess))
-        return std::nullopt;
-
     if (!decoder.decode(parameters.shouldRenderCanvasInGPUProcess))
         return std::nullopt;
 
@@ -587,6 +603,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.canUseCredentialStorage))
         return std::nullopt;
 
+#if PLATFORM(GTK)
+    if (!decoder.decode(parameters.gtkSettings))
+        return std::nullopt;
+#endif
+
     if (!decoder.decode(parameters.httpsUpgradeEnabled))
         return std::nullopt;
 
@@ -604,14 +625,6 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.requiresUserActionForEditingControlsManager))
         return std::nullopt;
 #endif
-
-#if HAVE(UIKIT_RESIZABLE_WINDOWS)
-    if (!decoder.decode(parameters.hasResizableWindows))
-        return std::nullopt;
-#endif
-
-    if (!decoder.decode(parameters.contentSecurityPolicyModeForExtension))
-        return std::nullopt;
 
     return parameters;
 }

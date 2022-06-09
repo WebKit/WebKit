@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: Error: boo
 
-PASS It rethrows exceptions
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT It rethrows exceptions Test timed out
 

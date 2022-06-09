@@ -473,8 +473,9 @@ static ExceptionOr<RefPtr<Node>> processContentsBetweenOffsets(Range::ActionType
                 result = WTFMove(processingInstruction);
         }
         if (action == Range::Extract || action == Range::Delete) {
-            auto data = makeStringByRemoving(instruction.data(), startOffset, endOffset - startOffset);
-            instruction.setData(WTFMove(data));
+            String data { instruction.data() };
+            data.remove(startOffset, endOffset - startOffset);
+            instruction.setData(data);
         }
         break;
     }
@@ -1004,16 +1005,16 @@ ExceptionOr<void> Range::expand(const String& unit)
 {
     auto start = VisiblePosition { makeContainerOffsetPosition(&startContainer(), startOffset()) };
     auto end = VisiblePosition { makeContainerOffsetPosition(&endContainer(), endOffset()) };
-    if (unit == "word"_s) {
+    if (unit == "word") {
         start = startOfWord(start);
         end = endOfWord(end);
-    } else if (unit == "sentence"_s) {
+    } else if (unit == "sentence") {
         start = startOfSentence(start);
         end = endOfSentence(end);
-    } else if (unit == "block"_s) {
+    } else if (unit == "block") {
         start = startOfParagraph(start);
         end = endOfParagraph(end);
-    } else if (unit == "document"_s) {
+    } else if (unit == "document") {
         start = startOfDocument(start);
         end = endOfDocument(end);
     } else
@@ -1102,8 +1103,8 @@ RefPtr<Range> createLiveRange(const std::optional<SimpleRange>& range)
 
 void Range::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const
 {
-    addWebCoreOpaqueRoot(visitor, m_start.container());
-    addWebCoreOpaqueRoot(visitor, m_end.container());
+    visitor.addOpaqueRoot(root(&m_start.container()));
+    visitor.addOpaqueRoot(root(&m_end.container()));
 }
 
 } // namespace WebCore

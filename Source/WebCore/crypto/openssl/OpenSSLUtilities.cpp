@@ -100,9 +100,9 @@ Vector<uint8_t> convertToBytesExpand(const BIGNUM* bignum, size_t minimumBufferS
     return bytes;
 }
 
-BIGNUMPtr convertToBigNumber(const Vector<uint8_t>& bytes)
+BIGNUM* convertToBigNumber(BIGNUM* bignum, const Vector<uint8_t>& bytes)
 {
-    return BIGNUMPtr(BN_bin2bn(bytes.data(), bytes.size(), nullptr));
+    return BN_bin2bn(bytes.data(), bytes.size(), bignum);
 }
 
 } // namespace WebCore

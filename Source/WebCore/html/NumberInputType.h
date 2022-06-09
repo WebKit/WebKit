@@ -38,18 +38,15 @@ namespace WebCore {
 class NumberInputType final : public TextFieldInputType {
     template<typename DowncastedType> friend bool isInvalidInputType(const InputType&, const String&);
 public:
-    explicit NumberInputType(HTMLInputElement& element)
-        : TextFieldInputType(Type::Number, element)
-    {
-    }
-    bool typeMismatchFor(const String&) const final;
+    explicit NumberInputType(HTMLInputElement& element) : TextFieldInputType(Type::Number, element) { }
 
 private:
     const AtomString& formControlType() const final;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDouble(double, TextFieldEventBehavior) const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
+    bool typeMismatchFor(const String&) const final;
     bool typeMismatch() const final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;
     float decorationWidth() const final;
@@ -68,5 +65,3 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(NumberInputType, Type::Number)

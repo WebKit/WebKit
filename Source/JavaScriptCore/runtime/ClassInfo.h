@@ -24,14 +24,7 @@
 
 #include "ConstructData.h"
 #include "JSCast.h"
-#include <wtf/CompactPtr.h>
 #include <wtf/PtrTag.h>
-
-#if HAVE(36BIT_ADDRESS)
-#define CLASS_INFO_ALIGNMENT alignas(16)
-#else
-#define CLASS_INFO_ALIGNMENT
-#endif
 
 namespace WTF {
 class PrintStream;
@@ -179,11 +172,11 @@ struct MethodTable {
     ClassName::TypedArrayStorageType, \
     sizeof(ClassName),
 
-struct CLASS_INFO_ALIGNMENT ClassInfo {
+struct ClassInfo {
     using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
 
     // A string denoting the class name. Example: "Window".
-    ASCIILiteral className;
+    const char* className;
     // Pointer to the class information of the base class.
     // nullptrif there is none.
     const ClassInfo* parentClass;

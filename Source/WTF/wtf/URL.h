@@ -65,14 +65,6 @@ public:
     // null or empty, in which case the relative URL will be interpreted as absolute.
     WTF_EXPORT_PRIVATE URL(const URL& base, const String& relative, const URLTextEncoding* = nullptr);
 
-    // Parses the input string as an absolute URL. If you need to parse a relative URL, call the constructor above
-    // taking a base URL and a relative URL string.
-    WTF_EXPORT_PRIVATE explicit URL(String&& absoluteURL, const URLTextEncoding* = nullptr);
-    explicit URL(const String& absoluteURL, const URLTextEncoding* encoding = nullptr)
-        : URL(String { absoluteURL }, encoding)
-    {
-    }
-
     WTF_EXPORT_PRIVATE static URL fakeURLWithRelativePart(StringView);
     WTF_EXPORT_PRIVATE static URL fileURLWithFileSystemPath(StringView);
 
@@ -117,9 +109,8 @@ public:
 
     WTF_EXPORT_PRIVATE StringView queryWithLeadingQuestionMark() const;
     WTF_EXPORT_PRIVATE StringView fragmentIdentifierWithLeadingNumberSign() const;
-    WTF_EXPORT_PRIVATE StringView viewWithoutQueryOrFragmentIdentifier() const;
-    WTF_EXPORT_PRIVATE StringView viewWithoutFragmentIdentifier() const;
-    WTF_EXPORT_PRIVATE String stringWithoutFragmentIdentifier() const;
+    WTF_EXPORT_PRIVATE StringView stringWithoutQueryOrFragmentIdentifier() const;
+    WTF_EXPORT_PRIVATE StringView stringWithoutFragmentIdentifier() const;
 
     WTF_EXPORT_PRIVATE String protocolHostAndPort() const;
     WTF_EXPORT_PRIVATE String hostAndPort() const;
@@ -137,9 +128,10 @@ public:
 
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
+    WTF_EXPORT_PRIVATE bool protocolIs(const char*) const;
     WTF_EXPORT_PRIVATE bool protocolIs(StringView) const;
-    bool protocolIsBlob() const { return protocolIs("blob"_s); }
-    bool protocolIsData() const { return protocolIs("data"_s); }
+    bool protocolIsBlob() const { return protocolIs("blob"); }
+    bool protocolIsData() const { return protocolIs("data"); }
     WTF_EXPORT_PRIVATE bool protocolIsAbout() const;
     WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
     WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily() const;
@@ -217,7 +209,7 @@ private:
     unsigned hostStart() const;
     unsigned credentialsEnd() const;
     void remove(unsigned start, unsigned length);
-    void parse(String&&);
+    void parse(const String&);
 
     friend WTF_EXPORT_PRIVATE bool protocolHostAndPortAreEqual(const URL&, const URL&);
 
@@ -270,7 +262,7 @@ WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 // These are also different from the WTF::URL functions in that they don't require the string to be a valid and parsable URL.
 // This is especially important because valid javascript URLs are not necessarily considered valid by WTF::URL.
 
-WTF_EXPORT_PRIVATE bool protocolIs(StringView url, ASCIILiteral protocol);
+WTF_EXPORT_PRIVATE bool protocolIs(StringView url, const char* protocol);
 WTF_EXPORT_PRIVATE bool protocolIsJavaScript(StringView url);
 WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily(StringView url);
 WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(StringView url);
@@ -321,7 +313,7 @@ template<typename Decoder> std::optional<URL> URL::decode(Decoder& decoder)
     decoder >> string;
     if (!string)
         return std::nullopt;
-    return URL(WTFMove(*string));
+    return URL(URL(), WTFMove(*string));
 }
 
 inline bool operator==(const URL& a, const URL& b)

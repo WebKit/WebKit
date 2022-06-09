@@ -11,11 +11,11 @@
 #include "common/PackedEnums.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
+#include "restricted_traces/restricted_traces_export.h"
 #include "tests/perf_tests/ANGLEPerfTest.h"
 #include "tests/perf_tests/ANGLEPerfTestArgs.h"
 #include "tests/perf_tests/DrawCallPerfParams.h"
 #include "util/capture/frame_capture_test_utils.h"
-#include "util/capture/traces_export.h"
 #include "util/egl_loader_autogen.h"
 #include "util/png_utils.h"
 #include "util/test_utils.h"
@@ -91,19 +91,6 @@ class TracePerfTest : public ANGLERenderTest
                                   EGLint const *attrib_list);
     void onEglMakeCurrent(EGLDisplay display, EGLSurface draw, EGLSurface read, EGLContext context);
     EGLContext onEglGetCurrentContext();
-    EGLImage onEglCreateImage(EGLDisplay display,
-                              EGLContext context,
-                              EGLenum target,
-                              EGLClientBuffer buffer,
-                              const EGLAttrib *attrib_list);
-    EGLImageKHR onEglCreateImageKHR(EGLDisplay display,
-                                    EGLContext context,
-                                    EGLenum target,
-                                    EGLClientBuffer buffer,
-                                    const EGLint *attrib_list);
-    EGLBoolean onEglDestroyImage(EGLDisplay display, EGLImage image);
-    EGLBoolean onEglDestroyImageKHR(EGLDisplay display, EGLImage image);
-
     void onReplayFramebufferChange(GLenum target, GLuint framebuffer);
     void onReplayInvalidateFramebuffer(GLenum target,
                                        GLsizei numAttachments,
@@ -185,7 +172,6 @@ class TracePerfTest : public ANGLERenderTest
     GLuint mDrawFramebufferBinding                                      = 0;
     GLuint mReadFramebufferBinding                                      = 0;
     uint32_t mCurrentFrame                                              = 0;
-    uint32_t mCurrentIteration                                          = 0;
     uint32_t mOffscreenFrameCount                                       = 0;
     uint32_t mTotalFrameCount                                           = 0;
     bool mScreenshotSaved                                               = false;
@@ -214,35 +200,6 @@ void KHRONOS_APIENTRY EglMakeCurrent(EGLDisplay display,
 EGLContext KHRONOS_APIENTRY EglGetCurrentContext()
 {
     return gCurrentTracePerfTest->onEglGetCurrentContext();
-}
-
-EGLImage KHRONOS_APIENTRY EglCreateImage(EGLDisplay display,
-                                         EGLContext context,
-                                         EGLenum target,
-                                         EGLClientBuffer buffer,
-                                         const EGLAttrib *attrib_list)
-{
-    return gCurrentTracePerfTest->onEglCreateImage(display, context, target, buffer, attrib_list);
-}
-
-EGLImageKHR KHRONOS_APIENTRY EglCreateImageKHR(EGLDisplay display,
-                                               EGLContext context,
-                                               EGLenum target,
-                                               EGLClientBuffer buffer,
-                                               const EGLint *attrib_list)
-{
-    return gCurrentTracePerfTest->onEglCreateImageKHR(display, context, target, buffer,
-                                                      attrib_list);
-}
-
-EGLBoolean KHRONOS_APIENTRY EglDestroyImage(EGLDisplay display, EGLImage image)
-{
-    return gCurrentTracePerfTest->onEglDestroyImage(display, image);
-}
-
-EGLBoolean KHRONOS_APIENTRY EglDestroyImageKHR(EGLDisplay display, EGLImage image)
-{
-    return gCurrentTracePerfTest->onEglDestroyImageKHR(display, image);
 }
 
 void KHRONOS_APIENTRY BindFramebufferProc(GLenum target, GLuint framebuffer)
@@ -541,22 +498,6 @@ angle::GenericProc KHRONOS_APIENTRY TraceLoadProc(const char *procName)
     {
         return reinterpret_cast<angle::GenericProc>(EglGetCurrentContext);
     }
-    if (strcmp(procName, "eglCreateImage") == 0)
-    {
-        return reinterpret_cast<angle::GenericProc>(EglCreateImage);
-    }
-    if (strcmp(procName, "eglCreateImageKHR") == 0)
-    {
-        return reinterpret_cast<angle::GenericProc>(EglCreateImageKHR);
-    }
-    if (strcmp(procName, "eglDestroyImage") == 0)
-    {
-        return reinterpret_cast<angle::GenericProc>(EglDestroyImage);
-    }
-    if (strcmp(procName, "eglDestroyImageKHR") == 0)
-    {
-        return reinterpret_cast<angle::GenericProc>(EglDestroyImageKHR);
-    }
 
     // GLES
     if (strcmp(procName, "glBindFramebuffer") == 0)
@@ -724,16 +665,16 @@ bool FindRootTraceTestDataPath(char *testDataDirOut, size_t maxDataDirLen)
 TracePerfTest::TracePerfTest(const TracePerfParams &params)
     : ANGLERenderTest("TracePerf", params, "ms"), mParams(params), mStartFrame(0), mEndFrame(0)
 {
+    // TODO: http://anglebug.com/4533 This fails after the upgrade to the 26.20.100.7870 driver.
     if (IsWindows() && IsIntel() && mParams.isVulkan() && traceNameIs("manhattan_10"))
     {
-        skipTest(
-            "TODO: http://anglebug.com/4533 This fails after the upgrade to the 26.20.100.7870 "
-            "driver");
+        mSkipTest = true;
     }
 
+    // TODO: http://anglebug.com/4731 Fails on older Intel drivers. Passes in newer.
     if (IsWindows() && IsIntel() && !mParams.isANGLE() && traceNameIs("angry_birds_2_1500"))
     {
-        skipTest("TODO: http://anglebug.com/4731 Fails on older Intel drivers. Passes in newer");
+        mSkipTest = true;
     }
 
     if (traceNameIs("cod_mobile"))
@@ -749,9 +690,10 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         // TODO: http://anglebug.com/4731 This extension is missing on older Intel drivers.
         addExtensionPrerequisite("GL_OES_EGL_image_external");
 
+        // Flaky on Intel/windows http://anglebug.com/6568
         if (IsWindows() && IsIntel())
         {
-            skipTest("http://anglebug.com/6568 Flaky on Intel/windows");
+            mSkipTest = true;
         }
     }
 
@@ -795,11 +737,10 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     {
         addExtensionPrerequisite("GL_EXT_shadow_samplers");
 
+        // TODO(https://anglebug.com/5517) Linux+Intel generates "Framebuffer is incomplete" errors.
         if (IsLinux() && IsIntel() && mParams.isVulkan())
         {
-            skipTest(
-                "TODO: https://anglebug.com/5517 Linux+Intel generates 'Framebuffer is incomplete' "
-                "errors");
+            mSkipTest = true;
         }
     }
 
@@ -817,9 +758,10 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         // Intel doesn't support external images.
         addExtensionPrerequisite("GL_OES_EGL_image_external");
 
+        // Failing on Linux Intel and AMD due to invalid enum. http://anglebug.com/5822
         if (IsLinux() && (IsIntel() || IsAMD()) && mParams.driver != GLESDriverType::AngleEGL)
         {
-            skipTest("http://anglebug.com/5822 Failing on Linux Intel and AMD due to invalid enum");
+            mSkipTest = true;
         }
     }
 
@@ -835,11 +777,29 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
 
     if (traceNameIs("efootball_pes_2021"))
     {
-        if (mParams.isVulkan() && IsLinux() && IsIntel())
+        // TODO(https://anglebug.com/5517) Linux+Intel and Pixel 2 generate "Framebuffer is
+        // incomplete" errors with the Vulkan backend.
+        if (mParams.isVulkan() && ((IsLinux() && IsIntel()) || IsPixel2()))
         {
-            skipTest(
-                "TODO: https://anglebug.com/5517 Linux+Intel generate 'Framebuffer is "
-                "incomplete' errors with the Vulkan backend");
+            mSkipTest = true;
+        }
+    }
+
+    if (traceNameIs("manhattan_31"))
+    {
+        // TODO: http://anglebug.com/5591 Trace crashes on Pixel 2 in vulkan driver
+        if (IsPixel2() && mParams.isVulkan())
+        {
+            mSkipTest = true;
+        }
+    }
+
+    if (traceNameIs("idle_heroes"))
+    {
+        // TODO: http://anglebug.com/5591 Trace crashes on Pixel 2
+        if (IsPixel2())
+        {
+            mSkipTest = true;
         }
     }
 
@@ -858,24 +818,26 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     {
         if (IsWindows() && IsAMD() && mParams.isVulkan())
         {
-            skipTest("http://anglebug.com/5623 Generates incorrect results on AMD Windows Vulkan");
+            mSkipTest = true;
         }
     }
 
     if (traceNameIs("bus_simulator_indonesia"))
     {
+        // TODO(https://anglebug.com/5629) Linux+(Intel|AMD) native GLES generates
+        // GL_INVALID_OPERATION
         if (IsLinux() && (IsIntel() || IsAMD()) && !mParams.isVulkan())
         {
-            skipTest("TODO: https://anglebug.com/5629 native GLES generates GL_INVALID_OPERATION");
+            mSkipTest = true;
         }
     }
 
     if (traceNameIs("messenger_lite"))
     {
+        // TODO: https://anglebug.com/5663 Incorrect pixels on NVIDIA Windows for first frame
         if (IsWindows() && IsNVIDIA() && mParams.isVulkan() && !mParams.isSwiftshader())
         {
-            skipTest(
-                "https://anglebug.com/5663 Incorrect pixels on NVIDIA Windows for first frame");
+            mSkipTest = true;
         }
     }
 
@@ -886,25 +848,33 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
 
     if (traceNameIs("car_parking_multiplayer"))
     {
+        // TODO: https://anglebug.com/5613 NVIDIA native driver spews undefined behavior warnings
         if (IsNVIDIA() && !mParams.isVulkan())
         {
-            skipTest(
-                "TODO: https://anglebug.com/5613 NVIDIA native driver spews undefined behavior "
-                "warnings");
+            mSkipTest = true;
         }
+        // TODO: https://anglebug.com/5724 Device lost on Win Intel
         if (IsWindows() && IsIntel() && mParams.isVulkan())
         {
-            skipTest("https://anglebug.com/5724 Device lost on Win Intel");
+            mSkipTest = true;
         }
     }
 
     if (traceNameIs("fifa_mobile"))
     {
+        // TODO: http://anglebug.com/5875 Intel Windows Vulkan flakily renders entirely black
         if (IsWindows() && IsIntel() && mParams.isVulkan())
         {
-            skipTest(
-                "TODO: http://anglebug.com/5875 Intel Windows Vulkan flakily renders entirely "
-                "black");
+            mSkipTest = true;
+        }
+    }
+
+    if (traceNameIs("rope_hero_vice_town"))
+    {
+        // TODO: http://anglebug.com/5716 Trace crashes on Pixel 2 in vulkan driver
+        if (IsPixel2() && mParams.isVulkan())
+        {
+            mSkipTest = true;
         }
     }
 
@@ -915,9 +885,10 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
 
     if (traceNameIs("plants_vs_zombies_2"))
     {
+        // TODO: http://crbug.com/1187752 Corrupted image
         if (IsWindows() && IsAMD() && mParams.isVulkan())
         {
-            skipTest("TODO: http://crbug.com/1187752 Corrupted image");
+            mSkipTest = true;
         }
     }
 
@@ -930,13 +901,20 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     {
         addExtensionPrerequisite("GL_OES_EGL_image_external");
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
+
+        // TODO: http://anglebug.com/5772 Pixel 2 errors with "Framebuffer is incomplete" on Vulkan
+        if (IsPixel2() && mParams.isVulkan())
+        {
+            mSkipTest = true;
+        }
     }
 
     if (traceNameIs("real_cricket_20"))
     {
+        // TODO: http://anglebug.com/5777 ARM doesn't have enough VS storage blocks
         if (IsAndroid() && IsARM())
         {
-            skipTest("TODO: http://anglebug.com/5777 ARM doesn't have enough VS storage blocks");
+            mSkipTest = true;
         }
     }
 
@@ -945,36 +923,43 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         addExtensionPrerequisite("GL_OES_EGL_image_external");
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
 
+        // TODO: http://anglebug.com/5815 Trace is crashing on Intel Linux
         if (IsLinux() && IsIntel() && mParams.isVulkan())
         {
-            skipTest("TODO: http://anglebug.com/5815 Trace is crashing on Intel Linux");
+            mSkipTest = true;
         }
     }
 
     if (traceNameIs("aztec_ruins"))
     {
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
+
+        // TODO: http://anglebug.com/5553 Pixel 2 errors with "Framebuffer is incomplete" on Vulkan
+        if (IsPixel2() && mParams.isVulkan())
+        {
+            mSkipTest = true;
+        }
     }
 
     if (traceNameIs("dragon_raja"))
     {
         addExtensionPrerequisite("GL_OES_EGL_image_external");
 
-        if ((IsLinux() && IsIntel()) && mParams.isVulkan())
+        // TODO: http://anglebug.com/5807 Intel Linux and Pixel 2 error with "Framebuffer is
+        // incomplete" on Vulkan
+        if (((IsLinux() && IsIntel()) || IsPixel2()) && mParams.isVulkan())
         {
-            skipTest(
-                "TODO: http://anglebug.com/5807 Intel Linux errors with 'Framebuffer is "
-                "incomplete' on Vulkan");
+            mSkipTest = true;
         }
     }
 
+    // Adreno gives a driver error with empty/small draw calls. http://anglebug.com/5823
     if (traceNameIs("hill_climb_racing") || traceNameIs("dead_trigger_2"))
     {
-        if (IsAndroid() && (IsPixel4() || IsPixel4XL()) &&
+        if (IsAndroid() && (IsPixel2() || IsPixel4() || IsPixel4XL()) &&
             mParams.driver == GLESDriverType::SystemEGL)
         {
-            skipTest(
-                "http://anglebug.com/5823 Adreno gives a driver error with empty/small draw calls");
+            mSkipTest = true;
         }
     }
 
@@ -985,22 +970,30 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
 
     if (traceNameIs("professional_baseball_spirits"))
     {
+        // TODO(https://anglebug.com/5827) Linux+Mesa/RADV Vulkan generates
+        // GL_INVALID_FRAMEBUFFER_OPERATION.
+        // Mesa versions below 20.3.5 produce the same issue on Linux+Mesa/Intel Vulkan
         if (IsLinux() && (IsAMD() || IsIntel()) && mParams.isVulkan() && !mParams.isSwiftshader())
         {
-            skipTest(
-                "TODO: https://anglebug.com/5827 Linux+Mesa/RADV Vulkan generates "
-                "GL_INVALID_FRAMEBUFFER_OPERATION. Mesa versions below 20.3.5 produce the same "
-                "issue on Linux+Mesa/Intel Vulkan");
+            mSkipTest = true;
         }
     }
 
     if (traceNameIs("call_break_offline_card_game"))
     {
+        // TODO: http://anglebug.com/5837 Intel Linux Vulkan errors with "Framebuffer is incomplete"
         if ((IsLinux() && IsIntel()) && mParams.isVulkan())
         {
-            skipTest(
-                "TODO: http://anglebug.com/5837 Intel Linux Vulkan errors with 'Framebuffer is "
-                "incomplete'");
+            mSkipTest = true;
+        }
+    }
+
+    if (traceNameIs("slingshot_test1") || traceNameIs("slingshot_test2"))
+    {
+        // TODO: http://anglebug.com/5877 Trace crashes on Pixel 2 in vulkan driver
+        if (IsPixel2() && mParams.isVulkan())
+        {
+            mSkipTest = true;
         }
     }
 
@@ -1009,11 +1002,12 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
     }
 
+    // TODO: http://anglebug.com/5943 GL_INVALID_ENUM on Windows/Intel.
     if (traceNameIs("summoners_war"))
     {
         if (IsWindows() && IsIntel() && mParams.driver != GLESDriverType::AngleEGL)
         {
-            skipTest("TODO: http://anglebug.com/5943 GL_INVALID_ENUM on Windows/Intel");
+            mSkipTest = true;
         }
     }
 
@@ -1022,14 +1016,11 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         addExtensionPrerequisite("GL_EXT_texture_cube_map_array");
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
 
-        if (IsLinux() && IsIntel() && mParams.isVulkan())
+        // TODO: http://anglebug.com/5989 Intel Linux crashing on teardown
+        // TODO: http://anglebug.com/5994 Intel Windows timing out periodically
+        if ((IsLinux() || IsWindows()) && IsIntel() && mParams.isVulkan())
         {
-            skipTest("TODO: http://anglebug.com/5989 Intel Linux crashing on teardown");
-        }
-
-        if (IsWindows() && IsIntel() && mParams.isVulkan())
-        {
-            skipTest("TODO: http://anglebug.com/5994 Intel Windows timing out periodically");
+            mSkipTest = true;
         }
     }
 
@@ -1038,9 +1029,10 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         addExtensionPrerequisite("GL_EXT_texture_cube_map_array");
         addExtensionPrerequisite("GL_OES_EGL_image_external");
 
+        // TODO: http://anglebug.com/6017 ARM doesn't have enough VS storage blocks
         if (IsAndroid() && IsARM())
         {
-            skipTest("TODO: http://anglebug.com/6017 ARM doesn't have enough VS storage blocks");
+            mSkipTest = true;
         }
     }
 
@@ -1048,22 +1040,26 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     {
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
 
-        if ((IsLinux() && IsIntel()) && mParams.isVulkan())
+        // TODO: http://anglebug.com/6023 Crashes on Pixel 2 in vulkan driver
+        // TODO: http://anglebug.com/6029 Crashes on Linux Intel Vulkan
+        if (((IsLinux() && IsIntel()) || IsPixel2()) && mParams.isVulkan())
         {
-            skipTest("TODO: http://anglebug.com/6029 Crashes on Linux Intel Vulkan");
+            mSkipTest = true;
         }
 
+        // Genshin is too large to handle in 32-bit mode.
         if (!Is64Bit())
         {
-            skipTest("Genshin is too large to handle in 32-bit mode");
+            mSkipTest = true;
         }
     }
 
     if (traceNameIs("mario_kart_tour"))
     {
+        // Fails on native Mesa. http://anglebug.com/6711
         if (IsLinux() && IsIntel() && !mParams.isVulkan())
         {
-            skipTest("http://anglebug.com/6711 Fails on native Mesa");
+            mSkipTest = true;
         }
     }
 
@@ -1071,17 +1067,19 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     {
         addExtensionPrerequisite("GL_EXT_texture_buffer");
 
+        // TODO: http://anglebug.com/6240 Internal errors on Windows/Intel and NVIDIA
         if (((IsWindows() && IsIntel()) || IsNVIDIA()) && !mParams.isVulkan())
         {
-            skipTest("TODO: http://anglebug.com/6240 Internal errors on Windows/Intel and NVIDIA");
+            mSkipTest = true;
         }
     }
 
     if (traceNameIs("sakura_school_simulator"))
     {
+        // Flaky on Intel. http://anglebug.com/6294
         if (IsWindows() && IsIntel())
         {
-            skipTest("http://anglebug.com/6294 Flaky on Intel");
+            mSkipTest = true;
         }
     }
 
@@ -1093,9 +1091,10 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     if (traceNameIs("world_of_kings"))
     {
         addExtensionPrerequisite("GL_OES_EGL_image_external");
+        // Flaky on Intel. http://anglebug.com/6372
         if (IsWindows() && IsIntel())
         {
-            skipTest("http://anglebug.com/6372 Flaky on Intel");
+            mSkipTest = true;
         }
     }
 
@@ -1106,11 +1105,11 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
 
     if (traceNameIs("mini_world"))
     {
+        // TODO: http://anglebug.com/6443 Vulkan Test failure on Pixel4XL due to vulkan validation
+        // error VUID-vkDestroyBuffer-buffer-00922
         if (IsQualcomm() && mParams.isVulkan())
         {
-            skipTest(
-                "TODO: http://anglebug.com/6443 Vulkan Test failure on Pixel4XL due to vulkan "
-                "validation error VUID-vkDestroyBuffer-buffer-00922");
+            mSkipTest = true;
         }
     }
 
@@ -1118,11 +1117,11 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     {
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
 
+        // http://anglebug.com/6548 - nondeterministic on Intel+Windows
+        // Crashes on Linux Intel
         if (IsIntel())
         {
-            skipTest(
-                "http://anglebug.com/6548 nondeterministic on Intel+Windows. Crashes on Linux "
-                "Intel");
+            mSkipTest = true;
         }
     }
 
@@ -1130,18 +1129,20 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     {
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
 
+        // http://anglebug.com/6657 - Native test timing out on Intel Linux
         if (IsLinux() && IsIntel() && !mParams.isVulkan())
         {
-            skipTest("http://anglebug.com/6657 Native test timing out on Intel Linux");
+            mSkipTest = true;
         }
     }
 
     if (traceNameIs("zillow"))
     {
+        // http://anglebug.com/6658 - Crashing in Vulkan backend
         if ((IsLinux() || IsWindows()) && IsNVIDIA() &&
             mParams.driver == GLESDriverType::AngleEGL && !mParams.isSwiftshader())
         {
-            skipTest("http://anglebug.com/6658 Crashing in Vulkan backend");
+            mSkipTest = true;
         }
     }
 
@@ -1157,9 +1158,10 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
 
     if (traceNameIs("pubg_mobile_launch"))
     {
+        // http://anglebug.com/6850 - Crashing in Nvidia GLES driver.
         if (IsLinux() && IsNVIDIA() && mParams.driver != GLESDriverType::AngleEGL)
         {
-            skipTest("http://anglebug.com/6850 Crashing in Nvidia GLES driver");
+            mSkipTest = true;
         }
     }
 
@@ -1181,11 +1183,11 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
 
     if (traceNameIs("marvel_strike_force"))
     {
+        // http://anglebug.com/7017 - Qualcomm native driver gets confused about the state of a
+        // buffer that was recreated during the trace
         if ((IsAndroid() && IsQualcomm()) && mParams.driver != GLESDriverType::AngleEGL)
         {
-            skipTest(
-                "http://anglebug.com/7017 Qualcomm native driver gets confused about the state of "
-                "a buffer that was recreated during the trace");
+            mSkipTest = true;
         }
     }
 
@@ -1199,57 +1201,6 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
         addExtensionPrerequisite("GL_EXT_texture_buffer");
         addExtensionPrerequisite("GL_EXT_shader_framebuffer_fetch");
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
-    }
-
-    if (traceNameIs("scary_teacher_3d"))
-    {
-        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
-    }
-
-    if (traceNameIs("car_chase"))
-    {
-        if (IsWindows() && IsIntel())
-        {
-            skipTest("http://anglebug.com/7173 Fails on Intel HD 630 Mobile");
-        }
-
-        addExtensionPrerequisite("GL_EXT_geometry_shader");
-        addExtensionPrerequisite("GL_EXT_primitive_bounding_box");
-        addExtensionPrerequisite("GL_EXT_tessellation_shader");
-        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
-        addExtensionPrerequisite("GL_EXT_texture_cube_map_array");
-    }
-
-    if (traceNameIs("aztec_ruins_high"))
-    {
-        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
-    }
-
-    if (traceNameIs("special_forces_group_2"))
-    {
-        addExtensionPrerequisite("GL_EXT_texture_buffer");
-    }
-
-    if (traceNameIs("tessellation"))
-    {
-        if (IsNVIDIA() && mParams.isVulkan())
-        {
-            skipTest("http://anglebug.com/7240 Tessellation driver bugs on Nvidia");
-        }
-
-        addExtensionPrerequisite("GL_EXT_geometry_shader");
-        addExtensionPrerequisite("GL_EXT_primitive_bounding_box");
-        addExtensionPrerequisite("GL_EXT_tessellation_shader");
-        addExtensionPrerequisite("GL_EXT_texture_cube_map_array");
-    }
-
-    if (traceNameIs("basemark_gpu"))
-    {
-        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
-    }
-    if (traceNameIs("mortal_kombat"))
-    {
-        addExtensionPrerequisite("GL_EXT_texture_buffer");
     }
 
     ASSERT(mParams.surfaceType == SurfaceType::Window || gEnableAllTraceTests);
@@ -1274,7 +1225,7 @@ void TracePerfTest::initializeBenchmark()
     mStartingDirectory = angle::GetCWD().value();
 
     std::stringstream traceNameStr;
-    traceNameStr << "angle_restricted_traces_" << traceInfo.name;
+    traceNameStr << "angle_restricted_trace_" << traceInfo.name;
     std::string traceName = traceNameStr.str();
     mTraceLibrary.reset(new TraceLibrary(traceName.c_str()));
 
@@ -1290,8 +1241,8 @@ void TracePerfTest::initializeBenchmark()
 
     if (!mTraceLibrary->valid())
     {
-        failTest("Could not load trace library.");
-        return;
+        mSkipTest = true;
+        FAIL() << "Could not load trace library.";
     }
 
     mStartFrame = traceInfo.frameStart;
@@ -1303,8 +1254,8 @@ void TracePerfTest::initializeBenchmark()
     char testDataDir[kMaxPath] = {};
     if (!FindTraceTestDataPath(traceInfo.name, testDataDir, kMaxPath))
     {
-        failTest("Could not find test data folder.");
-        return;
+        mSkipTest = true;
+        FAIL() << "Could not find test data folder.";
     }
 
     mTraceLibrary->setBinaryDataDir(testDataDir);
@@ -1320,8 +1271,7 @@ void TracePerfTest::initializeBenchmark()
         mWindowWidth  = mTestParams.windowWidth;
         mWindowHeight = mTestParams.windowHeight;
     }
-    mCurrentFrame     = mStartFrame;
-    mCurrentIteration = mStartFrame;
+    mCurrentFrame = mStartFrame;
 
     if (IsAndroid())
     {
@@ -1546,9 +1496,6 @@ void TracePerfTest::drawBenchmark()
         mCurrentFrame++;
     }
 
-    // Always iterated for saving screenshots after reset
-    mCurrentIteration++;
-
     // Process any running queries once per iteration.
     for (size_t queryIndex = 0; queryIndex < mRunningQueries.size();)
     {
@@ -1646,38 +1593,6 @@ void TracePerfTest::onEglMakeCurrent(EGLDisplay display,
 EGLContext TracePerfTest::onEglGetCurrentContext()
 {
     return getGLWindow()->getCurrentContextGeneric();
-}
-
-EGLImage TracePerfTest::onEglCreateImage(EGLDisplay display,
-                                         EGLContext context,
-                                         EGLenum target,
-                                         EGLClientBuffer buffer,
-                                         const EGLAttrib *attrib_list)
-{
-    GLWindowBase::Image image = getGLWindow()->createImage(
-        reinterpret_cast<GLWindowContext>(context), target, buffer, attrib_list);
-    return reinterpret_cast<EGLImage>(image);
-}
-
-EGLImageKHR TracePerfTest::onEglCreateImageKHR(EGLDisplay display,
-                                               EGLContext context,
-                                               EGLenum target,
-                                               EGLClientBuffer buffer,
-                                               const EGLint *attrib_list)
-{
-    GLWindowBase::Image image = getGLWindow()->createImageKHR(
-        reinterpret_cast<GLWindowContext>(context), target, buffer, attrib_list);
-    return reinterpret_cast<EGLImage>(image);
-}
-
-EGLBoolean TracePerfTest::onEglDestroyImage(EGLDisplay display, EGLImage image)
-{
-    return getGLWindow()->destroyImage(image);
-}
-
-EGLBoolean TracePerfTest::onEglDestroyImageKHR(EGLDisplay display, EGLImage image)
-{
-    return getGLWindow()->destroyImageKHR(image);
 }
 
 // Triggered when the replay calls glBindFramebuffer.
@@ -1953,7 +1868,7 @@ void TracePerfTest::swap()
 {
     // Capture a screenshot if enabled.
     if (gScreenShotDir != nullptr && !mScreenshotSaved &&
-        static_cast<uint32_t>(gScreenShotFrame) == mCurrentIteration)
+        static_cast<uint32_t>(gScreenShotFrame) == mCurrentFrame)
     {
         std::stringstream screenshotNameStr;
         screenshotNameStr << gScreenShotDir << GetPathSeparator() << "angle" << mBackend << "_"
@@ -2007,8 +1922,7 @@ void TracePerfTest::saveScreenshot(const std::string &screenshotName)
     if (!angle::SavePNGRGB(screenshotName.c_str(), "ANGLE Screenshot", mTestParams.windowWidth,
                            mTestParams.windowHeight, rgbData))
     {
-        failTest(std::string("Error saving screenshot: ") + screenshotName);
-        return;
+        FAIL() << "Error saving screenshot: " << screenshotName;
     }
     else
     {
@@ -2134,10 +2048,10 @@ void RegisterTraceTests()
         if (gTraceTestValidation)
         {
             // Enable limits when validating traces because we usually turn off capture.
-            overrideParams.eglParameters.enable(Feature::EnableCaptureLimits);
+            overrideParams.eglParameters.captureLimits = EGL_TRUE;
 
             // This feature should also be enabled in capture to mirror the replay.
-            overrideParams.eglParameters.enable(Feature::ForceInitShaderVariables);
+            overrideParams.eglParameters.forceInitShaderVariables = EGL_TRUE;
         }
 
         auto factory          = [overrideParams]() { return new TracePerfTest(overrideParams); };

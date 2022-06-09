@@ -89,7 +89,7 @@ public:
     WEBCORE_EXPORT void appendMedium(const String& newMedium);
 
     String mediaText() const { return m_mediaQueries->mediaText(); }
-    WEBCORE_EXPORT void setMediaText(const String&);
+    WEBCORE_EXPORT ExceptionOr<void> setMediaText(const String&);
 
     CSSRule* parentRule() const { return m_parentRule; }
     CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }
@@ -108,6 +108,10 @@ private:
     CSSStyleSheet* m_parentStyleSheet { nullptr };
     CSSRule* m_parentRule { nullptr };
 };
+
+// Adds message to inspector console whenever dpi or dpcm values are used for "screen" media.
+// FIXME: Seems strange to have this here in this file, and unclear exactly who should call this and when.
+void reportMediaQueryWarningIfNeeded(Document*, const MediaQuerySet*);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const MediaQuerySet&);
 WTF::TextStream& operator<<(WTF::TextStream&, const MediaList&);

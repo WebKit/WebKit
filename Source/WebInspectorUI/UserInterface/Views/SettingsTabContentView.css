@@ -105,9 +105,8 @@
 }
 
 .content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="checkbox"] {
-    width: 15px;
-    height: 15px;
-    vertical-align: -1px;
+    /* Vertically align <select> with the group title text. */
+    font-size: 16px;
 }
 
 .content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor select {

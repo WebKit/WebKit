@@ -161,13 +161,6 @@ Ref<JSON::Object> TimelineRecordFactory::createPaintData(const FloatQuad& quad)
     return data;
 }
 
-Ref<JSON::Object> TimelineRecordFactory::createScreenshotData(const String& imageData)
-{
-    Ref<JSON::Object> data = JSON::Object::create();
-    data->setString("imageData"_s, imageData);
-    return data;
-}
-
 void TimelineRecordFactory::appendLayoutRoot(JSON::Object& data, const FloatQuad& quad)
 {
     data.setArray("root"_s, createQuad(quad));

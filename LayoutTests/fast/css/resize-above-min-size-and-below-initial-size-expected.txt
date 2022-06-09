@@ -1,3 +1,0 @@
-
-PASS Test for resizing box above minimum size set and below its initial size.
-

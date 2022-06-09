@@ -26,6 +26,7 @@
 [
     GenerateIsReachable=ReachableFromDOMWindow,
     JSCustomMarkFunction,
+    ImplementationLacksVTable,
     Exposed=Window
 ] interface History {
     readonly attribute unsigned long length;

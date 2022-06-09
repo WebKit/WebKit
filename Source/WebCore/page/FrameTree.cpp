@@ -117,7 +117,7 @@ AtomString FrameTree::generateUniqueName() const
     if (&top.tree() != this)
         return top.tree().generateUniqueName();
 
-    return makeAtomString("<!--frame", ++m_frameIDGenerator, "-->");
+    return makeString("<!--frame", ++m_frameIDGenerator, "-->");
 }
 
 static bool inScope(Frame& frame, TreeScope& scope)
@@ -472,23 +472,23 @@ ASCIILiteral selfTargetFrameName()
 
 bool isBlankTargetFrameName(StringView name)
 {
-    return equalIgnoringASCIICase(name, "_blank"_s);
+    return equalIgnoringASCIICase(name, "_blank");
 }
 
 bool isParentTargetFrameName(StringView name)
 {
-    return equalIgnoringASCIICase(name, "_parent"_s);
+    return equalIgnoringASCIICase(name, "_parent");
 }
 
 bool isSelfTargetFrameName(StringView name)
 {
     // FIXME: Some day we should remove _current, which is not part of the HTML specification.
-    return name.isEmpty() || equalIgnoringASCIICase(name, "_self"_s) || name == "_current"_s;
+    return name.isEmpty() || equalIgnoringASCIICase(name, "_self") || name == "_current";
 }
 
 bool isTopTargetFrameName(StringView name)
 {
-    return equalIgnoringASCIICase(name, "_top"_s);
+    return equalIgnoringASCIICase(name, "_top");
 }
 
 } // namespace WebCore

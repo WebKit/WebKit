@@ -1,3 +1,11 @@
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
+CONSOLE MESSAGE: WebKit currently uses the first shipping option even if other shipping options are marked as selected.
 
 PASS Can construct a payment request (smoke test).
 PASS PaymentResponse.prototype must have a retry() function (smoke test).

@@ -193,8 +193,6 @@ void InternalSettings::resetToConsistentState()
     m_backup.restoreTo(settings());
     m_backup = Backup { settings() };
 
-    m_page->settings().resetToConsistentState();
-
     InternalSettingsGenerated::resetToConsistentState();
 }
 
@@ -589,48 +587,6 @@ ExceptionOr<void> InternalSettings::setDefaultAudioContextSampleRate(float sampl
 #endif
     return { };
 }
-
-ExceptionOr<void> InternalSettings::setAllowedMediaContainerTypes(const String& types)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-    m_page->settings().setAllowedMediaContainerTypes(types);
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setAllowedMediaCodecTypes(const String& types)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-    m_page->settings().setAllowedMediaCodecTypes(types);
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setAllowedMediaVideoCodecIDs(const String& types)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-    m_page->settings().setAllowedMediaVideoCodecIDs(types);
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setAllowedMediaAudioCodecIDs(const String& types)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-    m_page->settings().setAllowedMediaAudioCodecIDs(types);
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setAllowedMediaCaptionFormatTypes(const String& types)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-    m_page->settings().setAllowedMediaCaptionFormatTypes(types);
-    return { };
-}
-
-
 
 // If you add to this class, make sure you are not duplicating functionality in the generated
 // base class InternalSettingsGenerated and that you update the Backup class for test reproducability.

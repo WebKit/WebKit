@@ -1,3 +1,0 @@
-
-PASS A transform animation with a delay should run accelerated.
-

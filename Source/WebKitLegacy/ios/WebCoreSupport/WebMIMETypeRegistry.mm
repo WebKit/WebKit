@@ -35,7 +35,7 @@ using WebCore::MIMETypeRegistry;
 
 + (NSString *)mimeTypeForExtension:(NSString *)extension
 {
-    return MIMETypeRegistry::mimeTypeForExtension(String(extension));
+    return MIMETypeRegistry::mimeTypeForExtension(extension);
 }
 
 + (NSString *)preferredExtensionForMIMEType:(NSString *)mimeType

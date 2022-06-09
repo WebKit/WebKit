@@ -51,7 +51,7 @@ private:
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
-    void parametersForPlugin(Vector<AtomString>& paramNames, Vector<AtomString>& paramValues);
+    void parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues);
 };
 
 } // namespace WebCore

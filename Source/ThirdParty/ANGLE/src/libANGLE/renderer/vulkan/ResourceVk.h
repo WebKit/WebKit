@@ -45,6 +45,12 @@ class SharedResourceUse final : angle::NonCopyable
         return *this;
     }
 
+    void copy(SharedResourceUse &src)
+    {
+        mUse = src.mUse;
+        mUse->counter++;
+    }
+
     ANGLE_INLINE bool valid() const { return mUse != nullptr; }
 
     void init()
@@ -120,28 +126,19 @@ class SharedBufferSuballocationGarbage
   public:
     SharedBufferSuballocationGarbage() = default;
     SharedBufferSuballocationGarbage(SharedBufferSuballocationGarbage &&other)
-        : mLifetime(std::move(other.mLifetime)),
-          mSuballocation(std::move(other.mSuballocation)),
-          mBuffer(std::move(other.mBuffer))
+        : mLifetime(std::move(other.mLifetime)), mGarbage(std::move(other.mGarbage))
     {}
-    SharedBufferSuballocationGarbage(SharedResourceUse &&use,
-                                     BufferSuballocation &&suballocation,
-                                     Buffer &&buffer)
-        : mLifetime(std::move(use)),
-          mSuballocation(std::move(suballocation)),
-          mBuffer(std::move(buffer))
+    SharedBufferSuballocationGarbage(SharedResourceUse &&use, BufferSuballocation &&garbage)
+        : mLifetime(std::move(use)), mGarbage(std::move(garbage))
     {}
     ~SharedBufferSuballocationGarbage() = default;
 
     bool destroyIfComplete(RendererVk *renderer, Serial completedSerial);
     bool usedInRecordedCommands() const { return mLifetime.usedInRecordedCommands(); }
-    VkDeviceSize getSize() const { return mSuballocation.getSize(); }
-    bool isSuballocated() const { return mSuballocation.isSuballocated(); }
 
   private:
     SharedResourceUse mLifetime;
-    BufferSuballocation mSuballocation;
-    Buffer mBuffer;
+    BufferSuballocation mGarbage;
 };
 using SharedBufferSuballocationGarbageList = std::queue<SharedBufferSuballocationGarbage>;
 
@@ -174,6 +171,7 @@ class ResourceUseList final : angle::NonCopyable
     ResourceUseList &operator=(ResourceUseList &&rhs);
 
     void add(const SharedResourceUse &resourceUse);
+    void copy(ResourceUseList &srcResourceUse);
 
     void releaseResourceUses();
     void releaseResourceUsesAndUpdateSerials(Serial serial);

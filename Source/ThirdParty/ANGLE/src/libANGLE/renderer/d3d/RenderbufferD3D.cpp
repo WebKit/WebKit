@@ -115,7 +115,6 @@ angle::Result RenderbufferD3D::getAttachmentRenderTarget(const gl::Context *cont
 }
 
 angle::Result RenderbufferD3D::initializeContents(const gl::Context *context,
-                                                  GLenum binding,
                                                   const gl::ImageIndex &imageIndex)
 {
     RenderTargetD3D *renderTarget = nullptr;

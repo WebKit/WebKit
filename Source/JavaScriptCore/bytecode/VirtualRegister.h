@@ -121,7 +121,7 @@ private:
     int m_virtualRegister;
 };
 
-static_assert(sizeof(VirtualRegister) == sizeof(int), "VirtualRegister is 32bit");
+COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit);
 
 inline VirtualRegister virtualRegisterForLocal(int local)
 {

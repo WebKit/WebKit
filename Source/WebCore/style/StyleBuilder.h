@@ -40,10 +40,10 @@ public:
 
     void applyAllProperties();
     void applyHighPriorityProperties();
-    void applyNonHighPriorityProperties();
+    void applyLowPriorityProperties();
 
     void applyProperty(CSSPropertyID propertyID) { applyProperties(propertyID, propertyID); }
-    void applyCustomProperty(const AtomString& name);
+    void applyCustomProperty(const String& name);
 
     BuilderState& state() { return m_state; }
 

@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUDIO)
 
 namespace WebCore {
+using namespace JSC;
 
 template<typename Visitor>
 void JSAudioWorkletProcessor::visitAdditionalChildren(Visitor& visitor)

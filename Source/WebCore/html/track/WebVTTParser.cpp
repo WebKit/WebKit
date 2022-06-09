@@ -35,7 +35,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "HTMLParserIdioms.h"
 #include "ISOVTTCue.h"
@@ -50,13 +49,13 @@
 
 namespace WebCore {
 
-constexpr double secondsPerHour = 3600;
-constexpr double secondsPerMinute = 60;
-constexpr double secondsPerMillisecond = 0.001;
-constexpr auto fileIdentifier = "WEBVTT"_s;
-constexpr unsigned fileIdentifierLength = 6;
-constexpr unsigned regionIdentifierLength = 6;
-constexpr unsigned styleIdentifierLength = 5;
+const double secondsPerHour = 3600;
+const double secondsPerMinute = 60;
+const double secondsPerMillisecond = 0.001;
+const char* fileIdentifier = "WEBVTT";
+const unsigned fileIdentifierLength = 6;
+const unsigned regionIdentifierLength = 6;
+const unsigned styleIdentifierLength = 5;
 
 bool WebVTTParser::parseFloatPercentageValue(VTTScanner& valueScanner, float& percentage)
 {
@@ -93,7 +92,7 @@ bool WebVTTParser::parseFloatPercentageValuePair(VTTScanner& valueScanner, char 
 
 WebVTTParser::WebVTTParser(WebVTTParserClient& client, Document& document)
     : m_document(document)
-    , m_decoder(TextResourceDecoder::create(textPlainContentTypeAtom(), PAL::UTF8Encoding()))
+    , m_decoder(TextResourceDecoder::create("text/plain", PAL::UTF8Encoding()))
     , m_client(client)
 {
 }
@@ -279,8 +278,8 @@ WebVTTParser::ParseState WebVTTParser::collectWebVTTBlock(const String& line)
             m_client.newRegionsParsed();
         if (!m_styleSheets.isEmpty())
             m_client.newStyleSheetsParsed();
-        if (!m_previousLine.isEmpty() && !m_previousLine.contains("-->"_s))
-            m_currentId = AtomString { m_previousLine };
+        if (!m_previousLine.isEmpty() && !m_previousLine.contains("-->"))
+            m_currentId = m_previousLine;
         
         return state;
     }
@@ -298,7 +297,7 @@ WebVTTParser::ParseState WebVTTParser::collectWebVTTBlock(const String& line)
 WebVTTParser::ParseState WebVTTParser::checkAndRecoverCue(const String& line)
 {
     // parse cue timings and settings
-    if (line.contains("-->"_s)) {
+    if (line.contains("-->")) {
         ParseState state = recoverCue(line);
         if (state != BadCue)
             return state;
@@ -316,23 +315,23 @@ WebVTTParser::ParseState WebVTTParser::collectStyleSheet(const String& line)
     return Style;
 }
 
-bool WebVTTParser::checkAndCreateRegion(StringView line)
+bool WebVTTParser::checkAndCreateRegion(const String& line)
 {
-    if (m_previousLine.contains("-->"_s))
+    if (m_previousLine.contains("-->"))
         return false;
     // line starts with the substring "REGION" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these charecters it is invalid.
-    if (line.startsWith("REGION"_s) && line.substring(regionIdentifierLength).isAllSpecialCharacters<isASpace>()) {
+    if (line.startsWith("REGION") && line.substring(regionIdentifierLength).isAllSpecialCharacters<isASpace>()) {
         m_currentRegion = VTTRegion::create(m_document);
         return true;
     }
     return false;
 }
 
-bool WebVTTParser::checkAndStoreRegion(StringView line)
+bool WebVTTParser::checkAndStoreRegion(const String& line)
 {
-    if (!line.isEmpty() && !line.contains("-->"_s))
+    if (!line.isEmpty() && !line.contains("-->"))
         return false;
 
     if (!m_currentRegion->id().isEmpty()) {
@@ -345,26 +344,25 @@ bool WebVTTParser::checkAndStoreRegion(StringView line)
     return true;
 }
 
-bool WebVTTParser::checkStyleSheet(StringView line)
+bool WebVTTParser::checkStyleSheet(const String& line)
 {
-    if (m_previousLine.contains("-->"_s))
+    if (m_previousLine.contains("-->"))
         return false;
     // line starts with the substring "STYLE" and remaining characters
     // zero or more U+0020 SPACE characters or U+0009 CHARACTER TABULATION
     // (tab) characters expected other than these charecters it is invalid.
-    if (line.startsWith("STYLE"_s) && line.substring(styleIdentifierLength).isAllSpecialCharacters<isASpace>())
+    if (line.startsWith("STYLE") && line.substring(styleIdentifierLength).isAllSpecialCharacters<isASpace>())
         return true;
 
     return false;
 }
 
-bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
+bool WebVTTParser::checkAndStoreStyleSheet(const String& line)
 {
-    if (!line.isEmpty() && !line.contains("-->"_s))
+    if (!line.isEmpty() && !line.contains("-->"))
         return false;
     
-    auto styleSheetText = m_currentSourceStyleSheet.toString();
-    m_currentSourceStyleSheet.clear();
+    auto styleSheetText = WTFMove(m_currentSourceStyleSheet);
 
     // WebVTTMode disallows non-data URLs.
     auto contents = StyleSheetContents::create(CSSParserContext(WebVTTMode));
@@ -396,7 +394,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
         auto selector = selectorList.selectorAt(0);
         auto selectorText = selector->selectorText();
         
-        bool isCue = selectorText == "::cue"_s || selectorText.startsWith("::cue("_s);
+        bool isCue = selectorText == "::cue" || selectorText.startsWith("::cue(");
         if (!isCue)
             return true;
 
@@ -415,9 +413,9 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
 
 WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 {
-    if (line.contains("-->"_s))
+    if (line.contains("-->"))
         return collectTimingsAndSettings(line);
-    m_currentId = AtomString { line };
+    m_currentId = line;
     return TimingsAndSettings;
 }
 
@@ -463,7 +461,7 @@ WebVTTParser::ParseState WebVTTParser::collectCueText(const String& line)
         return Id;
     }
     // Step 35.
-    if (line.contains("-->"_s)) {
+    if (line.contains("-->")) {
         // Step 39-40.
         createNewCue();
 
@@ -490,7 +488,7 @@ WebVTTParser::ParseState WebVTTParser::ignoreBadCue(const String& line)
 {
     if (line.isEmpty())
         return Id;
-    if (line.contains("-->"_s))
+    if (line.contains("-->"))
         return recoverCue(line);
     return BadCue;
 }
@@ -520,7 +518,7 @@ Ref<DocumentFragment> WebVTTTreeBuilder::buildFromString(const String& cueText)
     auto fragment = DocumentFragment::create(m_document);
 
     if (cueText.isEmpty()) {
-        fragment->parserAppendChild(Text::create(m_document, String { emptyString() }));
+        fragment->parserAppendChild(Text::create(m_document, emptyString()));
         return fragment;
     }
 
@@ -556,7 +554,7 @@ void WebVTTParser::createNewCue()
 
 void WebVTTParser::resetCueValues()
 {
-    m_currentId = emptyAtom();
+    m_currentId = emptyString();
     m_currentSettings = emptyString();
     m_currentStartTime = MediaTime::zeroTime();
     m_currentEndTime = MediaTime::zeroTime();
@@ -651,7 +649,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
 
     switch (m_token.type()) {
     case WebVTTTokenTypes::Character: {
-        m_currentNode->parserAppendChild(Text::create(document, String { m_token.characters() }));
+        m_currentNode->parserAppendChild(Text::create(document, m_token.characters()));
         break;
     }
     case WebVTTTokenTypes::StartTag: {
@@ -710,7 +708,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         String charactersString = m_token.characters();
         MediaTime parsedTimeStamp;
         if (WebVTTParser::collectTimeStamp(charactersString, parsedTimeStamp))
-            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, WTFMove(charactersString)));
+            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp", charactersString));
         break;
     }
     default:

@@ -169,7 +169,7 @@ private:
 
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
-    ASCIILiteral renderName() const override;
+    const char* renderName() const override;
 
     LayoutUnit calculateMaxColumnHeight() const;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
-#include <wtf/BlockPtr.h>
 
 namespace PAL::WebGPU {
 
@@ -45,23 +44,40 @@ BufferImpl::~BufferImpl()
     wgpuBufferRelease(m_backing);
 }
 
-void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optional<Size64> size, CompletionHandler<void()>&& callback)
+void mapCallback(WGPUBufferMapAsyncStatus status, void* userdata)
 {
-    auto backingMapModeFlags = m_convertToBackingContext->convertMapModeFlagsToBacking(mapModeFlags);
-
-    auto usedSize = size.value_or(WGPU_WHOLE_MAP_SIZE);
-
-    // FIXME: Check the casts.
-    wgpuBufferMapAsyncWithBlock(m_backing, backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus) mutable {
-        callback();
-    }).get());
+    auto buffer = adoptRef(*static_cast<BufferImpl*>(userdata)); // adoptRef is balanced by leakRef in mapAsync() below. We have to do this because we're using a C API with no concept of reference counting or blocks.
+    buffer->mapCallback(status);
 }
 
-auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> MappedRange
+void BufferImpl::mapAsync(MapModeFlags mapModeFlags, std::optional<Size64> offset, std::optional<Size64> size, WTF::Function<void()>&& callback)
 {
-    auto usedSize = size.value_or(WGPU_WHOLE_MAP_SIZE);
+    Ref protectedThis(*this);
+
+    auto backingMapModeFlags = m_convertToBackingContext->convertMapModeFlagsToBacking(mapModeFlags);
+
+    auto usedOffset = offset.value_or(0);
+    auto usedSize = size.value_or(WGPU_WHOLE_SIZE);
+
+    m_callbacks.append(WTFMove(callback));
+
     // FIXME: Check the casts.
-    auto* pointer = wgpuBufferGetMappedRange(m_backing, static_cast<size_t>(offset), static_cast<size_t>(usedSize));
+    wgpuBufferMapAsync(m_backing, backingMapModeFlags, static_cast<size_t>(usedOffset), static_cast<size_t>(usedSize), &WebGPU::mapCallback, &protectedThis.leakRef()); // leakRef is balanced by adoptRef in mapCallback() above. We have to do this because we're using a C API with no concept of reference counting or blocks.
+}
+
+void BufferImpl::mapCallback(WGPUBufferMapAsyncStatus status)
+{
+    UNUSED_PARAM(status);
+    auto callback = m_callbacks.takeFirst();
+    callback();
+}
+
+auto BufferImpl::getMappedRange(std::optional<Size64> offset, std::optional<Size64> size) -> MappedRange
+{
+    auto usedOffset = offset.value_or(0);
+    auto usedSize = size.value_or(WGPU_WHOLE_SIZE);
+    // FIXME: Check the casts.
+    auto* pointer = wgpuBufferGetMappedRange(m_backing, static_cast<size_t>(usedOffset), static_cast<size_t>(usedSize));
     // FIXME: Check the type narrowing.
     return { pointer, static_cast<size_t>(usedSize) };
 }

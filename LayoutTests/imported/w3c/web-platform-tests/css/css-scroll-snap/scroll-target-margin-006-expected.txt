@@ -1,4 +1,0 @@
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX TARGETTARGETTARGETTARGET XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-PASS scroll-margin is taken into account when scrolling an inline element into view
-

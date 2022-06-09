@@ -31,10 +31,10 @@
 namespace WebCore {
 
 const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes();
-MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes();
+HashSet<String>& additionalSupportedImageTypes();
 WEBCORE_EXPORT void setAdditionalSupportedImageTypes(const Vector<String>&);
 WEBCORE_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);
-WEBCORE_EXPORT bool isSupportedImageType(const String&);
+bool isSupportedImageType(const String&);
 bool isGIFImageType(StringView);
 
 }

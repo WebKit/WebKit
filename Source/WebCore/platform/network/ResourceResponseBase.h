@@ -34,7 +34,6 @@
 #include <wtf/Box.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/Markable.h>
-#include <wtf/Span.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 
@@ -94,24 +93,24 @@ public:
     WEBCORE_EXPORT const URL& url() const;
     WEBCORE_EXPORT void setURL(const URL&);
 
-    WEBCORE_EXPORT const AtomString& mimeType() const;
-    WEBCORE_EXPORT void setMimeType(const AtomString&);
+    WEBCORE_EXPORT const String& mimeType() const;
+    WEBCORE_EXPORT void setMimeType(const String& mimeType);
 
     WEBCORE_EXPORT long long expectedContentLength() const;
     WEBCORE_EXPORT void setExpectedContentLength(long long expectedContentLength);
 
-    WEBCORE_EXPORT const AtomString& textEncodingName() const;
-    WEBCORE_EXPORT void setTextEncodingName(AtomString&&);
+    WEBCORE_EXPORT const String& textEncodingName() const;
+    WEBCORE_EXPORT void setTextEncodingName(const String& name);
 
     WEBCORE_EXPORT int httpStatusCode() const;
     WEBCORE_EXPORT void setHTTPStatusCode(int);
     WEBCORE_EXPORT bool isRedirection() const;
 
-    WEBCORE_EXPORT const AtomString& httpStatusText() const;
-    WEBCORE_EXPORT void setHTTPStatusText(const AtomString&);
+    WEBCORE_EXPORT const String& httpStatusText() const;
+    WEBCORE_EXPORT void setHTTPStatusText(const String&);
 
-    WEBCORE_EXPORT const AtomString& httpVersion() const;
-    WEBCORE_EXPORT void setHTTPVersion(const AtomString&);
+    WEBCORE_EXPORT const String& httpVersion() const;
+    WEBCORE_EXPORT void setHTTPVersion(const String&);
     WEBCORE_EXPORT bool isHTTP09() const;
 
     WEBCORE_EXPORT const HTTPHeaderMap& httpHeaderFields() const;
@@ -120,29 +119,27 @@ public:
     enum class SanitizationType { Redirection, RemoveCookies, CrossOriginSafe };
     WEBCORE_EXPORT void sanitizeHTTPHeaderFields(SanitizationType);
 
-    String httpHeaderField(StringView name) const;
+    String httpHeaderField(const String& name) const;
     WEBCORE_EXPORT String httpHeaderField(HTTPHeaderName) const;
     WEBCORE_EXPORT void setHTTPHeaderField(const String& name, const String& value);
-    WEBCORE_EXPORT void setUncommonHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void setHTTPHeaderField(HTTPHeaderName, const String& value);
 
     WEBCORE_EXPORT void addHTTPHeaderField(HTTPHeaderName, const String& value);
     WEBCORE_EXPORT void addHTTPHeaderField(const String& name, const String& value);
-    WEBCORE_EXPORT void addUncommonHTTPHeaderField(const String& name, const String& value);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
-    template<size_t length> String httpHeaderField(ASCIILiteral) const = delete;
-    template<size_t length> void setHTTPHeaderField(ASCIILiteral, const String&) = delete;
-    template<size_t length> void addHTTPHeaderField(ASCIILiteral, const String&) = delete;
+    template<size_t length> String httpHeaderField(const char (&)[length]) const = delete;
+    template<size_t length> void setHTTPHeaderField(const char (&)[length], const String&) = delete;
+    template<size_t length> void addHTTPHeaderField(const char (&)[length], const String&) = delete;
 
-    bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"_s; }
+    bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
 
     WEBCORE_EXPORT bool isAttachment() const;
     WEBCORE_EXPORT bool isAttachmentWithFilename() const;
     WEBCORE_EXPORT String suggestedFilename() const;
     WEBCORE_EXPORT static String sanitizeSuggestedFilename(const String&);
 
-    WEBCORE_EXPORT void includeCertificateInfo(Span<const std::byte> = { }) const;
+    WEBCORE_EXPORT void includeCertificateInfo() const;
     void setCertificateInfo(CertificateInfo&& info) { m_certificateInfo = WTFMove(info); }
     const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; };
     bool usedLegacyTLS() const { return m_usedLegacyTLS == UsedLegacyTLS::Yes; }
@@ -238,7 +235,7 @@ protected:
 
     // The ResourceResponse subclass should shadow these functions to lazily initialize platform specific fields
     void platformLazyInit(InitLevel) { }
-    CertificateInfo platformCertificateInfo(Span<const std::byte>) const { return CertificateInfo(); };
+    CertificateInfo platformCertificateInfo() const { return CertificateInfo(); };
     String platformSuggestedFileName() const { return String(); }
 
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }
@@ -339,7 +336,7 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
         return false;
     response.m_url = WTFMove(*url);
 
-    std::optional<AtomString> mimeType;
+    std::optional<String> mimeType;
     decoder >> mimeType;
     if (!mimeType)
         return false;

@@ -35,7 +35,6 @@
 #import "HitTestResult.h"
 #import "MediaPlayerPrivate.h"
 #import "Range.h"
-#import "SharedBuffer.h"
 #import "SimpleRange.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
@@ -43,48 +42,14 @@
 #import <Metal/Metal.h>
 #endif
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
-#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
-#import <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
 #endif
 
-#if ENABLE(DATA_DETECTION)
-#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
-#endif
 
-#import <pal/cocoa/VisionKitCoreSoftLink.h>
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-@interface FakeImageAnalysisResult : NSObject
-- (instancetype)initWithString:(NSString *)fullText;
-@end
-
-@implementation FakeImageAnalysisResult {
-    RetainPtr<NSAttributedString> _string;
-}
-
-- (instancetype)initWithString:(NSString *)string
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _string = adoptNS([[NSMutableAttributedString alloc] initWithString:string]);
-    return self;
-}
-
-- (NSAttributedString *)_attributedStringForRange:(NSRange)range
-{
-    return [_string attributedSubstringFromRange:range];
-}
-
-@end
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 namespace WebCore {
 
@@ -207,55 +172,4 @@ bool Internals::platformSupportsMetal(bool isWebGL2)
 }
 #endif
 
-#if ENABLE(DATA_DETECTION)
-
-DDScannerResult *Internals::fakeDataDetectorResultForTesting()
-{
-    static NeverDestroyed result = []() -> RetainPtr<DDScannerResult> {
-        auto scanner = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
-        auto stringToScan = CFSTR("webkit.org");
-        auto query = adoptCF(PAL::softLink_DataDetectorsCore_DDScanQueryCreateFromString(kCFAllocatorDefault, stringToScan, CFRangeMake(0, CFStringGetLength(stringToScan))));
-        if (!PAL::softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), query.get()))
-            return nil;
-
-        auto results = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCopyResultsWithOptions(scanner.get(), DDScannerCopyResultsOptionsNoOverlap));
-        if (!CFArrayGetCount(results.get()))
-            return nil;
-
-        return { [[PAL::getDDScannerResultClass() resultsFromCoreResults:results.get()] firstObject] };
-    }();
-    return result->get();
 }
-
-#endif // ENABLE(DATA_DETECTION)
-
-RefPtr<SharedBuffer> Internals::pngDataForTesting()
-{
-    NSBundle *webCoreBundle = [NSBundle bundleForClass:NSClassFromString(@"WebCoreBundleFinder")];
-    return SharedBuffer::createWithContentsOfFile([webCoreBundle pathForResource:@"missingImage" ofType:@"png"]);
-}
-
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-RetainPtr<VKCImageAnalysis> Internals::fakeImageAnalysisResultForTesting(const Vector<ImageOverlayLine>& lines)
-{
-    if (lines.isEmpty())
-        return { };
-
-    StringBuilder fullText;
-    for (auto& line : lines) {
-        for (auto& text : line.children) {
-            if (text.hasLeadingWhitespace)
-                fullText.append(space);
-            fullText.append(text.text);
-        }
-        if (line.hasTrailingNewline)
-            fullText.append(newlineCharacter);
-    }
-
-    return adoptNS((id)[[FakeImageAnalysisResult alloc] initWithString:fullText.toString()]);
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-
-} // namespace WebCore

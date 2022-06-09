@@ -22,11 +22,11 @@
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "VideoFrameMetadata.h"
-#include "VideoFrameTimeMetadata.h"
+#include "VideoSampleMetadata.h"
 
 #include <gst/gst.h>
 
-GstBuffer* webkitGstBufferSetVideoFrameTimeMetadata(GstBuffer*, std::optional<WebCore::VideoFrameTimeMetadata>&&);
+GstBuffer* webkitGstBufferSetVideoSampleMetadata(GstBuffer*, std::optional<WebCore::VideoSampleMetadata>&&);
 void webkitGstTraceProcessingTimeForElement(GstElement*);
 WebCore::VideoFrameMetadata webkitGstBufferGetVideoFrameMetadata(GstBuffer*);
 

@@ -80,9 +80,9 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
     return defaultSupportedImageTypes;
 }
 
-MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes()
+HashSet<String>& additionalSupportedImageTypes()
 {
-    static NeverDestroyed<MemoryCompactRobinHoodHashSet<String>> additionalSupportedImageTypes;
+    static NeverDestroyed<HashSet<String>> additionalSupportedImageTypes;
     return additionalSupportedImageTypes;
 }
 
@@ -111,7 +111,7 @@ bool isSupportedImageType(const String& imageType)
 
 bool isGIFImageType(StringView imageType)
 {
-    return imageType == "com.compuserve.gif"_s;
+    return imageType == "com.compuserve.gif";
 }
 
 }

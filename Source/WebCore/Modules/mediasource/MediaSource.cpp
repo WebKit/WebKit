@@ -36,7 +36,6 @@
 
 #include "AudioTrackList.h"
 #include "ContentType.h"
-#include "ContentTypeUtilities.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
@@ -331,7 +330,7 @@ const MediaTime& MediaSource::currentTimeFudgeFactor()
 
 bool MediaSource::contentTypeShouldGenerateTimestamps(const ContentType& contentType)
 {
-    return contentType.containerType() == "audio/aac"_s || contentType.containerType() == "audio/mpeg"_s;
+    return contentType.containerType() == "audio/aac" || contentType.containerType() == "audio/mpeg";
 }
 
 bool MediaSource::hasBufferedTime(const MediaTime& time)
@@ -641,7 +640,7 @@ static ContentType addVP9FullRangeVideoFlagToContentType(const ContentType& type
     };
 
     for (auto codec : type.codecs()) {
-        if (!codec.startsWith("vp09"_s) || countPeriods(codec) != 7)
+        if (!codec.startsWith("vp09") || countPeriods(codec) != 7)
             continue;
 
         auto rawType = type.raw();
@@ -650,7 +649,8 @@ static ContentType addVP9FullRangeVideoFlagToContentType(const ContentType& type
         if (position == notFound)
             continue;
 
-        return ContentType(makeStringByInserting(rawType, ".00"_s, position + codec.length()));
+        rawType.insert(".00", position + codec.length());
+        return ContentType(rawType);
     }
     return type;
 }
@@ -894,7 +894,7 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     if (context.isDocument() && downcast<Document>(context).quirks().needsVP9FullRangeFlagQuirk())
         contentType = addVP9FullRangeVideoFlagToContentType(contentType);
 
-    String codecs = contentType.parameter("codecs"_s);
+    String codecs = contentType.parameter("codecs");
 
     // 2. If type does not contain a valid MIME type string, then return false.
     if (contentType.containerType().isEmpty())
@@ -908,17 +908,6 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     parameters.type = contentType;
     parameters.isMediaSource = true;
     parameters.contentTypesRequiringHardwareSupport = WTFMove(contentTypesRequiringHardwareSupport);
-
-    if (context.isDocument()) {
-        auto& settings = downcast<Document>(context).settings();
-        if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, settings.allowedMediaContainerTypes(), settings.allowedMediaCodecTypes()))
-            return false;
-
-        parameters.allowedMediaContainerTypes = settings.allowedMediaContainerTypes();
-        parameters.allowedMediaVideoCodecIDs = settings.allowedMediaVideoCodecIDs();
-        parameters.allowedMediaAudioCodecIDs = settings.allowedMediaAudioCodecIDs();
-        parameters.allowedMediaCaptionFormatTypes = settings.allowedMediaCaptionFormatTypes();
-    }
 
     MediaPlayer::SupportsType supported = MediaPlayer::supportsType(parameters);
 
@@ -1050,9 +1039,10 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
 
 Vector<PlatformTimeRanges> MediaSource::activeRanges() const
 {
-    return WTF::map(*m_activeSourceBuffers, [](auto& sourceBuffer) {
-        return sourceBuffer->bufferedInternal().ranges();
-    });
+    Vector<PlatformTimeRanges> activeRanges;
+    for (auto& sourceBuffer : *m_activeSourceBuffers)
+        activeRanges.append(sourceBuffer->bufferedInternal().ranges());
+    return activeRanges;
 }
 
 ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(const ContentType& incomingType)

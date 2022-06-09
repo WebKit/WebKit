@@ -54,7 +54,7 @@ public:
     inline bool shouldHide(const Element&) const;
     void updateModalContainerIfNeeded(const FrameView&);
 
-    inline void overrideSearchTermForTesting(AtomString&&);
+    inline void overrideSearchTermForTesting(const String&);
 
 private:
     friend class ModalContainerPolicyDecisionScope;
@@ -86,9 +86,9 @@ private:
     bool m_makeDocumentElementScrollable { false };
 };
 
-inline void ModalContainerObserver::overrideSearchTermForTesting(AtomString&& searchTerm)
+inline void ModalContainerObserver::overrideSearchTermForTesting(const String& searchTerm)
 {
-    m_overrideSearchTermForTesting = WTFMove(searchTerm);
+    m_overrideSearchTermForTesting = searchTerm;
 }
 
 inline bool ModalContainerObserver::shouldHide(const Element& element) const

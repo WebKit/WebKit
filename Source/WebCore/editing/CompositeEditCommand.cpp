@@ -475,7 +475,7 @@ void CompositeEditCommand::setShouldRetainAutocorrectionIndicator(bool)
 {
 }
 
-AtomString CompositeEditCommand::inputEventTypeName() const
+String CompositeEditCommand::inputEventTypeName() const
 {
     return inputTypeNameForEditingAction(editingAction());
 }
@@ -789,9 +789,12 @@ Position CompositeEditCommand::replaceSelectedTextInNode(const String& text)
 
 static Vector<RenderedDocumentMarker> copyMarkers(const Vector<RenderedDocumentMarker*>& markerPointers)
 {
-    return markerPointers.map([](auto& markerPointer) {
-        return *markerPointer;
-    });
+    Vector<RenderedDocumentMarker> markers;
+    markers.reserveInitialCapacity(markerPointers.size());
+    for (auto& markerPointer : markerPointers)
+        markers.uncheckedAppend(*markerPointer);
+
+    return markers;
 }
 
 void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsigned offset, unsigned count, const String& replacementText)
@@ -892,7 +895,7 @@ RefPtr<Text> CompositeEditCommand::textNodeForRebalance(const Position& position
     if (position.anchorType() != Position::PositionIsOffsetInAnchor || !is<Text>(node))
         return nullptr;
 
-    auto textNode = static_pointer_cast<Text>(WTFMove(node));
+    auto textNode = static_pointer_cast<Text>(std::exchange(node, nullptr));
     if (!textNode->length())
         return nullptr;
 
@@ -1008,7 +1011,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
     document().updateLayout();
 
     bool wholeTextNodeIsEmpty = false;
-    String string;
+    String str;
     auto determineRemovalMode = [&] {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         RenderText* textRenderer = textNode.renderer();
@@ -1037,15 +1040,15 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
 
             unsigned gapEnd = run ? run->start() : length;
             bool indicesIntersect = start <= gapEnd && end >= gapStart;
-            int gapLength = gapEnd - gapStart;
-            if (indicesIntersect && gapLength > 0) {
+            int gapLen = gapEnd - gapStart;
+            if (indicesIntersect && gapLen > 0) {
                 gapStart = std::max(gapStart, start);
                 gapEnd = std::min(gapEnd, end);
-                if (string.isNull())
-                    string = textNode.data().substring(start, end - start);
-                // Remove text in the gap.
-                string = makeStringByRemoving(string, gapStart - start - removed, gapLength);
-                removed += gapLength;
+                if (str.isNull())
+                    str = textNode.data().substring(start, end - start);
+                // remove text in the gap
+                str.remove(gapStart - start - removed, gapLen);
+                removed += gapLen;
             }
 
             previousRun = run;
@@ -1060,10 +1063,10 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
         return;
     }
 
-    if (!string.isNull()) {
+    if (!str.isNull()) {
         // Replace the text between start and end with our pruned version.
-        if (!string.isEmpty())
-            replaceTextInNode(textNode, start, end - start, string);
+        if (!str.isEmpty())
+            replaceTextInNode(textNode, start, end - start, str);
         else {
             // Assert that we are not going to delete all of the text in the node.
             // If we were, that should have been done above with the call to 

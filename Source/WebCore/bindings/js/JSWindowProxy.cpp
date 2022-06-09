@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-const ClassInfo JSWindowProxy::s_info = { "JSWindowProxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWindowProxy) };
+const ClassInfo JSWindowProxy::s_info = { "JSWindowProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWindowProxy) };
 
 inline JSWindowProxy::JSWindowProxy(VM& vm, Structure& structure, DOMWrapperWorld& world)
     : Base(vm, &structure)
@@ -61,7 +61,7 @@ inline JSWindowProxy::JSWindowProxy(VM& vm, Structure& structure, DOMWrapperWorl
 void JSWindowProxy::finishCreation(VM& vm, AbstractDOMWindow& window)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     setWindow(window);
 }
 
@@ -80,9 +80,9 @@ void JSWindowProxy::destroy(JSCell* cell)
 
 void JSWindowProxy::setWindow(VM& vm, JSDOMGlobalObject& window)
 {
-    ASSERT(window.classInfo() == JSDOMWindow::info() || window.classInfo() == JSRemoteDOMWindow::info());
+    ASSERT(window.classInfo(vm) == JSDOMWindow::info() || window.classInfo(vm) == JSRemoteDOMWindow::info());
     setTarget(vm, &window);
-    structure()->setGlobalObject(vm, &window);
+    structure(vm)->setGlobalObject(vm, &window);
     GCController::singleton().garbageCollectSoon();
 }
 
@@ -112,18 +112,18 @@ void JSWindowProxy::setWindow(AbstractDOMWindow& domWindow)
         window = JSDOMWindow::create(vm, &windowStructure, localWindow, this);
         bool linkedWithNewSDK = true;
 #if PLATFORM(COCOA)
-        linkedWithNewSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DOMWindowReuseRestriction);
+        linkedWithNewSDK = linkedOnOrAfter(SDKVersion::FirstWithDOMWindowReuseRestriction);
 #endif
         if (!localWindow.document()->haveInitializedSecurityOrigin() && linkedWithNewSDK)
             localWindow.setAsWrappedWithoutInitializedSecurityOrigin();
     }
 
-    prototype->structure()->setGlobalObject(vm, window);
+    prototype->structure(vm)->setGlobalObject(vm, window);
 
     auto& propertiesStructure = *JSDOMWindowProperties::createStructure(vm, window, JSEventTarget::prototype(vm, *window));
     auto& properties = *JSDOMWindowProperties::create(&propertiesStructure, *window);
     properties.didBecomePrototype();
-    prototype->structure()->setPrototypeWithoutTransition(vm, &properties);
+    prototype->structure(vm)->setPrototypeWithoutTransition(vm, &properties);
 
     setWindow(vm, *window);
 
@@ -151,7 +151,7 @@ void JSWindowProxy::attachDebugger(JSC::Debugger* debugger)
 AbstractDOMWindow& JSWindowProxy::wrapped() const
 {
     auto* window = this->window();
-    if (auto* jsWindow = jsDynamicCast<JSRemoteDOMWindowBase*>(window))
+    if (auto* jsWindow = jsDynamicCast<JSRemoteDOMWindowBase*>(window->vm(), window))
         return jsWindow->wrapped();
     return jsCast<JSDOMWindowBase*>(window)->wrapped();
 }
@@ -167,17 +167,17 @@ JSWindowProxy* toJSWindowProxy(WindowProxy& windowProxy, DOMWrapperWorld& world)
     return windowProxy.jsWindowProxy(world);
 }
 
-WindowProxy* JSWindowProxy::toWrapped(VM&, JSValue value)
+WindowProxy* JSWindowProxy::toWrapped(VM& vm, JSValue value)
 {
     if (!value.isObject())
         return nullptr;
     JSObject* object = asObject(value);
-    if (object->inherits<JSWindowProxy>())
+    if (object->inherits<JSWindowProxy>(vm))
         return jsCast<JSWindowProxy*>(object)->windowProxy();
     return nullptr;
 }
 
-JSC::GCClient::IsoSubspace* JSWindowProxy::subspaceForImpl(JSC::VM& vm)
+JSC::IsoSubspace* JSWindowProxy::subspaceForImpl(JSC::VM& vm)
 {
     return &static_cast<JSVMClientData*>(vm.clientData)->windowProxySpace();
 }

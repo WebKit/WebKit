@@ -48,14 +48,14 @@ static void initialize()
     loadLibraryOrExit("PosixWebKit");
     setenv_np("WebInspectorServerPort", "868", 1);
 
-    loadLibraryOrExit(PNG_LOAD_AT);
-    loadLibraryOrExit(ICU_LOAD_AT);
-    loadLibraryOrExit(Fontconfig_LOAD_AT);
-    loadLibraryOrExit(Freetype_LOAD_AT);
-    loadLibraryOrExit(HarfBuzz_LOAD_AT);
-    loadLibraryOrExit(Cairo_LOAD_AT);
-    loadLibraryOrExit(ToolKitten_LOAD_AT);
-    loadLibraryOrExit(WebKitRequirements_LOAD_AT);
+    loadLibraryOrExit("libpng16");
+    loadLibraryOrExit("libicu");
+    loadLibraryOrExit("libfontconfig");
+    loadLibraryOrExit("libfreetype");
+    loadLibraryOrExit("libharfbuzz");
+    loadLibraryOrExit("libcairo");
+    loadLibraryOrExit("libToolKitten");    
+    loadLibraryOrExit("libSceNKWebKitRequirements");
 #if !(defined(ENABLE_STATIC_JSC) && ENABLE_STATIC_JSC)
     loadLibraryOrExit("libJavaScriptCore");
 #endif
@@ -76,7 +76,7 @@ private:
     }
 };
 
-int main(int argc, char *argv[])
+int main(int, char *[])
 {
     WKRunLoopInitializeMain();
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     auto& app = Application::singleton();
     app.init(&applicationClient);
 
-    auto mainWindow = std::make_unique<MainWindow>(argc > 1 ? argv[1] : nullptr);
+    auto mainWindow = std::make_unique<MainWindow>();
     mainWindow->setFocused();
     app.setRootWidget(move(mainWindow));
 

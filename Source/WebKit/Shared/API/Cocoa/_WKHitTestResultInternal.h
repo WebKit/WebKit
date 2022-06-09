@@ -25,7 +25,7 @@
 
 #import "_WKHitTestResult.h"
 
-#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+#if PLATFORM(MAC)
 
 #import "APIHitTestResult.h"
 #import "WKObject.h"

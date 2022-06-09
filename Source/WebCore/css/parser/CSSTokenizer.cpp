@@ -43,13 +43,13 @@
 namespace WebCore {
 
 // https://drafts.csswg.org/css-syntax/#input-preprocessing
-String CSSTokenizer::preprocessString(const String& string)
+String CSSTokenizer::preprocessString(String string)
 {
     // We don't replace '\r' and '\f' with '\n' as the specification suggests, instead
     // we treat them all the same in the isNewLine function below.
     StringImpl* oldImpl = string.impl();
-    String replaced = makeStringByReplacingAll(string, '\0', replacementCharacter);
-    replaced = replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(replaced));
+    string.replace('\0', replacementCharacter);
+    String replaced = replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(string));
     if (replaced.impl() != oldImpl)
         registerString(replaced);
     return replaced;
@@ -595,7 +595,7 @@ CSSParserToken CSSTokenizer::consumeIdentLikeToken()
 {
     StringView name = consumeName();
     if (consumeIfNext('(')) {
-        if (equalLettersIgnoringASCIICase(name, "url"_s)) {
+        if (equalIgnoringASCIICase(name, "url")) {
             // The spec is slightly different so as to avoid dropping whitespace
             // tokens, but they wouldn't be used and this is easier.
             m_input.advanceUntilNonWhitespace();

@@ -139,18 +139,16 @@ function makeImageBitmap() {
     });
 }
 
-function makeBlob(src) {
-    return function () {
-        return new Promise(function(resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", src);
-            xhr.responseType = 'blob';
-            xhr.send();
-            xhr.onload = function() {
-                resolve(xhr.response);
-            };
-        });
-    }
+function makeBlob() {
+    return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", '/images/pattern.png');
+        xhr.responseType = 'blob';
+        xhr.send();
+        xhr.onload = function() {
+            resolve(xhr.response);
+        };
+    });
 }
 
 var imageSourceTypes = [
@@ -164,5 +162,5 @@ var imageSourceTypes = [
     { name: 'an OffscreenCanvas',   factory: makeOffscreenCanvas },
     { name: 'an ImageData',         factory: makeImageData },
     { name: 'an ImageBitmap',       factory: makeImageBitmap },
-    { name: 'a Blob',               factory: makeBlob("/images/pattern.png") },
+    { name: 'a Blob',               factory: makeBlob },
 ];

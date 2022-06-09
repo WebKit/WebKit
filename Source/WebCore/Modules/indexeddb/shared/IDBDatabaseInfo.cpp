@@ -136,9 +136,12 @@ void IDBDatabaseInfo::renameObjectStore(uint64_t objectStoreIdentifier, const St
 
 Vector<String> IDBDatabaseInfo::objectStoreNames() const
 {
-    return WTF::map(m_objectStoreMap, [](auto& pair) {
-        return pair.value.name();
-    });
+    Vector<String> names;
+    names.reserveCapacity(m_objectStoreMap.size());
+    for (auto& objectStore : m_objectStoreMap.values())
+        names.uncheckedAppend(objectStore.name());
+
+    return names;
 }
 
 void IDBDatabaseInfo::deleteObjectStore(const String& objectStoreName)

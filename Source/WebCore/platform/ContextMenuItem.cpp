@@ -153,7 +153,6 @@ bool isValidContextMenuAction(ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagOpenImageInNewWindow:
     case ContextMenuAction::ContextMenuItemTagDownloadImageToDisk:
     case ContextMenuAction::ContextMenuItemTagCopyImageToClipboard:
-    case ContextMenuAction::ContextMenuItemTagCopySubject:
 #if PLATFORM(GTK)
     case ContextMenuAction::ContextMenuItemTagCopyImageUrlToClipboard:
 #endif
@@ -259,7 +258,7 @@ bool isValidContextMenuAction(ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagToggleVideoFullscreen:
     case ContextMenuAction::ContextMenuItemTagShareMenu:
     case ContextMenuAction::ContextMenuItemTagToggleVideoEnhancedFullscreen:
-    case ContextMenuAction::ContextMenuItemTagLookUpImage:
+    case ContextMenuAction::ContextMenuItemTagQuickLookImage:
     case ContextMenuAction::ContextMenuItemTagTranslate:
     case ContextMenuAction::ContextMenuItemBaseCustomTag:
     case ContextMenuAction::ContextMenuItemLastCustomTag:

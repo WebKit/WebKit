@@ -30,21 +30,13 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
-#include "EventLoop.h"
 #include "EventNames.h"
-#include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSNotification.h"
 #include "Logging.h"
 #include "NavigationPreloadManager.h"
-#include "NotificationClient.h"
-#include "NotificationPermission.h"
-#include "PushEvent.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
-#include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerTypes.h"
-#include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -158,11 +150,6 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(scriptExecutionContext()); serviceWorkerGlobalScope && serviceWorkerGlobalScope->serviceWorker().state() == ServiceWorkerState::Installing) {
-        promise->reject(Exception(InvalidStateError, "service worker is installing"_s));
-        return;
-    }
-
     m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), newestWorker->workerType(), WTFMove(promise));
 }
 
@@ -186,14 +173,14 @@ void ServiceWorkerRegistration::subscribeToPushService(const Vector<uint8_t>& ap
     m_container->subscribeToPushService(*this, applicationServerKey, WTFMove(promise));
 }
 
-void ServiceWorkerRegistration::unsubscribeFromPushService(PushSubscriptionIdentifier subscriptionIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)
+void ServiceWorkerRegistration::unsubscribeFromPushService(DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     if (isContextStopped()) {
         promise.reject(Exception(InvalidStateError));
         return;
     }
 
-    m_container->unsubscribeFromPushService(identifier(), subscriptionIdentifier, WTFMove(promise));
+    m_container->unsubscribeFromPushService(identifier(), WTFMove(promise));
 }
 
 void ServiceWorkerRegistration::getPushSubscription(DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
@@ -276,58 +263,22 @@ NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
     return *m_navigationPreload;
 }
 
-WebCoreOpaqueRoot root(ServiceWorkerRegistration* registration)
-{
-    return WebCoreOpaqueRoot { registration };
-}
-
 #if ENABLE(NOTIFICATION_EVENT)
-void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, String&& title, NotificationOptions&& options, Ref<DeferredPromise>&& promise)
+void ServiceWorkerRegistration::showNotification(ScriptExecutionContext&, const String& title, const NotificationOptions& options, DOMPromiseDeferred<void>&& promise)
 {
-    if (!m_activeWorker) {
-        promise->reject(Exception { TypeError, "Registration does not have an active worker"_s });
-        return;
-    }
+    UNUSED_PARAM(title);
+    UNUSED_PARAM(options);
 
-    auto* client = context.notificationClient();
-    if (!client) {
-        promise->reject(Exception { TypeError, "Registration not active"_s });
-        return;
-    }
-
-    if (client->checkPermission(&context) != NotificationPermission::Granted) {
-        promise->reject(Exception { TypeError, "Registration does not have permission to show notifications"_s });
-        return;
-    }
-
-    if (context.isServiceWorkerGlobalScope())
-        downcast<ServiceWorkerGlobalScope>(context).setHasPendingSilentPushEvent(false);
-
-    auto notificationResult = Notification::createForServiceWorker(context, WTFMove(title), WTFMove(options), m_registrationData.scopeURL);
-    if (notificationResult.hasException()) {
-        promise->reject(notificationResult.releaseException());
-        return;
-    }
-
-    if (auto* serviceWorkerGlobalScope = dynamicDowncast<ServiceWorkerGlobalScope>(context)) {
-        if (auto* pushEvent = serviceWorkerGlobalScope->pushEvent()) {
-            auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(promise->globalObject());
-            auto& jsPromise = *JSC::jsCast<JSC::JSPromise*>(promise->promise());
-            pushEvent->waitUntil(DOMPromise::create(globalObject, jsPromise));
-        }
-    }
-
-    auto notification = notificationResult.releaseReturnValue();
-    notification->show([promise = WTFMove(promise)]() mutable {
-        promise->resolve();
-    });
+    promise.reject();
 }
 
-void ServiceWorkerRegistration::getNotifications(const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>> promise)
+void ServiceWorkerRegistration::getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLDOMString>> promise)
 {
-    m_container->getNotifications(m_registrationData.scopeURL, filter.tag, WTFMove(promise));
-}
+    UNUSED_PARAM(filter);
 
+    promise.reject();
+
+}
 #endif // ENABLE(NOTIFICATION_EVENT)
 
 } // namespace WebCore

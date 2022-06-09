@@ -49,11 +49,7 @@ class LayoutState : public CanMakeWeakPtr<LayoutState> {
     WTF_MAKE_NONCOPYABLE(LayoutState);
     WTF_MAKE_ISO_ALLOCATED(LayoutState);
 public:
-    enum class FormattingContextIntegrationType {
-        Inline,
-        Flex
-    };
-    LayoutState(const Document&, const ContainerBox& rootContainer, std::optional<FormattingContextIntegrationType> = std::nullopt);
+    LayoutState(const Document&, const ContainerBox& rootContainer);
     ~LayoutState();
 
     InlineFormattingState& ensureInlineFormattingState(const ContainerBox& formattingContextRoot);
@@ -91,9 +87,6 @@ public:
     const ContainerBox& root() const { return m_rootContainer; }
 
     // LFC integration only. Full LFC has proper ICB access.
-    bool isInlineFormattingContextIntegration() const { return m_formattingContextIntegrationType && *m_formattingContextIntegrationType == FormattingContextIntegrationType::Inline; }
-    bool isFlexFormattingContextIntegration() const { return m_formattingContextIntegrationType && *m_formattingContextIntegrationType == FormattingContextIntegrationType::Flex; }
-
     void setViewportSize(const LayoutSize&);
     LayoutSize viewportSize() const;
     enum IsIntegratedRootBoxFirstChild { Yes, No, NotApplicable };
@@ -112,7 +105,6 @@ private:
     HashMap<const ContainerBox*, std::unique_ptr<FlexFormattingState>> m_flexFormattingStates;
 
     std::unique_ptr<InlineFormattingState> m_rootInlineFormattingStateForIntegration;
-    std::unique_ptr<FlexFormattingState> m_rootFlexFormattingStateForIntegration;
 
 #ifndef NDEBUG
     HashSet<const FormattingContext*> m_formattingContextList;
@@ -123,7 +115,6 @@ private:
     CheckedRef<const ContainerBox> m_rootContainer;
 
     // LFC integration only.
-    std::optional<FormattingContextIntegrationType> m_formattingContextIntegrationType;
     LayoutSize m_viewportSize;
     IsIntegratedRootBoxFirstChild m_isIntegratedRootBoxFirstChild { IsIntegratedRootBoxFirstChild::NotApplicable };
 };

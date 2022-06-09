@@ -26,7 +26,7 @@
 #include "config.h"
 #include "STUNMessageParsing.h"
 
-#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+#if ENABLE(WEB_RTC)
 
 #include <LibWebRTCMacros.h>
 #include <webrtc/rtc_base/byte_order.h>
@@ -122,4 +122,4 @@ Vector<uint8_t> extractMessages(Vector<uint8_t>&& buffer, MessageType type, cons
 } // namespace WebRTC
 } // namespace WebCore
 
-#endif // ENABLE(WEB_RTC) && USE(LIBWEBRTC)
+#endif // ENABLE(WEB_RTC)

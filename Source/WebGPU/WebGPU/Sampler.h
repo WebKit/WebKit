@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,52 +25,31 @@
 
 #pragma once
 
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
-struct WGPUSamplerImpl {
-};
-
 namespace WebGPU {
 
-class Device;
-
-// https://gpuweb.github.io/gpuweb/#gpusampler
-class Sampler : public WGPUSamplerImpl, public RefCounted<Sampler> {
+class Sampler : public RefCounted<Sampler> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Sampler> create(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& descriptor, Device& device)
+    static Ref<Sampler> create()
     {
-        return adoptRef(*new Sampler(samplerState, descriptor, device));
-    }
-    static Ref<Sampler> createInvalid(Device& device)
-    {
-        return adoptRef(*new Sampler(device));
+        return adoptRef(*new Sampler());
     }
 
     ~Sampler();
 
-    void setLabel(String&&);
-
-    bool isValid() const { return m_samplerState; }
-
-    id<MTLSamplerState> samplerState() const { return m_samplerState; }
-    const WGPUSamplerDescriptor& descriptor() const { return m_descriptor; }
-    bool isComparison() const { return descriptor().compare != WGPUCompareFunction_Undefined; }
-    bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUFilterMode_Linear; }
-
-    Device& device() const { return m_device; }
+    void setLabel(const char*);
 
 private:
-    Sampler(id<MTLSamplerState>, const WGPUSamplerDescriptor&, Device&);
-    Sampler(Device&);
-
-    const id<MTLSamplerState> m_samplerState { nil };
-
-    const WGPUSamplerDescriptor m_descriptor { };
-
-    const Ref<Device> m_device;
+    Sampler();
 };
 
 } // namespace WebGPU
+
+struct WGPUSamplerImpl {
+    Ref<WebGPU::Sampler> sampler;
+};

@@ -20,6 +20,7 @@
 
 [
     ExportToWrappedFunction,
+    ImplementationLacksVTable,
     InterfaceName=RGBColor,
     Exposed=Window
 ] interface DeprecatedCSSOMRGBColor {

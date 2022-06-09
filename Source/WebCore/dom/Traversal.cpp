@@ -53,7 +53,7 @@ ExceptionOr<unsigned short> NodeIteratorBase::acceptNode(Node& node)
     if (!m_filter)
         return NodeFilter::FILTER_ACCEPT;
 
-    SetForScope isActive(m_isActive, true);
+    SetForScope<bool> isActive(m_isActive, true);
     auto callbackResult = m_filter->acceptNode(node);
     if (callbackResult.type() == CallbackResultType::ExceptionThrown)
         return Exception { ExistingExceptionError };

@@ -130,7 +130,7 @@ struct ListResult
         filenameLength = 0;
         linkname = nullptr;
         linknameLength = 0;
-        fileSize = { };
+        fileSize.truncate(0);
         caseSensitive = false;
         memset(&modifiedTime, 0, sizeof(FTPTime));
     }

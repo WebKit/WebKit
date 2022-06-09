@@ -349,7 +349,8 @@ void webkit_dom_html_link_element_set_charset(WebKitDOMHTMLLinkElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charsetAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charsetAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_link_element_get_href(WebKitDOMHTMLLinkElement* self)
@@ -367,7 +368,8 @@ void webkit_dom_html_link_element_set_href(WebKitDOMHTMLLinkElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hrefAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_link_element_get_hreflang(WebKitDOMHTMLLinkElement* self)
@@ -385,7 +387,8 @@ void webkit_dom_html_link_element_set_hreflang(WebKitDOMHTMLLinkElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hreflangAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::hreflangAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_link_element_get_media(WebKitDOMHTMLLinkElement* self)
@@ -403,7 +406,8 @@ void webkit_dom_html_link_element_set_media(WebKitDOMHTMLLinkElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::mediaAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::mediaAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_link_element_get_rel(WebKitDOMHTMLLinkElement* self)
@@ -421,7 +425,8 @@ void webkit_dom_html_link_element_set_rel(WebKitDOMHTMLLinkElement* self, const 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::relAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::relAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_link_element_get_rev(WebKitDOMHTMLLinkElement* self)
@@ -439,7 +444,8 @@ void webkit_dom_html_link_element_set_rev(WebKitDOMHTMLLinkElement* self, const 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::revAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::revAttr, convertedValue);
 }
 
 WebKitDOMDOMTokenList* webkit_dom_html_link_element_get_sizes(WebKitDOMHTMLLinkElement* self)
@@ -466,7 +472,8 @@ void webkit_dom_html_link_element_set_target(WebKitDOMHTMLLinkElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::targetAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_link_element_get_type_attr(WebKitDOMHTMLLinkElement* self)
@@ -484,7 +491,8 @@ void webkit_dom_html_link_element_set_type_attr(WebKitDOMHTMLLinkElement* self, 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLLinkElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::typeAttr, convertedValue);
 }
 
 WebKitDOMStyleSheet* webkit_dom_html_link_element_get_sheet(WebKitDOMHTMLLinkElement* self)
@@ -501,6 +509,6 @@ void webkit_dom_html_link_element_set_sizes(WebKitDOMHTMLLinkElement* linkElemen
     g_return_if_fail(WEBKIT_DOM_IS_HTML_LINK_ELEMENT(linkElement));
     g_return_if_fail(value);
 
-    WebKit::core(linkElement)->sizes().setValue(AtomString::fromUTF8(value));
+    WebKit::core(linkElement)->sizes().setValue(String::fromUTF8(value));
 }
 G_GNUC_END_IGNORE_DEPRECATIONS;

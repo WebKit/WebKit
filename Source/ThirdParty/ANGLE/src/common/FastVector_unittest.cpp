@@ -319,32 +319,6 @@ TEST(FlatUnorderedSet, BasicUsage)
     }
 }
 
-// Comparison of FlatUnorderedSet
-TEST(FlatUnorderedSet, Comparison)
-{
-    FlatUnorderedSet<int, 3> testSet0;
-    FlatUnorderedSet<int, 3> testSet1;
-    EXPECT_TRUE(testSet0.empty());
-    EXPECT_TRUE(testSet1.empty());
-
-    testSet0.insert(5);
-    EXPECT_FALSE(testSet0 == testSet1);
-
-    testSet0.insert(10);
-    EXPECT_FALSE(testSet0 == testSet1);
-
-    testSet1.insert(5);
-    EXPECT_FALSE(testSet0 == testSet1);
-
-    testSet1.insert(15);
-    EXPECT_FALSE(testSet0 == testSet1);
-
-    testSet1.clear();
-    testSet1.insert(5);
-    testSet1.insert(10);
-    EXPECT_TRUE(testSet0 == testSet1);
-}
-
 // Basic functionality for FastIntegerSet
 TEST(FastIntegerSet, BasicUsage)
 {
@@ -409,28 +383,5 @@ TEST(FastIntegerMap, BasicUsage)
     testMap.clear();
     EXPECT_TRUE(testMap.empty());
     EXPECT_EQ(testMap.size(), 0u);
-}
-
-// Basic usage tests of fast map.
-TEST(FastMap, Basic)
-{
-    FastMap<int, 5> testMap;
-    EXPECT_TRUE(testMap.empty());
-
-    testMap[5] = 5;
-    EXPECT_FALSE(testMap.empty());
-
-    testMap.clear();
-    EXPECT_TRUE(testMap.empty());
-
-    for (int i = 0; i < 10; ++i)
-    {
-        testMap[i] = i;
-    }
-
-    for (int i = 0; i < 10; ++i)
-    {
-        EXPECT_TRUE(testMap[i] == i);
-    }
 }
 }  // namespace angle

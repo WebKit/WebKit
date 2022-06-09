@@ -28,7 +28,6 @@
 #if ENABLE(WEBM_FORMAT_READER)
 
 #include "CoreMediaWrapped.h"
-#include <WebCore/MediaSample.h>
 #include <WebCore/SampleMap.h>
 #include <variant>
 #include <wtf/Identified.h>
@@ -40,6 +39,10 @@ DECLARE_CORE_MEDIA_TRAITS(SampleCursor);
 namespace WTF {
 class Logger;
 }
+
+namespace WebCore {
+class MediaSample;
+};
 
 namespace WebKit {
 
@@ -71,8 +74,7 @@ private:
     MediaSampleCursor(Allocator&&, const MediaSampleCursor&);
 
     template<typename OrderedMap> std::optional<typename OrderedMap::iterator> locateIterator(OrderedMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
-    using SampleType = std::optional<std::pair<const MediaSample*, const WebCore::MediaSamplesBlock::MediaSampleItem*>>;
-    SampleType locateMediaSample(WebCore::SampleMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
+    WebCore::MediaSample* locateMediaSample(WebCore::SampleMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
     Timing locateTiming(WebCore::SampleMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
 
     template<typename Function> OSStatus getSampleMap(Function&&) const;
@@ -104,11 +106,8 @@ private:
     const void* logIdentifier() const { return m_logIdentifier; }
     WTFLogChannel& logChannel() const;
 
-    void setLocator(Locator&&) const WTF_REQUIRES_LOCK(m_locatorLock);
-
     Ref<MediaTrackReader> m_trackReader;
     mutable Locator m_locator WTF_GUARDED_BY_LOCK(m_locatorLock);
-    mutable std::optional<MediaSampleByteRange::const_iterator> m_currentEntry WTF_GUARDED_BY_LOCK(m_locatorLock);
     mutable Lock m_locatorLock;
     Ref<const WTF::Logger> m_logger;
     const void* m_logIdentifier;

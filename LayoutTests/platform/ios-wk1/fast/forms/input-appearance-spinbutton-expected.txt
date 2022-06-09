@@ -1,0 +1,175 @@
+layer at (0,0) size 800x684
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x684
+  RenderBlock {HTML} at (0,0) size 800x684
+    RenderBody {BODY} at (8,8) size 784x668
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 245x19
+          text run at (0,0) width 245: "Test appearances of outer-spin-button."
+      RenderBlock {DIV} at (0,36) size 784x0
+      RenderBlock {DIV} at (0,36) size 784x632
+        RenderTable {TABLE} at (0,0) size 491x632
+          RenderTableSection {TBODY} at (0,0) size 491x632
+            RenderTableRow {TR} at (0,2) size 491x628
+              RenderTableCell {TD} at (2,115) size 194x402 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (1,1) size 192x36
+                  RenderTextControl {INPUT} at (0,4) size 99x17 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (98,0) size 5x19
+                    text run at (98,0) width 5: " "
+                  RenderBR {BR} at (102,15) size 1x0
+                  RenderTextControl {INPUT} at (0,20) size 99x17 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,37) size 192x40
+                  RenderTextControl {INPUT} at (0,4) size 112x19 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (111,0) size 5x19
+                    text run at (111,0) width 5: " "
+                  RenderBR {BR} at (115,15) size 1x0
+                  RenderTextControl {INPUT} at (0,22) size 112x19 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,77) size 192x42
+                  RenderTextControl {INPUT} at (0,2) size 124x20 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (123,0) size 5x19
+                    text run at (123,0) width 5: " "
+                  RenderBR {BR} at (127,15) size 1x0
+                  RenderTextControl {INPUT} at (0,22) size 124x20 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,119) size 192x50
+                  RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (139,1) size 5x19
+                    text run at (139,1) width 5: " "
+                  RenderBR {BR} at (143,16) size 1x0
+                  RenderTextControl {INPUT} at (2,27) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,169) size 192x52
+                  RenderTextControl {INPUT} at (2,2) size 148x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (151,2) size 5x19
+                    text run at (151,2) width 5: " "
+                  RenderBR {BR} at (155,17) size 1x0
+                  RenderTextControl {INPUT} at (2,28) size 148x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,221) size 192x56
+                  RenderTextControl {INPUT} at (2,2) size 160x25 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (163,3) size 5x19
+                    text run at (163,3) width 5: " "
+                  RenderBR {BR} at (167,18) size 1x0
+                  RenderTextControl {INPUT} at (2,30) size 160x25 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,277) size 192x60
+                  RenderTextControl {INPUT} at (2,2) size 172x27 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (175,4) size 5x19
+                    text run at (175,4) width 5: " "
+                  RenderBR {BR} at (179,19) size 1x0
+                  RenderTextControl {INPUT} at (2,32) size 172x27 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,337) size 192x64
+                  RenderTextControl {INPUT} at (2,2) size 184x29 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (187,6) size 5x19
+                    text run at (187,6) width 5: " "
+                  RenderBR {BR} at (191,21) size 1x0
+                  RenderTextControl {INPUT} at (2,34) size 184x29 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+              RenderTableCell {TD} at (197,2) size 292x628 [r=0 c=1 rs=1 cs=1]
+                RenderBlock {DIV} at (1,1) size 289x66
+                  RenderTextControl {INPUT} at (2,2) size 196x30 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (199,7) size 5x19
+                    text run at (199,7) width 5: " "
+                  RenderBR {BR} at (203,22) size 1x0
+                  RenderTextControl {INPUT} at (2,35) size 196x30 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,67) size 289x70
+                  RenderTextControl {INPUT} at (2,2) size 209x32 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (212,8) size 5x19
+                    text run at (212,8) width 5: " "
+                  RenderBR {BR} at (216,23) size 1x0
+                  RenderTextControl {INPUT} at (2,37) size 209x32 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,137) size 289x72
+                  RenderTextControl {INPUT} at (2,2) size 221x33 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (224,8) size 5x19
+                    text run at (224,8) width 5: " "
+                  RenderBR {BR} at (228,23) size 1x0
+                  RenderTextControl {INPUT} at (2,38) size 221x33 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,209) size 289x76
+                  RenderTextControl {INPUT} at (2,2) size 233x35 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (236,9) size 5x19
+                    text run at (236,9) width 5: " "
+                  RenderBR {BR} at (240,24) size 1x0
+                  RenderTextControl {INPUT} at (2,40) size 233x35 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,285) size 289x82
+                  RenderTextControl {INPUT} at (2,2) size 245x37 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (248,12) size 5x19
+                    text run at (248,12) width 5: " "
+                  RenderBR {BR} at (252,27) size 1x0
+                  RenderTextControl {INPUT} at (2,43) size 245x37 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,367) size 289x84
+                  RenderTextControl {INPUT} at (2,2) size 257x39 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (260,13) size 5x19
+                    text run at (260,13) width 5: " "
+                  RenderBR {BR} at (264,28) size 1x0
+                  RenderTextControl {INPUT} at (2,44) size 257x39 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,451) size 289x86
+                  RenderTextControl {INPUT} at (2,2) size 269x40 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (272,13) size 5x19
+                    text run at (272,13) width 5: " "
+                  RenderBR {BR} at (276,28) size 1x0
+                  RenderTextControl {INPUT} at (2,45) size 269x40 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                RenderBlock {DIV} at (1,537) size 289x90
+                  RenderTextControl {INPUT} at (2,2) size 281x42 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                  RenderText {#text} at (284,14) size 5x19
+                    text run at (284,14) width 5: " "
+                  RenderBR {BR} at (288,29) size 1x0
+                  RenderTextControl {INPUT} at (2,47) size 281x42 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+layer at (16,167) size 89x11
+  RenderBlock {DIV} at (5,2) size 89x12
+layer at (16,183) size 89x11
+  RenderBlock {DIV} at (5,2) size 89x12
+layer at (17,203) size 100x12
+  RenderBlock {DIV} at (5,2) size 101x13
+layer at (17,221) size 100x12
+  RenderBlock {DIV} at (5,2) size 101x13
+layer at (17,241) size 111x13
+  RenderBlock {DIV} at (6,3) size 112x13
+layer at (17,261) size 111x13
+  RenderBlock {DIV} at (6,3) size 112x13
+layer at (20,283) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (20,308) size 122x14
+  RenderBlock {DIV} at (6,3) size 123x15
+layer at (20,333) size 133x15
+  RenderBlock {DIV} at (7,3) size 134x16
+layer at (20,359) size 133x15
+  RenderBlock {DIV} at (7,3) size 134x16
+layer at (21,386) size 144x16
+  RenderBlock {DIV} at (7,3) size 146x17
+layer at (21,414) size 144x16
+  RenderBlock {DIV} at (7,3) size 146x17
+layer at (21,442) size 156x18
+  RenderBlock {DIV} at (8,3) size 156x19
+layer at (21,472) size 156x18
+  RenderBlock {DIV} at (8,3) size 156x19
+layer at (22,502) size 166x19
+  RenderBlock {DIV} at (8,4) size 168x19
+layer at (22,534) size 166x19
+  RenderBlock {DIV} at (8,4) size 168x19
+layer at (218,53) size 178x20
+  RenderBlock {DIV} at (9,4) size 178x21
+layer at (218,86) size 178x20
+  RenderBlock {DIV} at (9,4) size 178x21
+layer at (218,119) size 189x21
+  RenderBlock {DIV} at (9,4) size 190x22
+layer at (218,154) size 189x21
+  RenderBlock {DIV} at (9,4) size 190x22
+layer at (219,190) size 200x22
+  RenderBlock {DIV} at (10,4) size 201x23
+layer at (219,226) size 200x22
+  RenderBlock {DIV} at (10,4) size 201x23
+layer at (219,262) size 211x23
+  RenderBlock {DIV} at (10,4) size 212x24
+layer at (219,300) size 211x23
+  RenderBlock {DIV} at (10,4) size 212x24
+layer at (220,338) size 222x25
+  RenderBlock {DIV} at (11,5) size 223x25
+layer at (220,379) size 222x25
+  RenderBlock {DIV} at (11,5) size 223x25
+layer at (220,420) size 233x26
+  RenderBlock {DIV} at (11,5) size 235x27
+layer at (220,462) size 233x26
+  RenderBlock {DIV} at (11,5) size 235x27
+layer at (221,504) size 245x27
+  RenderBlock {DIV} at (12,5) size 245x28
+layer at (221,547) size 245x27
+  RenderBlock {DIV} at (12,5) size 245x28
+layer at (221,591) size 255x28
+  RenderBlock {DIV} at (12,5) size 257x29
+layer at (221,636) size 255x28
+  RenderBlock {DIV} at (12,5) size 257x29

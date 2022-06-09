@@ -52,13 +52,6 @@ const String& Session::webElementIdentifier()
     return webElementID;
 }
 
-const String& Session::shadowRootIdentifier()
-{
-    // The shadow root identifier is constant defined by the spec.
-    static NeverDestroyed<String> shadowRootID { "shadow-6066-11e4-a52e-4f735466cecf"_s };
-    return shadowRootID;
-}
-
 Session::Session(std::unique_ptr<SessionHost>&& host)
     : m_host(WTFMove(host))
     , m_scriptTimeout(defaultScriptTimeout)
@@ -188,11 +181,11 @@ std::optional<String> Session::pageLoadStrategyString() const
 
     switch (capabilities().pageLoadStrategy.value()) {
     case PageLoadStrategy::None:
-        return String("None"_s);
+        return String("None");
     case PageLoadStrategy::Normal:
-        return String("Normal"_s);
+        return String("Normal");
     case PageLoadStrategy::Eager:
-        return String("Eager"_s);
+        return String("Eager");
     }
 
     return std::nullopt;
@@ -228,7 +221,7 @@ void Session::handleUserPrompts(Function<void (CommandResult&&)>&& completionHan
             return;
         }
 
-        auto isShowingJavaScriptDialog = response.responseObject->getBoolean("result"_s);
+        auto isShowingJavaScriptDialog = response.responseObject->getBoolean("result");
         if (!isShowingJavaScriptDialog) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
@@ -359,13 +352,13 @@ void Session::getCurrentURL(Function<void (CommandResult&&)>&& completionHandler
                 return;
             }
 
-            auto browsingContext = response.responseObject->getObject("context"_s);
+            auto browsingContext = response.responseObject->getObject("context");
             if (!browsingContext) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
 
-            auto url = browsingContext->getString("url"_s);
+            auto url = browsingContext->getString("url");
             if (!url) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
@@ -648,7 +641,7 @@ void Session::newWindow(std::optional<String> typeHint, Function<void (CommandRe
         RefPtr<JSON::Object> parameters;
         if (typeHint) {
             parameters = JSON::Object::create();
-            parameters->setString("presentationHint"_s, typeHint.value() == "window"_s ? "Window"_s : "Tab"_s);
+            parameters->setString("presentationHint"_s, typeHint.value() == "window" ? "Window"_s : "Tab"_s);
         }
         m_host->sendCommandToBackend("createBrowsingContext"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
@@ -855,14 +848,14 @@ void Session::setWindowRect(std::optional<double> x, std::optional<double> y, st
         parameters->setString("handle"_s, m_toplevelBrowsingContext.value());
         if (x && y) {
             auto windowOrigin = JSON::Object::create();
-            windowOrigin->setDouble("x"_s, x.value());
-            windowOrigin->setDouble("y"_s, y.value());
+            windowOrigin->setDouble("x", x.value());
+            windowOrigin->setDouble("y", y.value());
             parameters->setObject("origin"_s, WTFMove(windowOrigin));
         }
         if (width && height) {
             auto windowSize = JSON::Object::create();
-            windowSize->setDouble("width"_s, width.value());
-            windowSize->setDouble("height"_s, height.value());
+            windowSize->setDouble("width", width.value());
+            windowSize->setDouble("height", height.value());
             parameters->setObject("size"_s, WTFMove(windowSize));
         }
         m_host->sendCommandToBackend("setWindowFrameOfBrowsingContext"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)] (SessionHost::CommandResponse&& response) mutable {
@@ -991,24 +984,6 @@ Ref<JSON::Object> Session::createElement(const String& elementID)
     return elementObject;
 }
 
-RefPtr<JSON::Object> Session::createShadowRoot(RefPtr<JSON::Value>&& value)
-{
-    if (!value)
-        return nullptr;
-
-    auto valueObject = value->asObject();
-    if (!valueObject)
-        return nullptr;
-
-    auto elementID = valueObject->getString("session-node-" + id());
-    if (!elementID)
-        return nullptr;
-
-    auto elementObject = JSON::Object::create();
-    elementObject->setString(shadowRootIdentifier(), elementID);
-    return elementObject;
-}
-
 RefPtr<JSON::Object> Session::extractElement(JSON::Value& value)
 {
     String elementID = extractElementID(value);
@@ -1100,14 +1075,14 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
     });
 }
 
-void Session::findElements(const String& strategy, const String& selector, FindElementsMode mode, const String& rootElementID, ElementIsShadowRoot isShadowRoot, Function<void(CommandResult&&)>&& completionHandler)
+void Session::findElements(const String& strategy, const String& selector, FindElementsMode mode, const String& rootElementID, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_currentBrowsingContext) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
         return;
     }
 
-    handleUserPrompts([this, protectedThis = Ref { *this }, strategy, selector, mode, rootElementID, isShadowRoot, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+    handleUserPrompts([this, protectedThis = Ref { *this }, strategy, selector, mode, rootElementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
             return;
@@ -1133,14 +1108,9 @@ void Session::findElements(const String& strategy, const String& selector, FindE
         if (m_implicitWaitTimeout)
             parameters->setDouble("callbackTimeout"_s, m_implicitWaitTimeout + 1000);
 
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, mode, isShadowRoot, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, mode, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
-                auto result = CommandResult::fail(WTFMove(response.responseObject));
-                if (isShadowRoot == ElementIsShadowRoot::Yes && result.errorCode() == CommandResult::ErrorCode::StaleElementReference) {
-                    completionHandler(CommandResult::fail(CommandResult::ErrorCode::DetachedShadowRoot));
-                    return;
-                }
-                completionHandler(WTFMove(result));
+                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
                 return;
             }
 
@@ -1232,56 +1202,6 @@ void Session::getActiveElement(Function<void (CommandResult&&)>&& completionHand
     });
 }
 
-void Session::getElementShadowRoot(const String& elementID, Function<void(CommandResult&&)>&& completionHandler)
-{
-    if (!m_currentBrowsingContext) {
-        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
-        return;
-    }
-
-    handleUserPrompts([this, protectedThis = Ref { *this }, elementID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-        if (result.isError()) {
-            completionHandler(WTFMove(result));
-            return;
-        }
-
-        auto arguments = JSON::Array::create();
-        arguments->pushString(createElement(elementID)->toJSONString());
-
-        auto parameters = JSON::Object::create();
-        parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-        if (m_currentBrowsingContext)
-            parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
-        parameters->setString("function"_s, "function(element) { return element.shadowRoot; }"_s);
-        parameters->setArray("arguments"_s, WTFMove(arguments));
-        m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [this, protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
-            if (response.isError || !response.responseObject) {
-                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
-                return;
-            }
-
-            auto valueString = response.responseObject->getString("result"_s);
-            if (!valueString) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
-                return;
-            }
-
-            auto resultValue = JSON::Value::parseJSON(valueString);
-            if (!resultValue) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
-                return;
-            }
-
-            auto elementObject = createShadowRoot(WTFMove(resultValue));
-            if (!elementObject) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchShadowRoot));
-                return;
-            }
-            completionHandler(CommandResult::success(WTFMove(elementObject)));
-        });
-    });
-}
-
 void Session::isElementSelected(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_currentBrowsingContext) {
@@ -1328,7 +1248,7 @@ void Session::isElementSelected(const String& elementID, Function<void (CommandR
             }
 
             auto booleanResult = resultValue->asString();
-            if (!booleanResult || booleanResult != "true"_s) {
+            if (!booleanResult || booleanResult != "true") {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
@@ -1358,7 +1278,7 @@ void Session::getElementText(const String& elementID, Function<void (CommandResu
         if (m_currentBrowsingContext)
             parameters->setString("frameHandle"_s, m_currentBrowsingContext.value());
         // FIXME: Add an atom to properly implement this instead of just using innerText.
-        parameters->setString("function"_s, StringImpl::createWithoutCopying(ElementTextJavaScript, sizeof(ElementTextJavaScript)));
+        parameters->setString("function"_s, "function(element) { return element.innerText.replace(/^[^\\S\\xa0]+|[^\\S\\xa0]+$/g, '') }"_s);
         parameters->setArray("arguments"_s, WTFMove(arguments));
         m_host->sendCommandToBackend("evaluateJavaScriptFunction"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
             if (response.isError || !response.responseObject) {
@@ -1717,12 +1637,12 @@ void Session::elementIsFileUpload(const String& elementID, Function<void (Comman
     auto arguments = JSON::Array::create();
     arguments->pushString(createElement(elementID)->toJSONString());
 
-    static constexpr auto isFileUploadScript =
+    static const char isFileUploadScript[] =
         "function(element) {"
         "    if (element.tagName.toLowerCase() === 'input' && element.type === 'file')"
         "        return { 'fileUpload': true, 'multiple': element.hasAttribute('multiple') };"
         "    return { 'fileUpload': false };"
-        "}"_s;
+        "}";
 
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
@@ -1829,7 +1749,7 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
                     if (!result.isError()) {
                         auto tagName = result.result()->asString();
                         if (!!tagName)
-                            isOptionElement = tagName == "option"_s;
+                            isOptionElement = tagName == "option";
                     }
 
                     Function<void (CommandResult&&)> continueAfterClickFunction = [this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
@@ -1855,7 +1775,7 @@ void Session::elementIsEditable(const String& elementID, Function<void (CommandR
     auto arguments = JSON::Array::create();
     arguments->pushString(createElement(elementID)->toJSONString());
 
-    static constexpr auto isEditableScript =
+    static const char isEditableScript[] =
         "function(element) {"
         "    if (element.disabled || element.readOnly)"
         "        return false;"
@@ -1870,7 +1790,7 @@ void Session::elementIsEditable(const String& elementID, Function<void (CommandR
         "        return true;"
         "    }"
         "    return false;"
-        "}"_s;
+        "}";
 
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
@@ -2170,7 +2090,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
             auto fileUploadType = parseElementIsFileUploadResult(result.result());
             if (!fileUploadType || capabilities().strictFileInteractability.value_or(false)) {
                 // FIXME: move this to an atom.
-                static constexpr auto focusScript =
+                static const char focusScript[] =
                     "function focus(element) {"
                     "    let doc = element.ownerDocument || element;"
                     "    let prevActiveElement = doc.activeElement;"
@@ -2186,7 +2106,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
                     "        element.setSelectionRange(element.value.length, element.value.length);"
                     "    if (elementRootNode.activeElement !== element)"
                     "        throw {name: 'ElementNotInteractable', message: 'Element is not focusable.'};"
-                    "}"_s;
+                    "}";
 
                 auto arguments = JSON::Array::create();
                 arguments->pushString(createElement(elementID)->toJSONString());
@@ -2506,13 +2426,13 @@ static Ref<JSON::Object> builtAutomationCookie(const Session::Cookie& cookie)
     auto cookieObject = JSON::Object::create();
     cookieObject->setString("name"_s, cookie.name);
     cookieObject->setString("value"_s, cookie.value);
-    cookieObject->setString("path"_s, cookie.path.value_or("/"_s));
+    cookieObject->setString("path"_s, cookie.path.value_or("/"));
     cookieObject->setString("domain"_s, cookie.domain.value_or(emptyString()));
     cookieObject->setBoolean("secure"_s, cookie.secure.value_or(false));
     cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.value_or(false));
     cookieObject->setBoolean("session"_s, !cookie.expiry);
     cookieObject->setDouble("expires"_s, cookie.expiry.value_or(0));
-    cookieObject->setString("sameSite"_s, cookie.sameSite.value_or("None"_s));
+    cookieObject->setString("sameSite"_s, cookie.sameSite.value_or("None"));
     return cookieObject;
 }
 
@@ -2691,38 +2611,38 @@ Session::InputSourceState& Session::inputSourceState(const String& id)
     return m_inputStateTable.ensure(id, [] { return InputSourceState(); }).iterator->value;
 }
 
-static ASCIILiteral automationSourceType(const InputSource& inputSource)
+static const char* automationSourceType(const InputSource& inputSource)
 {
     switch (inputSource.type) {
     case InputSource::Type::None:
-        return "Null"_s;
+        return "Null";
     case InputSource::Type::Pointer:
         switch (inputSource.pointerType.value_or(PointerType::Mouse)) {
         case PointerType::Mouse:
-            return "Mouse"_s;
+            return "Mouse";
         case PointerType::Touch:
-            return "Touch"_s;
+            return "Touch";
         case PointerType::Pen:
-            return "Pen"_s;
+            return "Pen";
         }
         break;
     case InputSource::Type::Key:
-        return "Keyboard"_s;
+        return "Keyboard";
     case InputSource::Type::Wheel:
-        return "Wheel"_s;
+        return "Wheel";
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static ASCIILiteral automationOriginType(PointerOrigin::Type type)
+static const char* automationOriginType(PointerOrigin::Type type)
 {
     switch (type) {
     case PointerOrigin::Type::Viewport:
-        return "Viewport"_s;
+        return "Viewport";
     case PointerOrigin::Type::Pointer:
-        return "Pointer"_s;
+        return "Pointer";
     case PointerOrigin::Type::Element:
-        return "Element"_s;
+        return "Element";
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

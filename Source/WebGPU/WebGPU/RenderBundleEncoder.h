@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,24 @@
 
 #pragma once
 
-#import "CommandsMixin.h"
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
-
-struct WGPURenderBundleEncoderImpl {
-};
 
 namespace WebGPU {
 
 class BindGroup;
 class Buffer;
-class Device;
 class RenderBundle;
 class RenderPipeline;
 
-// https://gpuweb.github.io/gpuweb/#gpurenderbundleencoder
-class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
+class RenderBundleEncoder : public RefCounted<RenderBundleEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleEncoder> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Device& device)
+    static Ref<RenderBundleEncoder> create()
     {
-        return adoptRef(*new RenderBundleEncoder(indirectCommandBuffer, device));
-    }
-    static Ref<RenderBundleEncoder> createInvalid(Device& device)
-    {
-        return adoptRef(*new RenderBundleEncoder(device));
+        return adoptRef(*new RenderBundleEncoder());
     }
 
     ~RenderBundleEncoder();
@@ -60,33 +51,22 @@ public:
     void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance);
     void drawIndexedIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void drawIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
-    Ref<RenderBundle> finish(const WGPURenderBundleDescriptor&);
-    void insertDebugMarker(String&& markerLabel);
+    Ref<RenderBundle> finish(const WGPURenderBundleDescriptor*);
+    void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();
-    void pushDebugGroup(String&& groupLabel);
+    void pushDebugGroup(const char* groupLabel);
     void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
     void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
     void setPipeline(const RenderPipeline&);
     void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
-    void setLabel(String&&);
-
-    Device& device() const { return m_device; }
-
-    bool isValid() const { return m_indirectCommandBuffer; }
+    void setLabel(const char*);
 
 private:
-    RenderBundleEncoder(id<MTLIndirectCommandBuffer>, Device&);
-    RenderBundleEncoder(Device&);
-
-    bool validatePopDebugGroup() const;
-
-    void makeInvalid() { m_indirectCommandBuffer = nil; }
-
-    id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
-
-    uint64_t m_debugGroupStackSize { 0 };
-
-    const Ref<Device> m_device;
+    RenderBundleEncoder();
 };
 
 } // namespace WebGPU
+
+struct WGPURenderBundleEncoderImpl {
+    Ref<WebGPU::RenderBundleEncoder> renderBundleEncoder;
+};

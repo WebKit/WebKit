@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,9 +53,9 @@ struct SVGPropertyTraits<SVGStitchOptions> {
 
     static SVGStitchOptions fromString(const String& value)
     {
-        if (value == "stitch"_s)
+        if (value == "stitch")
             return SVG_STITCHTYPE_STITCH;
-        if (value == "noStitch"_s)
+        if (value == "noStitch")
             return SVG_STITCHTYPE_NOSTITCH;
         return SVG_STITCHTYPE_UNKNOWN;
     }
@@ -82,9 +82,9 @@ struct SVGPropertyTraits<TurbulenceType> {
 
     static TurbulenceType fromString(const String& value)
     {
-        if (value == "fractalNoise"_s)
+        if (value == "fractalNoise")
             return TurbulenceType::FractalNoise;
-        if (value == "turbulence"_s)
+        if (value == "turbulence")
             return TurbulenceType::Turbulence;
         return TurbulenceType::Unknown;
     }
@@ -119,7 +119,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
-    RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder&) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedNumber> m_baseFrequencyX { SVGAnimatedNumber::create(this) };

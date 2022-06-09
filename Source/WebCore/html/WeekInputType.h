@@ -45,12 +45,12 @@ public:
     }
 
 private:
-    const AtomString& formControlType() const final;
-    DateComponentsType dateType() const final;
-    StepRange createStepRange(AnyStepHandling) const final;
-    std::optional<DateComponents> parseToDateComponents(StringView) const final;
-    std::optional<DateComponents> setMillisecondToDateComponents(double) const final;
-    void handleDOMActivateEvent(Event&) final;
+    const AtomString& formControlType() const override;
+    DateComponentsType dateType() const override;
+    StepRange createStepRange(AnyStepHandling) const override;
+    std::optional<DateComponents> parseToDateComponents(StringView) const override;
+    std::optional<DateComponents> setMillisecondToDateComponents(double) const override;
+    void handleDOMActivateEvent(Event&) override;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;
     String formatDateTimeFieldsState(const DateTimeFieldsState&) const final;
@@ -58,7 +58,5 @@ private:
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(WeekInputType, Type::Week)
 
 #endif // ENABLE(INPUT_TYPE_WEEK)

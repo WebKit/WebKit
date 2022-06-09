@@ -29,13 +29,11 @@ const element = document.getElementById("testElement");
 element.onanimationstart = function() {
     element.onanimationstart = null;
 
-    window.unthrottled = internals.animationsInterval;
-    window.throttled = unthrottled * 2;
-
+    shouldBe("internals.animationsInterval", "0.015");
     evalAndLog("internals.setLowPowerModeEnabled(true)");
-    shouldBe("internals.animationsInterval", "throttled");
+    shouldBe("internals.animationsInterval", "0.030");
     evalAndLog("internals.setLowPowerModeEnabled(false)");
-    shouldBe("internals.animationsInterval", "unthrottled");
+    shouldBe("internals.animationsInterval", "0.015");
     finishJSTest();
 };
 </script>

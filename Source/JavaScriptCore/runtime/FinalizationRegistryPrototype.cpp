@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo FinalizationRegistryPrototype::s_info = { "FinalizationRegistry"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryPrototype) };
+const ClassInfo FinalizationRegistryPrototype::s_info = { "FinalizationRegistry", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryRegister);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryUnregister);
@@ -40,11 +40,11 @@ static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryUnregister);
 void FinalizationRegistryPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     // We can't make this a property name because it's a resevered word in C++...
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(Identifier::fromString(vm, "register"_s), protoFuncFinalizationRegistryRegister, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(Identifier::fromString(vm, "unregister"_s), protoFuncFinalizationRegistryUnregister, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(Identifier::fromString(vm, "register"), protoFuncFinalizationRegistryRegister, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(Identifier::fromString(vm, "unregister"), protoFuncFinalizationRegistryUnregister, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
@@ -57,7 +57,7 @@ ALWAYS_INLINE static JSFinalizationRegistry* getFinalizationRegistry(VM& vm, JSG
         return nullptr;
     }
 
-    auto* group = jsDynamicCast<JSFinalizationRegistry*>(asObject(value));
+    auto* group = jsDynamicCast<JSFinalizationRegistry*>(vm, asObject(value));
     if (LIKELY(group))
         return group;
 
@@ -97,7 +97,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncFinalizationRegistryUnregister, (JSGlobalObjec
     auto* group = getFinalizationRegistry(vm, globalObject, callFrame->thisValue());
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (auto* token = jsDynamicCast<JSObject*>(callFrame->argument(0))) {
+    if (auto* token = jsDynamicCast<JSObject*>(vm, callFrame->argument(0))) {
         bool result = group->unregister(vm, token);
         return JSValue::encode(jsBoolean(result));
     }

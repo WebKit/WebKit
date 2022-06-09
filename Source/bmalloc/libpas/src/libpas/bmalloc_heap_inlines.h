@@ -29,7 +29,6 @@
 #include "pas_platform.h"
 
 PAS_IGNORE_WARNINGS_BEGIN("missing-field-initializers")
-PAS_IGNORE_WARNINGS_BEGIN("cast-align")
 
 #include "bmalloc_heap.h"
 #include "bmalloc_heap_config.h"
@@ -577,7 +576,6 @@ PAS_END_EXTERN_C;
 
 #endif /* PAS_ENABLE_BMALLOC */
 
-PAS_IGNORE_WARNINGS_END
 PAS_IGNORE_WARNINGS_END
 
 #endif /* BMALLOC_HEAP_INLINES_H */

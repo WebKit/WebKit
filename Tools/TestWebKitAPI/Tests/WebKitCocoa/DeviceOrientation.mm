@@ -317,7 +317,7 @@ TEST(DeviceOrientation, FireOrientationEventsRightAwayIfPermissionAlreadyGranted
     EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
 }
 
-static constexpr auto mainBytes = R"TESTRESOURCE(
+static const char* mainBytes = R"TESTRESOURCE(
 <script>
 
 function log(msg)
@@ -332,12 +332,12 @@ function requestPermission() {
 }
 
 </script>
-)TESTRESOURCE"_s;
+)TESTRESOURCE";
 
 TEST(DeviceOrientation, PermissionSecureContextCheck)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/"_s, { mainBytes } }
+        { "/", { mainBytes } }
     });
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().websiteDataStore = [WKWebsiteDataStore defaultDataStore];
@@ -395,23 +395,23 @@ Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
 }
 @end
 
-static constexpr auto mainFrameText = R"DOCDOCDOC(
+static const char* mainFrameText = R"DOCDOCDOC(
 <html><body>
 <iframe src='https://127.0.0.1:9091/frame' allow='accelerometer:https://127.0.0.1:9091;gyroscope:https://127.0.0.1:9091;magnetometer:https://127.0.0.1:9091'></iframe>
 </body></html>
-)DOCDOCDOC"_s;
-static constexpr auto frameText = R"DOCDOCDOC(
+)DOCDOCDOC";
+static const char* frameText = R"DOCDOCDOC(
 <html><body></body></html>
-)DOCDOCDOC"_s;
+)DOCDOCDOC";
 
 TEST(WebKit, DeviceOrientationPermissionInIFrame)
 {
     TestWebKitAPI::HTTPServer server1({
-        { "/"_s, { mainFrameText } }
+        { "/", { mainFrameText } }
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9090);
 
     TestWebKitAPI::HTTPServer server2({
-        { "/frame"_s, { frameText } },
+        { "/frame", { frameText } },
     }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

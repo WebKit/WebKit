@@ -26,7 +26,7 @@
 #import "config.h"
 #import "_WKHitTestResultInternal.h"
 
-#if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+#if PLATFORM(MAC)
 
 #import <WebCore/WebCoreObjCExtras.h>
 

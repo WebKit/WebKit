@@ -40,7 +40,6 @@
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include <variant>
 #include <wtf/Function.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 #endif
 
 namespace IPC {
@@ -64,11 +63,10 @@ public:
     };
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-    explicit Attachment(UnixFileDescriptor&&, size_t);
-    explicit Attachment(UnixFileDescriptor&&);
-
     Attachment(Attachment&&);
     Attachment& operator=(Attachment&&);
+    Attachment(int fileDescriptor, size_t);
+    Attachment(int fileDescriptor);
     ~Attachment();
 
     using SocketDescriptor = int;
@@ -86,12 +84,10 @@ public:
     Type type() const { return m_type; }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-    bool isNull() const { return !m_fd; }
     size_t size() const { return m_size; }
 
-    const UnixFileDescriptor& fd() const { return m_fd; }
-    UnixFileDescriptor release() { return std::exchange(m_fd, UnixFileDescriptor { }); }
-
+    int releaseFileDescriptor() { int temp = m_fileDescriptor; m_fileDescriptor = -1; return temp; }
+    int fileDescriptor() const { return m_fileDescriptor; }
     const CustomWriter& customWriter() const { return m_customWriter; }
 #elif OS(DARWIN)
     void release();
@@ -110,7 +106,7 @@ private:
     Type m_type;
 
 #if USE(UNIX_DOMAIN_SOCKETS)
-    UnixFileDescriptor m_fd;
+    int m_fileDescriptor { -1 };
     size_t m_size;
     CustomWriter m_customWriter;
 #elif OS(DARWIN)

@@ -276,19 +276,11 @@ float ScrollingEffectsController::adjustedScrollDestination(ScrollEventAxis axis
 #if ENABLE(KINETIC_SCROLLING)
 bool ScrollingEffectsController::processWheelEventForKineticScrolling(const PlatformWheelEvent& event)
 {
-    if (is<ScrollAnimationKinetic>(m_currentAnimation.get())) {
-        auto& kineticAnimation = downcast<ScrollAnimationKinetic>(*m_currentAnimation);
-
-        m_previousKineticAnimationInfo.startTime = kineticAnimation.startTime();
-        m_previousKineticAnimationInfo.initialOffset = kineticAnimation.initialOffset();
-        m_previousKineticAnimationInfo.initialVelocity = kineticAnimation.initialVelocity();
-
+    if (is<ScrollAnimationKinetic>(m_currentAnimation.get()))
         m_currentAnimation->stop();
-    }
 
     if (!event.hasPreciseScrollingDeltas()) {
         m_scrollHistory.clear();
-        m_previousKineticAnimationInfo.initialVelocity = FloatSize();
         return false;
     }
 
@@ -302,7 +294,6 @@ bool ScrollingEffectsController::processWheelEventForKineticScrolling(const Plat
     if (m_currentAnimation && !is<ScrollAnimationKinetic>(m_currentAnimation.get())) {
         m_currentAnimation->stop();
         m_currentAnimation = nullptr;
-        m_previousKineticAnimationInfo.initialVelocity = FloatSize();
     }
 
     if (usesScrollSnap())
@@ -315,20 +306,13 @@ bool ScrollingEffectsController::processWheelEventForKineticScrolling(const Plat
     while (!m_scrollHistory.isEmpty())
         kineticAnimation.appendToScrollHistory(m_scrollHistory.takeFirst());
 
-    FloatSize previousVelocity;
-    if (!m_previousKineticAnimationInfo.initialVelocity.isZero()) {
-        previousVelocity = kineticAnimation.accumulateVelocityFromPreviousGesture(m_previousKineticAnimationInfo.startTime,
-            m_previousKineticAnimationInfo.initialOffset, m_previousKineticAnimationInfo.initialVelocity);
-        m_previousKineticAnimationInfo.initialVelocity = FloatSize();
-    }
-
     if (event.isEndOfNonMomentumScroll()) {
-        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), kineticAnimation.computeVelocity(), previousVelocity, m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
+        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), kineticAnimation.computeVelocity(), m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
         return true;
     }
     if (event.isTransitioningToMomentumScroll()) {
         kineticAnimation.clearScrollHistory();
-        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), event.swipeVelocity(), previousVelocity, m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
+        kineticAnimation.startAnimatedScrollWithInitialVelocity(m_client.scrollOffset(), event.swipeVelocity(), m_client.allowsHorizontalScrolling(), m_client.allowsVerticalScrolling());
         return true;
     }
 

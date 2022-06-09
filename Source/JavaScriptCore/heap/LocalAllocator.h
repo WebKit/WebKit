@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ class LocalAllocator : public BasicRawSentinelNode<LocalAllocator> {
     
 public:
     LocalAllocator(BlockDirectory*);
-    JS_EXPORT_PRIVATE ~LocalAllocator();
+    ~LocalAllocator();
     
     void* allocate(Heap&, GCDeferralContext*, AllocationFailureMode);
     
@@ -56,9 +56,7 @@ public:
     static ptrdiff_t offsetOfCellSize();
     
     bool isFreeListedCell(const void*) const;
-
-    BlockDirectory& directory() const { return *m_directory; }
-
+    
 private:
     friend class BlockDirectory;
     

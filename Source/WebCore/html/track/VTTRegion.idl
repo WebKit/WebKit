@@ -29,7 +29,7 @@
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface VTTRegion {
-    [CallWith=CurrentScriptExecutionContext] constructor();
+    [CallWith=ScriptExecutionContext] constructor();
 
     readonly attribute TextTrack track;
 

@@ -21,5 +21,6 @@ Object.defineProperty(timeZone, "toString", {
   },
 });
 
-assert.throws(TypeError, () => timeZone.id);
+const descriptor = Object.getOwnPropertyDescriptor(Temporal.TimeZone.prototype, "id");
+assert.throws(TypeError, () => descriptor.get.call(timeZone));
 assert.compareArray(actual, expected);

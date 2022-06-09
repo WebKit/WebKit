@@ -67,7 +67,6 @@
 #include <WebCore/TextRecognitionResult.h>
 #endif
 
-OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
@@ -164,6 +163,10 @@ class WebPopupMenuProxy;
 class WebProcessProxy;
 
 enum class ContinueUnsafeLoad : bool { No, Yes };
+
+#if ENABLE(IMAGE_ANALYSIS)
+enum class ImageAnalysisType : uint8_t { Text, VisualSearch };
+#endif
 
 struct FocusedElementInformation;
 struct FrameInfoData;
@@ -285,7 +288,7 @@ public:
     
 #if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(GTK)
-    virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&& dragImage, WebCore::IntPoint&& dragImageHotspot) = 0;
+    virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&& dragImage) = 0;
 #else
     virtual void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle&) { }
 #endif
@@ -353,7 +356,6 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    virtual void gpuProcessDidFinishLaunching() { }
     virtual void gpuProcessDidExit() { }
 #endif
 
@@ -385,7 +387,7 @@ public:
     virtual RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) = 0;
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if PLATFORM(COCOA)
     virtual Ref<WebCore::ValidationBubble> createValidationBubble(const String& message, const WebCore::ValidationBubble::Settings&) = 0;
 #endif
 
@@ -413,7 +415,6 @@ public:
 
 #if USE(DICTATION_ALTERNATIVES)
     virtual WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) = 0;
-    virtual void replaceDictationAlternatives(NSTextAlternatives *, WebCore::DictationContext) = 0;
     virtual void removeDictationAlternatives(WebCore::DictationContext) = 0;
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) = 0;
     virtual Vector<String> dictationAlternatives(WebCore::DictationContext) = 0;
@@ -476,10 +477,10 @@ public:
     virtual void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel) = 0;
     virtual double minimumZoomScale() const = 0;
     virtual WebCore::FloatRect documentRect() const = 0;
-    virtual void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) = 0;
-    virtual void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) = 0;
-    virtual void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) = 0;
-    virtual void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) = 0;
+    virtual void scrollingNodeScrollViewWillStartPanGesture() = 0;
+    virtual void scrollingNodeScrollViewDidScroll() = 0;
+    virtual void scrollingNodeScrollWillStartScroll() = 0;
+    virtual void scrollingNodeScrollDidEndScroll() = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
 
     virtual void showInspectorHighlight(const WebCore::InspectorOverlay::Highlight&) = 0;
@@ -499,14 +500,7 @@ public:
 
     virtual WebCore::Color contentViewBackgroundColor() = 0;
     virtual String sceneID() = 0;
-
-    virtual void beginTextRecognitionForFullscreenVideo(const ShareableBitmap::Handle&, AVPlayerViewController *) = 0;
-    virtual void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) = 0;
 #endif
-    virtual bool isTextRecognitionInFullscreenVideoEnabled() const { return false; }
-
-    virtual void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle&, WebCore::FloatRect) { }
-    virtual void cancelTextRecognitionForVideoInElementFullscreen() { }
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
@@ -554,11 +548,9 @@ public:
     virtual WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const { return WebCore::DataOwnerType::Undefined; }
 #endif
 
-    virtual bool hasResizableWindows() const { return false; }
-
 #if ENABLE(IMAGE_ANALYSIS)
-    virtual void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
-    virtual void computeHasVisualSearchResults(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
+    virtual void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion) { completion({ }); }
+    virtual void computeHasImageAnalysisResults(const URL&, ShareableBitmap&, ImageAnalysisType, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -573,14 +565,8 @@ public:
 
     virtual void microphoneCaptureWillChange() { }
     virtual void cameraCaptureWillChange() { }
-    virtual void displayCaptureWillChange() { }
-    virtual void displayCaptureSurfacesWillChange() { }
-    virtual void systemAudioCaptureWillChange() { }
     virtual void microphoneCaptureChanged() { }
     virtual void cameraCaptureChanged() { }
-    virtual void displayCaptureChanged() { }
-    virtual void displayCaptureSurfacesChanged() { }
-    virtual void systemAudioCaptureChanged() { }
 
     virtual void videoControlsManagerDidChange() { }
 
@@ -621,9 +607,7 @@ public:
     virtual void didInsertAttachment(API::Attachment&, const String& source) { }
     virtual void didRemoveAttachment(API::Attachment&) { }
     virtual void didInvalidateDataForAttachment(API::Attachment&) { }
-#if PLATFORM(IOS_FAMILY)
     virtual void writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&&) { }
-#endif
 #if PLATFORM(COCOA)
     virtual NSFileWrapper *allocFileWrapperInstance() const { return nullptr; }
     virtual NSSet *serializableFileWrapperClasses() const { return nullptr; }
@@ -653,15 +637,6 @@ public:
 
 #if ENABLE(DATA_DETECTION)
     virtual void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) { }
-#endif
-
-#if USE(GRAPHICS_LAYER_WC)
-    virtual bool usesOffscreenRendering() const = 0;
-#endif
-
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    virtual void didEnterFullscreen() = 0;
-    virtual void didExitFullscreen() = 0;
 #endif
 };
 

@@ -118,7 +118,7 @@ public:
     void dumpInContext(PrintStream&, DumpContext*) const;
     
 private:
-    const StringImpl* tryGetStringImpl() const;
+    const StringImpl* tryGetStringImpl(VM&) const;
     
     union {
         FrozenValue* value;

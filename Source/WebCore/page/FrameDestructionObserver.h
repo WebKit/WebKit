@@ -38,7 +38,7 @@ public:
     WEBCORE_EXPORT virtual void frameDestroyed();
     WEBCORE_EXPORT virtual void willDetachPage();
 
-    inline Frame* frame() const; // Defined in FrameDestructionObserverInlines.h.
+    WEBCORE_EXPORT Frame* frame() const;
 
 protected:
     WEBCORE_EXPORT virtual ~FrameDestructionObserver();

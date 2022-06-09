@@ -28,7 +28,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SWContextManager.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThreadProxy.h"
@@ -62,7 +61,6 @@ void ServiceWorkerInspectorProxy::connectToWorker(FrontendChannel& channel)
 {
     m_channel = &channel;
 
-    SWContextManager::singleton().setAsInspected(m_serviceWorkerThreadProxy.identifier(), true);
     m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend();
     });
@@ -73,7 +71,6 @@ void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
     ASSERT_UNUSED(channel, &channel == m_channel);
     m_channel = nullptr;
 
-    SWContextManager::singleton().setAsInspected(m_serviceWorkerThreadProxy.identifier(), false);
     m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().disconnectFrontend(DisconnectReason::InspectorDestroyed);
 
@@ -83,19 +80,19 @@ void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
     });
 }
 
-void ServiceWorkerInspectorProxy::sendMessageToWorker(String&& message)
+void ServiceWorkerInspectorProxy::sendMessageToWorker(const String& message)
 {
-    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([message = WTFMove(message).isolatedCopy()] (ScriptExecutionContext& context) {
+    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().dispatchMessageFromFrontend(message);
     });
 }
 
-void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(String&& message)
+void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(const String& message)
 {
     if (!m_channel)
         return;
 
-    m_channel->sendMessageToFrontend(WTFMove(message));
+    m_channel->sendMessageToFrontend(message);
 }
 
 } // namespace WebCore

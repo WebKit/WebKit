@@ -1,4 +1,0 @@
-This test loads a SW in a first-party context and gets the SW's (randomly) generated ID. It does the same thing for the SW but in a third-party context and then confirms that the IDs are different.
-
-PASS ServiceWorker's getRegistration() is partitioned
-

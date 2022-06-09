@@ -29,7 +29,6 @@
 #include <array>
 #include <cmath>
 #include <tuple>
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -166,15 +165,7 @@ constexpr ColorComponents<T, N> perComponentMin(const ColorComponents<T, N>& a, 
 template<typename T, size_t N>
 constexpr bool operator==(const ColorComponents<T, N>& a, const ColorComponents<T, N>& b)
 {
-    for (size_t i = 0; i < N; ++i) {
-        if (a[i] == b[i])
-            continue;
-        if (isNaNConstExpr(a[i]) && isNaNConstExpr(b[i]))
-            continue;
-        return false;
-    }
-
-    return true;
+    return a.components == b.components;
 }
 
 template<typename T, size_t N>

@@ -33,7 +33,6 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/SocketConnection.h>
 
-typedef struct _GSocketAddress GSocketAddress;
 typedef struct _GSocketConnection GSocketConnection;
 typedef struct _GSocketService GSocketService;
 
@@ -44,9 +43,8 @@ public:
     JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
     ~RemoteInspectorServer();
 
-    JS_EXPORT_PRIVATE bool start(GRefPtr<GSocketAddress>&&);
+    JS_EXPORT_PRIVATE bool start(const char* address, unsigned port);
     bool isRunning() const { return !!m_service; }
-    uint16_t port() const { return m_port; }
 
 private:
     static gboolean incomingConnectionCallback(GSocketService*, GSocketConnection*, GObject*, RemoteInspectorServer*);
@@ -63,7 +61,6 @@ private:
     void startAutomationSession(SocketConnection&, const char* sessionID, const RemoteInspector::Client::SessionCapabilities&);
 
     GRefPtr<GSocketService> m_service;
-    uint16_t m_port { 0 };
     HashSet<RefPtr<SocketConnection>> m_connections;
     HashMap<SocketConnection*, uint64_t> m_remoteInspectorConnectionToIDMap;
     HashMap<uint64_t, SocketConnection*> m_idToRemoteInspectorConnectionMap;

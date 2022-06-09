@@ -42,7 +42,7 @@ function next(value)
         var nextResult = @argumentCount() === 0 ? nextMethod.@call(syncIterator) : nextMethod.@call(syncIterator, value);
         var nextDone = !!nextResult.done;
         var nextValue = nextResult.value;
-        @resolveWithoutPromiseForAsyncAwait(nextValue,
+        @resolveWithoutPromise(nextValue,
             function (result) { @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value: result, done: nextDone }); },
             function (error) { @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error); });
     } catch (e) {
@@ -89,7 +89,7 @@ function return(value)
 
         var resultDone = !!returnResult.done;
         var resultValue = returnResult.value;
-        @resolveWithoutPromiseForAsyncAwait(resultValue,
+        @resolveWithoutPromise(resultValue,
             function (result) { @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value: result, done: resultDone }); },
             function (error) { @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error); });
     } catch (e) {
@@ -136,7 +136,7 @@ function throw(exception)
         
         var throwDone = !!throwResult.done;
         var throwValue = throwResult.value;
-        @resolveWithoutPromiseForAsyncAwait(throwValue,
+        @resolveWithoutPromise(throwValue,
             function (result) { @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, { value: result, done: throwDone }); },
             function (error) { @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error); });
     } catch (e) {

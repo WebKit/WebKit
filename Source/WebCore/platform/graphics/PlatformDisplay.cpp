@@ -84,10 +84,6 @@
 #include <wtf/glib/GUniquePtr.h>
 #endif
 
-#if USE(GLIB)
-#include <wtf/glib/GRefPtr.h>
-#endif
-
 namespace WebCore {
 
 std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
@@ -96,13 +92,24 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
     if (gtk_init_check(nullptr, nullptr)) {
         GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
 #if PLATFORM(X11)
-        if (GDK_IS_X11_DISPLAY(display))
-            return PlatformDisplayX11::create(display);
+        if (GDK_IS_X11_DISPLAY(display)) {
+            auto platformDisplay = PlatformDisplayX11::create(GDK_DISPLAY_XDISPLAY(display));
+#if USE(ATSPI) && USE(GTK4)
+            if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(display), "-gtk-atspi-bus-address")))
+                platformDisplay->m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
 #endif
-
+            return platformDisplay;
+        }
+#endif
 #if PLATFORM(WAYLAND)
-        if (GDK_IS_WAYLAND_DISPLAY(display))
-            return PlatformDisplayWayland::create(display);
+        if (GDK_IS_WAYLAND_DISPLAY(display)) {
+            auto platformDisplay = PlatformDisplayWayland::create(gdk_wayland_display_get_wl_display(display));
+#if USE(ATSPI) && USE(GTK4)
+            if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(display), "-gtk-atspi-bus-address")))
+                platformDisplay->m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
+#endif
+            return platformDisplay;
+        }
 #endif
     }
 #endif // PLATFORM(GTK)
@@ -163,49 +170,18 @@ void PlatformDisplay::setSharedDisplayForCompositing(PlatformDisplay& display)
     s_sharedDisplayForCompositing = &display;
 }
 
-PlatformDisplay::PlatformDisplay()
-#if USE(EGL)
-    : m_eglDisplay(EGL_NO_DISPLAY)
-#endif
-{
-}
-
-#if PLATFORM(GTK)
-PlatformDisplay::PlatformDisplay(GdkDisplay* display)
-    : m_sharedDisplay(display)
+PlatformDisplay::PlatformDisplay(NativeDisplayOwned displayOwned)
+    : m_nativeDisplayOwned(displayOwned)
 #if USE(EGL)
     , m_eglDisplay(EGL_NO_DISPLAY)
 #endif
 {
-    if (m_sharedDisplay) {
-#if USE(ATSPI) && USE(GTK4)
-        if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(m_sharedDisplay.get()), "-gtk-atspi-bus-address")))
-            m_accessibilityBusAddress = String::fromUTF8(atspiBusAddress);
-#endif
-
-        g_signal_connect(m_sharedDisplay.get(), "closed", G_CALLBACK(+[](GdkDisplay*, gboolean, gpointer userData) {
-            auto& platformDisplay = *static_cast<PlatformDisplay*>(userData);
-            platformDisplay.sharedDisplayDidClose();
-        }), this);
-    }
 }
-
-void PlatformDisplay::sharedDisplayDidClose()
-{
-#if USE(EGL) || USE(GLX)
-    clearSharingGLContext();
-#endif
-}
-#endif
 
 PlatformDisplay::~PlatformDisplay()
 {
 #if USE(EGL) && !PLATFORM(WIN)
     ASSERT(m_eglDisplay == EGL_NO_DISPLAY);
-#endif
-#if PLATFORM(GTK)
-    if (m_sharedDisplay)
-        g_signal_handlers_disconnect_by_data(m_sharedDisplay.get(), this);
 #endif
     if (s_sharedDisplayForCompositing == this)
         s_sharedDisplayForCompositing = nullptr;
@@ -217,11 +193,6 @@ GLContext* PlatformDisplay::sharingGLContext()
     if (!m_sharingGLContext)
         m_sharingGLContext = GLContext::createSharingContext(*this);
     return m_sharingGLContext.get();
-}
-
-void PlatformDisplay::clearSharingGLContext()
-{
-    m_sharingGLContext = nullptr;
 }
 #endif
 
@@ -269,20 +240,6 @@ void PlatformDisplay::initializeEGLDisplay()
     m_eglMajorVersion = majorVersion;
     m_eglMinorVersion = minorVersion;
 
-    {
-        const char* extensionsString = eglQueryString(m_eglDisplay, EGL_EXTENSIONS);
-        auto displayExtensions = StringView::fromLatin1(extensionsString).split(' ');
-        auto findExtension =
-            [&](auto extensionName) {
-                return std::any_of(displayExtensions.begin(), displayExtensions.end(),
-                    [&](auto extensionEntry) {
-                        return extensionEntry == extensionName;
-                    });
-            };
-
-        m_eglExtensions.EXT_image_dma_buf_import_modifiers = findExtension("EGL_EXT_image_dma_buf_import_modifiers"_s);
-    }
-
     eglDisplays().add(this);
 
 #if !PLATFORM(WIN)
@@ -313,11 +270,10 @@ void PlatformDisplay::terminateEGLDisplay()
     m_gstGLDisplay = nullptr;
     m_gstGLContext = nullptr;
 #endif
-    clearSharingGLContext();
+    m_sharingGLContext = nullptr;
     ASSERT(m_eglDisplayInitialized);
     if (m_eglDisplay == EGL_NO_DISPLAY)
         return;
-    eglMakeCurrent(m_eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     eglTerminate(m_eglDisplay);
     m_eglDisplay = EGL_NO_DISPLAY;
 }

@@ -347,8 +347,8 @@ String StructureShape::propertyHash()
     builder.append(m_constructorName);
     builder.append(':');
     for (auto& key : m_fields) {
-        // Ensure that hash({"foo:", "bar"}) != hash({"foo", ":bar"}) because we're using colons as a separator and colons are legal characters in field names in JS.
-        String property = makeStringByReplacingAll(key.get(), ':', "\\:"_s);
+        String property = key.get();
+        property.replace(":", "\\:"); // Ensure that hash({"foo:", "bar"}) != hash({"foo", ":bar"}) because we're using colons as a separator and colons are legal characters in field names in JS.
         builder.append(property);
     }
 
@@ -386,7 +386,7 @@ String StructureShape::leastCommonAncestor(const Vector<Ref<StructureShape>>& sh
             }
         }
 
-        if (origin->m_constructorName == "Object"_s)
+        if (origin->m_constructorName == "Object")
             break;
     }
 

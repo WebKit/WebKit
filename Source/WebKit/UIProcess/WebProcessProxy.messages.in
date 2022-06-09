@@ -34,7 +34,11 @@ messages -> WebProcessProxy LegacyReceiver {
     GetNetworkProcessConnection() -> (struct WebKit::NetworkProcessConnectionInfo connectionInfo) Synchronous
 
 #if ENABLE(GPU_PROCESS)
-    CreateGPUProcessConnection(IPC::Attachment connectionIdentifier, struct WebKit::GPUProcessConnectionParameters parameters)
+    GetGPUProcessConnection(struct WebKit::GPUProcessConnectionParameters parameters) -> (struct WebKit::GPUProcessConnectionInfo connectionInfo) Synchronous
+#endif
+
+#if ENABLE(WEB_AUTHN)
+    GetWebAuthnProcessConnection() -> (struct WebKit::WebAuthnProcessConnectionInfo connectionInfo) Synchronous
 #endif
 
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
@@ -68,7 +72,7 @@ messages -> WebProcessProxy LegacyReceiver {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebContext(struct WebKit::UserMessage userMessage)
-    SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
+    SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
 #endif
 
     DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)
@@ -87,6 +91,4 @@ messages -> WebProcessProxy LegacyReceiver {
     SetCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode mode)
     SetCaptionLanguage(String language)
 #endif
-
-    GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
 }

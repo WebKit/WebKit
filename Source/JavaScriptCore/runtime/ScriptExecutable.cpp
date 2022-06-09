@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #include "Debugger.h"
 #include "EvalCodeBlock.h"
 #include "FunctionCodeBlock.h"
-#include "FunctionExecutableInlines.h"
 #include "GlobalExecutable.h"
 #include "IsoCellSetInlines.h"
 #include "JIT.h"
@@ -45,7 +44,7 @@
 
 namespace JSC {
 
-const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable"_s, &ExecutableBase::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ScriptExecutable) };
+const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ScriptExecutable) };
 
 ScriptExecutable::ScriptExecutable(Structure* structure, VM& vm, const SourceCode& source, LexicalScopeFeatures lexicalScopeFeatures, DerivedContextType derivedContextType, bool isInArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType evalContextType, Intrinsic intrinsic)
     : ExecutableBase(vm, structure)
@@ -87,20 +86,20 @@ void ScriptExecutable::clearCode(IsoCellSet& clearableCodeSet)
     }
     case EvalExecutableType: {
         EvalExecutable* executable = static_cast<EvalExecutable*>(this);
-        executable->m_codeBlock.clear();
-        executable->m_unlinkedCodeBlock.clear();
+        executable->m_evalCodeBlock.clear();
+        executable->m_unlinkedEvalCodeBlock.clear();
         break;
     }
     case ProgramExecutableType: {
         ProgramExecutable* executable = static_cast<ProgramExecutable*>(this);
-        executable->m_codeBlock.clear();
-        executable->m_unlinkedCodeBlock.clear();
+        executable->m_programCodeBlock.clear();
+        executable->m_unlinkedProgramCodeBlock.clear();
         break;
     }
     case ModuleProgramExecutableType: {
         ModuleProgramExecutable* executable = static_cast<ModuleProgramExecutable*>(this);
-        executable->m_codeBlock.clear();
-        executable->m_unlinkedCodeBlock.clear();
+        executable->m_moduleProgramCodeBlock.clear();
+        executable->m_unlinkedModuleProgramCodeBlock.clear();
         executable->m_moduleEnvironmentSymbolTable.clear();
         break;
     }
@@ -109,7 +108,7 @@ void ScriptExecutable::clearCode(IsoCellSet& clearableCodeSet)
         break;
     }
 
-    ASSERT(&Heap::ScriptExecutableSpaceAndSets::clearableCodeSetFor(*subspace()) == &clearableCodeSet);
+    ASSERT(&VM::SpaceAndSet::setFor(*subspace()) == &clearableCodeSet);
     clearableCodeSet.remove(this);
 }
 
@@ -132,7 +131,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         
         ASSERT(kind == CodeForCall);
         
-        oldCodeBlock = executable->replaceCodeBlockWith(vm, codeBlock);
+        oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_programCodeBlock.get());
+        executable->m_programCodeBlock.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
         break;
     }
 
@@ -142,7 +142,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
 
         ASSERT(kind == CodeForCall);
 
-        oldCodeBlock = executable->replaceCodeBlockWith(vm, codeBlock);
+        oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_moduleProgramCodeBlock.get());
+        executable->m_moduleProgramCodeBlock.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
         break;
     }
 
@@ -152,7 +153,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         
         ASSERT(kind == CodeForCall);
         
-        oldCodeBlock = executable->replaceCodeBlockWith(vm, codeBlock);
+        oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_evalCodeBlock.get());
+        executable->m_evalCodeBlock.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
         break;
     }
         
@@ -160,7 +162,16 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
         FunctionCodeBlock* codeBlock = static_cast<FunctionCodeBlock*>(genericCodeBlock);
         
-        oldCodeBlock = executable->replaceCodeBlockWith(vm, kind, codeBlock);
+        switch (kind) {
+        case CodeForCall:
+            oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_codeBlockForCall.get());
+            executable->m_codeBlockForCall.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
+            break;
+        case CodeForConstruct:
+            oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_codeBlockForConstruct.get());
+            executable->m_codeBlockForConstruct.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
+            break;
+        }
         break;
     }
     }
@@ -176,8 +187,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         break;
     }
 
-    auto& clearableCodeSet = Heap::ScriptExecutableSpaceAndSets::clearableCodeSetFor(*subspace());
-    if (hasClearableCode())
+    auto& clearableCodeSet = VM::SpaceAndSet::setFor(*subspace());
+    if (hasClearableCode(vm))
         clearableCodeSet.add(this);
     else
         clearableCodeSet.remove(this);
@@ -204,7 +215,7 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     vm.writeBarrier(this);
 }
 
-bool ScriptExecutable::hasClearableCode() const
+bool ScriptExecutable::hasClearableCode(VM& vm) const
 {
     if (m_jitCodeForCall
         || m_jitCodeForConstruct
@@ -212,25 +223,25 @@ bool ScriptExecutable::hasClearableCode() const
         || m_jitCodeForConstructWithArityCheck)
         return true;
 
-    if (structure()->classInfoForCells() == FunctionExecutable::info()) {
+    if (structure(vm)->classInfo() == FunctionExecutable::info()) {
         auto* executable = static_cast<const FunctionExecutable*>(this);
-        if (executable->eitherCodeBlock())
+        if (executable->m_codeBlockForCall || executable->m_codeBlockForConstruct)
             return true;
 
-    } else if (structure()->classInfoForCells() == EvalExecutable::info()) {
+    } else if (structure(vm)->classInfo() == EvalExecutable::info()) {
         auto* executable = static_cast<const EvalExecutable*>(this);
-        if (executable->m_codeBlock || executable->m_unlinkedCodeBlock)
+        if (executable->m_evalCodeBlock || executable->m_unlinkedEvalCodeBlock)
             return true;
 
-    } else if (structure()->classInfoForCells() == ProgramExecutable::info()) {
+    } else if (structure(vm)->classInfo() == ProgramExecutable::info()) {
         auto* executable = static_cast<const ProgramExecutable*>(this);
-        if (executable->m_codeBlock || executable->m_unlinkedCodeBlock)
+        if (executable->m_programCodeBlock || executable->m_unlinkedProgramCodeBlock)
             return true;
 
-    } else if (structure()->classInfoForCells() == ModuleProgramExecutable::info()) {
+    } else if (structure(vm)->classInfo() == ModuleProgramExecutable::info()) {
         auto* executable = static_cast<const ModuleProgramExecutable*>(this);
-        if (executable->m_codeBlock
-            || executable->m_unlinkedCodeBlock
+        if (executable->m_moduleProgramCodeBlock
+            || executable->m_unlinkedModuleProgramCodeBlock
             || executable->m_moduleEnvironmentSymbolTable)
             return true;
     }
@@ -245,33 +256,33 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(CodeSpecializationKind kind, JSFunc
     ASSERT(vm.heap.isDeferred());
     ASSERT(endColumn() != UINT_MAX);
 
-    JSGlobalObject* globalObject = scope->globalObject();
+    JSGlobalObject* globalObject = scope->globalObject(vm);
 
-    if (classInfo() == EvalExecutable::info()) {
+    if (classInfo(vm) == EvalExecutable::info()) {
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
-        RELEASE_ASSERT(!executable->m_codeBlock);
+        RELEASE_ASSERT(!executable->m_evalCodeBlock);
         RELEASE_ASSERT(!function);
-        RELEASE_AND_RETURN(throwScope, EvalCodeBlock::create(vm, executable, executable->unlinkedCodeBlock(), scope));
+        RELEASE_AND_RETURN(throwScope, EvalCodeBlock::create(vm, executable, executable->m_unlinkedEvalCodeBlock.get(), scope));
     }
 
-    if (classInfo() == ProgramExecutable::info()) {
+    if (classInfo(vm) == ProgramExecutable::info()) {
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
-        RELEASE_ASSERT(!executable->m_codeBlock);
+        RELEASE_ASSERT(!executable->m_programCodeBlock);
         RELEASE_ASSERT(!function);
-        RELEASE_AND_RETURN(throwScope, ProgramCodeBlock::create(vm, executable, executable->unlinkedCodeBlock(), scope));
+        RELEASE_AND_RETURN(throwScope, ProgramCodeBlock::create(vm, executable, executable->m_unlinkedProgramCodeBlock.get(), scope));
     }
 
-    if (classInfo() == ModuleProgramExecutable::info()) {
+    if (classInfo(vm) == ModuleProgramExecutable::info()) {
         ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
         RELEASE_ASSERT(kind == CodeForCall);
-        RELEASE_ASSERT(!executable->m_codeBlock);
+        RELEASE_ASSERT(!executable->m_moduleProgramCodeBlock);
         RELEASE_ASSERT(!function);
-        RELEASE_AND_RETURN(throwScope, ModuleProgramCodeBlock::create(vm, executable, executable->unlinkedCodeBlock(), scope));
+        RELEASE_AND_RETURN(throwScope, ModuleProgramCodeBlock::create(vm, executable, executable->m_unlinkedModuleProgramCodeBlock.get(), scope));
     }
 
-    RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
+    RELEASE_ASSERT(classInfo(vm) == FunctionExecutable::info());
     RELEASE_ASSERT(function);
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
     RELEASE_ASSERT(!executable->codeBlockFor(kind));
@@ -307,7 +318,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
     CodeSpecializationKind kind)
 {
     VM& vm = this->vm();
-    if (classInfo() == EvalExecutable::info()) {
+    if (classInfo(vm) == EvalExecutable::info()) {
         RELEASE_ASSERT(kind == CodeForCall);
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         EvalCodeBlock* baseline = static_cast<EvalCodeBlock*>(
@@ -318,7 +329,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
         return result;
     }
     
-    if (classInfo() == ProgramExecutable::info()) {
+    if (classInfo(vm) == ProgramExecutable::info()) {
         RELEASE_ASSERT(kind == CodeForCall);
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         ProgramCodeBlock* baseline = static_cast<ProgramCodeBlock*>(
@@ -329,7 +340,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
         return result;
     }
 
-    if (classInfo() == ModuleProgramExecutable::info()) {
+    if (classInfo(vm) == ModuleProgramExecutable::info()) {
         RELEASE_ASSERT(kind == CodeForCall);
         ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
         ModuleProgramCodeBlock* baseline = static_cast<ModuleProgramCodeBlock*>(
@@ -340,7 +351,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
         return result;
     }
 
-    RELEASE_ASSERT(classInfo() == FunctionExecutable::info());
+    RELEASE_ASSERT(classInfo(vm) == FunctionExecutable::info());
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(this);
     FunctionCodeBlock* baseline = static_cast<FunctionCodeBlock*>(
         executable->codeBlockFor(kind)->baselineVersion());
@@ -373,7 +384,7 @@ void ScriptExecutable::prepareForExecutionImpl(VM& vm, JSFunction* function, JSS
     DeferGCForAWhile deferGC(vm);
 
     if (UNLIKELY(vm.getAndClearFailNextNewCodeBlock())) {
-        JSGlobalObject* globalObject = scope->globalObject();
+        JSGlobalObject* globalObject = scope->globalObject(vm);
         throwException(globalObject, throwScope, createError(globalObject, "Forced Failure"_s));
         return;
     }
@@ -464,27 +475,27 @@ CodeBlockHash ScriptExecutable::hashFor(CodeSpecializationKind kind) const
     return CodeBlockHash(source(), kind);
 }
 
-std::optional<int> ScriptExecutable::overrideLineNumber(VM&) const
+std::optional<int> ScriptExecutable::overrideLineNumber(VM& vm) const
 {
-    if (inherits<FunctionExecutable>())
+    if (inherits<FunctionExecutable>(vm))
         return jsCast<const FunctionExecutable*>(this)->overrideLineNumber();
     return std::nullopt;
 }
 
 unsigned ScriptExecutable::typeProfilingStartOffset(VM& vm) const
 {
-    if (inherits<FunctionExecutable>())
+    if (inherits<FunctionExecutable>(vm))
         return jsCast<const FunctionExecutable*>(this)->typeProfilingStartOffset(vm);
-    if (inherits<EvalExecutable>())
+    if (inherits<EvalExecutable>(vm))
         return UINT_MAX;
     return 0;
 }
 
 unsigned ScriptExecutable::typeProfilingEndOffset(VM& vm) const
 {
-    if (inherits<FunctionExecutable>())
+    if (inherits<FunctionExecutable>(vm))
         return jsCast<const FunctionExecutable*>(this)->typeProfilingEndOffset(vm);
-    if (inherits<EvalExecutable>())
+    if (inherits<EvalExecutable>(vm))
         return UINT_MAX;
     return source().length() - 1;
 }
@@ -523,63 +534,5 @@ unsigned ScriptExecutable::endColumn() const
     }
     return 0;
 }
-
-template<typename Visitor>
-void ScriptExecutable::runConstraint(const ConcurrentJSLocker& locker, Visitor& visitor, CodeBlock* codeBlock)
-{
-    ASSERT(codeBlock);
-    codeBlock->propagateTransitions(locker, visitor);
-    codeBlock->determineLiveness(locker, visitor);
-}
-
-template void ScriptExecutable::runConstraint(const ConcurrentJSLocker&, AbstractSlotVisitor&, CodeBlock*);
-template void ScriptExecutable::runConstraint(const ConcurrentJSLocker&, SlotVisitor&, CodeBlock*);
-
-template<typename Visitor>
-void ScriptExecutable::visitCodeBlockEdge(Visitor& visitor, CodeBlock* codeBlock)
-{
-    ASSERT(codeBlock);
-
-    ConcurrentJSLocker locker(codeBlock->m_lock);
-
-    if (codeBlock->shouldVisitStrongly(locker, visitor))
-        visitor.appendUnbarriered(codeBlock);
-
-    if (JITCode::isOptimizingJIT(codeBlock->jitType())) {
-        // If we jettison ourselves we'll install our alternative, so make sure that it
-        // survives GC even if we don't.
-        visitor.append(codeBlock->m_alternative);
-    }
-
-    // NOTE: There are two sides to this constraint, with different requirements for correctness.
-    // Because everything is ultimately protected with weak references and jettisoning, it's
-    // always "OK" to claim that something is dead prematurely and it's "OK" to keep things alive.
-    // But both choices could lead to bad perf - either recomp cycles or leaks.
-    //
-    // Determining CodeBlock liveness: This part is the most consequential. We want to keep the
-    // output constraint active so long as we think that we may yet prove that the CodeBlock is
-    // live but we haven't done it yet.
-    //
-    // Marking Structures if profitable: It's important that we do a pass of this. Logically, this
-    // seems like it is a constraint of CodeBlock. But we have always first run this as a result
-    // of the edge being marked even before we determine the liveness of the CodeBlock. This
-    // allows a CodeBlock to mark itself by first proving that all of the Structures it weakly
-    // depends on could be strongly marked. (This part is also called propagateTransitions.)
-    //
-    // As a weird caveat, we only fixpoint the constraints so long as the CodeBlock is not live.
-    // This means that we may overlook structure marking opportunities created by other marking
-    // that happens after the CodeBlock is marked. This was an accidental policy decision from a
-    // long time ago, but it is probably OK, since it's only worthwhile to keep fixpointing the
-    // structure marking if we still have unmarked structures after the first round. We almost
-    // never will because we will mark-if-profitable based on the owning global object being
-    // already marked. We mark it just in case that hadn't happened yet. And if the CodeBlock is
-    // not yet marked because it weakly depends on a structure that we did not yet mark, then we
-    // will keep fixpointing until the end.
-    visitor.appendUnbarriered(codeBlock->globalObject());
-    runConstraint(locker, visitor, codeBlock);
-}
-
-template void ScriptExecutable::visitCodeBlockEdge(AbstractSlotVisitor&, CodeBlock*);
-template void ScriptExecutable::visitCodeBlockEdge(SlotVisitor&, CodeBlock*);
 
 } // namespace JSC

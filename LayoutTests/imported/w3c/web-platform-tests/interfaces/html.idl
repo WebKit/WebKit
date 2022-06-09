@@ -43,7 +43,6 @@ interface DOMStringList {
 };
 
 enum DocumentReadyState { "loading", "interactive", "complete" };
-enum DocumentVisibilityState { "visible", "hidden" };
 typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 
 [LegacyOverrideBuiltIns]
@@ -88,12 +87,9 @@ partial interface Document {
   boolean queryCommandState(DOMString commandId);
   boolean queryCommandSupported(DOMString commandId);
   DOMString queryCommandValue(DOMString commandId);
-  readonly attribute boolean hidden;
-  readonly attribute DocumentVisibilityState visibilityState;
 
   // special event handler IDL attributes that only apply to Document objects
   [LegacyLenientThis] attribute EventHandler onreadystatechange;
-  attribute EventHandler onvisibilitychange;
 
   // also has obsolete members
 };
@@ -933,8 +929,6 @@ interface HTMLInputElement : HTMLElement {
   undefined setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional SelectionMode selectionMode = "preserve");
   undefined setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
 
-  undefined showPicker();
-
   // also has obsolete members
 };
 
@@ -1369,14 +1363,7 @@ interface mixin CanvasShadowStyles {
 
 interface mixin CanvasFilters {
   // filters
-  attribute (DOMString or CanvasFilter) filter; // (default "none")
-};
-
-typedef record<DOMString, any> CanvasFilterInput;
-
-[Exposed=(Window,Worker,PaintWorklet)]
-interface CanvasFilter {
-  constructor(optional (CanvasFilterInput or sequence<CanvasFilterInput>) filters);
+  attribute DOMString filter; // (default "none")
 };
 
 interface mixin CanvasRect {
@@ -1460,12 +1447,12 @@ interface mixin CanvasTextDrawingStyles {
   attribute CanvasTextAlign textAlign; // (default: "start")
   attribute CanvasTextBaseline textBaseline; // (default: "alphabetic")
   attribute CanvasDirection direction; // (default: "inherit")
-  attribute double letterSpacing; // (default: 0)
+  attribute double textLetterSpacing; // (default: 0)
+  attribute double textWordSpacing; // (default: 0)
   attribute CanvasFontKerning fontKerning; // (default: "auto")
   attribute CanvasFontStretch fontStretch; // (default: "normal")
   attribute CanvasFontVariantCaps fontVariantCaps; // (default: "normal")
   attribute CanvasTextRendering textRendering; // (default: "auto")
-  attribute double wordSpacing; // (default: 0)
 };
 
 interface mixin CanvasPath {
@@ -1847,7 +1834,7 @@ interface BeforeUnloadEvent : Event {
   attribute DOMString returnValue;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker)]
 interface ErrorEvent : Event {
   constructor(DOMString type, optional ErrorEventInit eventInitDict = {});
 
@@ -1866,7 +1853,7 @@ dictionary ErrorEventInit : EventInit {
   any error = null;
 };
 
-[Exposed=*]
+[Exposed=(Window,Worker)]
 interface PromiseRejectionEvent : Event {
   constructor(DOMString type, PromiseRejectionEventInit eventInitDict);
 
@@ -2002,9 +1989,9 @@ interface mixin WindowOrWorkerGlobalScope {
 
   // timers
   long setTimeout(TimerHandler handler, optional long timeout = 0, any... arguments);
-  undefined clearTimeout(optional long id = 0);
+  undefined clearTimeout(optional long handle = 0);
   long setInterval(TimerHandler handler, optional long timeout = 0, any... arguments);
-  undefined clearInterval(optional long id = 0);
+  undefined clearInterval(optional long handle = 0);
 
   // microtask queuing
   undefined queueMicrotask(VoidFunction callback);

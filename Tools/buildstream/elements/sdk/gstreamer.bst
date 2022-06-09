@@ -1,8 +1,11 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gstreamer/gstreamer-1.20.2.tar.xz
-  ref: df24e8792691a02dfe003b3833a51f1dbc6c3331ae625d143b17da939ceb5e0a
+  url: gst_downloads:gstreamer/gstreamer-1.18.5.tar.xz
+  ref: 55862232a63459bbf56abebde3085ca9aec211b478e891dacea4d6df8cafe80a
+# Backport of https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/679 to be shipped in 1.20.
+- kind: patch
+  path: patches/gstreamer-0001-devicemonitor-Stop-only-the-already-started-provider.patch
 build-depends:
 - freedesktop-sdk.bst:components/gobject-introspection.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
@@ -24,6 +27,7 @@ variables:
     -Dlibdw=enabled
     -Ddbghelp=disabled
     -Dbash-completion=disabled
+    -Dgtk_doc=disabled
     -Ddoc=disabled
     -Dpackage-origin="webkit-sdk"
 public:

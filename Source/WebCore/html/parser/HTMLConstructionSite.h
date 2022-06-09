@@ -141,7 +141,7 @@ public:
     void insertAlreadyParsedChild(HTMLStackItem& newParent, HTMLElementStack::ElementRecord& child);
     void takeAllChildrenAndReparent(HTMLStackItem& newParent, HTMLElementStack::ElementRecord& oldParent);
 
-    HTMLStackItem createElementFromSavedToken(const HTMLStackItem&);
+    Ref<HTMLStackItem> createElementFromSavedToken(HTMLStackItem&);
 
     bool shouldFosterParent() const;
     void fosterParent(Ref<Node>&&);
@@ -164,8 +164,8 @@ public:
     HTMLFormattingElementList& activeFormattingElements() const { return m_activeFormattingElements; }
     bool currentIsRootNode() { return &m_openElements.topNode() == &m_openElements.rootNode(); }
 
-    Element& head() const { return m_head.element(); }
-    HTMLStackItem& headStackItem() { return m_head; }
+    Element& head() const { return m_head->element(); }
+    HTMLStackItem* headStackItem() const { return m_head.get(); }
 
     void setForm(HTMLFormElement*);
     HTMLFormElement* form() const { return m_form.get(); }
@@ -216,7 +216,7 @@ private:
     // and a Document in all other cases.
     ContainerNode& m_attachmentRoot;
     
-    HTMLStackItem m_head;
+    RefPtr<HTMLStackItem> m_head;
     RefPtr<HTMLFormElement> m_form;
     mutable HTMLElementStack m_openElements;
     mutable HTMLFormattingElementList m_activeFormattingElements;

@@ -42,7 +42,7 @@ public:
     RenderRubyBase(Document&, RenderStyle&&);
     virtual ~RenderRubyBase();
     
-    ASCIILiteral renderName() const override { return "RenderRubyBase (anonymous)"_s; }
+    const char* renderName() const override { return "RenderRubyBase (anonymous)"; }
     
     RenderRubyRun* rubyRun() const;
 
@@ -58,8 +58,6 @@ public:
     }
     
     void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) override;
-
-    bool isEmptyOrHasInFlowContent() const;
 
 private:
     bool isRubyBase() const override { return true; }

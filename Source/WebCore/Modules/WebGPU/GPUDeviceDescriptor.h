@@ -44,12 +44,11 @@ struct GPUDeviceDescriptor : public GPUObjectDescriptorBase {
             requiredFeatures.map([] (const auto& requiredFeature) {
                 return WebCore::convertToBacking(requiredFeature);
             }),
-            requiredLimits,
         };
     }
 
     Vector<GPUFeatureName> requiredFeatures;
-    Vector<KeyValuePair<String, uint64_t>> requiredLimits;
+    // Vector<KeyValuePair<String, uint64_t>> requiredLimits;
 };
 
 }

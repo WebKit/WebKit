@@ -140,7 +140,7 @@ auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBase
         return TextFieldInputType::handleKeydownEvent(event);
 
     const String& key = event.keyIdentifier();
-    if (key == "U+001B"_s) {
+    if (key == "U+001B") {
         Ref<HTMLInputElement> protectedInputElement(*element());
         protectedInputElement->setValueForUser(emptyString());
         protectedInputElement->onSearch();
@@ -217,16 +217,6 @@ float SearchInputType::decorationWidth() const
     if (m_cancelButton)
         width += m_cancelButton->computedStyle()->logicalWidth().value();
     return width;
-}
-
-void SearchInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
-{
-    bool emptinessChanged = valueChanged && sanitizedValue.isEmpty() != element()->value().isEmpty();
-
-    BaseTextInputType::setValue(sanitizedValue, valueChanged, eventBehavior, selection);
-
-    if (m_cancelButton && emptinessChanged)
-        m_cancelButton->invalidateStyleInternal();
 }
 
 } // namespace WebCore

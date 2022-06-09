@@ -63,7 +63,7 @@ public:
 private:
     void sweep();
 
-    HashMap<unsigned, Entry, AlreadyHashed> m_entries;
+    HashMap<unsigned, Entry> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };
 };

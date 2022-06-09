@@ -1108,7 +1108,7 @@ private:
     bool m_invertParentheticalAssertion { false };
 };
 
-ErrorCode YarrPattern::compile(StringView patternString)
+ErrorCode YarrPattern::compile(const String& patternString)
 {
     YarrPatternConstructor constructor(*this);
 
@@ -1137,7 +1137,7 @@ ErrorCode YarrPattern::compile(StringView patternString)
     return ErrorCode::NoError;
 }
 
-YarrPattern::YarrPattern(StringView pattern, OptionSet<Flags> flags, ErrorCode& error)
+YarrPattern::YarrPattern(const String& pattern, OptionSet<Flags> flags, ErrorCode& error)
     : m_containsBackreferences(false)
     , m_containsBOL(false)
     , m_containsUnsignedLengthPattern(false)
@@ -1381,7 +1381,7 @@ void PatternDisjunction::dump(PrintStream& out, YarrPattern* thisPattern, unsign
     }
 }
 
-void YarrPattern::dumpPatternString(PrintStream& out, StringView patternString)
+void YarrPattern::dumpPatternString(PrintStream& out, const String& patternString)
 {
     out.print("/", patternString, "/");
 
@@ -1397,12 +1397,12 @@ void YarrPattern::dumpPatternString(PrintStream& out, StringView patternString)
         out.print("y");
 }
 
-void YarrPattern::dumpPattern(StringView patternString)
+void YarrPattern::dumpPattern(const String& patternString)
 {
     dumpPattern(WTF::dataFile(), patternString);
 }
 
-void YarrPattern::dumpPattern(PrintStream& out, StringView patternString)
+void YarrPattern::dumpPattern(PrintStream& out, const String& patternString)
 {
     out.print("RegExp pattern for ");
     dumpPatternString(out, patternString);

@@ -571,12 +571,6 @@ bool AccessibilityUIElement::isDecrementActionSupported()
     return false;
 }
 
-bool AccessibilityUIElement::isBusy() const
-{
-    // FIXME: Implement.
-    return false;
-}
-
 bool AccessibilityUIElement::isEnabled()
 {
     DWORD state = accessibilityState(m_element);

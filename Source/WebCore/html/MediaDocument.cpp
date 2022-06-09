@@ -99,8 +99,8 @@ void MediaDocumentParser::createDocumentStructure()
     rootElement->appendChild(headElement);
 
     auto metaElement = HTMLMetaElement::create(document);
-    metaElement->setAttributeWithoutSynchronization(nameAttr, "viewport"_s);
-    metaElement->setAttributeWithoutSynchronization(contentAttr, "width=device-width,initial-scale=1"_s);
+    metaElement->setAttributeWithoutSynchronization(nameAttr, AtomString("viewport", AtomString::ConstructFromLiteral));
+    metaElement->setAttributeWithoutSynchronization(contentAttr, AtomString("width=device-width,initial-scale=1", AtomString::ConstructFromLiteral));
     headElement->appendChild(metaElement);
 #endif
 
@@ -111,12 +111,12 @@ void MediaDocumentParser::createDocumentStructure()
     m_mediaElement = videoElement.ptr();
     videoElement->setAttributeWithoutSynchronization(controlsAttr, emptyAtom());
     videoElement->setAttributeWithoutSynchronization(autoplayAttr, emptyAtom());
-    videoElement->setAttributeWithoutSynchronization(srcAttr, AtomString { document.url().string() });
+    videoElement->setAttributeWithoutSynchronization(srcAttr, document.url().string());
     if (RefPtr loader = document.loader())
-        videoElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->responseMIMEType() });
+        videoElement->setAttributeWithoutSynchronization(typeAttr, loader->responseMIMEType());
 
 #if !ENABLE(MODERN_MEDIA_CONTROLS)
-    videoElement->setAttribute(styleAttr, "max-width: 100%; max-height: 100%;"_s);
+    videoElement->setAttribute(styleAttr, AtomString("max-width: 100%; max-height: 100%;", AtomString::ConstructFromLiteral));
 #endif // !ENABLE(MODERN_MEDIA_CONTROLS)
 
     body->appendChild(videoElement);
@@ -140,7 +140,7 @@ void MediaDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
 }
     
 MediaDocument::MediaDocument(Frame* frame, const Settings& settings, const URL& url)
-    : HTMLDocument(frame, settings, url, { }, { DocumentClass::Media })
+    : HTMLDocument(frame, settings, url, { DocumentClass::Media })
 {
     setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
     lockCompatibilityMode();
@@ -206,7 +206,7 @@ void MediaDocument::defaultEventHandler(Event& event)
             return;
 
         auto& keyboardEvent = downcast<KeyboardEvent>(event);
-        if (keyboardEvent.keyIdentifier() == "U+0020"_s) { // space
+        if (keyboardEvent.keyIdentifier() == "U+0020") { // space
             if (video->paused()) {
                 if (video->canPlay())
                     video->play();
@@ -227,20 +227,20 @@ void MediaDocument::replaceMediaElementTimerFired()
         return;
 
     // Set body margin width and height to 0 as that is what a PluginDocument uses.
-    htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, "0"_s);
-    htmlBody->setAttributeWithoutSynchronization(marginheightAttr, "0"_s);
+    htmlBody->setAttributeWithoutSynchronization(marginwidthAttr, AtomString("0", AtomString::ConstructFromLiteral));
+    htmlBody->setAttributeWithoutSynchronization(marginheightAttr, AtomString("0", AtomString::ConstructFromLiteral));
 
     if (RefPtr videoElement = descendantVideoElement(*htmlBody)) {
         auto embedElement = HTMLEmbedElement::create(*this);
 
-        embedElement->setAttributeWithoutSynchronization(widthAttr, "100%"_s);
-        embedElement->setAttributeWithoutSynchronization(heightAttr, "100%"_s);
-        embedElement->setAttributeWithoutSynchronization(nameAttr, "plugin"_s);
-        embedElement->setAttributeWithoutSynchronization(srcAttr, AtomString { url().string() });
+        embedElement->setAttributeWithoutSynchronization(widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(heightAttr, AtomString("100%", AtomString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(nameAttr, AtomString("plugin", AtomString::ConstructFromLiteral));
+        embedElement->setAttributeWithoutSynchronization(srcAttr, url().string());
 
         ASSERT(loader());
         if (RefPtr loader = this->loader())
-            embedElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->writer().mimeType() });
+            embedElement->setAttributeWithoutSynchronization(typeAttr, loader->writer().mimeType());
 
         videoElement->parentNode()->replaceChild(embedElement, *videoElement);
     }

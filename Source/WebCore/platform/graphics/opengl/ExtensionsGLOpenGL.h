@@ -40,7 +40,7 @@ public:
     ExtensionsGLOpenGL(GraphicsContextGLOpenGL*, bool useIndexedGetString);
     virtual ~ExtensionsGLOpenGL();
 
-    // ExtensionsGLOpenGLCommon methods.
+    // ExtensionsGL methods.
     PlatformGLObject createVertexArrayOES() override;
     void deleteVertexArrayOES(PlatformGLObject) override;
     GCGLboolean isVertexArrayOES(PlatformGLObject) override;

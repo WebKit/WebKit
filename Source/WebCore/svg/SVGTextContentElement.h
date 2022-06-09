@@ -53,9 +53,9 @@ template<> struct SVGPropertyTraits<SVGLengthAdjustType> {
 
     static SVGLengthAdjustType fromString(const String& value)
     {
-        if (value == "spacingAndGlyphs"_s)
+        if (value == "spacingAndGlyphs")
             return SVGLengthAdjustSpacingAndGlyphs;
-        if (value == "spacing"_s)
+        if (value == "spacing")
             return SVGLengthAdjustSpacing;
         return SVGLengthAdjustUnknown;
     }

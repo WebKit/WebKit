@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlRelativeTimeFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormat) };
+const ClassInfo IntlRelativeTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormat) };
 
 namespace IntlRelativeTimeFormatInternal {
 }
@@ -60,7 +60,7 @@ IntlRelativeTimeFormat::IntlRelativeTimeFormat(VM& vm, Structure* structure)
 void IntlRelativeTimeFormat::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 template<typename Visitor>
@@ -96,7 +96,7 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, { }, { });
+    String numberingSystem = intlStringOption(globalObject, options, vm.propertyNames->numberingSystem, { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!numberingSystem.isNull()) {
         if (!isUnicodeLocaleIdentifierType(numberingSystem)) {
@@ -185,7 +185,7 @@ ASCIILiteral IntlRelativeTimeFormat::styleString(Style style)
         return "narrow"_s;
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return ASCIILiteral::null();
 }
 
 // https://tc39.es/ecma402/#sec-intl.relativetimeformat.prototype.resolvedoptions
@@ -203,7 +203,7 @@ JSObject* IntlRelativeTimeFormat::resolvedOptions(JSGlobalObject* globalObject) 
 static StringView singularUnit(StringView unit)
 {
     // Plurals are allowed, but thankfully they're all just a simple -s.
-    return unit.endsWith('s') ? unit.left(unit.length() - 1) : unit;
+    return unit.endsWith("s") ? unit.left(unit.length() - 1) : unit;
 }
 
 // https://tc39.es/ecma402/#sec-singularrelativetimeunit
@@ -211,21 +211,21 @@ static std::optional<URelativeDateTimeUnit> relativeTimeUnitType(StringView unit
 {
     StringView singular = singularUnit(unit);
 
-    if (singular == "second"_s)
+    if (singular == "second")
         return UDAT_REL_UNIT_SECOND;
-    if (singular == "minute"_s)
+    if (singular == "minute")
         return UDAT_REL_UNIT_MINUTE;
-    if (singular == "hour"_s)
+    if (singular == "hour")
         return UDAT_REL_UNIT_HOUR;
-    if (singular == "day"_s)
+    if (singular == "day")
         return UDAT_REL_UNIT_DAY;
-    if (singular == "week"_s)
+    if (singular == "week")
         return UDAT_REL_UNIT_WEEK;
-    if (singular == "month"_s)
+    if (singular == "month")
         return UDAT_REL_UNIT_MONTH;
-    if (singular == "quarter"_s)
+    if (singular == "quarter")
         return UDAT_REL_UNIT_QUARTER;
-    if (singular == "year"_s)
+    if (singular == "year")
         return UDAT_REL_UNIT_YEAR;
 
     return std::nullopt;
@@ -270,7 +270,7 @@ JSValue IntlRelativeTimeFormat::format(JSGlobalObject* globalObject, double valu
     String result = formatInternal(globalObject, value, unit);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return jsString(vm, WTFMove(result));
+    return jsString(vm, result);
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTimeToParts
@@ -318,7 +318,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
         }
 
         IntlFieldIterator fieldIterator(*iterator.get());
-        IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Decimal, std::signbit(absValue), IntlMathematicalValue::numberTypeFromDouble(absValue), formattedNumber, fieldIterator, parts, nullptr, jsString(vm, singularUnit(unit)));
+        IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Decimal, std::signbit(absValue), IntlMathematicalValue::numberTypeFromDouble(absValue), formattedNumber, fieldIterator, parts, nullptr, jsString(vm, singularUnit(unit).toString()));
         RETURN_IF_EXCEPTION(scope, { });
     }
 

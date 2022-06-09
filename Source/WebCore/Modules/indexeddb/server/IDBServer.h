@@ -30,7 +30,6 @@
 #include "StorageQuotaManager.h"
 #include "UniqueIDBDatabase.h"
 #include "UniqueIDBDatabaseConnection.h"
-#include "UniqueIDBDatabaseManager.h"
 #include <pal/HysteresisActivity.h>
 #include <pal/SessionID.h>
 #include <wtf/CrossThreadTaskHandler.h>
@@ -49,7 +48,8 @@ struct IDBGetRecordData;
 
 namespace IDBServer {
 
-class IDBServer : public UniqueIDBDatabaseManager {
+class IDBServer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using StorageQuotaManagerSpaceRequester = Function<StorageQuotaManager::Decision(const ClientOrigin&, uint64_t spaceRequested)>;
     WEBCORE_EXPORT IDBServer(PAL::SessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&&, Lock&);
@@ -88,13 +88,15 @@ public:
 
     WEBCORE_EXPORT void getAllDatabaseNamesAndVersions(IDBConnectionIdentifier, const IDBResourceIdentifier&, const ClientOrigin&);
 
-    // UniqueIDBDatabaseManager
-    void registerConnection(UniqueIDBDatabaseConnection&) final;
-    void unregisterConnection(UniqueIDBDatabaseConnection&) final;
-    void registerTransaction(UniqueIDBDatabaseTransaction&) final;
-    void unregisterTransaction(UniqueIDBDatabaseTransaction&) final;
-    std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&) final;
-    void requestSpace(const ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&&) final;
+
+    void registerDatabaseConnection(UniqueIDBDatabaseConnection&);
+    void unregisterDatabaseConnection(UniqueIDBDatabaseConnection&);
+    void registerTransaction(UniqueIDBDatabaseTransaction&);
+    void unregisterTransaction(UniqueIDBDatabaseTransaction&);
+
+    std::unique_ptr<UniqueIDBDatabase> closeAndTakeUniqueIDBDatabase(UniqueIDBDatabase&);
+
+    std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
     WEBCORE_EXPORT HashSet<SecurityOriginData> getOrigins() const;
     WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(WallTime);
@@ -102,6 +104,7 @@ public:
     void closeDatabasesForOrigins(const Vector<SecurityOriginData>&, Function<bool(const SecurityOriginData&, const ClientOrigin&)>&&);
     WEBCORE_EXPORT void renameOrigin(const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&);
 
+    StorageQuotaManager::Decision requestSpace(const ClientOrigin&, uint64_t taskSize);
     WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
 
     WEBCORE_EXPORT bool hasDatabaseActivitiesOnMainThread() const;
@@ -111,7 +114,6 @@ private:
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
 
     void upgradeFilesIfNecessary();
-    String upgradedDatabaseDirectory(const WebCore::IDBDatabaseIdentifier&);
     void removeDatabasesModifiedSinceForVersion(WallTime, const String&);
     void removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData>&, const String&);
 

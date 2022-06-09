@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSMap::s_info = { "Map"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMap) };
+const ClassInfo JSMap::s_info = { "Map", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMap) };
 
 JSMap* JSMap::clone(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 {
@@ -61,12 +61,12 @@ bool JSMap::isIteratorProtocolFastAndNonObservable()
         return false;
 
     VM& vm = globalObject->vm();
-    Structure* structure = this->structure();
+    Structure* structure = this->structure(vm);
     // This is the fast case. Many maps will be an original map.
     if (structure == globalObject->mapStructure())
         return true;
 
-    if (getPrototypeDirect() != globalObject->mapPrototype())
+    if (getPrototypeDirect(vm) != globalObject->mapPrototype())
         return false;
 
     if (getDirectOffset(vm, vm.propertyNames->iteratorSymbol) != invalidOffset)

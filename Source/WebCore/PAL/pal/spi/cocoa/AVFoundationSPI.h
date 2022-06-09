@@ -37,7 +37,6 @@
 
 #import <AVFoundation/AVAssetCache_Private.h>
 #import <AVFoundation/AVCaptureSession_Private.h>
-#import <AVFoundation/AVContentKeySession_Private.h>
 #import <AVFoundation/AVMediaSelectionGroup_Private.h>
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
@@ -220,9 +219,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 NS_ASSUME_NONNULL_END
 
-#if HAVE(AVCONTENTKEYSESSION)
+#endif // USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(AVCONTENTKEYREPORTGROUP)
+#import <AVFoundation/AVPlayerLayer.h>
+
+#if HAVE(AVCONTENTKEYSESSION)
 @interface AVContentKeyReportGroup : NSObject
 @property (readonly, nullable) NSData *contentProtectionSessionIdentifier;
 - (void)expire;
@@ -234,15 +235,12 @@ NS_ASSUME_NONNULL_END
 @property (readonly, nullable) AVContentKeyReportGroup *defaultContentKeyGroup;
 - (nonnull AVContentKeyReportGroup *)makeContentKeyGroup;
 @end
-#endif
 
-#if HAVE(AVCONTENTKEYSESSIONWILLOUTPUTBEOBSCURED)
 @interface AVContentKeyRequest (OutputObscured)
 NS_ASSUME_NONNULL_BEGIN
 - (BOOL)willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:(NSArray<NSNumber *> *)displays;
 NS_ASSUME_NONNULL_END
 @end
-#endif
 
 #if HAVE(AVCONTENTKEYREQUEST_PENDING_PROTECTION_STATUS)
 typedef NS_ENUM(NSInteger, AVExternalContentProtectionStatus) {
@@ -257,10 +255,6 @@ typedef NS_ENUM(NSInteger, AVExternalContentProtectionStatus) {
 #endif
 
 #endif // HAVE(AVCONTENTKEYSESSION)
-
-#endif // USE(APPLE_INTERNAL_SDK)
-
-#import <AVFoundation/AVPlayerLayer.h>
 
 #if ENABLE(MEDIA_SOURCE) && !USE(APPLE_INTERNAL_SDK)
 NS_ASSUME_NONNULL_BEGIN
@@ -471,10 +465,6 @@ NS_ASSUME_NONNULL_BEGIN
 // FIXME: Move this inside the #if USE(APPLE_INTERNAL_SDK) once rdar://81297776 has been in the build for awhile.
 @interface AVCaptureSession (AVCaptureSessionPrivate)
 - (instancetype)initWithAssumedIdentity:(tcc_identity_t)tccIdentity SPI_AVAILABLE(ios(15.0)) API_UNAVAILABLE(macos, macCatalyst, watchos, tvos);
-@end
-
-@interface AVCaptureDevice (AVCaptureServerConnection)
-+ (void)ensureServerConnection;
 @end
 
 NS_ASSUME_NONNULL_END

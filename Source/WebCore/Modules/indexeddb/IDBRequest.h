@@ -54,7 +54,6 @@ class IDBObjectStore;
 class IDBResultData;
 class IDBTransaction;
 class ThreadSafeDataBuffer;
-class WebCoreOpaqueRoot;
 
 namespace IDBClient {
 class IDBConnectionProxy;
@@ -82,6 +81,7 @@ public:
     using Result = std::variant<RefPtr<IDBCursor>, RefPtr<IDBDatabase>, IDBKeyData, Vector<IDBKeyData>, IDBGetResult, IDBGetAllResult, uint64_t, NullResultType>;
     ExceptionOr<Result> result() const;
     JSValueInWrappedObject& resultWrapper() { return m_resultWrapper; }
+    JSValueInWrappedObject& cursorWrapper() { return m_cursorWrapper; }
 
     using Source = std::variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>, RefPtr<IDBCursor>>;
     const std::optional<Source>& source() const { return m_source; }
@@ -181,6 +181,7 @@ private:
     IDBResourceIdentifier m_resourceIdentifier;
 
     JSValueInWrappedObject m_resultWrapper;
+    JSValueInWrappedObject m_cursorWrapper;
 
     uint64_t m_currentTransactionOperationID { 0 };
 
@@ -200,7 +201,5 @@ private:
     bool m_hasUncaughtException { false };
     RefPtr<Event> m_eventBeingDispatched;
 };
-
-WebCoreOpaqueRoot root(IDBRequest*);
 
 } // namespace WebCore

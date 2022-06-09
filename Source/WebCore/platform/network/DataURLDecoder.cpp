@@ -46,14 +46,14 @@ namespace DataURLDecoder {
 static bool shouldRemoveFragmentIdentifier(const String& mediaType)
 {
 #if PLATFORM(COCOA)
-    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DataURLFragmentRemoval))
+    if (!linkedOnOrAfter(SDKVersion::FirstWithDataURLFragmentRemoval))
         return false;
 
     // HLS uses # in the middle of the manifests.
-    return !equalLettersIgnoringASCIICase(mediaType, "video/mpegurl"_s)
-        && !equalLettersIgnoringASCIICase(mediaType, "audio/mpegurl"_s)
-        && !equalLettersIgnoringASCIICase(mediaType, "application/x-mpegurl"_s)
-        && !equalLettersIgnoringASCIICase(mediaType, "vnd.apple.mpegurl"_s);
+    return !equalLettersIgnoringASCIICase(mediaType, "video/mpegurl")
+        && !equalLettersIgnoringASCIICase(mediaType, "audio/mpegurl")
+        && !equalLettersIgnoringASCIICase(mediaType, "application/x-mpegurl")
+        && !equalLettersIgnoringASCIICase(mediaType, "vnd.apple.mpegurl");
 #else
     UNUSED_PARAM(mediaType);
     return true;
@@ -90,10 +90,10 @@ public:
         //  header := [<mediatype>][;base64]
         //  mediatype := [<mimetype>][;charset=<charsettype>]
 
-        constexpr auto dataString = "data:"_s;
+        const char dataString[] = "data:";
         ASSERT(url.string().startsWith(dataString));
 
-        size_t headerStart = dataString.length();
+        size_t headerStart = strlen(dataString);
         size_t headerEnd = url.string().find(',', headerStart);
         if (headerEnd == notFound)
             return false;
@@ -112,13 +112,13 @@ public:
         auto formatType = header.substring(formatTypeStart, header.length() - formatTypeStart);
         formatType = stripLeadingAndTrailingHTTPSpaces(formatType);
 
-        isBase64 = equalLettersIgnoringASCIICase(formatType, "base64"_s);
+        isBase64 = equalLettersIgnoringASCIICase(formatType, "base64");
 
         // If header does not end with "base64", mediaType should be the whole header.
-        auto mediaType = (isBase64 ? header.left(mediaTypeEnd) : header).toString();
+        auto mediaType = (isBase64 ? header.substring(0, mediaTypeEnd) : header).toString();
         mediaType = stripLeadingAndTrailingHTTPSpaces(mediaType);
         if (mediaType.startsWith(';'))
-            mediaType = makeString("text/plain"_s, mediaType);
+            mediaType.insert("text/plain", 0);
 
         if (shouldRemoveFragmentIdentifier(mediaType))
             url.removeFragmentIdentifier();

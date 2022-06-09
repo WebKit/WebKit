@@ -1,3 +1,3 @@
 
-PASS Send paired surrogates data on a WebSocket - Connection should be closed
+FAIL Send paired surrogates data on a WebSocket - Connection should be closed assert_equals: expected 0 but got 4
 

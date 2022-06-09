@@ -210,7 +210,14 @@ void RemoteLayerTreeDrawingArea::forceRepaint()
     if (m_isRenderingSuspended)
         return;
 
-    m_webPage.corePage()->forceRepaintAllFrames();
+    for (Frame* frame = &m_webPage.corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        FrameView* frameView = frame->view();
+        if (!frameView || !frameView->tiledBacking())
+            continue;
+
+        frameView->tiledBacking()->forceRepaint();
+    }
+
     updateRendering();
 }
 
@@ -315,7 +322,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     if (m_inUpdateRendering)
         return;
 
-    SetForScope change(m_inUpdateRendering, true);
+    SetForScope<bool> change(m_inUpdateRendering, true);
     m_webPage.updateRendering();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
@@ -372,9 +379,26 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
     Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(layerTransaction, scrollingTransaction);
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
-    commitEncoder.get() << WTFMove(message).arguments();
+    commitEncoder.get() << message.arguments();
 
-    auto flushers = backingStoreCollection.didFlushLayers(layerTransaction);
+    // FIXME: Move all backing store flushing management to RemoteLayerBackingStoreCollection.
+    bool hadAnyChangedBackingStore = false;
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
+    for (auto& layer : layerTransaction.changedLayers()) {
+        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
+            hadAnyChangedBackingStore = true;
+            if (layer->properties().backingStore)
+                flushers.appendVector(layer->properties().backingStore->takePendingFlushers());
+        }
+
+        layer->didCommit();
+    }
+
+    backingStoreCollection.didFlushLayers();
+
+    if (hadAnyChangedBackingStore)
+        backingStoreCollection.scheduleVolatilityTimer();
+
     RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(flushers));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 
@@ -419,9 +443,9 @@ void RemoteLayerTreeDrawingArea::mainFrameContentSizeChanged(const IntSize& cont
     m_rootLayer->setSize(contentsSize);
 }
 
-void RemoteLayerTreeDrawingArea::tryMarkLayersVolatile(CompletionHandler<void(bool)>&& completionFunction)
+bool RemoteLayerTreeDrawingArea::markLayersVolatileImmediatelyIfPossible()
 {
-    m_remoteLayerTreeContext->backingStoreCollection().tryMarkAllBackingStoreVolatile(WTFMove(completionFunction));
+    return m_remoteLayerTreeContext->backingStoreCollection().markAllBackingStoreVolatileImmediatelyIfPossible();
 }
 
 Ref<RemoteLayerTreeDrawingArea::BackingStoreFlusher> RemoteLayerTreeDrawingArea::BackingStoreFlusher::create(IPC::Connection* connection, UniqueRef<IPC::Encoder>&& encoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers)

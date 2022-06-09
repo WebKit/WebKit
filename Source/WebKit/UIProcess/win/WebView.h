@@ -69,8 +69,6 @@ public:
     void setScrollOffsetOnNextResize(const WebCore::IntSize&);
     void initialize();
     void setToolTip(const String&);
-    void setUsesOffscreenRendering(bool);
-    bool usesOffscreenRendering() const;
 
     void setViewNeedsDisplay(const WebCore::Region&);
 
@@ -150,7 +148,6 @@ private:
     bool m_wasActivatedByMouseEvent { false };
     bool m_trackingMouseLeave { false };
     bool m_isBeingDestroyed { false };
-    bool m_usesOffscreenRendering { false };
 
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebPageProxy> m_page;

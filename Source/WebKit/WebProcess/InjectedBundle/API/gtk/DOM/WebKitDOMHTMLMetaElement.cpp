@@ -218,7 +218,8 @@ void webkit_dom_html_meta_element_set_content(WebKitDOMHTMLMetaElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_META_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLMetaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::contentAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::contentAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_meta_element_get_http_equiv(WebKitDOMHTMLMetaElement* self)
@@ -236,7 +237,8 @@ void webkit_dom_html_meta_element_set_http_equiv(WebKitDOMHTMLMetaElement* self,
     g_return_if_fail(WEBKIT_DOM_IS_HTML_META_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLMetaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::http_equivAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::http_equivAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_meta_element_get_name(WebKitDOMHTMLMetaElement* self)
@@ -254,7 +256,8 @@ void webkit_dom_html_meta_element_set_name(WebKitDOMHTMLMetaElement* self, const
     g_return_if_fail(WEBKIT_DOM_IS_HTML_META_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLMetaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_meta_element_get_scheme(WebKitDOMHTMLMetaElement* self)
@@ -272,7 +275,8 @@ void webkit_dom_html_meta_element_set_scheme(WebKitDOMHTMLMetaElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_META_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLMetaElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::schemeAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::schemeAttr, convertedValue);
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

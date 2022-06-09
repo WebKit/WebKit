@@ -393,17 +393,15 @@ void GlslangGetShaderSpirvCode(const gl::ProgramState &programState,
     rx::GlslangGetShaderSpirvCode(options, programState, resources, &programInterfaceInfo,
                                   spirvBlobsOut, variableInfoMapOut);
 
-    const gl::ProgramExecutable &programExecutable = programState.getExecutable();
-
     // Fill variable info map with transform feedback enabled.
-    if (!programExecutable.getLinkedTransformFeedbackVaryings().empty())
+    if (!programState.getLinkedTransformFeedbackVaryings().empty())
     {
         GlslangProgramInterfaceInfo xfbOnlyInterfaceInfo;
         ResetGlslangProgramInterfaceInfo(&xfbOnlyInterfaceInfo);
 
         options.enableTransformFeedbackEmulation = true;
         UniformBindingIndexMap uniformBindingIndexMap;
-        GlslangAssignLocations(options, programExecutable, resources.varyingPacking,
+        GlslangAssignLocations(options, programState, resources.varyingPacking,
                                gl::ShaderType::Vertex, gl::ShaderType::InvalidEnum, true,
                                &xfbOnlyInterfaceInfo, &uniformBindingIndexMap,
                                xfbOnlyVSVariableInfoMapOut);
@@ -459,10 +457,11 @@ angle::Result SpirvCodeToMsl(Context *context,
     angle::HashMap<uint32_t, uint32_t> xfbOriginalBindings;
     for (uint32_t bufferIdx = 0; bufferIdx < kMaxShaderXFBs; ++bufferIdx)
     {
-        if (xfbVSVariableInfoMap.hasTransformFeedbackInfo(gl::ShaderType::Vertex, bufferIdx))
+        std::string bufferName = rx::GetXfbBufferName(bufferIdx);
+        if (xfbVSVariableInfoMap.contains(gl::ShaderType::Vertex, bufferName))
         {
             const ShaderInterfaceVariableInfo &info =
-                xfbVSVariableInfoMap.getTransformFeedbackInfo(gl::ShaderType::Vertex, bufferIdx);
+                xfbVSVariableInfoMap.get(gl::ShaderType::Vertex, bufferName);
             xfbOriginalBindings[info.binding] = bufferIdx;
         }
     }

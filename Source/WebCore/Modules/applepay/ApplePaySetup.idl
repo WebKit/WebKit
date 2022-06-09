@@ -30,8 +30,8 @@
     SecureContext,
     Exposed=Window
 ] interface ApplePaySetup {
-    [CallWith=CurrentScriptExecutionContext] constructor(ApplePaySetupConfiguration configuration);
+    [CallWith=ScriptExecutionContext] constructor(ApplePaySetupConfiguration configuration);
 
-    [CallWith=CurrentDocument] Promise<sequence<ApplePaySetupFeature>> getSetupFeatures();
-    [CallWith=CurrentDocument] Promise<boolean> begin(sequence<ApplePaySetupFeature> setupFeatures);
+    [CallWith=Document] Promise<sequence<ApplePaySetupFeature>> getSetupFeatures();
+    [CallWith=Document] Promise<boolean> begin(sequence<ApplePaySetupFeature> setupFeatures);
 };

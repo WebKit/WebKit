@@ -25,14 +25,15 @@
 
 // https://immersive-web.github.io/webxr/#xrframe
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
     SecureContext,
     Exposed=Window,
+    ImplementationLacksVTable,
     InterfaceName=XRFrame
 ] interface WebXRFrame {
     [SameObject] readonly attribute WebXRSession session;
 
-    [CallWith=CurrentDocument] WebXRViewerPose? getViewerPose(WebXRReferenceSpace referenceSpace);
-    [CallWith=CurrentDocument] WebXRPose? getPose(WebXRSpace space, WebXRSpace baseSpace);
+    [CallWith=Document] WebXRViewerPose? getViewerPose(WebXRReferenceSpace referenceSpace);
+    [CallWith=Document] WebXRPose? getPose(WebXRSpace space, WebXRSpace baseSpace);
 };

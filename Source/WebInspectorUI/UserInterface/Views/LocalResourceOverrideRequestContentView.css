@@ -37,8 +37,3 @@
 .content-view.text.local-resource-override-request > .message-text-view {
     top: var(--navigation-bar-height);
 }
-
- .content-view.text.local-resource-override-request > .message-text-view select {
-    font-size: inherit;
-    vertical-align: text-bottom;
- }

@@ -280,11 +280,7 @@ class Settings
   def renderTemplate(template, outputDirectory)
     file = File.join(outputDirectory, File.basename(template, ".erb"))
 
-    if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
-        output = ERB.new(File.read(template), trim_mode:"-").result(binding)
-    else
-        output = ERB.new(File.read(template), 0, "-").result(binding)
-    end
+    output = ERB.new(File.read(template), 0, "-").result(binding)
     File.open(file, "w+") do |f|
       f.write(output)
     end

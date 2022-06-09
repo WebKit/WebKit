@@ -56,11 +56,11 @@ Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Docum
 void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == shapeAttr) {
-        if (equalLettersIgnoringASCIICase(value, "default"_s))
+        if (equalLettersIgnoringASCIICase(value, "default"))
             m_shape = Default;
-        else if (equalLettersIgnoringASCIICase(value, "circle"_s) || equalLettersIgnoringASCIICase(value, "circ"_s))
+        else if (equalLettersIgnoringASCIICase(value, "circle") || equalLettersIgnoringASCIICase(value, "circ"))
             m_shape = Circle;
-        else if (equalLettersIgnoringASCIICase(value, "poly"_s) || equalLettersIgnoringASCIICase(value, "polygon"_s))
+        else if (equalLettersIgnoringASCIICase(value, "poly") || equalLettersIgnoringASCIICase(value, "polygon"))
             m_shape = Poly;
         else {
             // The missing value default is the rectangle state.
@@ -250,7 +250,7 @@ bool HTMLAreaElement::supportsFocus() const
     return isLink();
 }
 
-AtomString HTMLAreaElement::target() const
+String HTMLAreaElement::target() const
 {
     return attributeWithoutSynchronization(targetAttr);
 }

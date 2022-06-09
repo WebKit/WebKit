@@ -35,9 +35,11 @@ Ref<DOMPlugin> DOMPlugin::create(Navigator& navigator, const PluginInfo& info)
 
 static Vector<Ref<DOMMimeType>> makeMimeTypes(Navigator& navigator, const PluginInfo& info, DOMPlugin& self)
 {
-    auto types = info.mimes.map([&](auto& type) {
-        return DOMMimeType::create(navigator, type, self);
-    });
+    Vector<Ref<DOMMimeType>> types;
+    types.reserveInitialCapacity(info.mimes.size());
+    for (auto& type : info.mimes)
+        types.uncheckedAppend(DOMMimeType::create(navigator, type, self));
+
     std::sort(types.begin(), types.end(), [](const Ref<DOMMimeType>& a, const Ref<DOMMimeType>& b) {
         return codePointCompareLessThan(a->type(), b->type());
     });
@@ -90,11 +92,13 @@ RefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomString& propertyName)
     return nullptr;
 }
 
-Vector<AtomString> DOMPlugin::supportedPropertyNames() const
+Vector<AtomString> DOMPlugin::supportedPropertyNames()
 {
-    return m_mimeTypes.map([](auto& type) {
-        return type->type();
-    });
+    Vector<AtomString> result;
+    result.reserveInitialCapacity(m_mimeTypes.size());
+    for (auto& type : m_mimeTypes)
+        result.uncheckedAppend(type->type());
+    return result;
 }
 
 } // namespace WebCore

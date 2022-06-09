@@ -31,14 +31,14 @@
     readonly attribute unrestricted double? beta;
     readonly attribute unrestricted double? gamma;
 
-    [CallWith=CurrentDocument, EnabledBySetting=DeviceOrientationPermissionAPIEnabled] static Promise<DeviceOrientationOrMotionPermissionState> requestPermission();
+    [CallWith=Document, EnabledBySetting=DeviceOrientationPermissionAPIEnabled] static Promise<DeviceOrientationOrMotionPermissionState> requestPermission();
 
     // FIXME: Consider defining an ENABLE macro for iOS device orientation code and/or modifying
     // the bindings scripts to support generating more complicated conditional code.
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     [ImplementedAs=compassHeading] readonly attribute unrestricted double? webkitCompassHeading;
     [ImplementedAs=compassAccuracy] readonly attribute unrestricted double? webkitCompassAccuracy;
-    undefined initDeviceOrientationEvent(optional [AtomString] DOMString type = "",
+    undefined initDeviceOrientationEvent(optional DOMString type = "",
                                     optional boolean bubbles = false,
                                     optional boolean cancelable = false,
                                     optional unrestricted double? alpha = null,
@@ -48,7 +48,7 @@
                                     optional unrestricted double? compassAccuracy = null);
 #else
     readonly attribute boolean? absolute;
-    undefined initDeviceOrientationEvent(optional [AtomString] DOMString type = "",
+    undefined initDeviceOrientationEvent(optional DOMString type = "",
                                     optional boolean bubbles = false,
                                     optional boolean cancelable = false,
                                     optional unrestricted double? alpha = null,

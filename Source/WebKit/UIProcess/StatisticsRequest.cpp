@@ -84,9 +84,12 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
         m_responseDictionary->set("JavaScriptObjectTypeCounts", createDictionaryFromHashMap(data.javaScriptObjectTypeCounts));
 
     if (!data.webCoreCacheStatistics.isEmpty()) {
-        auto cacheStatistics = data.webCoreCacheStatistics.map([](auto& statistic) -> RefPtr<API::Object> {
-            return createDictionaryFromHashMap(statistic);
-        });
+        Vector<RefPtr<API::Object>> cacheStatistics;
+        cacheStatistics.reserveInitialCapacity(data.webCoreCacheStatistics.size());
+
+        for (const auto& statistic : data.webCoreCacheStatistics)
+            cacheStatistics.uncheckedAppend(createDictionaryFromHashMap(statistic));
+
         m_responseDictionary->set("WebCoreCacheStatistics", API::Array::create(WTFMove(cacheStatistics)));
     }
 

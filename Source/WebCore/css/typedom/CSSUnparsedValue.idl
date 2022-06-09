@@ -25,10 +25,9 @@
 
 typedef (USVString or CSSOMVariableReferenceValue) CSSUnparsedSegment;
 
-// https://drafts.css-houdini.org/css-typed-om/#cssunparsedvalue
 [
     InterfaceName=CSSUnparsedValue,
-    EnabledBySetting=CSSTypedOMEnabled,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
     JSGenerateToNativeObject

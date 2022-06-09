@@ -49,7 +49,7 @@ bool FETileSoftwareApplier::apply(const Filter& filter, const FilterImageVector&
     auto maxResultRect = result.maxEffectRect(filter);
     maxResultRect.scale(filter.filterScale());
 
-    auto tileImage = ImageBuffer::create(tileRect.size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(filter.renderingMode()));
+    auto tileImage = ImageBuffer::create(tileRect.size(), filter.renderingMode(), 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!tileImage)
         return false;
 
@@ -57,10 +57,14 @@ bool FETileSoftwareApplier::apply(const Filter& filter, const FilterImageVector&
     tileImageContext.translate(-tileRect.location());
     tileImageContext.drawImageBuffer(*inputImage, inputImageRect.location());
 
+    auto patternImage = ImageBuffer::sinkIntoNativeImage(WTFMove(tileImage));
+    if (!patternImage)
+        return false;
+
     AffineTransform patternTransform;
     patternTransform.translate(tileRect.location() - maxResultRect.location());
 
-    auto pattern = Pattern::create({ tileImage.releaseNonNull() }, { true, true, patternTransform });
+    auto pattern = Pattern::create(patternImage.releaseNonNull(), { true, true, patternTransform });
 
     auto& resultContext = resultImage->context();
     resultContext.setFillPattern(WTFMove(pattern));

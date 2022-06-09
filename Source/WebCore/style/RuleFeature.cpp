@@ -53,7 +53,7 @@ static bool isSiblingOrSubject(MatchElement matchElement)
     case MatchElement::HasChild:
     case MatchElement::HasDescendant:
     case MatchElement::HasSiblingDescendant:
-    case MatchElement::HasNonSubjectOrScopeBreaking:
+    case MatchElement::HasNonSubject:
         return false;
     }
     ASSERT_NOT_REACHED();
@@ -67,7 +67,7 @@ bool isHasPseudoClassMatchElement(MatchElement matchElement)
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
-    case MatchElement::HasNonSubjectOrScopeBreaking:
+    case MatchElement::HasNonSubject:
         return true;
     default:
         return false;
@@ -99,7 +99,8 @@ RuleFeatureWithInvalidationSelector::RuleFeatureWithInvalidationSelector(const R
 
 static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)
 {
-    ASSERT(!isHasPseudoClassMatchElement(matchElement));
+    if (isHasPseudoClassMatchElement(matchElement))
+        return matchElement;
 
     if (isSiblingOrSubject(matchElement)) {
         switch (relation) {
@@ -145,23 +146,14 @@ static MatchElement computeNextMatchElement(MatchElement matchElement, CSSSelect
     return matchElement;
 };
 
-static MatchElement computeNextHasPseudoClassMatchElement(MatchElement matchElement, CSSSelector::RelationType relation, CanBreakScope canBreakScope)
-{
-    ASSERT(isHasPseudoClassMatchElement(matchElement));
-
-    // :has(:is(foo bar)) can be affected by changes outside the :has scope.
-    if (canBreakScope == CanBreakScope::Yes) {
-        if (relation == CSSSelector::DescendantSpace || relation == CSSSelector::Child)
-            return MatchElement::HasNonSubjectOrScopeBreaking;
-    }
-    return matchElement;
-}
-
 MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
 {
     auto hasMatchElement = MatchElement::Subject;
     for (auto* simpleSelector = &hasSelector; simpleSelector->tagHistory(); simpleSelector = simpleSelector->tagHistory())
         hasMatchElement = computeNextMatchElement(hasMatchElement, simpleSelector->relation());
+
+    if (hasMatchElement == MatchElement::Parent)
+        return MatchElement::HasChild;
 
     switch (hasMatchElement) {
     case MatchElement::Parent:
@@ -180,7 +172,7 @@ MatchElement computeHasPseudoClassMatchElement(const CSSSelector& hasSelector)
     case MatchElement::HasDescendant:
     case MatchElement::HasSibling:
     case MatchElement::HasSiblingDescendant:
-    case MatchElement::HasNonSubjectOrScopeBreaking:
+    case MatchElement::HasNonSubject:
     case MatchElement::Host:
         ASSERT_NOT_REACHED();
         break;
@@ -202,10 +194,9 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
 
         if (type == CSSSelector::PseudoClassHas) {
             if (matchElement != MatchElement::Subject)
-                return MatchElement::HasNonSubjectOrScopeBreaking;
+                return MatchElement::HasNonSubject;
             return computeHasPseudoClassMatchElement(childSelector);
         }
-
     }
     if (selector.match() == CSSSelector::PseudoElement) {
         // Similarly for ::slotted().
@@ -216,7 +207,7 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     return matchElement;
 };
 
-void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, MatchElement matchElement, IsNegation isNegation, CanBreakScope canBreakScope)
+void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& selectorFeatures, const CSSSelector& firstSelector, MatchElement matchElement, IsNegation isNegation)
 {
     const CSSSelector* selector = &firstSelector;
     do {
@@ -246,10 +237,8 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
                 break;
             }
         } else if (selector->match() == CSSSelector::PseudoClass) {
-            bool isLogicalCombination = isLogicalCombinationPseudoClass(selector->pseudoClassType());
-            if (!isLogicalCombination)
+            if (!isLogicalCombinationPseudoClass(selector->pseudoClassType()))
                 selectorFeatures.pseudoClasses.append({ selector, matchElement, isNegation });
-            canBreakScope = isLogicalCombination && selector->pseudoClassType() != CSSSelector::PseudoClassHas ? CanBreakScope::Yes : CanBreakScope::No;
         }
 
         if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
@@ -264,18 +253,14 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
                 auto subSelectorMatchElement = computeSubSelectorMatchElement(matchElement, *selector, *subSelector);
                 if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
                     selectorFeatures.hasSiblingSelector = true;
-                recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation, canBreakScope);
+                recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation);
 
                 if (selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHas)
                     selectorFeatures.hasPseudoClasses.append({ subSelector, subSelectorMatchElement, isNegation });
             }
         }
 
-        matchElement = [&] {
-            if (isHasPseudoClassMatchElement(matchElement))
-                return computeNextHasPseudoClassMatchElement(matchElement, selector->relation(), canBreakScope);
-            return computeNextMatchElement(matchElement, selector->relation());
-        }();
+        matchElement = computeNextMatchElement(matchElement, selector->relation());
 
         selector = selector->tagHistory();
     } while (selector);

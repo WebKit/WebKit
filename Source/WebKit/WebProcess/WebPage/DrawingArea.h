@@ -123,7 +123,7 @@ public:
     virtual void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, CompletionHandler<void()>&& completionHandler) { completionHandler(); };
     virtual void setLayerHostingMode(LayerHostingMode) { }
 
-    virtual void tryMarkLayersVolatile(CompletionHandler<void(bool)>&&);
+    virtual bool markLayersVolatileImmediatelyIfPossible() { return true; }
 
     virtual void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) { }
 
@@ -157,9 +157,9 @@ public:
 protected:
     DrawingArea(DrawingAreaType, DrawingAreaIdentifier, WebPage&);
 
-    template<typename T> bool send(T&& message)
+    template<typename U> bool send(const U& message)
     {
-        return m_webPage.send(WTFMove(message), m_identifier.toUInt64(), { });
+        return m_webPage.send(message, m_identifier.toUInt64(), { });
     }
 
     const DrawingAreaType m_type;
@@ -175,7 +175,6 @@ private:
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/,
                                          const WebCore::IntSize& /*scrollOffset*/) { }
-    virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
 #endif
     virtual void didUpdate() { }
 

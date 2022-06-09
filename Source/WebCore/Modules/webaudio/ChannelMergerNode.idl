@@ -28,7 +28,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudioEnabled,
     JSGenerateToJSObject,
     Exposed=Window
 ] interface ChannelMergerNode : AudioNode {

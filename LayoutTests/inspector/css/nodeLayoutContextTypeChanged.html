@@ -8,25 +8,17 @@ function changeElementDisplayValue(id, value)
     document.getElementById(id).style.display = value;
 }
 
-function appendElementToBody(tag, id)
-{
-    let element = document.createElement(tag);
-    element.id = id;
-    document.body.appendChild(element);
-}
-
 function test()
 {
     let documentNode;
 
     let suite = InspectorTest.createAsyncSuite("CSS.nodeLayoutContextTypeChanged");
 
-    function addTestCase({name, description, selector, setup, domNodeHandler})
+    function addTestCase({name, description, selector, domNodeHandler})
     {
         suite.addTestCase({
             name,
             description,
-            setup,
             async test() {
                 let nodeId = await documentNode.querySelector(selector);
                 let domNode = WI.domManager.nodeForId(nodeId);
@@ -39,11 +31,6 @@ function test()
     async function changeElementDisplayValue(id, value)
     {
         await InspectorTest.evaluateInPage(`changeElementDisplayValue("${id}", "${value}")`);
-    }
-
-    async function appendElementToBody(tag, id)
-    {
-        await InspectorTest.evaluateInPage(`appendElementToBody("${tag}", "${id}")`);
     }
 
     addTestCase({
@@ -78,93 +65,6 @@ function test()
         }
     });
 
-    addTestCase({
-        name: "CSS.nodeLayoutContextTypeChanged.FlexToNonFlex",
-        description: "Change a flex container to a non-flex container.",
-        selector: "#flexToNonFlex",
-        async domNodeHandler(domNode) {
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should be `flex`.");
-
-            await Promise.all([
-                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
-                changeElementDisplayValue("flexToNonFlex", "block"),
-            ]);
-
-            InspectorTest.expectEqual(domNode.layoutContextType, null, "Layout context should now be `null`.");
-        }
-    });
-
-    addTestCase({
-        name: "CSS.nodeLayoutContextTypeChanged.NonFlexToFlex",
-        description: "Change a non-flex container to a flex container.",
-        selector: "#nonFlexToFlex",
-        async domNodeHandler(domNode) {
-            InspectorTest.expectEqual(domNode.layoutContextType, null, "Layout context should be `null`.");
-
-            await Promise.all([
-                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
-                changeElementDisplayValue("nonFlexToFlex", "flex"),
-            ]);
-
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should now be `flex`.");
-        }
-    });
-
-    addTestCase({
-        name: "CSS.nodeLayoutContextTypeChanged.GridToFlex",
-        description: "Change a non-flex container to a flex container.",
-        selector: "#gridToFlex",
-        async domNodeHandler(domNode) {
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Grid, "Layout context should now be `grid`.");
-
-            await Promise.all([
-                domNode.awaitEvent(WI.DOMNode.Event.LayoutContextTypeChanged),
-                changeElementDisplayValue("gridToFlex", "flex"),
-            ]);
-
-            InspectorTest.expectEqual(domNode.layoutContextType, WI.DOMNode.LayoutContextType.Flex, "Layout context should now be `flex`.");
-        }
-    });
-
-    function addEnsureLayoutContextTypeTestCase({name, description, selector, expectedLayoutContextType, setup})
-    {
-        addTestCase({name, description, selector, setup, async domNodeHandler(domNode) {
-                InspectorTest.expectEqual(domNode.layoutContextType, expectedLayoutContextType, `Layout context should be \`${expectedLayoutContextType}\`.`);
-            }
-        });
-    }
-
-    addEnsureLayoutContextTypeTestCase({
-        name: "CSS.nodeLayoutContextTypeChanged.NotFlex.SubmitInput",
-        description: "Make sure an `input` element of type `submit` is not considered a flex container.",
-        selector: "#flexSubmitInput",
-        expectedLayoutContextType: null,
-    });
-
-    addEnsureLayoutContextTypeTestCase({
-        name: "CSS.nodeLayoutContextTypeChanged.NotFlex.Select",
-        description: "Make sure a `select` element is not considered a flex container.",
-        selector: "#flexSelect",
-        expectedLayoutContextType: null,
-    });
-
-    addEnsureLayoutContextTypeTestCase({
-        name: "CSS.nodeLayoutContextTypeChanged.NotFlex.Button",
-        description: "Make sure a `button` is not considered a flex container.",
-        selector: "#flexButton",
-        expectedLayoutContextType: null,
-    });
-
-    addEnsureLayoutContextTypeTestCase({
-        name: "CSS.nodeLayoutContextTypeChanged.NotFlex.DynamicallyAddedButton",
-        description: "Make sure a `button` that is added dynamically is not considered a flex container.",
-        selector: "#dynamicallyAddedFlexButton",
-        expectedLayoutContextType: null,
-        async setup() {
-            await appendElementToBody("button", "dynamicallyAddedFlexButton");
-        }
-    });
-
     WI.domManager.requestDocument().then((doc) => {
         documentNode = doc;
         suite.runTestCasesAndFinish();
@@ -174,10 +74,6 @@ function test()
 <style>
     .grid-container {
         display: grid;
-    }
-
-    .flex-container {
-        display: flex;
     }
 </style>
 </head>
@@ -192,24 +88,5 @@ function test()
         <div></div>
         <div></div>
     </div>
-
-    <div id="flexToNonFlex" class="flex-container">
-        <div></div>
-        <div></div>
-    </div>
-
-    <div id="nonFlexToFlex">
-        <div></div>
-        <div></div>
-    </div>
-
-    <div id="gridToFlex" class="grid-container">
-        <div></div>
-        <div></div>
-    </div>
-    
-    <input type="submit" id="flexSubmitInput" />
-    <select id="flexSelect"></select>
-    <button id="flexButton"></button>
 </body>
 </html>

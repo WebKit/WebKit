@@ -9,7 +9,6 @@
 
 #include "common/debug.h"
 #include "common/system_utils.h"
-#include "traces_export.h"
 #include "util/EGLPlatformParameters.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
@@ -25,75 +24,10 @@
 #include <string>
 #include <utility>
 
-#include "frame_capture_test_utils.h"
+#include "util/capture/frame_capture_test_utils.h"
 
-namespace
-{
-EGLWindow *gEGLWindow       = nullptr;
 constexpr char kResultTag[] = "*RESULT";
 constexpr char kTracePath[] = ANGLE_CAPTURE_REPLAY_TEST_NAMES_PATH;
-
-EGLImage KHRONOS_APIENTRY EGLCreateImage(EGLDisplay display,
-                                         EGLContext context,
-                                         EGLenum target,
-                                         EGLClientBuffer buffer,
-                                         const EGLAttrib *attrib_list)
-{
-
-    GLWindowContext ctx = reinterpret_cast<GLWindowContext>(context);
-    return gEGLWindow->createImage(ctx, target, buffer, attrib_list);
-}
-
-EGLImage KHRONOS_APIENTRY EGLCreateImageKHR(EGLDisplay display,
-                                            EGLContext context,
-                                            EGLenum target,
-                                            EGLClientBuffer buffer,
-                                            const EGLint *attrib_list)
-{
-
-    GLWindowContext ctx = reinterpret_cast<GLWindowContext>(context);
-    return gEGLWindow->createImageKHR(ctx, target, buffer, attrib_list);
-}
-
-EGLBoolean KHRONOS_APIENTRY EGLDestroyImage(EGLDisplay display, EGLImage image)
-{
-    return gEGLWindow->destroyImage(image);
-}
-
-EGLBoolean KHRONOS_APIENTRY EGLDestroyImageKHR(EGLDisplay display, EGLImage image)
-{
-    return gEGLWindow->destroyImageKHR(image);
-}
-}  // namespace
-
-angle::GenericProc KHRONOS_APIENTRY TraceLoadProc(const char *procName)
-{
-    if (!gEGLWindow)
-    {
-        std::cout << "No Window pointer in TraceLoadProc.\n";
-        return nullptr;
-    }
-    else
-    {
-        if (strcmp(procName, "eglCreateImage") == 0)
-        {
-            return reinterpret_cast<angle::GenericProc>(EGLCreateImage);
-        }
-        if (strcmp(procName, "eglCreateImageKHR") == 0)
-        {
-            return reinterpret_cast<angle::GenericProc>(EGLCreateImageKHR);
-        }
-        if (strcmp(procName, "eglDestroyImage") == 0)
-        {
-            return reinterpret_cast<angle::GenericProc>(EGLDestroyImage);
-        }
-        if (strcmp(procName, "eglDestroyImageKHR") == 0)
-        {
-            return reinterpret_cast<angle::GenericProc>(EGLDestroyImageKHR);
-        }
-        return gEGLWindow->getProcAddress(procName);
-    }
-}
 
 class CaptureReplayTests
 {
@@ -151,9 +85,9 @@ class CaptureReplayTests
         configParams.webGLCompatibility    = traceInfo.isWebGLCompatibilityEnabled;
         configParams.robustResourceInit    = traceInfo.isRobustResourceInitEnabled;
 
-        mPlatformParams.renderer   = traceInfo.displayPlatformType;
-        mPlatformParams.deviceType = traceInfo.displayDeviceType;
-        mPlatformParams.enable(angle::Feature::ForceInitShaderVariables);
+        mPlatformParams.renderer                 = traceInfo.displayPlatformType;
+        mPlatformParams.deviceType               = traceInfo.displayDeviceType;
+        mPlatformParams.forceInitShaderVariables = EGL_TRUE;
 
         if (!mEGLWindow->initializeGL(mOSWindow, mEntryPointsLib.get(),
                                       angle::GLESDriverType::AngleEGL, mPlatformParams,
@@ -162,11 +96,6 @@ class CaptureReplayTests
             mOSWindow->destroy();
             return false;
         }
-
-        gEGLWindow = mEGLWindow;
-        trace_angle::LoadEGL(TraceLoadProc);
-        trace_angle::LoadGLES(TraceLoadProc);
-
         // Disable vsync
         if (!mEGLWindow->setSwapInterval(0))
         {

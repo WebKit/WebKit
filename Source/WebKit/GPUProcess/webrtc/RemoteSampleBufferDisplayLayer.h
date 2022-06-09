@@ -30,25 +30,22 @@
 #include "LayerHostingContext.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
-#include "RemoteVideoFrameIdentifier.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
-#include "SharedVideoFrame.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
 #include <wtf/MediaTime.h>
-#include <wtf/ThreadAssertions.h>
 
 namespace WebCore {
 class ImageTransferSessionVT;
 class LocalSampleBufferDisplayLayer;
+class RemoteVideoSample;
 };
 
 namespace WebKit {
-class GPUConnectionToWebProcess;
 
 class RemoteSampleBufferDisplayLayer : public WebCore::SampleBufferDisplayLayer::Client, public IPC::MessageReceiver, private IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteSampleBufferDisplayLayer> create(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
+    static std::unique_ptr<RemoteSampleBufferDisplayLayer> create(SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
     ~RemoteSampleBufferDisplayLayer();
 
     using WebCore::SampleBufferDisplayLayer::Client::weakPtrFactory;
@@ -63,22 +60,20 @@ public:
     CGRect bounds() const;
     
 private:
-    RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
+    RemoteSampleBufferDisplayLayer(SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(String&&);
 #endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
     void updateAffineTransform(CGAffineTransform);
-    void updateBoundsAndPosition(CGRect, WebCore::VideoFrame::Rotation);
+    void updateBoundsAndPosition(CGRect, WebCore::MediaSample::VideoRotation);
     void flush();
     void flushAndRemoveImage();
     void play();
     void pause();
-    void enqueueVideoFrame(SharedVideoFrame&&);
-    void clearVideoFrames();
-    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
+    void enqueueSample(WebCore::RemoteVideoSample&&);
+    void clearEnqueuedSamples();
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
@@ -87,15 +82,11 @@ private:
     // WebCore::SampleBufferDisplayLayer::Client
     void sampleBufferDisplayLayerStatusDidFail() final;
 
-    GPUConnectionToWebProcess& m_gpuConnection WTF_GUARDED_BY_CAPABILITY(m_consumeThread);
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     std::unique_ptr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
-    SharedVideoFrameReader m_sharedVideoFrameReader;
-    ThreadAssertion m_consumeThread NO_UNIQUE_ADDRESS;
-
 };
 
 }

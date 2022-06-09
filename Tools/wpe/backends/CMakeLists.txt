@@ -7,11 +7,13 @@ file(MAKE_DIRECTORY ${WPEToolingBackends_DERIVED_SOURCES_DIR})
 set(WPEToolingBackends_PUBLIC_HEADERS
     HeadlessViewBackend.h
     ViewBackend.h
+    WindowViewBackend.h
 )
 
 set(WPEToolingBackends_SOURCES
     HeadlessViewBackend.cpp
     ViewBackend.cpp
+    WindowViewBackend.cpp
 )
 
 set(WPEToolingBackends_PRIVATE_INCLUDE_DIRECTORIES
@@ -20,13 +22,9 @@ set(WPEToolingBackends_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 set(WPEToolingBackends_LIBRARIES
+    Cairo::Cairo
     WPE::libwpe
 )
-
-if (USE_CAIRO)
-    list(APPEND WPEToolingBackends_LIBRARIES Cairo::Cairo)
-    list(APPEND WPEToolingBackends_DEFINITIONS USE_CAIRO=1)
-endif ()
 
 set(WPEToolingBackends_INTERFACE_LIBRARIES WPEToolingBackends)
 set(WPEToolingBackends_INTERFACE_INCLUDE_DIRECTORIES ${WPEToolingBackends_FRAMEWORK_HEADERS_DIR})

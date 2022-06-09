@@ -132,18 +132,7 @@ class UnlinkedFunctionCodeBlock;
     };
 
 #if ENABLE(WEBASSEMBLY)
-    class BaseWebAssemblySourceProvider : public SourceProvider {
-    public:
-        virtual const uint8_t* data() = 0;
-        virtual size_t size() const = 0;
-        virtual void lockUnderlyingBuffer() { }
-        virtual void unlockUnderlyingBuffer() { }
-
-    protected:
-        JS_EXPORT_PRIVATE BaseWebAssemblySourceProvider(const SourceOrigin&, String&&);
-    };
-
-    class WebAssemblySourceProvider final : public BaseWebAssemblySourceProvider {
+    class WebAssemblySourceProvider final : public SourceProvider {
     public:
         static Ref<WebAssemblySourceProvider> create(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String sourceURL)
         {
@@ -160,51 +149,21 @@ class UnlinkedFunctionCodeBlock;
             return m_source;
         }
 
-        const uint8_t* data() final
-        {
-            return m_data.data();
-        }
-
-        size_t size() const final
-        {
-            return m_data.size();
-        }
-
-        const Vector<uint8_t>& dataVector() const
+        const Vector<uint8_t>& data() const
         {
             return m_data;
         }
 
     private:
         WebAssemblySourceProvider(Vector<uint8_t>&& data, const SourceOrigin& sourceOrigin, String&& sourceURL)
-            : BaseWebAssemblySourceProvider(sourceOrigin, WTFMove(sourceURL))
-            , m_source("[WebAssembly source]"_s)
+            : SourceProvider(sourceOrigin, WTFMove(sourceURL), TextPosition(), SourceProviderSourceType::WebAssembly)
+            , m_source("[WebAssembly source]")
             , m_data(WTFMove(data))
         {
         }
 
         String m_source;
         Vector<uint8_t> m_data;
-    };
-
-    // RAII class for managing a Wasm source provider's underlying buffer.
-    class WebAssemblySourceProviderBufferGuard {
-    public:
-        explicit WebAssemblySourceProviderBufferGuard(BaseWebAssemblySourceProvider* sourceProvider)
-            : m_sourceProvider(sourceProvider)
-        {
-            if (m_sourceProvider)
-                m_sourceProvider->lockUnderlyingBuffer();
-        }
-
-        ~WebAssemblySourceProviderBufferGuard()
-        {
-            if (m_sourceProvider)
-                m_sourceProvider->unlockUnderlyingBuffer();
-        }
-
-    private:
-        RefPtr<BaseWebAssemblySourceProvider> m_sourceProvider;
     };
 #endif
 

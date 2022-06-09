@@ -121,10 +121,15 @@ bool OverrideTextureCaps(const DisplayMtl *display, angle::FormatID formatId, gl
 void GenerateTextureCapsMap(const FormatTable &formatTable,
                             const DisplayMtl *display,
                             gl::TextureCapsMap *capsMapOut,
+                            std::vector<GLenum> *compressedFormatsOut,
                             uint32_t *maxSamplesOut)
 {
-    auto &textureCapsMap = *capsMapOut;
-    auto formatVerifier  = [&](const gl::InternalFormat &internalFormatInfo) {
+    auto &textureCapsMap    = *capsMapOut;
+    auto &compressedFormats = *compressedFormatsOut;
+
+    compressedFormats.clear();
+
+    auto formatVerifier = [&](const gl::InternalFormat &internalFormatInfo) {
         angle::FormatID angleFormatId =
             angle::Format::InternalFormatToID(internalFormatInfo.sizedInternalFormat);
         const Format &mtlFormat = formatTable.getPixelFormat(angleFormatId);
@@ -134,6 +139,7 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
         }
         const FormatCaps &formatCaps = mtlFormat.getCaps();
 
+        const angle::Format &intendedAngleFormat = mtlFormat.intendedAngleFormat();
         gl::TextureCaps textureCaps;
 
         // First let check whether we can override certain special cases.
@@ -162,6 +168,11 @@ void GenerateTextureCapsMap(const FormatTable &formatTable,
         }
 
         textureCapsMap.set(mtlFormat.intendedFormatId, textureCaps);
+
+        if (intendedAngleFormat.isBlock)
+        {
+            compressedFormats.push_back(intendedAngleFormat.glInternalFormat);
+        }
     };
 
     // Texture caps map.
@@ -266,9 +277,11 @@ angle::Result FormatTable::initialize(const DisplayMtl *display)
     return angle::Result::Continue;
 }
 
-void FormatTable::generateTextureCaps(const DisplayMtl *display, gl::TextureCapsMap *capsMapOut)
+void FormatTable::generateTextureCaps(const DisplayMtl *display,
+                                      gl::TextureCapsMap *capsMapOut,
+                                      std::vector<GLenum> *compressedFormatsOut)
 {
-    GenerateTextureCapsMap(*this, display, capsMapOut, &mMaxSamples);
+    GenerateTextureCapsMap(*this, display, capsMapOut, compressedFormatsOut, &mMaxSamples);
 }
 
 const Format &FormatTable::getPixelFormat(angle::FormatID angleFormatId) const

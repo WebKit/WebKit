@@ -489,15 +489,14 @@ void Database::clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDo
     ASSERT(!RunLoop::isMain());
 
     // Default to clear all entries if no domain is specified.
-    String bindParameter;
+    String bindParameter = "%";
     if (domain) {
         auto domainIDToMatch = domainID(*domain);
         if (!domainIDToMatch)
             return;
 
         bindParameter = String::number(*domainIDToMatch);
-    } else
-        bindParameter = "%"_s;
+    }
 
     auto transactionScope = beginTransactionIfNecessary();
 
@@ -713,17 +712,17 @@ void Database::destroyStatements()
 
 void Database::addDestinationTokenColumnsIfNecessary()
 {
-    constexpr auto attributedTableName = "AttributedPrivateClickMeasurement"_s;
+    String attributedTableName("AttributedPrivateClickMeasurement"_s);
     String destinationKeyIDColumnName("destinationKeyID"_s);
     auto columns = columnsForTable(attributedTableName);
     if (!columns.size() || columns.last() != destinationKeyIDColumnName) {
         addMissingColumnToTable(attributedTableName, "destinationToken TEXT"_s);
         addMissingColumnToTable(attributedTableName, "destinationSignature TEXT"_s);
-        addMissingColumnToTable(attributedTableName, "destinationKeyID TEXT"_s);
+        addMissingColumnToTable(attributedTableName, "destinationKeyID TEXT");
     }
 }
 
-Vector<String> Database::columnsForTable(ASCIILiteral tableName)
+Vector<String> Database::columnsForTable(const String& tableName)
 {
     auto statement = m_database.prepareStatementSlow(makeString("PRAGMA table_info(", tableName, ")"));
 
@@ -742,7 +741,7 @@ Vector<String> Database::columnsForTable(ASCIILiteral tableName)
     return columns;
 }
 
-void Database::addMissingColumnToTable(ASCIILiteral tableName, ASCIILiteral columnName)
+void Database::addMissingColumnToTable(const String& tableName, const String& columnName)
 {
     auto statement = m_database.prepareStatementSlow(makeString("ALTER TABLE ", tableName, " ADD COLUMN ", columnName));
     if (!statement) {

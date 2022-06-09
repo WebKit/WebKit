@@ -34,14 +34,14 @@ class RenderSelectionInfoBase {
     WTF_MAKE_NONCOPYABLE(RenderSelectionInfoBase); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit RenderSelectionInfoBase(RenderObject& renderer);
-    const RenderLayerModelObject* repaintContainer() const { return m_repaintContainer; }
+    RenderLayerModelObject* repaintContainer() const { return m_repaintContainer; }
     RenderObject::HighlightState state() const { return m_state; }
 
 protected:
     void repaintRectangle(const LayoutRect& repaintRect);
 
     RenderObject& m_renderer;
-    const RenderLayerModelObject* m_repaintContainer;
+    RenderLayerModelObject* m_repaintContainer;
 
 private:
     RenderObject::HighlightState m_state;

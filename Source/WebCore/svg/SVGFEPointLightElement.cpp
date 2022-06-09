@@ -20,11 +20,10 @@
 #include "config.h"
 #include "SVGFEPointLightElement.h"
 
-#include "FilterEffectVector.h"
 #include "GeometryUtilities.h"
 #include "ImageBuffer.h"
 #include "PointLightSource.h"
-#include "SVGFilter.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include <wtf/MathExtras.h>
 
@@ -41,11 +40,11 @@ Ref<SVGFEPointLightElement> SVGFEPointLightElement::create(const QualifiedName& 
     return adoptRef(*new SVGFEPointLightElement(tagName, document));
 }
 
-Ref<LightSource> SVGFEPointLightElement::lightSource(const SVGFilter& filter) const
+Ref<LightSource> SVGFEPointLightElement::lightSource(SVGFilterBuilder& builder) const
 {
     FloatPoint3D position;
-    if (filter.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        FloatRect referenceBox = filter.targetBoundingBox();
+    if (builder.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        FloatRect referenceBox = builder.targetBoundingBox();
         
         position.setX(referenceBox.x() + x() * referenceBox.width());
         position.setY(referenceBox.y() + y() * referenceBox.height());

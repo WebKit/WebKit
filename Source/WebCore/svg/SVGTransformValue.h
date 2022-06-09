@@ -48,24 +48,6 @@ public:
         ConstructIdentityTransform,
         ConstructZeroTransform
     };
-    
-    static SVGTransformValue translateTransformValue(FloatSize delta)
-    {
-        return SVGTransformValue(SVG_TRANSFORM_TRANSLATE, AffineTransform::makeTranslation(delta));
-    }
-
-    static SVGTransformValue rotateTransformValue(float angleInDegrees, FloatPoint center)
-    {
-        auto result = SVGTransformValue(SVG_TRANSFORM_ROTATE, AffineTransform::makeRotation(angleInDegrees, center));
-        result.m_angle = angleInDegrees;
-        result.m_rotationCenter = center;
-        return result;
-    }
-
-    static SVGTransformValue scaleTransformValue(FloatSize scale)
-    {
-        return SVGTransformValue(SVG_TRANSFORM_SCALE, AffineTransform::makeScale(scale));
-    }
 
     SVGTransformValue(SVGTransformType type = SVG_TRANSFORM_MATRIX, const AffineTransform& transform = { })
         : m_type(type)
@@ -117,7 +99,7 @@ public:
     {
         m_type = SVG_TRANSFORM_MATRIX;
         m_angle = 0;
-        m_rotationCenter = { };
+        m_rotationCenter = FloatPoint();
         m_matrix->setValue(matrix);
     }
 
@@ -128,7 +110,7 @@ public:
         // then the type of the SVGTransform changes to SVG_TRANSFORM_MATRIX.
         m_type = SVG_TRANSFORM_MATRIX;
         m_angle = 0;
-        m_rotationCenter = { };
+        m_rotationCenter = FloatPoint();
     }
 
     FloatPoint translate() const
@@ -140,8 +122,10 @@ public:
     {
         m_type = SVG_TRANSFORM_TRANSLATE;
         m_angle = 0;
-        m_rotationCenter = { };
-        m_matrix->value() = AffineTransform::makeTranslation({ tx, ty });
+        m_rotationCenter = FloatPoint();
+        
+        m_matrix->value().makeIdentity();
+        m_matrix->value().translate(tx, ty);
     }
 
     FloatSize scale() const
@@ -153,16 +137,23 @@ public:
     {
         m_type = SVG_TRANSFORM_SCALE;
         m_angle = 0;
-        m_rotationCenter = { };
-        m_matrix->value() = AffineTransform::makeScale({ sx, sy });
+        m_rotationCenter = FloatPoint();
+        
+        m_matrix->value().makeIdentity();
+        m_matrix->value().scaleNonUniform(sx, sy);
     }
 
-    void setRotate(float angleInDegrees, float cx, float cy)
+    void setRotate(float angle, float cx, float cy)
     {
         m_type = SVG_TRANSFORM_ROTATE;
-        m_angle = angleInDegrees;
-        m_rotationCenter = { cx, cy };
-        m_matrix->value() = AffineTransform::makeRotation(angleInDegrees, { cx, cy });
+        m_angle = angle;
+        m_rotationCenter = FloatPoint(cx, cy);
+
+        // TODO: toString() implementation, which can show cx, cy (need to be stored?)
+        m_matrix->value().makeIdentity();
+        m_matrix->value().translate(cx, cy);
+        m_matrix->value().rotate(angle);
+        m_matrix->value().translate(-cx, -cy);
     }
 
     void setSkewX(float angle)

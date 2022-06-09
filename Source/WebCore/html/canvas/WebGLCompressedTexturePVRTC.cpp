@@ -26,8 +26,10 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
+
 #include "WebGLCompressedTexturePVRTC.h"
 
+#include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,7 +39,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTexturePVRTC);
 WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_IMG_texture_compression_pvrtc"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_IMG_texture_compression_pvrtc");
 
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGB_PVRTC_4BPPV1_IMG);
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGB_PVRTC_2BPPV1_IMG);
@@ -54,7 +56,7 @@ WebGLExtension::ExtensionName WebGLCompressedTexturePVRTC::getName() const
 
 bool WebGLCompressedTexturePVRTC::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension("GL_IMG_texture_compression_pvrtc"_s);
+    return context.supportsExtension("GL_IMG_texture_compression_pvrtc");
 }
 
 } // namespace WebCore

@@ -465,7 +465,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 {
     m_jit = &jit;
 
-    CompilerTimingScope timingScope("Air", "GenerateAndAllocateRegisters::generate");
+    TimingScope timingScope("Air::generateAndAllocateRegisters");
 
     DisallowMacroScratchRegisterUsage disallowScratch(*m_jit);
 
@@ -637,7 +637,11 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             })();
             checkConsistency();
 
-            inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width) {
+            inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
+                if (!arg.isTmp())
+                    return;
+
+                Tmp tmp = arg.tmp();
                 if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                     return;
 
@@ -647,13 +651,6 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                     if (Arg::isAnyDef(role))
                         m_namedDefdRegs.set(tmp.reg());
                 }
-            });
-
-            inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
-                if (!arg.isTmp())
-                    return;
-
-                Tmp tmp = arg.tmp();
 
                 // We convert any cold uses that are already in the stack to just point to
                 // the canonical stack location.
@@ -760,28 +757,34 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                     // We rewind this Inst to be in its previous state, however, if any arg admits stack,
                     // we move to providing that arg in stack form. This will allow us to fully allocate
                     // this inst when we rewind.
-                    inst.forEachTmpFast([&] (Tmp& tmp) {
-                        if (!tmp.isReg())
-                            return;
-                        if (isDisallowedRegister(tmp.reg()))
-                            return;
-                        Tmp originalTmp = allocationSnapshot[tmp.reg()];
-                        if (originalTmp.isReg()) {
-                            ASSERT(tmp.reg() == originalTmp.reg());
-                            // This means this Inst referred to this reg directly. We leave these as is.
-                            return;
-                        }
-                        tmp = originalTmp;
-                    });
                     inst.forEachArg([&] (Arg& arg, Arg::Role, Bank, Width) {
-                        if (arg.isTmp() && !arg.tmp().isReg() && inst.admitsStack(arg)) {
-                            Tmp tmp = arg.tmp();
-                            auto& entry = m_map[tmp];
-                            if (Reg reg = entry.reg)
-                                spill(tmp, reg);
+                        if (!arg.isTmp())
+                            return;
 
-                            arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
+                        Tmp tmp = arg.tmp();
+                        if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
+                            return;
+
+                        if (tmp.isReg()) {
+                            Tmp originalTmp = allocationSnapshot[tmp.reg()];
+                            if (originalTmp.isReg()) {
+                                ASSERT(tmp.reg() == originalTmp.reg());
+                                // This means this Inst referred to this reg directly. We leave these as is.
+                                return;
+                            }
+                            tmp = originalTmp;
                         }
+
+                        if (!inst.admitsStack(arg)) {
+                            arg = tmp;
+                            return;
+                        }
+
+                        auto& entry = m_map[tmp];
+                        if (Reg reg = entry.reg)
+                            spill(tmp, reg);
+
+                        arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
                     });
 
                     --instIndex;

@@ -49,11 +49,7 @@ CreatePeerConnectionFactory(
     std::unique_ptr<VideoDecoderFactory> video_decoder_factory,
     rtc::scoped_refptr<AudioMixer> audio_mixer,
     rtc::scoped_refptr<AudioProcessing> audio_processing,
-    AudioFrameProcessor* audio_frame_processor = nullptr
-#if defined(WEBRTC_WEBKIT_BUILD)
-    , std::unique_ptr<TaskQueueFactory> task_queue_factory = nullptr
-#endif
-    );
+    AudioFrameProcessor* audio_frame_processor = nullptr);
 
 }  // namespace webrtc
 

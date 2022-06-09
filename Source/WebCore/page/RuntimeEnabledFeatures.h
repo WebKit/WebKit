@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -78,6 +78,9 @@ public:
     bool fetchAPIKeepAliveEnabled() const { return m_fetchAPIKeepAliveEnabled; }
     void setFetchAPIKeepAliveEnabled(bool isEnabled) { m_fetchAPIKeepAliveEnabled = isEnabled; }
 
+    void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
+    bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
+
 #if ENABLE(WEBXR)
     void setWebXREnabled(bool isEnabled) { m_webXREnabled = isEnabled; }
     bool webXREnabled() const { return m_webXREnabled; }
@@ -85,6 +88,9 @@ public:
 
     void setAccessibilityObjectModelEnabled(bool isEnabled) { m_accessibilityObjectModelEnabled = isEnabled; }
     bool accessibilityObjectModelEnabled() const { return m_accessibilityObjectModelEnabled; }
+
+    void setAriaReflectionEnabled(bool isEnabled) { m_ariaReflectionEnabled = isEnabled; }
+    bool ariaReflectionEnabled() const { return m_ariaReflectionEnabled; }
 
     void setItpDebugModeEnabled(bool isEnabled) { m_itpDebugMode = isEnabled; }
     bool itpDebugModeEnabled() const { return m_itpDebugMode; }
@@ -105,8 +111,8 @@ public:
     void setLayoutFormattingContextEnabled(bool isEnabled) { m_layoutFormattingContextEnabled = isEnabled; }
     bool layoutFormattingContextEnabled() const { return m_layoutFormattingContextEnabled; }
 
-    void setInlineFormattingContextIntegrationEnabled(bool isEnabled) { m_inlineFormattingContextIntegrationEnabled = isEnabled; }
-    bool inlineFormattingContextIntegrationEnabled() const { return m_inlineFormattingContextIntegrationEnabled; }
+    void setLayoutFormattingContextIntegrationEnabled(bool isEnabled) { m_layoutFormattingContextIntegrationEnabled = isEnabled; }
+    bool layoutFormattingContextIntegrationEnabled() const { return m_layoutFormattingContextIntegrationEnabled; }
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
@@ -121,6 +127,9 @@ public:
 
     void setWebSQLEnabled(bool isEnabled) { m_webSQLEnabled = isEnabled; }
     bool webSQLEnabled() const { return m_webSQLEnabled; }
+
+    void setKeygenElementEnabled(bool isEnabled) { m_keygenElementEnabled = isEnabled; }
+    bool keygenElementEnabled() const { return m_keygenElementEnabled; }
 
     void setHighlightAPIEnabled(bool isEnabled) { m_highlightAPIEnabled = isEnabled; }
     bool highlightAPIEnabled() const { return m_highlightAPIEnabled; }
@@ -147,8 +156,6 @@ public:
     bool webRTCPlatformUDPSocketsEnabled() const { return m_isWebRTCPlatformUDPSocketsEnabled; }
     void setWebRTCPlatformUDPSocketsEnabled(bool isEnabled) { m_isWebRTCPlatformUDPSocketsEnabled = isEnabled; }
 #endif
-    bool webRTCAudioLatencyAdaptationEnabled() const { return m_isWebRTCAudioLatencyAdaptationEnabled; }
-    void setWebRTCAudioLatencyAdaptationEnabled(bool isEnabled) { m_isWebRTCAudioLatencyAdaptationEnabled = isEnabled; }
 
 #if ENABLE(DATALIST_ELEMENT)
     bool dataListElementEnabled() const { return m_isDataListElementEnabled; }
@@ -157,6 +164,13 @@ public:
 
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
     bool readableByteStreamAPIEnabled() const { return m_isReadableByteStreamAPIEnabled; }
+
+#if ENABLE(SERVICE_WORKER)
+    bool pushAPIEnabled() const { return m_pushAPIEnabled; }
+    void setPushAPIEnabled(bool isEnabled) { m_pushAPIEnabled = isEnabled; }
+    bool serviceWorkerEnabled() const { return m_serviceWorkerEnabled; }
+    void setServiceWorkerEnabled(bool isEnabled) { m_serviceWorkerEnabled = isEnabled; }
+#endif
 
     void setCSSLogicalEnabled(bool isEnabled) { m_CSSLogicalEnabled = isEnabled; }
     bool cssLogicalEnabled() const { return m_CSSLogicalEnabled; }
@@ -193,10 +207,7 @@ public:
     void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { m_accessibilityIsolatedTree = isEnabled; }
     bool isAccessibilityIsolatedTreeEnabled() const { return m_accessibilityIsolatedTree; }
 #endif
-
-    void setArePDFImagesEnabled(bool isEnabled) { m_arePDFImagesEnabled = isEnabled; }
-    bool arePDFImagesEnabled() const { return m_arePDFImagesEnabled; }
-
+    
 #if HAVE(INCREMENTAL_PDF_APIS)
     void setIncrementalPDFLoadingEnabled(bool isEnabled) { m_incrementalPDFLoadingEnabled = isEnabled; }
     bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
@@ -227,14 +238,14 @@ public:
     bool opusDecoderEnabled() const { return m_opusDecoderEnabled; }
 #endif
 
+#if ENABLE(WEB_AUTHN)
+    void setWebAuthenticationModernEnabled(bool areEnabled) { m_areWebAuthenticationModernEnabled = areEnabled; }
+    bool webAuthenticationModernEnabled() const { return m_areWebAuthenticationModernEnabled; }
+#endif
+
 #if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
     WEBCORE_EXPORT void setMediaSourceInlinePaintingEnabled(bool);
     bool mediaSourceInlinePaintingEnabled() const { return m_mediaSourceInlinePaintingEnabled; }
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    WEBCORE_EXPORT void setSampleBufferContentKeySessionSupportEnabled(bool);
-    bool sampleBufferContentKeySessionSupportEnabled() const { return m_sampleBufferContentKeySessionSupportEnabled; }
 #endif
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
@@ -270,10 +281,12 @@ private:
     bool m_isCacheAPIEnabled { false };
     bool m_isWebSocketEnabled { true };
     bool m_fetchAPIKeepAliveEnabled { false };
+    bool m_inspectorAdditionsEnabled { false };
 #if ENABLE(WEBXR)
     bool m_webXREnabled { false };
 #endif
     bool m_accessibilityObjectModelEnabled { false };
+    bool m_ariaReflectionEnabled { true };
     bool m_itpDebugMode { false };
     bool m_isRestrictedHTTPResponseAccess { true };
     bool m_isServerTimingEnabled { false };
@@ -287,7 +300,7 @@ private:
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool m_layoutFormattingContextEnabled { false };
-    bool m_inlineFormattingContextIntegrationEnabled { true };
+    bool m_layoutFormattingContextIntegrationEnabled { true };
 #endif
 
 #if ENABLE(CSS_PAINTING_API)
@@ -312,13 +325,17 @@ private:
     bool m_isWebRTCPlatformTCPSocketsEnabled { false };
     bool m_isWebRTCPlatformUDPSocketsEnabled { false };
 #endif
-    bool m_isWebRTCAudioLatencyAdaptationEnabled { true };
 
 #if ENABLE(DATALIST_ELEMENT)
     bool m_isDataListElementEnabled { false };
 #endif
 
     bool m_isReadableByteStreamAPIEnabled { false };
+
+#if ENABLE(SERVICE_WORKER)
+    bool m_pushAPIEnabled { false };
+    bool m_serviceWorkerEnabled { false };
+#endif
 
     bool m_CSSLogicalEnabled { false };
 
@@ -348,8 +365,6 @@ private:
     bool m_accessibilityIsolatedTree { false };
 #endif
 
-    bool m_arePDFImagesEnabled { true };
-
 #if HAVE(INCREMENTAL_PDF_APIS)
     bool m_incrementalPDFLoadingEnabled { false };
 #endif
@@ -374,12 +389,12 @@ private:
     bool m_opusDecoderEnabled { false };
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
-    bool m_mediaSourceInlinePaintingEnabled { false };
+#if ENABLE(WEB_AUTHN)
+    bool m_areWebAuthenticationModernEnabled { false };
 #endif
 
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool m_sampleBufferContentKeySessionSupportEnabled { false };
+#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
+    bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
@@ -387,7 +402,7 @@ private:
 #endif
 
 #if ENABLE(NOTIFICATION_EVENT)
-    bool m_notificationEventEnabled { true };
+    bool m_notificationEventEnabled { false };
 #endif
 
 #if ENABLE(MODEL_ELEMENT)

@@ -120,9 +120,6 @@ class ValidateAST : public TIntermTraverser
     // For validateMultiDeclarations:
     bool mMultiDeclarationsFailed = false;
 
-    // For validateNoSwizzleOfSwizzle:
-    bool mNoSwizzleOfSwizzleFailed = false;
-
     // For validateNoStatementsAfterBranch:
     bool mIsBranchVisitedInBlock        = false;
     bool mNoStatementsAfterBranchFailed = false;
@@ -701,17 +698,6 @@ void ValidateAST::visitConstantUnion(TIntermConstantUnion *node)
 bool ValidateAST::visitSwizzle(Visit visit, TIntermSwizzle *node)
 {
     visitNode(visit, node);
-
-    if (mOptions.validateNoSwizzleOfSwizzle)
-    {
-        if (node->getOperand()->getAsSwizzleNode() != nullptr)
-        {
-            mDiagnostics->error(node->getLine(), "Found swizzle applied to swizzle",
-                                "<validateNoSwizzleOfSwizzle>");
-            mNoSwizzleOfSwizzleFailed = true;
-        }
-    }
-
     return true;
 }
 
@@ -828,16 +814,6 @@ void ValidateAST::visitFunctionPrototype(TIntermFunctionPrototype *node)
                                     "Found function prototype with an invalid qualifier "
                                     "<validateQualifiers>",
                                     param->name().data());
-                mQualifiersFailed = true;
-            }
-
-            if (IsOpaqueType(paramType.getBasicType()) && qualifier != EvqParamIn)
-            {
-                mDiagnostics->error(
-                    node->getLine(),
-                    "Found function prototype with an invalid qualifier on opaque parameter "
-                    "<validateQualifiers>",
-                    param->name().data());
                 mQualifiersFailed = true;
             }
         }
@@ -1103,8 +1079,7 @@ bool ValidateAST::validateInternal()
     return !mSingleParentFailed && !mVariableReferencesFailed && !mBuiltInOpsFailed &&
            !mFunctionCallFailed && !mNoRawFunctionCallsFailed && !mNullNodesFailed &&
            !mQualifiersFailed && !mPrecisionFailed && !mStructUsageFailed &&
-           !mExpressionTypesFailed && !mMultiDeclarationsFailed && !mNoSwizzleOfSwizzleFailed &&
-           !mNoStatementsAfterBranchFailed;
+           !mExpressionTypesFailed && !mMultiDeclarationsFailed && !mNoStatementsAfterBranchFailed;
 }
 
 }  // anonymous namespace

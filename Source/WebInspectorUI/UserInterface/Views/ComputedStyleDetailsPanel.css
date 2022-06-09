@@ -40,19 +40,6 @@
 .sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter {
     width: 13px;
     height: 13px;
-    color: var(--glyph-color);
-}
-
-.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter:active {
-    color: var(--glyph-color-pressed);
-}
-
-.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter.active {
-    color: var(--glyph-color-active);
-}
-
-.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-properties > .header > .options.filter.active:active {
-    color: var(--glyph-color-active-pressed);
 }
 
 .sidebar > .panel.details.css-style > .content > .computed .spreadsheet-style-declaration-editor {
@@ -86,8 +73,4 @@
 
 .sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .scope-bar.computed-style-variables-grouping-mode:hover {
     --scope-bar-background-opacity-override: 0.5;
-}
-
-.sidebar > .panel.details.css-style > .content > .computed > .details-section.computed-style-variables .computed-style-section {
-    padding-top: var(--computed-style-section-vertical-padding);
 }

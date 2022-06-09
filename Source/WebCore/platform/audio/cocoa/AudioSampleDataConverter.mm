@@ -27,17 +27,10 @@
 #import "AudioSampleDataConverter.h"
 
 #import "AudioSampleBufferList.h"
-#import "Logging.h"
-#import "RuntimeEnabledFeatures.h"
 #import <AudioToolbox/AudioConverter.h>
 #import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
-
-AudioSampleDataConverter::AudioSampleDataConverter()
-    : m_latencyAdaptationEnabled(RuntimeEnabledFeatures::sharedFeatures().webRTCAudioLatencyAdaptationEnabled())
-{
-}
 
 AudioSampleDataConverter::~AudioSampleDataConverter()
 {
@@ -79,37 +72,19 @@ OSStatus AudioSampleDataConverter::setFormats(const CAAudioStreamDescription& in
     return noErr;
 }
 
-bool AudioSampleDataConverter::updateBufferedAmount(size_t currentBufferedAmount, size_t pushedSampleSize)
+bool AudioSampleDataConverter::updateBufferedAmount(size_t currentBufferedAmount)
 {
-    if (!m_latencyAdaptationEnabled)
-        return !!m_selectedConverter;
-
     if (currentBufferedAmount) {
         if (m_selectedConverter == m_regularConverter) {
-            if (currentBufferedAmount <= m_lowBufferSize) {
+            if (currentBufferedAmount <= m_lowBufferSize)
                 m_selectedConverter = m_lowConverter;
-                callOnMainThread([] {
-                    RELEASE_LOG(WebRTC, "AudioSampleDataConverter::updateBufferedAmount low buffer");
-                });
-            } else if (currentBufferedAmount >= m_highBufferSize && currentBufferedAmount >= 4 * pushedSampleSize) {
+            else if (currentBufferedAmount >= m_highBufferSize)
                 m_selectedConverter = m_highConverter;
-                callOnMainThread([] {
-                    RELEASE_LOG(WebRTC, "AudioSampleDataConverter::updateBufferedAmount high buffer");
-                });
-            }
         } else if (m_selectedConverter == m_highConverter) {
-            if (currentBufferedAmount < m_regularLowBufferSize) {
+            if (currentBufferedAmount < m_regularLowBufferSize)
                 m_selectedConverter = m_regularConverter;
-                callOnMainThread([] {
-                    RELEASE_LOG(WebRTC, "AudioSampleDataConverter::updateBufferedAmount going down to regular buffer");
-                });
-            }
-        } else if (currentBufferedAmount > m_regularHighBufferSize) {
+        } else if (currentBufferedAmount > m_regularHighBufferSize)
             m_selectedConverter = m_regularConverter;
-            callOnMainThread([] {
-                RELEASE_LOG(WebRTC, "AudioSampleDataConverter::updateBufferedAmount going up to regular buffer");
-            });
-        }
     }
     return !!m_selectedConverter;
 }

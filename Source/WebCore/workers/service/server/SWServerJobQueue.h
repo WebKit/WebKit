@@ -30,14 +30,11 @@
 #include "SWServer.h"
 #include "ServiceWorkerJobData.h"
 #include "Timer.h"
-#include "WorkerFetchResult.h"
 #include <wtf/Deque.h>
 
 namespace WebCore {
 
 class SWServerWorker;
-class ServiceWorkerJob;
-struct WorkerFetchResult;
 
 class SWServerJobQueue {
     WTF_MAKE_FAST_ALLOCATED;
@@ -53,8 +50,7 @@ public:
 
     void runNextJob();
 
-    void scriptFetchFinished(const ServiceWorkerJobDataIdentifier&, WorkerFetchResult&&);
-    void importedScriptsFetchFinished(const ServiceWorkerJobDataIdentifier&, const Vector<std::pair<URL, ScriptBuffer>>&);
+    void scriptFetchFinished(const ServiceWorkerFetchResult&);
     void scriptContextFailedToStart(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier, const String& message);
     void scriptContextStarted(const ServiceWorkerJobDataIdentifier&, ServiceWorkerIdentifier);
     void didFinishInstall(const ServiceWorkerJobDataIdentifier&, SWServerWorker&, bool wasSuccessful);
@@ -77,14 +73,12 @@ private:
     void install(SWServerRegistration&, ServiceWorkerIdentifier);
 
     void removeAllJobsMatching(const Function<bool(ServiceWorkerJobData&)>&);
-    void scriptAndImportedScriptsFetchFinished(const ServiceWorkerJobData&, SWServerRegistration&);
 
     Deque<ServiceWorkerJobData> m_jobQueue;
 
     Timer m_jobTimer;
     SWServer& m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
-    WorkerFetchResult m_workerFetchResult;
 };
 
 } // namespace WebCore

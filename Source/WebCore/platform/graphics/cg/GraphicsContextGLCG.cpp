@@ -506,9 +506,9 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
     return true;
 }
 
-void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer, const IntSize& canvasSize, GraphicsContext& context)
+void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, PixelBuffer&& pixelBuffer, const IntSize& canvasSize, GraphicsContext& context)
 {
-    ASSERT(!pixelBuffer->size().isEmpty());
+    ASSERT(!pixelBuffer.size().isEmpty());
     if (canvasSize.isEmpty())
         return;
     // Input is GL_RGBA == kCGBitmapByteOrder32Big | kCGImageAlpha*Last.
@@ -521,18 +521,18 @@ void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceC
     else
         bitmapInfo |= kCGImageAlphaLast;
 
-    Ref protectedPixelBuffer = pixelBuffer;
-    auto dataSize = pixelBuffer->sizeInBytes();
-    auto data = pixelBuffer->bytes();
+    Ref pixelArray = pixelBuffer.data();
+    auto dataSize = pixelArray->byteLength();
+    auto data = pixelArray->data();
 
     verifyImageBufferIsBigEnough(data, dataSize);
 
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(&protectedPixelBuffer.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
-        static_cast<PixelBuffer*>(context)->deref();
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(&pixelArray.leakRef(), data, dataSize, [] (void* context, const void*, size_t) {
+        static_cast<JSC::Uint8ClampedArray*>(context)->deref();
     }));
 
-    auto imageSize = pixelBuffer->size();
-    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer->format().colorSpace.platformColorSpace(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
+    auto imageSize = pixelBuffer.size();
+    auto image = NativeImage::create(adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, 4 * imageSize.width(), pixelBuffer.format().colorSpace.platformColorSpace(), bitmapInfo, dataProvider.get(), 0, false, kCGRenderingIntentDefault)));
 
     // CSS styling may cause the canvas's content to be resized on
     // the page. Go back to the Canvas to figure out the correct

@@ -146,7 +146,7 @@ void CurlDownload::curlDidFailWithError(CurlRequest& request, ResourceError&&, C
 
 bool CurlDownload::shouldRedirectAsGET(const ResourceRequest& request, bool crossOrigin)
 {
-    if ((request.httpMethod() == "GET"_s) || (request.httpMethod() == "HEAD"_s))
+    if ((request.httpMethod() == "GET") || (request.httpMethod() == "HEAD"))
         return false;
 
     if (!request.url().protocolIsInHTTPFamily())
@@ -155,10 +155,10 @@ bool CurlDownload::shouldRedirectAsGET(const ResourceRequest& request, bool cros
     if (m_response.isSeeOther())
         return true;
 
-    if ((m_response.isMovedPermanently() || m_response.isFound()) && (request.httpMethod() == "POST"_s))
+    if ((m_response.isMovedPermanently() || m_response.isFound()) && (request.httpMethod() == "POST"))
         return true;
 
-    if (crossOrigin && (request.httpMethod() == "DELETE"_s))
+    if (crossOrigin && (request.httpMethod() == "DELETE"))
         return true;
 
     return false;
@@ -184,7 +184,7 @@ void CurlDownload::willSendRequest()
     newRequest.setURL(newURL);
 
     if (shouldRedirectAsGET(newRequest, crossOrigin)) {
-        newRequest.setHTTPMethod("GET"_s);
+        newRequest.setHTTPMethod("GET");
         newRequest.setHTTPBody(nullptr);
         newRequest.clearHTTPContentType();
     }

@@ -66,8 +66,6 @@ enum class NegativePercentagePolicy : bool { Forbid, Allow };
 enum class UnitlessQuirk { Allow, Forbid };
 enum class UnitlessZeroQuirk { Allow, Forbid };
 
-struct NoneRaw { };
-
 struct NumberRaw {
     double value;
 };
@@ -88,11 +86,7 @@ struct LengthRaw {
 
 using LengthOrPercentRaw = std::variant<LengthRaw, PercentRaw>;
 using NumberOrPercentRaw = std::variant<NumberRaw, PercentRaw>;
-using NumberOrNoneRaw = std::variant<NumberRaw, NoneRaw>;
-using PercentOrNoneRaw = std::variant<PercentRaw, NoneRaw>;
-using NumberOrPercentOrNoneRaw = std::variant<NumberRaw, PercentRaw, NoneRaw>;
 using AngleOrNumberRaw = std::variant<AngleRaw, NumberRaw>;
-using AngleOrNumberOrNoneRaw = std::variant<AngleRaw, NumberRaw, NoneRaw>;
 
 std::optional<int> consumeIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&);
@@ -178,7 +172,7 @@ struct FontStyleRaw {
 using FontWeightRaw = std::variant<CSSValueID, double>;
 using FontSizeRaw = std::variant<CSSValueID, CSSPropertyParserHelpers::LengthOrPercentRaw>;
 using LineHeightRaw = std::variant<CSSValueID, double, CSSPropertyParserHelpers::LengthOrPercentRaw>;
-using FontFamilyRaw = std::variant<CSSValueID, AtomString>;
+using FontFamilyRaw = std::variant<CSSValueID, String>;
 
 struct FontRaw {
     std::optional<FontStyleRaw> style;
@@ -193,7 +187,6 @@ struct FontRaw {
 bool isPredefinedCounterStyle(CSSValueID);
 RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
 AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&);
-RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&);
 
 std::optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontWeightKeywordValueRaw(CSSParserTokenRange&);
@@ -201,8 +194,8 @@ std::optional<FontWeightRaw> consumeFontWeightRaw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeFontStyleKeywordValueRaw(CSSParserTokenRange&);
 std::optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange&, CSSParserMode);
-AtomString concatenateFamilyName(CSSParserTokenRange&);
-AtomString consumeFamilyNameRaw(CSSParserTokenRange&);
+String concatenateFamilyName(CSSParserTokenRange&);
+String consumeFamilyNameRaw(CSSParserTokenRange&);
 std::optional<CSSValueID> consumeGenericFamilyRaw(CSSParserTokenRange&);
 std::optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange&);
 std::optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
@@ -212,8 +205,6 @@ const AtomString& genericFontFamily(CSSValueID);
 WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
 
 bool isFontStyleAngleInRange(double angleInDegrees);
-
-RefPtr<CSSValueList> consumeAspectRatioValue(CSSParserTokenRange&);
 
 // Template and inline implementations are at the bottom of the file for readability.
 
@@ -246,7 +237,6 @@ inline bool isFontStyleAngleInRange(double angleInDegrees)
 {
     return angleInDegrees > -90 && angleInDegrees < 90;
 }
-
 
 } // namespace CSSPropertyParserHelpers
 

@@ -1,3 +1,0 @@
-
-FAIL Expecting logs: ["xhr allowed","TEST COMPLETE"] assert_unreached: unexpected log: xhr blocked Reached unreachable code
-

@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+*  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -86,7 +86,7 @@ void ExpressionNode::emitBytecodeInConditionContext(BytecodeGenerator& generator
 
 // ------------------------------ ThrowableExpressionData --------------------------------
 
-RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& generator, ASCIILiteral message, RegisterID* dst)
+RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& generator, const String& message, RegisterID* dst)
 {
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     generator.emitThrowReferenceError(message);
@@ -224,11 +224,9 @@ RegisterID* SuperNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 RegisterID* ImportNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> importModule = generator.moveLinkTimeConstant(nullptr, LinkTimeConstant::importModule);
-    CallArguments arguments(generator, nullptr, m_option ? 2 : 1);
+    CallArguments arguments(generator, nullptr, 1);
     generator.emitLoad(arguments.thisRegister(), jsUndefined());
     generator.emitNode(arguments.argumentRegister(0), m_expr);
-    if (m_option)
-        generator.emitNode(arguments.argumentRegister(1), m_option);
     return generator.emitCall(generator.finalDestination(dst, importModule.get()), importModule.get(), NoExpectedFunction, arguments, divot(), divotStart(), divotEnd(), DebuggableCall::No);
 }
 
@@ -661,8 +659,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     // Were there any get/set properties?
     if (p) {
         // Build a list of getter/setter pairs to try to put them at the same time. If we encounter
-        // a constant property by the same name as accessor or a computed property or a spread,
-        // just emit everything as that may override previous values.
+        // a computed property or a spread, just emit everything as that may override previous values.
         bool canOverrideProperties = false;
 
         GetterSetterMap instanceMap;
@@ -676,17 +673,12 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 break;
             }
 
-            GetterSetterMap& map = node->isStaticClassProperty() ? staticMap : instanceMap;
-            if (node->m_type & PropertyNode::Constant) {
-                if (map.contains(node->name()->impl())) {
-                    canOverrideProperties = true;
-                    break;
-                }
+            if (node->m_type & PropertyNode::Constant)
                 continue;
-            }
 
             // Duplicates are possible.
             GetterSetterPair pair(node, static_cast<PropertyNode*>(nullptr));
+            GetterSetterMap& map = node->isStaticClassProperty() ? staticMap : instanceMap;
             GetterSetterMap::AddResult result = map.add(node->name()->impl(), pair);
             auto& resultPair = result.iterator->value;
             if (!result.isNewEntry) {
@@ -896,7 +888,7 @@ void PropertyListNode::emitSaveComputedFieldName(BytecodeGenerator& generator, P
         Ref<Label> validPropertyNameLabel = generator.newLabel();
         RefPtr<RegisterID> prototypeString = generator.emitLoad(nullptr, JSValue(generator.addStringConstant(generator.propertyNames().prototype)));
         generator.emitJumpIfFalse(generator.emitBinaryOp<OpStricteq>(generator.newTemporary(), prototypeString.get(), propertyName.get(), OperandTypes(ResultType::stringType(), ResultType::stringType())), validPropertyNameLabel.get());
-        generator.emitThrowTypeError("Cannot declare a static field named 'prototype'"_s);
+        generator.emitThrowTypeError("Cannot declare a static field named 'prototype'");
         generator.emitLabel(validPropertyNameLabel.get());
     }
 
@@ -1015,7 +1007,7 @@ RegisterID* BaseDotNode::emitGetPropertyValue(BytecodeGenerator& generator, Regi
             ASSERT(scope); // Private names are always captured.
             RefPtr<RegisterID> privateBrandSymbol = generator.emitGetPrivateBrand(generator.newTemporary(), scope.get(), privateTraits.isStatic());
             generator.emitCheckPrivateBrand(base, privateBrandSymbol.get(), privateTraits.isStatic());
-            generator.emitThrowTypeError("Trying to access an undefined private getter"_s);
+            generator.emitThrowTypeError("Trying to access an undefined private getter");
             return dst;
         }
 
@@ -1074,7 +1066,7 @@ RegisterID* BaseDotNode::emitPutProperty(BytecodeGenerator& generator, RegisterI
             RefPtr<RegisterID> privateBrandSymbol = generator.emitGetPrivateBrand(generator.newTemporary(), scope.get(), privateTraits.isStatic());
             generator.emitCheckPrivateBrand(base, privateBrandSymbol.get(), privateTraits.isStatic());
 
-            generator.emitThrowTypeError("Trying to access an undefined private setter"_s);
+            generator.emitThrowTypeError("Trying to access an undefined private setter");
             return value;
         }
 
@@ -2244,7 +2236,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
     if (emitCallCheck) {
         makeFunction();
-        ASSERT(!m_base->isResolveNode() || static_cast<ResolveNode*>(m_base)->identifier() != "Reflect"_s);
+        ASSERT(!m_base->isResolveNode() || static_cast<ResolveNode*>(m_base)->identifier() != "Reflect");
         generator.emitJumpIfNotFunctionApply(function.get(), realCall.get());
     }
     if (mayBeCall) {
@@ -2454,7 +2446,7 @@ RegisterID* PostfixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
             generator.emitCheckPrivateBrand(base.get(), privateBrandSymbol.get(), privateTraits.isStatic());
 
             generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-            generator.emitThrowTypeError("Trying to access an undefined private setter"_s);
+            generator.emitThrowTypeError("Trying to access an undefined private setter");
             return generator.tempDestination(dst);
         }
 
@@ -2472,7 +2464,7 @@ RegisterID* PostfixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
             generator.move(args.thisRegister(), base.get());
             value = generator.emitCall(generator.newTemporary(), getterFunction.get(), NoExpectedFunction, args, m_position, m_position, m_position, DebuggableCall::Yes);
         } else {
-            generator.emitThrowTypeError("Trying to access an undefined private getter"_s);
+            generator.emitThrowTypeError("Trying to access an undefined private getter");
             return generator.tempDestination(dst);
         }
 
@@ -2490,7 +2482,7 @@ RegisterID* PostfixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
             return generator.move(dst, oldValue.get());
         } 
 
-        generator.emitThrowTypeError("Trying to access an undefined private getter"_s);
+        generator.emitThrowTypeError("Trying to access an undefined private getter");
         return generator.move(dst, oldValue.get());
     }
 
@@ -2558,7 +2550,7 @@ RegisterID* DeleteBracketNode::emitBytecode(BytecodeGenerator& generator, Regist
     RefPtr<RegisterID> r1 = generator.emitNode(m_subscript);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     if (m_base->isSuperNode())
-        return emitThrowReferenceError(generator, "Cannot delete a super property"_s, dst);
+        return emitThrowReferenceError(generator, "Cannot delete a super property", dst);
     return generator.emitDeleteByVal(finalDest.get(), r0.get(), r1.get());
 }
 
@@ -2574,7 +2566,7 @@ RegisterID* DeleteDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     if (m_base->isSuperNode())
-        return emitThrowReferenceError(generator, "Cannot delete a super property"_s, dst);
+        return emitThrowReferenceError(generator, "Cannot delete a super property", dst);
     return generator.emitDeleteById(finalDest.get(), r0.get(), m_ident);
 }
 
@@ -2743,7 +2735,7 @@ RegisterID* PrefixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
             generator.emitCheckPrivateBrand(base.get(), privateBrandSymbol.get(), privateTraits.isStatic());
 
             generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
-            generator.emitThrowTypeError("Trying to access an undefined private setter"_s);
+            generator.emitThrowTypeError("Trying to access an undefined private setter");
             return generator.move(dst, propDst.get());
         }
 
@@ -2760,7 +2752,7 @@ RegisterID* PrefixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
             generator.move(args.thisRegister(), base.get());
             value = generator.emitCall(propDst.get(), getterFunction.get(), NoExpectedFunction, args, m_position, m_position, m_position, DebuggableCall::Yes);
         } else {
-            generator.emitThrowTypeError("Trying to access an undefined private getter"_s);
+            generator.emitThrowTypeError("Trying to access an undefined private getter");
             return generator.move(dst, propDst.get());
         }
 
@@ -2778,7 +2770,7 @@ RegisterID* PrefixNode::emitDot(BytecodeGenerator& generator, RegisterID* dst)
             return generator.move(dst, propDst.get());
         } 
 
-        generator.emitThrowTypeError("Trying to access an undefined private getter"_s);
+        generator.emitThrowTypeError("Trying to access an undefined private getter");
         return generator.move(dst, propDst.get());
     }
 
@@ -3208,7 +3200,7 @@ RegisterID* InstanceOfNode::emitBytecode(BytecodeGenerator& generator, RegisterI
     generator.emitJump(done.get());
 
     generator.emitLabel(typeError.get());
-    generator.emitThrowTypeError("Right hand side of instanceof is not an object"_s);
+    generator.emitThrowTypeError("Right hand side of instanceof is not an object");
 
     generator.emitLabel(custom.get());
 
@@ -4460,7 +4452,7 @@ static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& 
                 typeForTable = SwitchNeither;
                 break;
             }
-            auto& value = static_cast<StringNode*>(clauseExpression)->value().string();
+            const String& value = static_cast<StringNode*>(clauseExpression)->value().string();
             if (singleCharacterSwitch &= value.length() == 1) {
                 int32_t intVal = value[0];
                 if (intVal < min_num)
@@ -5357,7 +5349,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
     if (!rhs->isSimpleArray())
         return nullptr;
 
-    if (m_targetPatterns.findIf([&] (auto& target) { return target.bindingType == BindingType::RestElement; }) != notFound)
+    if (m_targetPatterns.findMatching([&] (auto& target) { return target.bindingType == BindingType::RestElement; }) != notFound)
         return nullptr;
 
     ElementNode* elementNodes = static_cast<ArrayNode*>(rhs)->elements();
@@ -5374,7 +5366,7 @@ RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, Re
     if (m_targetPatterns.size() != elements.size())
         return nullptr;
     Vector<RefPtr<RegisterID>> registers;
-    registers.reserveInitialCapacity(m_targetPatterns.size());
+    registers.reserveCapacity(m_targetPatterns.size());
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
         registers.uncheckedAppend(generator.newTemporary());
         generator.emitNode(registers.last().get(), elements[i]);

@@ -10,6 +10,7 @@
             if (!window.internals || !window.eventSender || !window.testRunner)
                 return;
 
+            internals.settings.setInputEventsEnabled(true);
             document.querySelector("#editable").focus();
 
             eventSender.keyDown("a", []);

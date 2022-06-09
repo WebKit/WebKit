@@ -1,0 +1,31 @@
+The test to ensure that currentX/currentY of Path2D works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.currentX is 0
+PASS ctx.currentY is 0
+PASS ctx.currentX is 1
+PASS ctx.currentY is 2
+PASS ctx.currentX is 3
+PASS ctx.currentY is 4
+PASS ctx.currentX is 7
+PASS ctx.currentY is 8
+PASS ctx.currentX is 13
+PASS ctx.currentY is 14
+PASS ctx.currentX is 15
+PASS ctx.currentY is 16
+PASS ctx.currentX is 1
+PASS ctx.currentY is 2
+PASS ctx.currentX is 20
+PASS ctx.currentY is 21
+PASS ctx.currentX is 23
+PASS ctx.currentY is 23
+PASS ctx.currentX is 25
+PASS ctx.currentY is 25
+PASS ctx.currentX is 0
+PASS ctx.currentY is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

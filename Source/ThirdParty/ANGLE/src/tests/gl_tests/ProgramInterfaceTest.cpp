@@ -182,6 +182,8 @@ TEST_P(ProgramInterfaceTestES31, GetResourceName)
 // Tests glGetProgramResourceLocation.
 TEST_P(ProgramInterfaceTestES31, GetResourceLocation)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr char kVS[] =
         "#version 310 es\n"
         "precision highp float;\n"
@@ -196,7 +198,7 @@ TEST_P(ProgramInterfaceTestES31, GetResourceLocation)
         "#version 310 es\n"
         "precision highp float;\n"
         "uniform vec4 color;\n"
-        "layout(location = 1) out vec4 oColor[3];\n"
+        "layout(location = 2) out vec4 oColor[4];\n"
         "void main()\n"
         "{\n"
         "    oColor[0] = color;\n"
@@ -230,18 +232,20 @@ TEST_P(ProgramInterfaceTestES31, GetResourceLocation)
 
     location = glGetProgramResourceLocation(program, GL_PROGRAM_OUTPUT, "oColor");
     EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(1, location);
+    EXPECT_EQ(2, location);
     location = glGetProgramResourceLocation(program, GL_PROGRAM_OUTPUT, "oColor[0]");
     EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(1, location);
-    location = glGetProgramResourceLocation(program, GL_PROGRAM_OUTPUT, "oColor[2]");
+    EXPECT_EQ(2, location);
+    location = glGetProgramResourceLocation(program, GL_PROGRAM_OUTPUT, "oColor[3]");
     EXPECT_GL_NO_ERROR();
-    EXPECT_EQ(3, location);
+    EXPECT_EQ(5, location);
 }
 
 // Tests glGetProgramResource.
 TEST_P(ProgramInterfaceTestES31, GetResource)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr char kVS[] =
         "#version 310 es\n"
         "precision highp float;\n"
@@ -255,7 +259,7 @@ TEST_P(ProgramInterfaceTestES31, GetResource)
         "#version 310 es\n"
         "precision highp float;\n"
         "uniform vec4 color;\n"
-        "layout(location = 1) out vec4 oColor[3];\n"
+        "layout(location = 2) out vec4 oColor[4];\n"
         "void main()\n"
         "{\n"
         "    oColor[0] = color;\n"
@@ -269,12 +273,12 @@ TEST_P(ProgramInterfaceTestES31, GetResource)
     EXPECT_NE(GL_INVALID_INDEX, index);
 
     GLenum props[]    = {GL_TYPE,
-                         GL_ARRAY_SIZE,
-                         GL_LOCATION,
-                         GL_NAME_LENGTH,
-                         GL_REFERENCED_BY_VERTEX_SHADER,
-                         GL_REFERENCED_BY_FRAGMENT_SHADER,
-                         GL_REFERENCED_BY_COMPUTE_SHADER};
+                      GL_ARRAY_SIZE,
+                      GL_LOCATION,
+                      GL_NAME_LENGTH,
+                      GL_REFERENCED_BY_VERTEX_SHADER,
+                      GL_REFERENCED_BY_FRAGMENT_SHADER,
+                      GL_REFERENCED_BY_COMPUTE_SHADER};
     GLsizei propCount = static_cast<GLsizei>(ArraySize(props));
     GLint params[ArraySize(props)];
     GLsizei length;
@@ -300,8 +304,8 @@ TEST_P(ProgramInterfaceTestES31, GetResource)
     EXPECT_GL_NO_ERROR();
     EXPECT_EQ(propCount - 1, length);
     EXPECT_EQ(GL_FLOAT_VEC4, params[0]);  // type
-    EXPECT_EQ(3, params[1]);              // array_size
-    EXPECT_EQ(1, params[2]);              // location
+    EXPECT_EQ(4, params[1]);              // array_size
+    EXPECT_EQ(2, params[2]);              // location
     EXPECT_EQ(10, params[3]);             // name_length
     EXPECT_EQ(0, params[4]);              // referenced_by_vertex_shader
     EXPECT_EQ(1, params[5]);              // referenced_by_fragment_shader
@@ -451,18 +455,18 @@ TEST_P(ProgramInterfaceTestES31, GetUniformProperties)
     EXPECT_EQ(12, location);
 
     GLenum props[]    = {GL_TYPE,
-                         GL_ARRAY_SIZE,
-                         GL_LOCATION,
-                         GL_NAME_LENGTH,
-                         GL_REFERENCED_BY_VERTEX_SHADER,
-                         GL_REFERENCED_BY_FRAGMENT_SHADER,
-                         GL_REFERENCED_BY_COMPUTE_SHADER,
-                         GL_ARRAY_STRIDE,
-                         GL_BLOCK_INDEX,
-                         GL_IS_ROW_MAJOR,
-                         GL_MATRIX_STRIDE,
-                         GL_OFFSET,
-                         GL_ATOMIC_COUNTER_BUFFER_INDEX};
+                      GL_ARRAY_SIZE,
+                      GL_LOCATION,
+                      GL_NAME_LENGTH,
+                      GL_REFERENCED_BY_VERTEX_SHADER,
+                      GL_REFERENCED_BY_FRAGMENT_SHADER,
+                      GL_REFERENCED_BY_COMPUTE_SHADER,
+                      GL_ARRAY_STRIDE,
+                      GL_BLOCK_INDEX,
+                      GL_IS_ROW_MAJOR,
+                      GL_MATRIX_STRIDE,
+                      GL_OFFSET,
+                      GL_ATOMIC_COUNTER_BUFFER_INDEX};
     GLsizei propCount = static_cast<GLsizei>(ArraySize(props));
     GLint params[ArraySize(props)];
     glGetProgramResourceiv(program, GL_UNIFORM, index, propCount, props, propCount, &length,
@@ -555,13 +559,13 @@ TEST_P(ProgramInterfaceTestES31, GetUniformBlockProperties)
     EXPECT_EQ("blockName", std::string(name));
 
     GLenum props[]         = {GL_BUFFER_BINDING,
-                              GL_BUFFER_DATA_SIZE,
-                              GL_NAME_LENGTH,
-                              GL_NUM_ACTIVE_VARIABLES,
-                              GL_ACTIVE_VARIABLES,
-                              GL_REFERENCED_BY_VERTEX_SHADER,
-                              GL_REFERENCED_BY_FRAGMENT_SHADER,
-                              GL_REFERENCED_BY_COMPUTE_SHADER};
+                      GL_BUFFER_DATA_SIZE,
+                      GL_NAME_LENGTH,
+                      GL_NUM_ACTIVE_VARIABLES,
+                      GL_ACTIVE_VARIABLES,
+                      GL_REFERENCED_BY_VERTEX_SHADER,
+                      GL_REFERENCED_BY_FRAGMENT_SHADER,
+                      GL_REFERENCED_BY_COMPUTE_SHADER};
     GLsizei propCount      = static_cast<GLsizei>(ArraySize(props));
     constexpr int kBufSize = 256;
     GLint params[kBufSize];
@@ -646,7 +650,7 @@ TEST_P(ProgramInterfaceTestES31, QueryAtomicCounteBuffer)
     EXPECT_EQ(2, num);
 
     GLenum props[]    = {GL_BUFFER_BINDING, GL_NUM_ACTIVE_VARIABLES, GL_REFERENCED_BY_VERTEX_SHADER,
-                         GL_REFERENCED_BY_FRAGMENT_SHADER, GL_REFERENCED_BY_COMPUTE_SHADER};
+                      GL_REFERENCED_BY_FRAGMENT_SHADER, GL_REFERENCED_BY_COMPUTE_SHADER};
     GLsizei propCount = static_cast<GLsizei>(ArraySize(props));
     GLint params[ArraySize(props)];
     GLsizei length = 0;
@@ -724,18 +728,18 @@ TEST_P(ProgramInterfaceTestES31, GetBufferVariableProperties)
     EXPECT_EQ("blockName1.f1", std::string(name));
 
     GLenum props[]         = {GL_ARRAY_SIZE,
-                              GL_ARRAY_STRIDE,
-                              GL_BLOCK_INDEX,
-                              GL_IS_ROW_MAJOR,
-                              GL_MATRIX_STRIDE,
-                              GL_NAME_LENGTH,
-                              GL_OFFSET,
-                              GL_REFERENCED_BY_VERTEX_SHADER,
-                              GL_REFERENCED_BY_FRAGMENT_SHADER,
-                              GL_REFERENCED_BY_COMPUTE_SHADER,
-                              GL_TOP_LEVEL_ARRAY_SIZE,
-                              GL_TOP_LEVEL_ARRAY_STRIDE,
-                              GL_TYPE};
+                      GL_ARRAY_STRIDE,
+                      GL_BLOCK_INDEX,
+                      GL_IS_ROW_MAJOR,
+                      GL_MATRIX_STRIDE,
+                      GL_NAME_LENGTH,
+                      GL_OFFSET,
+                      GL_REFERENCED_BY_VERTEX_SHADER,
+                      GL_REFERENCED_BY_FRAGMENT_SHADER,
+                      GL_REFERENCED_BY_COMPUTE_SHADER,
+                      GL_TOP_LEVEL_ARRAY_SIZE,
+                      GL_TOP_LEVEL_ARRAY_STRIDE,
+                      GL_TYPE};
     GLsizei propCount      = static_cast<GLsizei>(ArraySize(props));
     constexpr int kBufSize = 256;
     GLint params[kBufSize];
@@ -840,18 +844,18 @@ void main()
     EXPECT_EQ("blockIn.a[0]", std::string(name));
 
     GLenum props[]         = {GL_ARRAY_SIZE,
-                              GL_ARRAY_STRIDE,
-                              GL_BLOCK_INDEX,
-                              GL_IS_ROW_MAJOR,
-                              GL_MATRIX_STRIDE,
-                              GL_NAME_LENGTH,
-                              GL_OFFSET,
-                              GL_REFERENCED_BY_VERTEX_SHADER,
-                              GL_REFERENCED_BY_FRAGMENT_SHADER,
-                              GL_REFERENCED_BY_COMPUTE_SHADER,
-                              GL_TOP_LEVEL_ARRAY_SIZE,
-                              GL_TOP_LEVEL_ARRAY_STRIDE,
-                              GL_TYPE};
+                      GL_ARRAY_STRIDE,
+                      GL_BLOCK_INDEX,
+                      GL_IS_ROW_MAJOR,
+                      GL_MATRIX_STRIDE,
+                      GL_NAME_LENGTH,
+                      GL_OFFSET,
+                      GL_REFERENCED_BY_VERTEX_SHADER,
+                      GL_REFERENCED_BY_FRAGMENT_SHADER,
+                      GL_REFERENCED_BY_COMPUTE_SHADER,
+                      GL_TOP_LEVEL_ARRAY_SIZE,
+                      GL_TOP_LEVEL_ARRAY_STRIDE,
+                      GL_TYPE};
     GLsizei propCount      = static_cast<GLsizei>(ArraySize(props));
     constexpr int kBufSize = 256;
     GLint params[kBufSize];
@@ -954,18 +958,18 @@ void main()
     EXPECT_EQ("blockOut.s[0][0].m", std::string(name));
 
     GLenum props[]         = {GL_ARRAY_SIZE,
-                              GL_ARRAY_STRIDE,
-                              GL_BLOCK_INDEX,
-                              GL_IS_ROW_MAJOR,
-                              GL_MATRIX_STRIDE,
-                              GL_NAME_LENGTH,
-                              GL_OFFSET,
-                              GL_REFERENCED_BY_VERTEX_SHADER,
-                              GL_REFERENCED_BY_FRAGMENT_SHADER,
-                              GL_REFERENCED_BY_COMPUTE_SHADER,
-                              GL_TOP_LEVEL_ARRAY_SIZE,
-                              GL_TOP_LEVEL_ARRAY_STRIDE,
-                              GL_TYPE};
+                      GL_ARRAY_STRIDE,
+                      GL_BLOCK_INDEX,
+                      GL_IS_ROW_MAJOR,
+                      GL_MATRIX_STRIDE,
+                      GL_NAME_LENGTH,
+                      GL_OFFSET,
+                      GL_REFERENCED_BY_VERTEX_SHADER,
+                      GL_REFERENCED_BY_FRAGMENT_SHADER,
+                      GL_REFERENCED_BY_COMPUTE_SHADER,
+                      GL_TOP_LEVEL_ARRAY_SIZE,
+                      GL_TOP_LEVEL_ARRAY_STRIDE,
+                      GL_TYPE};
     GLsizei propCount      = static_cast<GLsizei>(ArraySize(props));
     constexpr int kBufSize = 256;
     GLint params[kBufSize];
@@ -1083,13 +1087,13 @@ TEST_P(ProgramInterfaceTestES31, GetShaderStorageBlockProperties)
     EXPECT_EQ("blockName0", std::string(name));
 
     GLenum props[]         = {GL_ACTIVE_VARIABLES,
-                              GL_BUFFER_BINDING,
-                              GL_NUM_ACTIVE_VARIABLES,
-                              GL_BUFFER_DATA_SIZE,
-                              GL_NAME_LENGTH,
-                              GL_REFERENCED_BY_VERTEX_SHADER,
-                              GL_REFERENCED_BY_FRAGMENT_SHADER,
-                              GL_REFERENCED_BY_COMPUTE_SHADER};
+                      GL_BUFFER_BINDING,
+                      GL_NUM_ACTIVE_VARIABLES,
+                      GL_BUFFER_DATA_SIZE,
+                      GL_NAME_LENGTH,
+                      GL_REFERENCED_BY_VERTEX_SHADER,
+                      GL_REFERENCED_BY_FRAGMENT_SHADER,
+                      GL_REFERENCED_BY_COMPUTE_SHADER};
     GLsizei propCount      = static_cast<GLsizei>(ArraySize(props));
     constexpr int kBufSize = 256;
     GLint params[kBufSize];

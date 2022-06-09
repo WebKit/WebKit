@@ -133,7 +133,7 @@ TEST(WebKit, SOCKS5)
                                 "HTTP/1.1 200 OK\r\n"
                                 "Content-Length: 34\r\n"
                                 "\r\n"
-                                "<script>alert('success!')</script>"_s
+                                "<script>alert('success!')</script>"
                             );
                         });
                     });
@@ -297,7 +297,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                         "Access-Control-Allow-Origin: http://example.com\r\n"
                         "Access-Control-Allow-Credentials: true\r\n"
                         "Connection: close\r\n"
-                        "\r\n"_s;
+                        "\r\n";
                     break;
                 default:
                     ASSERT_NOT_REACHED();

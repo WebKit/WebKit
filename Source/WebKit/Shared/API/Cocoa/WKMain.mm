@@ -40,7 +40,7 @@ int WKAdAttributionDaemonMain(int argc, const char** argv)
     return WebKit::PCMDaemonMain(argc, argv);
 }
 
-int WKWebPushDaemonMain(int argc, char** argv)
+int WKWebPushDaemonMain(int argc, const char** argv)
 {
     return WebKit::WebPushDaemonMain(argc, argv);
 }

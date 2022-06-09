@@ -20,9 +20,9 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
-#include "AccessibilityAtspi.h"
+#include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -31,6 +31,7 @@ namespace WebCore {
 GDBusInterfaceVTable AccessibilityObjectAtspi::s_hypertextFunctions = {
     // method_call
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData) {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -40,7 +41,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hypertextFunctions = {
             int index;
             g_variant_get(parameters, "(i)", &index);
             auto* wrapper = index >= 0 ? atspiObject->hyperlink(index) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", wrapper ? wrapper->hyperlinkReference() : AccessibilityAtspi::singleton().nullReference()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(@(so))", wrapper ? wrapper->hyperlinkReference() : atspiObject->m_root.atspi().nullReference()));
         } else if (!g_strcmp0(methodName, "GetLinkIndex")) {
             int offset;
             g_variant_get(parameters, "(i)", &offset);
@@ -52,51 +53,61 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_hypertextFunctions = {
     // set_property,
     nullptr,
     // padding
-    { nullptr }
+    nullptr
 };
 
 unsigned AccessibilityObjectAtspi::hyperlinkCount() const
 {
-    if (!m_coreObject)
-        return 0;
+    return Accessibility::retrieveValueFromMainThread<unsigned>([this]() -> unsigned {
+        if (m_coreObject)
+            m_coreObject->updateBackingStore();
 
-    unsigned linkCount = 0;
-    const auto& children = m_coreObject->children();
-    for (const auto& child : children) {
-        if (child->accessibilityIsIgnored())
-            continue;
+        if (!m_coreObject)
+            return 0;
 
-        auto* wrapper = child->wrapper();
-        if (wrapper && wrapper->interfaces().contains(Interface::Hyperlink))
-            linkCount++;
-    }
+        unsigned linkCount = 0;
+        const auto& children = m_coreObject->children();
+        for (const auto& child : children) {
+            if (child->accessibilityIsIgnored())
+                continue;
 
-    return linkCount;
+            auto* wrapper = child->wrapper();
+            if (wrapper && wrapper->interfaces().contains(Interface::Hyperlink))
+                linkCount++;
+        }
+
+        return linkCount;
+    });
 }
 
 AccessibilityObjectAtspi* AccessibilityObjectAtspi::hyperlink(unsigned index) const
 {
-    if (!m_coreObject)
+    return Accessibility::retrieveValueFromMainThread<AccessibilityObjectAtspi*>([this, index]() -> AccessibilityObjectAtspi* {
+        if (m_coreObject)
+            m_coreObject->updateBackingStore();
+
+        if (!m_coreObject)
+            return nullptr;
+
+        const auto& children = m_coreObject->children();
+        if (index >= children.size())
+            return nullptr;
+
+        int linkIndex = -1;
+        for (const auto& child : children) {
+            if (child->accessibilityIsIgnored())
+                continue;
+
+            auto* wrapper = child->wrapper();
+            if (!wrapper || !wrapper->interfaces().contains(Interface::Hyperlink))
+                continue;
+
+            if (static_cast<unsigned>(++linkIndex) == index)
+                return wrapper;
+        }
+
         return nullptr;
-
-    const auto& children = m_coreObject->children();
-    if (index >= children.size())
-        return nullptr;
-
-    int linkIndex = -1;
-    for (const auto& child : children) {
-        if (child->accessibilityIsIgnored())
-            continue;
-
-        auto* wrapper = child->wrapper();
-        if (!wrapper || !wrapper->interfaces().contains(Interface::Hyperlink))
-            continue;
-
-        if (static_cast<unsigned>(++linkIndex) == index)
-            return wrapper;
-    }
-
-    return nullptr;
+    });
 }
 
 std::optional<unsigned> AccessibilityObjectAtspi::hyperlinkIndex(unsigned offset) const
@@ -106,4 +117,4 @@ std::optional<unsigned> AccessibilityObjectAtspi::hyperlinkIndex(unsigned offset
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

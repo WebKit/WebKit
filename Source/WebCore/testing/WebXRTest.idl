@@ -24,20 +24,20 @@
  */ 
 
 [
-    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled,
+    Conditional=WEBXR,
     Exposed=Window,
     InterfaceName=XRTest,
     LegacyNoInterfaceObject
 ] interface WebXRTest {
     // Simulates connecting a device to the system.
     // Used to instantiate a fake device for use in tests.
-    [CallWith=CurrentScriptExecutionContext] Promise<WebFakeXRDevice> simulateDeviceConnection(FakeXRDeviceInit init);
+    [CallWith=ScriptExecutionContext] Promise<WebFakeXRDevice> simulateDeviceConnection(FakeXRDeviceInit init);
 
     // Simulates a user activation (aka user gesture) for the current scope.
     // The activation is only guaranteed to be valid in the provided function and only applies to WebXR
     // Device API methods.
-    [CallWith=CurrentDocument] undefined simulateUserActivation(XRSimulateUserActivationFunction f);
+    [CallWith=Document] undefined simulateUserActivation(XRSimulateUserActivationFunction f);
 
     // Disconnect all fake devices
     Promise<undefined> disconnectAllDevices();
@@ -61,10 +61,6 @@
     // NOTE: This is meant to emulate hardware support, not whether a feature is
     // currently available (e.g. bounds not being tracked per below)
     sequence<any> supportedFeatures;
-    
-    // The list of features that are automatically enabled and do
-    // not need further explicit consent.
-    sequence<any> enabledFeatures;
 
     // The bounds coordinates. If empty, no bounded reference space is currently tracked.
     // If not, must have at least three elements.

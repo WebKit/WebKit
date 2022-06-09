@@ -35,7 +35,6 @@ class CSSCustomPropertyValue;
 class CSSStyleDeclaration;
 class CachedResource;
 class DeprecatedCSSOMValue;
-class Document;
 class StyleSheetContents;
 
 enum CSSPropertyID : uint16_t;
@@ -78,7 +77,7 @@ public:
     }
 
     Type cssValueType() const;
-    String cssText(Document* = nullptr) const;
+    String cssText() const;
     ASCIILiteral separatorCSSText() const;
 
     bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
@@ -90,7 +89,6 @@ public:
 
     bool isAspectRatioValue() const { return m_classType == AspectRatioClass; }
     bool isBorderImageSliceValue() const { return m_classType == BorderImageSliceClass; }
-    bool isBorderImageWidthValue() const { return m_classType == BorderImageWidthClass; }
     bool isCanvasValue() const { return m_classType == CanvasClass; }
     bool isCrossfadeValue() const { return m_classType == CrossfadeClass; }
     bool isCursorImageValue() const { return m_classType == CursorImageClass; }
@@ -136,7 +134,6 @@ public:
     bool isGridIntegerRepeatValue() const { return m_classType == GridIntegerRepeatClass; }
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
-    bool isSubgridValue() const { return m_classType == SubgridClass; }
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
 
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
@@ -193,7 +190,6 @@ protected:
         // Other class types.
         AspectRatioClass,
         BorderImageSliceClass,
-        BorderImageWidthClass,
         FontFeatureClass,
         FontVariationClass,
         FontClass,
@@ -228,7 +224,6 @@ protected:
         GridLineNamesClass,
         GridAutoRepeatClass,
         GridIntegerRepeatClass,
-        SubgridClass,
         // Do not append non-list class types here.
     };
 
@@ -249,7 +244,6 @@ protected:
         , m_hasCachedCSSText(false)
         , m_valueSeparator(SpaceSeparator)
         , m_isImplicit(false)
-        , m_cachedCSSTextUsesLegacyPrecision(false)
         , m_classType(classType)
     {
     }
@@ -277,7 +271,6 @@ protected:
 
     unsigned m_valueSeparator : ValueSeparatorBits;
     unsigned m_isImplicit : 1;
-    mutable unsigned m_cachedCSSTextUsesLegacyPrecision : 1;
 
 private:
     unsigned m_classType : ClassTypeBits; // ClassType

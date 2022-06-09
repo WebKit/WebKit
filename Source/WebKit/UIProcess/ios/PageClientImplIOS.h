@@ -122,7 +122,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) final;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
@@ -211,10 +211,10 @@ private:
     void enableInspectorNodeSearch() override;
     void disableInspectorNodeSearch() override;
 
-    void scrollingNodeScrollViewWillStartPanGesture(WebCore::ScrollingNodeID) override;
-    void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) override;
-    void scrollingNodeScrollWillStartScroll(WebCore::ScrollingNodeID) override;
-    void scrollingNodeScrollDidEndScroll(WebCore::ScrollingNodeID) override;
+    void scrollingNodeScrollViewWillStartPanGesture() override;
+    void scrollingNodeScrollViewDidScroll() override;
+    void scrollingNodeScrollWillStartScroll() override;
+    void scrollingNodeScrollDidEndScroll() override;
         
     void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) override;
         
@@ -302,20 +302,6 @@ private:
 
     WebCore::Color contentViewBackgroundColor() final;
     String sceneID() final;
-
-    void beginTextRecognitionForFullscreenVideo(const ShareableBitmap::Handle&, AVPlayerViewController *) final;
-    void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) final;
-    bool isTextRecognitionInFullscreenVideoEnabled() const final;
-
-    void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle&, WebCore::FloatRect) final;
-    void cancelTextRecognitionForVideoInElementFullscreen() final;
-
-    bool hasResizableWindows() const final;
-
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    void didEnterFullscreen() final;
-    void didExitFullscreen() final;
-#endif
 
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;

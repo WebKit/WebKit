@@ -40,7 +40,6 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CachedResourceLoader.h"
-#include "CompositeOperation.h"
 #include "ElementRuleCollector.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -195,9 +194,8 @@ void Resolver::appendAuthorStyleSheets(const Vector<RefPtr<CSSStyleSheet>>& styl
 // This is a simplified style setting function for keyframe styles
 void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
-    auto& animationName = rule->name();
-    m_keyframesRuleMap.set(animationName, WTFMove(rule));
-    m_document.keyframesRuleDidChange(animationName);
+    AtomString s(rule->name());
+    m_keyframesRuleMap.set(s.impl(), WTFMove(rule));
 }
 
 Resolver::~Resolver()
@@ -269,7 +267,7 @@ ElementStyle Resolver::styleForElement(const Element& element, const ResolutionC
     Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, &element);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
 
-    if (state.style()->usesViewportUnits())
+    if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
 
     return { state.takeStyle(), WTFMove(elementStyleRelations) };
@@ -277,49 +275,36 @@ ElementStyle Resolver::styleForElement(const Element& element, const ResolutionC
 
 std::unique_ptr<RenderStyle> Resolver::styleForKeyframe(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, KeyframeValue& keyframeValue)
 {
-    // Add all the animating properties to the keyframe.
-    unsigned propertyCount = keyframe.properties().propertyCount();
-    bool hasRevert = false;
-    for (unsigned i = 0; i < propertyCount; ++i) {
-        auto propertyReference = keyframe.properties().propertyAt(i);
-        auto property = CSSProperty::resolveDirectionAwareProperty(propertyReference.id(), elementStyle.direction(), elementStyle.writingMode());
-        // The animation-composition and animation-timing-function within keyframes are special
-        // because they are not animated; they just describe the composite operation and timing
-        // function between this keyframe and the next.
-        if (property != CSSPropertyAnimationTimingFunction && property != CSSPropertyAnimationComposition)
-            keyframeValue.addProperty(property);
-        if (auto* value = propertyReference.value(); value && value->isRevertValue())
-            hasRevert = true;
-    }
+    MatchResult result;
+    result.authorDeclarations.append({ &keyframe.properties(), SelectorChecker::MatchAll, propertyAllowlistForPseudoId(elementStyle.styleType()) });
 
     auto state = State(element, nullptr, context.documentElementStyle);
 
     state.setStyle(RenderStyle::clonePtr(elementStyle));
     state.setParentStyle(RenderStyle::clonePtr(context.parentStyle ? *context.parentStyle : elementStyle));
 
-    ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-    collector.setPseudoElementRequest({ elementStyle.styleType() });
-    if (hasRevert) {
-        // In the animation origin, 'revert' rolls back the cascaded value to the user level.
-        // Therefore, we need to collect UA and user rules.
-        collector.setMedium(&m_mediaQueryEvaluator);
-        collector.matchUARules();
-        collector.matchUserRules();
-    }
-    collector.addAuthorKeyframeRules(keyframe);
-    Builder builder(*state.style(), builderContext(state), collector.matchResult(), CascadeLevel::Author);
-    builder.state().setIsBuildingKeyframeStyle();
+    Builder builder(*state.style(), builderContext(state), result, CascadeLevel::Author);
     builder.applyAllProperties();
 
     Adjuster adjuster(document(), *state.parentStyle(), nullptr, nullptr);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
+
+    // Add all the animating properties to the keyframe.
+    unsigned propertyCount = keyframe.properties().propertyCount();
+    for (unsigned i = 0; i < propertyCount; ++i) {
+        CSSPropertyID property = keyframe.properties().propertyAt(i).id();
+        // Timing-function within keyframes is special, because it is not animated; it just
+        // describes the timing function between this keyframe and the next.
+        if (property != CSSPropertyAnimationTimingFunction)
+            keyframeValue.addProperty(property);
+    }
 
     return state.takeStyle();
 }
 
 bool Resolver::isAnimationNameValid(const String& name)
 {
-    return m_keyframesRuleMap.find(AtomString(name)) != m_keyframesRuleMap.end();
+    return m_keyframesRuleMap.find(AtomString(name).impl()) != m_keyframesRuleMap.end();
 }
 
 Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName) const
@@ -329,17 +314,9 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
 
     m_keyframesRuleMap.checkConsistency();
 
-    auto it = m_keyframesRuleMap.find(animationName);
+    auto it = m_keyframesRuleMap.find(animationName.impl());
     if (it == m_keyframesRuleMap.end())
         return { };
-
-    auto compositeOperationForKeyframe = [](Ref<StyleRuleKeyframe> keyframe) -> CompositeOperation {
-        if (auto compositeOperationCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {
-            if (auto compositeOperation = toCompositeOperation(*compositeOperationCSSValue))
-                return *compositeOperation;
-        }
-        return Animation::initialCompositeOperation();
-    };
 
     auto timingFunctionForKeyframe = [](Ref<StyleRuleKeyframe> keyframe) -> RefPtr<const TimingFunction> {
         if (auto timingFunctionCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
@@ -363,14 +340,13 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     auto* keyframesRule = it->value.get();
     auto* keyframes = &keyframesRule->keyframes();
 
-    using KeyframeUniqueKey = std::tuple<double, RefPtr<const TimingFunction>, CompositeOperation>;
+    using KeyframeUniqueKey = std::pair<double, RefPtr<const TimingFunction>>;
     auto hasDuplicateKeys = [&]() -> bool {
         HashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
         for (auto& keyframe : *keyframes) {
-            auto compositeOperation = compositeOperationForKeyframe(keyframe);
             auto timingFunction = uniqueTimingFunctionForKeyframe(keyframe);
             for (auto key : keyframe->keys()) {
-                if (!uniqueKeyframeKeys.add({ key, timingFunction, compositeOperation }))
+                if (!uniqueKeyframeKeys.add({ key, timingFunction }))
                     return true;
             }
         }
@@ -382,21 +358,19 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
 
     // FIXME: If HashMaps could have Ref<> as value types, we wouldn't need
     // to copy the HashMap into a Vector.
-    // Merge keyframes with a similar offset and timing function.
     Vector<Ref<StyleRuleKeyframe>> deduplicatedKeyframes;
+    // Merge keyframes with a similar offset and timing function.
     HashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
     for (auto& originalKeyframe : *keyframes) {
-        auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);
         for (auto key : originalKeyframe->keys()) {
-            KeyframeUniqueKey uniqueKey { key, timingFunction, compositeOperation };
-            if (auto keyframe = keyframesMap.get(uniqueKey))
+            if (auto keyframe = keyframesMap.get({ key, timingFunction }))
                 keyframe->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
             else {
                 auto styleRuleKeyframe = StyleRuleKeyframe::create(MutableStyleProperties::create());
                 styleRuleKeyframe.ptr()->setKey(key);
                 styleRuleKeyframe.ptr()->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
-                keyframesMap.set(uniqueKey, styleRuleKeyframe.ptr());
+                keyframesMap.set({ key, timingFunction }, styleRuleKeyframe.ptr());
                 deduplicatedKeyframes.append(styleRuleKeyframe);
             }
         }
@@ -422,10 +396,6 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
             keyframeValue.setKey(key);
             if (auto timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 keyframeValue.setTimingFunction(TimingFunction::createFromCSSValue(*timingFunctionCSSValue.get()));
-            if (auto compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {
-                if (auto compositeOperation = toCompositeOperation(*compositeOperationCSSValue))
-                    keyframeValue.setCompositeOperation(*compositeOperation);
-            }
             list.insert(WTFMove(keyframeValue));
         }
     }
@@ -465,7 +435,7 @@ std::unique_ptr<RenderStyle> Resolver::pseudoStyleForElement(const Element& elem
     Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr);
     adjuster.adjust(*state.style(), state.userAgentAppearanceStyle());
 
-    if (state.style()->usesViewportUnits())
+    if (state.style()->hasViewportUnits())
         document().setHasStyleWithViewportUnits();
 
     return state.takeStyle();
@@ -628,7 +598,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         return;
     }
 
-    builder.applyNonHighPriorityProperties();
+    builder.applyLowPriorityProperties();
 
     for (auto& contentAttribute : builder.state().registeredContentAttributes())
         ruleSets().mutableFeatures().registerContentAttribute(contentAttribute);

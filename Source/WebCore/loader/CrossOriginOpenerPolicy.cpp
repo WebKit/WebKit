@@ -140,16 +140,16 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
         if (!coopParsingResult)
             return;
 
-        if (coopParsingResult->first == "same-origin"_s) {
+        if (coopParsingResult->first == "same-origin") {
             auto& coep = ensureCOEP();
             if (coep.value == CrossOriginEmbedderPolicyValue::RequireCORP || (headerName == HTTPHeaderName::CrossOriginOpenerPolicyReportOnly && coep.reportOnlyValue == CrossOriginEmbedderPolicyValue::RequireCORP))
                 value = CrossOriginOpenerPolicyValue::SameOriginPlusCOEP;
             else
                 value = CrossOriginOpenerPolicyValue::SameOrigin;
-        } else if (coopParsingResult->first == "same-origin-allow-popups"_s)
+        } else if (coopParsingResult->first == "same-origin-allow-popups")
             value = CrossOriginOpenerPolicyValue::SameOriginAllowPopups;
 
-        reportingEndpoint = coopParsingResult->second.get<HashTranslatorASCIILiteral>("report-to"_s);
+        reportingEndpoint = coopParsingResult->second.get("report-to"_s);
     };
 
     CrossOriginOpenerPolicy policy;
@@ -161,14 +161,14 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
     return policy;
 }
 
-CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() const &
+CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() const
 {
-    return { value, reportingEndpoint.isolatedCopy(), reportOnlyValue, reportOnlyReportingEndpoint.isolatedCopy() };
-}
-
-CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() &&
-{
-    return { value, WTFMove(reportingEndpoint).isolatedCopy(), reportOnlyValue, WTFMove(reportOnlyReportingEndpoint).isolatedCopy() };
+    return {
+        value,
+        reportingEndpoint.isolatedCopy(),
+        reportOnlyValue,
+        reportOnlyReportingEndpoint.isolatedCopy()
+    };
 }
 
 void addCrossOriginOpenerPolicyHeaders(ResourceResponse& response, const CrossOriginOpenerPolicy& coop)

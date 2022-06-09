@@ -48,7 +48,7 @@
 
     border: 0;
     background: none;
-    appearance: none;
+    -webkit-appearance: none;
 }
 
 .item.type-tree-element.parent > .disclosure-button {

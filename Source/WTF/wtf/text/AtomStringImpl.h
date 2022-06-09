@@ -39,9 +39,12 @@ public:
 
     static void remove(AtomStringImpl*);
 
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const LChar*);
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(const char* s) { return add(reinterpret_cast<const LChar*>(s)); };
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const UChar*, unsigned length);
-    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); }
+    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); };
+    WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const UChar*);
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(StringImpl*, unsigned offset, unsigned length);
     ALWAYS_INLINE static RefPtr<AtomStringImpl> add(StringImpl* string)
     {
@@ -49,17 +52,8 @@ public:
             return nullptr;
         return add(*string);
     }
-    ALWAYS_INLINE static RefPtr<AtomStringImpl> add(RefPtr<StringImpl>&& string)
-    {
-        if (!string)
-            return nullptr;
-        return add(string.releaseNonNull());
-    }
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> add(const StaticStringImpl*);
-    ALWAYS_INLINE static Ref<AtomStringImpl> add(ASCIILiteral literal) { return addLiteral(literal.characters(), literal.length()); }
-
-    // Not using the add() naming to encourage developers to call add(ASCIILiteral) when they have a string literal.
-    ALWAYS_INLINE static RefPtr<AtomStringImpl> addCString(const char* s) { return s ? add(s, strlen(s)) : nullptr; }
+    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(const char* characters, unsigned length);
 
     // Returns null if the input data contains an invalid UTF-8 sequence.
     static RefPtr<AtomStringImpl> addUTF8(const char* start, const char* end);
@@ -92,17 +86,6 @@ private:
         return addSlowCase(string);
     }
 
-    ALWAYS_INLINE static Ref<AtomStringImpl> add(Ref<StringImpl>&& string)
-    {
-        if (string->isAtom()) {
-            ASSERT_WITH_MESSAGE(!string->length() || isInAtomStringTable(string.ptr()), "The atom string comes from an other thread!");
-            return static_reference_cast<AtomStringImpl>(WTFMove(string));
-        }
-        return addSlowCase(WTFMove(string));
-    }
-
-    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addLiteral(const char* characters, unsigned length);
-
     ALWAYS_INLINE static Ref<AtomStringImpl> add(AtomStringTable& stringTable, StringImpl& string)
     {
         if (string.isAtom()) {
@@ -113,7 +96,6 @@ private:
     }
 
     WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addSlowCase(StringImpl&);
-    WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addSlowCase(Ref<StringImpl>&&);
     WTF_EXPORT_PRIVATE static Ref<AtomStringImpl> addSlowCase(AtomStringTable&, StringImpl&);
 
     WTF_EXPORT_PRIVATE static RefPtr<AtomStringImpl> lookUpSlowCase(StringImpl&);

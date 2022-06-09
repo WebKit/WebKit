@@ -74,20 +74,12 @@ void InbandWebVTTTextTrack::newCuesParsed()
 {
     for (auto& cueData : parser().takeCues()) {
         auto cue = VTTCue::create(document(), cueData);
-        auto existingCue = matchCue(cue, TextTrackCue::IgnoreDuration);
-        if (!existingCue) {
-            INFO_LOG(LOGIDENTIFIER, cue.get());
-            addCue(WTFMove(cue));
-            continue;
-        }
-
-        if (existingCue->endTime() >= cue->endTime()) {
+        if (hasCue(cue, TextTrackCue::IgnoreDuration)) {
             INFO_LOG(LOGIDENTIFIER, "ignoring already added cue: ", cue.get());
-            continue;
+            return;
         }
-
-        ALWAYS_LOG(LOGIDENTIFIER, "extending endTime of existing cue: ", *existingCue, " to ", cue->endTime());
-        existingCue->setEndTime(cue->endTime());
+        INFO_LOG(LOGIDENTIFIER, cue.get());
+        addCue(WTFMove(cue));
     }
 }
     

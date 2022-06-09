@@ -1,3 +1,4 @@
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
 
 PASS Static import.
 FAIL Static import (cross-origin). promise_test: Unhandled rejection with value: "Importing a module script failed."

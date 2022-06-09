@@ -29,19 +29,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Notification should be exposed to all Worker contexts, not just ServiceWorker.
+// FIXME: Notification is specified to be exposed on both Window and Worker.
 // https://notifications.spec.whatwg.org/#notification
 [
     Conditional=NOTIFICATIONS,
     ActiveDOMObject,
     EnabledBySetting=NotificationsEnabled,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=(Window,ServiceWorker)
+    Exposed=Window,
 ] interface Notification : EventTarget {
-    [CallWith=CurrentScriptExecutionContext] constructor(DOMString title, optional NotificationOptions options);
+    [CallWith=Document] constructor(DOMString title, optional NotificationOptions options);
 
-    [CallWith=CurrentScriptExecutionContext] static readonly attribute NotificationPermission permission;
-    [Exposed=Window, CallWith=CurrentDocument] static Promise<NotificationPermission> requestPermission(optional NotificationPermissionCallback? deprecatedCallback);
+    [CallWith=Document] static readonly attribute NotificationPermission permission;
+    [CallWith=Document] static Promise<NotificationPermission> requestPermission(optional NotificationPermissionCallback? deprecatedCallback);
 
     // static readonly attribute unsigned long maxActions;
 
@@ -62,7 +62,7 @@
     // readonly attribute boolean renotify;
     // readonly attribute boolean silent;
     // readonly attribute boolean requireInteraction;
-    [CallWith=CurrentGlobalObject, CachedAttribute, ImplementedAs=dataForBindings] readonly attribute any data;
+    // [SameObject] readonly attribute any data;
     // [SameObject] readonly attribute FrozenArray<NotificationAction> actions;
 
     undefined close();

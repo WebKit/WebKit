@@ -81,11 +81,8 @@ ScriptElement::ScriptElement(Element& element, bool parserInserted, bool already
     , m_creationTime(MonotonicTime::now())
     , m_userGestureToken(UserGestureIndicator::currentUserGesture())
 {
-    if (parserInserted) {
-        Ref document = m_element.document();
-        if (RefPtr parser = document->scriptableDocumentParser(); parser && !document->isInDocumentWrite())
-            m_startLineNumber = parser->textPosition().m_line;
-    }
+    if (parserInserted && m_element.document().scriptableDocumentParser() && !m_element.document().isInDocumentWrite())
+        m_startLineNumber = m_element.document().scriptableDocumentParser()->textPosition().m_line;
 }
 
 void ScriptElement::didFinishInsertingNode()
@@ -138,7 +135,6 @@ void ScriptElement::dispatchErrorEvent()
     m_element.dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-// https://html.spec.whatwg.org/multipage/scripting.html#prepare-a-script
 std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const
 {
     // FIXME: isLegacySupportedJavaScriptLanguage() is not valid HTML5. It is used here to maintain backwards compatibility with existing layout tests. The specific violations are:
@@ -146,7 +142,7 @@ std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(Lega
     // - Allowing a different set of languages for language= and type=. language= supports Javascript 1.1 and 1.4-1.6, but type= does not.
     String type = typeAttributeValue();
     String language = languageAttributeValue();
-    if (type.isNull()) {
+    if (type.isEmpty()) {
         if (language.isEmpty())
             return ScriptType::Classic; // Assume text/javascript.
         if (MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/" + language))
@@ -155,9 +151,6 @@ std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(Lega
             return ScriptType::Classic;
         return std::nullopt;
     }
-    if (type.isEmpty())
-        return ScriptType::Classic; // Assume text/javascript.
-
     if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.stripWhiteSpace()))
         return ScriptType::Classic;
     if (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type))
@@ -172,7 +165,7 @@ std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(Lega
 
     // https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type
     // Setting the attribute to an ASCII case-insensitive match for the string "module" means that the script is a module script.
-    if (equalLettersIgnoringASCIICase(type, "module"_s))
+    if (equalLettersIgnoringASCIICase(type, "module"))
         return ScriptType::Module;
     return std::nullopt;
 }
@@ -288,11 +281,24 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
 
 bool ScriptElement::requestClassicScript(const String& sourceURL)
 {
-    ASSERT(m_element.isConnected());
+    Ref<Document> originalDocument(m_element.document());
+    if (!m_element.dispatchBeforeLoadEvent(sourceURL))
+        return false;
+    bool didEventListenerDisconnectThisElement = !m_element.isConnected() || &m_element.document() != originalDocument.ptr();
+    if (didEventListenerDisconnectThisElement)
+        return false;
+
     ASSERT(!m_loadableScript);
     if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
-        auto script = LoadableClassicScript::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(),
-            m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
+        auto script = LoadableClassicScript::create(
+            m_element.nonce(),
+            m_element.document().settings().subresourceIntegrityEnabled() ? m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string() : emptyString(),
+            referrerPolicy(),
+            m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr),
+            scriptCharset(),
+            m_element.localName(),
+            m_element.isInUserAgentShadowTree(),
+            hasAsyncAttribute());
 
         auto scriptURL = m_element.document().completeURL(sourceURL);
         m_element.document().willLoadScriptElement(scriptURL);
@@ -320,15 +326,21 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
 {
     // https://html.spec.whatwg.org/multipage/urls-and-fetching.html#cors-settings-attributes
     // Module is always CORS request. If attribute is not given, it should be same-origin credential.
-    auto nonce = m_element.nonce();
-    auto crossOriginMode = m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
+    String nonce = m_element.nonce();
+    String crossOriginMode = m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
     if (crossOriginMode.isNull())
         crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
 
     if (hasSourceAttribute()) {
-        ASSERT(m_element.isConnected());
-
         String sourceURL = sourceAttributeValue();
+        Ref<Document> originalDocument(m_element.document());
+        if (!m_element.dispatchBeforeLoadEvent(sourceURL))
+            return false;
+
+        bool didEventListenerDisconnectThisElement = !m_element.isConnected() || &m_element.document() != originalDocument.ptr();
+        if (didEventListenerDisconnectThisElement)
+            return false;
+
         if (stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
             dispatchErrorEvent();
             return false;
@@ -341,8 +353,14 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         }
 
         m_isExternalScript = true;
-        auto script = LoadableModuleScript::create(nonce, m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), crossOriginMode,
-            scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
+        auto script = LoadableModuleScript::create(
+            nonce,
+            m_element.document().settings().subresourceIntegrityEnabled() ? m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr).string() : emptyString(),
+            referrerPolicy(),
+            crossOriginMode,
+            scriptCharset(),
+            m_element.localName(),
+            m_element.isInUserAgentShadowTree());
         m_loadableScript = WTFMove(script);
         if (auto* frame = m_element.document().frame()) {
             auto& script = downcast<LoadableModuleScript>(*m_loadableScript.get());
@@ -351,7 +369,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         return true;
     }
 
-    auto script = LoadableModuleScript::create(nonce, emptyAtom(), referrerPolicy(), crossOriginMode, scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
+    auto script = LoadableModuleScript::create(nonce, emptyString(), referrerPolicy(), crossOriginMode, scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree());
 
     TextPosition position = m_element.document().isInDocumentWrite() ? TextPosition() : scriptStartPosition;
     ScriptSourceCode sourceCode(scriptContent(), URL(m_element.document().url()), position, JSC::SourceProviderSourceType::Module, script.copyRef());
@@ -434,21 +452,9 @@ void ScriptElement::dispatchLoadEventRespectingUserGestureIndicator()
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)
 {
     if (std::optional<LoadableScript::Error> error = loadableScript.error()) {
-        if (error->errorValue) {
-            // https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception
-            // An error value is present when there is a load failure that was
-            // not triggered during fetching. In this case, we need to report
-            // the exception to the global object.
-            if (auto* frame = m_element.document().frame())
-                frame->script().reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
-        } else {
-            // https://html.spec.whatwg.org/multipage/scripting.html#execute-the-script-block
-            // When the script is "null" due to a fetch error, an error event
-            // should be dispatched for the script element.
-            if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
-                m_element.document().addConsoleMessage(message->source, message->level, message->message);
-            dispatchErrorEvent();
-        }
+        if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
+            m_element.document().addConsoleMessage(message->source, message->level, message->message);
+        dispatchErrorEvent();
     } else if (!loadableScript.wasCanceled()) {
         ASSERT(!loadableScript.error());
         loadableScript.execute(*this);
@@ -484,11 +490,11 @@ bool ScriptElement::isScriptForEventSupported() const
     String forAttribute = forAttributeValue();
     if (!eventAttribute.isNull() && !forAttribute.isNull()) {
         forAttribute = stripLeadingAndTrailingHTMLSpaces(forAttribute);
-        if (!equalLettersIgnoringASCIICase(forAttribute, "window"_s))
+        if (!equalLettersIgnoringASCIICase(forAttribute, "window"))
             return false;
 
         eventAttribute = stripLeadingAndTrailingHTMLSpaces(eventAttribute);
-        if (!equalLettersIgnoringASCIICase(eventAttribute, "onload"_s) && !equalLettersIgnoringASCIICase(eventAttribute, "onload()"_s))
+        if (!equalLettersIgnoringASCIICase(eventAttribute, "onload") && !equalLettersIgnoringASCIICase(eventAttribute, "onload()"))
             return false;
     }
     return true;

@@ -45,9 +45,6 @@ ISSUES = [
         creator=USERS['Felix Filer'],
         assignee=USERS['Tim Contributor'],
         description='An example issue for testing',
-        project='WebKit',
-        component='Text',
-        version='Other',
         comments=[
             Issue.Comment(
                 user=USERS['Felix Filer'],
@@ -66,9 +63,6 @@ ISSUES = [
         creator=USERS['Tim Contributor'],
         assignee=USERS['Tim Contributor'],
         description='We need to support a new feature',
-        project='WebKit',
-        component='Scrolling',
-        version='Safari 15',
         comments=[
             Issue.Comment(
                 user=USERS['Tim Contributor'],
@@ -84,9 +78,6 @@ ISSUES = [
         creator=USERS['Felix Filer'],
         assignee=USERS['Tim Contributor'],
         description='Another example issue for testing, example.com is broken',
-        project='WebKit',
-        component='SVG',
-        version='WebKit Local Build',
         comments=[
             Issue.Comment(
                 user=USERS['Tim Contributor'],
@@ -96,25 +87,3 @@ ISSUES = [
         ], watchers=[USERS['Felix Filer'], USERS['Tim Contributor'], USERS['Wilma Watcher']], references=[2],
     ),
 ]
-
-PROJECTS = dict(
-    WebKit=dict(
-        id=1,
-        description='The WebKit browser engine',
-        versions=['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
-        components=dict(
-            Scrolling=dict(description='Bugs related to main thread and off-main thread scrolling'),
-            SVG=dict(description='For bugs in the SVG implementation.'),
-            Tables=dict(description='For bugs specific to tables (both the DOM and rendering issues).'),
-            Text=dict(description='For bugs in text layout and rendering, including international text support.'),
-        ),
-    ), CFNetwork=dict(
-        id=2,
-        description='Darwin networking framework',
-        versions=['All'],
-        components=dict(
-            IPv4=dict(description='Bugs involving IPv4 networking'),
-            IPv6=dict(description='Bugs involving IPv6 networking'),
-        ),
-    ),
-)

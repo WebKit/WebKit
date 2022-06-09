@@ -33,73 +33,56 @@ namespace WebKit {
 
 using namespace WebCore;
 
-MediaSampleByteRange::MediaSampleByteRange(MediaSamplesBlock&& sample, MTPluginByteSourceRef byteSource)
-    : m_block(WTFMove(sample))
+MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSourceRef byteSource, uint64_t trackID)
+    : MediaSampleAVFObjC(nullptr)
+    , m_presentationTime(sample.presentationTime())
+    , m_decodeTime(sample.decodeTime())
+    , m_duration(sample.duration())
+    , m_byteRange(*sample.byteRange())
+    , m_trackID(trackID)
+    , m_sizeInBytes(sample.sizeInBytes())
+    , m_presentationSize(sample.presentationSize())
     , m_byteSource(byteSource)
+    , m_flags(sample.flags())
 {
-    ASSERT(!m_block.isEmpty());
-    ASSERT(std::holds_alternative<MediaSample::ByteRange>(m_block.last().data));
+    ASSERT(!isMainRunLoop());
+    ASSERT(m_decodeTime == m_presentationTime || m_decodeTime == MediaTime::invalidTime());
+    auto platformSample = sample.platformSample();
+    switch (platformSample.type) {
+    case PlatformSample::CMSampleBufferType:
+        m_formatDescription = PAL::CMSampleBufferGetFormatDescription(platformSample.sample.cmSampleBuffer);
+        break;
+    case PlatformSample::ByteRangeSampleType:
+        m_formatDescription = platformSample.sample.byteRangeSample.second;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
 AtomString MediaSampleByteRange::trackID() const
 {
-    return AtomString::number(m_block.info()->trackID);
+    return AtomString::number(m_trackID);
 }
 
-PlatformSample MediaSampleByteRange::platformSample() const
+PlatformSample MediaSampleByteRange::platformSample()
 {
-    ASSERT(m_block.info());
     return {
         PlatformSample::ByteRangeSampleType,
-        { .byteRangeSample = std::make_pair(m_byteSource.get(), std::reference_wrapper(*m_block.info())) },
+        { .byteRangeSample = std::make_pair(m_byteSource.get(), m_formatDescription.get()) },
     };
 }
 
-MediaTime MediaSampleByteRange::presentationTime() const
+void MediaSampleByteRange::offsetTimestampsBy(const MediaTime& offset)
 {
-    return m_block.last().presentationTime;
+    setTimestamps(presentationTime() + offset, decodeTime() + offset);
 }
 
-MediaTime MediaSampleByteRange::decodeTime() const
+void MediaSampleByteRange::setTimestamps(const MediaTime& presentationTime, const MediaTime& decodeTime)
 {
-    return m_block.last().decodeTime;
-}
-
-MediaTime MediaSampleByteRange::duration() const
-{
-    return m_block.last().duration;
-}
-
-size_t MediaSampleByteRange::sizeInBytes() const
-{
-    return std::get<MediaSample::ByteRange>(m_block.last().data).byteLength;
-}
-
-WebCore::FloatSize MediaSampleByteRange::presentationSize() const
-{
-    if (m_block.isVideo())
-        return downcast<const VideoInfo>(m_block.info())->displaySize;
-    return { };
-}
-
-MediaSampleByteRange::SampleFlags MediaSampleByteRange::flags() const
-{
-    return m_block.last().flags;
-}
-
-std::optional<MediaSampleByteRange::ByteRange> MediaSampleByteRange::byteRange() const
-{
-    return std::get<MediaSample::ByteRange>(m_block.last().data);
-}
-
-void MediaSampleByteRange::offsetTimestampsBy(const MediaTime&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void MediaSampleByteRange::setTimestamps(const MediaTime&, const MediaTime&)
-{
-    ASSERT_NOT_REACHED();
+    m_presentationTime = presentationTime;
+    m_decodeTime = decodeTime;
 }
 
 } // namespace WebKit

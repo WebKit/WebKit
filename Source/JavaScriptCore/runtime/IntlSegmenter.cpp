@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlSegmenter::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlSegmenter) };
+const ClassInfo IntlSegmenter::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlSegmenter) };
 
 IntlSegmenter* IntlSegmenter::create(VM& vm, Structure* structure)
 {
@@ -56,7 +56,7 @@ IntlSegmenter::IntlSegmenter(VM& vm, Structure* structure)
 void IntlSegmenter::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 }
 
 // https://tc39.es/proposal-intl-segmenter/#sec-intl.segmenter
@@ -161,7 +161,7 @@ ASCIILiteral IntlSegmenter::granularityString(Granularity granularity)
         return "sentence"_s;
     }
     ASSERT_NOT_REACHED();
-    return { };
+    return ASCIILiteral::null();
 }
 
 JSObject* IntlSegmenter::createSegmentDataObject(JSGlobalObject* globalObject, JSString* string, int32_t startIndex, int32_t endIndex, UBreakIterator& segmenter, Granularity granularity)

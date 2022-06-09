@@ -97,6 +97,7 @@ int SQLiteStatement::bindBlob(int index, Span<const uint8_t> blob)
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
     ASSERT(blob.data() || !blob.size());
+    ASSERT(blob.size() >= 0);
 
     return sqlite3_bind_blob(m_statement, index, blob.data(), blob.size(), SQLITE_TRANSIENT);
 }
@@ -183,7 +184,7 @@ int SQLiteStatement::columnCount()
 bool SQLiteStatement::isColumnDeclaredAsBlob(int col)
 {
     ASSERT(col >= 0);
-    return equalLettersIgnoringASCIICase(StringView::fromLatin1(sqlite3_column_decltype(m_statement, col)), "blob"_s);
+    return equalLettersIgnoringASCIICase(StringView(sqlite3_column_decltype(m_statement, col)), "blob");
 }
 
 String SQLiteStatement::columnName(int col)
@@ -283,7 +284,7 @@ String SQLiteStatement::columnBlobAsString(int col)
         return String();
 
     ASSERT(!(size % sizeof(UChar)));
-    return StringImpl::create8BitIfPossible(static_cast<const UChar*>(blob), size / sizeof(UChar));
+    return String(static_cast<const UChar*>(blob), size / sizeof(UChar));
 }
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)

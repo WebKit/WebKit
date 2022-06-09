@@ -26,8 +26,8 @@
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/QueryGL.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
-#include "platform/FeaturesGL_autogen.h"
-#include "platform/FrontendFeatures_autogen.h"
+#include "platform/FeaturesGL.h"
+#include "platform/FrontendFeatures.h"
 
 #include <EGL/eglext.h>
 #include <algorithm>
@@ -185,8 +185,8 @@ void ClearErrors(const FunctionsGL *functions,
     GLenum error = functions->getError();
     while (error != GL_NO_ERROR)
     {
-        INFO() << "Preexisting GL error " << gl::FmtHex(error) << " as of " << file << ", "
-               << function << ":" << line << ". ";
+        ERR() << "Preexisting GL error " << gl::FmtHex(error) << " as of " << file << ", "
+              << function << ":" << line << ". ";
         error = functions->getError();
     }
 }
@@ -654,6 +654,11 @@ void GenerateCaps(const FunctionsGL *functions,
         gl::TextureCaps textureCaps =
             GenerateTextureFormatCaps(functions, features, internalFormat, maxSupportedESVersion);
         textureCapsMap->insert(internalFormat, textureCaps);
+
+        if (gl::GetSizedInternalFormatInfo(internalFormat).compressed)
+        {
+            caps->compressedTextureFormats.push_back(internalFormat);
+        }
     }
 
     // Table 6.28, implementation dependent values
@@ -1324,12 +1329,6 @@ void GenerateCaps(const FunctionsGL *functions,
 
     // Extension support
     extensions->setTextureExtensionSupport(*textureCapsMap);
-
-    // Expose this extension only when we support the formats or we're running on top of a native
-    // ES driver.
-    extensions->textureCompressionAstcLdrKHR =
-        extensions->textureCompressionAstcLdrKHR &&
-        (features.allowAstcFormats.enabled || functions->standard == STANDARD_GL_ES);
     extensions->textureCompressionAstcHdrKHR =
         extensions->textureCompressionAstcLdrKHR &&
         functions->hasExtension("GL_KHR_texture_compression_astc_hdr");
@@ -1583,7 +1582,7 @@ void GenerateCaps(const FunctionsGL *functions,
     {
         extensions->textureRectangleANGLE = true;
         caps->maxRectangleTextureSize     = std::min(
-                QuerySingleGLInt(functions, GL_MAX_RECTANGLE_TEXTURE_SIZE_ANGLE), textureSizeLimit);
+            QuerySingleGLInt(functions, GL_MAX_RECTANGLE_TEXTURE_SIZE_ANGLE), textureSizeLimit);
     }
 
     // OpenGL 4.3 (and above) and OpenGL ES 3.2 can support all features and constants defined in
@@ -1710,17 +1709,17 @@ void GenerateCaps(const FunctionsGL *functions,
     // Expose this extension only when we support the formats or we're running on top of a native
     // ES driver.
     extensions->compressedTextureEtcANGLE =
-        (features.allowETCFormats.enabled || functions->standard == STANDARD_GL_ES) &&
+        (features.allowEtcFormats.enabled || functions->standard == STANDARD_GL_ES) &&
         gl::DetermineCompressedTextureETCSupport(*textureCapsMap);
 
     // When running on top of desktop OpenGL drivers and allow_etc_formats feature is not enabled,
     // mark ETC1 as emulated to hide it from WebGL clients.
     limitations->emulatedEtc1 =
-        !features.allowETCFormats.enabled && functions->standard == STANDARD_GL_DESKTOP;
+        !features.allowEtcFormats.enabled && functions->standard == STANDARD_GL_DESKTOP;
 
     // To work around broken unsized sRGB textures, sized sRGB textures are used. Disable EXT_sRGB
     // if those formats are not available.
-    if (features.unsizedSRGBReadPixelsDoesntTransform.enabled &&
+    if (features.unsizedsRGBReadPixelsDoesntTransform.enabled &&
         !functions->isAtLeastGLES(gl::Version(3, 0)))
     {
         extensions->sRGBEXT = false;
@@ -1895,21 +1894,14 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, avoid1BitAlphaTextureFormats,
                             functions->standard == STANDARD_GL_DESKTOP && isAMD);
 
-    ANGLE_FEATURE_CONDITION(features, RGBA4IsNotSupportedForColorRendering,
+    ANGLE_FEATURE_CONDITION(features, rgba4IsNotSupportedForColorRendering,
                             functions->standard == STANDARD_GL_DESKTOP && isIntel);
 
     // Although "Sandy Bridge", "Ivy Bridge", and "Haswell" may support GL_ARB_ES3_compatibility
     // extension, ETC2/EAC formats are emulated there. Newer Intel GPUs support them natively.
     ANGLE_FEATURE_CONDITION(
-        features, allowETCFormats,
+        features, allowEtcFormats,
         isIntel && !IsSandyBridge(device) && !IsIvyBridge(device) && !IsHaswell(device));
-
-    // Mesa always exposes ASTC extension but only Intel Gen9, Gen11, and Gen12 have hardware
-    // support for it. Newer Intel GPUs (Gen12.5+) do not support ASTC.
-    ANGLE_FEATURE_CONDITION(features, allowAstcFormats,
-                            !isMesa || isIntel && (Is9thGenIntel(device) || IsGeminiLake(device) ||
-                                                   IsCoffeeLake(device) || Is11thGenIntel(device) ||
-                                                   Is12thGenIntel(device)));
 
     // Ported from gpu_driver_bug_list.json (#183)
     ANGLE_FEATURE_CONDITION(features, emulateAbsIntFunction, IsApple() && isIntel);
@@ -1939,7 +1931,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, rewriteFloatUnaryMinusOperator,
                             IsApple() && isIntel && GetMacOSVersion() < OSVersion(10, 12, 0));
 
-    ANGLE_FEATURE_CONDITION(features, vertexIDDoesNotIncludeBaseVertex, IsApple() && isAMD);
+    ANGLE_FEATURE_CONDITION(features, addBaseVertexToVertexID, IsApple() && isAMD);
 
     // Triggers a bug on Marshmallow Adreno (4xx?) driver.
     // http://anglebug.com/2046
@@ -1990,7 +1982,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     ANGLE_FEATURE_CONDITION(features, disableBlendFuncExtended, isAMD || isIntel);
 
-    ANGLE_FEATURE_CONDITION(features, unsizedSRGBReadPixelsDoesntTransform,
+    ANGLE_FEATURE_CONDITION(features, unsizedsRGBReadPixelsDoesntTransform,
                             IsAndroid() && isQualcomm);
 
     ANGLE_FEATURE_CONDITION(features, queryCounterBitsGeneratesErrors, IsNexus5X(vendor, device));
@@ -2032,14 +2024,14 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, clearToZeroOrOneBroken,
                             IsApple() && isIntel && GetMacOSVersion() < OSVersion(10, 12, 6));
 
-    ANGLE_FEATURE_CONDITION(features, adjustSrcDstRegionForBlitFramebuffer,
+    ANGLE_FEATURE_CONDITION(features, adjustSrcDstRegionBlitFramebuffer,
                             IsLinux() || (IsAndroid() && isNvidia) || (IsWindows() && isNvidia) ||
                                 (IsApple() && functions->standard == STANDARD_GL_ES));
 
-    ANGLE_FEATURE_CONDITION(features, clipSrcRegionForBlitFramebuffer,
+    ANGLE_FEATURE_CONDITION(features, clipSrcRegionBlitFramebuffer,
                             IsApple() || (IsLinux() && isAMD));
 
-    ANGLE_FEATURE_CONDITION(features, RGBDXT1TexturesSampleZeroAlpha, IsApple());
+    ANGLE_FEATURE_CONDITION(features, rgbDXT1TexturesSampleZeroAlpha, IsApple());
 
     ANGLE_FEATURE_CONDITION(features, unfoldShortCircuits, IsApple());
 
@@ -2089,7 +2081,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
             (IsAndroid() && IsMaliT8xxOrOlder(functions)) ||
             (IsAndroid() && IsMaliG31OrOlder(functions)));
 
-    ANGLE_FEATURE_CONDITION(features, decodeEncodeSRGBForGenerateMipmap, IsApple());
+    ANGLE_FEATURE_CONDITION(features, encodeAndDecodeSRGBForGenerateMipmap, IsApple());
 
     // anglebug.com/4674
     // The (redundant) explicit exclusion of Windows AMD is because the workaround fails
@@ -2163,7 +2155,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // http://crbug.com/1144207
     // The Mac bot with Intel Iris GPU seems unaffected by this bug. Exclude the Haswell family for
     // now.
-    ANGLE_FEATURE_CONDITION(features, shiftInstancedArrayDataWithOffset,
+    ANGLE_FEATURE_CONDITION(features, shiftInstancedArrayDataWithExtraOffset,
                             IsApple() && IsIntel(vendor) && !IsHaswell(device));
     ANGLE_FEATURE_CONDITION(features, syncVertexArraysToDefault,
                             !nativegl::SupportsVertexArrayObjects(functions));
@@ -2171,12 +2163,12 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // http://crbug.com/1181193
     // On desktop Linux/AMD when using the amdgpu drivers, the precise kernel and DRM version are
     // leaked via GL_RENDERER. We workaround this too improve user security.
-    ANGLE_FEATURE_CONDITION(features, sanitizeAMDGPURendererString, IsLinux() && hasAMD);
+    ANGLE_FEATURE_CONDITION(features, sanitizeAmdGpuRendererString, IsLinux() && hasAMD);
 
     // http://crbug.com/1187513
     // Imagination drivers are buggy with context switching. It needs to unbind fbo before context
     // switching to workadround the driver issues.
-    ANGLE_FEATURE_CONDITION(features, unbindFBOBeforeSwitchingContext, IsPowerVR(vendor));
+    ANGLE_FEATURE_CONDITION(features, unbindFBOOnContextSwitch, IsPowerVR(vendor));
 
     // http://crbug.com/1181068 and http://crbug.com/783979
     ANGLE_FEATURE_CONDITION(features, flushOnFramebufferChange,
@@ -2213,13 +2205,6 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     // https://crbug.com/1060012
     ANGLE_FEATURE_CONDITION(features, emulateImmutableCompressedTexture3D, isQualcomm);
-
-    // https://crbug.com/1300575
-    ANGLE_FEATURE_CONDITION(features, emulateRGB10, functions->standard == STANDARD_GL_DESKTOP);
-
-    // https://anglebug.com/5536
-    ANGLE_FEATURE_CONDITION(features, alwaysUnbindFramebufferTexture2D,
-                            isNvidia && (IsWindows() || IsLinux()));
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)
@@ -2246,7 +2231,7 @@ void ReInitializeFeaturesAtGPUSwitch(const FunctionsGL *functions, angle::Featur
     // The Mac bot with Intel Iris GPU seems unaffected by this bug. Exclude the Haswell family for
     // now.
     // We need to reinitialize this feature when switching between buggy and non-buggy GPUs.
-    ANGLE_FEATURE_CONDITION(features, shiftInstancedArrayDataWithOffset,
+    ANGLE_FEATURE_CONDITION(features, shiftInstancedArrayDataWithExtraOffset,
                             IsApple() && IsIntel(vendor) && !IsHaswell(device));
 }
 

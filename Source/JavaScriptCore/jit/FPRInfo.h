@@ -67,12 +67,12 @@ public:
 
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.
-    static_assert(X86Registers::xmm0 == 0);
-    static_assert(X86Registers::xmm1 == 1);
-    static_assert(X86Registers::xmm2 == 2);
-    static_assert(X86Registers::xmm3 == 3);
-    static_assert(X86Registers::xmm4 == 4);
-    static_assert(X86Registers::xmm5 == 5);
+    COMPILE_ASSERT(X86Registers::xmm0 == 0, xmm0_is_0);
+    COMPILE_ASSERT(X86Registers::xmm1 == 1, xmm1_is_1);
+    COMPILE_ASSERT(X86Registers::xmm2 == 2, xmm2_is_2);
+    COMPILE_ASSERT(X86Registers::xmm3 == 3, xmm3_is_3);
+    COMPILE_ASSERT(X86Registers::xmm4 == 4, xmm4_is_4);
+    COMPILE_ASSERT(X86Registers::xmm5 == 5, xmm5_is_5);
     static FPRReg toRegister(unsigned index)
     {
         return (FPRReg)index;
@@ -106,7 +106,7 @@ public:
 class FPRInfo {
 public:
     typedef FPRReg RegisterType;
-    static constexpr unsigned numberOfRegisters = 8;
+    static constexpr unsigned numberOfRegisters = 6;
 
 #if CPU(ARM_HARDFP)
     static constexpr unsigned numberOfArgumentRegisters = 8;
@@ -115,23 +115,13 @@ public:
 #endif
 
     // Temporary registers.
-    // d8-d15 are callee saved, d15 is use by the MacroAssembler as fpTempRegister.
+    // d7 is use by the MacroAssembler as fpTempRegister.
     static constexpr FPRReg fpRegT0 = ARMRegisters::d0;
     static constexpr FPRReg fpRegT1 = ARMRegisters::d1;
     static constexpr FPRReg fpRegT2 = ARMRegisters::d2;
     static constexpr FPRReg fpRegT3 = ARMRegisters::d3;
     static constexpr FPRReg fpRegT4 = ARMRegisters::d4;
     static constexpr FPRReg fpRegT5 = ARMRegisters::d5;
-    static constexpr FPRReg fpRegT6 = ARMRegisters::d6;
-    static constexpr FPRReg fpRegT7 = ARMRegisters::d7;
-    static constexpr FPRReg fpRegCS0 = ARMRegisters::d8;
-    static constexpr FPRReg fpRegCS1 = ARMRegisters::d9;
-    static constexpr FPRReg fpRegCS2 = ARMRegisters::d10;
-    static constexpr FPRReg fpRegCS3 = ARMRegisters::d11;
-    static constexpr FPRReg fpRegCS4 = ARMRegisters::d12;
-    static constexpr FPRReg fpRegCS5 = ARMRegisters::d13;
-    static constexpr FPRReg fpRegCS6 = ARMRegisters::d14;
-
     // ARMv7 doesn't pass arguments in fp registers. The return
     // value is also actually in integer registers, for now
     // we'll return in d0 for simplicity.
@@ -144,14 +134,12 @@ public:
 
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.
-    static_assert(ARMRegisters::d0 == 0);
-    static_assert(ARMRegisters::d1 == 1);
-    static_assert(ARMRegisters::d2 == 2);
-    static_assert(ARMRegisters::d3 == 3);
-    static_assert(ARMRegisters::d4 == 4);
-    static_assert(ARMRegisters::d5 == 5);
-    static_assert(ARMRegisters::d6 == 6);
-    static_assert(ARMRegisters::d7 == 7);
+    COMPILE_ASSERT(ARMRegisters::d0 == 0, d0_is_0);
+    COMPILE_ASSERT(ARMRegisters::d1 == 1, d1_is_1);
+    COMPILE_ASSERT(ARMRegisters::d2 == 2, d2_is_2);
+    COMPILE_ASSERT(ARMRegisters::d3 == 3, d3_is_3);
+    COMPILE_ASSERT(ARMRegisters::d4 == 4, d4_is_4);
+    COMPILE_ASSERT(ARMRegisters::d5 == 5, d5_is_5);
     static FPRReg toRegister(unsigned index)
     {
         return (FPRReg)index;

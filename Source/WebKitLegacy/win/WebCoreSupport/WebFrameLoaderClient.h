@@ -154,8 +154,8 @@ public:
     bool canHandleRequest(const WebCore::ResourceRequest&) const override;
     bool canShowMIMEType(const WTF::String& MIMEType) const override;
     bool canShowMIMETypeAsHTML(const WTF::String& MIMEType) const override;
-    bool representationExistsForURLScheme(WTF::StringView URLScheme) const override;
-    WTF::String generatedMIMETypeForURLScheme(WTF::StringView URLScheme) const override;
+    bool representationExistsForURLScheme(const WTF::String& URLScheme) const override;
+    WTF::String generatedMIMETypeForURLScheme(const WTF::String& URLScheme) const override;
 
     void frameLoadCompleted() override;
     void saveViewStateToItem(WebCore::HistoryItem&) override;
@@ -168,8 +168,8 @@ public:
 
     bool canCachePage() const override;
 
-    RefPtr<WebCore::Frame> createFrame(const WTF::AtomString& name, WebCore::HTMLFrameOwnerElement&) override;
-    RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<WTF::AtomString>&, const Vector<WTF::AtomString>&, const WTF::String&, bool loadManually) override;
+    RefPtr<WebCore::Frame> createFrame(const WTF::String& name, WebCore::HTMLFrameOwnerElement&) override;
+    RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually) override;
     void redirectDataToPlugin(WebCore::Widget&) override;
 
     WebCore::ObjectContentType objectContentType(const URL&, const WTF::String& mimeType) override;

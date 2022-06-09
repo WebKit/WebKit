@@ -35,7 +35,7 @@ class BatchedTransitionOptimizer {
 public:
     BatchedTransitionOptimizer(VM& vm, JSObject* object)
     {
-        if (!object->structure()->isDictionary())
+        if (!object->structure(vm)->isDictionary())
             object->convertToDictionary(vm);
     }
 };

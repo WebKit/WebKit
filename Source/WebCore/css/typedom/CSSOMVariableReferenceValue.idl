@@ -23,11 +23,11 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// https://drafts.css-houdini.org/css-typed-om/#cssvariablereferencevalue
 [
     InterfaceName=CSSVariableReferenceValue,
-    EnabledBySetting=CSSTypedOMEnabled,
+    EnabledAtRuntime=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
+    ImplementationLacksVTable,
     Exposed=(Window,Worker,PaintWorklet),
 ] interface CSSOMVariableReferenceValue {
     constructor(USVString variable, optional CSSUnparsedValue? fallback = null);

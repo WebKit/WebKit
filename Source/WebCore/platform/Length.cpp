@@ -282,7 +282,10 @@ bool Length::isCalculatedEqual(const Length& other) const
 
 static Length makeCalculated(CalcOperator calcOperator, const Length& a, const Length& b)
 {
-    auto lengths = Vector<std::unique_ptr<CalcExpressionNode>>::from(makeUnique<CalcExpressionLength>(a), makeUnique<CalcExpressionLength>(b));
+    Vector<std::unique_ptr<CalcExpressionNode>> lengths;
+    lengths.reserveInitialCapacity(2);
+    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(a));
+    lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(b));
     auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), calcOperator);
     return Length(CalculationValue::create(WTFMove(op), ValueRange::All));
 }
@@ -359,7 +362,7 @@ struct SameSizeAsLength {
     int32_t value;
     int32_t metaData;
 };
-static_assert(sizeof(Length) == sizeof(SameSizeAsLength), "length should stay small");
+COMPILE_ASSERT(sizeof(Length) == sizeof(SameSizeAsLength), length_should_stay_small);
 
 static TextStream& operator<<(TextStream& ts, LengthType type)
 {

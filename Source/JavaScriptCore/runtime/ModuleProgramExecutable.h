@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExecutableToCodeBlockEdge.h"
 #include "GlobalExecutable.h"
 
 namespace JSC {
@@ -36,7 +37,7 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         return vm.moduleProgramExecutableSpace<mode>();
     }
@@ -45,14 +46,9 @@ public:
 
     static void destroy(JSCell*);
 
-    ModuleProgramCodeBlock* codeBlock() const
+    ModuleProgramCodeBlock* codeBlock()
     {
-        return bitwise_cast<ModuleProgramCodeBlock*>(Base::codeBlock());
-    }
-
-    UnlinkedModuleProgramCodeBlock* unlinkedCodeBlock() const
-    {
-        return bitwise_cast<UnlinkedModuleProgramCodeBlock*>(Base::unlinkedCodeBlock());
+        return bitwise_cast<ModuleProgramCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_moduleProgramCodeBlock.get()));
     }
 
     Ref<JITCode> generatedJITCode()
@@ -67,6 +63,7 @@ public:
 
     DECLARE_INFO;
 
+    UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock() { return m_unlinkedModuleProgramCodeBlock.get(); }
     bool isAsync() const { return features() & AwaitFeature; }
 
     SymbolTable* moduleEnvironmentSymbolTable() { return m_moduleEnvironmentSymbolTable.get(); }
@@ -81,7 +78,9 @@ private:
 
     DECLARE_VISIT_CHILDREN;
 
+    WriteBarrier<UnlinkedModuleProgramCodeBlock> m_unlinkedModuleProgramCodeBlock;
     WriteBarrier<SymbolTable> m_moduleEnvironmentSymbolTable;
+    WriteBarrier<ExecutableToCodeBlockEdge> m_moduleProgramCodeBlock;
     std::unique_ptr<TemplateObjectMap> m_templateObjectMap;
 };
 

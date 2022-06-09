@@ -1,0 +1,75 @@
+/*
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.css-grid-section .node-display-name {
+    margin-inline: 5px 4px;
+}
+
+.css-grid-section .node-overlay-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.css-grid-section .node-overlay-list-item-container {
+    display: flex;
+    align-items: center;
+}
+
+.css-grid-section .node-overlay-list-item-container label {
+    flex-shrink: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.css-grid-section .node-overlay-list-item-container :is(.go-to-arrow, .inline-swatch) {
+    flex-shrink: 0;
+}
+
+.css-grid-section .node-overlay-list-item-container:not(:hover) .go-to-arrow {
+    opacity: 0;
+}
+
+.css-grid-section :is(.heading, .title) {
+    font-size: 11px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-color)
+}
+
+.css-grid-section .toggle-all {
+    padding-inline-start: 4px;
+}
+
+.css-grid-section :is(.setting-editor, .node-overlay-list-item-container, .heading) input[type="checkbox"] {
+    margin-inline-end: 0;
+}
+
+.css-grid-section .setting-editor > input[type="checkbox"] {
+    font-size: revert;
+}

@@ -151,7 +151,7 @@ bool SVGTextContentElement::hasPresentationalHintsForAttribute(const QualifiedNa
 void SVGTextContentElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name.matches(XMLNames::spaceAttr)) {
-        if (value == "preserve"_s)
+        if (value == "preserve")
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
         else
             addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);
@@ -184,7 +184,7 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
             m_specifiedTextLength = m_textLength->baseVal()->value();
 
         InstanceInvalidationGuard guard(*this);
-        updateSVGRendererForElementChange();
+        setSVGResourcesInAncestorChainAreDirty();
         return;
     }
 

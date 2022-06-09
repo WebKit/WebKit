@@ -39,9 +39,9 @@ class AudioWorkletMessagingProxy;
 
 class AudioWorkletThread : public WorkerOrWorkletThread {
 public:
-    static Ref<AudioWorkletThread> create(AudioWorkletMessagingProxy& messagingProxy, WorkletParameters&& parameters)
+    static Ref<AudioWorkletThread> create(AudioWorkletMessagingProxy& messagingProxy, const WorkletParameters& parameters)
     {
-        return adoptRef(*new AudioWorkletThread(messagingProxy, WTFMove(parameters)));
+        return adoptRef(*new AudioWorkletThread(messagingProxy, parameters));
     }
     ~AudioWorkletThread();
 
@@ -54,7 +54,7 @@ public:
     AudioWorkletMessagingProxy& messagingProxy() { return m_messagingProxy; }
 
 private:
-    AudioWorkletThread(AudioWorkletMessagingProxy&, WorkletParameters&&);
+    AudioWorkletThread(AudioWorkletMessagingProxy&, const WorkletParameters&);
 
     // WorkerOrWorkletThread.
     Ref<Thread> createThread() final;

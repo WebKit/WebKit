@@ -33,10 +33,6 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
-struct SecurityOriginData;
-}
-
 namespace WebKit {
 
 class PlatformXRSystemProxy;
@@ -49,13 +45,12 @@ public:
     XRDeviceIdentifier identifier() const { return m_identifier; }
 
     void sessionDidEnd();
-    void updateSessionVisibilityState(PlatformXR::VisibilityState);
 
 private:
     XRDeviceProxy(XRDeviceInfo&&, PlatformXRSystemProxy&);
 
     WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final { return m_recommendedResolution; }
-    void initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&) final;
+    void initializeTrackingAndRendering(PlatformXR::SessionMode) final;
     void shutDownTrackingAndRendering() final;
     bool supportsSessionShutdownNotification() const final { return true; }
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }

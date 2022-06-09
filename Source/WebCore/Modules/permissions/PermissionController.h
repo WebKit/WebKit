@@ -38,7 +38,8 @@ struct PermissionDescriptor;
 class PermissionController : public ThreadSafeRefCounted<PermissionController> {
 public:
     virtual ~PermissionController() = default;
-    virtual void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, CompletionHandler<void(std::optional<PermissionState>)>&&) = 0;
+    virtual PermissionState query(ClientOrigin&&, PermissionDescriptor&&) = 0;
+    virtual void request(ClientOrigin&&, PermissionDescriptor&&, CompletionHandler<void(PermissionState)>&&) = 0;
     virtual void addObserver(PermissionObserver&) = 0;
     virtual void removeObserver(PermissionObserver&) = 0;
 protected:
@@ -50,7 +51,8 @@ public:
     static Ref<DummyPermissionController> create() { return adoptRef(*new DummyPermissionController); }
 private:
     DummyPermissionController() = default;
-    void query(WebCore::ClientOrigin&&, PermissionDescriptor&&, CompletionHandler<void(std::optional<PermissionState>)>&& callback) final { callback({ }); }
+    PermissionState query(ClientOrigin&&, PermissionDescriptor&&) final { return PermissionState::Denied; }
+    void request(ClientOrigin&&, PermissionDescriptor&&, CompletionHandler<void(PermissionState)>&& completionHandler) final { completionHandler(PermissionState::Denied); }
     void addObserver(PermissionObserver&) final { }
     void removeObserver(PermissionObserver&) final { }
 };

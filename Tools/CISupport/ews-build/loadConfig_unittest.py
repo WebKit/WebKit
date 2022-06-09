@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,15 +27,10 @@ import json
 import os
 import unittest
 
-from datetime import datetime, timedelta, timezone
-from twisted.internet import defer
-
 import loadConfig
 
 
 class ConfigDotJSONTest(unittest.TestCase):
-    DUPLICATED_TRIGGERS = ['try', 'pull_request']
-
     def get_config(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
         with open(os.path.join(cwd, 'config.json'), 'r') as config:
@@ -77,10 +72,7 @@ class ConfigDotJSONTest(unittest.TestCase):
             if scheduler['name'] in triggered_by_schedulers:
                 continue
             for buildername in scheduler.get('builderNames'):
-                if scheduler.get('name') in self.DUPLICATED_TRIGGERS and builder_to_schduler_map.get(buildername):
-                    self.assertTrue(builder_to_schduler_map[buildername] in self.DUPLICATED_TRIGGERS)
-                else:
-                    self.assertTrue(buildername not in builder_to_schduler_map, 'builder {} appears multiple times in schedulers.'.format(buildername))
+                self.assertTrue(buildername not in builder_to_schduler_map, 'builder {} appears multiple times in schedulers.'.format(buildername))
                 builder_to_schduler_map[buildername] = scheduler.get('name')
 
     def test_schduler_contains_valid_builder_name(self):
@@ -247,42 +239,6 @@ class TestcheckWorkersAndBuildersForConsistency(unittest.TestCase):
 
     def test_success(self):
         loadConfig.checkWorkersAndBuildersForConsistency({}, [self.ews101, {'name': 'ews102', 'platform': 'mac-sierra'}], [self.WK2Builder])
-
-
-class TestPrioritizeBuilders(unittest.TestCase):
-    class MockBuilder(object):
-        def __init__(self, name, building=False, oldestRequestTime=None):
-            self.name = name
-            self.building = building
-            self.old_building = False
-            self._oldestRequestTime = oldestRequestTime or datetime.now(timezone.utc)
-
-        def getOldestRequestTime(self):
-            return self._oldestRequestTime
-
-    def test_builders_over_testers(self):
-        builders = [
-            self.MockBuilder('macOS-BigSur-Debug-Build-EWS'),
-            self.MockBuilder('macOS-BigSur-Debug-WK1-Tests-EWS'),
-            self.MockBuilder('macOS-BigSur-Release-Build-EWS'),
-        ]
-        sorted_builders = loadConfig.prioritizeBuilders(None, builders)
-        self.assertEqual(
-            ['macOS-BigSur-Debug-Build-EWS', 'macOS-BigSur-Release-Build-EWS', 'macOS-BigSur-Debug-WK1-Tests-EWS'],
-            [builder.name for builder in sorted_builders],
-        )
-
-    def test_starvation(self):
-        builders = [
-            self.MockBuilder('Commit-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=30)),
-            self.MockBuilder('Merge-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=10)),
-            self.MockBuilder('Unsafe-Merge-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=60)),
-        ]
-        sorted_builders = loadConfig.prioritizeBuilders(None, builders)
-        self.assertEqual(
-            ['Unsafe-Merge-Queue', 'Commit-Queue', 'Merge-Queue'],
-            [builder.name for builder in sorted_builders],
-        )
 
 
 if __name__ == '__main__':

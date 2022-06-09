@@ -51,19 +51,35 @@ public:
         m_payload = extractCencIfNeeded(mappedInitData->createSharedBuffer());
     }
 
-    InitData(const String& systemId, RefPtr<SharedBuffer>&& payload)
+    InitData(const String& systemId, RefPtr<FragmentedSharedBuffer>&& payload)
         : m_systemId(systemId)
     {
         if (payload)
-            m_payload = extractCencIfNeeded(WTFMove(payload));
+            m_payload = extractCencIfNeeded(payload->makeContiguous());
     }
 
-    RefPtr<SharedBuffer> payload() const { return m_payload; }
+    void append(InitData&& initData)
+    {
+        // FIXME: There is some confusion here about how to detect the
+        // correct "initialization data type", if the system ID is
+        // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID, then we know it came
+        // from WebM. If the system id is specified with one of the
+        // defined ClearKey / Playready / Widevine / etc UUIDs, then
+        // we know it's MP4. For the latter case, it does not matter
+        // which of the UUIDs it is, so we just overwrite it. This is
+        // a quirk of how GStreamer provides protection events, and
+        // it's not very robust, so be careful here!
+        m_systemId = initData.m_systemId;
+
+        m_payload.append(*initData.payload());
+    }
+
+    RefPtr<FragmentedSharedBuffer> payload() const { return m_payload.get(); }
     const String& systemId() const { return m_systemId; }
     String payloadContainerType() const
     {
 #if GST_CHECK_VERSION(1, 16, 0)
-        if (m_systemId == GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s)
+        if (m_systemId == GST_PROTECTION_UNSPECIFIED_SYSTEM_ID)
             return "webm"_s;
 #endif
         return "cenc"_s;
@@ -72,7 +88,7 @@ public:
 private:
     static RefPtr<SharedBuffer> extractCencIfNeeded(RefPtr<SharedBuffer>&&);
     String m_systemId;
-    RefPtr<SharedBuffer> m_payload;
+    SharedBufferBuilder m_payload;
 };
 
 class ProtectionSystemEvents {
@@ -93,7 +109,7 @@ public:
         const char** streamEncryptionAllowedSystems = reinterpret_cast<const char**>(g_value_get_boxed(streamEncryptionAllowedSystemsValue));
         if (streamEncryptionAllowedSystems) {
             for (unsigned i = 0; streamEncryptionAllowedSystems[i]; ++i)
-                m_availableSystems.append(String::fromLatin1(streamEncryptionAllowedSystems[i]));
+                m_availableSystems.append(streamEncryptionAllowedSystems[i]);
         }
     }
     const EventVector& events() const { return m_events; }
@@ -109,10 +125,10 @@ class GStreamerEMEUtilities {
 
 public:
     static constexpr char const* s_ClearKeyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID;
-    static constexpr auto s_ClearKeyKeySystem = "org.w3.clearkey"_s;
+    static constexpr char const* s_ClearKeyKeySystem = "org.w3.clearkey";
 #if ENABLE(THUNDER)
     static constexpr char const* s_WidevineUUID = WEBCORE_GSTREAMER_EME_UTILITIES_WIDEVINE_UUID;
-    static constexpr auto s_WidevineKeySystem = "com.widevine.alpha"_s;
+    static constexpr char const* s_WidevineKeySystem = "com.widevine.alpha";
 #endif
 
     static bool isClearKeyKeySystem(const String& keySystem)

@@ -40,9 +40,14 @@ class StyleRuleKeyframe;
 class StyleRuleKeyframes final : public StyleRuleBase {
 public:
     static Ref<StyleRuleKeyframes> create(const AtomString& name);
+    static Ref<StyleRuleKeyframes> create(const AtomString& name, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     ~StyleRuleKeyframes();
     
     const Vector<Ref<StyleRuleKeyframe>>& keyframes() const;
+    const Vector<Ref<StyleRuleKeyframe>>* keyframesWithoutDeferredParsing() const
+    {
+        return !m_deferredRules ? &m_keyframes : nullptr;
+    }
 
     void parserAppendKeyframe(RefPtr<StyleRuleKeyframe>&&);
     void wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&&);
@@ -59,10 +64,15 @@ public:
 
 private:
     explicit StyleRuleKeyframes(const AtomString&);
+    StyleRuleKeyframes(const AtomString&, std::unique_ptr<DeferredStyleGroupRuleList>&&);
     StyleRuleKeyframes(const StyleRuleKeyframes&);
+
+    void parseDeferredRulesIfNeeded() const;
     
     mutable Vector<Ref<StyleRuleKeyframe>> m_keyframes;
     AtomString m_name;
+    
+    mutable std::unique_ptr<DeferredStyleGroupRuleList> m_deferredRules;
 };
 
 class CSSKeyframesRule final : public CSSRule {
@@ -75,8 +85,8 @@ public:
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 
-    const AtomString& name() const { return m_keyframesRule->name(); }
-    void setName(const AtomString&);
+    String name() const { return m_keyframesRule->name(); }
+    void setName(const String&);
 
     CSSRuleList& cssRules();
 

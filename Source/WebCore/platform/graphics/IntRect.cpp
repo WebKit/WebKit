@@ -105,9 +105,9 @@ void IntRect::unite(const IntRect& other)
 void IntRect::uniteIfNonZero(const IntRect& other)
 {
     // Handle empty special cases first.
-    if (other.isZero())
+    if (!other.width() && !other.height())
         return;
-    if (isZero()) {
+    if (!width() && !height()) {
         *this = other;
         return;
     }

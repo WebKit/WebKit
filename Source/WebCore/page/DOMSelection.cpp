@@ -288,43 +288,43 @@ ExceptionOr<void> DOMSelection::setPosition(Node* node, unsigned offset)
 void DOMSelection::modify(const String& alterString, const String& directionString, const String& granularityString)
 {
     FrameSelection::EAlteration alter;
-    if (equalLettersIgnoringASCIICase(alterString, "extend"_s))
+    if (equalLettersIgnoringASCIICase(alterString, "extend"))
         alter = FrameSelection::AlterationExtend;
-    else if (equalLettersIgnoringASCIICase(alterString, "move"_s))
+    else if (equalLettersIgnoringASCIICase(alterString, "move"))
         alter = FrameSelection::AlterationMove;
     else
         return;
 
     SelectionDirection direction;
-    if (equalLettersIgnoringASCIICase(directionString, "forward"_s))
+    if (equalLettersIgnoringASCIICase(directionString, "forward"))
         direction = SelectionDirection::Forward;
-    else if (equalLettersIgnoringASCIICase(directionString, "backward"_s))
+    else if (equalLettersIgnoringASCIICase(directionString, "backward"))
         direction = SelectionDirection::Backward;
-    else if (equalLettersIgnoringASCIICase(directionString, "left"_s))
+    else if (equalLettersIgnoringASCIICase(directionString, "left"))
         direction = SelectionDirection::Left;
-    else if (equalLettersIgnoringASCIICase(directionString, "right"_s))
+    else if (equalLettersIgnoringASCIICase(directionString, "right"))
         direction = SelectionDirection::Right;
     else
         return;
 
     TextGranularity granularity;
-    if (equalLettersIgnoringASCIICase(granularityString, "character"_s))
+    if (equalLettersIgnoringASCIICase(granularityString, "character"))
         granularity = TextGranularity::CharacterGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "word"_s))
+    else if (equalLettersIgnoringASCIICase(granularityString, "word"))
         granularity = TextGranularity::WordGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "sentence"_s))
+    else if (equalLettersIgnoringASCIICase(granularityString, "sentence"))
         granularity = TextGranularity::SentenceGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "line"_s))
+    else if (equalLettersIgnoringASCIICase(granularityString, "line"))
         granularity = TextGranularity::LineGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "paragraph"_s))
+    else if (equalLettersIgnoringASCIICase(granularityString, "paragraph"))
         granularity = TextGranularity::ParagraphGranularity;
-    else if (equalLettersIgnoringASCIICase(granularityString, "lineboundary"_s))
+    else if (equalLettersIgnoringASCIICase(granularityString, "lineboundary"))
         granularity = TextGranularity::LineBoundary;
-    else if (equalLettersIgnoringASCIICase(granularityString, "sentenceboundary"_s))
+    else if (equalLettersIgnoringASCIICase(granularityString, "sentenceboundary"))
         granularity = TextGranularity::SentenceBoundary;
-    else if (equalLettersIgnoringASCIICase(granularityString, "paragraphboundary"_s))
+    else if (equalLettersIgnoringASCIICase(granularityString, "paragraphboundary"))
         granularity = TextGranularity::ParagraphBoundary;
-    else if (equalLettersIgnoringASCIICase(granularityString, "documentboundary"_s))
+    else if (equalLettersIgnoringASCIICase(granularityString, "documentboundary"))
         granularity = TextGranularity::DocumentBoundary;
     else
         return;
@@ -340,7 +340,7 @@ ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
         return { };
     
     if (rangeCount() < 1)
-        return Exception { InvalidStateError, "extend() requires a Range to be added to the Selection"_s };
+        return Exception { InvalidStateError, "extend() requires a Range to be added to the Selection" };
 
     if (frame->settings().liveRangeSelectionEnabled()) {
         if (!frame->document()->contains(node))

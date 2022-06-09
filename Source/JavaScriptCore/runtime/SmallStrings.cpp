@@ -33,7 +33,7 @@ namespace JSC {
 
 SmallStrings::SmallStrings()
 {
-    static_assert(singleCharacterStringCount == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), "characters count is in sync with class usage");
+    COMPILE_ASSERT(singleCharacterStringCount == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), IsNumCharactersConstInSyncWithClassUsage);
 
     for (unsigned i = 0; i < singleCharacterStringCount; ++i)
         m_singleCharacterStrings[i] = nullptr;
@@ -52,17 +52,17 @@ void SmallStrings::initializeCommonStrings(VM& vm)
         ASSERT(m_needsToBeVisited);
     }
 
-#define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) initialize(&vm, m_##name, #name ## _s);
+#define JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE(name) initialize(&vm, m_##name, #name);
     JSC_COMMON_STRINGS_EACH_NAME(JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE)
 #undef JSC_COMMON_STRINGS_ATTRIBUTE_INITIALIZE
-    initialize(&vm, m_objectStringStart, "[object "_s);
-    initialize(&vm, m_nullObjectString, "[object Null]"_s);
-    initialize(&vm, m_undefinedObjectString, "[object Undefined]"_s);
-    initialize(&vm, m_boundPrefixString, "bound "_s);
-    initialize(&vm, m_notEqualString, "not-equal"_s);
-    initialize(&vm, m_timedOutString, "timed-out"_s);
-    initialize(&vm, m_okString, "ok"_s);
-    initialize(&vm, m_sentinelString, "$"_s);
+    initialize(&vm, m_objectStringStart, "[object ");
+    initialize(&vm, m_nullObjectString, "[object Null]");
+    initialize(&vm, m_undefinedObjectString, "[object Undefined]");
+    initialize(&vm, m_boundPrefixString, "bound ");
+    initialize(&vm, m_notEqualString, "not-equal");
+    initialize(&vm, m_timedOutString, "timed-out");
+    initialize(&vm, m_okString, "ok");
+    initialize(&vm, m_sentinelString, "$");
 
     setIsInitialized(true);
 }
@@ -102,9 +102,9 @@ Ref<AtomStringImpl> SmallStrings::singleCharacterStringRep(unsigned char charact
     return AtomStringImpl::add(string, 1).releaseNonNull();
 }
 
-void SmallStrings::initialize(VM* vm, JSString*& string, ASCIILiteral value)
+void SmallStrings::initialize(VM* vm, JSString*& string, const char* value)
 {
-    string = JSString::create(*vm, AtomStringImpl::add(value));
+    string = JSString::create(*vm, AtomStringImpl::add(value).releaseNonNull());
     ASSERT(m_needsToBeVisited);
 }
 

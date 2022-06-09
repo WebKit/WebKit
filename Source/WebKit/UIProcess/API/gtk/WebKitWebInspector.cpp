@@ -31,9 +31,9 @@
 using namespace WebKit;
 
 /**
- * WebKitWebInspector:
- *
- * Access to the WebKit inspector.
+ * SECTION: WebKitWebInspector
+ * @Short_description: Access to the WebKit inspector
+ * @Title: WebKitWebInspector
  *
  * The WebKit Inspector is a graphical tool to inspect and change the
  * content of a #WebKitWebView. It also includes an interactive
@@ -44,18 +44,19 @@ using namespace WebKit;
  * #WebKitWebView has set the #WebKitSettings:enable-developer-extras
  * to true, otherwise no inspector is available.
  *
- * ```c
- * // Enable the developer extras
+ * <informalexample><programlisting>
+ * /<!-- -->* Enable the developer extras *<!-- -->/
  * WebKitSettings *settings = webkit_web_view_get_settings (WEBKIT_WEB_VIEW(my_webview));
  * g_object_set (G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
  *
- * // Load some data or reload to be able to inspect the page
+ * /<!-- -->* Load some data or reload to be able to inspect the page*<!-- -->/
  * webkit_web_view_load_uri (WEBKIT_WEB_VIEW(my_webview), "http://www.gnome.org");
  *
- * // Show the inspector
+ * /<!-- -->* Show the inspector *<!-- -->/
  * WebKitWebInspector *inspector = webkit_web_view_get_inspector (WEBKIT_WEB_VIEW(my_webview));
  * webkit_web_inspector_show (WEBKIT_WEB_INSPECTOR(inspector));
- * ```
+ * </programlisting></informalexample>
+ *
  */
 
 enum {

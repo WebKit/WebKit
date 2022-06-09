@@ -82,9 +82,10 @@ public:
 
     virtual AffineTransform* supplementalTransform() { return nullptr; }
 
-    inline void setAnimatedSVGAttributesAreDirty();
-    inline void setPresentationalHintStyleIsDirty();
-    void updateSVGRendererForElementChange();
+    inline void invalidateSVGAttributes();
+    inline void invalidateSVGPresentationalHintStyle();
+    void setSVGResourcesInAncestorChainAreDirty();
+    void invalidateSVGResourcesInAncestorChainIfNeeded();
 
     // The instances of an element are clones made in shadow trees to implement <use>.
     const WeakHashSet<SVGElement>& instances() const;
@@ -151,7 +152,7 @@ public:
     const RenderStyle* computedStyle(PseudoId = PseudoId::None) final;
 
     // These are needed for the RenderTree, animation and DOM.
-    AtomString className() const { return AtomString { m_className->currentValue() }; }
+    String className() const { return m_className->currentValue(); }
     SVGAnimatedString& classNameAnimated() { return m_className; }
 
 protected:
@@ -246,7 +247,6 @@ inline SVGElement::InstanceUpdateBlocker::~InstanceUpdateBlocker()
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGElement)
-    static bool isType(const WebCore::EventTarget& eventTarget) { return eventTarget.isNode() && static_cast<const WebCore::Node&>(eventTarget).isSVGElement(); }
     static bool isType(const WebCore::Node& node) { return node.isSVGElement(); }
 SPECIALIZE_TYPE_TRAITS_END()
 

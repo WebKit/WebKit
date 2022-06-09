@@ -367,7 +367,7 @@ TEST(WebKit, ClearCustomDataStoreNoWebViews)
                     "Set-Cookie: a=b\r\n"
                     "Connection: close\r\n"
                     "\r\n"
-                    "Hello"_s);
+                    "Hello");
                 break;
             case 2:
                 EXPECT_FALSE(strstr(request.data(), "Cookie: a=b\r\n"));
@@ -376,7 +376,7 @@ TEST(WebKit, ClearCustomDataStoreNoWebViews)
                     "Content-Length: 5\r\n"
                     "Connection: close\r\n"
                     "\r\n"
-                    "Hello"_s);
+                    "Hello");
                 break;
             default:
                 ASSERT_NOT_REACHED();
@@ -411,13 +411,6 @@ TEST(WebKit, ClearCustomDataStoreNoWebViews)
 
     webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get() addToWindow:YES]);
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:url]];
-}
-
-TEST(WKWebsiteDataStore, DoNotCreateDefaultDataStore)
-{
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
-    [configuration.get() copy];
-    EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }
 
 } // namespace TestWebKitAPI

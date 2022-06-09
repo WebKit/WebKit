@@ -111,8 +111,10 @@ bool IDBKeyRangeData::isValid() const
 String IDBKeyRangeData::loggingString() const
 {
     auto result = makeString(lowerOpen ? "( " : "[ ", lowerKey.loggingString(), ", ", upperKey.loggingString(), upperOpen ? " )" : " ]");
-    if (result.length() > 400)
-        result = makeString(StringView(result).left(397), "..."_s);
+    if (result.length() > 400) {
+        result.truncate(397);
+        result.append("..."_s);
+    }
 
     return result;
 }

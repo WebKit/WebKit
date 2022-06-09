@@ -361,7 +361,6 @@ asm (
     // Restore the sp and pc.
     "ldr       sp, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
     "pop       { pc }" "\n"
-    ".previous" "\n"
 );
 #endif // COMPILER(GCC_COMPATIBLE)
 
@@ -372,7 +371,6 @@ void MacroAssembler::probe(Probe::Function function, void* arg)
     store32(lr, Address(sp, offsetof(IncomingRecord, lr)));
     store32(ip, Address(sp, offsetof(IncomingRecord, ip)));
     m_assembler.mrs(ip, apsr);
-    cachedDataTempRegister().invalidate();
     store32(ip, Address(sp, offsetof(IncomingRecord, apsr)));
     store32(r0, Address(sp, offsetof(IncomingRecord, r0)));
     store32(r1, Address(sp, offsetof(IncomingRecord, r1)));

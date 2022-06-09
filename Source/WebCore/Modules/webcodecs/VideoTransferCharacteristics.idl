@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[Conditional=VIDEO] enum VideoTransferCharacteristics {
+enum VideoTransferCharacteristics {
   "bt709",
   "smpte170m",
   "iec61966-2-1"

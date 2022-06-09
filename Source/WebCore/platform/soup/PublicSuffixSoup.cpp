@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-bool isPublicSuffix(StringView domain)
+bool isPublicSuffix(const String& domain)
 {
     if (domain.isEmpty())
         return false;
@@ -50,7 +50,7 @@ String topPrivatelyControlledDomain(const String& domain)
 
     String lowercaseDomain = domain.convertToASCIILowercase();
 
-    if (lowercaseDomain == "localhost"_s)
+    if (lowercaseDomain == "localhost")
         return lowercaseDomain;
 
     CString domainUTF8 = lowercaseDomain.utf8();

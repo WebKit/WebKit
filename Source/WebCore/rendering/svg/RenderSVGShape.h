@@ -30,7 +30,8 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "RenderSVGModelObject.h"
-#include "SVGBoundingBoxComputation.h"
+// FIXME: [LBSE] Upstream SVGBoundingBoxComputation
+// #include "SVGBoundingBoxComputation.h"
 #include "SVGGraphicsElement.h"
 #include "SVGMarkerData.h"
 #include <memory>
@@ -40,6 +41,7 @@ namespace WebCore {
 
 class FloatPoint;
 class GraphicsContextStateSaver;
+class RenderSVGContainer;
 class RenderSVGPath;
 class RenderSVGResource;
 class SVGGraphicsElement;
@@ -78,11 +80,15 @@ public:
 
     FloatRect objectBoundingBox() const final { return m_fillBoundingBox; }
     FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
-    FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
 
-    FloatRect computeMarkerBoundingBox(const SVGBoundingBoxComputation::DecorationOptions&) const;
+    FloatRect repaintRectInLocalCoordinates() const final
+    {
+        // FIXME: [LBSE] Upstream SVGBoundingBoxComputation
+        // return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+        return FloatRect();
+    }
 
-    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> = RenderStyle::allTransformOperations) const final;
+    FloatRect computeMarkerBoundingBox() const;
 
 protected:
     void element() const = delete;
@@ -108,7 +114,7 @@ private:
 
     bool isSVGShape() const final { return true; }
     bool canHaveChildren() const final { return false; }
-    ASCIILiteral renderName() const override { return "RenderSVGShape"_s; }
+    const char* renderName() const override { return "RenderSVGShape"; }
 
     void layout() final;
     void paint(PaintInfo&, const LayoutPoint&) final;

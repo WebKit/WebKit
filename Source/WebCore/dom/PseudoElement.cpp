@@ -29,6 +29,7 @@
 #include "PseudoElement.h"
 
 #include "ContentData.h"
+#include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffectStack.h"
 #include "RenderElement.h"
@@ -43,7 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(PseudoElement);
 
 const QualifiedName& pseudoElementTagName()
 {
-    static NeverDestroyed<QualifiedName> name(nullAtom(), "<pseudo>"_s, nullAtom());
+    static NeverDestroyed<QualifiedName> name(nullAtom(), "<pseudo>", nullAtom());
     return name;
 }
 

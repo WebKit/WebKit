@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "GraphicsContextGL.h"
+#include "GraphicsContextGLState.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>

@@ -2,7 +2,7 @@
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,6 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCPeerConnection.h"
 #include "JSRTCSessionDescriptionInit.h"
@@ -96,7 +95,7 @@ ExceptionOr<Ref<RTCPeerConnection>> RTCPeerConnection::create(Document& document
     if (!peerConnection->isClosed()) {
         if (auto* page = document.page()) {
             peerConnection->registerToController(page->rtcController());
-#if USE(LIBWEBRTC) && (!LOG_DISABLED || !RELEASE_LOG_DISABLED)
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
             if (!page->sessionID().isEphemeral())
                 page->libWebRTCProvider().setLoggingLevel(LogWebRTC.level);
 #endif
@@ -274,7 +273,7 @@ void RTCPeerConnection::setLocalDescription(std::optional<RTCLocalSessionDescrip
         return;
     }
 
-    ALWAYS_LOG(LOGIDENTIFIER, "Setting local description to:\n", localDescription ? localDescription->sdp : "''"_s);
+    ALWAYS_LOG(LOGIDENTIFIER, "Setting local description to:\n", localDescription ? localDescription->sdp : "''");
     chainOperation(WTFMove(promise), [this, localDescription = WTFMove(localDescription)](auto&& promise) mutable {
         auto type = typeForSetLocalDescription(localDescription, m_signalingState);
         String sdp;
@@ -345,7 +344,7 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
         });
     }
 
-    ALWAYS_LOG(LOGIDENTIFIER, "Received ice candidate:\n", candidate ? candidate->candidate() : "null"_s);
+    ALWAYS_LOG(LOGIDENTIFIER, "Received ice candidate:\n", candidate ? candidate->candidate() : "null");
 
     if (exception) {
         promise->reject(*exception);
@@ -380,13 +379,13 @@ std::optional<bool> RTCPeerConnection::canTrickleIceCandidates() const
 ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection::iceServersFromConfiguration(RTCConfiguration& newConfiguration, const RTCConfiguration* existingConfiguration, bool isLocalDescriptionSet)
 {
     if (existingConfiguration && newConfiguration.bundlePolicy != existingConfiguration->bundlePolicy)
-        return Exception { InvalidModificationError, "BundlePolicy does not match existing policy"_s };
+        return Exception { InvalidModificationError, "BundlePolicy does not match existing policy" };
 
     if (existingConfiguration && newConfiguration.rtcpMuxPolicy != existingConfiguration->rtcpMuxPolicy)
-        return Exception { InvalidModificationError, "RTCPMuxPolicy does not match existing policy"_s };
+        return Exception { InvalidModificationError, "RTCPMuxPolicy does not match existing policy" };
 
     if (existingConfiguration && newConfiguration.iceCandidatePoolSize != existingConfiguration->iceCandidatePoolSize && isLocalDescriptionSet)
-        return Exception { InvalidModificationError, "IceTransportPolicy pool size does not match existing pool size"_s };
+        return Exception { InvalidModificationError, "IceTransportPolicy pool size does not match existing pool size" };
 
     Vector<MediaEndpointConfiguration::IceServerInfo> servers;
     if (newConfiguration.iceServers) {
@@ -401,7 +400,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
 
             urls.removeAllMatching([&](auto& urlString) {
                 URL url { URL { }, urlString };
-                if (url.path().endsWithIgnoringASCIICase(".local"_s) || !portAllowed(url)) {
+                if (url.path().endsWithIgnoringASCIICase(".local") || !portAllowed(url)) {
                     queueTaskToDispatchEvent(*this, TaskSource::MediaElement, RTCPeerConnectionIceErrorEvent::create(Event::CanBubble::No, Event::IsCancelable::No, { }, { }, WTFMove(urlString), 701, "URL is not allowed"_s));
                     return true;
                 }
@@ -415,18 +414,18 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
 
             for (auto& serverURL : serverURLs) {
                 if (serverURL.isNull())
-                    return Exception { TypeError, "Bad ICE server URL"_s };
-                if (serverURL.protocolIs("turn"_s) || serverURL.protocolIs("turns"_s)) {
+                    return Exception { TypeError, "Bad ICE server URL" };
+                if (serverURL.protocolIs("turn") || serverURL.protocolIs("turns")) {
                     if (server.credential.isNull() || server.username.isNull())
-                        return Exception { InvalidAccessError, "TURN/TURNS server requires both username and credential"_s };
+                        return Exception { InvalidAccessError, "TURN/TURNS server requires both username and credential" };
                     // https://tools.ietf.org/html/rfc8489#section-14.3
                     if (server.credential.length() > 64 || server.username.length() > 64) {
                         constexpr size_t MaxTurnUsernameLength = 509;
                         if (server.credential.utf8().length() > MaxTurnUsernameLength || server.username.utf8().length() > MaxTurnUsernameLength)
-                            return Exception { TypeError, "TURN/TURNS username and/or credential are too long"_s };
+                            return Exception { TypeError, "TURN/TURNS username and/or credential are too long" };
                     }
-                } else if (!serverURL.protocolIs("stun"_s))
-                    return Exception { NotSupportedError, "ICE server protocol not supported"_s };
+                } else if (!serverURL.protocolIs("stun"))
+                    return Exception { NotSupportedError, "ICE server protocol not supported" };
             }
             if (serverURLs.size())
                 servers.uncheckedAppend({ WTFMove(serverURLs), server.credential, server.username });
@@ -444,7 +443,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnectio
     certificates.reserveInitialCapacity(configuration.certificates.size());
     for (auto& certificate : configuration.certificates) {
         if (!origin.isSameOriginAs(certificate->origin()))
-            return Exception { InvalidAccessError, "Certificate does not have a valid origin"_s };
+            return Exception { InvalidAccessError, "Certificate does not have a valid origin" };
 
         if (currentMilliSeconds > certificate->expires())
             return Exception { InvalidAccessError, "Certificate has expired"_s };
@@ -467,7 +466,7 @@ ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& 
         return certificates.releaseException();
 
     if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.rtcpMuxPolicy, configuration.iceCandidatePoolSize, certificates.releaseReturnValue() }))
-        return Exception { InvalidAccessError, "Bad Configuration Parameters"_s };
+        return Exception { InvalidAccessError, "Bad Configuration Parameters" };
 
     m_configuration = WTFMove(configuration);
     return { };
@@ -486,19 +485,19 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
 
     if (configuration.certificates.size()) {
         if (configuration.certificates.size() != m_configuration.certificates.size())
-            return Exception { InvalidModificationError, "Certificates parameters are different"_s };
+            return Exception { InvalidModificationError, "Certificates parameters are different" };
 
         for (auto& certificate : configuration.certificates) {
-            bool isThere = m_configuration.certificates.findIf([&certificate](const auto& item) {
+            bool isThere = m_configuration.certificates.findMatching([&certificate](const auto& item) {
                 return item.get() == certificate.get();
             }) != notFound;
             if (!isThere)
-                return Exception { InvalidModificationError, "A certificate given in constructor is not present"_s };
+                return Exception { InvalidModificationError, "A certificate given in constructor is not present" };
         }
     }
 
     if (!m_backend->setConfiguration({ servers.releaseReturnValue(), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.rtcpMuxPolicy, configuration.iceCandidatePoolSize, { } }))
-        return Exception { InvalidAccessError, "Bad Configuration Parameters"_s };
+        return Exception { InvalidAccessError, "Bad Configuration Parameters" };
 
     m_configuration = WTFMove(configuration);
     return { };
@@ -920,7 +919,7 @@ const Vector<RefPtr<RTCRtpTransceiver>>& RTCPeerConnection::getTransceivers() co
 void RTCPeerConnection::chainOperation(Ref<DeferredPromise>&& promise, Function<void(Ref<DeferredPromise>&&)>&& operation)
 {
     if (isClosed()) {
-        promise->reject(InvalidStateError, "RTCPeerConnection is closed"_s);
+        promise->reject(InvalidStateError, "RTCPeerConnection is closed");
         return;
     }
 
@@ -928,7 +927,7 @@ void RTCPeerConnection::chainOperation(Ref<DeferredPromise>&& promise, Function<
         ASSERT(m_hasPendingOperation);
         if (isClosed()) {
             for (auto& operation : std::exchange(m_operations, { }))
-                operation.first->reject(InvalidStateError, "RTCPeerConnection is closed"_s);
+                operation.first->reject(InvalidStateError, "RTCPeerConnection is closed");
             m_hasPendingOperation = false;
             return;
         }
@@ -960,7 +959,7 @@ Document* RTCPeerConnection::document()
 
 Ref<RTCIceTransport> RTCPeerConnection::getOrCreateIceTransport(UniqueRef<RTCIceTransportBackend>&& backend)
 {
-    auto index = m_iceTransports.findIf([&backend](auto& transport) { return backend.get() == transport->backend(); });
+    auto index = m_iceTransports.findMatching([&backend](auto& transport) { return backend.get() == transport->backend(); });
     if (index == notFound) {
         index = m_iceTransports.size();
         m_iceTransports.append(RTCIceTransport::create(*scriptExecutionContext(), WTFMove(backend), *this));
@@ -979,7 +978,7 @@ RefPtr<RTCDtlsTransport> RTCPeerConnection::getOrCreateDtlsTransport(std::unique
     if (!context)
         return nullptr;
 
-    auto index = m_dtlsTransports.findIf([&backend](auto& transport) { return *backend == transport->backend(); });
+    auto index = m_dtlsTransports.findMatching([&backend](auto& transport) { return *backend == transport->backend(); });
     if (index == notFound) {
         index = m_dtlsTransports.size();
         auto iceTransportBackend = backend->iceTransportBackend();

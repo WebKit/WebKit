@@ -6,7 +6,7 @@
 
 #include "test_utils/ANGLETest.h"
 
-#include "platform/FeaturesVk_autogen.h"
+#include "platform/FeaturesVk.h"
 #include "test_utils/gl_raii.h"
 #include "util/random_utils.h"
 #include "util/shader_utils.h"
@@ -235,8 +235,6 @@ class MaskedScissoredClearTestBase
 class MaskedScissoredClearTest : public MaskedScissoredClearTestBase
 {};
 
-// Overrides a feature to force emulation of stencil-only and depth-only formats with a packed
-// depth/stencil format
 class VulkanClearTest : public MaskedScissoredClearTestBase
 {
   protected:
@@ -287,6 +285,13 @@ class VulkanClearTest : public MaskedScissoredClearTestBase
     {
         glBindFramebuffer(GL_FRAMEBUFFER, mColorDepthFBO);
         mHasStencil = false;
+    }
+
+    // Override a feature to force emulation of stencil-only and depth-only formats with a packed
+    // depth/stencil format
+    void overrideFeaturesVk(FeaturesVk *featuresVk) override
+    {
+        featuresVk->overrideFeatures({"force_fallback_format"}, true);
     }
 
   private:
@@ -371,6 +376,38 @@ TEST_P(ClearTestRGB_ES3, InvalidateDefaultFramebufferRGB)
     glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, discards);
 
     // Don't explicitly clear, but draw blue (make sure alpha is not cleared)
+    drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Invalidate an RGB user framebuffer and verify that the alpha channel is not cleared, and
+// stays set after drawing.
+TEST_P(ClearTestRGB_ES3, InvalidateUserFramebufferRGB)
+{
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, getWindowWidth(), getWindowHeight(), 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Verify that clearing alpha is ineffective on an RGB format.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+
+    // Invalidate the framebuffer contents.
+    const GLenum discards[] = {GL_COLOR_ATTACHMENT0};
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, discards);
+
+    // Without an explicit clear, draw blue and make sure alpha is unaffected.  If RGB is emualted
+    // with RGBA, the previous invalidate shouldn't affect the alpha value.
     drawQuad(blueProgram, essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
 }
@@ -743,6 +780,8 @@ TEST_P(ClearTestES3, ClearPlusMaskDrawAndClear)
 // clears to the correct values.
 TEST_P(ClearTestES3, ClearMultipleAttachmentsFollowedBySpecificOne)
 {
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(isSwiftshader());
     constexpr uint32_t kSize            = 16;
     constexpr uint32_t kAttachmentCount = 4;
     std::vector<unsigned char> pixelData(kSize * kSize * 4, 255);
@@ -1725,9 +1764,8 @@ void MaskedScissoredClearTestBase::maskedScissoredColorDepthStencilClear(
     // using a scissor, the corners should be left to the original color, while the center is
     // possibly changed.  If using a mask, the center (and corners if not scissored), changes to
     // the masked results.
-    GLColor expectedCenterColorRGB = !clearColor ? color1RGB
-                                     : maskColor ? color2MaskedRGB
-                                                 : color2RGB;
+    GLColor expectedCenterColorRGB =
+        !clearColor ? color1RGB : maskColor ? color2MaskedRGB : color2RGB;
     GLColor expectedCornerColorRGB = scissor ? color1RGB : expectedCenterColorRGB;
 
     // Verify second clear color mask worked as expected.
@@ -1965,57 +2003,6 @@ TEST_P(ClearTest, InceptionScissorClears)
     EXPECT_EQ(expectedColors, actualColors);
 }
 
-// Clears many small concentric rectangles using scissor regions.
-TEST_P(ClearTest, DrawThenInceptionScissorClears)
-{
-    angle::RNG rng;
-
-    constexpr GLuint kSize = 16;
-
-    // Create a square user FBO so we have more control over the dimensions.
-    GLFramebuffer fbo;
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-    GLRenderbuffer rbo;
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    glViewport(0, 0, kSize, kSize);
-
-    ANGLE_GL_PROGRAM(redProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
-    drawQuad(redProgram, essl1_shaders::PositionAttrib(), 0.5f);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-
-    // Draw small concentric squares using scissor.
-    std::vector<GLColor> expectedColors;
-    for (GLuint index = 0; index < (kSize - 1) / 2; index++)
-    {
-        // Do the first clear without the scissor.
-        if (index > 0)
-        {
-            glEnable(GL_SCISSOR_TEST);
-            glScissor(index, index, kSize - (index * 2), kSize - (index * 2));
-        }
-
-        GLColor color = RandomColor(&rng);
-        expectedColors.push_back(color);
-        Vector4 floatColor = color.toNormalizedVector();
-        glClearColor(floatColor[0], floatColor[1], floatColor[2], floatColor[3]);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-
-    ASSERT_GL_NO_ERROR();
-
-    std::vector<GLColor> actualColors(expectedColors.size());
-    glReadPixels(0, kSize / 2, actualColors.size(), 1, GL_RGBA, GL_UNSIGNED_BYTE,
-                 actualColors.data());
-
-    EXPECT_EQ(expectedColors, actualColors);
-}
-
 // Test that clearBuffer with disabled non-zero drawbuffer or disabled read source doesn't cause an
 // assert.
 TEST_P(ClearTestES3, ClearDisabledNonZeroAttachmentNoAssert)
@@ -2218,10 +2205,10 @@ TEST_P(ClearTestES3, ClearMaxAttachmentsAfterDraw)
     {
         glReadBuffer(GL_COLOR_ATTACHMENT0 + colorIndex);
 
-        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red) << colorIndex;
-        EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::red) << colorIndex;
-        EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::red) << colorIndex;
-        EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red) << colorIndex;
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::red);
+        EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red);
     }
 
     // Verify that depth and stencil attachments are cleared correctly.
@@ -2318,171 +2305,6 @@ TEST_P(ClearTestES3, ClearThenMixedMaskedClear)
     EXPECT_PIXEL_COLOR_NEAR(0, kSize - 1, kExpected, 1);
     EXPECT_PIXEL_COLOR_NEAR(kSize - 1, 0, kExpected, 1);
     EXPECT_PIXEL_COLOR_NEAR(kSize - 1, kSize - 1, kExpected, 1);
-}
-
-// Test that clearing stencil after a draw call works.
-TEST_P(ClearTestES3, ClearStencilAfterDraw)
-{
-    // http://anglebug.com/4612
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsDesktopOpenGL());
-
-    constexpr GLsizei kSize = 16;
-
-    GLint maxDrawBuffers = 0;
-    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
-    ASSERT_GE(maxDrawBuffers, 4);
-
-    // Setup framebuffer.
-    GLFramebuffer fb;
-    glBindFramebuffer(GL_FRAMEBUFFER, fb);
-
-    std::vector<GLRenderbuffer> color(maxDrawBuffers);
-    std::vector<GLenum> drawBuffers(maxDrawBuffers);
-
-    for (GLint colorIndex = 0; colorIndex < maxDrawBuffers; ++colorIndex)
-    {
-        glBindRenderbuffer(GL_RENDERBUFFER, color[colorIndex]);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorIndex,
-                                  GL_RENDERBUFFER, color[colorIndex]);
-
-        drawBuffers[colorIndex] = GL_COLOR_ATTACHMENT0 + colorIndex;
-    }
-
-    GLRenderbuffer depthStencil;
-    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                              depthStencil);
-
-    EXPECT_GL_NO_ERROR();
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    glDrawBuffers(maxDrawBuffers, drawBuffers.data());
-
-    // Issue a draw call to render blue and stencil 0x3C to the attachments.
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_ALWAYS, 0x3C, 0xFF);
-    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-    glStencilMask(0xFF);
-
-    // Generate shader for this framebuffer.
-    std::stringstream strstr;
-    strstr << "#version 300 es\n"
-              "precision highp float;\n";
-    for (GLint colorIndex = 0; colorIndex < maxDrawBuffers; ++colorIndex)
-    {
-        strstr << "layout(location = " << colorIndex << ") out vec4 value" << colorIndex << ";\n";
-    }
-    strstr << "void main()\n"
-              "{\n";
-    for (GLint colorIndex = 0; colorIndex < maxDrawBuffers; ++colorIndex)
-    {
-        strstr << "value" << colorIndex << " = vec4(0.0f, 0.0f, 1.0f, 1.0f);\n";
-    }
-    strstr << "}\n";
-
-    ANGLE_GL_PROGRAM(drawMRT, essl3_shaders::vs::Simple(), strstr.str().c_str());
-    drawQuad(drawMRT, essl3_shaders::PositionAttrib(), 0.0f);
-    ASSERT_GL_NO_ERROR();
-
-    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-    glClearStencil(0x55);
-    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    EXPECT_GL_NO_ERROR();
-
-    // Verify that every color attachment is cleared correctly.
-    for (GLint colorIndex = 0; colorIndex < maxDrawBuffers; ++colorIndex)
-    {
-        glReadBuffer(GL_COLOR_ATTACHMENT0 + colorIndex);
-
-        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-        EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::red);
-        EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::red);
-        EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::red);
-    }
-
-    // Verify that depth and stencil attachments are cleared correctly.
-    GLFramebuffer fbVerify;
-    glBindFramebuffer(GL_FRAMEBUFFER, fbVerify);
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color[0]);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                              depthStencil);
-
-    // If stencil is not cleared to 0x55, rendering would fail.
-    glStencilFunc(GL_EQUAL, 0x55, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-    // Draw green.
-    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
-    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.95f);
-
-    // Verify that green was drawn.
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(0, kSize - 1, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kSize - 1, 0, GLColor::green);
-    EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::green);
-}
-
-// Test that mid-render pass clearing of mixed used and unused color attachments works.
-TEST_P(ClearTestES3, MixedRenderPassClearMixedUsedUnusedAttachments)
-{
-    // http://anglebug.com/4612
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsDesktopOpenGL());
-
-    constexpr GLsizei kSize = 16;
-
-    // Setup framebuffer.
-    GLFramebuffer fb;
-    glBindFramebuffer(GL_FRAMEBUFFER, fb);
-
-    GLRenderbuffer color[2];
-
-    for (GLint colorIndex = 0; colorIndex < 2; ++colorIndex)
-    {
-        glBindRenderbuffer(GL_RENDERBUFFER, color[colorIndex]);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize, kSize);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + colorIndex,
-                                  GL_RENDERBUFFER, color[colorIndex]);
-    }
-    EXPECT_GL_NO_ERROR();
-    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-
-    // Disable color attachment 0.
-    GLenum drawBuffers[] = {GL_NONE, GL_COLOR_ATTACHMENT1};
-    glDrawBuffers(2, drawBuffers);
-
-    // Draw into color attachment 1
-    constexpr char kFS[] = R"(#version 300 es
-precision highp float;
-layout(location = 0) out vec4 color0;
-layout(location = 1) out vec4 color1;
-void main()
-{
-    color0 = vec4(0, 0, 1, 1);
-    color1 = vec4(1, 0, 0, 1);
-})";
-
-    ANGLE_GL_PROGRAM(drawMRT, essl3_shaders::vs::Simple(), kFS);
-    drawQuad(drawMRT, essl3_shaders::PositionAttrib(), 0.0f);
-    ASSERT_GL_NO_ERROR();
-
-    // Color attachment 0 is now uninitialized, while color attachment 1 is red.
-    // Re-enable color attachment 0 and clear both attachments to green.
-    drawBuffers[0] = GL_COLOR_ATTACHMENT0;
-    glDrawBuffers(2, drawBuffers);
-
-    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    EXPECT_GL_NO_ERROR();
-
-    // Verify that both color attachments are now green.
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    glReadBuffer(GL_COLOR_ATTACHMENT1);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
-    EXPECT_GL_NO_ERROR();
 }
 
 // Test that draw without state change after masked clear works
@@ -2750,55 +2572,6 @@ TEST_P(ClearTest, ClearThenScissoredMaskedClear)
     EXPECT_PIXEL_RECT_EQ(kSize / 2, 0, kSize / 2, kSize, GLColor::red);
 }
 
-// Test that a scissored stencil clear followed by a full clear works.
-TEST_P(ClearTestES3, StencilScissoredClearThenFullClear)
-{
-    constexpr GLsizei kSize = 128;
-
-    GLint stencilBits = 0;
-    glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
-    EXPECT_EQ(stencilBits, 8);
-
-    // Clear stencil value must be masked to 0x42
-    glClearBufferfi(GL_DEPTH_STENCIL, 0, 0.5f, 0x142);
-
-    glClearColor(1, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
-
-    // Shrink the render area.
-    glScissor(kSize / 2, 0, kSize / 2, kSize);
-    glEnable(GL_SCISSOR_TEST);
-
-    // Clear stencil.
-    glClearBufferfi(GL_DEPTH_STENCIL, 0, 0.5f, 0x64);
-
-    // Grow the render area.
-    glScissor(0, 0, kSize, kSize);
-    glEnable(GL_SCISSOR_TEST);
-
-    // Check that the stencil test works as expected
-    glEnable(GL_STENCIL_TEST);
-
-    // Scissored region is green, outside is red (clear color)
-    glStencilFunc(GL_EQUAL, 0x64, 0xFF);
-    ANGLE_GL_PROGRAM(drawGreen, essl3_shaders::vs::Simple(), essl3_shaders::fs::Green());
-    glUseProgram(drawGreen);
-    drawQuad(drawGreen, essl3_shaders::PositionAttrib(), 0.5f);
-    EXPECT_PIXEL_RECT_EQ(0, 0, kSize / 2, kSize, GLColor::red);
-    EXPECT_PIXEL_RECT_EQ(kSize / 2, 0, kSize / 2, kSize, GLColor::green);
-
-    // Outside scissored region is blue.
-    glStencilFunc(GL_EQUAL, 0x42, 0xFF);
-    ANGLE_GL_PROGRAM(drawBlue, essl3_shaders::vs::Simple(), essl3_shaders::fs::Blue());
-    glUseProgram(drawBlue);
-    drawQuad(drawBlue, essl3_shaders::PositionAttrib(), 0.5f);
-    EXPECT_PIXEL_RECT_EQ(0, 0, kSize / 2, kSize, GLColor::blue);
-    EXPECT_PIXEL_RECT_EQ(kSize / 2, 0, kSize / 2, kSize, GLColor::green);
-
-    ASSERT_GL_NO_ERROR();
-}
-
 // This is a test that must be verified visually.
 //
 // Tests that clear of the default framebuffer applies to the window.
@@ -2860,100 +2633,15 @@ TEST_P(ClearTestES3, ClearStencilZeroFirstByteMask)
     glClear(GL_STENCIL_BUFFER_BIT);
 }
 
-// Test that mid render pass clear after draw sets the render pass size correctly.
-TEST_P(ClearTestES3, ScissoredDrawThenFullClear)
-{
-    const int w = getWindowWidth();
-    const int h = getWindowHeight();
-
-    // Use viewport to imply scissor on the draw call
-    glViewport(w / 4, h / 4, w / 2, h / 2);
-
-    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Passthrough(), essl1_shaders::fs::Blue());
-    drawQuad(program, essl1_shaders::PositionAttrib(), 0);
-
-    // Mid-render-pass clear without scissor or viewport change, which covers the whole framebuffer.
-    glClearColor(1, 1, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::yellow);
-}
-
-// Test that mid render pass clear after masked clear sets the render pass size correctly.
-TEST_P(ClearTestES3, MaskedScissoredClearThenFullClear)
-{
-    const int w = getWindowWidth();
-    const int h = getWindowHeight();
-
-    // Use viewport to imply a small scissor on (non-existing) draw calls.  This is important to
-    // make sure render area that's derived from scissor+viewport for draw calls doesn't
-    // accidentally fix render area derived from scissor for clear calls.
-    glViewport(w / 2, h / 2, 1, 1);
-
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(w / 4, h / 4, w / 2, h / 2);
-    glColorMask(GL_TRUE, GL_FALSE, GL_TRUE, GL_FALSE);
-    glClearColor(0.13, 0.38, 0.87, 0.65);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Mid-render-pass clear without scissor, which covers the whole framebuffer.
-    glDisable(GL_SCISSOR_TEST);
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glClearColor(1, 1, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    EXPECT_PIXEL_RECT_EQ(0, 0, w, h, GLColor::yellow);
-}
-
-// Test that mid render pass masked clear after masked clear sets the render pass size correctly.
-TEST_P(ClearTestES3, MaskedScissoredClearThenFullMaskedClear)
-{
-    const int w = getWindowWidth();
-    const int h = getWindowHeight();
-
-    // Make sure the framebuffer is initialized.
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
-
-    // Use viewport to imply a small scissor on (non-existing) draw calls  This is important to
-    // make sure render area that's derived from scissor+viewport for draw calls doesn't
-    // accidentally fix render area derived from scissor for clear calls.
-    glViewport(w / 2, h / 2, 1, 1);
-
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(w / 4, h / 4, w / 2, h / 2);
-    glColorMask(GL_TRUE, GL_FALSE, GL_TRUE, GL_FALSE);
-    glClearColor(1, 1, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // Mid-render-pass clear without scissor, which covers the whole framebuffer.
-    glDisable(GL_SCISSOR_TEST);
-    glColorMask(GL_FALSE, GL_TRUE, GL_FALSE, GL_TRUE);
-    glClearColor(1, 1, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    EXPECT_PIXEL_RECT_EQ(0, 0, w / 4, h, GLColor::green);
-    EXPECT_PIXEL_RECT_EQ(w / 4, 0, w / 2, h / 4, GLColor::green);
-    EXPECT_PIXEL_RECT_EQ(w / 4, 3 * h / 4, w / 2, h / 4, GLColor::green);
-    EXPECT_PIXEL_RECT_EQ(3 * w / 4, 0, w / 4, h, GLColor::green);
-
-    EXPECT_PIXEL_RECT_EQ(w / 4, h / 4, w / 2, h / 2, GLColor::yellow);
-}
-
 #ifdef Bool
 // X11 craziness.
 #    undef Bool
 #endif
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
-    ClearTest,
-    ES3_VULKAN().enable(Feature::PreferDrawClearOverVkCmdClearAttachments));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ClearTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ClearTestES3);
-ANGLE_INSTANTIATE_TEST_ES3_AND(
-    ClearTestES3,
-    ES3_VULKAN().enable(Feature::PreferDrawClearOverVkCmdClearAttachments));
+ANGLE_INSTANTIATE_TEST_ES3(ClearTestES3);
 
 ANGLE_INSTANTIATE_TEST_COMBINE_4(MaskedScissoredClearTest,
                                  MaskedScissoredClearVariationsTestPrint,
@@ -2961,12 +2649,17 @@ ANGLE_INSTANTIATE_TEST_COMBINE_4(MaskedScissoredClearTest,
                                  testing::Range(0, 3),
                                  testing::Range(0, 3),
                                  testing::Bool(),
-                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
-                                 ANGLE_ALL_TEST_PLATFORMS_ES3,
-                                 ES3_VULKAN()
-                                     .disable(Feature::SupportsExtendedDynamicState)
-                                     .disable(Feature::SupportsExtendedDynamicState2),
-                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
+                                 ES2_D3D9(),
+                                 ES2_D3D11(),
+                                 ES3_D3D11(),
+                                 ES2_OPENGL(),
+                                 ES3_OPENGL(),
+                                 ES2_OPENGLES(),
+                                 ES3_OPENGLES(),
+                                 ES2_VULKAN(),
+                                 ES3_VULKAN(),
+                                 ES2_METAL(),
+                                 ES3_METAL());
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanClearTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_4(VulkanClearTest,
@@ -2975,10 +2668,8 @@ ANGLE_INSTANTIATE_TEST_COMBINE_4(VulkanClearTest,
                                  testing::Range(0, 3),
                                  testing::Range(0, 3),
                                  testing::Bool(),
-                                 ES2_VULKAN().enable(Feature::ForceFallbackFormat),
-                                 ES2_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
-                                 ES3_VULKAN().enable(Feature::ForceFallbackFormat),
-                                 ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat));
+                                 ES2_VULKAN(),
+                                 ES3_VULKAN());
 
 // Not all ANGLE backends support RGB backbuffers
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ClearTestRGB);

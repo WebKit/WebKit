@@ -28,7 +28,6 @@
 #include "HTMLFormControlElementWithState.h"
 #include "HTMLOptionElement.h"
 #include "TypeAhead.h"
-#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -107,8 +106,6 @@ public:
     void optionSelectionStateChanged(HTMLOptionElement&, bool optionIsSelected);
     bool allowsNonContiguousSelection() const { return m_allowsNonContiguousSelection; };
 
-    CompletionHandlerCallingScope optionToSelectFromChildChangeScope(const ChildChange&, HTMLOptGroupElement* parentOptGroup = nullptr);
-
 protected:
     HTMLSelectElement(const QualifiedName&, Document&, HTMLFormElement*);
 
@@ -142,7 +139,7 @@ private:
     void reset() final;
 
     void defaultEventHandler(Event&) final;
-    bool willRespondToMouseClickEventsWithEditability(Editability) const final;
+    bool willRespondToMouseClickEvents() final;
 
     void dispatchChangeEventForMenuList();
 

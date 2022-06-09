@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Copyright (C) 2013 Igalia S.L.
 #
 # This library is free software; you can redistribute it and/or

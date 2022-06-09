@@ -40,10 +40,10 @@
 #include "JITScannable.h"
 #include "MethodOfGettingAValueProfile.h"
 #include <wtf/BitVector.h>
-#include <wtf/GenericHashKey.h>
 #include <wtf/HashMap.h>
 #include <wtf/StackCheck.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/StdUnorderedMap.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -473,7 +473,20 @@ public:
     JSObject* globalThisObjectFor(CodeOrigin codeOrigin)
     {
         JSGlobalObject* object = globalObjectFor(codeOrigin);
-        return jsCast<JSObject*>(object->methodTable()->toThis(object, object, ECMAMode::sloppy()));
+        return jsCast<JSObject*>(object->methodTable(m_vm)->toThis(object, object, ECMAMode::sloppy()));
+    }
+    
+    ScriptExecutable* executableFor(InlineCallFrame* inlineCallFrame)
+    {
+        if (!inlineCallFrame)
+            return m_codeBlock->ownerExecutable();
+        
+        return inlineCallFrame->baselineCodeBlock->ownerExecutable();
+    }
+    
+    ScriptExecutable* executableFor(const CodeOrigin& codeOrigin)
+    {
+        return executableFor(codeOrigin.inlineCallFrame());
     }
     
     CodeBlock* baselineCodeBlockFor(InlineCallFrame* inlineCallFrame)
@@ -490,8 +503,6 @@ public:
     
     bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
     {
-        if (m_plan.isUnlinked())
-            return false;
         return globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid();
     }
     
@@ -784,17 +795,12 @@ public:
 
     bool isWatchingHavingABadTimeWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         return watchpoints().isWatched(globalObject->havingABadTimeWatchpoint());
     }
 
     bool isWatchingGlobalObjectWatchpoint(JSGlobalObject* globalObject, InlineWatchpointSet& set)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         if (watchpoints().isWatched(set))
             return true;
 
@@ -813,9 +819,6 @@ public:
 
     bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpointSet();
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
@@ -823,20 +826,8 @@ public:
 
     bool isWatchingNumberToStringWatchpoint(Node* node)
     {
-        if (m_plan.isUnlinked())
-            return false;
-
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->numberToStringWatchpointSet();
-        return isWatchingGlobalObjectWatchpoint(globalObject, set);
-    }
-
-    bool isWatchingStructureCacheClearedWatchpoint(JSGlobalObject* globalObject)
-    {
-        if (m_plan.isUnlinked())
-            return false;
-
-        InlineWatchpointSet& set = globalObject->structureCacheClearedWatchpoint();
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
 
@@ -1188,8 +1179,8 @@ public:
     HashSet<String> m_copiedStrings;
 
 #if USE(JSVALUE32_64)
-    HashMap<GenericHashKey<int64_t>, double*> m_doubleConstantsMap;
-    Bag<double> m_doubleConstants;
+    StdUnorderedMap<int64_t, double*> m_doubleConstantsMap;
+    std::unique_ptr<Bag<double>> m_doubleConstants;
 #endif
     
     OptimizationFixpointState m_fixpointState;

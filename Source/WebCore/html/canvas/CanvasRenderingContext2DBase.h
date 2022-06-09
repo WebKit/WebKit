@@ -65,10 +65,6 @@ class TextMetrics;
 
 struct DOMMatrix2DInit;
 
-namespace DisplayList {
-class DrawingContext;
-}
-
 using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
 #if ENABLE(CSS_TYPED_OM)
     , RefPtr<CSSStyleImageValue>
@@ -238,7 +234,7 @@ public:
 
         bool realized() const { return m_font.fontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
-        const FontMetrics& metricsOfPrimaryFont() const;
+        const FontMetrics& fontMetrics() const;
         const FontCascadeDescription& fontDescription() const;
         float width(const TextRun&, GlyphOverflow* = 0) const;
         void drawBidiText(GraphicsContext&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction) const;
@@ -296,7 +292,7 @@ public:
 
 protected:
     static const int DefaultFontSize;
-    static const ASCIILiteral DefaultFontFamily;
+    static const char* const DefaultFontFamily;
 
     const State& state() const { return m_stateStack.last(); }
     void realizeSaves();
@@ -385,6 +381,7 @@ private:
     bool rectContainsCanvas(const FloatRect&) const;
 
     template<class T> IntRect calculateCompositingBufferRect(const T&, IntSize*);
+    RefPtr<ImageBuffer> createCompositingBuffer(const IntRect&);
     void compositeBuffer(ImageBuffer&, const IntRect&, CompositeOperator);
 
     void inflateStrokeRect(FloatRect&) const;

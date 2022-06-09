@@ -34,16 +34,16 @@
 
 #include "CBORValue.h"
 #include "CBORWriter.h"
-#include "WebAuthenticationConstants.h"
 
 namespace fido {
 
 template <typename Container>
 cbor::CBORValue toArrayValue(const Container& container)
 {
-    auto value = WTF::map(container, [](auto& item) {
-        return cbor::CBORValue(item);
-    });
+    cbor::CBORValue::ArrayValue value;
+    value.reserveInitialCapacity(container.size());
+    for (const auto& item : container)
+        value.append(cbor::CBORValue(item));
     return cbor::CBORValue(WTFMove(value));
 }
 
@@ -77,36 +77,6 @@ AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setOptions(Authentic
     return *this;
 }
 
-AuthenticatorGetInfoResponse& AuthenticatorGetInfoResponse::setTransports(Vector<WebCore::AuthenticatorTransport>&& transports)
-{
-    m_transports = WTFMove(transports);
-    return *this;
-}
-
-static String toString(WebCore::AuthenticatorTransport transport)
-{
-    switch (transport) {
-    case WebCore::AuthenticatorTransport::Usb:
-        return WebCore::authenticatorTransportUsb;
-        break;
-    case WebCore::AuthenticatorTransport::Nfc:
-        return WebCore::authenticatorTransportNfc;
-        break;
-    case WebCore::AuthenticatorTransport::Ble:
-        return WebCore::authenticatorTransportBle;
-        break;
-    case WebCore::AuthenticatorTransport::Internal:
-        return WebCore::authenticatorTransportInternal;
-        break;
-    case WebCore::AuthenticatorTransport::Cable:
-        return WebCore::authenticatorTransportCable;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return nullString();
-}
-
 Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
 {
     using namespace cbor;
@@ -129,11 +99,6 @@ Vector<uint8_t> encodeAsCBOR(const AuthenticatorGetInfoResponse& response)
 
     if (response.pinProtocol())
         deviceInfoMap.emplace(CBORValue(6), toArrayValue(*response.pinProtocol()));
-    
-    if (response.transports()) {
-        auto transports = *response.transports();
-        deviceInfoMap.emplace(CBORValue(7), toArrayValue(transports.map(toString)));
-    }
 
     auto encodedBytes = CBORWriter::write(CBORValue(WTFMove(deviceInfoMap)));
     ASSERT(encodedBytes);

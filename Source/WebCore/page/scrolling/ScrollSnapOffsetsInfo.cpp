@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -113,7 +113,7 @@ static bool hasCompatibleSnapArea(const InfoType& info, const SnapOffset<UnitTyp
     auto scrollDestinationInOtherAxis = componentForAxis<UnitType, PointType>(destinationOffsetPoint, otherAxis);
     auto viewportLengthInOtherAxis = axis == ScrollEventAxis::Horizontal ? viewportSize.height() : viewportSize.width();
 
-    return snapOffset.snapAreaIndices.findIf([&] (auto index) {
+    return snapOffset.snapAreaIndices.findMatching([&] (auto index) {
         const auto& snapArea = info.snapAreas[index];
         auto [otherAxisMin, otherAxisMax] = rangeForAxis<UnitType>(snapArea, otherAxis);
         return (scrollDestinationInOtherAxis + viewportLengthInOtherAxis) > otherAxisMin && scrollDestinationInOtherAxis < otherAxisMax;
@@ -288,9 +288,6 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
 
     auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, size_t snapAreaIndices)
     {
-        if (!offsets.isValidKey(newOffset))
-            return;
-
         auto offset = offsets.ensure(newOffset, [&] {
             return SnapOffset<LayoutUnit> { newOffset, stop, hasSnapAreaLargerThanViewport, { } };
         });
@@ -423,19 +420,25 @@ static ScrollSnapOffsetsInfo<OutputType, OutputRectType> convertOffsetInfo(const
 {
     auto convertOffsets = [scaleFactor](const Vector<SnapOffset<InputType>>& input)
     {
-        return input.map([scaleFactor](auto& offset) -> SnapOffset<OutputType> {
-            return { convertOffsetUnit(offset.offset, scaleFactor), offset.stop, offset.hasSnapAreaLargerThanViewport, offset.snapAreaIndices };
-        });
+        Vector<SnapOffset<OutputType>> output;
+        output.reserveInitialCapacity(input.size());
+        for (auto& offset : input)
+            output.uncheckedAppend({ convertOffsetUnit(offset.offset, scaleFactor), offset.stop, offset.hasSnapAreaLargerThanViewport, offset.snapAreaIndices });
+        return output;
     };
 
     auto convertRects = [scaleFactor](const Vector<InputRectType>& input)
     {
-        return input.map([scaleFactor](auto& rect) -> OutputRectType {
-            return {
+        Vector<OutputRectType> output;
+        output.reserveInitialCapacity(input.size());
+        for (auto& rect : input) {
+            OutputRectType outputRect(
                 convertOffsetUnit(rect.x(), scaleFactor), convertOffsetUnit(rect.y(), scaleFactor),
-                convertOffsetUnit(rect.width(), scaleFactor), convertOffsetUnit(rect.height(), scaleFactor)
-            };
-        });
+                convertOffsetUnit(rect.width(), scaleFactor), convertOffsetUnit(rect.height(), scaleFactor));
+            output.uncheckedAppend(outputRect);
+        }
+
+        return output;
     };
 
     return {

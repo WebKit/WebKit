@@ -20,7 +20,6 @@ angle_perf_tests_sources = [
   "perf_tests/LinkProgramPerfTest.cpp",
   "perf_tests/MapBufferRange.cpp",
   "perf_tests/MultisampledRenderToTexturePerf.cpp",
-  "perf_tests/MultisampledSwapchainResolve.cpp",
   "perf_tests/MultiviewPerf.cpp",
   "perf_tests/PointSprites.cpp",
   "perf_tests/PreRotationPerf.cpp",
@@ -48,11 +47,9 @@ angle_white_box_perf_tests_sources = [
   "perf_tests/ResultPerf.cpp",
 ]
 
-angle_white_box_perf_tests_vulkan_sources =
-    [ "perf_tests/VulkanPipelineCachePerf.cpp" ]
-
-angle_white_box_perf_tests_vulkan_command_buffer_sources = [
+angle_white_box_perf_tests_vulkan_sources = [
   "perf_tests/VulkanCommandBufferPerf.cpp",
+  "perf_tests/VulkanPipelineCachePerf.cpp",
   "test_utils/third_party/vulkan_command_buffer_utils.cpp",
   "test_utils/third_party/vulkan_command_buffer_utils.h",
 ]

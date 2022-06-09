@@ -1,13 +1,10 @@
 // This test that the beginning of line (bol) optimization throws when we run out of stack space.
-//@ requireOptions("-e", "let arrayLength=25000") if $memoryLimited
-
-arrayLength = typeof(arrayLength) === 'undefined' ? 50000 : arrayLength;
 
 let expectedException = "SyntaxError: Invalid regular expression: regular expression too large";
 
 function test()
 {
-    let source = Array(arrayLength).join("(") + /(?:^|:|,)(?:\s*\[)+/g.toString() + Array(arrayLength).join(")");
+    let source = Array(50000).join("(") + /(?:^|:|,)(?:\s*\[)+/g.toString() + Array(50000).join(")");
     RegExp(source);
 }
 

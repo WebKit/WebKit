@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,15 +28,10 @@
 #include "APIObject.h"
 #include "ImageOptions.h"
 #include "ShareableBitmap.h"
-#include <WebCore/ImageBufferBackend.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
-class ChromeClient;
-class GraphicsContext;
-class ImageBuffer;
 class IntSize;
-class NativeImage;
 }
 
 namespace WebKit {
@@ -45,27 +40,20 @@ namespace WebKit {
 
 class WebImage : public API::ObjectImpl<API::Object::Type::Image> {
 public:
-    static RefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions, const WebCore::DestinationColorSpace&, WebCore::ChromeClient* = nullptr);
-    static RefPtr<WebImage> create(const WebCore::ImageBufferBackend::Parameters&, ShareableBitmap::Handle&&);
-    static Ref<WebImage> create(Ref<WebCore::ImageBuffer>&&);
+    static RefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions);
+    static RefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions, const ShareableBitmap::Configuration&);
+    static Ref<WebImage> create(Ref<ShareableBitmap>&&);
+    ~WebImage();
+    
+    const WebCore::IntSize& size() const;
 
-    WebCore::IntSize size() const;
-    const WebCore::ImageBufferBackend::Parameters& parameters() const;
-
-    WebCore::GraphicsContext& context() const;
-
-    RefPtr<WebCore::NativeImage> copyNativeImage(WebCore::BackingStoreCopy = WebCore::CopyBackingStore) const;
-    RefPtr<ShareableBitmap> bitmap() const;
-#if USE(CAIRO)
-    RefPtr<cairo_surface_t> createCairoSurface();
-#endif
-
-    ShareableBitmap::Handle createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
+    ShareableBitmap& bitmap() { return m_bitmap.get(); }
+    const ShareableBitmap& bitmap() const { return m_bitmap.get(); }
 
 private:
-    WebImage(Ref<WebCore::ImageBuffer>&&);
+    WebImage(Ref<ShareableBitmap>&&);
 
-    Ref<WebCore::ImageBuffer> m_buffer;
+    Ref<ShareableBitmap> m_bitmap;
 };
 
 } // namespace WebKit

@@ -20,10 +20,10 @@
 #include "config.h"
 #include "AccessibilityObjectAtspi.h"
 
-#if USE(ATSPI)
+#if ENABLE(ACCESSIBILITY) && USE(ATSPI)
 
-#include "AccessibilityAtspi.h"
 #include "AccessibilityObject.h"
+#include "AccessibilityRootAtspi.h"
 #include <gio/gio.h>
 
 namespace WebCore {
@@ -33,6 +33,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_valueFunctions = {
     nullptr,
     // get_property
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GError** error, gpointer userData) -> GVariant* {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -50,6 +51,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_valueFunctions = {
     },
     // set_property,
     [](GDBusConnection*, const gchar*, const gchar*, const gchar*, const gchar* propertyName, GVariant* propertyValue, GError** error, gpointer userData) -> gboolean {
+        RELEASE_ASSERT(!isMainThread());
         auto atspiObject = Ref { *static_cast<AccessibilityObjectAtspi*>(userData) };
         atspiObject->updateBackingStore();
 
@@ -60,58 +62,81 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_valueFunctions = {
         return FALSE;
     },
     // padding
-    { nullptr }
+    nullptr
 };
 
 double AccessibilityObjectAtspi::currentValue() const
 {
-    return m_coreObject ? m_coreObject->valueForRange() : 0;
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_axObject)
+        return 0;
+
+    return m_axObject->valueForRange();
 }
 
 bool AccessibilityObjectAtspi::setCurrentValue(double value)
 {
-    if (!m_coreObject)
-        return false;
+    return Accessibility::retrieveValueFromMainThread<bool>([this, value]() -> bool {
+        if (m_coreObject)
+            m_coreObject->updateBackingStore();
 
-    if (!m_coreObject->canSetValueAttribute())
-        return false;
+        if (!m_coreObject)
+            return false;
 
-    if (m_coreObject->canSetNumericValue())
-        return m_coreObject->setValue(value);
+        if (!m_coreObject->canSetValueAttribute())
+            return false;
 
-    return m_coreObject->setValue(String::numberToStringFixedPrecision(value));
+        if (m_coreObject->canSetNumericValue())
+            return m_coreObject->setValue(value);
+
+        return m_coreObject->setValue(String::numberToStringFixedPrecision(value));
+    });
 }
 
 double AccessibilityObjectAtspi::minimumValue() const
 {
-    return m_coreObject ? m_coreObject->minValueForRange() : 0;
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_axObject)
+        return 0;
+
+    return m_axObject->minValueForRange();
 }
 
 double AccessibilityObjectAtspi::maximumValue() const
 {
-    return m_coreObject ? m_coreObject->maxValueForRange() : 0;
+    RELEASE_ASSERT(!isMainThread());
+    if (!m_axObject)
+        return 0;
+
+    return m_axObject->maxValueForRange();
 }
 
 double AccessibilityObjectAtspi::minimumIncrement() const
 {
-    if (!m_coreObject)
-        return 0;
+    return Accessibility::retrieveValueFromMainThread<float>([this]() -> float {
+        if (m_coreObject)
+            m_coreObject->updateBackingStore();
 
-    auto stepAttribute = static_cast<AccessibilityObject*>(m_coreObject)->getAttribute(HTMLNames::stepAttr);
-    if (!stepAttribute.isEmpty())
-        return stepAttribute.toFloat();
+        if (!m_coreObject)
+            return 0;
 
-    // If 'step' attribute is not defined, WebCore assumes a 5% of the range between
-    // minimum and maximum values. Implicit value of step should be one or larger.
-    float step = (m_coreObject->maxValueForRange() - m_coreObject->minValueForRange()) * 0.05;
-    return step < 1 ? 1 : step;
+        auto stepAttribute = static_cast<AccessibilityObject*>(m_coreObject)->getAttribute(HTMLNames::stepAttr);
+        if (!stepAttribute.isEmpty())
+            return stepAttribute.toFloat();
+
+        // If 'step' attribute is not defined, WebCore assumes a 5% of the range between
+        // minimum and maximum values. Implicit value of step should be one or larger.
+        float step = (m_coreObject->maxValueForRange() - m_coreObject->minValueForRange()) * 0.05;
+        return step < 1 ? 1 : step;
+    });
 }
 
 void AccessibilityObjectAtspi::valueChanged(double value)
 {
-    AccessibilityAtspi::singleton().valueChanged(*this, value);
+    RELEASE_ASSERT(isMainThread());
+    m_root.atspi().valueChanged(*this, value);
 }
 
 } // namespace WebCore
 
-#endif // USE(ATSPI)
+#endif // ENABLE(ACCESSIBILITY) && USE(ATSPI)

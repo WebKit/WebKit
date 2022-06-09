@@ -33,7 +33,6 @@
 #include "JSTrackCustom.h"
 #include "JSVTTCue.h"
 #include "TextTrack.h"
-#include "WebCoreOpaqueRoot.h"
 
 
 namespace WebCore {
@@ -57,7 +56,7 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     if (UNLIKELY(reason))
         *reason = "TextTrack is an opaque root";
 
-    return containsWebCoreOpaqueRoot(visitor, textTrackCue.track());
+    return visitor.containsOpaqueRoot(root(textTrackCue.track()));
 }
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TextTrackCue>&& cue)
@@ -84,8 +83,8 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObjec
 template<typename Visitor>
 void JSTextTrackCue::visitAdditionalChildren(Visitor& visitor)
 {
-    if (auto* textTrack = wrapped().track())
-        addWebCoreOpaqueRoot(visitor, *textTrack);
+    if (TextTrack* textTrack = wrapped().track())
+        visitor.addOpaqueRoot(root(textTrack));
 }
 
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSTextTrackCue);

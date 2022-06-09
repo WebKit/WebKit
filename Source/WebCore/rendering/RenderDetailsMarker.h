@@ -35,7 +35,7 @@ public:
     Orientation orientation() const;
 
 private:
-    ASCIILiteral renderName() const override { return "RenderDetailsMarker"_s; }
+    const char* renderName() const override { return "RenderDetailsMarker"; }
     bool isDetailsMarker() const override { return true; }
     void paint(PaintInfo&, const LayoutPoint&) override;
 

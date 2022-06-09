@@ -35,8 +35,8 @@
 #include "Timer.h"
 #include <wtf/Expected.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -200,8 +200,8 @@ private:
     bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&, const URL& preRedirectURL) const;
     bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
 
-    MemoryCompactRobinHoodHashSet<URL> m_validatedURLs;
-    MemoryCompactRobinHoodHashSet<URL> m_cachedSVGImagesURLs;
+    HashSet<String> m_validatedURLs;
+    HashSet<String> m_cachedSVGImagesURLs;
     mutable DocumentResourceMap m_documentResources;
     WeakPtr<Document> m_document;
     DocumentLoader* m_documentLoader;

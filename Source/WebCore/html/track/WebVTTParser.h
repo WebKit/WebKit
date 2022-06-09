@@ -73,14 +73,14 @@ public:
     MediaTime endTime() const { return m_endTime; }
     void setEndTime(const MediaTime& endTime) { m_endTime = endTime; }
 
-    AtomString id() const { return m_id; }
-    void setId(const AtomString& id) { m_id = id; }
+    String id() const { return m_id; }
+    void setId(String id) { m_id = id; }
 
     String content() const { return m_content; }
-    void setContent(const String& content) { m_content = content; }
+    void setContent(String content) { m_content = content; }
 
     String settings() const { return m_settings; }
-    void setSettings(const String& settings) { m_settings = settings; }
+    void setSettings(String settings) { m_settings = settings; }
 
     MediaTime originalStartTime() const { return m_originalStartTime; }
     void setOriginalStartTime(const MediaTime& time) { m_originalStartTime = time; }
@@ -91,7 +91,7 @@ private:
     MediaTime m_startTime;
     MediaTime m_endTime;
     MediaTime m_originalStartTime;
-    AtomString m_id;
+    String m_id;
     String m_content;
     String m_settings;
 };
@@ -170,10 +170,10 @@ private:
     ParseState collectWebVTTBlock(const String&);
     ParseState checkAndRecoverCue(const String& line);
     ParseState collectStyleSheet(const String&);
-    bool checkAndCreateRegion(StringView line);
-    bool checkAndStoreRegion(StringView line);
-    bool checkStyleSheet(StringView line);
-    bool checkAndStoreStyleSheet(StringView line);
+    bool checkAndCreateRegion(const String& line);
+    bool checkAndStoreRegion(const String& line);
+    bool checkStyleSheet(const String& line);
+    bool checkAndStoreStyleSheet(const String& line);
 
     void createNewCue();
     void resetCueValues();
@@ -185,14 +185,14 @@ private:
 
     BufferedLineReader m_lineReader;
     RefPtr<TextResourceDecoder> m_decoder;
-    AtomString m_currentId;
+    String m_currentId;
     MediaTime m_currentStartTime;
     MediaTime m_currentEndTime;
     StringBuilder m_currentContent;
     String m_previousLine;
     String m_currentSettings;
     RefPtr<VTTRegion> m_currentRegion;
-    StringBuilder m_currentSourceStyleSheet;
+    String m_currentSourceStyleSheet;
     
     WebVTTParserClient& m_client;
 

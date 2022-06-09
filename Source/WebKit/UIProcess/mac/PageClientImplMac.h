@@ -131,8 +131,8 @@ private:
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
-    void computeHasVisualSearchResults(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&&) override;
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& identifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&) override;
+    void computeHasImageAnalysisResults(const URL&, ShareableBitmap&, ImageAnalysisType, CompletionHandler<void(bool)>&&) override;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
@@ -256,10 +256,6 @@ private:
     bool effectiveAppearanceIsDark() const override;
     bool effectiveUserInterfaceLevelIsElevated() const override;
 
-    bool isTextRecognitionInFullscreenVideoEnabled() const final { return true; }
-    void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle&, WebCore::FloatRect) final;
-    void cancelTextRecognitionForVideoInElementFullscreen() final;
-
 #if ENABLE(DRAG_SUPPORT)
     void didPerformDragOperation(bool handled) final;
 #endif
@@ -294,11 +290,6 @@ private:
 #endif
         
     void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) override;
-
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    void didEnterFullscreen() final { }
-    void didExitFullscreen() final { }
-#endif
 
     NSView *m_view;
     WeakPtr<WebViewImpl> m_impl;

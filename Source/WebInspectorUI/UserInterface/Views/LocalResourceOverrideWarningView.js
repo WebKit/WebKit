@@ -62,8 +62,10 @@ WI.LocalResourceOverrideWarningView = class LocalResourceOverrideWarningView ext
         this._revealButton = document.createElement("button");
         this._revealButton.textContent = WI.UIString("Reveal");
         this._revealButton.addEventListener("click", (event) => {
+            const cookie = null;
+            const options = {ignoreNetworkTab: true, ignoreSearchTab: true};
             let localResourceOverride = WI.networkManager.localResourceOverridesForURL(this._resource.url)[0];
-            WI.showLocalResourceOverride(localResourceOverride, {overriddenResource: sourceCode});
+            WI.showRepresentedObject(localResourceOverride, cookie, options);
         });
 
         let container = this.element.appendChild(document.createElement("div"));

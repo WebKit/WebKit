@@ -561,7 +561,8 @@ void webkit_dom_html_input_element_set_accept(WebKitDOMHTMLInputElement* self, c
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::acceptAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::acceptAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_input_element_get_alt(WebKitDOMHTMLInputElement* self)
@@ -579,7 +580,8 @@ void webkit_dom_html_input_element_set_alt(WebKitDOMHTMLInputElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::altAttr, convertedValue);
 }
 
 gboolean webkit_dom_html_input_element_get_autofocus(WebKitDOMHTMLInputElement* self)
@@ -766,7 +768,8 @@ void webkit_dom_html_input_element_set_name(WebKitDOMHTMLInputElement* self, con
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, convertedValue);
 }
 
 gboolean webkit_dom_html_input_element_get_read_only(WebKitDOMHTMLInputElement* self)
@@ -823,7 +826,8 @@ void webkit_dom_html_input_element_set_src(WebKitDOMHTMLInputElement* self, cons
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::srcAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_input_element_get_input_type(WebKitDOMHTMLInputElement* self)
@@ -841,7 +845,8 @@ void webkit_dom_html_input_element_set_input_type(WebKitDOMHTMLInputElement* sel
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setType(WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setType(convertedValue);
 }
 
 gchar* webkit_dom_html_input_element_get_default_value(WebKitDOMHTMLInputElement* self)
@@ -859,7 +864,8 @@ void webkit_dom_html_input_element_set_default_value(WebKitDOMHTMLInputElement* 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setDefaultValue(WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setDefaultValue(convertedValue);
 }
 
 gchar* webkit_dom_html_input_element_get_value(WebKitDOMHTMLInputElement* self)
@@ -922,7 +928,8 @@ void webkit_dom_html_input_element_set_align(WebKitDOMHTMLInputElement* self, co
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_input_element_get_use_map(WebKitDOMHTMLInputElement* self)
@@ -940,7 +947,8 @@ void webkit_dom_html_input_element_set_use_map(WebKitDOMHTMLInputElement* self, 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLInputElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::usemapAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::usemapAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_input_element_get_capture_type(WebKitDOMHTMLInputElement* self)

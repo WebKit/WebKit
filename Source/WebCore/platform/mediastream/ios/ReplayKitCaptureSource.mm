@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,7 +156,7 @@ bool ReplayKitCaptureSource::start()
     });
 
     auto completionHandler = makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier](NSError * _Nullable error) {
-        // FIXME: It should be safe to call `videoFrameAvailable` from any thread. Test this and get rid of this main thread hop.
+        // FIXME: It should be safe to call `videoSampleAvailable` from any thread. Test this and get rid of this main thread hop.
         RunLoop::main().dispatch([this, weakThis, error = retainPtr(error), identifier]() mutable {
             if (!weakThis || !error)
                 return;
@@ -189,7 +189,7 @@ void ReplayKitCaptureSource::captureStateDidChange()
 
         m_isRunning = isRecording && !m_interrupted;
         ALWAYS_LOG_IF(loggerPtr(), identifier, m_isRunning);
-        isRunningChanged(m_isRunning);
+        capturerIsRunningChanged(m_isRunning);
     });
 }
 
@@ -245,7 +245,7 @@ void ReplayKitCaptureSource::startCaptureWatchdogTimer()
 
 static String screenDeviceUUID()
 {
-    static NeverDestroyed<String> screenID = createVersion4UUIDString();
+    static NeverDestroyed<String> screenID = createCanonicalUUIDString();
     return screenID;
 }
 

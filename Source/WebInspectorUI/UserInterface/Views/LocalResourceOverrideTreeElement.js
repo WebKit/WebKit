@@ -108,12 +108,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
     updateStatus()
     {
-        // Don't call `super` as we don't want `WI.ResourceTreeElement` / `WI.SourceCodeTreeElement` / etc. to modify our status element.
-
-        if (this.resource?.hadLoadingError())
-            this.addClassName(WI.ResourceTreeElement.FailedStyleClassName);
-        else
-            this.removeClassName(WI.ResourceTreeElement.FailedStyleClassName);
+        // Do nothing. Do not allow ResourceTreeElement / SourceCodeTreeElement to modify our status element.
     }
 
     // Popover delegate
@@ -132,7 +127,7 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
         let wasSelected = this.selected;
 
-        if (serializedData.type === WI.LocalResourceOverride.InterceptType.Response || serializedData.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork) {
+        if (serializedData.type !== WI.LocalResourceOverride.InterceptType.Request) {
             let revision = this._localResourceOverride.localResource.currentRevision;
             serializedData.responseContent = revision.content;
             serializedData.responseBase64Encoded = revision.base64Encoded;
@@ -142,8 +137,11 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
         WI.networkManager.removeLocalResourceOverride(this._localResourceOverride);
         WI.networkManager.addLocalResourceOverride(newLocalResourceOverride);
 
-        if (wasSelected)
-            WI.showLocalResourceOverride(newLocalResourceOverride, {overriddenResource: this._localResourceOverride});
+        if (wasSelected) {
+            const cookie = null;
+            const options = {ignoreNetworkTab: true, ignoreSearchTab: true};
+            WI.showRepresentedObject(newLocalResourceOverride, cookie, options);
+        }
     }
 
     // Private

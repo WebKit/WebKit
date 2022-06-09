@@ -44,7 +44,6 @@
     z-index: var(--z-index-header);
 
     --find-banner-outer-child-margin: 8px;
-    --find-banner-input-margin-start: 6px;
 }
 
 .find-banner.showing {
@@ -82,12 +81,12 @@
     height: 19px;
     margin-top: 1px;
     margin-bottom: 1px;
-    margin-inline: var(--find-banner-input-margin-start) -1px;
+    margin-inline: 6px -1px;
     vertical-align: top;
     background-color: white;
     border: 1px solid var(--border-color);
     outline: none;
-    appearance: none;
+    -webkit-appearance: none;
 
     --find-banner-search-box-border-radius-start: 4px;
     --find-banner-search-box-border-radius-end: 0;
@@ -110,9 +109,10 @@ body[dir=rtl] .find-banner > input[type="search"] {
 .find-banner > button {
     margin: 1px 4px;
 
-    padding-inline: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
 
-    appearance: none;
+    -webkit-appearance: none;
 
     border-radius: 4px;
     border: 1px solid var(--border-color);

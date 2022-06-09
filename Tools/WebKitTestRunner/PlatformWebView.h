@@ -40,27 +40,28 @@ OBJC_CLASS WKWebViewConfiguration;
 OBJC_CLASS WebKitTestRunnerWindow;
 typedef struct CGImage *CGImageRef;
 
-using PlatformWKView = TestRunnerWKWebView*;
-using PlatformWindow = WebKitTestRunnerWindow*;
-using PlatformImage = RetainPtr<CGImageRef>;
+typedef TestRunnerWKWebView *PlatformWKView;
+typedef WebKitTestRunnerWindow *PlatformWindow;
+typedef RetainPtr<CGImageRef> PlatformImage;
 #elif defined(BUILDING_GTK__)
 typedef struct _GtkWidget GtkWidget;
 typedef WKViewRef PlatformWKView;
 typedef GtkWidget* PlatformWindow;
-#elif USE(LIBWPE)
+#elif PLATFORM(WPE)
 namespace WPEToolingBackends {
 class HeadlessViewBackend;
 }
-using PlatformWKView = WKViewRef;
-using PlatformWindow = WPEToolingBackends::HeadlessViewBackend*;
+typedef WKViewRef PlatformWKView;
+typedef WPEToolingBackends::HeadlessViewBackend* PlatformWindow;
 #elif PLATFORM(WIN)
-using PlatformWKView = WKViewRef;
-using PlatformWindow = HWND;
+#include <cairo.h>
+class TestRunnerWindow;
+typedef HWND PlatformWindow;
+typedef WKViewRef PlatformWKView;
 #endif
 
 #if USE(CAIRO)
-#include <cairo.h>
-using PlatformImage = cairo_surface_t*;
+typedef cairo_surface_t* PlatformImage;
 #endif
 
 namespace WTR {
@@ -76,8 +77,8 @@ public:
     ~PlatformWebView();
 
     WKPageRef page();
-    PlatformWKView platformView() const { return m_view; }
-    PlatformWindow platformWindow() const { return m_window; }
+    PlatformWKView platformView() { return m_view; }
+    PlatformWindow platformWindow() { return m_window; }
     static PlatformWindow keyWindow();
 
     enum class WebViewSizingMode {
@@ -102,8 +103,6 @@ public:
     void setTextInChromeInputField(const String&);
     void selectChromeInputField();
     String getSelectedTextInChromeInputField();
-
-    bool isSecureEventInputEnabled() const;
 
     bool drawsBackground() const;
     void setDrawsBackground(bool);

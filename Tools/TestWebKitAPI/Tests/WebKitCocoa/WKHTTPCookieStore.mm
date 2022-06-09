@@ -459,18 +459,29 @@ TEST(WebKit, CookieObserverCrash)
     TestWebKitAPI::Util::run(&gotFlag);
 }
 
-static void clearCookies(WKWebsiteDataStore *dataStore)
+static void deleteCookies(WKHTTPCookieStore *store, RetainPtr<NSMutableArray> cookies, BlockPtr<void(void)> completionBlock)
 {
-    __block bool deleted = false;
-    [dataStore removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeCookies] modifiedSince:[NSDate distantPast] completionHandler:^{
-        deleted = true;
+    if (![cookies count])
+        return completionBlock();
+    [store deleteCookie:[cookies lastObject] completionHandler:^(void) {
+        [cookies removeLastObject];
+        deleteCookies(store, cookies, completionBlock);
     }];
-    TestWebKitAPI::Util::run(&deleted);
 }
 
 TEST(WKHTTPCookieStore, ObserveCookiesReceivedFromHTTP)
 {
-    TestWebKitAPI::HTTPServer server({{ "/"_s, {{{ "Set-Cookie"_s, "testkey=testvalue"_s }}, "hello"_s }}});
+    TestWebKitAPI::HTTPServer server({{ "/", {{{ "Set-Cookie", "testkey=testvalue" }}, "hello" }}});
+
+    auto removeAllCookies = [] (WKHTTPCookieStore *store) {
+        __block bool deletedAllCookies = false;
+        [store getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+            deleteCookies(store, adoptNS([cookies mutableCopy]), ^{
+                deletedAllCookies = true;
+            });
+        }];
+        TestWebKitAPI::Util::run(&deletedAllCookies);
+    };
 
     auto runTest = [&] (WKWebsiteDataStore *dataStore) {
         auto configuration = adoptNS([WKWebViewConfiguration new]);
@@ -478,7 +489,7 @@ TEST(WKHTTPCookieStore, ObserveCookiesReceivedFromHTTP)
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto observer = adoptNS([CookieObserver new]);
         globalCookieStore = webView.get().configuration.websiteDataStore.httpCookieStore;
-        clearCookies(dataStore);
+        removeAllCookies(globalCookieStore.get());
         [globalCookieStore addObserver:observer.get()];
         observerCallbacks = 0;
         [webView loadRequest:server.request()];
@@ -715,6 +726,27 @@ static bool areCookiesEqual(NSHTTPCookie *first, NSHTTPCookie *second)
     return [first.name isEqual:second.name] && [first.domain isEqual:second.domain] && [first.path isEqual:second.path] && [first.value isEqual:second.value];
 }
 
+static void clearCookies(WKHTTPCookieStore* cookieStore)
+{
+    finished = false;
+    [cookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        if (!cookies || !cookies.count) {
+            finished = true;
+            return;
+        }
+
+        unsigned cookiesCount = cookies.count;
+        __block unsigned deletedCount = 0;
+        for (NSHTTPCookie* cookie in cookies) {
+            [cookieStore deleteCookie:cookie completionHandler:^{
+                if (++deletedCount == cookiesCount)
+                    finished = true;
+            }];
+        }
+    }];
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(WKHTTPCookieStore, WithoutProcessPoolDuplicates)
 {
     RetainPtr<WKHTTPCookieStore> httpCookieStore = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
@@ -732,7 +764,7 @@ TEST(WKHTTPCookieStore, WithoutProcessPoolDuplicates)
     RetainPtr<NSHTTPCookie> sessionCookieDifferentValue = [NSHTTPCookie cookieWithProperties:properties.get()];
     finished = false;
 
-    clearCookies([WKWebsiteDataStore defaultDataStore]);
+    clearCookies(httpCookieStore.get());
 
     [httpCookieStore.get() setCookie:sessionCookie.get() completionHandler:^{
         finished = true;

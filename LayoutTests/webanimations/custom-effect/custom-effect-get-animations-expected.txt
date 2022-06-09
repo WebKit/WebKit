@@ -1,3 +1,0 @@
-
-PASS Animation created with document.timeline.animate() appears in getAnimations() result.
-

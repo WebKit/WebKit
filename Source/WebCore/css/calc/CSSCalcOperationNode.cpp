@@ -73,7 +73,30 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
         if (rightCategory != CalculationCategory::Number)
             return CalculationCategory::Other;
         return leftCategory;
-    default:
+    case CalcOperator::Sin:
+    case CalcOperator::Cos:
+    case CalcOperator::Tan:
+    case CalcOperator::Min:
+    case CalcOperator::Max:
+    case CalcOperator::Clamp:
+    case CalcOperator::Log:
+    case CalcOperator::Exp:
+    case CalcOperator::Asin:
+    case CalcOperator::Acos:
+    case CalcOperator::Atan:
+    case CalcOperator::Atan2:
+    case CalcOperator::Abs:
+    case CalcOperator::Sign:
+    case CalcOperator::Mod:
+    case CalcOperator::Rem:
+    case CalcOperator::Round:
+    case CalcOperator::Up:
+    case CalcOperator::Down:
+    case CalcOperator::Nearest:
+    case CalcOperator::ToZero:
+    case CalcOperator::Pow:
+    case CalcOperator::Sqrt:
+    case CalcOperator::Hypot:
         ASSERT_NOT_REACHED();
         return CalculationCategory::Other;
     }
@@ -139,13 +162,33 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
                 return CalculationCategory::Other;
             break;
         }
+        case CalcOperator::Sin:
+        case CalcOperator::Cos:
+        case CalcOperator::Tan:
+        case CalcOperator::Abs:
+        case CalcOperator::Sign:
+        case CalcOperator::Min:
+        case CalcOperator::Max:
+        case CalcOperator::Clamp:
+        case CalcOperator::Log:
+        case CalcOperator::Exp:
+        case CalcOperator::Asin:
+        case CalcOperator::Acos:
+        case CalcOperator::Atan:
+        case CalcOperator::Atan2:
+        case CalcOperator::Mod:
+        case CalcOperator::Rem:
+        case CalcOperator::Round:
+        case CalcOperator::Up:
+        case CalcOperator::Down:
+        case CalcOperator::Nearest:
+        case CalcOperator::ToZero:
+        case CalcOperator::Hypot:
+            return CalculationCategory::Other;
         case CalcOperator::Pow:
         case CalcOperator::Sqrt:
             // The type of pow() and sqrt() functions must evaluate to a number.
             return CalculationCategory::Number;
-        default:
-            return CalculationCategory::Other;
-        
         }
     }
 
@@ -202,7 +245,7 @@ static SortingCategory sortingCategoryForType(CSSUnitType unitType)
         SortingCategory::Other,         // UOther
     };
 
-    static_assert(ARRAY_SIZE(sortOrder) == static_cast<unsigned>(CalculationCategory::Other) + 1, "sortOrder size should match UnitCategory");
+    COMPILE_ASSERT(ARRAY_SIZE(sortOrder) == static_cast<unsigned>(CalculationCategory::Other) + 1, sortOrder_size_should_match_UnitCategory);
     return sortOrder[static_cast<unsigned>(calcUnitCategory(unitType))];
 }
 
@@ -577,11 +620,14 @@ void CSSCalcOperationNode::hoistChildrenWithOperator(CalcOperator op)
 
     Vector<Ref<CSSCalcExpressionNode>> newChildren;
     for (auto& child : m_children) {
-        if (is<CSSCalcOperationNode>(child) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op)
-            newChildren.appendVector(downcast<CSSCalcOperationNode>(child.get()).children());
-        else
+        if (is<CSSCalcOperationNode>(child) && downcast<CSSCalcOperationNode>(child.get()).calcOperator() == op) {
+            auto& children = downcast<CSSCalcOperationNode>(child.get()).children();
+            for (auto& childToMove : children)
+                newChildren.append(WTFMove(childToMove));
+        } else
             newChildren.append(WTFMove(child));
     }
+    
     newChildren.shrinkToFit();
     m_children = WTFMove(newChildren);
 }
@@ -623,8 +669,7 @@ void CSSCalcOperationNode::combineChildren()
 {
     if (isIdentity() || !m_children.size())
         return;
-    m_isRoot = IsRoot::No;
-    
+
     if (m_children.size() < 2) {
         if (m_children.size() == 1 && isTrigNode()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
@@ -781,7 +826,7 @@ void CSSCalcOperationNode::combineChildren()
         m_children = WTFMove(newChildren);
     }
 
-    if ((isMinOrMaxNode() || isHypotNode() || isClampNode()) && canCombineAllChildren()) {
+    if ((isMinOrMaxNode() || isHypotNode()) && canCombineAllChildren()) {
         auto combinedUnitType = m_children[0]->primitiveType();
         auto involvesPercentageComparisons = [&]() {
             return combinedUnitType == CSSUnitType::CSS_PERCENTAGE && m_children.size() > 1;
@@ -866,13 +911,6 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyRecursive(Ref<CSSCalcEx
     return simplifyNode(WTFMove(rootNode), depth);
 }
 
-inline void CSSCalcOperationNode::makeTopLevelCalc()
-{
-    // Top level calc nodes where we need not preserve the function are changed into add nodes because
-    // that’s the best way to make them serialize as "calc(xxx)".
-    m_operator = CalcOperator::Add;
-}
-
 Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpressionNode>&& rootNode, int depth)
 {
     if (is<CSSCalcPrimitiveValueNode>(rootNode)) {
@@ -898,17 +936,45 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
         
         if (calcOperationNode.isCalcSumNode()) {
             calcOperationNode.hoistChildrenWithOperator(CalcOperator::Add);
+            calcOperationNode.combineChildren();
         }
 
         if (calcOperationNode.isCalcProductNode()) {
             calcOperationNode.hoistChildrenWithOperator(CalcOperator::Multiply);
+            calcOperationNode.combineChildren();
         }
         
-        if (calcOperationNode.isMinOrMaxNode() || calcOperationNode.isHypotNode() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode() || (calcOperationNode.shouldPreserveFunction() && depth))
+        if (calcOperationNode.isMinOrMaxNode())
+            calcOperationNode.combineChildren();
+        
+        if (calcOperationNode.isTrigNode() && depth)
+            calcOperationNode.combineChildren();
+        
+        if (calcOperationNode.isExpNode() && depth)
+            calcOperationNode.combineChildren();
+        
+        if (calcOperationNode.isInverseTrigNode() && depth)
+            calcOperationNode.combineChildren();
+        
+        if (calcOperationNode.isAtan2Node() && depth)
+            calcOperationNode.combineChildren();
+        if (calcOperationNode.isSignNode() && depth)
+            calcOperationNode.combineChildren();
+
+        if (calcOperationNode.isSteppedNode() && depth)
+            calcOperationNode.combineChildren();
+        
+        if (calcOperationNode.isRoundOperation() && depth)
+            calcOperationNode.combineChildren();
+
+        if (calcOperationNode.isHypotNode())
+            calcOperationNode.combineChildren();
+
+        if (calcOperationNode.isPowOrSqrtNode() && depth)
             calcOperationNode.combineChildren();
 
         // If only one child remains, return the child (except at the root).
-        auto shouldCombineParentWithOnlyChild = [](CSSCalcOperationNode& parent, int depth)
+        auto shouldCombineParentWithOnlyChild = [](const CSSCalcOperationNode& parent, int depth)
         {
             if (parent.children().size() != 1)
                 return false;
@@ -916,11 +982,6 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             // Always simplify below the root.
             if (depth)
                 return true;
-            
-            if (parent.shouldNotPreserveFunction() && is<CSSCalcPrimitiveValueNode>(parent.children()[0])) {
-                parent.makeTopLevelCalc();
-                return false;
-            }
 
             // At the root, preserve the root function by only merging nodes with the same function.
             auto& child = parent.children().first();
@@ -1315,22 +1376,16 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         if (children.isEmpty())
             return std::numeric_limits<double>::quiet_NaN();
         double minimum = children[0];
-        for (auto child : children) {
-            if (std::isnan(child))
-                return child;
+        for (auto child : children)
             minimum = std::min(minimum, child);
-        }
         return minimum;
     }
     case CalcOperator::Max: {
         if (children.isEmpty())
             return std::numeric_limits<double>::quiet_NaN();
         double maximum = children[0];
-        for (auto child : children) {
-            if (std::isnan(child))
-                return child;
+        for (auto child : children)
             maximum = std::max(maximum, child);
-        }
         return maximum;
     }
     case CalcOperator::Clamp: {
@@ -1339,8 +1394,6 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         double min = children[0];
         double value = children[1];
         double max = children[2];
-        if (std::isnan(min) || std::isnan(value) || std::isnan(max))
-            return std::numeric_limits<double>::quiet_NaN();
         return std::max(min, std::min(value, max));
     }
     case CalcOperator::Pow:
@@ -1358,11 +1411,8 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
         if (children.size() == 1)
             return std::abs(children[0]);
         double sum = 0;
-        for (auto child : children) {
-            if (std::isnan(child))
-                return child;
+        for (auto child : children)
             sum += (child * child);
-        }
         return std::sqrt(sum);
     }
     case CalcOperator::Sin: {
@@ -1451,30 +1501,18 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
     case CalcOperator::Up: {
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
-        if (!isinf(children[0]) && std::isinf(children[1])) {
-            if (!children[0])
-                return children[0];
-            return signbit(children[0]) ? -0.0 : std::numeric_limits<double>::infinity();
-        }
         auto ret = getNearestMultiples(children[0], children[1]);
         return ret.second;
     }
     case CalcOperator::Down: {
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
-        if (!isinf(children[0]) && isinf(children[1])) {
-            if (!children[0])
-                return children[0];
-            return signbit(children[0]) ? -std::numeric_limits<double>::infinity() : +0.0;
-        }
         auto ret = getNearestMultiples(children[0], children[1]);
         return ret.first;
     }
     case CalcOperator::Nearest: {
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
-        if (!isinf(children[0]) && isinf(children[1]))
-            return signbit(children[0]) ? -0.0 : +0.0;
         auto ret = getNearestMultiples(children[0], children[1]);
         auto upperB = ret.second;
         auto lowerB = ret.first;
@@ -1483,8 +1521,6 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
     case CalcOperator::ToZero: {
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
-        if (!isinf(children[0]) && isinf(children[1]))
-            return signbit(children[0]) ? -0.0 : +0.0;
         auto ret = getNearestMultiples(children[0], children[1]);
         auto upperB = ret.second;
         auto lowerB = ret.first;

@@ -32,8 +32,6 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
-#include "CSSUnitValue.h"
-#include "CSSUnits.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -42,61 +40,27 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSScale);
 
-ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std::optional<CSSNumberish> z)
+Ref<CSSScale> CSSScale::create(CSSNumberish&& x, CSSNumberish&& y, std::optional<CSSNumberish>&& z)
 {
-    auto rectifiedX = CSSNumericValue::rectifyNumberish(WTFMove(x));
-    auto rectifiedY = CSSNumericValue::rectifyNumberish(WTFMove(y));
-    auto rectifiedZ = z ? CSSNumericValue::rectifyNumberish(WTFMove(*z)) : Ref<CSSNumericValue> { CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER) };
-
-    // https://drafts.css-houdini.org/css-typed-om/#dom-cssscale-cssscale
-    if (!rectifiedX->type().matchesNumber()
-        || !rectifiedY->type().matchesNumber()
-        || (!rectifiedZ->type().matchesNumber()))
-        return Exception { TypeError };
-
-    return adoptRef(*new CSSScale(z ? Is2D::No : Is2D::Yes, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ)));
+    return adoptRef(*new CSSScale(WTFMove(x), WTFMove(y), WTFMove(z)));
 }
 
-CSSScale::CSSScale(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, Ref<CSSNumericValue> z)
-    : CSSTransformComponent(is2D)
-    , m_x(WTFMove(x))
+CSSScale::CSSScale(CSSNumberish&& x, CSSNumberish&& y, std::optional<CSSNumberish>&& z)
+    : m_x(WTFMove(x))
     , m_y(WTFMove(y))
     , m_z(WTFMove(z))
 {
 }
 
-void CSSScale::setX(CSSNumberish x)
-{
-    m_x = CSSNumericValue::rectifyNumberish(WTFMove(x));
-}
+// FIXME: Fix all the following virtual functions
 
-void CSSScale::setY(CSSNumberish y)
+String CSSScale::toString() const
 {
-    m_y = CSSNumericValue::rectifyNumberish(WTFMove(y));
-}
-
-void CSSScale::setZ(CSSNumberish z)
-{
-    m_z = CSSNumericValue::rectifyNumberish(WTFMove(z));
-}
-
-void CSSScale::serialize(StringBuilder& builder) const
-{
-    // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssscale
-    builder.append(is2D() ? "scale(" : "scale3d(");
-    m_x->serialize(builder);
-    builder.append(", ");
-    m_y->serialize(builder);
-    if (!is2D()) {
-        builder.append(", ");
-        m_z->serialize(builder);
-    }
-    builder.append(')');
+    return emptyString();
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSScale::toMatrix()
 {
-    // FIXME: Implement.
     return DOMMatrix::fromMatrix(DOMMatrixInit { });
 }
 

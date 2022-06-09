@@ -38,6 +38,8 @@
 
 namespace WebCore {
 
+const char* QLPreviewProtocol = "x-apple-ql-id";
+
 NSSet *QLPreviewGetSupportedMIMETypesSet()
 {
     static NeverDestroyed<RetainPtr<NSSet>> set = PAL::softLink_QuickLook_QLPreviewGetSupportedMIMETypes();

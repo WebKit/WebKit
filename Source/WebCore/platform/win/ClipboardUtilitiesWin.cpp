@@ -38,7 +38,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/win/WCharStringExtras.h>
-#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -83,10 +82,10 @@ static bool getWebLocData(IDataObject* dataObject, String& url, String* title)
     
     if (title) {
         PathRemoveExtension(filename);
-        *title = String(filename);
+        *title = String((UChar*)filename);
     }
     
-    url = String(urlBuffer);
+    url = String((UChar*)urlBuffer);
     succeeded = true;
 
 exit:
@@ -120,15 +119,15 @@ static bool getWebLocData(const DragDataMap* dataObject, String& url, String* ti
     return true;
 }
 
-static String extractURL(const String& url, String* title)
+static String extractURL(const String &inURL, String* title)
 {
-    auto splitIndex = url.find('\n');
-    if (splitIndex != notFound) {
+    String url = inURL;
+    int splitLoc = url.find('\n');
+    if (splitLoc > 0) {
         if (title)
-            *title = url.substring(splitIndex + 1);
-        return url.left(splitIndex);
-    }
-    if (title)
+            *title = url.substring(splitLoc+1);
+        url.truncate(splitLoc);
+    } else if (title)
         *title = url;
     return url;
 }
@@ -225,10 +224,10 @@ static void append(Vector<char>& vector, const CString& string)
 // Find the markup between "<!--StartFragment -->" and "<!--EndFragment -->", accounting for browser quirks.
 static String extractMarkupFromCFHTML(const String& cfhtml)
 {
-    unsigned markupStart = cfhtml.findIgnoringASCIICase("<html"_s);
-    unsigned tagStart = cfhtml.findIgnoringASCIICase("startfragment"_s, markupStart);
+    unsigned markupStart = cfhtml.findIgnoringASCIICase("<html");
+    unsigned tagStart = cfhtml.findIgnoringASCIICase("startfragment", markupStart);
     unsigned fragmentStart = cfhtml.find('>', tagStart) + 1;
-    unsigned tagEnd = cfhtml.findIgnoringASCIICase("endfragment"_s, fragmentStart);
+    unsigned tagEnd = cfhtml.findIgnoringASCIICase("endfragment", fragmentStart);
     unsigned fragmentEnd = cfhtml.reverseFind('<', tagEnd);
     return cfhtml.substring(fragmentStart, fragmentEnd - fragmentStart).stripWhiteSpace();
 }
@@ -299,9 +298,11 @@ void replaceNewlinesWithWindowsStyleNewlines(String& str)
     str = result.toString();
 }
 
-void replaceNBSPWithSpace(String& string)
+void replaceNBSPWithSpace(String& str)
 {
-    string = makeStringByReplacingAll(string, noBreakSpace, space);
+    static const UChar NonBreakingSpaceCharacter = 0xA0;
+    static const UChar SpaceCharacter = ' ';
+    str.replace(NonBreakingSpaceCharacter, SpaceCharacter);
 }
 
 FORMATETC* urlWFormat()
@@ -448,14 +449,14 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
 
     if (SUCCEEDED(dataObject->GetData(urlWFormat(), &store))) {
         // URL using Unicode
-        auto* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
+        UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
         url = extractURL(String(data), title);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
     } else if (SUCCEEDED(dataObject->GetData(urlFormat(), &store))) {
         // URL using ASCII
         char* data = static_cast<char*>(GlobalLock(store.hGlobal));
-        url = extractURL(String::fromLatin1(data), title);
+        url = extractURL(String(data), title);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
     }
@@ -474,7 +475,7 @@ String getURL(IDataObject* dataObject, DragData::FilenameConversionPolicy filena
             // filename using ascii
             char* data = static_cast<char*>(GlobalLock(store.hGlobal));
             if (data && data[0] && (PathFileExistsA(data) || PathIsUNCA(data))) {
-                url = URL::fileURLWithFileSystemPath(String::fromLatin1(data)).fileSystemPath();
+                url = URL::fileURLWithFileSystemPath(String(data)).fileSystemPath();
                 if (title)
                     *title = url;
             }
@@ -519,14 +520,14 @@ String getPlainText(IDataObject* dataObject)
     String text;
     if (SUCCEEDED(dataObject->GetData(plainTextWFormat(), &store))) {
         // Unicode text
-        auto* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
+        UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
         text = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
     } else if (SUCCEEDED(dataObject->GetData(plainTextFormat(), &store))) {
         // ASCII text
         char* data = static_cast<char*>(GlobalLock(store.hGlobal));
-        text = String::fromLatin1(data);
+        text = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
     } else {
@@ -554,7 +555,7 @@ String getTextHTML(IDataObject* data)
     STGMEDIUM store;
     String html;
     if (SUCCEEDED(data->GetData(texthtmlFormat(), &store))) {
-        auto* data = static_cast<wchar_t*>(GlobalLock(store.hGlobal));
+        UChar* data = static_cast<UChar*>(GlobalLock(store.hGlobal));
         html = String(data);
         GlobalUnlock(store.hGlobal);
         ReleaseStgMedium(&store);
@@ -612,7 +613,7 @@ bool containsFilenames(const DragDataMap*)
 Ref<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
 {
     // obtain baseURL if present
-    String srcURLStr("sourceURL:"_s);
+    String srcURLStr("sourceURL:");
     String srcURL;
     unsigned lineStart = cfhtml.findIgnoringASCIICase(srcURLStr);
     if (lineStart != -1) {

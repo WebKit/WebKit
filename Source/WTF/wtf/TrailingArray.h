@@ -54,7 +54,6 @@ public:
     using reverse_iterator = std::reverse_iterator<iterator>;
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-protected:
     explicit TrailingArray(unsigned size)
         : m_size(size)
     {
@@ -67,16 +66,8 @@ protected:
         : m_size(size)
     {
         static_assert(std::is_final_v<Derived>);
-        ASSERT(static_cast<size_t>(std::distance(first, last)) == size);
+        ASSERT(std::distance(first, last) == size);
         std::uninitialized_copy(first, last, begin());
-    }
-
-    template<typename... Args>
-    TrailingArray(unsigned size, Args&&... args) // create with given size and constructor arguments for all elements
-        : m_size(size)
-    {
-        static_assert(std::is_final_v<Derived>);
-        VectorTypeOperations<T>::initializeWithArgs(begin(), end(), std::forward<Args>(args)...);
     }
 
     ~TrailingArray()
@@ -84,7 +75,6 @@ protected:
         VectorTypeOperations<T>::destruct(begin(), end());
     }
 
-public:
     static constexpr size_t allocationSize(unsigned size)
     {
         return offsetOfData() + size * sizeof(T);

@@ -36,7 +36,7 @@ WI.CSSCompletions = class CSSCompletions
     constructor(values, {acceptEmptyPrefix} = {})
     {
         console.assert(Array.isArray(values), values);
-        console.assert(!values.length || typeof values[0] === "string", "Expected an array of string values or an empty array", values);
+        console.assert(typeof values[0] === "string", "Expect an array of string values", values);
 
         this._values = values.slice();
         this._values.sort();
@@ -138,11 +138,20 @@ WI.CSSCompletions = class CSSCompletions
         return this._values;
     }
 
+    addValues(values)
+    {
+        console.assert(Array.isArray(values), values);
+        if (!values.length)
+            return;
+
+        this._values.pushAll(values);
+        this._values.sort();
+
+        this._queryController?.addValues(values);
+    }
+
     executeQuery(query)
     {
-        if (!query)
-            return this._acceptEmptyPrefix ? this._values.slice() : [];
-
         this._queryController ||= new WI.CSSQueryController(this._values);
 
         return this._queryController.executeQuery(query);

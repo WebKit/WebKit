@@ -96,7 +96,7 @@ class TestExporterTest(unittest.TestCase):
         def branch_ref_exists(self, name):
             return False
 
-        def create_patch(self, commit, arguments, commit_message=False):
+        def create_patch(self, commit, arguments):
             self.calls.append('create_patch ' + commit + ' ' + str(arguments))
             return self.mock_format_patch_result
 
@@ -138,7 +138,7 @@ class TestExporterTest(unittest.TestCase):
             'checkout master',
             'reset hard origin/master',
             'checkout new branch wpt-export-for-webkit-1234',
-            'apply_mail_patch patch.temp -3',
+            'apply_mail_patch patch.temp ',
             'commit -a -m WebKit export of https://bugs.webkit.org/show_bug.cgi?id=1234',
             'remote ',
             'remote add USER https://USER@github.com/USER/wpt.git',
@@ -166,7 +166,7 @@ class TestExporterTest(unittest.TestCase):
             'checkout master',
             'reset hard origin/master',
             'checkout new branch wpt-export-for-webkit-1234',
-            'apply_mail_patch patch.temp -3',
+            'apply_mail_patch patch.temp ',
             'commit -a -m WebKit export of https://bugs.webkit.org/show_bug.cgi?id=1234',
             'remote ',
             'remote add USER https://USER@github.com/USER/wpt.git',

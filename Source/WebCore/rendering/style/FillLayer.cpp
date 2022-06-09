@@ -41,7 +41,7 @@ struct SameSizeAsFillLayer : RefCounted<SameSizeAsFillLayer> {
     unsigned bitfields2 : 11;
 };
 
-static_assert(sizeof(FillLayer) == sizeof(SameSizeAsFillLayer), "FillLayer should stay small");
+COMPILE_ASSERT(sizeof(FillLayer) == sizeof(SameSizeAsFillLayer), FillLayer_should_stay_small);
 
 Ref<FillLayer> FillLayer::create(FillLayerType type)
 {

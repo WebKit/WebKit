@@ -877,6 +877,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setDefaultFixedFontSize(13);
     preferences->setMinimumFontSize(0);
     preferences->setDefaultTextEncodingName(_bstr_t(L"ISO-8859-1"));
+    preferences->setJavaEnabled(FALSE);
     preferences->setJavaScriptEnabled(TRUE);
     preferences->setEditableLinkBehavior(WebKitEditableLinkOnlyLiveWithShiftKey);
     preferences->setDOMPasteAllowed(TRUE);
@@ -974,9 +975,9 @@ static void setDefaultsToConsistentValuesForTesting()
     String libraryPath = libraryPathForDumpRenderTree();
 
     // Set up these values before creating the WebView so that the various initializations will see these preferred values.
-    CFPreferencesSetAppValue(WebDatabaseDirectoryDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "Databases"_s).createCFString().get(), appId.get());
-    CFPreferencesSetAppValue(WebStorageDirectoryDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "LocalStorage"_s).createCFString().get(), appId.get());
-    CFPreferencesSetAppValue(WebKitLocalCacheDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "LocalCache"_s).createCFString().get(), appId.get());
+    CFPreferencesSetAppValue(WebDatabaseDirectoryDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "Databases").createCFString().get(), appId.get());
+    CFPreferencesSetAppValue(WebStorageDirectoryDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "LocalStorage").createCFString().get(), appId.get());
+    CFPreferencesSetAppValue(WebKitLocalCacheDefaultsKey, FileSystem::pathByAppendingComponent(libraryPath, "LocalCache").createCFString().get(), appId.get());
 #endif
 }
 
@@ -1103,7 +1104,7 @@ static void sizeWebViewForCurrentTest()
 
 static String findFontFallback(const char* pathOrUrl)
 {
-    String pathToFontFallback = FileSystem::parentPath(String::fromUTF8(pathOrUrl));
+    String pathToFontFallback = FileSystem::parentPath(pathOrUrl);
 
     wchar_t fullPath[_MAX_PATH];
     if (!_wfullpath(fullPath, pathToFontFallback.wideCharacters().data(), _MAX_PATH))
@@ -1113,30 +1114,29 @@ static String findFontFallback(const char* pathOrUrl)
         return emptyString();
 
     String pathToCheck = fullPath;
-    StringView pathToCheckView { pathToCheck };
 
-    static const String layoutTests = "LayoutTests"_s;
+    static const String layoutTests = "LayoutTests";
 
     // Find the layout test root on the current path:
-    size_t location = pathToCheckView.find(layoutTests);
+    size_t location = pathToCheck.find(layoutTests);
     if (WTF::notFound == location)
         return emptyString();
 
-    StringView pathToTest = pathToCheckView.substring(location + layoutTests.length() + 1);
-    String possiblePathToLogue = FileSystem::pathByAppendingComponent(pathToCheckView.left(location + layoutTests.length() + 1), "platform\\win"_s);
+    String pathToTest = pathToCheck.substring(location + layoutTests.length() + 1);
+    String possiblePathToLogue = FileSystem::pathByAppendingComponent(pathToCheck.substring(0, location + layoutTests.length() + 1), "platform\\win");
 
     Vector<String> possiblePaths;
     possiblePaths.append(FileSystem::pathByAppendingComponent(possiblePathToLogue, pathToTest));
 
     size_t nextCandidateEnd = pathToTest.reverseFind('\\');
     while (nextCandidateEnd && nextCandidateEnd != WTF::notFound) {
-        pathToTest = pathToTest.left(nextCandidateEnd);
+        pathToTest = pathToTest.substring(0, nextCandidateEnd);
         possiblePaths.append(FileSystem::pathByAppendingComponent(possiblePathToLogue, pathToTest));
         nextCandidateEnd = pathToTest.reverseFind('\\');
     }
 
     for (Vector<String>::iterator pos = possiblePaths.begin(); pos != possiblePaths.end(); ++pos) {
-        pathToFontFallback = FileSystem::pathByAppendingComponent(*pos, "resources\\"_s);
+        pathToFontFallback = FileSystem::pathByAppendingComponent(*pos, "resources\\");
 
         if (::PathIsDirectoryW(pathToFontFallback.wideCharacters().data()))
             return pathToFontFallback;
@@ -1150,7 +1150,7 @@ static void addFontFallbackIfPresent(const String& fontFallbackPath)
     if (fontFallbackPath.isEmpty())
         return;
 
-    String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css"_s);
+    String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
 
     if (!::PathFileExistsW(fontFallback.wideCharacters().data()))
         return;
@@ -1163,7 +1163,7 @@ static void removeFontFallbackIfPresent(const String& fontFallbackPath)
     if (fontFallbackPath.isEmpty())
         return;
 
-    String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css"_s);
+    String fontFallback = FileSystem::pathByAppendingComponent(fontFallbackPath, "Mac-compatible-font-fallback.css");
 
     if (!::PathFileExistsW(fontFallback.wideCharacters().data()))
         return;
@@ -1174,9 +1174,13 @@ static void removeFontFallbackIfPresent(const String& fontFallbackPath)
 static bool handleControlCommand(const char* command)
 {
     if (!strcmp("#CHECK FOR ABANDONED DOCUMENTS", command)) {
-        // DumpRenderTree does not support checking for abandoned documents.
-        fputs("Content-Type: text/plain\nContent-Length: 1\n\n#EOF\n", stdout);
-        fputs("#EOF\n", stderr);
+        // DumpRenderTree does not support checking for abandonded documents.
+        String result("\n");
+        printf("Content-Type: text/plain\n");
+        printf("Content-Length: %u\n", result.length());
+        fwrite(result.utf8().data(), 1, result.length(), stdout);
+        printf("#EOF\n");
+        fprintf(stderr, "#EOF\n");
         fflush(stdout);
         fflush(stderr);
         return true;
@@ -1289,7 +1293,7 @@ static void runTest(const string& inputLine)
 
     request->initWithURL(urlBStr, WebURLRequestUseProtocolCachePolicy, 60);
     request->setHTTPMethod(methodBStr);
-    if (hostName == "localhost"_s || hostName == "127.0.0.1"_s)
+    if (hostName == "localhost" || hostName == "127.0.0.1")
         request->setAllowsAnyHTTPSCertificate();
     frame->loadRequest(request.get());
 

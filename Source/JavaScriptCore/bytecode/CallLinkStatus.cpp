@@ -414,11 +414,11 @@ void CallLinkStatus::merge(const CallLinkStatus& other)
     }
 }
 
-void CallLinkStatus::filter(JSValue value)
+void CallLinkStatus::filter(VM& vm, JSValue value)
 {
     m_variants.removeAllMatching(
         [&] (CallVariant& variant) -> bool {
-            variant.filter(value);
+            variant.filter(vm, value);
             return !variant;
         });
 }

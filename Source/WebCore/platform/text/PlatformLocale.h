@@ -150,7 +150,7 @@ private:
 
 inline std::unique_ptr<Locale> Locale::createDefault()
 {
-    return Locale::create(AtomString { defaultLanguage() });
+    return Locale::create(defaultLanguage());
 }
 
 }

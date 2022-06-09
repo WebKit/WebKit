@@ -87,7 +87,7 @@ static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapCon
     if (header.keyAsHTTPHeaderName)
         headers.add(header.keyAsHTTPHeaderName.value(), header.value);
     else
-        headers.addUncommonHeader(header.key, header.value);
+        headers.add(header.key, header.value);
 
     if (guard == FetchHeaders::Guard::RequestNoCors)
         removePrivilegedNoCORSRequestHeaders(headers);
@@ -102,7 +102,7 @@ static ExceptionOr<void> fillHeaderMap(HTTPHeaderMap& headers, const FetchHeader
         auto& sequence = std::get<Vector<Vector<String>>>(headersInit);
         for (auto& header : sequence) {
             if (header.size() != 2)
-                return Exception { TypeError, "Header sub-sequence must contain exactly two items"_s };
+                return Exception { TypeError, "Header sub-sequence must contain exactly two items" };
             auto result = appendToHeaderMap(header[0], header[1], headers, guard);
             if (result.hasException())
                 return result.releaseException();
@@ -218,7 +218,7 @@ void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
         if (header.keyAsHTTPHeaderName)
             m_headers.add(header.keyAsHTTPHeaderName.value(), header.value);
         else
-            m_headers.addUncommonHeader(header.key, header.value);
+            m_headers.add(header.key, header.value);
     }
 }
 

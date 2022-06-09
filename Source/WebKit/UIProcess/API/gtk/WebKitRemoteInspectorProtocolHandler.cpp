@@ -30,7 +30,6 @@
 #include "WebPageProxy.h"
 #include "WebScriptMessageHandler.h"
 #include <wtf/URL.h>
-#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
@@ -79,13 +78,11 @@ RemoteInspectorProtocolHandler::RemoteInspectorProtocolHandler(WebKitWebContext*
 
 RemoteInspectorProtocolHandler::~RemoteInspectorProtocolHandler()
 {
-    for (auto* webView : m_webViews.keys()) {
-        g_signal_handlers_disconnect_by_data(webView, this);
+    for (auto* webView : m_webViews)
         g_object_weak_unref(G_OBJECT(webView), reinterpret_cast<GWeakNotify>(webViewDestroyed), this);
-    }
 
     for (auto* userContentManager : m_userContentManagers) {
-        webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->removeUserMessageHandlerForName("inspector"_s, API::ContentWorld::pageContentWorld());
+        webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->removeUserMessageHandlerForName("inspector", API::ContentWorld::pageContentWorld());
         g_object_weak_unref(G_OBJECT(userContentManager), reinterpret_cast<GWeakNotify>(userContentManagerDestroyed), this);
     }
 }
@@ -102,7 +99,7 @@ void RemoteInspectorProtocolHandler::userContentManagerDestroyed(RemoteInspector
 
 void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* request)
 {
-    URL requestURL = URL(String::fromLatin1(webkit_uri_scheme_request_get_uri(request)));
+    URL requestURL = URL({ }, webkit_uri_scheme_request_get_uri(request));
     if (!requestURL.port()) {
         GUniquePtr<GError> error(g_error_new_literal(WEBKIT_POLICY_ERROR, WEBKIT_POLICY_ERROR_CANNOT_SHOW_URI, "Cannot show inspector URL: no port provided"));
         webkit_uri_scheme_request_finish_error(request, error.get());
@@ -111,33 +108,57 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
 
     auto* webView = webkit_uri_scheme_request_get_web_view(request);
     ASSERT(webView);
-    auto webViewResult = m_webViews.add(webView, nullptr);
-    if (webViewResult.isNewEntry) {
-        g_signal_connect(webView, "notify::uri", G_CALLBACK(+[](WebKitWebView* webView, GParamSpec*, RemoteInspectorProtocolHandler* handler) {
-            URL webViewURL = URL(String::fromUTF8(webkit_web_view_get_uri(webView)));
-            if (!webViewURL.protocolIs("inspector"_s) || !handler->m_inspectorClients.contains(webViewURL.hostAndPort())) {
-                g_signal_handlers_disconnect_by_data(webView, handler);
-                g_object_weak_unref(G_OBJECT(webView), reinterpret_cast<GWeakNotify>(webViewDestroyed), handler);
-                handler->m_webViews.remove(webView);
-            }
-        }), this);
+    auto webViewResult = m_webViews.add(webView);
+    if (webViewResult.isNewEntry)
         g_object_weak_ref(G_OBJECT(webView), reinterpret_cast<GWeakNotify>(webViewDestroyed), this);
-    }
 
     auto* userContentManager = webkit_web_view_get_user_content_manager(webView);
     auto userContentManagerResult = m_userContentManagers.add(userContentManager);
     if (userContentManagerResult.isNewEntry) {
-        auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector"_s, API::ContentWorld::pageContentWorld());
+        auto handler = WebScriptMessageHandler::create(makeUnique<ScriptMessageClient>(*this), "inspector", API::ContentWorld::pageContentWorld());
         webkitUserContentManagerGetUserContentControllerProxy(userContentManager)->addUserScriptMessageHandler(handler.get());
         g_object_weak_ref(G_OBJECT(userContentManager), reinterpret_cast<GWeakNotify>(userContentManagerDestroyed), this);
     }
 
     auto* client = m_inspectorClients.ensure(requestURL.hostAndPort(), [this, &requestURL] {
-        return makeUnique<RemoteInspectorClient>(requestURL.hostAndPort(), *this);
+        return makeUnique<RemoteInspectorClient>(requestURL.host().utf8().data(), requestURL.port().value(), *this);
     }).iterator->value.get();
-    webViewResult.iterator->value = client;
 
-    auto* html = client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI);
+    GString* html = g_string_new(
+        "<html><head><title>Remote inspector</title>"
+        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
+        "<style>"
+        "  h1 { color: #babdb6; text-shadow: 0 1px 0 white; margin-bottom: 0; }"
+        "  html { font-family: -webkit-system-font; font-size: 11pt; color: #2e3436; padding: 20px 20px 0 20px; background-color: #f6f6f4; "
+        "         background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeec), color-stop(1, #f6f6f4));"
+        "         background-size: 100% 5em; background-repeat: no-repeat; }"
+        "  table { width: 100%; border-collapse: collapse; }"
+        "  table, td { border: 1px solid #d3d7cf; border-left: none; border-right: none; }"
+        "  p { margin-bottom: 30px; }"
+        "  td { padding: 15px; }"
+        "  td.data { width: 200px; }"
+        "  .targetname { font-weight: bold; }"
+        "  .targeturl { color: #babdb6; }"
+        "  td.input { width: 64px; }"
+        "  input { width: 100%; padding: 8px; }"
+        "</style>"
+        "</head><body><h1>Inspectable targets</h1>");
+    if (client->targets().isEmpty())
+        g_string_append(html, "<p>No targets found</p>");
+    else {
+        g_string_append(html, "<table>");
+        for (auto connectionID : client->targets().keys()) {
+            for (auto& target : client->targets().get(connectionID)) {
+                g_string_append_printf(html,
+                    "<tbody><tr>"
+                    "<td class=\"data\"><div class=\"targetname\">%s</div><div class=\"targeturl\">%s</div></td>"
+                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage('%" G_GUINT64_FORMAT ":%" G_GUINT64_FORMAT ":%s');\"></td>"
+                    "</tr></tbody>", target.name.data(), target.url.data(), connectionID, target.id, target.type.data());
+            }
+        }
+        g_string_append(html, "</table>");
+    }
+    g_string_append(html, "</body></html>");
     gsize streamLength = html->len;
     GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(g_string_free(html, FALSE), streamLength, g_free));
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");
@@ -149,51 +170,31 @@ void RemoteInspectorProtocolHandler::inspect(const String& hostAndPort, uint64_t
         client->inspect(connectionID, tatgetID, targetType);
 }
 
-void RemoteInspectorProtocolHandler::updateTargetList(WebKitWebView* webView)
-{
-    auto* clientForWebView = m_webViews.get(webView);
-    if (!clientForWebView)
-        return;
-
-    GString* script = g_string_new("document.getElementById('targetlist').innerHTML='");
-    clientForWebView->appendTargertList(script, RemoteInspectorClient::InspectorType::UI, RemoteInspectorClient::ShouldEscapeSingleQuote::Yes);
-    g_string_append(script, "';");
-    webkit_web_view_run_javascript(webView, script->str, nullptr, nullptr, nullptr);
-    g_string_free(script, TRUE);
-}
-
-void RemoteInspectorProtocolHandler::webViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent event, RemoteInspectorProtocolHandler* handler)
-{
-    if (event != WEBKIT_LOAD_FINISHED)
-        return;
-
-    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<gpointer>(webViewLoadChanged), handler);
-    handler->updateTargetList(webView);
-}
-
 void RemoteInspectorProtocolHandler::targetListChanged(RemoteInspectorClient& client)
 {
-    for (auto* webView : m_webViews.keys()) {
-        if (m_webViews.get(webView) != &client)
+    Vector<WebKitWebView*, 4> webViewsToRemove;
+    for (auto* webView : m_webViews) {
+        if (webkit_web_view_is_loading(webView))
             continue;
 
-        if (webkit_web_view_is_loading(webView))
-            g_signal_connect(webView, "load-changed", reinterpret_cast<GCallback>(webViewLoadChanged), this);
-        else
-            updateTargetList(webView);
+        URL webViewURL = URL({ }, webkit_web_view_get_uri(webView));
+        auto clientForWebView = m_inspectorClients.get(webViewURL.hostAndPort());
+        if (!clientForWebView) {
+            // This view is not showing a inspector view anymore.
+            webViewsToRemove.append(webView);
+        } else if (clientForWebView == &client)
+            webkit_web_view_reload(webView);
+    }
+
+    for (auto* webView : webViewsToRemove) {
+        g_object_weak_unref(G_OBJECT(webView), reinterpret_cast<GWeakNotify>(webViewDestroyed), this);
+        m_webViews.remove(webView);
     }
 }
 
 void RemoteInspectorProtocolHandler::connectionClosed(RemoteInspectorClient& client)
 {
-    m_webViews.removeIf([&](auto& entry) {
-        if (entry.value == &client) {
-            g_signal_handlers_disconnect_by_data(entry.key, this);
-            g_object_weak_unref(G_OBJECT(entry.key), reinterpret_cast<GWeakNotify>(webViewDestroyed), this);
-            return true;
-        }
-        return false;
-    });
+    targetListChanged(client);
     m_inspectorClients.remove(client.hostAndPort());
 }
 

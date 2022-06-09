@@ -43,7 +43,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CSSOMVariableReferenceValue);
 
 ExceptionOr<Ref<CSSOMVariableReferenceValue>> CSSOMVariableReferenceValue::create(String&& variable, RefPtr<CSSUnparsedValue>&& fallback)
 {
-    if (!variable.startsWith("--"_s))
+    if (!variable.startsWith("--"))
         return Exception { TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
     
     return adoptRef(*new CSSOMVariableReferenceValue(WTFMove(variable), WTFMove(fallback)));
@@ -51,7 +51,7 @@ ExceptionOr<Ref<CSSOMVariableReferenceValue>> CSSOMVariableReferenceValue::creat
 
 ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(String&& variable)
 {
-    if (!variable.startsWith("--"_s))
+    if (!variable.startsWith("--"))
         return Exception { TypeError, "Custom Variable Reference needs to have \"--\" prefix."_s };
     
     m_variable = WTFMove(variable);
@@ -61,17 +61,18 @@ ExceptionOr<void> CSSOMVariableReferenceValue::setVariable(String&& variable)
 String CSSOMVariableReferenceValue::toString() const
 {
     StringBuilder builder;
-    serialize(builder, { });
+    serialize(builder);
+    
     return builder.toString();
 }
 
-void CSSOMVariableReferenceValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
+void CSSOMVariableReferenceValue::serialize(StringBuilder& builder) const
 {
     builder.append("var(");
     builder.append(m_variable);
     if (m_fallback) {
         builder.append(", ");
-        m_fallback->serialize(builder, arguments);
+        m_fallback->serialize(builder);
     }
     builder.append(')');
 }

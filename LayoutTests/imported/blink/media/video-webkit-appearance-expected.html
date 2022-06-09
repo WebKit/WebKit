@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<title>video with -webkit-appearance media-play-button</title>
+<script src="media-file.js"></script>
+<video></video>
+<script>
+var video = document.querySelector('video');
+video.src = findMediaFile('video', 'content/test');
+
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  video.addEventListener('loadedmetadata', function() {
+    testRunner.notifyDone();
+  });
+}
+</script>

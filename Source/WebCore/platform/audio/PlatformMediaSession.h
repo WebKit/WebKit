@@ -102,7 +102,7 @@ public:
         MayResumePlaying = 1 << 0,
     };
 
-    virtual void clientCharacteristicsChanged(bool);
+    void clientCharacteristicsChanged();
 
     void beginInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);

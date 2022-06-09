@@ -48,15 +48,10 @@ static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo
 
 namespace WebCore {
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 NetworkExtensionContentFilter::SandboxExtensionsState NetworkExtensionContentFilter::m_sandboxExtensionsState = SandboxExtensionsState::NotSet;
-#endif
 
 bool NetworkExtensionContentFilter::enabled()
 {
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    return isRequired();
-#else
     bool enabled = false;
     switch (m_sandboxExtensionsState) {
     case SandboxExtensionsState::Consumed:
@@ -71,7 +66,6 @@ bool NetworkExtensionContentFilter::enabled()
     }
     LOG(ContentFiltering, "NetworkExtensionContentFilter is %s.\n", enabled ? "enabled" : "not enabled");
     return enabled;
-#endif
 }
 
 UniqueRef<NetworkExtensionContentFilter> NetworkExtensionContentFilter::create()
@@ -123,7 +117,7 @@ void NetworkExtensionContentFilter::willSendRequest(ResourceRequest& request, co
     if (!modifiedRequestURLString)
         return;
 
-    URL modifiedRequestURL { modifiedRequestURLString.get() };
+    URL modifiedRequestURL { URL(), modifiedRequestURLString.get() };
     if (!modifiedRequestURL.isValid()) {
         LOG(ContentFiltering, "NetworkExtensionContentFilter failed to convert modified URL string %@ to a  URL.\n", modifiedRequestURLString.get());
         return;
@@ -234,7 +228,6 @@ bool NetworkExtensionContentFilter::isRequired()
     return [NEFilterSource filterRequired];
 }
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasConsumedSandboxExtensions)
 {
     if (m_sandboxExtensionsState == SandboxExtensionsState::Consumed)
@@ -242,7 +235,6 @@ void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasCons
 
     m_sandboxExtensionsState = (hasConsumedSandboxExtensions ? SandboxExtensionsState::Consumed : SandboxExtensionsState::NotConsumed);
 }
-#endif
 
 } // namespace WebCore
 

@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-const ClassInfo FinalizationRegistryConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryConstructor) };
+const ClassInfo FinalizationRegistryConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryConstructor) };
 
 void FinalizationRegistryConstructor::finishCreation(VM& vm, FinalizationRegistryPrototype* prototype)
 {
@@ -65,7 +65,7 @@ JSC_DEFINE_HOST_FUNCTION(constructFinalizationRegistry, (JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!callFrame->argument(0).isCallable())
+    if (!callFrame->argument(0).isCallable(vm))
         return throwVMTypeError(globalObject, scope, "First argument to FinalizationRegistry should be a function"_s);
 
     JSObject* newTarget = asObject(callFrame->newTarget());

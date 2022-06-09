@@ -31,15 +31,17 @@
 
 namespace WebCore {
 
-enum class GraphicsContextCGFlag : uint8_t {
-    IsLayerCGContext        = 1 << 0,
-    IsAcceleratedCGContext  = 1 << 1
+enum GraphicsContextCGFlag {
+    IsLayerCGContext = 1 << 0,
+    IsAcceleratedCGContext = 1 << 1
 };
+
+typedef unsigned GraphicsContextCGFlags;
 
 class GraphicsContextPlatformPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GraphicsContextPlatformPrivate(RetainPtr<CGContextRef>&& cgContext, OptionSet<GraphicsContextCGFlag> flags = { })
+    GraphicsContextPlatformPrivate(RetainPtr<CGContextRef>&& cgContext, GraphicsContextCGFlags flags = 0)
         : m_cgContext(WTFMove(cgContext))
 #if PLATFORM(WIN)
         , m_hdc(0)
@@ -81,7 +83,7 @@ public:
 
     RetainPtr<CGContextRef> m_cgContext;
     bool m_userToDeviceTransformKnownToBeIdentity;
-    OptionSet<GraphicsContextCGFlag> m_contextFlags;
+    GraphicsContextCGFlags m_contextFlags;
 };
 
 }

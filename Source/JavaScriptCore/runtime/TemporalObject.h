@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2021 Igalia, S.L. All rights reserved.
  *  Copyright (C) 2021 Sony Interactive Entertainment Inc.
- *  Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -27,12 +27,6 @@
 
 namespace JSC {
 
-#define JSC_TEMPORAL_PLAIN_DATE_UNITS(macro) \
-    macro(year, Year) \
-    macro(month, Month) \
-    macro(day, Day) \
-
-
 #define JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
     macro(hour, Hour) \
     macro(minute, Minute) \
@@ -57,7 +51,6 @@ enum class TemporalUnit : uint8_t {
 };
 #define JSC_COUNT_TEMPORAL_UNITS(name, capitalizedName) + 1
 static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT_TEMPORAL_UNITS);
-static constexpr unsigned numberOfTemporalPlainDateUnits = 0 JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 
@@ -69,7 +62,7 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     template<typename CellType, SubspaceAccess>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static IsoSubspace* subspaceFor(VM& vm)
     {
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(TemporalObject, Base);
         return &vm.plainObjectSpace();

@@ -1,5 +1,4 @@
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
-//@ skip if !$isFTLPlatform
 //@ requireOptions("--useExecutableAllocationFuzz=false")
 // Source in wasm/stress/memcpy-wasm
 if (typeof WebAssembly === "object") {

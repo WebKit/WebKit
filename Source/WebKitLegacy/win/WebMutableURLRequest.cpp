@@ -49,7 +49,7 @@ WebMutableURLRequest::WebMutableURLRequest(bool isMutable)
     : m_isMutable(isMutable)
 {
     gClassCount++;
-    gClassNameCount().add("WebMutableURLRequest"_s);
+    gClassNameCount().add("WebMutableURLRequest");
 }
 
 WebMutableURLRequest* WebMutableURLRequest::createInstance()
@@ -93,7 +93,7 @@ WebMutableURLRequest* WebMutableURLRequest::createImmutableInstance(const Resour
 WebMutableURLRequest::~WebMutableURLRequest()
 {
     gClassCount--;
-    gClassNameCount().remove("WebMutableURLRequest"_s);
+    gClassNameCount().remove("WebMutableURLRequest");
 }
 
 // IUnknown -------------------------------------------------------------------

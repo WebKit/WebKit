@@ -31,6 +31,7 @@ enum DeviceType {
 
 [
     Conditional=MEDIA_CONTROLS_SCRIPT,
+    ImplementationLacksVTable,
     LegacyNoInterfaceObject,
 ] interface MediaControlsHost {
     readonly attribute DOMString layoutTraitsClassName;

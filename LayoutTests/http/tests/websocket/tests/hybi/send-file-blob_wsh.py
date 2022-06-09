@@ -15,15 +15,15 @@ def web_socket_do_extra_handshake(request):
 
 
 def web_socket_transfer_data(request):
-    expected_messages = [b'Hello, world!']
+    expected_messages = ['Hello, world!']
 
     for test_number, expected_message in enumerate(expected_messages):
         frame = _retrieve_frame(request.ws_stream)
         if frame.opcode == common.OPCODE_BINARY and frame.payload == expected_message and frame.fin:
-            msgutil.send_message(request, ('PASS: Message #%d.' % test_number).encode())
+            msgutil.send_message(request, 'PASS: Message #%d.' % test_number)
         else:
-            msgutil.send_message(request, ('FAIL: Message #%d: Received unexpected frame: opcode = %r, payload = %r, final = %r' % (test_number, frame.opcode, frame.payload, frame.fin)).encode())
+            msgutil.send_message(request, 'FAIL: Message #%d: Received unexpected frame: opcode = %r, payload = %r, final = %r' % (test_number, frame.opcode, frame.payload, frame.fin))
 
 
 def all_distinct_bytes():
-    return b''.join([i.to_bytes(1, 'big') for i in range(256)])
+    return ''.join([chr(i) for i in xrange(256)])

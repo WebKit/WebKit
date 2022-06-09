@@ -308,7 +308,7 @@ inline Parser::Token Parser::nextTokenInternal()
         if (isBinaryOperatorContext())
             return makeTokenAndAdvance(MULOP, NumericOp::OP_Mul);
         ++m_nextPos;
-        return Token(NAMETEST, "*"_s);
+        return Token(NAMETEST, "*");
     case '$': { // $ QName
         m_nextPos++;
         String name;
@@ -325,13 +325,13 @@ inline Parser::Token Parser::nextTokenInternal()
     skipWS();
     // If we're in an operator context, check for any operator names
     if (isBinaryOperatorContext()) {
-        if (name == "and"_s) // ### hash?
+        if (name == "and") //### hash?
             return Token(AND);
-        if (name == "or"_s)
+        if (name == "or")
             return Token(OR);
-        if (name == "mod"_s)
+        if (name == "mod")
             return Token(MULOP, NumericOp::OP_Mod);
-        if (name == "div"_s)
+        if (name == "div")
             return Token(MULOP, NumericOp::OP_Div);
     }
 
@@ -372,13 +372,13 @@ inline Parser::Token Parser::nextTokenInternal()
 
         // Either node type oor function name.
 
-        if (name == "processing-instruction"_s)
+        if (name == "processing-instruction")
             return Token(PI);
-        if (name == "node"_s)
+        if (name == "node")
             return Token(NODE);
-        if (name == "text"_s)
+        if (name == "text")
             return Token(TEXT_);
-        if (name == "comment"_s)
+        if (name == "comment")
             return Token(COMMENT);
 
         return Token(FUNCTIONNAME, name);
@@ -429,7 +429,7 @@ int Parser::lex(YYSTYPE& yylval)
     return token.type;
 }
 
-bool Parser::expandQualifiedName(const String& qualifiedName, AtomString& localName, AtomString& namespaceURI)
+bool Parser::expandQualifiedName(const String& qualifiedName, String& localName, String& namespaceURI)
 {
     size_t colon = qualifiedName.find(':');
     if (colon != notFound) {
@@ -437,14 +437,14 @@ bool Parser::expandQualifiedName(const String& qualifiedName, AtomString& localN
             m_sawNamespaceError = true;
             return false;
         }
-        namespaceURI = m_resolver->lookupNamespaceURI(StringView(qualifiedName).left(colon).toAtomString());
+        namespaceURI = m_resolver->lookupNamespaceURI(qualifiedName.left(colon));
         if (namespaceURI.isNull()) {
             m_sawNamespaceError = true;
             return false;
         }
-        localName = StringView(qualifiedName).substring(colon + 1).toAtomString();
+        localName = qualifiedName.substring(colon + 1);
     } else
-        localName = AtomString { qualifiedName };
+        localName = qualifiedName;
     return true;
 }
 

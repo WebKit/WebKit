@@ -28,6 +28,7 @@
 [
     Conditional=VIDEO,
     LegacyNoInterfaceObject,
+    ImplementationLacksVTable,
 ] interface VideoPlaybackQuality {
     readonly attribute unrestricted double creationTime;
     readonly attribute unsigned long totalVideoFrames;

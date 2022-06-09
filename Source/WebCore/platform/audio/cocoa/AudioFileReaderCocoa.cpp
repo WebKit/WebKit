@@ -202,10 +202,10 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
             }
         }
     });
-    parser->setDidProvideMediaDataCallback([&](Ref<MediaSampleAVFObjC>&& sample, uint64_t trackID, const String&) {
+    parser->setDidProvideMediaDataCallback([&](Ref<MediaSample>&& sample, uint64_t trackID, const String&) {
         if (!audioTrackId || trackID != *audioTrackId)
             return;
-        samples.append(WTFMove(sample));
+        samples.append(static_reference_cast<MediaSampleAVFObjC>(WTFMove(sample)));
     });
     parser->setCallOnClientThreadCallback([](auto&& function) {
         function();
@@ -219,7 +219,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
     parser->appendData(WTFMove(segment));
     if (!track)
         return nullptr;
-    parser->flushPendingAudioSamples();
+    parser->flushPendingAudioBuffers();
     return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(buffer), track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
 }
 

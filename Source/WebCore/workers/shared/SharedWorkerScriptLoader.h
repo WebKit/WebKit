@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,46 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "MessagePortIdentifier.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceResponse.h"
 #include "WorkerOptions.h"
 #include "WorkerScriptLoaderClient.h"
-#include <wtf/CompletionHandler.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-struct ServiceWorkerRegistrationData;
 class SharedWorker;
 class WorkerScriptLoader;
-struct WorkerFetchResult;
-struct WorkerInitializationData;
+
+class SharedWorkerScriptLoader;
+using SharedWorkerScriptLoaderIdentifier = ObjectIdentifier<SharedWorkerScriptLoader>;
+
+using TransferredMessagePort = std::pair<WebCore::MessagePortIdentifier, WebCore::MessagePortIdentifier>;
 
 class SharedWorkerScriptLoader : private WorkerScriptLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SharedWorkerScriptLoader(URL&&, SharedWorker&, WorkerOptions&&);
+    SharedWorkerScriptLoader(const URL&, SharedWorker&, TransferredMessagePort&&, WorkerOptions&&);
 
-    void load(CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)>&&);
-
+    SharedWorkerScriptLoaderIdentifier identifier() const { return m_identifier; }
     const URL& url() const { return m_url; }
     SharedWorker& worker() { return m_worker.get(); }
-    const WorkerOptions& options() const { return m_options; }
+    const WorkerOptions& options() { return m_options; }
 
 private:
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
     void notifyFinished() final;
 
+    const SharedWorkerScriptLoaderIdentifier m_identifier;
     const WorkerOptions m_options;
     const Ref<SharedWorker> m_worker;
+    TransferredMessagePort m_port;
     const Ref<WorkerScriptLoader> m_loader;
+    const Ref<ActiveDOMObject::PendingActivity<SharedWorker>> m_pendingActivity;
     const URL m_url;
-    CompletionHandler<void(WorkerFetchResult&&, WorkerInitializationData&&)> m_completionHandler;
 };
 
 } // namespace WebCore

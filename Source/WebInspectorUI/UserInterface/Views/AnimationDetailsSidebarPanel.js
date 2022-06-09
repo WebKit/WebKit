@@ -179,8 +179,8 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
         this._cssTransitionPropertyRow.value = cssTransitionProperty;
 
         this._targetRow.value = null;
-        this._animation.requestEffectTarget((styleable) => {
-            this._targetRow.value = WI.linkifyStyleable(styleable);
+        this._animation.requestEffectTarget((domNode) => {
+            this._targetRow.value = domNode ? WI.linkifyNodeReference(domNode) : null;
         });
     }
 
@@ -191,6 +191,7 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
         this._codeMirrorSectionMap.clear();
 
         const precision = 0;
+        const readOnly = true;
 
         this._iterationCountRow.value = !isNaN(this._animation.iterationCount) ? this._animation.iterationCount.toLocaleString() : null;
         this._iterationStartRow.value = !isNaN(this._animation.iterationStart) ? this._animation.iterationStart.toLocaleString() : null;
@@ -231,7 +232,7 @@ WI.AnimationDetailsSidebarPanel = class AnimationDetailsSidebarPanel extends WI.
                     return {
                         allowedTokens: /\btag\b/,
                         callback(marker, valueObject, valueString) {
-                            let swatch = new WI.InlineSwatch(type, valueObject, {readOnly: true});
+                            let swatch = new WI.InlineSwatch(type, valueObject, readOnly);
                             codeMirror.setUniqueBookmark(marker.range.startPosition().toCodeMirror(), swatch.element);
                         }
                     };

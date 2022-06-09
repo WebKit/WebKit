@@ -35,6 +35,8 @@ class SVGRootInlineBox final : public LegacyRootInlineBox {
 public:
     explicit SVGRootInlineBox(RenderSVGText&);
 
+    RenderSVGText& renderSVGText();
+
     float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
@@ -47,8 +49,6 @@ public:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) final;
 
 private:
-    RenderSVGText& renderSVGText() const;
-
     bool isSVGRootInlineBox() const override { return true; }
     void reorderValueListsToLogicalOrder(Vector<SVGTextLayoutAttributes*>&);
     void layoutCharactersInTextBoxes(LegacyInlineFlowBox*, SVGTextLayoutEngine&);

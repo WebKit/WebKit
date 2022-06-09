@@ -60,7 +60,7 @@ inline String resultToString(XrResult value, XrInstance instance)
     char buffer[XR_MAX_RESULT_STRING_SIZE];
     XrResult result = xrResultToString(instance, value, buffer);
     if (result == XR_SUCCESS)
-        return String::fromLatin1(buffer);
+        return String(buffer);
     return makeString("<unknown ", int(value), ">");
 }
 
@@ -127,12 +127,12 @@ inline String handenessToString(XRHandedness handeness)
 {
     switch (handeness) {
     case XRHandedness::Left:
-        return "left"_s;
+        return "left";
     case XRHandedness::Right:
-        return "right"_s;
+        return "right";
     default:
         ASSERT_NOT_REACHED();
-        return emptyString();
+        return "";
     }
 }
 

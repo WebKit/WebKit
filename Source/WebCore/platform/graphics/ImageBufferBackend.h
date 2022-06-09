@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,9 @@
 
 #pragma once
 
-#include "CopyImageOptions.h"
 #include "DestinationColorSpace.h"
 #include "FloatRect.h"
 #include "GraphicsTypesGL.h"
-#include "ImageBufferAllocator.h"
 #include "ImagePaintingOptions.h"
 #include "IntRect.h"
 #include "PixelBufferFormat.h"
@@ -38,35 +36,28 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-#if USE(CAIRO)
-#include "RefPtrCairo.h"
-#include <cairo.h>
-#endif
-
 namespace WebCore {
 
 class GraphicsContext;
 class GraphicsContextGL;
-#if HAVE(IOSURFACE)
-class IOSurfacePool;
-#endif
+class HostWindow;
 class Image;
 class NativeImage;
 class PixelBuffer;
+
+enum BackingStoreCopy {
+    CopyBackingStore, // Guarantee subsequent draws don't affect the copy.
+    DontCopyBackingStore // Subsequent draws may affect the copy.
+};
 
 enum class PreserveResolution : uint8_t {
     No,
     Yes,
 };
 
-enum class SetNonVolatileResult : uint8_t {
+enum class VolatilityState : uint8_t {
     Valid,
     Empty
-};
-
-enum class VolatilityState : uint8_t {
-    NonVolatile,
-    Volatile
 };
 
 class ThreadSafeImageBufferFlusher {
@@ -78,12 +69,6 @@ public:
     virtual void flush() = 0;
 };
 
-class ImageBufferBackendSharing {
-public:
-    virtual ~ImageBufferBackendSharing() = default;
-    virtual bool isImageBufferBackendHandleSharing() const { return false; }
-};
-
 class ImageBufferBackend {
 public:
     struct Parameters {
@@ -91,10 +76,6 @@ public:
         float resolutionScale;
         DestinationColorSpace colorSpace;
         PixelFormat pixelFormat;
-        RenderingPurpose purpose;
-
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<Parameters> decode(Decoder&);
     };
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend();
@@ -109,10 +90,15 @@ public:
 
     virtual IntSize backendSize() const { return { }; }
 
-    virtual void finalizeDrawIntoContext(GraphicsContext&) { }
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const = 0;
+    virtual RefPtr<Image> copyImage(BackingStoreCopy, PreserveResolution) const = 0;
+
+    WEBCORE_EXPORT virtual void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) = 0;
+    WEBCORE_EXPORT virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) = 0;
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
+    WEBCORE_EXPORT virtual RefPtr<Image> sinkIntoImage(PreserveResolution);
+    WEBCORE_EXPORT virtual void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 
     virtual void clipToMask(GraphicsContext&, const FloatRect&) { }
 
@@ -122,24 +108,16 @@ public:
     virtual String toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const = 0;
     virtual Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const = 0;
 
-    virtual RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator& = ImageBufferAllocator()) const = 0;
+    virtual std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual bool copyToPlatformTexture(GraphicsContextGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const { return false; }
 
-#if USE(CAIRO)
-    virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }
-#endif
-
     virtual bool isInUse() const { return false; }
     virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
-
-    // Returns true on success.
-    virtual bool setVolatile() { return true; }
-    virtual SetNonVolatileResult setNonVolatile() { return SetNonVolatileResult::Valid; }
-    virtual VolatilityState volatilityState() const { return VolatilityState::NonVolatile; }
-    virtual void setVolatilityState(VolatilityState) { }
+    virtual VolatilityState setVolatile(bool) { return VolatilityState::Valid; }
+    virtual void releaseBufferToPool() { }
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 
@@ -152,8 +130,6 @@ public:
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 
     virtual void ensureNativeImagesHaveCopiedBackingStore() { }
-
-    virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
 
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);
@@ -173,55 +149,15 @@ protected:
     float resolutionScale() const { return m_parameters.resolutionScale; }
     const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
-    RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
 
     IntRect logicalRect() const { return IntRect(IntPoint::zero(), logicalSize()); };
     IntRect backendRect() const { return IntRect(IntPoint::zero(), backendSize()); };
 
-    WEBCORE_EXPORT RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, void* data, const ImageBufferAllocator&) const;
+    WEBCORE_EXPORT std::optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, void* data) const;
     WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);
 
     Parameters m_parameters;
 };
-
-template<typename Encoder> void ImageBufferBackend::Parameters::encode(Encoder& encoder) const
-{
-    encoder << logicalSize;
-    encoder << resolutionScale;
-    encoder << colorSpace;
-    encoder << pixelFormat;
-    encoder << purpose;
-}
-
-template<typename Decoder> std::optional<ImageBufferBackend::Parameters> ImageBufferBackend::Parameters::decode(Decoder& decoder)
-{
-    std::optional<FloatSize> logicalSize;
-    decoder >> logicalSize;
-    if (!logicalSize)
-        return std::nullopt;
-
-    std::optional<float> resolutionScale;
-    decoder >> resolutionScale;
-    if (!resolutionScale)
-        return std::nullopt;
-
-    std::optional<DestinationColorSpace> colorSpace;
-    decoder >> colorSpace;
-    if (!colorSpace)
-        return std::nullopt;
-
-    std::optional<PixelFormat> pixelFormat;
-    decoder >> pixelFormat;
-    if (!pixelFormat)
-        return std::nullopt;
-
-    std::optional<RenderingPurpose> purpose;
-    decoder >> purpose;
-    if (!purpose)
-        return std::nullopt;
-
-    return { { *logicalSize, *resolutionScale, *colorSpace, *pixelFormat, *purpose } };
-}
 
 } // namespace WebCore
 

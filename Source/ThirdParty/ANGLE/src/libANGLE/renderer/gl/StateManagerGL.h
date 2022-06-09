@@ -14,7 +14,7 @@
 #include "libANGLE/State.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/gl/functionsgl_typedefs.h"
-#include "platform/FeaturesGL_autogen.h"
+#include "platform/FeaturesGL.h"
 
 #include <array>
 #include <map>
@@ -457,7 +457,7 @@ class StateManagerGL final : angle::NonCopyable
     float mSampleCoverageValue;
     bool mSampleCoverageInvert;
     bool mSampleMaskEnabled;
-    gl::SampleMaskArray<GLbitfield> mSampleMaskValues;
+    std::array<GLbitfield, gl::MAX_SAMPLE_MASK_WORDS> mSampleMaskValues;
 
     bool mDepthTestEnabled;
     GLenum mDepthFunc;

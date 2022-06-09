@@ -33,6 +33,10 @@
 
 #include "EGL/eglext.h"
 
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+constexpr char kANGLEPreferredDeviceEnv[] = "ANGLE_PREFERRED_DEVICE";
+#endif
+
 namespace rx
 {
 
@@ -250,12 +254,10 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
         }
     }
 
-    auto externalGPUs =
-        mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
-    auto integratedGPUs =
-        mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
-    auto discreteGPUs =
-        mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    auto externalGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    auto integratedGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    auto discreteGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+
     for (id<MTLDevice> device in deviceList.get())
     {
         if (device.removable)
@@ -293,13 +295,15 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
         }
     }
 
-    const std::string preferredDeviceString = angle::GetPreferredDeviceString();
-    if (!preferredDeviceString.empty())
+    // Check the ANGLE_PREFERRED_DEVICE environment variable for device preference
+    const std::string anglePreferredDevice = angle::GetEnvironmentVar(kANGLEPreferredDeviceEnv);
+    if (anglePreferredDevice != "")
     {
         for (id<MTLDevice> device in deviceList.get())
         {
             if ([device.name.lowercaseString
-                    containsString:[NSString stringWithUTF8String:preferredDeviceString.c_str()]])
+                    containsString:[NSString stringWithUTF8String:anglePreferredDevice.c_str()]
+                                       .lowercaseString])
             {
                 NSLog(@"Using Metal Device: %@", [device name]);
                 return device;
@@ -307,6 +311,17 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
         }
     }
 
+    // Default to use a low power device, look through integrated devices.
+    for (id<MTLDevice> device in integratedGPUs.get())
+    {
+        if (![device isHeadless])
+            return device;
+    }
+
+    // If we selected a low power device and there's no low-power devices avaialble, return the
+    // first (default) device.
+    if (deviceList.get().count > 0)
+        return deviceList[0];
 #endif
     // If we can't find anything, or are on a platform that doesn't support power options, create a
     // default device.
@@ -984,7 +999,8 @@ void DisplayMtl::initializeTextureCaps() const
 {
     mNativeTextureCaps.clear();
 
-    mFormatTable.generateTextureCaps(this, &mNativeTextureCaps);
+    mFormatTable.generateTextureCaps(this, &mNativeTextureCaps,
+                                     &mNativeCaps.compressedTextureFormats);
 
     // Re-verify texture extensions.
     mNativeExtensions.setTextureExtensionSupport(mNativeTextureCaps);
@@ -1061,7 +1077,7 @@ void DisplayMtl::initializeFeatures()
 
     // http://anglebug.com/4919
     // Stencil blit shader is not compiled on Intel & NVIDIA, need investigation.
-    ANGLE_FEATURE_CONDITION((&mFeatures), hasShaderStencilOutput,
+    ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilOutput,
                             isMetal2_1 && !isIntel() && !isNVIDIA());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), hasTextureSwizzle,
@@ -1084,7 +1100,7 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), hasNonUniformDispatch,
                             isOSX || isCatalyst || supportsAppleGPUFamily(4));
 
-    ANGLE_FEATURE_CONDITION((&mFeatures), allowSeparateDepthStencilBuffers,
+    ANGLE_FEATURE_CONDITION((&mFeatures), allowSeparatedDepthStencilBuffers,
                             !isOSX && !isCatalyst && !isSimulator);
     ANGLE_FEATURE_CONDITION((&mFeatures), rewriteRowMajorMatrices, true);
     ANGLE_FEATURE_CONDITION((&mFeatures), emulateTransformFeedback, true);
@@ -1095,9 +1111,6 @@ void DisplayMtl::initializeFeatures()
                             isIntel() && GetMacOSVersion() < OSVersion(12, 0, 0));
 
     ANGLE_FEATURE_CONDITION((&mFeatures), multisampleColorFormatShaderReadWorkaround, isAMD());
-    ANGLE_FEATURE_CONDITION((&mFeatures), copyIOSurfaceToNonIOSurfaceForReadOptimization,
-                            isIntel());
-    ANGLE_FEATURE_CONDITION((&mFeatures), copyTextureToBufferForReadOptimization, isAMD());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), forceNonCSBaseMipmapGeneration, isIntel());
 
@@ -1105,15 +1118,13 @@ void DisplayMtl::initializeFeatures()
 
     ANGLE_FEATURE_CONDITION((&mFeatures), directMetalGeneration, defaultDirectToMetal);
 
+    angle::PlatformMethods *platform = ANGLEPlatformCurrent();
+    platform->overrideFeaturesMtl(platform, &mFeatures);
+
     ApplyFeatureOverrides(&mFeatures, getState());
 #ifdef ANGLE_ENABLE_ASSERTS
-    static bool once = true;
-    if (once)
-    {
-        fprintf(stderr, "Shader compiler output: %s\n",
-                mFeatures.directMetalGeneration.enabled ? "Metal" : "SPIR-V");
-        once = false;
-    }
+    fprintf(stderr, "Shader compiler output: %s\n",
+            mFeatures.directMetalGeneration.enabled ? "Metal" : "SPIR-V");
 #endif
 }
 

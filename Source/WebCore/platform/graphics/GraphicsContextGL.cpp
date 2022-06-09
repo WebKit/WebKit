@@ -570,7 +570,7 @@ bool GraphicsContextGL::extractPixelBuffer(const PixelBuffer& pixelBuffer, DataF
         return false;
     data.resize(packedSize);
 
-    if (!packPixels(pixelBuffer.bytes(), sourceDataFormat, width, height, sourceImageSubRectangle, depth, 0, unpackImageHeight, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
+    if (!packPixels(pixelBuffer.data().data(), sourceDataFormat, width, height, sourceImageSubRectangle, depth, 0, unpackImageHeight, format, type, premultiplyAlpha ? AlphaOp::DoPremultiply : AlphaOp::DoNothing, data.data(), flipY))
         return false;
 
     return true;
@@ -633,21 +633,8 @@ void GraphicsContextGL::markLayerComposited()
         if (attrs.stencil)
             m_buffersToAutoClear |= GraphicsContextGL::STENCIL_BUFFER_BIT;
     }
-    if (m_client)
-        m_client->didComposite();
-}
-
-
-void GraphicsContextGL::forceContextLost()
-{
-    if (m_client)
-        m_client->forceContextLost();
-}
-
-void GraphicsContextGL::dispatchContextChangedNotification()
-{
-    if (m_client)
-        m_client->dispatchContextChangedNotification();
+    for (auto* client : copyToVector(m_clients))
+        client->didComposite();
 }
 
 } // namespace WebCore

@@ -30,6 +30,6 @@
 
 namespace JSC { namespace Yarr {
 
-ErrorCode checkSyntax(StringView pattern, StringView flags);
+ErrorCode checkSyntax(const String& pattern, const String& flags);
 
 }} // JSC::Yarr

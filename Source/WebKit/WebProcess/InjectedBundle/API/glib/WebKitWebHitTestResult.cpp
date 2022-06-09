@@ -32,10 +32,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * WebKitWebHitTestResult:
+ * SECTION: WebKitWebHitTestResult
+ * @Short_description: Result of a Hit Test (Web Process Extensions)
+ * @Title: WebKitWebHitTestResult
  * @See_also: #WebKitHitTestResult, #WebKitWebPage
- *
- * Result of a Hit Test (Web Process Extensions).
  *
  * WebKitWebHitTestResult extends #WebKitHitTestResult to provide information
  * about the #WebKitDOMNode in the coordinates of the Hit Test.

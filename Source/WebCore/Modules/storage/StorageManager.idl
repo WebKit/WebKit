@@ -27,6 +27,7 @@
 
 [
     EnabledBySetting=StorageAPIEnabled,
+    ImplementationLacksVTable,
     SecureContext,
     Exposed=(Window,Worker)
 ] interface StorageManager {

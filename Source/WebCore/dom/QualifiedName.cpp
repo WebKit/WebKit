@@ -20,7 +20,6 @@
 #include "config.h"
 #include "QualifiedName.h"
 
-#include "CommonAtomStrings.h"
 #include "QualifiedNameCache.h"
 #include "ThreadGlobalData.h"
 #include <wtf/Assertions.h>
@@ -49,6 +48,7 @@ void QualifiedName::init()
     if (initialized)
         return;
 
+    ASSERT_WITH_MESSAGE(WTF::nullAtomData.isConstructed(), "AtomString::init should have been called");
     anyName.construct(nullAtom(), starAtom(), starAtom());
     initialized = true;
 }
@@ -69,7 +69,7 @@ const AtomString& QualifiedName::localNameUpper() const
 unsigned QualifiedName::QualifiedNameImpl::computeHash() const
 {
     QualifiedNameComponents components = { m_prefix.impl(), m_localName.impl(), m_namespace.impl() };
-    return WTF::computeHash(components);
+    return hashComponents(components);
 }
 
 }

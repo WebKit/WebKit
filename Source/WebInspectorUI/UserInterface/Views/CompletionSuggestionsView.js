@@ -74,13 +74,11 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
         this._selectedIndex = index;
 
         selectedItemElement = this._selectedItemElement;
-        if (selectedItemElement) {
-            selectedItemElement.classList.add("selected");
-            selectedItemElement.scrollIntoViewIfNeeded(false);
-        }
+        if (!selectedItemElement)
+            return;
 
-        if (this._completions[this._selectedIndex])
-            this._delegate?.completionSuggestionsSelectedCompletion?.(this, this.getCompletionText(this._completions[this._selectedIndex]));
+        selectedItemElement.classList.add("selected");
+        selectedItemElement.scrollIntoViewIfNeeded(false);
     }
 
     selectNext()
@@ -91,6 +89,9 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
             this.selectedIndex = 0;
         else
             ++this.selectedIndex;
+
+        if (this._completions[this.selectedIndex])
+            this._delegate?.completionSuggestionsSelectedCompletion?.(this, this.getCompletionText(this._completions[this.selectedIndex]));
     }
 
     selectPrevious()
@@ -99,6 +100,9 @@ WI.CompletionSuggestionsView = class CompletionSuggestionsView extends WI.Object
             this.selectedIndex = this._containerElement.children.length - 1;
         else
             --this.selectedIndex;
+
+        if (this._completions[this.selectedIndex])
+            this._delegate?.completionSuggestionsSelectedCompletion?.(this, this.getCompletionText(this._completions[this.selectedIndex]));
     }
 
     isHandlingClickEvent()

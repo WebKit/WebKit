@@ -51,8 +51,9 @@ class SQLiteIDBCursor;
 class SQLiteIDBBackingStore final : public IDBBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseDirectory);
-    WEBCORE_EXPORT ~SQLiteIDBBackingStore() final;
+    SQLiteIDBBackingStore(PAL::SessionID, const IDBDatabaseIdentifier&, const String& databaseRootDirectory);
+    
+    ~SQLiteIDBBackingStore() final;
 
     IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
     uint64_t databaseVersion() final;
@@ -93,16 +94,18 @@ public:
 
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, Vector<String>& blobFilePaths);
 
-    WEBCORE_EXPORT static uint64_t databasesSizeForDirectory(const String& directory);
-    String databaseDirectory() const { return m_databaseDirectory; };
-    WEBCORE_EXPORT static String fullDatabasePathForDirectory(const String&);
-    WEBCORE_EXPORT static String encodeDatabaseName(const String& databaseName);
-    WEBCORE_EXPORT static String decodeDatabaseName(const String& encodedDatabaseName);
+    static uint64_t databasesSizeForDirectory(const String& directory);
 
-    WEBCORE_EXPORT static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
-    void handleLowMemoryWarning() final;
+    String databaseDirectory() const { return m_databaseDirectory; };
+    static String fullDatabasePathForDirectory(const String&);
+    static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
+
+    PAL::SessionID sessionID() const { return m_sessionID; }
 
 private:
+    String filenameForDatabaseName() const;
+    String fullDatabaseDirectoryWithUpgrade();
+
     IDBError ensureValidRecordsTable();
     IDBError ensureValidIndexRecordsTable();
     IDBError ensureValidIndexRecordsIndex();
@@ -203,6 +206,7 @@ private:
 
     std::unique_ptr<SQLiteStatement> m_cachedStatements[static_cast<int>(SQL::Invalid)];
 
+    PAL::SessionID m_sessionID;
     IDBDatabaseIdentifier m_identifier;
     std::unique_ptr<IDBDatabaseInfo> m_databaseInfo;
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfoBeforeVersionChange;
@@ -212,6 +216,7 @@ private:
     HashMap<IDBResourceIdentifier, std::unique_ptr<SQLiteIDBTransaction>> m_transactions;
     HashMap<IDBResourceIdentifier, SQLiteIDBCursor*> m_cursors;
 
+    String m_databaseRootDirectory;
     String m_databaseDirectory;
 };
 

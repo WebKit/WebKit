@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +25,20 @@
 
 #pragma once
 
-#import <utility>
-#import <wtf/CompletionHandler.h>
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
-#import <wtf/Range.h>
-#import <wtf/RangeSet.h>
+#import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
-struct WGPUBufferImpl {
-};
-
 namespace WebGPU {
 
-class Device;
-
-// https://gpuweb.github.io/gpuweb/#gpubuffer
-class Buffer : public WGPUBufferImpl, public RefCounted<Buffer> {
+class Buffer : public RefCounted<Buffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class State : uint8_t;
-    struct MappingRange {
-        size_t beginOffset; // Inclusive
-        size_t endOffset; // Exclusive
-    };
-
-    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t size, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
+    static Ref<Buffer> create()
     {
-        return adoptRef(*new Buffer(buffer, size, usage, initialState, initialMappingRange, device));
-    }
-    static Ref<Buffer> createInvalid(Device& device)
-    {
-        return adoptRef(*new Buffer(device));
+        return adoptRef(*new Buffer());
     }
 
     ~Buffer();
@@ -64,50 +46,16 @@ public:
     void destroy();
     const void* getConstMappedRange(size_t offset, size_t);
     void* getMappedRange(size_t offset, size_t);
-    void mapAsync(WGPUMapModeFlags, size_t offset, size_t, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback);
+    void mapAsync(WGPUMapModeFlags, size_t offset, size_t, WTF::Function<void(WGPUBufferMapAsyncStatus)>&& callback);
     void unmap();
-    void setLabel(String&&);
-
-    bool isValid() const { return m_buffer; }
-
-    // https://gpuweb.github.io/gpuweb/#buffer-state
-    enum class State : uint8_t {
-        Mapped,
-        MappedAtCreation,
-        MappingPending,
-        Unmapped,
-        Destroyed,
-    };
-
-    id<MTLBuffer> buffer() const { return m_buffer; }
-    uint64_t size() const { return m_size; }
-    WGPUBufferUsageFlags usage() const { return m_usage; }
-    State state() const { return m_state; }
-
-    Device& device() const { return m_device; }
+    void setLabel(const char*);
 
 private:
-    Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
-    Buffer(Device&);
-
-    bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
-    bool validateMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;
-    bool validateUnmap() const;
-
-    id<MTLBuffer> m_buffer { nil };
-
-    // https://gpuweb.github.io/gpuweb/#buffer-interface
-
-    const uint64_t m_size { 0 };
-    const WGPUBufferUsageFlags m_usage { 0 };
-    State m_state { State::Unmapped };
-    // [[mapping]] is unnecessary; we can just use m_device.contents.
-    MappingRange m_mappingRange { 0, 0 };
-    using MappedRanges = RangeSet<Range<size_t>>;
-    MappedRanges m_mappedRanges;
-    WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
-
-    const Ref<Device> m_device;
+    Buffer();
 };
 
 } // namespace WebGPU
+
+struct WGPUBufferImpl {
+    Ref<WebGPU::Buffer> buffer;
+};

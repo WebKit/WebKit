@@ -26,7 +26,8 @@
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "FloatRect.h"
 #include "RenderReplaced.h"
-#include "SVGBoundingBoxComputation.h"
+// FIXME: [LBSE] Upstream SVGBoundingBoxComputation
+// #include "SVGBoundingBoxComputation.h"
 
 namespace WebCore {
 
@@ -66,18 +67,32 @@ public:
 
     bool shouldApplyViewportClip() const;
 
-    FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
-    FloatRect objectBoundingBoxWithoutTransformations() const final { return m_objectBoundingBoxWithoutTransformations; }
-    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
-    FloatRect repaintRectInLocalCoordinates() const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
+    // FIXME: [LBSE] Mark final, add applyTransform to RenderLayerModelObject
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const;
 
-    LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }
+    FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
+    FloatRect strokeBoundingBox() const final { return m_strokeBoundingBox; }
+
+    // FIXME: [LBSE] Mark final, add repaintBoundingBox() to RenderObject
+    FloatRect repaintBoundingBox() const
+    {
+        // FIXME: [LBSE] Upstream SVGBoundingBoxComputation
+        // return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this);
+        return m_strokeBoundingBox;
+    }
+
+    LayoutRect visualOverflowRectEquivalent() const
+    {
+        // FIXME: [LBSE] Upstream SVGBoundingBoxComputation
+        // return SVGBoundingBoxComputation::computeVisualOverflowRect(*this);
+        return LayoutRect();
+    }
 
 private:
     void element() const = delete;
 
     bool isSVGRoot() const override { return true; }
-    ASCIILiteral renderName() const override { return "RenderSVGRoot"_s; }
+    const char* renderName() const override { return "RenderSVGRoot"; }
     bool requiresLayer() const override { return true; }
 
     // To prevent certain legacy code paths to hit assertions in debug builds, when switching off LBSE (during the teardown of the LBSE tree).
@@ -124,7 +139,6 @@ private:
 
     IntSize m_containerSize;
     FloatRect m_objectBoundingBox;
-    FloatRect m_objectBoundingBoxWithoutTransformations;
     FloatRect m_strokeBoundingBox;
     AffineTransform m_viewBoxTransform;
     AffineTransform m_supplementalLocalToParentTransform;

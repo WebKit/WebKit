@@ -34,7 +34,6 @@ enum class DebugOverlayRegions : uint8_t {
     WheelEventHandlerRegion = 1 << 1,
     TouchActionRegion = 1 << 2,
     EditableElementRegion = 1 << 3,
-    InteractionRegion = 1 << 4,
 };
 
 }
@@ -47,8 +46,7 @@ template<> struct EnumTraits<WebCore::DebugOverlayRegions> {
         WebCore::DebugOverlayRegions::NonFastScrollableRegion,
         WebCore::DebugOverlayRegions::WheelEventHandlerRegion,
         WebCore::DebugOverlayRegions::TouchActionRegion,
-        WebCore::DebugOverlayRegions::EditableElementRegion,
-        WebCore::DebugOverlayRegions::InteractionRegion
+        WebCore::DebugOverlayRegions::EditableElementRegion
     >;
 };
 

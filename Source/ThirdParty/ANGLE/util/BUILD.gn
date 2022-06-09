@@ -14,8 +14,6 @@ _util_sources = [
   "OSPixmap.h",
   "OSWindow.cpp",
   "OSWindow.h",
-  "angle_features_autogen.cpp",
-  "angle_features_autogen.h",
   "com_utils.h",
   "geometry_utils.cpp",
   "geometry_utils.h",
@@ -51,22 +49,11 @@ if (is_linux) {
 
 if (angle_use_x11) {
   _util_sources += [
-    "linux/x11/X11Pixmap.cpp",
-    "linux/x11/X11Pixmap.h",
-    "linux/x11/X11Window.cpp",
-    "linux/x11/X11Window.h",
+    "x11/X11Pixmap.cpp",
+    "x11/X11Pixmap.h",
+    "x11/X11Window.cpp",
+    "x11/X11Window.h",
   ]
-}
-
-if (angle_use_wayland) {
-  _util_sources += [
-    "linux/wayland/WaylandWindow.cpp",
-    "linux/wayland/WaylandWindow.h",
-  ]
-}
-
-if (angle_use_x11 || angle_use_wayland) {
-  _util_sources += [ "linux/LinuxWindow.cpp" ]
 }
 
 if (is_fuchsia) {
@@ -76,7 +63,7 @@ if (is_fuchsia) {
     "fuchsia/ScenicWindow.cpp",
     "fuchsia/ScenicWindow.h",
   ]
-} else if (use_ozone && !(angle_use_x11 || angle_use_wayland)) {
+} else if (use_ozone && !angle_use_x11) {
   # Use X11 impl by default otherwise switch to fake Ozone impl that does not
   # seem to do anything real.
   # TODO(msisov): probably, we need to have a proper support for different
@@ -167,10 +154,6 @@ angle_source_set("angle_util_loader") {
 }
 
 if (angle_has_frame_capture) {
-  config("angle_frame_capture_test_utils_config") {
-    include_dirs = [ "$angle_root/util/capture" ]
-  }
-
   angle_source_set("angle_frame_capture_test_utils") {
     testonly = true
     sources = [
@@ -182,35 +165,7 @@ if (angle_has_frame_capture) {
       "$angle_root:angle_compression",
       "$angle_root/third_party/rapidjson",
     ]
-
-    public_configs += [ ":angle_frame_capture_test_utils_config" ]
   }
-}
-
-config("angle_trace_loader_config") {
-  include_dirs = [ "$angle_root/util/capture" ]
-}
-
-angle_shared_library("angle_trace_loader") {
-  defines = [ "ANGLE_TRACE_LOADER_IMPLEMENTATION" ]
-
-  sources = [
-    "capture/angle_trace_gl.h",
-    "capture/trace_egl_loader_autogen.cpp",
-    "capture/trace_egl_loader_autogen.h",
-    "capture/trace_gles_loader_autogen.cpp",
-    "capture/trace_gles_loader_autogen.h",
-    "capture/traces_export.h",
-  ]
-  deps = [
-    "$angle_root:angle_common",
-    "$angle_root:angle_compression",
-  ]
-
-  public_configs += [
-    "$angle_root:no_gl_prototypes",
-    ":angle_trace_loader_config",
-  ]
 }
 
 config("angle_util_config") {
@@ -219,7 +174,6 @@ config("angle_util_config") {
   if ((is_linux || is_chromeos) && angle_use_x11) {
     libs = [ "X11" ]
   }
-  configs = [ "$angle_root:angle_vulkan_wayland_config" ]
 }
 
 foreach(is_shared_library,
@@ -352,12 +306,7 @@ config("angle_test_util_config") {
 
 angle_source_set("angle_test_utils") {
   public_configs = [ ":angle_test_util_config" ]
-
   public_deps = [ "$angle_root:angle_common" ]
-  if (angle_use_wayland) {
-    public_deps += [ "$angle_root:angle_wayland" ]
-  }
-
   deps = []
   sources = [
     "Timer.cpp",

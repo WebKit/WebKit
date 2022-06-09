@@ -33,9 +33,6 @@ class HTMLTableElement;
 
 class HTMLTablePartElement : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLTablePartElement);
-public:
-    RefPtr<const HTMLTableElement> findParentTable() const;
-
 protected:
     HTMLTablePartElement(const QualifiedName& tagName, Document& document)
         : HTMLElement(tagName, document)
@@ -44,6 +41,8 @@ protected:
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+
+    RefPtr<const HTMLTableElement> findParentTable() const;
 };
 
 } // namespace WebCore

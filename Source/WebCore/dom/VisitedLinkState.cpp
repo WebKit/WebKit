@@ -31,7 +31,6 @@
 
 #include "ElementIterator.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "HTMLAnchorElementInlines.h"
 #include "Page.h"
 #include "SVGAElement.h"
@@ -72,10 +71,10 @@ void VisitedLinkState::invalidateStyleForAllLinks()
 
 inline static std::optional<SharedStringHash> linkHashForElement(const Element& element)
 {
-    if (auto anchor = dynamicDowncast<HTMLAnchorElement>(element))
-        return anchor->visitedLinkHash();
-    if (auto anchor = dynamicDowncast<SVGAElement>(element))
-        return anchor->visitedLinkHash();
+    if (is<HTMLAnchorElement>(element))
+        return downcast<HTMLAnchorElement>(element).visitedLinkHash();
+    if (is<SVGAElement>(element))
+        return downcast<SVGAElement>(element).visitedLinkHash();
     return std::nullopt;
 }
 

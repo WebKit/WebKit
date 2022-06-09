@@ -1,0 +1,10 @@
+Tests that requestAnimationFrame is disabled when the setting/preference is false. Note: since the setting is true by default, this usually can't be tested directly in a browser.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS callbackInvoked is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

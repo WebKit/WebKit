@@ -33,8 +33,6 @@ namespace WebCore {
 class CSSCalcOperationNode final : public CSSCalcExpressionNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class IsRoot : bool { No, Yes };
-    
     static RefPtr<CSSCalcOperationNode> create(CalcOperator, RefPtr<CSSCalcExpressionNode>&& leftSide, RefPtr<CSSCalcExpressionNode>&& rightSide);
     static RefPtr<CSSCalcOperationNode> createSum(Vector<Ref<CSSCalcExpressionNode>>&& values);
     static RefPtr<CSSCalcOperationNode> createProduct(Vector<Ref<CSSCalcExpressionNode>>&& values);
@@ -69,8 +67,6 @@ public:
     bool isRoundConstant() const { return (isRoundOperation()) && !m_children.size(); }
     bool isHypotNode() const { return m_operator == CalcOperator::Hypot; }
     bool isPowOrSqrtNode() const { return m_operator == CalcOperator::Pow || m_operator == CalcOperator::Sqrt; }
-    bool shouldPreserveFunction() const { return isTrigNode() || isExpNode() || isInverseTrigNode() || isAtan2Node() || isSignNode() || isSignNode() || isSteppedNode() || isRoundOperation() || isPowOrSqrtNode() || isClampNode(); }
-    bool isClampNode() const { return m_operator == CalcOperator::Clamp; }
 
     void hoistChildrenWithOperator(CalcOperator);
     void combineChildren();
@@ -89,8 +85,10 @@ private:
     CSSCalcOperationNode(CalculationCategory category, CalcOperator op, Ref<CSSCalcExpressionNode>&& leftSide, Ref<CSSCalcExpressionNode>&& rightSide)
         : CSSCalcExpressionNode(category)
         , m_operator(op)
-        , m_children({ WTFMove(leftSide), WTFMove(rightSide) })
     {
+        m_children.reserveInitialCapacity(2);
+        m_children.uncheckedAppend(WTFMove(leftSide));
+        m_children.uncheckedAppend(WTFMove(rightSide));
     }
 
     CSSCalcOperationNode(CalculationCategory category, CalcOperator op, Vector<Ref<CSSCalcExpressionNode>>&& children)
@@ -128,22 +126,12 @@ private:
             return &rightSide;
         return nullptr;
     }
-    
-    static double convertToTopLevelValue(double value)
-    {
-        if (isnan(value))
-            value = std::numeric_limits<double>::infinity();
-        return value;
-    }
-    
+
     double evaluate(const Vector<double>& children) const
     {
-        auto result = evaluateOperator(m_operator, children);
-        return m_isRoot == IsRoot::No ? result : convertToTopLevelValue(result);
+        return evaluateOperator(m_operator, children);
     }
 
-    void makeTopLevelCalc();
-    bool shouldNotPreserveFunction() const { return isMinOrMaxNode() || isHypotNode(); }
     static double evaluateOperator(CalcOperator, const Vector<double>&);
     static Ref<CSSCalcExpressionNode> simplifyNode(Ref<CSSCalcExpressionNode>&&, int depth);
     static Ref<CSSCalcExpressionNode> simplifyRecursive(Ref<CSSCalcExpressionNode>&&, int depth);
@@ -157,7 +145,6 @@ private:
     CalcOperator m_operator;
     Vector<Ref<CSSCalcExpressionNode>> m_children;
     bool m_allowsNegativePercentageReference = false;
-    IsRoot m_isRoot = IsRoot::Yes;
 };
 
 }

@@ -5,13 +5,18 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 800
+      (children 783
         (GraphicsLayer
           (offsetFromRenderer width=-14 height=-14)
           (position 34.00 66.00)
           (anchor 0.06 0.89)
           (bounds 228.00 128.00)
           (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 20.00 30.00)
+          (bounds 4.00 4.00)
+          (contentsOpaque 1)
         )
         (GraphicsLayer
           (position 30.00 30.00)
@@ -239,12 +244,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 30.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 30.00)
+          (position 20.00 40.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -474,12 +474,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 40.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 40.00)
+          (position 20.00 50.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -709,12 +704,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 50.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 50.00)
+          (position 20.00 60.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -944,12 +934,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 60.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 60.00)
+          (position 20.00 70.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -1179,12 +1164,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 70.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 70.00)
+          (position 20.00 80.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -1414,12 +1394,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 80.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 80.00)
+          (position 20.00 90.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -1649,12 +1624,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 90.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 90.00)
+          (position 20.00 100.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -1884,12 +1854,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 100.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 100.00)
+          (position 20.00 110.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -2119,12 +2084,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 110.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 110.00)
+          (position 20.00 120.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -2354,12 +2314,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 120.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 120.00)
+          (position 20.00 130.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -2589,12 +2544,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 130.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 130.00)
+          (position 20.00 140.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -2824,12 +2774,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 140.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 140.00)
+          (position 20.00 150.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -3059,12 +3004,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 150.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 150.00)
+          (position 20.00 160.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -3294,12 +3234,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 160.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 160.00)
+          (position 20.00 170.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -3529,12 +3464,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 170.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 170.00)
+          (position 20.00 180.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -3764,12 +3694,7 @@
           (contentsOpaque 1)
         )
         (GraphicsLayer
-          (position 480.00 180.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 180.00)
+          (position 20.00 190.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )
@@ -3995,16 +3920,6 @@
         )
         (GraphicsLayer
           (position 470.00 190.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 480.00 190.00)
-          (bounds 4.00 4.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 490.00 190.00)
           (bounds 4.00 4.00)
           (contentsOpaque 1)
         )

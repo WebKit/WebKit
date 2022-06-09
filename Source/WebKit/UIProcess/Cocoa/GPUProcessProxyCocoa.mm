@@ -35,7 +35,6 @@ namespace WebKit {
 
 void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
 {
-    parameters.mobileGestaltExtensionHandle = createMobileGestaltSandboxExtensionIfNeeded();
     parameters.applicationVisibleName = applicationVisibleName();
 }
 

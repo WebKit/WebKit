@@ -15,10 +15,8 @@ addEventListener("load", async () => {
     await UIHelper.setHardwareKeyboardAttached(false);
     await UIHelper.activateAndWaitForInputSessionAt(160, innerHeight - 50);
 
-    shouldBecomeDifferent("document.scrollingElement.scrollTop", "0", async () => {
+    shouldBecomeDifferent("document.scrollingElement.scrollTop", "0", () => {
         document.getElementById("content").remove();
-        document.activeElement.blur();
-        await UIHelper.waitForKeyboardToHide();
         finishJSTest();
     });
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -167,16 +167,18 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& painti
     if (bitmapSize.isEmpty())
         return nullptr;
 
-    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options), DestinationColorSpace::SRGB());
+    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
     if (!snapshot)
         return nullptr;
 
-    auto& graphicsContext = snapshot->context();
+    auto graphicsContext = snapshot->bitmap().createGraphicsContext();
+    if (!graphicsContext)
+        return nullptr;
 
-    graphicsContext.clearRect(IntRect(IntPoint(), bitmapSize));
-    graphicsContext.applyDeviceScaleFactor(deviceScaleFactor);
-    graphicsContext.scale(bitmapScaleFactor);
-    graphicsContext.translate(-paintingRect.location());
+    graphicsContext->clearRect(IntRect(IntPoint(), bitmapSize));
+    graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+    graphicsContext->scale(bitmapScaleFactor);
+    graphicsContext->translate(-paintingRect.location());
 
     FrameView::SelectionInSnapshot shouldPaintSelection = FrameView::IncludeSelection;
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
@@ -190,7 +192,7 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& painti
 
     auto oldPaintBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(paintBehavior);
-    frameView->paintContentsForSnapshot(graphicsContext, paintingRect, shouldPaintSelection, FrameView::DocumentCoordinates);
+    frameView->paintContentsForSnapshot(*graphicsContext.get(), paintingRect, shouldPaintSelection, FrameView::DocumentCoordinates);
     frameView->setPaintBehavior(oldPaintBehavior);
 
     return snapshot;

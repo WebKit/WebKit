@@ -1,3 +1,0 @@
-
-PASS Test worker navigator hardware concurrency.
-

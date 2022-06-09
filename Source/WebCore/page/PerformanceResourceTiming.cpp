@@ -53,7 +53,7 @@ static double networkLoadTimeToDOMHighResTimeStamp(MonotonicTime timeOrigin, Mon
 
 static double fetchStart(MonotonicTime timeOrigin, const ResourceTiming& resourceTiming)
 {
-    if (auto fetchStart = resourceTiming.networkLoadMetrics().fetchStart; fetchStart && !resourceTiming.networkLoadMetrics().failsTAOCheck)
+    if (auto fetchStart = resourceTiming.networkLoadMetrics().fetchStart)
         return networkLoadTimeToDOMHighResTimeStamp(timeOrigin, fetchStart);
 
     // fetchStart is a required property.
@@ -99,9 +99,6 @@ PerformanceResourceTiming::~PerformanceResourceTiming() = default;
 
 const String& PerformanceResourceTiming::nextHopProtocol() const
 {
-    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
-        return emptyString();
-
     return m_resourceTiming.networkLoadMetrics().protocol;
 }
 
@@ -116,9 +113,6 @@ double PerformanceResourceTiming::redirectStart() const
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
-    if (m_resourceTiming.isLoadedFromServiceWorker())
-        return 0.0;
-
     if (!m_resourceTiming.networkLoadMetrics().redirectCount)
         return 0.0;
 
@@ -128,9 +122,6 @@ double PerformanceResourceTiming::redirectStart() const
 double PerformanceResourceTiming::redirectEnd() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
-        return 0.0;
-
-    if (m_resourceTiming.isLoadedFromServiceWorker())
         return 0.0;
 
     if (!m_resourceTiming.networkLoadMetrics().redirectCount)
@@ -151,9 +142,6 @@ double PerformanceResourceTiming::domainLookupStart() const
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
-    if (m_resourceTiming.isLoadedFromServiceWorker())
-        return fetchStart();
-
     if (!m_resourceTiming.networkLoadMetrics().domainLookupStart)
         return fetchStart();
 
@@ -164,9 +152,6 @@ double PerformanceResourceTiming::domainLookupEnd() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
-    if (m_resourceTiming.isLoadedFromServiceWorker())
-        return fetchStart();
 
     if (!m_resourceTiming.networkLoadMetrics().domainLookupEnd)
         return domainLookupStart();
@@ -179,9 +164,6 @@ double PerformanceResourceTiming::connectStart() const
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
 
-    if (m_resourceTiming.isLoadedFromServiceWorker())
-        return fetchStart();
-
     if (!m_resourceTiming.networkLoadMetrics().connectStart)
         return domainLookupEnd();
 
@@ -192,9 +174,6 @@ double PerformanceResourceTiming::connectEnd() const
 {
     if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
         return 0.0;
-
-    if (m_resourceTiming.isLoadedFromServiceWorker())
-        return fetchStart();
 
     if (!m_resourceTiming.networkLoadMetrics().connectEnd)
         return connectStart();

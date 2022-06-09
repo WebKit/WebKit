@@ -98,13 +98,6 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 namespace WebKit {
 using namespace WebCore;
 
-template<typename T> static Vector<PlatformCAAnimationRemote::KeyframeValue> toKeyframeValueVector(const Vector<T>& values)
-{
-    return values.map([](auto& value) {
-        return PlatformCAAnimationRemote::KeyframeValue { value };
-    });
-}
-
 static void encodeTimingFunction(IPC::Encoder& encoder, TimingFunction* timingFunction)
 {
     switch (timingFunction->type()) {
@@ -568,7 +561,13 @@ void PlatformCAAnimationRemote::setValues(const Vector<float>& values)
     if (animationType() != Keyframe)
         return;
 
-    m_properties.keyValues = toKeyframeValueVector(values);
+    Vector<KeyframeValue> keyframes;
+    keyframes.reserveInitialCapacity(values.size());
+    
+    for (size_t i = 0; i < values.size(); ++i)
+        keyframes.uncheckedAppend(KeyframeValue(values[i]));
+    
+    m_properties.keyValues = WTFMove(keyframes);
 }
 
 void PlatformCAAnimationRemote::setValues(const Vector<TransformationMatrix>& values)
@@ -576,7 +575,13 @@ void PlatformCAAnimationRemote::setValues(const Vector<TransformationMatrix>& va
     if (animationType() != Keyframe)
         return;
 
-    m_properties.keyValues = toKeyframeValueVector(values);
+    Vector<KeyframeValue> keyframes;
+    keyframes.reserveInitialCapacity(values.size());
+    
+    for (size_t i = 0; i < values.size(); ++i)
+        keyframes.uncheckedAppend(KeyframeValue(values[i]));
+    
+    m_properties.keyValues = WTFMove(keyframes);
 }
 
 void PlatformCAAnimationRemote::setValues(const Vector<FloatPoint3D>& values)
@@ -584,7 +589,13 @@ void PlatformCAAnimationRemote::setValues(const Vector<FloatPoint3D>& values)
     if (animationType() != Keyframe)
         return;
 
-    m_properties.keyValues = toKeyframeValueVector(values);
+    Vector<KeyframeValue> keyframes;
+    keyframes.reserveInitialCapacity(values.size());
+    
+    for (size_t i = 0; i < values.size(); ++i)
+        keyframes.uncheckedAppend(KeyframeValue(values[i]));
+    
+    m_properties.keyValues = WTFMove(keyframes);
 }
 
 void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
@@ -592,7 +603,13 @@ void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
     if (animationType() != Keyframe)
         return;
 
-    m_properties.keyValues = toKeyframeValueVector(values);
+    Vector<KeyframeValue> keyframes;
+    keyframes.reserveInitialCapacity(values.size());
+    
+    for (size_t i = 0; i < values.size(); ++i)
+        keyframes.uncheckedAppend(KeyframeValue(values[i]));
+    
+    m_properties.keyValues = WTFMove(keyframes);
 }
 
 void PlatformCAAnimationRemote::setValues(const Vector<RefPtr<FilterOperation>>& values, int internalFilterPropertyIndex)
@@ -602,7 +619,13 @@ void PlatformCAAnimationRemote::setValues(const Vector<RefPtr<FilterOperation>>&
     if (animationType() != Keyframe)
         return;
 
-    m_properties.keyValues = toKeyframeValueVector(values);
+    Vector<KeyframeValue> keyframes;
+    keyframes.reserveInitialCapacity(values.size());
+    
+    for (auto& value : values)
+        keyframes.uncheckedAppend(KeyframeValue { value.copyRef() });
+    
+    m_properties.keyValues = WTFMove(keyframes);
 }
 
 void PlatformCAAnimationRemote::copyValuesFrom(const PlatformCAAnimation& value)
@@ -622,9 +645,13 @@ void PlatformCAAnimationRemote::copyKeyTimesFrom(const PlatformCAAnimation& valu
 
 void PlatformCAAnimationRemote::setTimingFunctions(const Vector<const TimingFunction*>& values, bool reverse)
 {
-    m_properties.timingFunctions = values.map([](auto& value) -> RefPtr<WebCore::TimingFunction> {
-        return value->clone();
-    });
+    Vector<RefPtr<WebCore::TimingFunction>> timingFunctions;
+    timingFunctions.reserveInitialCapacity(values.size());
+    
+    for (size_t i = 0; i < values.size(); ++i)
+        timingFunctions.uncheckedAppend(values[i]->clone());
+    
+    m_properties.timingFunctions = WTFMove(timingFunctions);
     m_properties.reverseTimingFunctions = reverse;
 }
 

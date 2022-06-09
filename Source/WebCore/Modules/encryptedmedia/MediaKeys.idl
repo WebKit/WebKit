@@ -33,6 +33,6 @@
     DisabledByQuirk=hasBrokenEncryptedMediaAPISupport,
     Exposed=Window
 ] interface MediaKeys {
-    [CallWith=CurrentDocument] MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");
+    [CallWith=Document] MediaKeySession createSession(optional MediaKeySessionType sessionType = "temporary");
     Promise<boolean> setServerCertificate(BufferSource serverCertificate);
 };

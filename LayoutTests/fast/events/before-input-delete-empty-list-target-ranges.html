@@ -11,6 +11,9 @@
         editable.focus();
         getSelection().setPosition(item);
 
+        if (window.internals)
+            internals.settings.setInputEventsEnabled(true);
+
         if (window.testRunner)
             testRunner.execCommand("deleteBackward");
 

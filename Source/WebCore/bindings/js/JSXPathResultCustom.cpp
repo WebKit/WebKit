@@ -28,7 +28,6 @@
 #include "JSXPathResult.h"
 
 #include "JSNodeCustom.h"
-#include "WebCoreOpaqueRoot.h"
 #include "XPathValue.h"
 
 namespace WebCore {
@@ -40,7 +39,7 @@ void JSXPathResult::visitAdditionalChildren(Visitor& visitor)
     if (value.isNodeSet()) {
         // FIXME: This looks like it might race, but I'm not sure.
         for (auto& node : value.toNodeSet())
-            addWebCoreOpaqueRoot(visitor, node.get());
+            visitor.addOpaqueRoot(root(node.get()));
     }
 }
 

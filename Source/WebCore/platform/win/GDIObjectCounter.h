@@ -43,7 +43,7 @@ namespace WebCore {
 
     class GDIObjectCounter {
     public:
-        GDIObjectCounter(const char* identifier);
+        GDIObjectCounter(const String& identifier);
         GDIObjectCounter(const String& className, void* instance);
         ~GDIObjectCounter();
 

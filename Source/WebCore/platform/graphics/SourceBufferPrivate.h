@@ -44,14 +44,12 @@
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Ref.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class SharedBuffer;
-class TrackBuffer;
 class TimeRanges;
 
 enum class SourceBufferAppendMode : uint8_t {
@@ -116,6 +114,30 @@ public:
 
     virtual size_t platformMaximumBufferSize() const { return 0; }
 
+    struct TrackBuffer {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        MediaTime lastDecodeTimestamp;
+        MediaTime greatestFrameDuration;
+        MediaTime lastFrameDuration;
+        MediaTime highestPresentationTimestamp;
+        MediaTime highestEnqueuedPresentationTime;
+        MediaTime minimumEnqueuedPresentationTime;
+        DecodeOrderSampleMap::KeyType lastEnqueuedDecodeKey;
+        MediaTime enqueueDiscontinuityBoundary { MediaTime::zeroTime() };
+        MediaTime roundedTimestampOffset;
+        uint32_t lastFrameTimescale { 0 };
+        bool needRandomAccessFlag { true };
+        bool enabled { false };
+        bool needsReenqueueing { false };
+        bool needsMinimumUpcomingPresentationTimeUpdating { false };
+        SampleMap samples;
+        DecodeOrderSampleMap::MapType decodeQueue;
+        RefPtr<MediaDescription> description;
+        PlatformTimeRanges buffered;
+
+        TrackBuffer();
+    };
+
     // Internals Utility methods
     WEBCORE_EXPORT virtual void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
     WEBCORE_EXPORT virtual void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
@@ -168,7 +190,7 @@ private:
     bool m_hasAudio { false };
     bool m_hasVideo { false };
 
-    MemoryCompactRobinHoodHashMap<AtomString, UniqueRef<TrackBuffer>> m_trackBufferMap;
+    HashMap<AtomString, UniqueRef<TrackBuffer>> m_trackBufferMap;
 
     SourceBufferAppendMode m_appendMode { SourceBufferAppendMode::Segments };
 

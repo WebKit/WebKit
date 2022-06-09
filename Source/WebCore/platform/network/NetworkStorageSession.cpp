@@ -27,7 +27,6 @@
 #include "NetworkStorageSession.h"
 
 #include "Cookie.h"
-#include "CookieJar.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
@@ -190,9 +189,6 @@ void NetworkStorageSession::setAgeCapForClientSideCookies(std::optional<Seconds>
 {
     m_ageCapForClientSideCookies = seconds;
     m_ageCapForClientSideCookiesShort = seconds ? Seconds { seconds->seconds() / 7. } : seconds;
-#if ENABLE(JS_COOKIE_CHECKING)
-    m_ageCapForClientSideCookiesForLinkDecorationTargetPage = seconds;
-#endif
 }
 
 void NetworkStorageSession::setPrevalentDomainsToBlockAndDeleteCookiesFor(const Vector<RegistrableDomain>& domains)
@@ -372,16 +368,10 @@ void NetworkStorageSession::resetAppBoundDomains()
 
 std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDomain& firstParty, std::optional<PageIdentifier> pageID) const
 {
-    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
-#if ENABLE(JS_COOKIE_CHECKING)
-    if (domainIterator != m_navigatedToWithLinkDecorationByPrevalentResource.end() && domainIterator->value == firstParty)
-        return m_ageCapForClientSideCookiesForLinkDecorationTargetPage;
-
-    return std::nullopt;
-#else
     if (!m_ageCapForClientSideCookies || !pageID || m_navigatedToWithLinkDecorationByPrevalentResource.isEmpty())
         return m_ageCapForClientSideCookies;
 
+    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
     if (domainIterator == m_navigatedToWithLinkDecorationByPrevalentResource.end())
         return m_ageCapForClientSideCookies;
 
@@ -389,21 +379,20 @@ std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const Registra
         return m_ageCapForClientSideCookiesShort;
 
     return m_ageCapForClientSideCookies;
-#endif
 }
 
 const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSession::storageAccessQuirks()
 {
     static NeverDestroyed<HashMap<RegistrableDomain, HashSet<RegistrableDomain>>> map = [] {
         HashMap<RegistrableDomain, HashSet<RegistrableDomain>> map;
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s),
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"),
             HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s) });
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("live.com"_s),
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("live.com"),
             HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("skype.com"_s) });
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"_s), HashSet {
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"), HashSet {
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s),
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s) });
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("bbc.co.uk"_s), HashSet {
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("bbc.co.uk"), HashSet {
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("radioplayer.co.uk"_s) });
         return map;
     }();
@@ -441,10 +430,5 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
 }
 
 #endif // ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, CompletionHandler<void()>&& completionHandler)
-{
-    deleteCookiesForHostnames(cookieHostNames, IncludeHttpOnlyCookies::Yes, ScriptWrittenCookiesOnly::No, WTFMove(completionHandler));
-}
 
 }

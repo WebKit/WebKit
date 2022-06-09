@@ -58,14 +58,17 @@ private:
     MediaTime decodeTime() const override { return m_box.decodeTimestamp(); }
     MediaTime duration() const override { return m_box.duration(); }
     AtomString trackID() const override { return m_id; }
+    void setTrackID(const String& id) override { m_id = id; }
     size_t sizeInBytes() const override { return sizeof(m_box); }
     SampleFlags flags() const override;
-    PlatformSample platformSample() const override;
-    PlatformSample::Type platformSampleType() const override { return PlatformSample::MockSampleBoxType; }
+    PlatformSample platformSample() override;
+    std::optional<ByteRange> byteRange() const override { return std::nullopt; }
     FloatSize presentationSize() const override { return FloatSize(); }
     void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }
     void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
+    bool isDivisable() const override { return false; }
+    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime&, UseEndTime) override { return {nullptr, nullptr}; }
     Ref<MediaSample> createNonDisplayingCopy() const override;
 
     unsigned generation() const { return m_box.generation(); }
@@ -84,7 +87,7 @@ MediaSample::SampleFlags MockMediaSample::flags() const
     return SampleFlags(flags);
 }
 
-PlatformSample MockMediaSample::platformSample() const
+PlatformSample MockMediaSample::platformSample()
 {
     PlatformSample sample = { PlatformSample::MockSampleBoxType, { &m_box } };
     return sample;

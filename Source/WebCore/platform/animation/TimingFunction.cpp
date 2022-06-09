@@ -198,13 +198,13 @@ String TimingFunction::cssText() const
     if (m_type == TimingFunction::CubicBezierFunction) {
         auto& function = downcast<CubicBezierTimingFunction>(*this);
         if (function.x1() == 0.25 && function.y1() == 0.1 && function.x2() == 0.25 && function.y2() == 1.0)
-            return "ease"_s;
+            return "ease";
         if (function.x1() == 0.42 && !function.y1() && function.x2() == 1.0 && function.y2() == 1.0)
-            return "ease-in"_s;
+            return "ease-in";
         if (!function.x1() && !function.y1() && function.x2() == 0.58 && function.y2() == 1.0)
-            return "ease-out"_s;
+            return "ease-out";
         if (function.x1() == 0.42 && !function.y1() && function.x2() == 0.58 && function.y2() == 1.0)
-            return "ease-in-out"_s;
+            return "ease-in-out";
         return makeString("cubic-bezier(", function.x1(), ", ", function.y1(), ", ", function.x2(), ", ", function.y2(), ')');
     }
 

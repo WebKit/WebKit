@@ -117,7 +117,7 @@ public:
         return MRNowPlayingClientGetProcessIdentifier(getNowPlayingClient().get());
     }
 
-    void loadPageAndBecomeNowPlaying(NSString *pageName)
+    void loadPageAndBecomeNowPlaying(const String& pageName)
     {
         [_webView synchronouslyLoadTestPageNamed:pageName];
 
@@ -125,7 +125,7 @@ public:
         [webView() performAfterReceivingMessage:@"canplaythrough event" action:[&] {
             canplaythrough = true;
         }];
-        runScriptWithUserGesture(@"load()");
+        runScriptWithUserGesture("load()");
         Util::run(&canplaythrough);
 
         play();
@@ -133,7 +133,7 @@ public:
         ASSERT_EQ(webViewPid(), getNowPlayingClientPid());
     }
 
-    void runScriptWithUserGesture(NSString *script)
+    void runScriptWithUserGesture(const String& script)
     {
         bool complete = false;
         [_webView evaluateJavaScript:script completionHandler:[&] (id, NSError *) { complete = true; }];
@@ -144,7 +144,7 @@ public:
     {
         bool playing = false;
         [_webView performAfterReceivingMessage:@"play event" action:[&] { playing = true; }];
-        runScriptWithUserGesture(@"audio.play()");
+        runScriptWithUserGesture("audio.play()");
         Util::run(&playing);
     }
 
@@ -152,7 +152,7 @@ public:
     {
         bool paused = false;
         [_webView performAfterReceivingMessage:@"pause event" action:[&] { paused = true; }];
-        runScriptWithUserGesture(@"audio.pause()");
+        runScriptWithUserGesture("audio.pause()");
         Util::run(&paused);
     }
 
@@ -188,7 +188,7 @@ public:
         }
     }
 
-    bool eventListenerWasCalled(StringView event)
+    bool eventListenerWasCalled(const String& event)
     {
         return _eventListenersCalled.contains(makeString(event, " event"));
     }
@@ -198,7 +198,7 @@ public:
         _eventListenersCalled.clear();
     }
 
-    void waitForEventListenerToBeCalled(StringView event)
+    void waitForEventListenerToBeCalled(const String& event)
     {
         int tries = 0;
         do {
@@ -221,12 +221,12 @@ public:
         }
     }
 
-    bool sessionHandlerWasCalled(StringView handler)
+    bool sessionHandlerWasCalled(const String& handler)
     {
         return _mediaSessionHandlersCalled.contains(makeString(handler, " handler"));
     }
 
-    void waitForSessionHandlerToBeCalled(StringView handler)
+    void waitForSessionHandlerToBeCalled(const String& handler)
     {
         int tries = 0;
         do {
@@ -264,7 +264,7 @@ private:
 
 TEST_F(MediaSessionTest, DISABLED_OnlyOneHandler)
 {
-    loadPageAndBecomeNowPlaying(@"media-remote");
+    loadPageAndBecomeNowPlaying("media-remote");
 
     [webView() objectByEvaluatingJavaScript:@"setEmptyActionHandlers([ 'play' ])"];
 
@@ -283,33 +283,33 @@ TEST_F(MediaSessionTest, DISABLED_OnlyOneHandler)
 #endif
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPlay));
-    waitForSessionHandlerToBeCalled("play"_s);
-    ASSERT_TRUE(sessionHandlerWasCalled("play"_s));
-    ASSERT_FALSE(eventListenerWasCalled("play"_s));
+    waitForSessionHandlerToBeCalled("play");
+    ASSERT_TRUE(sessionHandlerWasCalled("play"));
+    ASSERT_FALSE(eventListenerWasCalled("play"));
 
     // The media session only registered for Play, but no other commands should reach HTMLMediaElement.
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipForward, 1));
-    ASSERT_FALSE(sessionHandlerWasCalled("seekforward"_s));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
+    ASSERT_FALSE(sessionHandlerWasCalled("seekforward"));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipBackward, 10));
-    ASSERT_FALSE(sessionHandlerWasCalled("seekbackward"_s));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
+    ASSERT_FALSE(sessionHandlerWasCalled("seekbackward"));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSeekToPlaybackPosition, 6));
-    ASSERT_FALSE(sessionHandlerWasCalled("seekto"_s));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
+    ASSERT_FALSE(sessionHandlerWasCalled("seekto"));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandNextTrack));
-    ASSERT_FALSE(sessionHandlerWasCalled("nexttrack"_s));
+    ASSERT_FALSE(sessionHandlerWasCalled("nexttrack"));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPreviousTrack));
-    ASSERT_FALSE(sessionHandlerWasCalled("previoustrack"_s));
+    ASSERT_FALSE(sessionHandlerWasCalled("previoustrack"));
 }
 
 TEST_F(MediaSessionTest, DISABLED_RemoteCommands)
 {
-    loadPageAndBecomeNowPlaying(@"media-remote");
+    loadPageAndBecomeNowPlaying("media-remote");
 
     [webView() objectByEvaluatingJavaScript:@"setEmptyActionHandlers([ 'play', 'pause', 'seekto', 'seekforward', 'seekbackward', 'previoustrack', 'nexttrack' ])"];
 
@@ -328,63 +328,63 @@ TEST_F(MediaSessionTest, DISABLED_RemoteCommands)
 #endif
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPlay));
-    waitForSessionHandlerToBeCalled("play"_s);
-    ASSERT_TRUE(sessionHandlerWasCalled("play"_s));
-    ASSERT_FALSE(eventListenerWasCalled("play"_s));
+    waitForSessionHandlerToBeCalled("play");
+    ASSERT_TRUE(sessionHandlerWasCalled("play"));
+    ASSERT_FALSE(eventListenerWasCalled("play"));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPause));
-    waitForSessionHandlerToBeCalled("pause"_s);
-    ASSERT_TRUE(sessionHandlerWasCalled("pause"_s));
-    ASSERT_FALSE(eventListenerWasCalled("pause"_s));
+    waitForSessionHandlerToBeCalled("pause");
+    ASSERT_TRUE(sessionHandlerWasCalled("pause"));
+    ASSERT_FALSE(eventListenerWasCalled("pause"));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipForward, 1));
-    waitForSessionHandlerToBeCalled("seekforward"_s);
-    ASSERT_TRUE(sessionHandlerWasCalled("seekforward"_s));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
+    waitForSessionHandlerToBeCalled("seekforward");
+    ASSERT_TRUE(sessionHandlerWasCalled("seekforward"));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipBackward, 10));
-    waitForSessionHandlerToBeCalled("seekbackward"_s);
-    ASSERT_TRUE(sessionHandlerWasCalled("seekbackward"_s));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
+    waitForSessionHandlerToBeCalled("seekbackward");
+    ASSERT_TRUE(sessionHandlerWasCalled("seekbackward"));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSeekToPlaybackPosition, 6));
-    waitForSessionHandlerToBeCalled("seekto"_s);
-    ASSERT_TRUE(sessionHandlerWasCalled("seekto"_s));
-    ASSERT_FALSE(eventListenerWasCalled("seeked"_s));
+    waitForSessionHandlerToBeCalled("seekto");
+    ASSERT_TRUE(sessionHandlerWasCalled("seekto"));
+    ASSERT_FALSE(eventListenerWasCalled("seeked"));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandNextTrack));
-    waitForSessionHandlerToBeCalled("nexttrack"_s);
-    ASSERT_TRUE(sessionHandlerWasCalled("nexttrack"_s));
+    waitForSessionHandlerToBeCalled("nexttrack");
+    ASSERT_TRUE(sessionHandlerWasCalled("nexttrack"));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPreviousTrack));
-    waitForSessionHandlerToBeCalled("previoustrack"_s);
-    ASSERT_TRUE(sessionHandlerWasCalled("previoustrack"_s));
+    waitForSessionHandlerToBeCalled("previoustrack");
+    ASSERT_TRUE(sessionHandlerWasCalled("previoustrack"));
 
     // Unregister action handlers, supported commands should go to HTMLMediaElement.
     [webView() objectByEvaluatingJavaScript:@"clearActionHandlers()"];
     clearEventListenerState();
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPlay));
-    waitForEventListenerToBeCalled("play"_s);
-    ASSERT_TRUE(eventListenerWasCalled("play"_s));
+    waitForEventListenerToBeCalled("play");
+    ASSERT_TRUE(eventListenerWasCalled("play"));
 
     ASSERT_TRUE(sendMediaRemoteCommand(MRMediaRemoteCommandPause));
-    waitForEventListenerToBeCalled("pause"_s);
-    ASSERT_TRUE(eventListenerWasCalled("pause"_s));
+    waitForEventListenerToBeCalled("pause");
+    ASSERT_TRUE(eventListenerWasCalled("pause"));
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipForward, 1));
-    waitForEventListenerToBeCalled("seeked"_s);
-    ASSERT_TRUE(eventListenerWasCalled("seeked"_s));
+    waitForEventListenerToBeCalled("seeked");
+    ASSERT_TRUE(eventListenerWasCalled("seeked"));
     clearEventListenerState();
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSkipBackward, 10));
-    waitForEventListenerToBeCalled("seeked"_s);
-    ASSERT_TRUE(eventListenerWasCalled("seeked"_s));
+    waitForEventListenerToBeCalled("seeked");
+    ASSERT_TRUE(eventListenerWasCalled("seeked"));
     clearEventListenerState();
 
     ASSERT_TRUE(sendMediaRemoteSeekCommand(MRMediaRemoteCommandSeekToPlaybackPosition, 6));
-    waitForEventListenerToBeCalled("seeked"_s);
-    ASSERT_TRUE(eventListenerWasCalled("seeked"_s));
+    waitForEventListenerToBeCalled("seeked");
+    ASSERT_TRUE(eventListenerWasCalled("seeked"));
 }
 
 }

@@ -38,7 +38,6 @@
 #include "Timer.h"
 #include <array>
 #include <limits.h>
-#include <wtf/CrossThreadCopier.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
@@ -258,11 +257,6 @@ struct FontCascadeCacheKey {
     unsigned fontSelectorVersion;
 };
 
-inline void add(Hasher& hasher, const FontCascadeCacheKey& key)
-{
-    add(hasher, key.fontDescriptionKey, key.families, key.fontSelectorId, key.fontSelectorVersion);
-}
-
 bool operator==(const FontCascadeCacheKey&, const FontCascadeCacheKey&);
 
 struct FontCascadeCacheEntry {
@@ -273,7 +267,7 @@ struct FontCascadeCacheEntry {
 };
 
 struct FontCascadeCacheKeyHash {
-    static unsigned hash(const FontCascadeCacheKey& key) { return computeHash(key); }
+    static unsigned hash(const FontCascadeCacheKey&);
     static bool equal(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
@@ -358,14 +352,13 @@ public:
         Vector<String> fontNamesRequiringSystemFallback;
 
         bool isEmpty() const;
-        PrewarmInformation isolatedCopy() const & { return { crossThreadCopy(seenFamilies), crossThreadCopy(fontNamesRequiringSystemFallback) }; }
-        PrewarmInformation isolatedCopy() && { return { crossThreadCopy(WTFMove(seenFamilies)), crossThreadCopy(WTFMove(fontNamesRequiringSystemFallback)) }; }
+        PrewarmInformation isolatedCopy() const;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<PrewarmInformation> decode(Decoder&);
     };
     PrewarmInformation collectPrewarmInformation() const;
-    void prewarm(PrewarmInformation&&);
+    void prewarm(const PrewarmInformation&);
     static void prewarmGlobally();
 
 private:
@@ -432,6 +425,11 @@ inline void FontCache::platformPurgeInactiveFontData()
 inline bool FontCache::PrewarmInformation::isEmpty() const
 {
     return seenFamilies.isEmpty() && fontNamesRequiringSystemFallback.isEmpty();
+}
+
+inline FontCache::PrewarmInformation FontCache::PrewarmInformation::isolatedCopy() const
+{
+    return { seenFamilies.isolatedCopy(), fontNamesRequiringSystemFallback.isolatedCopy() };
 }
 
 template<class Encoder>

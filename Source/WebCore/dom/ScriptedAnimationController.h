@@ -50,6 +50,7 @@ public:
     }
     ~ScriptedAnimationController();
     void clearDocumentPointer() { m_document = nullptr; }
+    bool requestAnimationFrameEnabled() const;
 
     WEBCORE_EXPORT Seconds interval() const;
     WEBCORE_EXPORT OptionSet<ThrottlingReason> throttlingReasons() const;

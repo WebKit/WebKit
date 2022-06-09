@@ -45,7 +45,7 @@ static std::optional<PlatformMediaSession::RemoteControlCommandType> getCommand(
     };
 
     static const SortedArrayMap map { commandList };
-    auto value = map.get(StringView::fromLatin1(name), PlatformMediaSession::RemoteControlCommandType::NoCommand);
+    auto value = map.get(name, PlatformMediaSession::RemoteControlCommandType::NoCommand);
     if (value == PlatformMediaSession::RemoteControlCommandType::NoCommand)
         return { };
     return value;
@@ -112,7 +112,7 @@ static std::optional<MprisProperty> getMprisProperty(const char* propertyName)
         { "SupportedUriSchemes", MprisProperty::SupportedUriSchemes }
     };
     static constexpr SortedArrayMap map { propertiesList };
-    auto value = map.get(StringView::fromLatin1(propertyName), MprisProperty::NoProperty);
+    auto value = map.get(propertyName, MprisProperty::NoProperty);
     if (value == MprisProperty::NoProperty)
         return { };
     return value;
@@ -141,7 +141,7 @@ static GVariant* handleGetProperty(GDBusConnection*, const char* /* sender */, c
     case MprisProperty::GetPosition:
         return session.getPositionAsGVariant();
     case MprisProperty::Identity:
-        return g_variant_new_string(getApplicationName().ascii().data());
+        return g_variant_new_string(getApplicationName());
     case MprisProperty::DesktopEntry:
         return g_variant_new_string("");
     case MprisProperty::CanSeek:
@@ -174,9 +174,6 @@ static const GDBusInterfaceVTable gInterfaceVTable = {
 
 std::unique_ptr<MediaSessionGLib> MediaSessionGLib::create(MediaSessionManagerGLib& manager, MediaSessionIdentifier identifier)
 {
-    if (!manager.areDBusNotificationsEnabled())
-        return makeUnique<MediaSessionGLib>(manager, nullptr, identifier);
-
     GUniqueOutPtr<GError> error;
     GUniquePtr<char> address(g_dbus_address_get_for_bus_sync(G_BUS_TYPE_SESSION, nullptr, &error.outPtr()));
     if (error) {
@@ -200,9 +197,6 @@ MediaSessionGLib::MediaSessionGLib(MediaSessionManagerGLib& manager, GRefPtr<GDB
     , m_manager(manager)
     , m_connection(WTFMove(connection))
 {
-    if (!m_connection)
-        return;
-
     const auto& mprisInterface = m_manager.mprisInterface();
     GUniqueOutPtr<GError> error;
     m_rootRegistrationId = g_dbus_connection_register_object(m_connection.get(), DBUS_MPRIS_OBJECT_PATH, mprisInterface->interfaces[0],
@@ -241,9 +235,6 @@ MediaSessionGLib::~MediaSessionGLib()
 
 void MediaSessionGLib::emitPositionChanged(double time)
 {
-    if (!m_connection)
-        return;
-
     GUniqueOutPtr<GError> error;
     int64_t position = time * 1000000;
     if (!g_dbus_connection_emit_signal(m_connection.get(), nullptr, DBUS_MPRIS_OBJECT_PATH, DBUS_MPRIS_PLAYER_INTERFACE, "Seeked", g_variant_new("(x)", position), &error.outPtr()))
@@ -252,9 +243,6 @@ void MediaSessionGLib::emitPositionChanged(double time)
 
 void MediaSessionGLib::updateNowPlaying(NowPlayingInfo& nowPlayingInfo)
 {
-    if (!m_connection)
-        return;
-
     GVariantBuilder propertiesBuilder;
     g_variant_builder_init(&propertiesBuilder, G_VARIANT_TYPE("a{sv}"));
     g_variant_builder_add(&propertiesBuilder, "{sv}", "Metadata", getMetadataAsGVariant(nowPlayingInfo));
@@ -327,9 +315,6 @@ void MediaSessionGLib::emitPropertiesChanged(GVariant* parameters)
 
 void MediaSessionGLib::playbackStatusChanged(PlatformMediaSession& platformSession)
 {
-    if (!m_connection)
-        return;
-
     GVariantBuilder builder;
     g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
     g_variant_builder_add(&builder, "{sv}", "PlaybackStatus", getPlaybackStatusAsGVariant(&platformSession));

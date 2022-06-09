@@ -92,8 +92,8 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
-    // The request will be aborted in WebAuthenticatorCoordinatorProxy if conditional mediation is not available.
-    if (options.mediation != CredentialRequestOptions::MediationRequirement::Conditional && !m_document->hasFocus()) {
+    // Extra.
+    if (!m_document->hasFocus()) {
         promise.reject(Exception { NotAllowedError, "The document is not focused."_s });
         return;
     }

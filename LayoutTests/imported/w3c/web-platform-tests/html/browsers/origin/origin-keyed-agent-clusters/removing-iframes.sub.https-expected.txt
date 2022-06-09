@@ -1,0 +1,18 @@
+Blocked access to external URL https://www.localhost:9443/html/browsers/origin/origin-keyed-agent-clusters/resources/send-oac-header.py
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN Before: messageerror event must occur
+NOTRUN Before: setting document.domain must not give sync access
+NOTRUN parent: originAgentCluster must equal true
+NOTRUN child1: originAgentCluster must equal false
+NOTRUN Remove the iframe and insert new ones
+NOTRUN Parent to child2: messageerror event must occur
+NOTRUN Parent to child2: setting document.domain must not give sync access
+NOTRUN Parent to child3: messageerror event must occur
+NOTRUN Parent to child3: setting document.domain must not give sync access
+NOTRUN child2 to child3: setting document.domain must give sync access
+NOTRUN child3 to child2: setting document.domain must give sync access
+NOTRUN child2: originAgentCluster must equal false
+NOTRUN child3: originAgentCluster must equal false
+

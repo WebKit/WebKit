@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBServer.h"
 #include "UniqueIDBDatabase.h"
 #include <wtf/HashMap.h>
 #include <wtf/Identified.h>
@@ -35,7 +36,6 @@ namespace WebCore {
 
 class IDBError;
 class IDBResultData;
-class UniqueIDBDatabaseManager;
 
 namespace IDBServer {
 
@@ -52,11 +52,11 @@ public:
 
     const IDBResourceIdentifier& openRequestIdentifier() { return m_openRequestIdentifier; }
     UniqueIDBDatabase* database() { return m_database.get(); }
-    UniqueIDBDatabaseManager* manager();
+    IDBServer* server() { return &m_server; }
     IDBConnectionToClient& connectionToClient() { return m_connectionToClient; }
 
-    WEBCORE_EXPORT void connectionPendingCloseFromClient();
-    WEBCORE_EXPORT void connectionClosedFromClient();
+    void connectionPendingCloseFromClient();
+    void connectionClosedFromClient();
 
     bool closePending() const { return m_closePending; }
 
@@ -65,7 +65,7 @@ public:
     void fireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion);
     UniqueIDBDatabaseTransaction& createVersionChangeTransaction(uint64_t newVersion);
 
-    WEBCORE_EXPORT void establishTransaction(const IDBTransactionInfo&);
+    void establishTransaction(const IDBTransactionInfo&);
     void didAbortTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
     void didCommitTransaction(UniqueIDBDatabaseTransaction&, const IDBError&);
     void didCreateObjectStore(const IDBResultData&);
@@ -75,8 +75,8 @@ public:
     void didCreateIndex(const IDBResultData&);
     void didDeleteIndex(const IDBResultData&);
     void didRenameIndex(const IDBResultData&);
-    WEBCORE_EXPORT void didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
-    WEBCORE_EXPORT void didFinishHandlingVersionChange(const IDBResourceIdentifier& transactionIdentifier);
+    void didFireVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, IndexedDB::ConnectionClosedOnBehalfOfServer);
+    void didFinishHandlingVersionChange(const IDBResourceIdentifier& transactionIdentifier);
 
     void abortTransactionWithoutCallback(UniqueIDBDatabaseTransaction&);
 
@@ -88,7 +88,7 @@ private:
     UniqueIDBDatabaseConnection(UniqueIDBDatabase&, ServerOpenDBRequest&);
 
     WeakPtr<UniqueIDBDatabase> m_database;
-    WeakPtr<UniqueIDBDatabaseManager> m_manager;
+    IDBServer& m_server;
     Ref<IDBConnectionToClient> m_connectionToClient;
     IDBResourceIdentifier m_openRequestIdentifier;
 

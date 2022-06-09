@@ -29,7 +29,6 @@
 
 #include "APIArray.h"
 #include "APIAutomationSessionClient.h"
-#include "APIHTTPCookieStore.h"
 #include "APINavigation.h"
 #include "APIOpenPanelParameters.h"
 #include "AutomationProtocolObjects.h"
@@ -37,6 +36,7 @@
 #include "WebAutomationSessionMacros.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
+#include "WebCookieManagerProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebInspectorUIProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -116,9 +116,9 @@ void WebAutomationSession::setProcessPool(WebKit::WebProcessPool* processPool)
 
 // Inspector::RemoteAutomationTarget API
 
-void WebAutomationSession::dispatchMessageFromRemote(String&& message)
+void WebAutomationSession::dispatchMessageFromRemote(const String& message)
 {
-    m_backendDispatcher->dispatch(WTFMove(message));
+    m_backendDispatcher->dispatch(message);
 }
 
 void WebAutomationSession::connect(Inspector::FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)
@@ -190,7 +190,7 @@ String WebAutomationSession::handleForWebPageProxy(const WebPageProxy& webPagePr
     if (iter != m_webPageHandleMap.end())
         return iter->value;
 
-    String handle = makeString("page-"_s, asASCIIUppercase(createVersion4UUIDString()));
+    String handle = "page-" + createCanonicalUUIDString().convertToASCIIUppercase();
 
     auto firstAddResult = m_webPageHandleMap.add(webPageProxy.identifier(), handle);
     RELEASE_ASSERT(firstAddResult.isNewEntry);
@@ -239,7 +239,7 @@ String WebAutomationSession::handleForWebFrameID(std::optional<FrameIdentifier> 
     if (iter != m_webFrameHandleMap.end())
         return iter->value;
 
-    String handle = makeString("frame-"_s, asASCIIUppercase(createVersion4UUIDString()));
+    String handle = "frame-" + createCanonicalUUIDString().convertToASCIIUppercase();
 
     auto firstAddResult = m_webFrameHandleMap.add(*frameID, handle);
     RELEASE_ASSERT(firstAddResult.isNewEntry);
@@ -705,7 +705,7 @@ void WebAutomationSession::navigateBrowsingContext(const Inspector::Protocol::Au
     auto pageLoadStrategy = optionalPageLoadStrategy.value_or(defaultPageLoadStrategy);
     auto pageLoadTimeout = optionalPageLoadTimeout ? Seconds::fromMilliseconds(*optionalPageLoadTimeout) : defaultPageLoadTimeout;
 
-    page->loadRequest(URL { url });
+    page->loadRequest(URL(URL(), url));
     waitForNavigationToCompleteOnPage(*page, pageLoadStrategy, pageLoadTimeout, WTFMove(callback));
 }
 
@@ -1410,7 +1410,7 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    URL activeURL { page->pageLoadState().activeURL() };
+    URL activeURL = URL(URL(), page->pageLoadState().activeURL());
     ASSERT(activeURL.isValid());
 
     WebCore::Cookie cookie;
@@ -1471,8 +1471,8 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
 
     cookie.sameSite = toWebCoreSameSitePolicy(*parsedSameSite);
 
-    auto& cookieStore = page->websiteDataStore().cookieStore();
-    cookieStore.setCookies({ cookie }, [callback]() {
+    WebCookieManagerProxy& cookieManager = page->websiteDataStore().networkProcess().cookieManager();
+    cookieManager.setCookies(page->websiteDataStore().sessionID(), { cookie }, [callback]() {
         callback->sendSuccess();
     });
 }
@@ -1483,13 +1483,13 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::deleteAllCookies(
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    URL activeURL { page->pageLoadState().activeURL() };
+    URL activeURL = URL(URL(), page->pageLoadState().activeURL());
     ASSERT(activeURL.isValid());
 
     String host = activeURL.host().toString();
 
-    auto& cookieStore = page->websiteDataStore().cookieStore();
-    cookieStore.deleteCookiesForHostnames({ host, domainByAddingDotPrefixIfNeeded(host) }, [] { });
+    WebCookieManagerProxy& cookieManager = page->websiteDataStore().networkProcess().cookieManager();
+    cookieManager.deleteCookiesForHostnames(page->websiteDataStore().sessionID(), { host, domainByAddingDotPrefixIfNeeded(host) });
 
     return { };
 }

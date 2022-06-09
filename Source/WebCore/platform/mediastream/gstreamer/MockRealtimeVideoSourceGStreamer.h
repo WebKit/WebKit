@@ -30,7 +30,7 @@ namespace WebCore {
 
 class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource {
 public:
-    MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, String&& hashSalt);
+    MockRealtimeVideoSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt);
     ~MockRealtimeVideoSourceGStreamer() = default;
 
 private:
@@ -40,20 +40,18 @@ private:
     bool canResizeVideoFrames() const final { return true; }
 };
 
-class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource, RealtimeMediaSource::VideoFrameObserver {
+class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource, RealtimeMediaSource::VideoSampleObserver {
 public:
     static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*);
 
     void requestToEnd(Observer&) final;
-    bool isProducingData() const final { return m_source->isProducingData(); }
-    void setMuted(bool isMuted) final;
 
 protected:
-    // RealtimeMediaSource::VideoFrameObserver
-    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
+    // RealtimeMediaSource::VideoSampleObserver
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
 
 private:
-    MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type, Ref<MockRealtimeVideoSourceGStreamer>&&, String&&, CaptureDevice::DeviceType);
+    MockDisplayCaptureSourceGStreamer(Ref<MockRealtimeVideoSourceGStreamer>&&, String&&, CaptureDevice::DeviceType);
     ~MockDisplayCaptureSourceGStreamer();
 
     void startProducingData() final { m_source->start(); }
@@ -62,14 +60,14 @@ private:
     bool isCaptureSource() const final { return true; }
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
-    CaptureDevice::DeviceType deviceType() const { return m_deviceType; }
+    CaptureDevice::DeviceType deviceType() const { return m_type; }
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MockDisplayCaptureSourceGStreamer"; }
 #endif
 
     Ref<MockRealtimeVideoSourceGStreamer> m_source;
-    CaptureDevice::DeviceType m_deviceType;
+    CaptureDevice::DeviceType m_type;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 };

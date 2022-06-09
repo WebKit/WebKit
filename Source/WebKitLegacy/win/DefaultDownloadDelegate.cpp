@@ -45,13 +45,13 @@ using namespace WebCore;
 DefaultDownloadDelegate::DefaultDownloadDelegate()
 {
     gClassCount++;
-    gClassNameCount().add("DefaultDownloadDelegate"_s);
+    gClassNameCount().add("DefaultDownloadDelegate");
 }
 
 DefaultDownloadDelegate::~DefaultDownloadDelegate()
 {
     gClassCount--;
-    gClassNameCount().remove("DefaultDownloadDelegate"_s);
+    gClassNameCount().remove("DefaultDownloadDelegate");
     HashSet<IWebDownload*>::iterator i = m_downloads.begin();
     for (;i != m_downloads.end(); ++i)
         (*i)->Release();

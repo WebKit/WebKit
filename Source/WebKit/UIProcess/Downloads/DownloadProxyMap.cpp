@@ -47,7 +47,7 @@ namespace WebKit {
 DownloadProxyMap::DownloadProxyMap(NetworkProcessProxy& process)
     : m_process(process)
 #if PLATFORM(COCOA)
-    , m_shouldTakeAssertion(WTF::processHasEntitlement("com.apple.multitasking.systemappassertions"_s))
+    , m_shouldTakeAssertion(WTF::processHasEntitlement("com.apple.multitasking.systemappassertions"))
 #endif
 {
     platformCreate();
@@ -68,6 +68,16 @@ void DownloadProxyMap::platformDestroy()
 {
 }
 #endif
+
+void DownloadProxyMap::applicationDidEnterBackground()
+{
+    m_process.send(Messages::NetworkProcess::ApplicationDidEnterBackground(), 0);
+}
+
+void DownloadProxyMap::applicationWillEnterForeground()
+{
+    m_process.send(Messages::NetworkProcess::ApplicationWillEnterForeground(), 0);
+}
 
 DownloadProxy& DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataStore, WebProcessPool& processPool, const WebCore::ResourceRequest& resourceRequest, const FrameInfoData& frameInfo, WebPageProxy* originatingPage)
 {

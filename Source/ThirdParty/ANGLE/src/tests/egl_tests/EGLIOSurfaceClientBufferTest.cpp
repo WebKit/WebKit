@@ -29,7 +29,7 @@ void AddIntegerValue(CFMutableDictionaryRef dictionary, const CFStringRef key, i
     CFRelease(number);
 }
 
-class ANGLE_NO_DISCARD ScopedIOSurfaceRef : angle::NonCopyable
+class ScopedIOSurfaceRef : angle::NonCopyable
 {
   public:
     explicit ScopedIOSurfaceRef(IOSurfaceRef surface) : mSurface(surface) {}

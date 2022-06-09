@@ -81,9 +81,6 @@ public:
 
     void devicesChanged(const Vector<CaptureDevice>&);
     void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
-    bool isRenderingAudio() const { return m_isRenderingAudio; }
-
-    const String& persistentIDForTesting() const { return m_capturingDevice ? m_capturingDevice->first : emptyString(); }
 
 protected:
     void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
@@ -94,7 +91,7 @@ protected:
     virtual OSStatus startInternal() = 0;
     virtual void stopInternal() = 0;
     virtual OSStatus reconfigureAudioUnit() = 0;
-    virtual void resetSampleRate() = 0;
+    virtual void resetSampleRate();
     virtual void captureDeviceChanged() = 0;
 
     void setSuspended(bool value) { m_suspended = value; }

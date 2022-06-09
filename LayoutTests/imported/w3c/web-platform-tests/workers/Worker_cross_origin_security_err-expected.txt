@@ -1,4 +1,5 @@
 
-PASS Cross-origin classic workers should fail to fetch
-PASS Cross-origin module workers should fail to fetch
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT  Worker cross-origin URL  Test timed out
 

@@ -204,7 +204,7 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet
 // Paint text-shadow, underline, overline
 void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, const FloatPoint& textOrigin, const FloatPoint& boxOrigin)
 {
-    const auto& fontMetrics = m_lineStyle.metricsOfPrimaryFont();
+    const auto& fontMetrics = m_lineStyle.fontMetrics();
     float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), fontMetrics);
     FloatPoint localOrigin = boxOrigin;
 
@@ -279,7 +279,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
         if (m_decorations.contains(TextDecorationLine::Underline)) {
             float textDecorationBaseFontSize = 16;
             auto defaultGap = m_lineStyle.computedFontSize() / textDecorationBaseFontSize;
-            float offset = computeUnderlineOffset(m_lineStyle.textUnderlinePosition(), m_lineStyle.textUnderlineOffset(), m_lineStyle.metricsOfPrimaryFont(), m_textBox, defaultGap);
+            float offset = computeUnderlineOffset(m_lineStyle.textUnderlinePosition(), m_lineStyle.textUnderlineOffset(), m_lineStyle.fontMetrics(), m_textBox, defaultGap);
             float wavyOffset = m_styles.underlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));
             rect.move(0, offset + wavyOffset);
@@ -310,13 +310,13 @@ void TextDecorationPainter::paintForegroundDecorations(const FloatPoint& boxOrig
     if (!m_decorations.contains(TextDecorationLine::LineThrough))
         return;
 
-    float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), m_lineStyle.metricsOfPrimaryFont());
+    float textDecorationThickness = m_lineStyle.textDecorationThickness().resolve(m_lineStyle.computedFontSize(), m_lineStyle.fontMetrics());
     paintLineThrough(m_styles.linethroughColor, textDecorationThickness, boxOrigin);
 }
 
 void TextDecorationPainter::paintLineThrough(const Color& color, float thickness, const FloatPoint& localOrigin)
 {
-    const auto& fontMetrics = m_lineStyle.metricsOfPrimaryFont();
+    const auto& fontMetrics = m_lineStyle.fontMetrics();
     FloatRect rect(localOrigin, FloatSize(m_width, thickness));
     float autoTextDecorationThickness = TextDecorationThickness::createWithAuto().resolve(m_lineStyle.computedFontSize(), fontMetrics);
     auto center = 2 * fontMetrics.floatAscent() / 3 + autoTextDecorationThickness / 2;
@@ -336,9 +336,6 @@ void TextDecorationPainter::paintLineThrough(const Color& color, float thickness
 static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecorationLine> remainingDecorations, bool firstLineStyle, PseudoId pseudoId)
 {
     auto extractDecorations = [&] (const RenderStyle& style, OptionSet<TextDecorationLine> decorations) {
-        if (decorations.isEmpty())
-            return;
-
         auto color = TextDecorationPainter::decorationColor(style);
         auto decorationStyle = style.textDecorationStyle();
 
@@ -357,6 +354,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
             result.linethroughColor = color;
             result.linethroughStyle = decorationStyle;
         }
+
     };
 
     auto styleForRenderer = [&] (const RenderObject& renderer) -> const RenderStyle& {
@@ -371,7 +369,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
     auto* current = &renderer;
     do {
         const auto& style = styleForRenderer(*current);
-        extractDecorations(style, style.textDecorationLine());
+        extractDecorations(style, style.textDecoration());
 
         if (current->isRubyText())
             return;
@@ -409,9 +407,6 @@ OptionSet<TextDecorationLine> TextDecorationPainter::textDecorationsInEffectForS
 
 auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle, PseudoId pseudoId) -> Styles
 {
-    if (requestedDecorations.isEmpty())
-        return { };
-
     Styles result;
     collectStylesForRenderer(result, renderer, requestedDecorations, false, pseudoId);
     if (firstLineStyle)

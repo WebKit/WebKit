@@ -38,7 +38,6 @@
 #import <spawn.h>
 #import <sys/param.h>
 #import <sys/stat.h>
-#import <wtf/FileSystem.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
@@ -74,6 +73,10 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
     case ProcessLauncher::ProcessType::GPU:
         return "com.apple.WebKit.GPU";
 #endif
+#if ENABLE(WEB_AUTHN)
+    case ProcessLauncher::ProcessType::WebAuthn:
+        return "com.apple.WebKit.WebAuthn";
+#endif
     }
 }
 
@@ -81,17 +84,40 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 {
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(launchOptions);
-    // On iOS, we don't need to leak a boost message because RunningBoard process assertions give us the
+#if HAVE(RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT)
+    // On iOS, we don't need to leak a boost message when RunningBoard process assertions give us the
     // right priorities.
-    return false;
+    static const bool runningBoardHandlesPriorities = isFeatureFlagEnabled("RB_full_manage_WK_jetsam"_s);
+    return !runningBoardHandlesPriorities;
 #else
-    // On Mac, leak a boost onto the NetworkProcess and GPUProcess.
+    return true;
+#endif // HAVE(RUNNINGBOARD_WEBKIT_PRIORITY_SUPPORT)
+#else
+    // On Mac, leak a boost onto the NetworkProcess, GPUProcess, and WebAuthnProcess.
 #if ENABLE(GPU_PROCESS)
     if (launchOptions.processType == ProcessLauncher::ProcessType::GPU)
         return true;
 #endif
+#if ENABLE(WEB_AUTHN)
+    if (launchOptions.processType == ProcessLauncher::ProcessType::WebAuthn)
+        return true;
+#endif
     return launchOptions.processType == ProcessLauncher::ProcessType::Network;
 #endif
+}
+
+static NSString *systemDirectoryPath()
+{
+    static NeverDestroyed<RetainPtr<NSString>> path = adoptNS([^{
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+        char *simulatorRoot = getenv("SIMULATOR_ROOT");
+        return simulatorRoot ? [NSString stringWithFormat:@"%s/System/", simulatorRoot] : @"/System/";
+#else
+        return @"/System/";
+#endif
+    }() copy]);
+
+    return path.get().get();
 }
 
 void ProcessLauncher::launchProcess()
@@ -128,11 +154,11 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_value(initializationMessage.get(), "ContainerEnvironmentVariables", containerEnvironmentVariables.get());
 #endif
 
-    auto languagesIterator = m_launchOptions.extraInitializationData.find<HashTranslatorASCIILiteral>("OverrideLanguages"_s);
+    auto languagesIterator = m_launchOptions.extraInitializationData.find("OverrideLanguages");
     if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
         LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
         auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
-        for (auto language : StringView(languagesIterator->value).split(','))
+        for (auto& language : languagesIterator->value.split(','))
             xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());
         xpc_dictionary_set_value(initializationMessage.get(), "OverrideLanguages", languages.get());
     }
@@ -195,18 +221,19 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", WebCore::applicationBundleIdentifier().utf8().data());
+    xpc_dictionary_set_string(bootstrapMessage.get(), "client-sdk-version", String::number(applicationSDKVersion()).utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "process-identifier", String::number(m_launchOptions.processIdentifier.toUInt64()).utf8().data());
     xpc_dictionary_set_string(bootstrapMessage.get(), "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
 
-    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:FileSystem::systemDirectoryPath()];
+    bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:systemDirectoryPath()];
     if (isWebKitDevelopmentBuild) {
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stdout", STDOUT_FILENO);
         xpc_dictionary_set_fd(bootstrapMessage.get(), "stderr", STDERR_FILENO);
     }
     
-    auto sdkBehaviors = sdkAlignedBehaviors();
-    xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviors.storage(), sdkBehaviors.storageLengthInBytes());
+    if (auto linkedOnOrAfterOverrideValue = linkedOnOrAfterOverride())
+        xpc_dictionary_set_bool(bootstrapMessage.get(), "client-linked-on-or-after-override", *linkedOnOrAfterOverrideValue == LinkedOnOrAfterOverride::AfterEverything);
 
     auto extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
@@ -215,7 +242,7 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
-    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort, logName = CString(name)] (xpc_object_t event) {
+    auto errorHandlerImpl = [weakProcessLauncher = WeakPtr { *this }, listeningPort, logName = String(name)] (xpc_object_t event) {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();
@@ -230,9 +257,9 @@ void ProcessLauncher::launchProcess()
 #endif
 
         if (event)
-            LOG_ERROR("Error while launching %s: %s", logName.data(), xpc_dictionary_get_string(event, XPC_ERROR_KEY_DESCRIPTION));
+            LOG_ERROR("Error while launching %s: %s", logName.utf8().data(), xpc_dictionary_get_string(event, XPC_ERROR_KEY_DESCRIPTION));
         else
-            LOG_ERROR("Error while launching %s: No xpc_object_t event available.", logName.data());
+            LOG_ERROR("Error while launching %s: No xpc_object_t event available.", logName.utf8().data());
 
 #if ASSERT_ENABLED
         mach_port_urefs_t sendRightCount = 0;

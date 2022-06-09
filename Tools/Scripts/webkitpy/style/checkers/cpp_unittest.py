@@ -4330,26 +4330,6 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
 
         self.assert_multi_line_lint(
             '''\
-                enum class Requester { Main, XHR };''',
-            '')
-
-        self.assert_lint(
-            '''enum class CommonAbbreviations { AM, CF, PM, URL, XHR };''',
-            '')
-
-        self.assert_multi_line_lint(
-            '''\
-                enum class CommonAbbreviationsMultiline {
-                    AM,
-                    CF,
-                    PM,
-                    URL,
-                    XHR
-                };''',
-            '')
-
-        self.assert_multi_line_lint(
-            '''\
                 enum Foo {
                     fooOne = 1,
                     FooTwo = 2
@@ -4402,22 +4382,6 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                     FooOne,
                     FooTwo = FooOne,
                 };''',
-            '')
-
-        self.assert_multi_line_lint(
-            '''\
-                enum class Foo : uint8_t {
-                    ONE,
-                    Two
-                };''',
-            'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]')
-
-        self.assert_lint(
-            '''enum class Type : uint8_t { FIRST, SECOND };''',
-            'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.  [readability/enum_casing] [4]')
-
-        self.assert_lint(
-            '''enum class Type : uint8_t { Uno, Dos };''',
             '')
 
         self.assert_lint(

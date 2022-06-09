@@ -19,14 +19,6 @@ const validValues = [
   { hour: 12 },
   "12:00",
 ];
-
-const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
-for (const value of validValues) {
-  for (const overflow of badOverflows) {
-    assert.throws(
-      RangeError,
-      () => Temporal.PlainTime.from(value, { overflow }),
-      `invalid overflow ("${overflow}")`
-    );
-  }
-}
+validValues.forEach((value) => {
+  assert.throws(RangeError, () => Temporal.PlainTime.from(value, { overflow: "other string" }));
+});

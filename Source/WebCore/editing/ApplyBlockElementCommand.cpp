@@ -78,13 +78,10 @@ void ApplyBlockElementCommand::doApply()
     }
 
     VisibleSelection selection = selectionForParagraphIteration(endingSelection());
-
     VisiblePosition startOfSelection = selection.visibleStart();
-    if (startOfSelection.isNull())
-        return;
     VisiblePosition endOfSelection = selection.visibleEnd();
-    if (endOfSelection.isNull())
-        return;
+    ASSERT(!startOfSelection.isNull());
+    ASSERT(!endOfSelection.isNull());
     RefPtr<ContainerNode> startScope;
     int startIndex = indexForVisiblePosition(startOfSelection, startScope);
     RefPtr<ContainerNode> endScope;

@@ -67,7 +67,7 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
     VM& vm = lexicalGlobalObject.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (object.isString() && keyPathElement == "length"_s) {
+    if (object.isString() && keyPathElement == "length") {
         result = jsNumber(asString(object)->length());
         return true;
     }
@@ -76,31 +76,31 @@ static bool get(JSGlobalObject& lexicalGlobalObject, JSValue object, const Strin
 
     auto* obj = asObject(object);
     Identifier identifier = Identifier::fromString(vm, keyPathElement);
-    if (obj->inherits<JSArray>() && keyPathElement == "length"_s) {
+    if (obj->inherits<JSArray>(vm) && keyPathElement == "length") {
         result = obj->get(&lexicalGlobalObject, identifier);
         RETURN_IF_EXCEPTION(scope, false);
         return true;
     }
-    if (obj->inherits<JSBlob>() && (keyPathElement == "size"_s || keyPathElement == "type"_s)) {
-        if (keyPathElement == "size"_s) {
+    if (obj->inherits<JSBlob>(vm) && (keyPathElement == "size" || keyPathElement == "type")) {
+        if (keyPathElement == "size") {
             result = jsNumber(jsCast<JSBlob*>(obj)->wrapped().size());
             return true;
         }
-        if (keyPathElement == "type"_s) {
+        if (keyPathElement == "type") {
             result = jsString(vm, jsCast<JSBlob*>(obj)->wrapped().type());
             return true;
         }
     }
-    if (obj->inherits<JSFile>()) {
-        if (keyPathElement == "name"_s) {
+    if (obj->inherits<JSFile>(vm)) {
+        if (keyPathElement == "name") {
             result = jsString(vm, jsCast<JSFile*>(obj)->wrapped().name());
             return true;
         }
-        if (keyPathElement == "lastModified"_s) {
+        if (keyPathElement == "lastModified") {
             result = jsNumber(jsCast<JSFile*>(obj)->wrapped().lastModified());
             return true;
         }
-        if (keyPathElement == "lastModifiedDate"_s) {
+        if (keyPathElement == "lastModifiedDate") {
             result = jsDate(lexicalGlobalObject, WallTime::fromRawSeconds(Seconds::fromMilliseconds(jsCast<JSFile*>(obj)->wrapped().lastModified()).value()));
             return true;
         }
@@ -207,7 +207,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
         return IDBKey::createString(WTFMove(string));
     }
 
-    if (value.inherits<DateInstance>()) {
+    if (value.inherits<DateInstance>(vm)) {
         auto dateValue = valueToDate(lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(scope, { });
         if (!std::isnan(dateValue))
@@ -216,7 +216,7 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
 
     if (value.isObject()) {
         JSObject* object = asObject(value);
-        if (auto* array = jsDynamicCast<JSArray*>(object)) {
+        if (auto* array = jsDynamicCast<JSArray*>(vm, object)) {
             size_t length = array->length();
 
             if (stack.contains(array))
@@ -243,10 +243,10 @@ static RefPtr<IDBKey> createIDBKeyFromValue(JSGlobalObject& lexicalGlobalObject,
             return IDBKey::createArray(subkeys);
         }
 
-        if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(value))
+        if (auto* arrayBuffer = jsDynamicCast<JSArrayBuffer*>(vm, value))
             return IDBKey::createBinary(*arrayBuffer);
 
-        if (auto* arrayBufferView = jsDynamicCast<JSArrayBufferView*>(value))
+        if (auto* arrayBufferView = jsDynamicCast<JSArrayBufferView*>(vm, value))
             return IDBKey::createBinary(*arrayBufferView);
     }
     return nullptr;
@@ -481,7 +481,7 @@ void generateIndexKeyForValue(JSGlobalObject& lexicalGlobalObject, const IDBInde
     outKey = IndexKey(WTFMove(keyDatas));
 }
 
-IndexIDToIndexKeyMap generateIndexKeyMapForValueIsolatedCopy(JSC::JSGlobalObject& lexicalGlobalObject, const IDBObjectStoreInfo& storeInfo, const IDBKeyData& key, const IDBValue& value)
+IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject& lexicalGlobalObject, const IDBObjectStoreInfo& storeInfo, const IDBKeyData& key, const IDBValue& value)
 {
     auto& indexMap = storeInfo.indexMap();
     auto indexCount = indexMap.size();
@@ -503,7 +503,7 @@ IndexIDToIndexKeyMap generateIndexKeyMapForValueIsolatedCopy(JSC::JSGlobalObject
         if (indexKey.isNull())
             continue;
 
-        indexKeys.add(entry.key, WTFMove(indexKey).isolatedCopy());
+        indexKeys.add(entry.key, WTFMove(indexKey));
     }
 
     return indexKeys;

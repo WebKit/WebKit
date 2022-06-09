@@ -99,7 +99,7 @@ public:
 
     T*& outPtr()
     {
-        clear();
+        ASSERT(!m_ptr);
         return m_ptr;
     }
 
@@ -250,8 +250,6 @@ template <> WTF_EXPORT_PRIVATE GDateTime* refGPtr(GDateTime* ptr);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GDateTime* ptr);
 template <> WTF_EXPORT_PRIVATE GDBusNodeInfo* refGPtr(GDBusNodeInfo* ptr);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GDBusNodeInfo* ptr);
-template <> WTF_EXPORT_PRIVATE GArray* refGPtr(GArray*);
-template <> WTF_EXPORT_PRIVATE void derefGPtr(GArray*);
 
 #if HAVE(GURI)
 template <> WTF_EXPORT_PRIVATE GUri* refGPtr(GUri*);

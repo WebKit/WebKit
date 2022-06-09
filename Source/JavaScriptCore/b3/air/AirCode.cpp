@@ -229,8 +229,14 @@ void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOf
 RegisterAtOffsetList Code::calleeSaveRegisterAtOffsetList() const
 {
     RegisterAtOffsetList result = m_uncorrectedCalleeSaveRegisterAtOffsetList;
-    if (StackSlot* slot = m_calleeSaveStackSlot)
-        result.adjustOffsets(slot->byteSize() + slot->offsetFromFP());
+    if (StackSlot* slot = m_calleeSaveStackSlot) {
+        ptrdiff_t offset = slot->byteSize() + slot->offsetFromFP();
+        for (size_t i = result.size(); i--;) {
+            result.at(i) = RegisterAtOffset(
+                result.at(i).reg(),
+                result.at(i).offset() + offset);
+        }
+    }
     return result;
 }
 
@@ -271,7 +277,7 @@ void Code::dump(PrintStream& out) const
     if (m_callArgAreaSize)
         out.print(tierName, "Call arg area size: ", m_callArgAreaSize, "\n");
     RegisterAtOffsetList calleeSaveRegisters = this->calleeSaveRegisterAtOffsetList();
-    if (calleeSaveRegisters.registerCount())
+    if (calleeSaveRegisters.size())
         out.print(tierName, "Callee saves: ", calleeSaveRegisters, "\n");
 }
 
@@ -328,9 +334,12 @@ unsigned Code::jsHash() const
     return result;
 }
 
-void Code::setNumEntrypoints(unsigned numEntryPoints)
+void Code::setNumEntrypoints(unsigned numEntrypoints)
 {
-    m_prologueGenerators = { numEntryPoints, m_defaultPrologueGenerator.copyRef() };
+    m_prologueGenerators.clear();
+    m_prologueGenerators.reserveCapacity(numEntrypoints);
+    for (unsigned i = 0; i < numEntrypoints; ++i)
+        m_prologueGenerators.uncheckedAppend(m_defaultPrologueGenerator.copyRef());
 }
 
 } } } // namespace JSC::B3::Air

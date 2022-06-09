@@ -1,3 +1,0 @@
-Test that CSP for manifest V3 extensions allows keywords for non-restricted directives.
-
- PASS

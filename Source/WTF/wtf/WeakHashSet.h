@@ -31,7 +31,7 @@
 
 namespace WTF {
 
-template<typename T, typename Counter = EmptyCounter, EnableWeakPtrThreadingAssertions assertionsPolicy = EnableWeakPtrThreadingAssertions::Yes>
+template<typename T, typename Counter = EmptyCounter>
 class WeakHashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -83,7 +83,7 @@ public:
         }
 
     private:
-        template <typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+        template <typename, typename> friend class WeakHashSet;
 
         typename WeakPtrImplSet::const_iterator m_position;
         typename WeakPtrImplSet::const_iterator m_endPosition;
@@ -98,7 +98,7 @@ public:
     template <typename U>
     AddResult add(const U& value)
     {
-        return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value), assertionsPolicy).m_impl);
+        return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value)).m_impl);
     }
 
     template <typename U>

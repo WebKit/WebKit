@@ -109,7 +109,7 @@ template <typename T>
 class UUIDIdentified : public IdentifiedBase<UUID, T> {
 protected:
     UUIDIdentified()
-        : IdentifiedBase<UUID, T>(UUID::createVersion4())
+        : IdentifiedBase<UUID, T>(UUID::create())
     {
     }
 

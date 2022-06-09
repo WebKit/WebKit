@@ -24,7 +24,7 @@
 */
 
 [
-    Exposed=*,
+    Exposed=(Window,Worker),
     JSCustomMarkFunction,
 ] interface PromiseRejectionEvent : Event {
     constructor([AtomString] DOMString type, PromiseRejectionEventInit eventInitDict);

@@ -65,7 +65,7 @@ ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const F
 void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
 #if USE(NEW_THEME)
-    auto imageBuffer = context.createAlignedImageBuffer(size());
+    auto imageBuffer = ImageBuffer::createCompatibleBuffer(size(), context);
     if (!imageBuffer)
         return;
 
@@ -73,7 +73,7 @@ void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const Float
     Theme::singleton().drawNamedImage(m_name, graphicsContext, size());
 
     // Tile the image buffer into the context.
-    context.drawPattern(*imageBuffer, dstRect, srcRect, patternTransform, phase, spacing, options);
+    imageBuffer->drawPattern(context, dstRect, srcRect, patternTransform, phase, spacing, options);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(dstRect);

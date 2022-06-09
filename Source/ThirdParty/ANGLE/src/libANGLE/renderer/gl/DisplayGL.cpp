@@ -175,7 +175,7 @@ std::string DisplayGL::getRendererDescription()
     std::string rendererString        = GetRendererString(getRenderer()->getFunctions());
     const angle::FeaturesGL &features = getRenderer()->getFeatures();
 
-    if (features.sanitizeAMDGPURendererString.enabled)
+    if (features.sanitizeAmdGpuRendererString.enabled)
     {
         return SanitizeRendererString(rendererString);
     }

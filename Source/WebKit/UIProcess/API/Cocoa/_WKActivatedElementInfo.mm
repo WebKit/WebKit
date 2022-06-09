@@ -43,13 +43,11 @@
     WebCore::IntPoint _interactionLocation;
     RetainPtr<NSString> _ID;
     RefPtr<WebKit::ShareableBitmap> _image;
-    RetainPtr<NSString> _imageMIMEType;
     RetainPtr<CocoaImage> _cocoaImage;
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<NSDictionary> _userInfo;
 #endif
     BOOL _animatedImage;
-    BOOL _isImage;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -65,7 +63,6 @@
     
     _URL = information.url;
     _imageURL = information.imageURL;
-    _imageMIMEType = information.imageMIMEType;
     _interactionLocation = information.request.point;
     _title = information.title;
     _boundingRect = information.bounds;
@@ -82,26 +79,25 @@
     _image = information.image;
     _ID = information.idAttribute;
     _animatedImage = information.isAnimatedImage;
-    _isImage = information.isImage;
+
     _userInfo = userInfo;
     
     return self;
 }
 #endif
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
 {
-    return [self _initWithType:type URL:url imageURL:imageURL location:location title:title ID:ID rect:rect image:image imageMIMEType:imageMIMEType userInfo:nil];
+    return [self _initWithType:type URL:url imageURL:imageURL location:location title:title ID:ID rect:rect image:image userInfo:nil];
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image imageMIMEType:(NSString *)imageMIMEType userInfo:(NSDictionary *)userInfo
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(const WebCore::IntPoint&)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo
 {
     if (!(self = [super init]))
         return nil;
 
     _URL = adoptNS([url copy]);
     _imageURL = adoptNS([imageURL copy]);
-    _imageMIMEType = adoptNS(imageMIMEType.copy);
     _interactionLocation = location;
     _title = adoptNS([title copy]);
     _boundingRect = rect;
@@ -130,11 +126,6 @@
     return _title.get();
 }
 
-- (NSString *)imageMIMEType
-{
-    return _imageMIMEType.get();
-}
-
 - (NSString *)ID
 {
     return _ID.get();
@@ -156,11 +147,6 @@
     return _userInfo.get();
 }
 #endif
-
-- (BOOL)_isImage
-{
-    return _isImage;
-}
 
 - (CocoaImage *)image
 {

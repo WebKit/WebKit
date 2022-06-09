@@ -27,10 +27,8 @@
 #import "WebKit2Initialize.h"
 
 #import <JavaScriptCore/InitializeThreading.h>
-#import <WebCore/CommonAtomStrings.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <mutex>
-#import <wtf/GenerateProfiles.h>
 #import <wtf/MainThread.h>
 #import <wtf/RefCounted.h>
 #import <wtf/WorkQueue.h>
@@ -44,13 +42,11 @@ namespace WebKit {
 
 static std::once_flag flag;
 
-enum class WebKitProfileTag { };
-
 static void runInitializationCode(void* = nullptr)
 {
     RELEASE_ASSERT_WITH_MESSAGE([NSThread isMainThread], "InitializeWebKit2 should be called on the main thread");
 
-    WebCore::initializeCommonAtomStrings();
+    AtomString::init();
 #if PLATFORM(IOS_FAMILY)
     InitWebCoreThreadSystemInterface();
 #endif
@@ -61,8 +57,6 @@ static void runInitializationCode(void* = nullptr)
     WTF::RefCountedBase::enableThreadingChecksGlobally();
 
     WebCore::populateJITOperations();
-
-    WTF::registerProfileGenerationCallback<WebKitProfileTag>("WebKit");
 }
 
 void InitializeWebKit2()
@@ -70,7 +64,7 @@ void InitializeWebKit2()
     // Make sure the initialization code is run only once and on the main thread since things like initializeMainThread()
     // are only safe to call on the main thread.
     std::call_once(flag, [] {
-        if ([NSThread isMainThread] || linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::InitializeWebKit2MainThreadAssertion))
+        if ([NSThread isMainThread] || linkedOnOrAfter(SDKVersion::FirstWithInitializeWebKit2MainThreadAssertion))
             runInitializationCode();
         else
             WorkQueue::main().dispatchSync([] { runInitializationCode(); });

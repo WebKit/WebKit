@@ -46,7 +46,8 @@ ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContent
     , m_extensionBaseURL(WTFMove(extensionBaseURL))
 {
     DFABytecodeInterpreter interpreter(m_compiledExtension->urlFiltersBytecode());
-    m_universalActions = copyToVector(interpreter.actionsMatchingEverything());
+    for (uint64_t action : interpreter.actionsMatchingEverything())
+        m_universalActions.append(action);
 
     if (shouldCompileCSS == ShouldCompileCSS::Yes)
         compileGlobalDisplayNoneStyleSheet();

@@ -48,9 +48,9 @@ void WebGeolocationClient::geolocationDestroyed()
     delete this;
 }
 
-void WebGeolocationClient::startUpdating(const String& authorizationToken, bool needsHighAccuracy)
+void WebGeolocationClient::startUpdating(const String& authorizationToken)
 {
-    WebProcess::singleton().supplement<WebGeolocationManager>()->registerWebPage(m_page, authorizationToken, needsHighAccuracy);
+    WebProcess::singleton().supplement<WebGeolocationManager>()->registerWebPage(m_page, authorizationToken);
 }
 
 void WebGeolocationClient::stopUpdating()

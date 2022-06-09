@@ -51,8 +51,9 @@ void TextDocumentParser::insertFakePreElement()
     // We create a fake token and give it to the tree builder rather than
     // sending fake bytes through the front-end of the parser to avoid
     // distrubing the line/column number calculations.
-    Attribute attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"_s);
-    AtomHTMLToken fakePre(HTMLToken::Type::StartTag, preTag->localName(), { WTFMove(attribute) });
+    Vector<Attribute> attributes;
+    attributes.append(Attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"));
+    AtomHTMLToken fakePre(HTMLToken::StartTag, preTag->localName(), WTFMove(attributes));
     treeBuilder().constructTree(WTFMove(fakePre));
 
     // Normally we would skip the first \n after a <pre> element, but we don't

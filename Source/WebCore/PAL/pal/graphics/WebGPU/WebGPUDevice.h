@@ -33,7 +33,7 @@
 #include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
 #include <optional>
-#include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
@@ -58,7 +58,6 @@ class PipelineLayout;
 struct PipelineLayoutDescriptor;
 class QuerySet;
 struct QuerySetDescriptor;
-class Queue;
 class RenderBundleEncoder;
 struct RenderBundleEncoderDescriptor;
 class RenderPipeline;
@@ -87,8 +86,6 @@ public:
     SupportedLimits& limits() { return m_limits; }
     const SupportedLimits& limits() const { return m_limits; }
 
-    virtual Queue& queue() = 0;
-
     virtual void destroy() = 0;
 
     virtual Ref<Buffer> createBuffer(const BufferDescriptor&) = 0;
@@ -103,8 +100,8 @@ public:
     virtual Ref<ShaderModule> createShaderModule(const ShaderModuleDescriptor&) = 0;
     virtual Ref<ComputePipeline> createComputePipeline(const ComputePipelineDescriptor&) = 0;
     virtual Ref<RenderPipeline> createRenderPipeline(const RenderPipelineDescriptor&) = 0;
-    virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, CompletionHandler<void(Ref<ComputePipeline>&&)>&&) = 0;
-    virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, CompletionHandler<void(Ref<RenderPipeline>&&)>&&) = 0;
+    virtual void createComputePipelineAsync(const ComputePipelineDescriptor&, WTF::Function<void(Ref<ComputePipeline>&&)>&&) = 0;
+    virtual void createRenderPipelineAsync(const RenderPipelineDescriptor&, WTF::Function<void(Ref<RenderPipeline>&&)>&&) = 0;
 
     virtual Ref<CommandEncoder> createCommandEncoder(const std::optional<CommandEncoderDescriptor>&) = 0;
     virtual Ref<RenderBundleEncoder> createRenderBundleEncoder(const RenderBundleEncoderDescriptor&) = 0;
@@ -112,7 +109,7 @@ public:
     virtual Ref<QuerySet> createQuerySet(const QuerySetDescriptor&) = 0;
 
     virtual void pushErrorScope(ErrorFilter) = 0;
-    virtual void popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&) = 0;
+    virtual void popErrorScope(WTF::Function<void(std::optional<Error>&&)>&&) = 0;
 
     class DeviceLostClient {
         virtual ~DeviceLostClient() = default;

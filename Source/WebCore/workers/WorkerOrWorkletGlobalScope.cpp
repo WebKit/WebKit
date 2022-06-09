@@ -40,13 +40,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerOrWorkletGlobalScope);
 
-WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, PAL::SessionID sessionID, Ref<JSC::VM>&& vm, WorkerOrWorkletThread* thread, ScriptExecutionContextIdentifier contextIdentifier)
-    : ScriptExecutionContext(contextIdentifier)
-    , m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
+WorkerOrWorkletGlobalScope::WorkerOrWorkletGlobalScope(WorkerThreadType type, Ref<JSC::VM>&& vm, WorkerOrWorkletThread* thread)
+    : m_script(makeUnique<WorkerOrWorkletScriptController>(type, WTFMove(vm), this))
     , m_moduleLoader(makeUnique<ScriptModuleLoader>(*this, ScriptModuleLoader::OwnerType::WorkerOrWorklet))
     , m_thread(thread)
     , m_inspectorController(makeUnique<WorkerInspectorController>(*this))
-    , m_sessionID(sessionID)
 {
 }
 
@@ -120,12 +118,6 @@ void WorkerOrWorkletGlobalScope::postTask(Task&& task)
 {
     ASSERT(workerOrWorkletThread());
     workerOrWorkletThread()->runLoop().postTask(WTFMove(task));
-}
-
-void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, const String& mode)
-{
-    ASSERT(workerOrWorkletThread());
-    workerOrWorkletThread()->runLoop().postTaskForMode(WTFMove(task), mode);
 }
 
 } // namespace WebCore

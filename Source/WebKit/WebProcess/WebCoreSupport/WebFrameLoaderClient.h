@@ -186,8 +186,8 @@ private:
     bool canHandleRequest(const WebCore::ResourceRequest&) const final;
     bool canShowMIMEType(const String& MIMEType) const final;
     bool canShowMIMETypeAsHTML(const String& MIMEType) const final;
-    bool representationExistsForURLScheme(StringView URLScheme) const final;
-    String generatedMIMETypeForURLScheme(StringView URLScheme) const final;
+    bool representationExistsForURLScheme(const String& URLScheme) const final;
+    String generatedMIMETypeForURLScheme(const String& URLScheme) const final;
     
     void frameLoadCompleted() final;
     void saveViewStateToItem(WebCore::HistoryItem&) final;
@@ -217,9 +217,9 @@ private:
     bool canCachePage() const final;
     void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) final;
 
-    RefPtr<WebCore::Frame> createFrame(const AtomString& name, WebCore::HTMLFrameOwnerElement&) final;
+    RefPtr<WebCore::Frame> createFrame(const String& name, WebCore::HTMLFrameOwnerElement&) final;
 
-    RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<AtomString>&, const Vector<AtomString>&, const String&, bool loadManually) final;
+    RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
     
 #if ENABLE(WEBGL)
@@ -275,15 +275,9 @@ private:
 
     void didCreateWindow(WebCore::DOMWindow&) final;
 
-    inline bool hasPlugInView() const;
-
     Ref<WebFrame> m_frame;
-
-#if ENABLE(PDFKIT_PLUGIN)
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView { false };
-#endif
-
     bool m_didCompletePageTransition { false };
     bool m_frameHasCustomContentProvider { false };
     bool m_frameCameFromBackForwardCache { false };
@@ -302,10 +296,6 @@ private:
 #endif
 
     bool isParentProcessAFullWebBrowser() const final;
-
-#if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    void modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>)>&&) const final;
-#endif
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.
@@ -313,7 +303,6 @@ inline WebFrameLoaderClient* toWebFrameLoaderClient(WebCore::FrameLoaderClient& 
 {
     return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<WebFrameLoaderClient*>(&client);
 }
-
 inline const WebFrameLoaderClient* toWebFrameLoaderClient(const WebCore::FrameLoaderClient& client)
 {
     return client.isEmptyFrameLoaderClient() ? nullptr : static_cast<const WebFrameLoaderClient*>(&client);

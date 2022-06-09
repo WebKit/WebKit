@@ -41,6 +41,7 @@
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethod.h>
 #import <WebCore/ApplePayShippingMethodUpdate.h>
+#import <WebCore/PaymentAuthorizationStatus.h>
 #import <WebCore/PaymentHeaders.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
@@ -78,7 +79,7 @@ WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-    if (!PAL::isPassKitCoreFrameworkAvailable())
+    if (!PAL::isPassKitFrameworkAvailable())
         return completionHandler(false);
 #endif
 
@@ -95,7 +96,7 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
 void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)
-    if (!PAL::isPassKitCoreFrameworkAvailable())
+    if (!PAL::isPassKitFrameworkAvailable())
         return completionHandler(false);
 #endif
 
@@ -112,15 +113,15 @@ static RetainPtr<NSSet> toPKContactFields(const WebCore::ApplePaySessionPaymentR
     Vector<NSString *> result;
 
     if (contactFields.postalAddress)
-        result.append(PKContactFieldPostalAddress);
+        result.append(PAL::get_PassKit_PKContactFieldPostalAddress());
     if (contactFields.phone)
-        result.append(PKContactFieldPhoneNumber);
+        result.append(PAL::get_PassKit_PKContactFieldPhoneNumber());
     if (contactFields.email)
-        result.append(PKContactFieldEmailAddress);
+        result.append(PAL::get_PassKit_PKContactFieldEmailAddress());
     if (contactFields.name)
-        result.append(PKContactFieldName);
+        result.append(PAL::get_PassKit_PKContactFieldName());
     if (contactFields.phoneticName)
-        result.append(PKContactFieldPhoneticName);
+        result.append(PAL::get_PassKit_PKContactFieldPhoneticName());
 
     return adoptNS([[NSSet alloc] initWithObjects:result.data() count:result.size()]);
 }
@@ -347,9 +348,9 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     return result;
 }
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)
+void WebPaymentCoordinatorProxy::platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
 {
-    m_authorizationPresenter->completePaymentSession(WTFMove(result));
+    m_authorizationPresenter->completePaymentSession(result);
 }
 
 void WebPaymentCoordinatorProxy::platformCompleteMerchantValidation(const WebCore::PaymentMerchantSession& paymentMerchantSession)

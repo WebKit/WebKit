@@ -30,7 +30,6 @@
 
 #include "APIDebuggableInfo.h"
 #include "APIInspectorConfiguration.h"
-#include "RemoteInspectorHTTPServer.h"
 #include "RemoteWebInspectorUIProxy.h"
 #include <JavaScriptCore/RemoteInspectorUtils.h>
 #include <WebCore/InspectorDebuggableType.h>
@@ -45,42 +44,37 @@ class RemoteInspectorProxy final : public RemoteWebInspectorUIProxyClient {
     WTF_MAKE_FAST_ALLOCATED();
 public:
     RemoteInspectorProxy(RemoteInspectorClient& inspectorClient, uint64_t connectionID, uint64_t targetID)
-        : m_inspectorClient(inspectorClient)
+        : m_proxy(RemoteWebInspectorUIProxy::create())
+        , m_inspectorClient(inspectorClient)
         , m_connectionID(connectionID)
         , m_targetID(targetID)
     {
+        m_proxy->setClient(this);
     }
 
     ~RemoteInspectorProxy()
     {
-        if (m_proxy) {
-            m_proxy->setClient(nullptr);
-            m_proxy->invalidate();
-        } else
-            RemoteInspectorHTTPServer::singleton().targetDidClose(m_connectionID, m_targetID);
+        m_proxy->setClient(nullptr);
+        m_proxy->invalidate();
     }
 
-    void initialize(Inspector::DebuggableType debuggableType)
+    void load(Inspector::DebuggableType debuggableType)
     {
-        m_proxy = RemoteWebInspectorUIProxy::create();
-        m_proxy->setClient(this);
         // FIXME <https://webkit.org/b/205536>: this should infer more useful data about the debug target.
         Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
         debuggableInfo->setDebuggableType(debuggableType);
-        m_proxy->initialize(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
+        m_proxy->load(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
     }
 
     void show()
     {
-        if (m_proxy)
-            m_proxy->show();
+        m_proxy->show();
     }
 
     void setTargetName(const CString& name)
     {
 #if PLATFORM(GTK)
-        if (m_proxy)
-            m_proxy->updateWindowTitle(name);
+        m_proxy->updateWindowTitle(name);
 #endif
     }
 
@@ -88,10 +82,7 @@ public:
 
     void sendMessageToFrontend(const String& message)
     {
-        if (m_proxy)
-            m_proxy->sendMessageToFrontend(message);
-        else
-            RemoteInspectorHTTPServer::singleton().sendMessageToFrontend(m_connectionID, m_targetID, message);
+        m_proxy->sendMessageToFrontend(message);
     }
 
     void sendMessageToBackend(const String& message) override
@@ -110,7 +101,7 @@ public:
     }
 
 private:
-    RefPtr<RemoteWebInspectorUIProxy> m_proxy;
+    Ref<RemoteWebInspectorUIProxy> m_proxy;
     RemoteInspectorClient& m_inspectorClient;
     uint64_t m_connectionID;
     uint64_t m_targetID;
@@ -167,8 +158,8 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
     return messageHandlers;
 }
 
-RemoteInspectorClient::RemoteInspectorClient(String&& hostAndPort, RemoteInspectorObserver& observer)
-    : m_hostAndPort(WTFMove(hostAndPort))
+RemoteInspectorClient::RemoteInspectorClient(const char* address, unsigned port, RemoteInspectorObserver& observer)
+    : m_hostAndPort(String::fromUTF8(address) + ':' + String::number(port))
     , m_observer(observer)
     , m_cancellable(adoptGRef(g_cancellable_new()))
 {
@@ -191,8 +182,6 @@ RemoteInspectorClient::RemoteInspectorClient(String&& hostAndPort, RemoteInspect
 
 RemoteInspectorClient::~RemoteInspectorClient()
 {
-    if (m_socketConnection)
-        m_socketConnection->close();
     g_cancellable_cancel(m_cancellable.get());
 }
 
@@ -222,16 +211,16 @@ void RemoteInspectorClient::connectionDidClose()
 
 static Inspector::DebuggableType debuggableType(const String& targetType)
 {
-    if (targetType == "JavaScript"_s)
+    if (targetType == "JavaScript")
         return Inspector::DebuggableType::JavaScript;
-    if (targetType == "ServiceWorker"_s)
+    if (targetType == "ServiceWorker")
         return Inspector::DebuggableType::ServiceWorker;
-    if (targetType == "WebPage"_s)
+    if (targetType == "WebPage")
         return Inspector::DebuggableType::WebPage;
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, const String& targetType, InspectorType inspectorType)
+void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, const String& targetType)
 {
     auto addResult = m_inspectorProxyMap.ensure(std::make_pair(connectionID, targetID), [this, connectionID, targetID] {
         return makeUnique<RemoteInspectorProxy>(*this, connectionID, targetID);
@@ -242,8 +231,7 @@ void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, co
     }
 
     m_socketConnection->sendMessage("Setup", g_variant_new("(tt)", connectionID, targetID));
-    if (inspectorType == InspectorType::UI)
-        addResult.iterator->value->initialize(debuggableType(targetType));
+    addResult.iterator->value->load(debuggableType(targetType));
 }
 
 void RemoteInspectorClient::sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String& message)
@@ -290,76 +278,6 @@ void RemoteInspectorClient::sendMessageToFrontend(uint64_t connectionID, uint64_
     if (!proxy)
         return;
     proxy->sendMessageToFrontend(String::fromUTF8(message));
-}
-
-void RemoteInspectorClient::appendTargertList(GString* html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const
-{
-    if (m_targets.isEmpty())
-        g_string_append(html, "<p>No targets found</p>");
-    else {
-        g_string_append(html, "<table>");
-        for (auto connectionID : m_targets.keys()) {
-            for (auto& target : m_targets.get(connectionID)) {
-                g_string_append_printf(html,
-                    "<tbody><tr>"
-                    "<td class=\"data\"><div class=\"targetname\">%s</div><div class=\"targeturl\">%s</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=",
-                    target.name.data(), target.url.data());
-
-                switch (inspectorType) {
-                case InspectorType::UI:
-                    g_string_append(html, "\"window.webkit.messageHandlers.inspector.postMessage(");
-                    if (escapeSingleQuote == ShouldEscapeSingleQuote::Yes)
-                        g_string_append(html, "\\'");
-                    else
-                        g_string_append_c(html, '\'');
-                    g_string_append_printf(html, "%" G_GUINT64_FORMAT ":%" G_GUINT64_FORMAT ":%s", connectionID, target.id, target.type.data());
-                    if (escapeSingleQuote == ShouldEscapeSingleQuote::Yes)
-                        g_string_append(html, "\\')\"");
-                    else
-                        g_string_append(html, "')\"");
-                    break;
-                case InspectorType::HTTP:
-                    g_string_append_printf(html,
-                        "\"window.open('Main.html?ws=' + window.location.host + '/socket/%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT "/%s', "
-                        "'_blank', 'location=no,menubar=no,status=no,toolbar=no');\"",
-                        connectionID, target.id, target.type.data());
-                    break;
-                }
-
-                g_string_append(html, "></td></tr></tbody>");
-            }
-        }
-        g_string_append(html, "</table>");
-    }
-}
-
-GString* RemoteInspectorClient::buildTargetListPage(InspectorType inspectorType) const
-{
-    GString* html = g_string_new(
-        "<html><head><title>Remote inspector</title>"
-        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
-        "<style>"
-        "  h1 { color: #babdb6; text-shadow: 0 1px 0 white; margin-bottom: 0; }"
-        "  html { font-family: -webkit-system-font; font-size: 11pt; color: #2e3436; padding: 20px 20px 0 20px; background-color: #f6f6f4; "
-        "         background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeec), color-stop(1, #f6f6f4));"
-        "         background-size: 100% 5em; background-repeat: no-repeat; }"
-        "  table { width: 100%; border-collapse: collapse; }"
-        "  table, td { border: 1px solid #d3d7cf; border-left: none; border-right: none; }"
-        "  p { margin-bottom: 30px; }"
-        "  td { padding: 15px; }"
-        "  td.data { width: 200px; }"
-        "  .targetname { font-weight: bold; }"
-        "  .targeturl { color: #babdb6; }"
-        "  td.input { width: 64px; }"
-        "  input { width: 100%; padding: 8px; }"
-        "</style>"
-        "</head><body><h1>Inspectable targets</h1>"
-        "<div id='targetlist'>");
-    appendTargertList(html, inspectorType, ShouldEscapeSingleQuote::No);
-    g_string_append(html, "</div></body></html>");
-
-    return html;
 }
 
 } // namespace WebKit

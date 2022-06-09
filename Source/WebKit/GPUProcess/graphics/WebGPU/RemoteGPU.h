@@ -122,7 +122,6 @@ private:
     RemoteGPU& operator=(RemoteGPU&&) = delete;
 
     void initialize();
-    IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
     void workQueueInitialize();
     void workQueueUninitialize();
 
@@ -132,17 +131,18 @@ private:
         return m_streamConnection->connection().send(WTFMove(message), m_identifier);
     }
 
-    void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 
-    void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&&);
+    void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, WTF::CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&&);
 
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
-    RefPtr<PAL::WebGPU::GPU> m_backing WTF_GUARDED_BY_CAPABILITY(workQueue());
-    Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
+    RefPtr<PAL::WebGPU::GPU> m_backing WTF_GUARDED_BY_LOCK(m_streamThread);
+    Ref<WebGPU::ObjectHeap> m_objectHeap WTF_GUARDED_BY_LOCK(m_streamThread);
     const WebGPUIdentifier m_identifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
+    NO_UNIQUE_ADDRESS ThreadAssertion m_streamThread;
     const WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
 

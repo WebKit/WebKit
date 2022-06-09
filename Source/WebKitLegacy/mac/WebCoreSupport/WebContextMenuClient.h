@@ -64,10 +64,6 @@ public:
     bool supportsLookUpInImages() final { return false; }
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    bool supportsCopySubject() final { return false; }
-#endif
-
 #if ENABLE(SERVICE_CONTROLS)
     // WebSharingServicePickerClient
     void sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &) override;

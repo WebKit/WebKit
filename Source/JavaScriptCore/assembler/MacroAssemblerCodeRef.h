@@ -68,8 +68,8 @@ class CFunctionPtr {
 public:
     using Ptr = void(*)();
 
-    constexpr CFunctionPtr() = default;
-    constexpr CFunctionPtr(std::nullptr_t) { }
+    CFunctionPtr() { }
+    CFunctionPtr(std::nullptr_t) { }
 
     template<typename ReturnType, typename... Arguments>
     constexpr CFunctionPtr(ReturnType(&ptr)(Arguments...))
@@ -135,8 +135,8 @@ private:
 template<PtrTag tag = CFunctionPtrTag>
 class FunctionPtr {
 public:
-    constexpr FunctionPtr() = default;
-    constexpr FunctionPtr(std::nullptr_t) { }
+    FunctionPtr() { }
+    FunctionPtr(std::nullptr_t) { }
 
     template<typename ReturnType, typename... Arguments>
     FunctionPtr(ReturnType(*value)(Arguments...))
@@ -223,9 +223,9 @@ private:
     template<PtrTag> friend class FunctionPtr;
 };
 
-static_assert(sizeof(FunctionPtr<CFunctionPtrTag>) == sizeof(void*));
+static_assert(sizeof(FunctionPtr<CFunctionPtrTag>) == sizeof(void*), "");
 #if COMPILER_SUPPORTS(BUILTIN_IS_TRIVIALLY_COPYABLE)
-static_assert(__is_trivially_copyable(FunctionPtr<CFunctionPtrTag>));
+static_assert(__is_trivially_copyable(FunctionPtr<CFunctionPtrTag>), "");
 #endif
 
 // ReturnAddressPtr:
@@ -525,8 +525,6 @@ public:
     {
         m_codePtr.dumpWithName("CodeRef", out);
     }
-
-    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(MacroAssemblerCodeRef, m_codePtr); }
 
 private:
     template<PtrTag otherTag>

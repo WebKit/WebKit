@@ -48,19 +48,19 @@ PerformanceEntry::~PerformanceEntry() = default;
 
 std::optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(const String& entryType)
 {
-    if (entryType == "navigation"_s)
+    if (entryType == "navigation")
         return std::optional<Type>(Type::Navigation);
 
-    if (entryType == "mark"_s)
+    if (entryType == "mark")
         return std::optional<Type>(Type::Mark);
-    if (entryType == "measure"_s)
+    if (entryType == "measure")
         return std::optional<Type>(Type::Measure);
 
-    if (entryType == "resource"_s)
+    if (entryType == "resource")
         return std::optional<Type>(Type::Resource);
 
     if (RuntimeEnabledFeatures::sharedFeatures().paintTimingEnabled()) {
-        if (entryType == "paint"_s)
+        if (entryType == "paint")
             return std::optional<Type>(Type::Paint);
     }
 

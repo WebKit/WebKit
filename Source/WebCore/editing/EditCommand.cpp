@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-ASCIILiteral inputTypeNameForEditingAction(EditAction action)
+String inputTypeNameForEditingAction(EditAction action)
 {
     switch (action) {
     case EditAction::Justify:
@@ -117,7 +117,7 @@ ASCIILiteral inputTypeNameForEditingAction(EditAction action)
     case EditAction::CreateLink:
         return "insertLink"_s;
     default:
-        return ""_s;
+        return emptyString();
     }
 }
 

@@ -89,8 +89,6 @@ public:
 
     static constexpr uint8_t numberOfLowerTierCells = 8;
 
-    static constexpr size_t atomSize = 16; // This needs to be larger or equal to 16.
-
     static JSCell* seenMultipleCalleeObjects() { return bitwise_cast<JSCell*>(static_cast<uintptr_t>(1)); }
 
     enum CreatingEarlyCellTag { CreatingEarlyCell };
@@ -110,12 +108,12 @@ public:
     bool isGetterSetter() const;
     bool isCustomGetterSetter() const;
     bool isProxy() const;
-    bool isCallable();
-    bool isConstructor();
-    template<Concurrency> TriState isCallableWithConcurrency();
-    template<Concurrency> TriState isConstructorWithConcurrency();
-    bool inherits(const ClassInfo*) const;
-    template<typename Target> bool inherits() const;
+    bool isCallable(VM&);
+    bool isConstructor(VM&);
+    template<Concurrency> TriState isCallableWithConcurrency(VM&);
+    template<Concurrency> TriState isConstructorWithConcurrency(VM&);
+    bool inherits(VM&, const ClassInfo*) const;
+    template<typename Target> bool inherits(VM&) const;
     JS_EXPORT_PRIVATE bool isValidCallee() const;
     bool isAPIValueWrapper() const;
     
@@ -134,13 +132,14 @@ public:
     IndexingType indexingType() const;
     StructureID structureID() const { return m_structureID; }
     Structure* structure() const;
+    Structure* structure(VM&) const;
     void setStructure(VM&, Structure*);
     void setStructureIDDirectly(StructureID id) { m_structureID = id; }
-    void clearStructure() { m_structureID = StructureID(); }
+    void clearStructure() { m_structureID = 0; }
 
     TypeInfo::InlineTypeFlags inlineTypeFlags() const { return m_flags; }
     
-    ASCIILiteral className() const;
+    const char* className(VM&) const;
 
     // Extracting the value.
     JS_EXPORT_PRIVATE bool getString(JSGlobalObject*, String&) const;
@@ -176,8 +175,8 @@ public:
     JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
 
     // Object operations, with the toObject operation included.
-    const ClassInfo* classInfo() const;
-    const MethodTable* methodTable() const;
+    const ClassInfo* classInfo(VM&) const;
+    const MethodTable* methodTable(VM&) const;
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
     bool putInline(JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);

@@ -28,5 +28,5 @@
     EnabledBySetting=CSSCustomPropertiesAndValuesEnabled,
     ImplementedBy=DOMCSSRegisterCustomProperty
 ] partial namespace DOMCSSNamespace {
-    [CallWith=CurrentDocument] undefined registerProperty(DOMCSSCustomPropertyDescriptor descriptor);
+    [CallWith=Document] undefined registerProperty(DOMCSSCustomPropertyDescriptor descriptor);
 };

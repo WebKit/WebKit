@@ -44,7 +44,6 @@
     [_relyingPartyIdentifier release];
     [_allowCredentials release];
     [_extensions release];
-    [_extensionsCBOR release];
     [super dealloc];
 }
 

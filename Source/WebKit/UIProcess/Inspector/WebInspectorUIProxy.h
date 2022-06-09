@@ -33,7 +33,6 @@
 #include "WebInspectorUtilities.h"
 #include "WebPageProxyIdentifier.h"
 #include <JavaScriptCore/InspectorFrontendChannel.h>
-#include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/InspectorClient.h>
 #include <WebCore/InspectorFrontendClient.h>
@@ -49,7 +48,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 
-OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
@@ -132,7 +130,6 @@ public:
 #if PLATFORM(MAC)
     enum class InspectionTargetType { Local, Remote };
     static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType);
-    static void showSavePanel(NSWindow *, NSURL *, Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs, CompletionHandler<void(NSURL *)>&&);
 
     void didBecomeActive();
 
@@ -161,7 +158,6 @@ public:
     void showResources();
     void showMainResourceForFrame(WebFrameProxy*);
     void openURLExternally(const String& url);
-    void revealFileExternally(const String& path);
 
     AttachmentSide attachmentSide() const { return m_attachmentSide; }
     bool isAttached() const { return m_isAttached; }
@@ -230,16 +226,16 @@ private:
     void platformOpenURLExternally(const String&);
     void platformInspectedURLChanged(const String&);
     void platformShowCertificate(const WebCore::CertificateInfo&);
+    unsigned platformInspectedWindowHeight();
+    unsigned platformInspectedWindowWidth();
     void platformAttach();
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);
     void platformSetAttachedWindowWidth(unsigned);
     void platformSetSheetRect(const WebCore::FloatRect&);
     void platformStartWindowDrag();
-    void platformRevealFileExternally(const String&);
-    void platformSave(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
-    void platformPickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
+    void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
+    void platformAppend(const String& filename, const String& content);
 
 #if PLATFORM(MAC)
     bool platformCanAttach(bool webProcessCanAttach);
@@ -264,9 +260,8 @@ private:
     void timelineRecordingChanged(bool);
     void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, std::optional<bool>);
 
-    void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs);
-    void load(const String& path, CompletionHandler<void(const String&)>&&);
-    void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&);
+    void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
+    void append(const String& filename, const String& content);
 
     bool canAttach() const { return m_canAttach; }
     bool shouldOpenAttached();

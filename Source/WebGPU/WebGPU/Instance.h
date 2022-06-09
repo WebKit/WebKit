@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,55 +25,37 @@
 
 #pragma once
 
-#import <wtf/CompletionHandler.h>
-#import <wtf/Deque.h>
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
-#import <wtf/Lock.h>
+#import <wtf/Function.h>
 #import <wtf/Ref.h>
-#import <wtf/ThreadSafeRefCounted.h>
-
-struct WGPUInstanceImpl {
-};
+#import <wtf/RefCounted.h>
 
 namespace WebGPU {
 
 class Adapter;
 class Surface;
 
-// https://gpuweb.github.io/gpuweb/#gpu
-class Instance : public WGPUInstanceImpl, public ThreadSafeRefCounted<Instance> {
+class Instance : public RefCounted<Instance> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Instance> create(const WGPUInstanceDescriptor&);
-    static Ref<Instance> createInvalid()
+    static Ref<Instance> create()
     {
         return adoptRef(*new Instance());
     }
 
     ~Instance();
 
-    Ref<Surface> createSurface(const WGPUSurfaceDescriptor&);
+    Ref<Surface> createSurface(const WGPUSurfaceDescriptor*);
     void processEvents();
-    void requestAdapter(const WGPURequestAdapterOptions&, CompletionHandler<void(WGPURequestAdapterStatus, Ref<Adapter>&&, String&&)>&& callback);
-
-    bool isValid() const { return m_isValid; }
-
-    // This can be called on a background thread.
-    using WorkItem = CompletionHandler<void(void)>;
-    void scheduleWork(WorkItem&&);
+    void requestAdapter(const WGPURequestAdapterOptions*, WTF::Function<void(WGPURequestAdapterStatus, Ref<Adapter>&&, const char*)>&& callback);
 
 private:
-    Instance(WGPUScheduleWorkBlock);
     Instance();
-
-    // This can be called on a background thread.
-    void defaultScheduleWork(WGPUWorkItem&&);
-
-    // This can be used on a background thread.
-    Deque<WGPUWorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
-    const WGPUScheduleWorkBlock m_scheduleWorkBlock;
-    Lock m_lock;
-    bool m_isValid { true };
 };
 
 } // namespace WebGPU
+
+struct WGPUInstanceImpl {
+    Ref<WebGPU::Instance> instance;
+};

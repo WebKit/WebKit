@@ -31,25 +31,23 @@
 #include "IPCSemaphore.h"
 #include "MessageReceiver.h"
 #include "RemoteRealtimeAudioSource.h"
+#include "RemoteRealtimeDisplaySource.h"
 #include "RemoteRealtimeVideoSource.h"
-#include "RemoteVideoFrameIdentifier.h"
-#include "RemoteVideoFrameProxy.h"
 #include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/HashMap.h>
-#include <wtf/Lock.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class ImageTransferSessionVT;
+class RemoteVideoSample;
 }
 
 namespace WebKit {
-class RemoteVideoFrameObjectHeapProxy;
 
-class RemoteCaptureSampleManager : public IPC::Connection::WorkQueueMessageReceiver {
+class RemoteCaptureSampleManager : public IPC::Connection::ThreadMessageReceiverRefCounted {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteCaptureSampleManager();
@@ -58,21 +56,21 @@ public:
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
     void addSource(Ref<RemoteRealtimeVideoSource>&&);
+    void addSource(Ref<RemoteRealtimeDisplaySource>&&);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
-    void didUpdateSourceConnection(IPC::Connection&);
-    void setVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy*);
+    void didUpdateSourceConnection(IPC::Connection*);
 
-    // IPC::Connection::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
+    // IPC::Connection::ThreadMessageReceiver
+    void dispatchToThread(Function<void()>&&) final;
+
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
-    void videoFrameAvailable(WebCore::RealtimeMediaSourceIdentifier, RemoteVideoFrameProxy::Properties&&, WebCore::VideoFrameTimeMetadata);
-    // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
-    void videoFrameAvailableCV(WebCore::RealtimeMediaSourceIdentifier, RetainPtr<CVPixelBufferRef>&&, WebCore::VideoFrame::Rotation, bool mirrored, MediaTime, WebCore::VideoFrameTimeMetadata);
+    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
 
     void setConnection(IPC::Connection*);
 
@@ -101,15 +99,26 @@ private:
         std::atomic<bool> m_shouldStopThread { false };
     };
 
+    class RemoteVideo {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        using Source = std::variant<Ref<RemoteRealtimeVideoSource>, Ref<RemoteRealtimeDisplaySource>>;
+        explicit RemoteVideo(Source&&);
+
+        void videoSampleAvailable(WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
+
+    private:
+        Source m_source;
+        std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
+    };
+
     bool m_isRegisteredToParentProcessConnection { false };
     Ref<WorkQueue> m_queue;
     RefPtr<IPC::Connection> m_connection;
+
     // background thread member
     HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteAudio>> m_audioSources;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<RemoteRealtimeVideoSource>> m_videoSources;
-
-    Lock m_videoFrameObjectHeapProxyLock;
-    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_videoFrameObjectHeapProxyLock);
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, std::unique_ptr<RemoteVideo>> m_videoSources;
 };
 
 } // namespace WebKit

@@ -24,7 +24,6 @@
 #include "Attr.h"
 
 #include "AttributeChangeInvalidation.h"
-#include "CommonAtomStrings.h"
 #include "Document.h"
 #include "ElementInlines.h"
 #include "Event.h"
@@ -71,8 +70,6 @@ Attr::~Attr()
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!isInShadowTree());
     ASSERT_WITH_SECURITY_IMPLICATION(treeScope().rootNode().isDocumentNode());
-
-    willBeDeletedFrom(document());
 }
 
 ExceptionOr<void> Attr::setPrefix(const AtomString& prefix)
@@ -100,9 +97,10 @@ void Attr::setValue(const AtomString& value)
         m_standaloneValue = value;
 }
 
-void Attr::setNodeValue(const String& value)
+ExceptionOr<void> Attr::setNodeValue(const String& value)
 {
-    setValue(AtomString { value });
+    setValue(value);
+    return { };
 }
 
 Ref<Node> Attr::cloneNodeInternal(Document& targetDocument, CloningOperation)
@@ -114,11 +112,10 @@ CSSStyleDeclaration* Attr::style()
 {
     // This is not part of the DOM API, and therefore not available to webpages. However, WebKit SPI
     // lets clients use this via the Objective-C and JavaScript bindings.
-    auto styledElement = dynamicDowncast<StyledElement>(m_element);
-    if (!styledElement)
+    if (!is<StyledElement>(m_element))
         return nullptr;
     m_style = MutableStyleProperties::create();
-    styledElement->collectPresentationalHintsForAttribute(qualifiedName(), value(), *m_style);
+    downcast<StyledElement>(*m_element).collectPresentationalHintsForAttribute(qualifiedName(), value(), *m_style);
     return &m_style->ensureCSSStyleDeclaration();
 }
 

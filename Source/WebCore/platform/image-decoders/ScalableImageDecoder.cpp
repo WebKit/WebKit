@@ -251,4 +251,11 @@ PlatformImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, Sub
     return buffer->backingStore()->image();
 }
 
+#if USE(DIRECT2D)
+void ScalableImageDecoder::setTargetContext(ID2D1RenderTarget*)
+{
+    notImplemented();
+}
+#endif
+
 }

@@ -43,16 +43,15 @@ class ContentSecurityPolicyResponseHeaders;
 class ScriptBuffer;
 class ScriptExecutionContext;
 class Worker;
-struct WorkerInitializationData;
 enum class ReferrerPolicy : uint8_t;
-enum class WorkerType : bool;
+enum class WorkerType : uint8_t;
 
 // A proxy to talk to the worker context.
 class WorkerGlobalScopeProxy {
 public:
     static WorkerGlobalScopeProxy& create(Worker&);
 
-    virtual void startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID, const String& name, WorkerInitializationData&&, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) = 0;
+    virtual void startWorkerGlobalScope(const URL& scriptURL, const String& name, const String& userAgent, bool isOnline, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy&, MonotonicTime timeOrigin, ReferrerPolicy, WorkerType, FetchRequestCredentials, JSC::RuntimeFlags) = 0;
     virtual void terminateWorkerGlobalScope() = 0;
     virtual void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) = 0;
     virtual void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&) = 0;

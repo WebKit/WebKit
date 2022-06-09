@@ -103,7 +103,7 @@ class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasB
 public:
 
     struct ImageEncodeOptions {
-        String type = "image/png"_s;
+        String type = "image/png";
         double quality = 1.0;
     };
 

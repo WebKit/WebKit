@@ -39,9 +39,6 @@ public:
     }
     NetworkSessionCurl(NetworkProcess&, const NetworkSessionCreationParameters&);
     ~NetworkSessionCurl();
-
-private:
-    std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool) final;
 };
 
 } // namespace WebKit

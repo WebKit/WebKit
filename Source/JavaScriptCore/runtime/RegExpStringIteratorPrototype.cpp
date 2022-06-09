@@ -32,12 +32,12 @@
 
 namespace JSC {
 
-const ClassInfo RegExpStringIteratorPrototype::s_info = { "RegExp String Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpStringIteratorPrototype) };
+const ClassInfo RegExpStringIteratorPrototype::s_info = { "RegExp String Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpStringIteratorPrototype) };
 
 void RegExpStringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->next, regExpStringIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }

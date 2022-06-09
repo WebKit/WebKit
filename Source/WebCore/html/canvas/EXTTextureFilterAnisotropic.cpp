@@ -26,8 +26,8 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
-#include "EXTTextureFilterAnisotropic.h"
 
+#include "EXTTextureFilterAnisotropic.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,7 +37,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(EXTTextureFilterAnisotropic);
 EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_filter_anisotropic"_s);
 }
 
 EXTTextureFilterAnisotropic::~EXTTextureFilterAnisotropic() = default;
@@ -45,11 +44,6 @@ EXTTextureFilterAnisotropic::~EXTTextureFilterAnisotropic() = default;
 WebGLExtension::ExtensionName EXTTextureFilterAnisotropic::getName() const
 {
     return EXTTextureFilterAnisotropicName;
-}
-
-bool EXTTextureFilterAnisotropic::supported(GraphicsContextGL& context)
-{
-    return context.supportsExtension("GL_EXT_texture_filter_anisotropic"_s);
 }
 
 } // namespace WebCore

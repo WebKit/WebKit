@@ -450,7 +450,7 @@ const Vector<AtomString>& PlaybackSessionModelMediaElement::observedEventNames()
 
 const AtomString&  PlaybackSessionModelMediaElement::eventNameAll()
 {
-    static MainThreadNeverDestroyed<const AtomString> eventNameAll("allEvents"_s);
+    static MainThreadNeverDestroyed<const AtomString> eventNameAll("allEvents", AtomString::ConstructFromLiteral);
     return eventNameAll;
 }
 
@@ -511,13 +511,18 @@ bool PlaybackSessionModelMediaElement::canPlayFastReverse() const
 
 Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::audioMediaSelectionOptions() const
 {
+    Vector<MediaSelectionOption> audioOptions;
+
     if (!m_mediaElement || !m_mediaElement->document().page())
-        return { };
+        return audioOptions;
 
     auto& captionPreferences = m_mediaElement->document().page()->group().ensureCaptionPreferences();
-    return m_audioTracksForMenu.map([&](auto& audioTrack) {
-        return captionPreferences.mediaSelectionOptionForTrack(audioTrack.get());
-    });
+
+    audioOptions.reserveInitialCapacity(m_audioTracksForMenu.size());
+    for (auto& audioTrack : m_audioTracksForMenu)
+        audioOptions.uncheckedAppend(captionPreferences.mediaSelectionOptionForTrack(audioTrack.get()));
+
+    return audioOptions;
 }
 
 uint64_t PlaybackSessionModelMediaElement::audioMediaSelectedIndex() const
@@ -534,12 +539,14 @@ Vector<MediaSelectionOption> PlaybackSessionModelMediaElement::legibleMediaSelec
     Vector<MediaSelectionOption> legibleOptions;
 
     if (!m_mediaElement || !m_mediaElement->document().page())
-        return { };
+        return legibleOptions;
 
     auto& captionPreferences = m_mediaElement->document().page()->group().ensureCaptionPreferences();
-    return m_legibleTracksForMenu.map([&](auto& track) {
-        return captionPreferences.mediaSelectionOptionForTrack(track.get());
-    });
+
+    for (auto& track : m_legibleTracksForMenu)
+        legibleOptions.append(captionPreferences.mediaSelectionOptionForTrack(track.get()));
+
+    return legibleOptions;
 }
 
 uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const

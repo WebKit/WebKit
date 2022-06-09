@@ -30,6 +30,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(WIN)
 #include "GPUConnectionToWebProcess.h"
 #include "WCContentBufferManager.h"
+#include <WebCore/GraphicsContextGLTextureMapper.h>
 
 namespace WebKit {
 
@@ -57,7 +58,7 @@ RemoteGraphicsContextGLWin::RemoteGraphicsContextGLWin(GPUConnectionToWebProcess
 
 void RemoteGraphicsContextGLWin::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    m_context = WebCore::GraphicsContextGLTextureMapperANGLE::create(WTFMove(attributes));
+    m_context = WebCore::GraphicsContextGLTextureMapper::create(WTFMove(attributes));
 }
 
 void RemoteGraphicsContextGLWin::prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&& completionHandler)

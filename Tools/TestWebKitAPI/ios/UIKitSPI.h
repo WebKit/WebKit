@@ -29,10 +29,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <UIKit/NSParagraphStyle_Private.h>
 #import <UIKit/NSTextAlternatives.h>
-#import <UIKit/NSTextList.h>
-#import <UIKit/UIAction_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItemGroup_Private.h>
 #import <UIKit/UICalloutBar.h>
@@ -69,19 +66,9 @@ IGNORE_WARNINGS_END
 #else // USE(APPLE_INTERNAL_SDK)
 
 @interface NSTextAlternatives : NSObject
-- (id)initWithPrimaryString:(NSString *)primaryString alternativeStrings:(NSArray<NSString *> *)alternativeStrings;
 @property (readonly) NSString *primaryString;
 @property (readonly) NSArray<NSString *> *alternativeStrings;
 @property (readonly) BOOL isLowConfidence;
-@end
-
-@interface NSParagraphStyle ()
-- (NSArray *)textLists;
-@end
-
-@interface NSTextList : NSObject
-@property NSInteger startingItemNumber;
-@property (readonly, copy) NSString *markerFormat;
 @end
 
 WTF_EXTERN_C_BEGIN
@@ -214,7 +201,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @protocol UIWKInteractionViewProtocol
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
-- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler;
 - (void)selectWordBackward;
@@ -224,7 +210,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler;
 - (void)selectWordForReplacement;
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point;
-- (void)replaceDictatedText:(NSString *)oldText withText:(NSString *)newText;
 - (NSArray<NSTextAlternatives *> *)alternativesForSelectedText;
 @property (nonatomic, readonly) NSString *selectedText;
 
@@ -284,10 +269,6 @@ IGNORE_WARNINGS_END
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 @end
 
-@interface UIAction ()
-- (void)_performActionWithSender:(id)sender;
-@end
-
 #endif // USE(APPLE_INTERNAL_SDK)
 
 @interface UITextAutofillSuggestion ()
@@ -333,15 +314,10 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 
 @protocol UITextInputInternal
 - (CGRect)_selectionClipRect;
-- (void)moveByOffset:(NSInteger)offset;
-@optional
-- (void)addTextAlternatives:(NSTextAlternatives *)alternatives;
-- (void)removeEmojiAlternatives;
 @end
 
 @interface UIResponder (Internal)
 - (void)_share:(id)sender;
-@property (nonatomic, readonly) BOOL _requiresKeyboardWhenFirstResponder;
 @end
 
 @interface UIWebGeolocationPolicyDecider : NSObject
@@ -349,12 +325,6 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 
 @interface UIWebGeolocationPolicyDecider ()
 + (instancetype)sharedPolicyDecider;
-@end
-
-@protocol UIWKInteractionViewProtocol_Staging_91919121 <UIWKInteractionViewProtocol>
-@optional
-- (void)willInsertFinalDictationResult;
-- (void)didInsertFinalDictationResult;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

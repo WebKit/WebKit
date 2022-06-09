@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,8 +36,6 @@ public:
     float dy() const { return m_dy; }
     void setDy(float);
 
-    static IntOutsets calculateOutsets(const FloatSize& offset);
-
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<Ref<FEOffset>> decode(Decoder&);
 
@@ -48,7 +46,7 @@ private:
 
     bool resultIsAlphaImage(const FilterImageVector& inputs) const override;
 
-    std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
+    std::unique_ptr<FilterEffectApplier> createApplier(const Filter&) const override;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 

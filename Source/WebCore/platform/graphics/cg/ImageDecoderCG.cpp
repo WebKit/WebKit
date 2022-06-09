@@ -56,13 +56,6 @@ const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldP
 const CFStringRef kCGImageSourceSkipMetadata = CFSTR("kCGImageSourceSkipMetadata");
 const CFStringRef kCGImageSourceSubsampleFactor = CFSTR("kCGImageSourceSubsampleFactor");
 const CFStringRef kCGImageSourceShouldCacheImmediately = CFSTR("kCGImageSourceShouldCacheImmediately");
-const CFStringRef kCGImageSourceUseHardwareAcceleration = CFSTR("kCGImageSourceUseHardwareAcceleration");
-#endif
-
-const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
-
-#if HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG)
-const CFStringRef kCGImageSourceCreateUnpremultipliedPNG = CFSTR("kCGImageSourceCreateUnpremultipliedPNG");
 #endif
 
 static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
@@ -71,18 +64,6 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
     CFDictionarySetValue(options.get(), kCGImageSourceShouldCache, kCFBooleanTrue);
     CFDictionarySetValue(options.get(), kCGImageSourceShouldPreferRGB32, kCFBooleanTrue);
     CFDictionarySetValue(options.get(), kCGImageSourceSkipMetadata, kCFBooleanTrue);
-
-    if (ImageDecoderCG::hardwareAcceleratedDecodingDisabled())
-        CFDictionarySetValue(options.get(), kCGImageSourceUseHardwareAcceleration, kCFBooleanFalse);
-
-#if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK)
-    if (ImageDecoderCG::decodingHEICEnabled())
-        CFDictionarySetValue(options.get(), kCGImageSourceEnableRestrictedDecoding, kCFBooleanTrue);
-#endif
-
-#if HAVE(IMAGEIO_CREATE_UNPREMULTIPLIED_PNG)
-    CFDictionarySetValue(options.get(), kCGImageSourceCreateUnpremultipliedPNG, kCFBooleanTrue);
-#endif
     return options;
 }
 
@@ -267,9 +248,6 @@ void sharedBufferRelease(void* info)
     sharedBuffer->deref();
 }
 #endif
-
-bool ImageDecoderCG::s_enableDecodingHEIC = false;
-bool ImageDecoderCG::s_hardwareAcceleratedDecodingDisabled = false;
 
 ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
@@ -524,7 +502,7 @@ bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const
     
     // Return false if there is no image type or the image type is JPEG, because
     // JPEG does not support alpha transparency.
-    if (uti.isEmpty() || uti == "public.jpeg"_s)
+    if (uti.isEmpty() || uti == "public.jpeg")
         return false;
     
     // FIXME: Could return false for other non-transparent image formats.
@@ -575,7 +553,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
 #endif // PLATFORM(IOS_FAMILY)
     
     String uti = this->uti();
-    if (uti.isEmpty() || uti != "public.xbitmap-image"_s)
+    if (uti.isEmpty() || uti != "public.xbitmap-image")
         return image;
     
     // If it is an xbm image, mask out all the white areas to render them transparent.
@@ -609,26 +587,6 @@ void ImageDecoderCG::setData(const FragmentedSharedBuffer& data, bool allDataRec
 bool ImageDecoderCG::canDecodeType(const String& mimeType)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
-}
-
-void ImageDecoderCG::enableDecodingHEIC()
-{
-    s_enableDecodingHEIC = true;
-}
-
-bool ImageDecoderCG::decodingHEICEnabled()
-{
-    return s_enableDecodingHEIC;
-}
-
-void ImageDecoderCG::disableHardwareAcceleratedDecoding()
-{
-    s_hardwareAcceleratedDecodingDisabled = true;
-}
-
-bool ImageDecoderCG::hardwareAcceleratedDecodingDisabled()
-{
-    return s_hardwareAcceleratedDecodingDisabled;
 }
 
 }

@@ -2743,7 +2743,7 @@ static void testMicrotaskWithFunction()
 {
     @autoreleasepool {
 #if PLATFORM(COCOA)
-        bool useLegacyDrain = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotDrainTheMicrotaskQueueWhenCallingObjC);
+        bool useLegacyDrain = !linkedOnOrAfter(SDKVersion::FirstThatDoesNotDrainTheMicrotaskQueueWhenCallingObjC);
         if (useLegacyDrain)
             return;
 #endif

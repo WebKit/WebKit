@@ -33,7 +33,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "URLRegistry.h"
-#include <wtf/RobinHoodHashMap.h>
+#include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -53,7 +53,7 @@ public:
 
 private:
     MediaSourceRegistry();
-    MemoryCompactRobinHoodHashMap<String, RefPtr<MediaSource>> m_mediaSources;
+    HashMap<String, RefPtr<MediaSource>> m_mediaSources;
 };
 
 } // namespace WebCore

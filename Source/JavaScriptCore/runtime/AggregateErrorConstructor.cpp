@@ -37,7 +37,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AggregateErrorConstructor);
 
-const ClassInfo AggregateErrorConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AggregateErrorConstructor) };
+const ClassInfo AggregateErrorConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AggregateErrorConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(callAggregateErrorConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructAggregateErrorConstructor);
@@ -50,7 +50,7 @@ AggregateErrorConstructor::AggregateErrorConstructor(VM& vm, Structure* structur
 void AggregateErrorConstructor::finishCreation(VM& vm, AggregateErrorPrototype* prototype)
 {
     Base::finishCreation(vm, 2, errorTypeName(ErrorType::AggregateError), PropertyAdditionMode::WithoutStructureTransition);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
 
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }

@@ -29,30 +29,86 @@
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #include "GPUProcessConnection.h"
+#include "SharedRingBufferStorage.h"
 #include "UserMediaCaptureManager.h"
+#include "UserMediaCaptureManagerMessages.h"
+#include "UserMediaCaptureManagerProxyMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include <WebCore/MediaConstraints.h>
+#include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/WebAudioBufferList.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
 {
-    auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier));
+    auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
     manager.addSource(source.copyRef());
     manager.remoteCaptureSampleManager().addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
-RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
-    : RemoteRealtimeMediaSource(identifier, device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier)
+RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt))
+    , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
+    , m_manager(manager)
 {
     ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
+#if PLATFORM(IOS_FAMILY)
+    RealtimeMediaSourceCenter::singleton().audioCaptureFactory().setActiveSource(*this);
+#endif
+}
+
+void RemoteRealtimeAudioSource::createRemoteMediaSource()
+{
+    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
+        if (!succeeded) {
+            m_proxy.didFail(WTFMove(errorMessage));
+            return;
+        }
+
+        setSettings(WTFMove(settings));
+        setCapabilities(WTFMove(capabilities));
+        setName(String { m_settings.label().string() });
+
+        m_proxy.setAsReady();
+        if (m_proxy.shouldCaptureInGPUProcess())
+            WebProcess::singleton().ensureGPUProcessConnection().addClient(*this);
+    });
 }
 
 RemoteRealtimeAudioSource::~RemoteRealtimeAudioSource()
 {
-    removeAsClient();
+    if (m_proxy.shouldCaptureInGPUProcess()) {
+        if (auto* connection = WebProcess::singleton().existingGPUProcessConnection())
+            connection->removeClient(*this);
+    }
+
+#if PLATFORM(IOS_FAMILY)
+    RealtimeMediaSourceCenter::singleton().audioCaptureFactory().unsetActiveSource(*this);
+#endif
+}
+
+void RemoteRealtimeAudioSource::setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
+{
+    m_capabilities = WTFMove(capabilities);
+}
+
+void RemoteRealtimeAudioSource::setSettings(RealtimeMediaSourceSettings&& settings)
+{
+    auto changed = m_settings.difference(settings);
+    m_settings = WTFMove(settings);
+    notifySettingsDidChangeObservers(changed);
+}
+
+void RemoteRealtimeAudioSource::applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&& settings)
+{
+    setSettings(WTFMove(settings));
+    m_proxy.applyConstraintsSucceeded();
 }
 
 void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t size)
@@ -60,6 +116,60 @@ void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& tim
     ASSERT(!isMainRunLoop());
     audioSamplesAvailable(time, data, description, size);
 }
+
+void RemoteRealtimeAudioSource::hasEnded()
+{
+    m_proxy.hasEnded();
+    m_manager.removeSource(identifier());
+    m_manager.remoteCaptureSampleManager().removeSource(identifier());
+}
+
+void RemoteRealtimeAudioSource::captureStopped()
+{
+    stop();
+    hasEnded();
+}
+
+void RemoteRealtimeAudioSource::captureFailed()
+{
+    RealtimeMediaSource::captureFailed();
+    hasEnded();
+}
+
+void RemoteRealtimeAudioSource::applyConstraints(const MediaConstraints& constraints, ApplyConstraintsHandler&& callback)
+{
+    m_constraints = constraints;
+    m_proxy.applyConstraints(constraints, WTFMove(callback));
+}
+
+#if ENABLE(GPU_PROCESS)
+void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnection&)
+{
+    ASSERT(m_proxy.shouldCaptureInGPUProcess());
+    if (isEnded())
+        return;
+
+#if PLATFORM(IOS_FAMILY)
+    if (this != RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource()) {
+        // Track is muted and has no chance of being unmuted, let's end it.
+        captureFailed();
+        return;
+    }
+#endif
+
+    m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
+    m_proxy.resetReady();
+    createRemoteMediaSource();
+
+    m_proxy.failApplyConstraintCallbacks("GPU Process terminated"_s);
+    if (m_constraints)
+        m_proxy.applyConstraints(*m_constraints, [](auto) { });
+
+    if (isProducingData())
+        startProducingData();
+
+}
+#endif
 
 }
 

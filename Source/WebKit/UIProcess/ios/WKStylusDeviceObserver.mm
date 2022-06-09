@@ -82,7 +82,7 @@ static Seconds changeTimeInterval { 10_min };
     if (++_startCount > 1)
         return;
 
-    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ObservesClassProperty))
+    if (linkedOnOrAfter(SDKVersion::FirstThatObservesClassProperty))
         [[UIScribbleInteraction class] addObserver:self forKeyPath:@"isPencilInputExpected" options:NSKeyValueObservingOptionInitial context:nil];
 }
 
@@ -92,7 +92,7 @@ static Seconds changeTimeInterval { 10_min };
     if (!_startCount || --_startCount)
         return;
 
-    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ObservesClassProperty))
+    if (linkedOnOrAfter(SDKVersion::FirstThatObservesClassProperty))
         [[UIScribbleInteraction class] removeObserver:self forKeyPath:@"isPencilInputExpected"];
 }
 

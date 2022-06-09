@@ -60,13 +60,13 @@ using DisplayListAcceleratedImageBuffer = DisplayList::ImageBuffer<AcceleratedIm
 class IOSurfaceImageBuffer final : public ConcreteImageBuffer<ImageBufferIOSurfaceBackend> {
     using Base = ConcreteImageBuffer<ImageBufferIOSurfaceBackend>;
 public:
-    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const CreationContext& creationContext = { })
+    static auto create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, const HostWindow* hostWindow = nullptr)
     {
-        return Base::create<IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+        return Base::create<IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, hostWindow);
     }
-    static auto create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose)
+    static auto create(const FloatSize& size, const GraphicsContext& context)
     {
-        return Base::create<IOSurfaceImageBuffer>(size, context, purpose);
+        return Base::create<IOSurfaceImageBuffer>(size, context);
     }
     using Base::Base;
 

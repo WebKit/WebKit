@@ -318,11 +318,12 @@ String HeapSnapshotBuilder::descriptionForCell(JSCell *cell) const
     if (cell->isString())
         return emptyString(); // FIXME: get part of string.
 
-    Structure* structure = cell->structure();
+    VM& vm = m_profiler.vm();
+    Structure* structure = cell->structure(vm);
 
-    if (structure->classInfoForCells()->isSubClassOf(Structure::info())) {
+    if (structure->classInfo()->isSubClassOf(Structure::info())) {
         Structure* cellAsStructure = jsCast<Structure*>(cell);
-        return cellAsStructure->classInfoForCells()->className;
+        return cellAsStructure->classInfo()->className;
     }
 
     return emptyString();
@@ -361,7 +362,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
 
         allowedNodeIdentifiers.set(node.cell, node.identifier);
 
-        String className = node.cell->classInfo()->className;
+        String className = node.cell->classInfo(vm)->className;
         if (node.cell->isObject() && className == JSObject::info()->className) {
             flags |= static_cast<unsigned>(NodeFlags::ObjectSubtype);
 
@@ -369,7 +370,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             // These cases are typically F.prototype objects and we want to treat these as
             // "Object" in snapshots and not get the name of the prototype's parent.
             JSObject* object = asObject(node.cell);
-            if (JSGlobalObject* globalObject = object->globalObject()) {
+            if (JSGlobalObject* globalObject = object->globalObject(vm)) {
                 PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
                 if (!object->getOwnPropertySlot(object, globalObject, vm.propertyNames->constructor, slot))
                     className = JSObject::calculatedClassName(object);
@@ -384,20 +385,20 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
         void* wrappedAddress = nullptr;
         unsigned labelIndex = 0;
         if (!node.cell->isString() && !node.cell->isHeapBigInt()) {
-            Structure* structure = node.cell->structure();
+            Structure* structure = node.cell->structure(vm);
             if (!structure || !structure->globalObject())
                 flags |= static_cast<unsigned>(NodeFlags::Internal);
 
             if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
-                StringBuilder nodeLabel;
+                String nodeLabel;
                 auto it = m_cellLabels.find(node.cell);
                 if (it != m_cellLabels.end())
-                    nodeLabel.append(it->value);
+                    nodeLabel = it->value;
 
                 if (nodeLabel.isEmpty()) {
-                    if (auto* object = jsDynamicCast<JSObject*>(node.cell)) {
-                        if (auto* function = jsDynamicCast<JSFunction*>(object))
-                            nodeLabel.append(function->calculatedDisplayName(vm));
+                    if (auto* object = jsDynamicCast<JSObject*>(vm, node.cell)) {
+                        if (auto* function = jsDynamicCast<JSFunction*>(vm, object))
+                            nodeLabel = function->calculatedDisplayName(vm);
                     }
                 }
 
@@ -409,7 +410,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                 }
 
                 if (!nodeLabel.isEmpty() && m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
-                    auto result = labelIndexes.add(nodeLabel.toString(), nextLabelIndex);
+                    auto result = labelIndexes.add(nodeLabel, nextLabelIndex);
                     if (result.isNewEntry)
                         nextLabelIndex++;
                     labelIndex = result.iterator->value;
@@ -574,7 +575,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             json.append(snapshotNode.value().identifier);
 
             // Maybe we should just always encode the root names.
-            auto rootName = rootMarkReasonDescription(it.value.markReason);
+            const char* rootName = rootMarkReasonDescription(it.value.markReason);
             auto result = labelIndexes.add(rootName, nextLabelIndex);
             if (result.isNewEntry)
                 nextLabelIndex++;
@@ -582,7 +583,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
 
             unsigned reachabilityReasonIndex = 0;
             if (it.value.reachabilityFromOpaqueRootReasons) {
-                auto result = labelIndexes.add(String::fromLatin1(it.value.reachabilityFromOpaqueRootReasons), nextLabelIndex);
+                auto result = labelIndexes.add(it.value.reachabilityFromOpaqueRootReasons, nextLabelIndex);
                 if (result.isNewEntry)
                     nextLabelIndex++;
                 reachabilityReasonIndex = result.iterator->value;

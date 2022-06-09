@@ -1,7 +1,7 @@
 {
     "domain": "Audit",
     "description": "",
-    "version": 4,
+    "version": 3,
     "debuggableTypes": ["itml", "javascript", "page", "service-worker", "web-page"],
     "targetTypes": ["itml", "javascript", "page", "service-worker", "worker"],
     "commands": [

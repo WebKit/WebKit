@@ -63,11 +63,11 @@ void XMLErrors::handleError(ErrorType type, const char* message, TextPosition po
     if (type == fatal || (m_errorCount < maxErrors && (!m_lastErrorPosition || (m_lastErrorPosition->m_line != position.m_line && m_lastErrorPosition->m_column != position.m_column)))) {
         switch (type) {
         case warning:
-            appendErrorMessage("warning"_s, position, message);
+            appendErrorMessage("warning", position, message);
             break;
         case fatal:
         case nonFatal:
-            appendErrorMessage("error"_s, position, message);
+            appendErrorMessage("error", position, message);
         }
 
         m_lastErrorPosition = position;
@@ -75,18 +75,18 @@ void XMLErrors::handleError(ErrorType type, const char* message, TextPosition po
     }
 }
 
-void XMLErrors::appendErrorMessage(ASCIILiteral typeString, TextPosition position, const char* message)
+void XMLErrors::appendErrorMessage(const String& typeString, TextPosition position, const char* message)
 {
     // <typeString> on line <lineNumber> at column <columnNumber>: <message>
     m_errorMessages.append(typeString, " on line ", position.m_line.oneBasedInt(), " at column ", position.m_column.oneBasedInt(), ": ", message);
 }
 
-static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, String&& errorMessages)
+static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, const String& errorMessages)
 {
-    Ref<Element> reportElement = document.createElement(QualifiedName(nullAtom(), "parsererror"_s, xhtmlNamespaceURI), true);
+    Ref<Element> reportElement = document.createElement(QualifiedName(nullAtom(), "parsererror", xhtmlNamespaceURI), true);
 
     Vector<Attribute> reportAttributes;
-    reportAttributes.append(Attribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"_s));
+    reportAttributes.append(Attribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"));
     reportElement->parserSetAttributes(reportAttributes);
 
     auto h3 = HTMLHeadingElement::create(h3Tag, document);
@@ -95,11 +95,11 @@ static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, Stri
 
     auto fixed = HTMLDivElement::create(document);
     Vector<Attribute> fixedAttributes;
-    fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"_s));
+    fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"));
     fixed->parserSetAttributes(fixedAttributes);
     reportElement->parserAppendChild(fixed);
 
-    fixed->parserAppendChild(Text::create(document, WTFMove(errorMessages)));
+    fixed->parserAppendChild(Text::create(document, errorMessages));
 
     h3 = HTMLHeadingElement::create(h3Tag, document);
     reportElement->parserAppendChild(h3);
@@ -142,12 +142,13 @@ void XMLErrors::insertErrorMessageBlock()
         documentElement = WTFMove(body);
     }
 
-    auto reportElement = createXHTMLParserErrorHeader(m_document, m_errorMessages.toString());
+    String errorMessages = m_errorMessages.toString();
+    auto reportElement = createXHTMLParserErrorHeader(m_document, errorMessages);
 
 #if ENABLE(XSLT)
     if (m_document.transformSourceDocument()) {
         Vector<Attribute> attributes;
-        attributes.append(Attribute(styleAttr, "white-space: normal"_s));
+        attributes.append(Attribute(styleAttr, "white-space: normal"));
         auto paragraph = HTMLParagraphElement::create(m_document);
         paragraph->parserSetAttributes(attributes);
         paragraph->parserAppendChild(m_document.createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."_s));

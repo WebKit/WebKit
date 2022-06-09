@@ -121,9 +121,9 @@ private:
 
     TransactionID takeNextTransactionID() { return m_currentTransactionID.increment(); }
 
-    void tryMarkLayersVolatile(CompletionHandler<void(bool succeeded)>&&) final;
+    bool markLayersVolatileImmediatelyIfPossible() override;
 
-    void adoptLayersFromDrawingArea(DrawingArea&) final;
+    void adoptLayersFromDrawingArea(DrawingArea&) override;
 
     class BackingStoreFlusher : public ThreadSafeRefCounted<BackingStoreFlusher> {
     public:

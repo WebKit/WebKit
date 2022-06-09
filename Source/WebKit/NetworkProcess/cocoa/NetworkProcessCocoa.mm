@@ -73,6 +73,13 @@ static void initializeNetworkSettings()
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
+#if PLATFORM(IOS_FAMILY)
+    SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.parentBundleDirectoryExtensionHandle);
+    SandboxExtension::consumePermanently(parameters.tempDirectoryExtensionHandle);
+#endif
+
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
@@ -247,13 +254,5 @@ void NetworkProcess::notifyPreferencesChanged(const String& domain, const String
     preferenceDidUpdate(domain, key, encodedValue);
 }
 #endif
-
-const String& NetworkProcess::uiProcessBundleIdentifier() const
-{
-    if (m_uiProcessBundleIdentifier.isNull())
-        m_uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-
-    return m_uiProcessBundleIdentifier;
-}
 
 } // namespace WebKit

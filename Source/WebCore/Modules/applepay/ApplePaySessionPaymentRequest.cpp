@@ -28,6 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "PaymentAuthorizationStatus.h"
 #include <wtf/SoftLinking.h>
 
 namespace WebCore {
@@ -35,6 +36,23 @@ namespace WebCore {
 ApplePaySessionPaymentRequest::ApplePaySessionPaymentRequest() = default;
 
 ApplePaySessionPaymentRequest::~ApplePaySessionPaymentRequest() = default;
+
+bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>& result)
+{
+    if (!result)
+        return true;
+
+    switch (result->status) {
+    case PaymentAuthorizationStatus::Success:
+    case PaymentAuthorizationStatus::Failure:
+        return result->errors.isEmpty();
+
+    case PaymentAuthorizationStatus::PINRequired:
+    case PaymentAuthorizationStatus::PINIncorrect:
+    case PaymentAuthorizationStatus::PINLockout:
+        return false;
+    }
+}
 
 }
 

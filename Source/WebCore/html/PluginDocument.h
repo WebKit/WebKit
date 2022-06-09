@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class HTMLPlugInElement;
-class PluginViewBase;
+class Widget;
 
 class PluginDocument final : public HTMLDocument {
     WTF_MAKE_ISO_ALLOCATED(PluginDocument);
@@ -39,7 +39,7 @@ public:
         return adoptRef(*new PluginDocument(frame, url));
     }
 
-    WEBCORE_EXPORT PluginViewBase* pluginWidget();
+    WEBCORE_EXPORT Widget* pluginWidget();
     HTMLPlugInElement* pluginElement() { return m_pluginElement.get(); }
 
     void setPluginElement(HTMLPlugInElement&);

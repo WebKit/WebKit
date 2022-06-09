@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ScriptWrappable.h"
-#include "WebCoreOpaqueRoot.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -48,8 +47,6 @@ public:
 
     AbortSignal& signal();
     void abort(JSDOMGlobalObject&, JSC::JSValue reason);
-
-    WebCoreOpaqueRoot opaqueRoot();
 
 private:
     explicit AbortController(ScriptExecutionContext&);

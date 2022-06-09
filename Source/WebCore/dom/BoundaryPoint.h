@@ -41,8 +41,6 @@ struct BoundaryPoint {
 bool operator==(const BoundaryPoint&, const BoundaryPoint&);
 bool operator!=(const BoundaryPoint&, const BoundaryPoint&);
 
-WTF::TextStream& operator<<(WTF::TextStream&, const BoundaryPoint&);
-
 template<TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
 
 WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node&);

@@ -205,7 +205,7 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
 
 String DatabaseUtilities::stripIndexQueryToMatchStoredValue(const char* originalQuery)
 {
-    return makeStringByReplacingAll(String::fromLatin1(originalQuery), "CREATE UNIQUE INDEX IF NOT EXISTS"_s, "CREATE UNIQUE INDEX"_s);
+    return String(originalQuery).replace("CREATE UNIQUE INDEX IF NOT EXISTS", "CREATE UNIQUE INDEX");
 }
 
 TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& tableName)
@@ -256,16 +256,16 @@ TableAndIndexPair DatabaseUtilities::currentTableAndIndexQueries(const String& t
 
 static Expected<WebCore::SQLiteStatement, int> insertDistinctValuesInTableStatement(WebCore::SQLiteDatabase& database, const String& table)
 {
-    if (table == "SubframeUnderTopFrameDomains"_s)
+    if (table == "SubframeUnderTopFrameDomains")
         return database.prepareStatement("INSERT INTO SubframeUnderTopFrameDomains SELECT subFrameDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubframeUnderTopFrameDomains GROUP BY subFrameDomainID, topFrameDomainID"_s);
 
-    if (table == "SubresourceUnderTopFrameDomains"_s)
+    if (table == "SubresourceUnderTopFrameDomains")
         return database.prepareStatement("INSERT INTO SubresourceUnderTopFrameDomains SELECT subresourceDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubresourceUnderTopFrameDomains GROUP BY subresourceDomainID, topFrameDomainID"_s);
 
-    if (table == "SubresourceUniqueRedirectsTo"_s)
+    if (table == "SubresourceUniqueRedirectsTo")
         return database.prepareStatement("INSERT INTO SubresourceUniqueRedirectsTo SELECT subresourceDomainID, MAX(lastUpdated), toDomainID FROM _SubresourceUniqueRedirectsTo GROUP BY subresourceDomainID, toDomainID"_s);
 
-    if (table == "TopFrameLinkDecorationsFrom"_s)
+    if (table == "TopFrameLinkDecorationsFrom")
         return database.prepareStatement("INSERT INTO TopFrameLinkDecorationsFrom SELECT toDomainID, MAX(lastUpdated), fromDomainID FROM _TopFrameLinkDecorationsFrom GROUP BY toDomainID, fromDomainID"_s);
 
     return database.prepareStatementSlow(makeString("INSERT INTO ", table, " SELECT DISTINCT * FROM _", table));

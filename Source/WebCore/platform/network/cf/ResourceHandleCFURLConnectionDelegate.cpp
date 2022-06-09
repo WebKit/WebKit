@@ -148,7 +148,7 @@ ResourceRequest ResourceHandleCFURLConnectionDelegate::createResourceRequest(CFU
             CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), lastHTTPMethod.get());
 
             FormData* body = m_handle->firstRequest().httpBody();
-            if (!equalLettersIgnoringASCIICase(m_handle->firstRequest().httpMethod(), "get"_s) && body && !body->isEmpty())
+            if (!equalLettersIgnoringASCIICase(m_handle->firstRequest().httpMethod(), "get") && body && !body->isEmpty())
                 WebCore::setHTTPBody(mutableRequest.get(), body);
 
             String originalContentType = m_handle->firstRequest().httpContentType();
@@ -162,7 +162,7 @@ ResourceRequest ResourceHandleCFURLConnectionDelegate::createResourceRequest(CFU
     if (request.isNull())
         request = cfRequest;
 
-    if (!request.url().protocolIs("https"_s) && protocolIs(request.httpReferrer(), "https"_s) && m_handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
+    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && m_handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
         request.clearHTTPReferrer();
     return request;
 }

@@ -31,7 +31,7 @@
 #include "WasmCallee.h"
 #include "WasmLLIntPlan.h"
 #include "WasmNameSection.h"
-#include "WasmTypeDefinitionInlines.h"
+#include "WasmSignatureInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>

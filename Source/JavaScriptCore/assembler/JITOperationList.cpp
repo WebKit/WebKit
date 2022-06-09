@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,21 +26,14 @@
 #include "config.h"
 #include "JITOperationList.h"
 
-#include "Disassembler.h"
 #include "Gate.h"
 #include "JITOperationValidation.h"
 #include "LLIntData.h"
 #include "Opcode.h"
-#include "Options.h"
-
-#if HAVE(DLADDR)
-#include <cxxabi.h>
-#include <dlfcn.h>
-#endif
 
 namespace JSC {
 
-#if ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
+#if ENABLE(JIT_OPERATION_VALIDATION)
 
 LazyNeverDestroyed<JITOperationList> jitOperationList;
 
@@ -51,8 +44,6 @@ void JITOperationList::initialize()
 {
     jitOperationList.construct();
 }
-
-#if ENABLE(JIT_OPERATION_VALIDATION)
 
 #if JIT_OPERATION_VALIDATION_ASSERT_ENABLED
 void JITOperationList::addInverseMap(void* validationEntry, void* pointer)
@@ -94,14 +85,8 @@ void JITOperationList::populatePointersInJavaScriptCore()
     std::call_once(onceKey, [] {
         if (Options::useJIT())
             jitOperationList->addPointers(&startOfJITOperationsInJSC, &endOfJITOperationsInJSC);
-#if ENABLE(JIT_OPERATION_DISASSEMBLY)
-        if (UNLIKELY(Options::needDisassemblySupport()))
-            populateDisassemblyLabelsInJavaScriptCore();
-#endif
     });
 }
-
-#endif // ENABLE(JIT_OPERATION_VALIDATION)
 
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_function_for_call_prologue);
 LLINT_DECLARE_ROUTINE_VALIDATE(llint_function_for_construct_prologue);
@@ -119,43 +104,31 @@ LLINT_DECLARE_ROUTINE_VALIDATE(checkpoint_osr_exit_from_inlined_call_trampoline)
 LLINT_DECLARE_ROUTINE_VALIDATE(normal_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(fuzzer_return_early_from_loop_hint);
 
-#if ENABLE(JIT_OPERATION_VALIDATION)
-#define LLINT_OP_EXTRAS(validateLabel) bitwise_cast<void*>(validateLabel)
-#else // ENABLE(JIT_OPERATION_DISASSEMBLY)
-#define LLINT_OP_EXTRAS(validateLabel)
-#endif
+void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
+{
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
 
 #define LLINT_ROUTINE(functionName) { \
         bitwise_cast<void*>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(functionName)), \
-        LLINT_OP_EXTRAS(LLINT_ROUTINE_VALIDATE(functionName)) \
+        bitwise_cast<void*>(LLINT_ROUTINE_VALIDATE(functionName)) \
     },
 
 #define LLINT_OP(name) { \
         bitwise_cast<void*>(LLInt::getCodeFunctionPtr<CFunctionPtrTag>(name)), \
-        LLINT_OP_EXTRAS(LLINT_RETURN_VALIDATE(name)) \
+        bitwise_cast<void*>(LLINT_RETURN_VALIDATE(name)) \
     }, { \
         bitwise_cast<void*>(LLInt::getWide16CodeFunctionPtr<CFunctionPtrTag>(name)), \
-        LLINT_OP_EXTRAS(LLINT_RETURN_WIDE16_VALIDATE(name)) \
+        bitwise_cast<void*>(LLINT_RETURN_WIDE16_VALIDATE(name)) \
     }, { \
         bitwise_cast<void*>(LLInt::getWide32CodeFunctionPtr<CFunctionPtrTag>(name)), \
-        LLINT_OP_EXTRAS(LLINT_RETURN_WIDE32_VALIDATE(name)) \
+        bitwise_cast<void*>(LLINT_RETURN_WIDE32_VALIDATE(name)) \
     },
 
 #define LLINT_RETURN_LOCATION(name, ...) \
     LLINT_OP(name##_return_location)
 
-struct LLIntOperations {
-    const JITOperationAnnotation* operations;
-    size_t numberOfOperations;
-};
-
-static LLIntOperations llintOperations()
-{
-    static const JITOperationAnnotation* operations = nullptr;
-    static size_t numberOfOperations = 0;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        static const JITOperationAnnotation operationsStorage[] = {
+        const JITOperationAnnotation operations[] = {
             LLINT_ROUTINE(llint_function_for_call_prologue)
             LLINT_ROUTINE(llint_function_for_construct_prologue)
             LLINT_ROUTINE(llint_function_for_call_arity_check)
@@ -187,33 +160,14 @@ static LLIntOperations llintOperations()
             JSC_JS_GATE_OPCODES(LLINT_RETURN_LOCATION)
             JSC_WASM_GATE_OPCODES(LLINT_RETURN_LOCATION)
         };
-        operations = operationsStorage;
-        numberOfOperations = WTF_ARRAY_LENGTH(operationsStorage);
-    });
-    return { operations, numberOfOperations };
-}
-
+        if (Options::useJIT())
+            jitOperationList->addPointers(operations, operations + WTF_ARRAY_LENGTH(operations));
 #undef LLINT_ROUTINE
 #undef LLINT_OP
 #undef LLINT_RETURN_LOCATION
-#undef LLINT_OP_EXTRAS
-
-#if ENABLE(JIT_OPERATION_VALIDATION)
-
-void JITOperationList::populatePointersInJavaScriptCoreForLLInt()
-{
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        if (Options::useJIT()) {
-            auto list = llintOperations();
-            jitOperationList->addPointers(list.operations, list.operations + list.numberOfOperations);
-        }
-#if ENABLE(JIT_OPERATION_DISASSEMBLY)
-        if (UNLIKELY(Options::needDisassemblySupport()))
-            JITOperationList::populateDisassemblyLabelsInJavaScriptCoreForLLInt();
-#endif
     });
 }
+
 
 void JITOperationList::populatePointersInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations)
 {
@@ -222,56 +176,5 @@ void JITOperationList::populatePointersInEmbedder(const JITOperationAnnotation* 
 }
 
 #endif // ENABLE(JIT_OPERATION_VALIDATION)
-
-#if ENABLE(JIT_OPERATION_DISASSEMBLY)
-
-SUPPRESS_ASAN void JITOperationList::addDisassemblyLabels(const JITOperationAnnotation* begin, const JITOperationAnnotation* end)
-{
-    RELEASE_ASSERT(Options::needDisassemblySupport());
-    for (const auto* current = begin; current != end; ++current) {
-#if ENABLE(JIT_OPERATION_VALIDATION)
-        auto* operation = current->operationWithValidation;
-#else
-        auto* operation = current->operation;
-#endif
-        Dl_info info;
-        if (dladdr(operation, &info) && info.dli_sname)
-            registerLabel(removeCodePtrTag(operation), info.dli_sname);
-    }
-}
-
-void JITOperationList::populateDisassemblyLabelsInJavaScriptCore()
-{
-    ASSERT(Options::needDisassemblySupport());
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        if (Options::useJIT())
-            addDisassemblyLabels(&startOfJITOperationsInJSC, &endOfJITOperationsInJSC);
-    });
-}
-
-void JITOperationList::populateDisassemblyLabelsInJavaScriptCoreForLLInt()
-{
-    ASSERT(Options::needDisassemblySupport());
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        if (Options::useJIT()) {
-            auto list = llintOperations();
-            addDisassemblyLabels(list.operations, list.operations + list.numberOfOperations);
-        }
-    });
-}
-
-void JITOperationList::populateDisassemblyLabelsInEmbedder(const JITOperationAnnotation* beginOperations, const JITOperationAnnotation* endOperations)
-{
-    if (LIKELY(!Options::needDisassemblySupport()))
-        return;
-    if (Options::useJIT())
-        addDisassemblyLabels(beginOperations, endOperations);
-}
-
-#endif // ENABLE(JIT_OPERATION_DISASSEMBLY)
-
-#endif // ENABLE(JIT_OPERATION_VALIDATION) || ENABLE(JIT_OPERATION_DISASSEMBLY)
 
 } // namespace JSC

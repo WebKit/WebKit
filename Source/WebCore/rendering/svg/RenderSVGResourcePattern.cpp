@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -96,20 +95,27 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, Opt
     if (!buildTileImageTransform(renderer, m_attributes, patternElement(), tileBoundaries, tileImageTransform))
         return nullptr;
 
-    auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
+    AffineTransform absoluteTransformIgnoringRotation = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(renderer);
 
     // Ignore 2D rotation, as it doesn't affect the size of the tile.
-    FloatSize tileScale(absoluteTransform.xScale(), absoluteTransform.yScale());
+    SVGRenderingContext::clear2DRotation(absoluteTransformIgnoringRotation);
+    FloatRect absoluteTileBoundaries = absoluteTransformIgnoringRotation.mapRect(tileBoundaries);
+    FloatRect clampedAbsoluteTileBoundaries;
 
     // Scale the tile size to match the scale level of the patternTransform.
-    tileScale.scale(static_cast<float>(m_attributes.patternTransform().xScale()), static_cast<float>(m_attributes.patternTransform().yScale()));
+    absoluteTileBoundaries.scale(static_cast<float>(m_attributes.patternTransform().xScale()),
+        static_cast<float>(m_attributes.patternTransform().yScale()));
 
     // Build tile image.
-    auto tileImage = createTileImage(context, tileBoundaries.size(), tileScale, tileImageTransform, m_attributes);
+    auto tileImage = createTileImage(m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform, clampedAbsoluteTileBoundaries, context.renderingMode());
     if (!tileImage)
         return nullptr;
 
     auto tileImageSize = tileImage->logicalSize();
+
+    auto copiedImage = ImageBuffer::sinkIntoNativeImage(WTFMove(tileImage));
+    if (!copiedImage)
+        return nullptr;
 
     // Compute pattern space transformation.
     auto patternData = makeUnique<PatternData>();
@@ -128,7 +134,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, Opt
     }
 
     // Build pattern.
-    patternData->pattern = Pattern::create({ tileImage.releaseNonNull() }, { true, true, patternData->transform });
+    patternData->pattern = Pattern::create(copiedImage.releaseNonNull(), { true, true, patternData->transform });
 
     // Various calls above may trigger invalidations in some fringe cases (ImageBuffer allocation
     // failures in the SVG image cache for example). To avoid having our PatternData deleted by
@@ -232,22 +238,17 @@ bool RenderSVGResourcePattern::buildTileImageTransform(RenderElement& renderer,
     return true;
 }
 
-RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& context, const FloatSize& size, const FloatSize& scale, const AffineTransform& tileImageTransform, const PatternAttributes& attributes) const
+RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternAttributes& attributes, const FloatRect& tileBoundaries, const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform, FloatRect& clampedAbsoluteTileBoundaries, RenderingMode renderingMode) const
 {
-    // This is equivalent to making createImageBuffer() use roundedIntSize().
-    auto roundedUnscaledImageBufferSize = [](const FloatSize& size, const FloatSize& scale) -> FloatSize {
-        auto scaledSize = size * scale;
-        return size - (expandedIntSize(scaledSize) - roundedIntSize(scaledSize)) * (scaledSize - flooredIntSize(scaledSize)) / scale;
-    };
-
-    auto tileSize = roundedUnscaledImageBufferSize(size, scale);
-
-    // FIXME: Use createImageBuffer(rect, scale), delete the above calculations and fix 'tileImageTransform'
-    auto tileImage = context.createScaledImageBuffer(tileSize, scale);
+    clampedAbsoluteTileBoundaries = ImageBuffer::clampedRect(absoluteTileBoundaries);
+    auto tileImage = SVGRenderingContext::createImageBuffer(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, DestinationColorSpace::SRGB(), renderingMode);
     if (!tileImage)
         return nullptr;
 
     GraphicsContext& tileImageContext = tileImage->context();
+
+    // The image buffer represents the final rendered size, so the content has to be scaled (to avoid pixelation).
+    tileImageContext.scale(clampedAbsoluteTileBoundaries.size() / tileBoundaries.size());
 
     // Apply tile image transformations.
     if (!tileImageTransform.isIdentity())

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,57 +26,36 @@
 #import "config.h"
 #import "QuerySet.h"
 
-#import "APIConversions.h"
-#import "Device.h"
+#import "WebGPUExt.h"
 
 namespace WebGPU {
 
-Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
-{
-    UNUSED_PARAM(descriptor);
-    return QuerySet::createInvalid(*this);
-}
-
-QuerySet::QuerySet(id<MTLCounterSampleBuffer> counterSampleBuffer, Device& device)
-    : m_counterSampleBuffer(counterSampleBuffer)
-    , m_device(device)
-{
-}
-
-QuerySet::QuerySet(Device& device)
-    : m_device(device)
-{
-}
+QuerySet::QuerySet() = default;
 
 QuerySet::~QuerySet() = default;
 
 void QuerySet::destroy()
 {
-    // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
-
-    m_counterSampleBuffer = nil;
 }
 
-void QuerySet::setLabel(String&&)
+void QuerySet::setLabel(const char* label)
 {
-    // MTLCounterSampleBuffer's labels are read-only.
+    UNUSED_PARAM(label);
 }
 
 } // namespace WebGPU
 
-#pragma mark WGPU Stubs
-
 void wgpuQuerySetRelease(WGPUQuerySet querySet)
 {
-    WebGPU::fromAPI(querySet).deref();
+    delete querySet;
 }
 
 void wgpuQuerySetDestroy(WGPUQuerySet querySet)
 {
-    WebGPU::fromAPI(querySet).destroy();
+    querySet->querySet->destroy();
 }
 
 void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
 {
-    WebGPU::fromAPI(querySet).setLabel(WebGPU::fromAPI(label));
+    querySet->querySet->setLabel(label);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,11 @@
 
 namespace JSC {
 
-IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
+IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells)
     : Subspace(name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
-    , m_isoAlignedMemoryAllocator(allocator ? WTFMove(allocator) : makeUnique<IsoAlignedMemoryAllocator>(name))
+    , m_localAllocator(&m_directory)
+    , m_isoAlignedMemoryAllocator(makeUnique<IsoAlignedMemoryAllocator>(name))
 {
     m_remainingLowerTierCellCount = numberOfLowerTierCells;
     ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
@@ -93,14 +94,13 @@ void* IsoSubspace::tryAllocateFromLowerTier()
     };
 
     if (!m_lowerTierFreeList.isEmpty()) {
-        PreciseAllocation* allocation = &*m_lowerTierFreeList.begin();
+        PreciseAllocation* allocation = m_lowerTierFreeList.begin();
         allocation->remove();
         return revive(allocation);
     }
     if (m_remainingLowerTierCellCount) {
-        PreciseAllocation* allocation = PreciseAllocation::tryCreateForLowerTier(m_space.heap(), cellSize(), this, --m_remainingLowerTierCellCount);
-        if (allocation)
-            return revive(allocation);
+        PreciseAllocation* allocation = PreciseAllocation::createForLowerTier(m_space.heap(), cellSize(), this, --m_remainingLowerTierCellCount);
+        return revive(allocation);
     }
     return nullptr;
 }
@@ -117,15 +117,6 @@ void IsoSubspace::destroyLowerTierFreeList()
         allocation->destroy();
     });
 }
-
-namespace GCClient {
-
-IsoSubspace::IsoSubspace(JSC::IsoSubspace& server)
-    : m_localAllocator(&server.m_directory)
-{
-}
-
-} // namespace GCClient
 
 } // namespace JSC
 

@@ -44,7 +44,7 @@ public:
     {
         m_cookieDirectory = FileSystem::createTemporaryDirectory();
 
-        m_cookieJar = makeUnique<WebCore::CookieJarDB>(FileSystem::pathByAppendingComponent(m_cookieDirectory, "cookiedb.sql"_s));
+        m_cookieJar = makeUnique<WebCore::CookieJarDB>(FileSystem::pathByAppendingComponent(m_cookieDirectory, "cookiedb.sql"));
         m_cookieJar->open();
         m_cookieJar->setAcceptPolicy(CookieAcceptPolicy::Always);
     }
@@ -64,30 +64,30 @@ protected:
 
 TEST_F(CurlCookies, RejectTailmatchFailureDomain)
 {
-    URL url { "http://example.com"_s };
+    URL url(URL(), "http://example.com");
 
     // success: domain match
-    EXPECT_TRUE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=example.com"_s, CookieJarDB::Source::Network));
+    EXPECT_TRUE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=example.com", CookieJarDB::Source::Network));
     // success: wildcard of domains
-    EXPECT_TRUE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=.example.com"_s, CookieJarDB::Source::Network));
+    EXPECT_TRUE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=.example.com", CookieJarDB::Source::Network));
     // failure: specific sub domain
-    EXPECT_FALSE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=www.example.com"_s, CookieJarDB::Source::Network));
+    EXPECT_FALSE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=www.example.com", CookieJarDB::Source::Network));
     // failure: different domain
-    EXPECT_FALSE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=sample.com"_s, CookieJarDB::Source::Network));
+    EXPECT_FALSE(m_cookieJar->setCookie(url, url, "foo=bar; Domain=sample.com", CookieJarDB::Source::Network));
 }
 
 TEST_F(CurlCookies, TestHttpOnlyCase)
 {
-    URL url { "http://example.com"_s };
+    URL url(URL(), "http://example.com");
 
     // success: from network
-    EXPECT_TRUE(m_cookieJar->setCookie(url, url, "foo=bar; HttpOnly"_s, CookieJarDB::Source::Network));
+    EXPECT_TRUE(m_cookieJar->setCookie(url, url, "foo=bar; HttpOnly", CookieJarDB::Source::Network));
     // success: wildcard of domains
-    EXPECT_TRUE(m_cookieJar->setCookie(url, url, "bingo=bongo;"_s, CookieJarDB::Source::Script));
+    EXPECT_TRUE(m_cookieJar->setCookie(url, url, "bingo=bongo;", CookieJarDB::Source::Script));
     // failure: foo is already stored as HttpOnly
-    EXPECT_FALSE(m_cookieJar->setCookie(url, url, "foo=bar;"_s, CookieJarDB::Source::Script));
+    EXPECT_FALSE(m_cookieJar->setCookie(url, url, "foo=bar;", CookieJarDB::Source::Script));
     // failure: inconsistent. Source is Script, but attribute says HttpOnly
-    EXPECT_FALSE(m_cookieJar->setCookie(url, url, "foo=bar; HttpOnly"_s, CookieJarDB::Source::Script));
+    EXPECT_FALSE(m_cookieJar->setCookie(url, url, "foo=bar; HttpOnly", CookieJarDB::Source::Script));
 }
 
 }

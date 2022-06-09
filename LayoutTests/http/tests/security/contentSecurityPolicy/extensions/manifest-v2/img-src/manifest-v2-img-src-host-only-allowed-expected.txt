@@ -1,5 +1,0 @@
-ALERT: PASS: Successfully loaded image.
-
-Test that CSP for extensions allows wildcards for other directives.
-
-

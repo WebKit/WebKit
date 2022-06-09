@@ -93,13 +93,13 @@ class Contributor(object):
         def save(self, file):
             alias_to_name = defaultdict(list)
             for alias, contributor in self.items():
-                if not contributor or alias in contributor.emails or alias == contributor.name:
+                if alias in contributor.emails or alias == contributor.name:
                     continue
                 alias_to_name[contributor.name].append(alias)
 
             contributors = []
             for alias, contributor in self.items():
-                if not contributor or alias != contributor.name:
+                if alias != contributor.name:
                     continue
                 contributors.append(Contributor.Encoder().default(contributor))
                 contributors[-1]['aliases'] = alias_to_name[contributor.name]
@@ -220,8 +220,6 @@ class Contributor(object):
             ref_value = other
         elif isinstance(other, Contributor):
             ref_value = other.name
-        elif other is None:
-            ref_value = ''
         else:
             raise ValueError('Cannot compare {} with {}'.format(Contributor, type(other)))
         if self.name == ref_value:

@@ -31,9 +31,9 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * WebKitContextMenu:
- *
- * Represents the context menu in a #WebKitWebView.
+ * SECTION: WebKitContextMenu
+ * @Short_description: Represents the context menu in a #WebKitWebView
+ * @Title: WebKitContextMenu
  *
  * #WebKitContextMenu represents a context menu containing
  * #WebKitContextMenuItem<!-- -->s in a #WebKitWebView.
@@ -46,6 +46,7 @@ using namespace WebCore;
  * webkit_context_menu_prepend(), webkit_context_menu_append() or
  * webkit_context_menu_insert(), maybe after having removed the
  * existing ones with webkit_context_menu_remove_all().
+ *
  */
 
 struct _WebKitContextMenuPrivate {

@@ -1,3 +1,0 @@
-
-PASS verticalAlign responsive to style changes
-

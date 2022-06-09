@@ -8,31 +8,18 @@ info: |
     sec-getoption step 3:
       3. If _value_ is *undefined*, return _fallback_.
     sec-getstringornumberoption step 2:
-      2. Let _value_ be ? GetOption(_options_, _property_, « Number, String », *undefined*, _fallback_).
+      2. Let _value_ be ? GetOption(_options_, _property_, *"stringOrNumber"*, *undefined*, _fallback_).
     sec-temporal-tosecondsstringprecision step 9:
       9. Let _digits_ be ? GetStringOrNumberOption(_normalizedOptions_, *"fractionalSecondDigits"*, « *"auto"* », 0, 9, *"auto"*).
     sec-temporal.plaintime.prototype.tostring step 4:
-      4. Let _precision_ be ? ToSecondsStringPrecision(_options_).
+      4. Let _precision_ be ? ToDurationSecondsStringPrecision(_options_).
 features: [Temporal]
 ---*/
 
-const zeroSeconds = new Temporal.PlainTime(15, 23);
-const wholeSeconds = new Temporal.PlainTime(15, 23, 30);
-const subSeconds = new Temporal.PlainTime(15, 23, 30, 123, 400);
+const time = new Temporal.PlainTime(12, 34, 56, 987, 650, 0);
 
-const tests = [
-  [zeroSeconds, "15:23:00"],
-  [wholeSeconds, "15:23:30"],
-  [subSeconds, "15:23:30.1234"],
-];
+const explicit = time.toString({ fractionalSecondDigits: undefined });
+assert.sameValue(explicit, "12:34:56.98765", "default fractionalSecondDigits is auto");
 
-for (const [time, expected] of tests) {
-  const explicit = time.toString({ fractionalSecondDigits: undefined });
-  assert.sameValue(explicit, expected, "default fractionalSecondDigits is auto (property present but undefined)");
-
-  const implicit = time.toString({});
-  assert.sameValue(implicit, expected, "default fractionalSecondDigits is auto (property not present)");
-
-  const lambda = time.toString(() => {});
-  assert.sameValue(lambda, expected, "default fractionalSecondDigits is auto (property not present, function object)");
-}
+const implicit = time.toString({});
+assert.sameValue(implicit, "12:34:56.98765", "default fractionalSecondDigits is auto");

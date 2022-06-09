@@ -77,7 +77,6 @@ TEST(WebKit, UserMediaBasic)
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
-    WKPreferencesSetGetUserMediaRequiresFocus(preferences, false);
 
     WKPageUIClientV6 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
@@ -114,7 +113,6 @@ TEST(WebKit, OnDeviceChangeCrash)
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
-    WKPreferencesSetGetUserMediaRequiresFocus(preferences, false);
 
     WKPageUIClientV6 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
@@ -175,7 +173,6 @@ TEST(WebKit, EnumerateDevicesCrash)
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
     WKPreferencesSetMediaCaptureRequiresSecureConnection(preferences, false);
     WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
-    WKPreferencesSetGetUserMediaRequiresFocus(preferences, false);
 
     WKPageUIClientV6 uiClient;
     // We want uiClient.checkUserMediaPermissionForOrigin to be null.

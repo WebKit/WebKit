@@ -30,7 +30,6 @@
 #include "Document.h"
 #include "EventLoop.h"
 #include "FontFace.h"
-#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"

@@ -39,13 +39,12 @@ namespace WebKit::WebGPU {
 
 struct DeviceDescriptor : public ObjectDescriptorBase {
     Vector<PAL::WebGPU::FeatureName> requiredFeatures;
-    Vector<KeyValuePair<String, uint64_t>> requiredLimits;
+    // FIXME: Add support for requiredLimits.
 
     template<class Encoder> void encode(Encoder& encoder) const
     {
         encoder << static_cast<const ObjectDescriptorBase&>(*this);
         encoder << requiredFeatures;
-        encoder << requiredLimits;
     }
 
     template<class Decoder> static std::optional<DeviceDescriptor> decode(Decoder& decoder)
@@ -60,12 +59,7 @@ struct DeviceDescriptor : public ObjectDescriptorBase {
         if (!requiredFeatures)
             return std::nullopt;
 
-        std::optional<Vector<KeyValuePair<String, uint64_t>>> requiredLimits;
-        decoder >> requiredLimits;
-        if (!requiredLimits)
-            return std::nullopt;
-
-        return { { WTFMove(*objectDescriptorBase), WTFMove(*requiredFeatures), WTFMove(*requiredLimits) } };
+        return { { WTFMove(*objectDescriptorBase), WTFMove(*requiredFeatures) } };
     }
 };
 

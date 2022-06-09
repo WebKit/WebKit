@@ -28,7 +28,6 @@
 
 #include "pas_allocator_index.h"
 #include "pas_lock.h"
-#include "pas_range.h"
 #include "pas_thread_local_cache_layout_node_kind.h"
 #include "pas_utils.h"
 
@@ -138,7 +137,7 @@ PAS_API pas_segregated_size_directory*
 pas_thread_local_cache_layout_node_get_directory(pas_thread_local_cache_layout_node node);
 
 PAS_API pas_allocator_index
-pas_thread_local_cache_layout_node_num_allocator_indices(pas_thread_local_cache_layout_node node);
+pas_thread_local_cache_layout_num_allocator_indices(pas_thread_local_cache_layout_node node);
 
 static inline bool
 pas_thread_local_cache_layout_node_represents_allocator(pas_thread_local_cache_layout_node node)
@@ -168,8 +167,8 @@ PAS_API void
 pas_thread_local_cache_layout_node_set_allocator_index(pas_thread_local_cache_layout_node node,
                                                        pas_allocator_index index);
 
-PAS_API void pas_thread_local_cache_layout_node_commit_and_construct(pas_thread_local_cache_layout_node node,
-                                                                     pas_thread_local_cache* cache);
+PAS_API void pas_thread_local_cache_layout_node_construct(pas_thread_local_cache_layout_node node,
+                                                          pas_thread_local_cache* cache);
 
 PAS_API void pas_thread_local_cache_layout_node_move(pas_thread_local_cache_layout_node node,
                                                      pas_thread_local_cache* to_cache,
@@ -179,14 +178,6 @@ PAS_API void pas_thread_local_cache_layout_node_stop(pas_thread_local_cache_layo
                                                      pas_thread_local_cache* cache,
                                                      pas_lock_lock_mode page_lock_mode,
                                                      pas_lock_hold_mode heap_lock_hold_mode);
-
-PAS_API bool pas_thread_local_cache_layout_node_is_committed(pas_thread_local_cache_layout_node node,
-                                                             pas_thread_local_cache* cache);
-PAS_API void pas_thread_local_cache_layout_node_ensure_committed(pas_thread_local_cache_layout_node node,
-                                                                 pas_thread_local_cache* cache);
-PAS_API void pas_thread_local_cache_layout_node_prepare_to_decommit(pas_thread_local_cache_layout_node node,
-                                                                    pas_thread_local_cache* cache,
-                                                                    pas_range decommit_range);
 
 PAS_END_EXTERN_C;
 

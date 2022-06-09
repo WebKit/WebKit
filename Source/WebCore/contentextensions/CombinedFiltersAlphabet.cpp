@@ -37,15 +37,10 @@ struct TermCreatorInput {
     Vector<std::unique_ptr<Term>>& internedTermsStorage;
 };
 
-inline void add(Hasher& hasher, const TermCreatorInput& input)
-{
-    add(hasher, input.term);
-}
-
 struct TermCreatorTranslator {
     static unsigned hash(const TermCreatorInput& input)
     {
-        return computeHash(input);
+        return input.term.hash();
     }
 
     static inline bool equal(const Term* term, const TermCreatorInput& input)

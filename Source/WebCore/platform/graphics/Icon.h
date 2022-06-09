@@ -61,8 +61,6 @@ public:
 #if PLATFORM(MAC)
     static RefPtr<Icon> createIconForUTI(const String&);
     static RefPtr<Icon> createIconForFileExtension(const String&);
-
-    RetainPtr<NSImage> nsImage() const { return m_nsImage; }
 #endif
 
 private:

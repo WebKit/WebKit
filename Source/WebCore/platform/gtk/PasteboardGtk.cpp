@@ -44,12 +44,12 @@ enum ClipboardDataType {
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), "CLIPBOARD"_s);
+    return makeUnique<Pasteboard>(WTFMove(context), "CLIPBOARD");
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection(std::unique_ptr<PasteboardContext>&& context)
 {
-    return makeUnique<Pasteboard>(WTFMove(context), "PRIMARY"_s);
+    return makeUnique<Pasteboard>(WTFMove(context), "PRIMARY");
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -100,11 +100,11 @@ static ClipboardDataType selectionDataTypeFromHTMLClipboardType(const String& ty
 {
     // From the Mac port: Ignore any trailing charset - JS strings are
     // Unicode, which encapsulates the charset issue.
-    if (type == "text/plain"_s)
+    if (type == "text/plain")
         return ClipboardDataTypeText;
-    if (type == "text/html"_s)
+    if (type == "text/html")
         return ClipboardDataTypeMarkup;
-    if (type == "Files"_s || type == "text/uri-list"_s)
+    if (type == "Files" || type == "text/uri-list")
         return ClipboardDataTypeURIList;
 
     // Not a known type, so just default to using the text portion.
@@ -403,7 +403,7 @@ String Pasteboard::readOrigin()
 String Pasteboard::readString(const String& type)
 {
     if (!m_selectionData) {
-        if (type.startsWith("text/plain"_s))
+        if (type.startsWith("text/plain"))
             return platformStrategies()->pasteboardStrategy()->readTextFromClipboard(m_name);
 
         auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, type);
@@ -455,7 +455,7 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
             return FileContentState::MayContainFilePaths;
     }
 
-    auto result = types.findIf([](const String& type) {
+    auto result = types.findMatching([](const String& type) {
         return MIMETypeRegistry::isSupportedImageMIMEType(type);
     });
     return result == notFound ? FileContentState::NoFileOrImageData : FileContentState::MayContainFilePaths;

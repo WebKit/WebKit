@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x261
+  RenderBlock {HTML} at (0,0) size 800x261
+    RenderBody {BODY} at (8,8) size 784x245
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderSlider {INPUT} at (2,2) size 129x30 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 129x30
+            RenderBlock {DIV} at (0,7) size 129x16
+              RenderBlock {DIV} at (57,0) size 15x15
+      RenderBlock {DIV} at (0,36) size 784x21
+        RenderSlider {INPUT} at (2,2) size 129x15 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 129x15
+            RenderBlock {DIV} at (0,0) size 129x15
+              RenderBlock {DIV} at (0,0) size 15x15
+      RenderBlock {DIV} at (0,57) size 784x21
+        RenderSlider {INPUT} at (2,2) size 129x15 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 129x15
+            RenderBlock {DIV} at (0,0) size 129x15
+              RenderBlock {DIV} at (114,0) size 15x15
+      RenderBlock {DIV} at (0,78) size 784x146
+        RenderSlider {INPUT} at (64,2) size 129x140 [color=#909090] [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,0) size 129x140
+            RenderBlock {DIV} at (57,0) size 15x140
+              RenderBlock {DIV} at (0,62) size 15x16
+      RenderBlock {DIV} at (0,224) size 784x21
+layer at (10,234) size 129x15
+  RenderSlider {INPUT} at (2,2) size 129x15 [color=#909090] [bgcolor=#FFFFFF]
+    RenderFlexibleBox {DIV} at (0,0) size 129x15
+      RenderBlock {DIV} at (0,0) size 129x15
+        RenderBlock {DIV} at (85,0) size 16x15

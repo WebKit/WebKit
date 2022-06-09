@@ -51,9 +51,11 @@ inline size_t systemPageSize()
 
 inline size_t systemPageSize()
 {
+    static size_t size = 0;
     SYSTEM_INFO system_info;
     GetSystemInfo(&system_info);
-    return system_info.dwPageSize;
+    size = system_info.dwPageSize;
+    return size;
 }
 
 #endif

@@ -3,11 +3,6 @@ function shouldBe(actual, expected) {
         throw new Error(`expected ${expected} but got ${actual}`);
 }
 
-function shouldBeOneOf(actual, expectedArray) {
-    if (!expectedArray.some((value) => value === actual))
-        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
-}
-
 function shouldNotThrow(func) {
   func();
 }
@@ -49,8 +44,8 @@ shouldBe(new Date(NaN).toLocaleString(), "Invalid Date");
 // Test for DateTimeFormat behavior.
 // Test that locale parameter is passed through properly.
 shouldThrow(() => new Date().toLocaleString('i'), RangeError);
-shouldBeOneOf(new Date(0).toLocaleString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), [ '一九七〇/一/一 〇〇:〇〇:〇〇', '一九七〇/一/一 上午一二:〇〇:〇〇' ]);
-shouldBeOneOf(new Date(0).toLocaleString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec' }), [ '一九七〇/一/一 〇〇:〇〇:〇〇', '一九七〇/一/一 上午一二:〇〇:〇〇' ]);
+shouldBe(new Date(0).toLocaleString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), $vm.icuVersion() >= 69 ? '一九七〇/一/一 〇〇:〇〇:〇〇' : '一九七〇/一/一 上午一二:〇〇:〇〇');
+shouldBe(new Date(0).toLocaleString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec' }), $vm.icuVersion() >= 69 ? '一九七〇/一/一 〇〇:〇〇:〇〇' : '一九七〇/一/一 上午一二:〇〇:〇〇');
 shouldBe(new Date(0).toLocaleString('en-u-ca-chinese', { timeZone: 'UTC', year: 'numeric' }), '1969(ji-you)');
 shouldBe(new Date(0).toLocaleString('en', { timeZone: 'UTC', year: 'numeric', calendar: 'chinese' }), '1969(ji-you)');
 
@@ -129,8 +124,8 @@ shouldBe(new Date(NaN).toLocaleTimeString(), 'Invalid Date');
 // Test for DateTimeFormat behavior.
 // Test that locale parameter is passed through properly.
 shouldThrow(() => new Date().toLocaleTimeString('i'), RangeError);
-shouldBeOneOf(new Date(0).toLocaleTimeString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), [ "〇〇:〇〇:〇〇", "上午一二:〇〇:〇〇" ]);
-shouldBeOneOf(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec' }), [ "〇〇:〇〇:〇〇", "上午一二:〇〇:〇〇" ]);
+shouldBe(new Date(0).toLocaleTimeString('zh-Hans-CN-u-nu-hanidec', { timeZone: 'UTC' }), $vm.icuVersion() >= 69 ? "〇〇:〇〇:〇〇" : "上午一二:〇〇:〇〇");
+shouldBe(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec' }), $vm.icuVersion() >= 69 ? "〇〇:〇〇:〇〇" : "上午一二:〇〇:〇〇");
 shouldBe(new Date(0).toLocaleTimeString('en-u-ca-chinese', { timeZone: 'UTC', year: 'numeric' }), '1969(ji-you), 12:00:00 AM');
 shouldBe(new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', year: 'numeric', calendar: 'chinese' }), '1969(ji-you), 12:00:00 AM');
 
@@ -142,8 +137,4 @@ shouldThrow(() => new Date(0).toLocaleTimeString('en', null), TypeError);
 // If time formats specifed, just use them.
 shouldBe(new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', hour: 'numeric', minute: '2-digit' }), '12:00 AM');
 // Adds hms if no time formats specified.
-// See https://bugs.webkit.org/show_bug.cgi?id=238852
-const monthLongTimeString = new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', year: 'numeric', month: 'long' });
-if (monthLongTimeString !== 'January 1970, 12:00:00 AM' &&
-    monthLongTimeString !== 'January 1970 at 12:00:00 AM')
-    throw new Error(`Unexpected time string for {month: 'long'}: ${monthLongTimeString}`);
+shouldBe(new Date(0).toLocaleTimeString('en', { timeZone: 'UTC', year: 'numeric', month: 'long' }), 'January 1970, 12:00:00 AM');

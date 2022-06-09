@@ -63,7 +63,6 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUCommandBuffer.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCommandBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCommandEncoder.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCommandEncoderDescriptor.idl
-$(PROJECT_DIR)/Modules/WebGPU/GPUCommandsMixin.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCompareFunction.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCompilationInfo.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCompilationMessage.idl
@@ -75,7 +74,6 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUComputePassTimestampWrite.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePipeline.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUComputePipelineDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUCullMode.idl
-$(PROJECT_DIR)/Modules/WebGPU/GPUDebugCommandsMixin.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDepthStencilState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDevice.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUDeviceDescriptor.idl
@@ -111,6 +109,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineDescriptorBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPipelineLayoutDescriptor.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUPipelineStatisticName.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPowerPreference.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPredefinedColorSpace.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUPrimitiveState.idl
@@ -141,7 +140,6 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUSamplerBindingLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUSamplerBindingType.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUSamplerDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUShaderModule.idl
-$(PROJECT_DIR)/Modules/WebGPU/GPUShaderModuleCompilationHint.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUShaderModuleDescriptor.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUShaderStage.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUSize64.idl
@@ -220,7 +218,6 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayShippingMethodUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayValidateMerchantEvent.idl
 $(PROJECT_DIR)/Modules/applepay/paymentrequest/ApplePayModifier.idl
-$(PROJECT_DIR)/Modules/applepay/paymentrequest/ApplePayPaymentCompleteDetails.idl
 $(PROJECT_DIR)/Modules/applepay/paymentrequest/ApplePayRequest.idl
 $(PROJECT_DIR)/Modules/async-clipboard/Clipboard.idl
 $(PROJECT_DIR)/Modules/async-clipboard/ClipboardItem.idl
@@ -554,7 +551,6 @@ $(PROJECT_DIR)/Modules/paymentrequest/MerchantValidationEvent.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PayerErrorFields.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentAddress.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentComplete.idl
-$(PROJECT_DIR)/Modules/paymentrequest/PaymentCompleteDetails.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentCurrencyAmount.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentDetailsBase.idl
 $(PROJECT_DIR)/Modules/paymentrequest/PaymentDetailsInit.idl
@@ -579,8 +575,8 @@ $(PROJECT_DIR)/Modules/permissions/PermissionStatus.idl
 $(PROJECT_DIR)/Modules/permissions/Permissions.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/Document+PictureInPicture.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl
+$(PROJECT_DIR)/Modules/pictureinpicture/EnterPictureInPictureEvent.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl
-$(PROJECT_DIR)/Modules/pictureinpicture/PictureInPictureEvent.idl
 $(PROJECT_DIR)/Modules/pictureinpicture/PictureInPictureWindow.idl
 $(PROJECT_DIR)/Modules/push-api/PushEncryptionKeyName.idl
 $(PROJECT_DIR)/Modules/push-api/PushEvent.idl
@@ -608,11 +604,7 @@ $(PROJECT_DIR)/Modules/speech/SpeechRecognitionEvent.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionResult.idl
 $(PROJECT_DIR)/Modules/speech/SpeechRecognitionResultList.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesis.idl
-$(PROJECT_DIR)/Modules/speech/SpeechSynthesisErrorCode.idl
-$(PROJECT_DIR)/Modules/speech/SpeechSynthesisErrorEvent.idl
-$(PROJECT_DIR)/Modules/speech/SpeechSynthesisErrorEventInit.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisEvent.idl
-$(PROJECT_DIR)/Modules/speech/SpeechSynthesisEventInit.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisUtterance.idl
 $(PROJECT_DIR)/Modules/speech/SpeechSynthesisVoice.idl
 $(PROJECT_DIR)/Modules/storage/StorageManager.idl
@@ -751,7 +743,6 @@ $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialDescriptor.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialType.idl
-$(PROJECT_DIR)/Modules/webauthn/ResidentKeyRequirement.idl
 $(PROJECT_DIR)/Modules/webauthn/UserVerificationRequirement.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoColorPrimaries.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoColorSpace.idl
@@ -892,7 +883,6 @@ $(PROJECT_DIR)/crypto/parameters/RsaKeyGenParams.idl
 $(PROJECT_DIR)/crypto/parameters/RsaOaepParams.idl
 $(PROJECT_DIR)/crypto/parameters/RsaPssParams.idl
 $(PROJECT_DIR)/css/CSSConditionRule.idl
-$(PROJECT_DIR)/css/CSSContainerRule.idl
 $(PROJECT_DIR)/css/CSSCounterStyleRule.idl
 $(PROJECT_DIR)/css/CSSFontFaceRule.idl
 $(PROJECT_DIR)/css/CSSFontPaletteValuesRule.idl
@@ -971,15 +961,6 @@ $(PROJECT_DIR)/css/typedom/CSSUnitValue.idl
 $(PROJECT_DIR)/css/typedom/CSSUnparsedValue.idl
 $(PROJECT_DIR)/css/typedom/StylePropertyMap.idl
 $(PROJECT_DIR)/css/typedom/StylePropertyMapReadOnly.idl
-$(PROJECT_DIR)/css/typedom/color/CSSColor.idl
-$(PROJECT_DIR)/css/typedom/color/CSSColorValue.idl
-$(PROJECT_DIR)/css/typedom/color/CSSHSL.idl
-$(PROJECT_DIR)/css/typedom/color/CSSHWB.idl
-$(PROJECT_DIR)/css/typedom/color/CSSLCH.idl
-$(PROJECT_DIR)/css/typedom/color/CSSLab.idl
-$(PROJECT_DIR)/css/typedom/color/CSSOKLCH.idl
-$(PROJECT_DIR)/css/typedom/color/CSSOKLab.idl
-$(PROJECT_DIR)/css/typedom/color/CSSRGB.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSMathInvert.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSMathMax.idl
 $(PROJECT_DIR)/css/typedom/numeric/CSSMathMin.idl
@@ -1009,6 +990,7 @@ $(PROJECT_DIR)/dom/AbstractRange.idl
 $(PROJECT_DIR)/dom/AddEventListenerOptions.idl
 $(PROJECT_DIR)/dom/AnimationEvent.idl
 $(PROJECT_DIR)/dom/Attr.idl
+$(PROJECT_DIR)/dom/BeforeLoadEvent.idl
 $(PROJECT_DIR)/dom/BeforeUnloadEvent.idl
 $(PROJECT_DIR)/dom/BroadcastChannel.idl
 $(PROJECT_DIR)/dom/CDATASection.idl
@@ -1057,7 +1039,6 @@ $(PROJECT_DIR)/dom/DocumentOrShadowRoot.idl
 $(PROJECT_DIR)/dom/DocumentType.idl
 $(PROJECT_DIR)/dom/DragEvent.idl
 $(PROJECT_DIR)/dom/Element+CSSOMView.idl
-$(PROJECT_DIR)/dom/Element+ComputedStyleMap.idl
 $(PROJECT_DIR)/dom/Element+DOMParsing.idl
 $(PROJECT_DIR)/dom/Element+Fullscreen.idl
 $(PROJECT_DIR)/dom/Element+PointerEvents.idl
@@ -1140,6 +1121,8 @@ $(PROJECT_DIR)/dom/TreeWalker.idl
 $(PROJECT_DIR)/dom/UIEvent.idl
 $(PROJECT_DIR)/dom/UIEventInit.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
+$(PROJECT_DIR)/dom/WebKitAnimationEvent.idl
+$(PROJECT_DIR)/dom/WebKitTransitionEvent.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl
 $(PROJECT_DIR)/dom/make_event_factory.pl
@@ -1196,6 +1179,7 @@ $(PROJECT_DIR)/html/HTMLIFrameElement.idl
 $(PROJECT_DIR)/html/HTMLImageElement+CSSOMView.idl
 $(PROJECT_DIR)/html/HTMLImageElement.idl
 $(PROJECT_DIR)/html/HTMLInputElement.idl
+$(PROJECT_DIR)/html/HTMLKeygenElement.idl
 $(PROJECT_DIR)/html/HTMLLIElement.idl
 $(PROJECT_DIR)/html/HTMLLabelElement.idl
 $(PROJECT_DIR)/html/HTMLLegendElement.idl
@@ -1296,16 +1280,13 @@ $(PROJECT_DIR)/html/canvas/EXTColorBufferHalfFloat.idl
 $(PROJECT_DIR)/html/canvas/EXTFloatBlend.idl
 $(PROJECT_DIR)/html/canvas/EXTFragDepth.idl
 $(PROJECT_DIR)/html/canvas/EXTShaderTextureLOD.idl
-$(PROJECT_DIR)/html/canvas/EXTTextureCompressionBPTC.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureCompressionRGTC.idl
 $(PROJECT_DIR)/html/canvas/EXTTextureFilterAnisotropic.idl
-$(PROJECT_DIR)/html/canvas/EXTTextureNorm16.idl
 $(PROJECT_DIR)/html/canvas/EXTsRGB.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContext.idl
 $(PROJECT_DIR)/html/canvas/ImageBitmapRenderingContextSettings.idl
 $(PROJECT_DIR)/html/canvas/ImageSmoothingQuality.idl
 $(PROJECT_DIR)/html/canvas/KHRParallelShaderCompile.idl
-$(PROJECT_DIR)/html/canvas/OESDrawBuffersIndexed.idl
 $(PROJECT_DIR)/html/canvas/OESElementIndexUint.idl
 $(PROJECT_DIR)/html/canvas/OESFBORenderMipmap.idl
 $(PROJECT_DIR)/html/canvas/OESStandardDerivatives.idl
@@ -1448,7 +1429,6 @@ $(PROJECT_DIR)/page/ScrollLogicalPosition.idl
 $(PROJECT_DIR)/page/ScrollOptions.idl
 $(PROJECT_DIR)/page/ScrollToOptions.idl
 $(PROJECT_DIR)/page/Settings.yaml
-$(PROJECT_DIR)/page/ShadowRealmGlobalScope.idl
 $(PROJECT_DIR)/page/ShareData.idl
 $(PROJECT_DIR)/page/StructuredSerializeOptions.idl
 $(PROJECT_DIR)/page/UndoItem.idl
@@ -1625,7 +1605,6 @@ $(PROJECT_DIR)/svg/xlinkattrs.in
 $(PROJECT_DIR)/testing/FakeXRBoundsPoint.idl
 $(PROJECT_DIR)/testing/FakeXRButtonStateInit.idl
 $(PROJECT_DIR)/testing/FakeXRInputSourceInit.idl
-$(PROJECT_DIR)/testing/FakeXRJointStateInit.idl
 $(PROJECT_DIR)/testing/FakeXRRigidTransformInit.idl
 $(PROJECT_DIR)/testing/FakeXRViewInit.idl
 $(PROJECT_DIR)/testing/GCObservation.idl

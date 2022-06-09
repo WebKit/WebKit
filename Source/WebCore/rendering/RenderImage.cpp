@@ -47,8 +47,7 @@
 #include "HitTestResult.h"
 #include "ImageOverlay.h"
 #include "InlineIteratorInlineBox.h"
-#include "InlineIteratorLineBox.h"
-#include "LineSelection.h"
+#include "InlineIteratorLine.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderChildIterator.h"
@@ -110,10 +109,9 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
             lineExtentRect.setHeight(containingBlock->height());
         }
     } else {
-        auto selectionLogicalRect = LineSelection::logicalRect(*run->lineBox());
-        int selectionTop = !containingBlock->style().isFlippedBlocksWritingMode() ? selectionLogicalRect.y() - logicalTop() : logicalBottom() - selectionLogicalRect.maxY();
-        int selectionHeight = selectionLogicalRect.height();
-        imageRect = IntRect { 0,  selectionTop, logicalWidth(), selectionHeight };
+        auto line = run->line();
+        LayoutUnit selectionTop = !containingBlock->style().isFlippedBlocksWritingMode() ? line->selectionTop() - logicalTop() : logicalBottom() - line->selectionBottom();
+        imageRect = IntRect(0,  selectionTop, logicalWidth(), line->selectionHeight());
         isFirstOnLine = !run->previousOnLine();
         isLastOnLine = !run->nextOnLine();
         LogicalSelectionOffsetCaches cache(*containingBlock);
@@ -149,7 +147,7 @@ RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styl
     updateAltText();
 #if ENABLE(SERVICE_CONTROLS)
     if (is<HTMLImageElement>(element))
-        m_hasShadowControls = downcast<HTMLImageElement>(element).isImageMenuEnabled();
+        m_hasShadowControls = downcast<HTMLImageElement>(element).imageMenuEnabled();
 #endif
 }
 
@@ -212,7 +210,7 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
         const FontCascade& font = style().fontCascade();
-        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.metricsOfPrimaryFont().height(), maxAltTextHeight));
+        IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.fontMetrics().height(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
 
@@ -333,7 +331,7 @@ void RenderImage::updateInnerContentRect()
     IntSize containerSize(replacedContentRect().size());
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
-        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        if (HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr)
             imageSourceURL = document().completeURL(imageElement->imageSourceURL());
         imageResource().setContainerContext(containerSize, imageSourceURL);
     }
@@ -499,8 +497,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (contentSize.width() > 2 && contentSize.height() > 2) {
             LayoutUnit leftBorder = borderLeft();
             LayoutUnit topBorder = borderTop();
-            LayoutUnit leftPadding = paddingLeft();
-            LayoutUnit topPadding = paddingTop();
+            LayoutUnit leftPad = paddingLeft();
+            LayoutUnit topPad = paddingTop();
 
             bool errorPictureDrawn = false;
             LayoutSize imageOffset;
@@ -524,36 +522,30 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 LayoutUnit centerY { (usableSize.height() - imageSize.height()) / 2 };
                 if (centerY < 0)
                     centerY = 0;
-                imageOffset = LayoutSize(leftBorder + leftPadding + centerX + missingImageBorderWidth, topBorder + topPadding + centerY + missingImageBorderWidth);
+                imageOffset = LayoutSize(leftBorder + leftPad + centerX + missingImageBorderWidth, topBorder + topPad + centerY + missingImageBorderWidth);
 
                 context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), { imageOrientation() });
                 errorPictureDrawn = true;
             }
 
             if (!m_altText.isEmpty()) {
-                auto& font = style().fontCascade();
-                auto& fontMetrics = font.metricsOfPrimaryFont();
-                auto textRun = RenderBlock::constructTextRun(document().displayStringModifiedByEncoding(m_altText), style(), ExpansionBehavior::defaultBehavior(), RespectDirection | RespectDirectionOverride);
-                auto textWidth = LayoutUnit { font.width(textRun) };
+                String text = document().displayStringModifiedByEncoding(m_altText);
+                context.setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
+                const FontCascade& font = style().fontCascade();
+                const FontMetrics& fontMetrics = font.fontMetrics();
+                LayoutUnit ascent = fontMetrics.ascent();
+                LayoutPoint altTextOffset = paintOffset;
+                altTextOffset.move(leftBorder + leftPad + (paddingWidth / 2) - missingImageBorderWidth, topBorder + topPad + ascent + (paddingHeight / 2) - missingImageBorderWidth);
 
-                auto hasRoomForAltText = [&] {
-                    // Only draw the alt text if it'll fit within the content box,
-                    // and only if it fits above the error image.
-                    if (usableSize.width() < textWidth)
-                        return false;
-                    return errorPictureDrawn ? fontMetrics.height() <= imageOffset.height() : usableSize.height() >= fontMetrics.height();
-                };
-                if (hasRoomForAltText()) {
-                    auto altTextLocation = [&]() -> LayoutPoint {
-                        auto contentHorizontalOffset = LayoutUnit { leftBorder + leftPadding + (paddingWidth / 2) - missingImageBorderWidth };
-                        auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + fontMetrics.ascent() + (paddingHeight / 2) - missingImageBorderWidth };
-                        if (!style().isLeftToRightDirection())
-                            contentHorizontalOffset += contentSize.width() - textWidth;
-                        return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
-                    };
-                    context.setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-                    context.drawBidiText(font, textRun, altTextLocation());
-                }
+                // Only draw the alt text if it'll fit within the content box,
+                // and only if it fits above the error image.
+                TextRun textRun = RenderBlock::constructTextRun(text, style());
+                LayoutUnit textWidth { font.width(textRun) };
+                if (errorPictureDrawn) {
+                    if (usableSize.width() >= textWidth && fontMetrics.height() <= imageOffset.height())
+                        context.drawBidiText(font, textRun, altTextOffset);
+                } else if (usableSize.width() >= textWidth && usableSize.height() >= fontMetrics.height())
+                    context.drawBidiText(font, textRun, altTextOffset);
             }
         }
         return;
@@ -674,7 +666,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (!img || img->isNull())
         return ImageDrawResult::DidNothing;
 
-    auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
+    HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
 
     // FIXME: Document when image != img.get().
     Image* image = imageResource().image().get();
@@ -858,7 +850,7 @@ void RenderImage::layoutShadowContent(const LayoutSize& oldSize)
 
 void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
-    ASSERT(!shouldApplySizeContainment());
+    ASSERT(!shouldApplySizeContainment(*this));
     RenderReplaced::computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio);
 
     // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.

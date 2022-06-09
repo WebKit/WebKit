@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@
 namespace PAL::WebGPU {
 
 struct RenderPassDescriptor : public ObjectDescriptorBase {
-    Vector<std::optional<RenderPassColorAttachment>> colorAttachments;
+    Vector<RenderPassColorAttachment> colorAttachments;
     std::optional<RenderPassDepthStencilAttachment> depthStencilAttachment;
     QuerySet* occlusionQuerySet { nullptr };
     RenderPassTimestampWrites timestampWrites;

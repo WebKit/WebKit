@@ -43,7 +43,7 @@ public:
 
 protected:
     bool isRenderMathMLScripts() const override { return true; }
-    ASCIILiteral renderName() const override { return "RenderMathMLScripts"_s; }
+    const char* renderName() const override { return "RenderMathMLScripts"; }
     MathMLScriptsElement::ScriptType scriptType() const;
     void computePreferredLogicalWidths() override;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;

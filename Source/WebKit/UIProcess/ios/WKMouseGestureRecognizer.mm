@@ -29,6 +29,7 @@
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #import "NativeWebMouseEvent.h"
+#import "UIKitSPI.h"
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/Compiler.h>
 #import <wtf/MonotonicTime.h>
@@ -48,15 +49,6 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
         modifiers.add(WebKit::WebEvent::Modifier::CapsLockKey);
     return modifiers;
 }
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKMouseGestureRecognizerAdditions.mm>
-#else
-static String pointerTypeForUITouchType(UITouchType)
-{
-    return WebCore::mousePointerEventType();
-}
-#endif
 
 @implementation WKMouseGestureRecognizer {
     RetainPtr<UIEvent> _currentHoverEvent;
@@ -87,7 +79,7 @@ static String pointerTypeForUITouchType(UITouchType)
 {
     // FIXME: We should move off of this UIKit IPI method once we have a viable SPI or API alternative
     // for opting a UIHoverGestureRecognizer subclass into receiving UITouches. See also: rdar://80700227.
-    return touch == _currentTouch && touch._isPointerTouch;
+    return touch == _currentTouch;
 }
 
 - (WebKit::NativeWebMouseEvent *)lastMouseEvent
@@ -138,8 +130,7 @@ static String pointerTypeForUITouchType(UITouchType)
     auto delta = point - WebCore::IntPoint { [_currentTouch previousLocationInView:self.view] };
     // UITouch's timestamp uses mach_absolute_time as its timebase, same as MonotonicTime.
     auto timestamp = MonotonicTime::fromRawSeconds([_currentTouch timestamp]).approximateWallTime();
-
-    return WTF::makeUnique<WebKit::NativeWebMouseEvent>(type, button, buttons, point, point, delta.width(), delta.height(), 0, [_currentTouch tapCount], modifiers, timestamp, 0, cancelled ? WebKit::GestureWasCancelled::Yes : WebKit::GestureWasCancelled::No, pointerTypeForUITouchType([_currentTouch type]));
+    return WTF::makeUnique<WebKit::NativeWebMouseEvent>(type, button, buttons, point, point, delta.width(), delta.height(), 0, [_currentTouch tapCount], modifiers, timestamp, 0, cancelled ? WebKit::GestureWasCancelled::Yes : WebKit::GestureWasCancelled::No);
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event

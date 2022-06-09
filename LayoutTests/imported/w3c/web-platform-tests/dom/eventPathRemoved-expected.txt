@@ -1,3 +1,0 @@
-
-PASS Event.prototype should not have property named 'path'
-

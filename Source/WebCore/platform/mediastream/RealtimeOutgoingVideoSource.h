@@ -50,7 +50,7 @@ class RealtimeOutgoingVideoSource
     : public ThreadSafeRefCounted<RealtimeOutgoingVideoSource, WTF::DestructionThread::Main>
     , public webrtc::VideoTrackSourceInterface
     , private MediaStreamTrackPrivate::Observer
-    , private RealtimeMediaSource::VideoFrameObserver
+    , private RealtimeMediaSource::VideoSampleObserver
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -134,8 +134,8 @@ private:
     void trackSettingsChanged(MediaStreamTrackPrivate&) final { initializeFromSource(); }
     void trackEnded(MediaStreamTrackPrivate&) final { }
 
-    // RealtimeMediaSource::VideoFrameObserver API
-    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) override { }
+    // RealtimeMediaSource::VideoSampleObserver API
+    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) override { }
 
     Ref<MediaStreamTrackPrivate> m_videoSource;
     Timer m_blackFrameTimer;

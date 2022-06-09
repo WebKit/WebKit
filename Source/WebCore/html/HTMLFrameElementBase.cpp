@@ -88,7 +88,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
         return;
 
     if (m_frameURL.isEmpty())
-        m_frameURL = AtomString { aboutBlankURL().string() };
+        m_frameURL = aboutBlankURL().string();
 
     if (shouldLoadFrameLazily())
         return;
@@ -99,7 +99,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
 
     document().willLoadFrameElement(document().completeURL(m_frameURL));
 
-    auto frameName = getNameAttribute();
+    String frameName = getNameAttribute();
     if (frameName.isNull() && UNLIKELY(document().settings().needsFrameNameFallbackToIdQuirk()))
         frameName = getIdAttribute();
 
@@ -114,7 +114,7 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const AtomS
             if (!srcValue.isNull())
                 setLocation(stripLeadingAndTrailingHTMLSpaces(srcValue));
         } else
-            setLocation("about:srcdoc"_s);
+            setLocation("about:srcdoc");
     } else if (name == srcAttr && !hasAttributeWithoutSynchronization(srcdocAttr))
         setLocation(stripLeadingAndTrailingHTMLSpaces(value));
     else
@@ -228,9 +228,9 @@ int HTMLFrameElementBase::height()
 ScrollbarMode HTMLFrameElementBase::scrollingMode() const
 {
     auto scrollingAttribute = attributeWithoutSynchronization(scrollingAttr);
-    return equalLettersIgnoringASCIICase(scrollingAttribute, "no"_s)
-        || equalLettersIgnoringASCIICase(scrollingAttribute, "noscroll"_s)
-        || equalLettersIgnoringASCIICase(scrollingAttribute, "off"_s)
+    return equalLettersIgnoringASCIICase(scrollingAttribute, "no")
+        || equalLettersIgnoringASCIICase(scrollingAttribute, "noscroll")
+        || equalLettersIgnoringASCIICase(scrollingAttribute, "off")
         ? ScrollbarMode::AlwaysOff : ScrollbarMode::Auto;
 }
 

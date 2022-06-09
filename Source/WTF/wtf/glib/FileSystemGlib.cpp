@@ -140,12 +140,12 @@ std::optional<WallTime> fileCreationTime(const String&)
     return std::nullopt;
 }
 
-String openTemporaryFile(StringView prefix, PlatformFileHandle& handle, StringView suffix)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& handle, const String& suffix)
 {
     // FIXME: Suffix is not supported, but OK for now since the code using it is macOS-port-only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
-    GUniquePtr<gchar> filename(g_strdup_printf("%s%s", prefix.utf8().data(), createVersion4UUIDString().utf8().data()));
+    GUniquePtr<gchar> filename(g_strdup_printf("%s%s", prefix.utf8().data(), createCanonicalUUIDString().utf8().data()));
     GUniquePtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), nullptr));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(tempPath.get()));
 
@@ -247,12 +247,8 @@ int readFromFile(PlatformFileHandle handle, void* data, int length)
     return -1;
 }
 
-std::optional<int32_t> getFileDeviceId(const String& path)
+std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
-    auto fsFile = fileSystemRepresentation(path);
-    if (fsFile.isNull())
-        return std::nullopt;
-
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(fsFile.data()));
     GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_filesystem_info(file.get(), G_FILE_ATTRIBUTE_UNIX_DEVICE, nullptr, nullptr));
     if (!fileInfo)
@@ -269,9 +265,9 @@ std::optional<uint32_t> volumeFileBlockSize(const String&)
 #if USE(FILE_LOCK)
 bool lockFile(PlatformFileHandle handle, OptionSet<FileLockMode> lockMode)
 {
-    static_assert(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::Shared), "LockSharedEncoding is as expected");
-    static_assert(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::Exclusive), "LockExclusiveEncoding is as expected");
-    static_assert(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::Nonblocking), "LockNonblockingEncoding is as expected");
+    COMPILE_ASSERT(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::Shared), LockSharedEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::Exclusive), LockExclusiveEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::Nonblocking), LockNonblockingEncodingIsAsExpected);
     auto* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(handle));
     int result = flock(g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream)), lockMode.toRaw());
     return result != -1;
@@ -330,16 +326,6 @@ CString currentExecutableName()
     }
 
     return g_get_prgname();
-}
-
-String userCacheDirectory()
-{
-    return stringFromFileSystemRepresentation(g_get_user_cache_dir());
-}
-
-String userDataDirectory()
-{
-    return stringFromFileSystemRepresentation(g_get_user_data_dir());
 }
 
 } // namespace FileSystemImpl

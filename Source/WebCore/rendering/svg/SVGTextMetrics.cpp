@@ -50,7 +50,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun&
     m_width = scaledFont.width(run) / scalingFactor;
     length = run.length();
     m_glyph.name = emptyString();
-    m_height = scaledFont.metricsOfPrimaryFont().floatHeight() / scalingFactor;
+    m_height = scaledFont.fontMetrics().floatHeight() / scalingFactor;
 
     m_glyph.unicodeString = run.is8Bit() ? String(run.characters8(), length) : String(run.characters16(), length);
     m_glyph.isValid = true;
@@ -63,12 +63,12 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned pos
 {
     const RenderStyle& style = text.style();
 
-    TextRun run(StringView(text.text()).substring(position, length),
-        0, /* xPos, only relevant with allowTabs=true */
-        0, /* padding, only relevant for justified text, not relevant for SVG */
-        ExpansionBehavior::allowRightOnly(),
-        style.direction(),
-        isOverride(style.unicodeBidi()) /* directionalOverride */);
+    TextRun run(StringView(text.text()).substring(position, length)
+                , 0 /* xPos, only relevant with allowTabs=true */
+                , 0 /* padding, only relevant for justified text, not relevant for SVG */
+                , AllowRightExpansion
+                , style.direction()
+                , isOverride(style.unicodeBidi()) /* directionalOverride */);
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
@@ -86,7 +86,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& text, unsigned length, float
     ASSERT(scalingFactor);
 
     m_width = width / scalingFactor;
-    m_height = text.scaledFont().metricsOfPrimaryFont().floatHeight() / scalingFactor;
+    m_height = text.scaledFont().fontMetrics().floatHeight() / scalingFactor;
 
     m_length = length;
 }

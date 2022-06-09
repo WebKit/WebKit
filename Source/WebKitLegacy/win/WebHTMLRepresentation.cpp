@@ -42,7 +42,7 @@ WebHTMLRepresentation::WebHTMLRepresentation()
 {
     WebHTMLRepresentationCount++;
     gClassCount++;
-    gClassNameCount().add("WebHTMLRepresentation"_s);
+    gClassNameCount().add("WebHTMLRepresentation");
 }
 
 WebHTMLRepresentation::~WebHTMLRepresentation()
@@ -54,7 +54,7 @@ WebHTMLRepresentation::~WebHTMLRepresentation()
 
     WebHTMLRepresentationCount--;
     gClassCount--;
-    gClassNameCount().remove("WebHTMLRepresentation"_s);
+    gClassNameCount().remove("WebHTMLRepresentation");
 }
 
 WebHTMLRepresentation* WebHTMLRepresentation::createInstance(WebFrame* frame)

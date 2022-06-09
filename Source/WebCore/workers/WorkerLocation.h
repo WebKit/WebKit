@@ -31,36 +31,32 @@
 
 namespace WebCore {
 
-class WebCoreOpaqueRoot;
+    class WorkerLocation : public RefCounted<WorkerLocation> {
+    public:
+        static Ref<WorkerLocation> create(URL&& url, String&& origin) { return adoptRef(*new WorkerLocation(WTFMove(url), WTFMove(origin))); }
 
-class WorkerLocation : public RefCounted<WorkerLocation> {
-public:
-    static Ref<WorkerLocation> create(URL&& url, String&& origin) { return adoptRef(*new WorkerLocation(WTFMove(url), WTFMove(origin))); }
+        const URL& url() const { return m_url; }
+        String href() const;
 
-    const URL& url() const { return m_url; }
-    String href() const;
+        // URI decomposition attributes
+        String protocol() const;
+        String host() const;
+        String hostname() const;
+        String port() const;
+        String pathname() const;
+        String search() const;
+        String hash() const;
+        String origin() const;
 
-    // URI decomposition attributes
-    String protocol() const;
-    String host() const;
-    String hostname() const;
-    String port() const;
-    String pathname() const;
-    String search() const;
-    String hash() const;
-    String origin() const;
+    private:
+        WorkerLocation(URL&& url, String&& origin)
+            : m_url(WTFMove(url))
+            , m_origin(WTFMove(origin))
+        {
+        }
 
-private:
-    WorkerLocation(URL&& url, String&& origin)
-        : m_url(WTFMove(url))
-        , m_origin(WTFMove(origin))
-    {
-    }
-
-    URL m_url;
-    String m_origin;
-};
-
-WebCoreOpaqueRoot root(WorkerLocation*);
+        URL m_url;
+        String m_origin;
+    };
 
 } // namespace WebCore

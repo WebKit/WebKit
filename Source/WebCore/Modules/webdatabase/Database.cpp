@@ -56,7 +56,6 @@
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
@@ -92,16 +91,19 @@ namespace WebCore {
 // (and un-returned) databases instances.
 
 static const char versionKey[] = "WebKitDatabaseVersionKey";
-static constexpr auto unqualifiedInfoTableName = "__WebKitDatabaseInfoTable__"_s;
+static const char unqualifiedInfoTableName[] = "__WebKitDatabaseInfoTable__";
 const unsigned long long quotaIncreaseSize = 5 * 1024 * 1024;
 
-static const String& fullyQualifiedInfoTableName()
+static const char* fullyQualifiedInfoTableName()
 {
-    static LazyNeverDestroyed<String> qualifiedName;
+    static const char qualifier[] = "main.";
+    static char qualifiedName[sizeof(qualifier) + sizeof(unqualifiedInfoTableName) - 1];
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        qualifiedName.construct(MAKE_STATIC_STRING_IMPL("main.__WebKitDatabaseInfoTable__"));
+        snprintf(qualifiedName, sizeof(qualifiedName), "%s%s", qualifier, unqualifiedInfoTableName);
     });
+
     return qualifiedName;
 }
 
@@ -110,29 +112,29 @@ static String formatErrorMessage(const char* message, int sqliteErrorCode, const
     return makeString(message, " (", sqliteErrorCode, ' ', sqliteErrorMessage, ')');
 }
 
-static bool setTextValueInDatabase(SQLiteDatabase& db, StringView query, const String& value)
+static bool setTextValueInDatabase(SQLiteDatabase& db, const String& query, const String& value)
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
-        LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.utf8().data());
+        LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.ascii().data());
         return false;
     }
 
     statement->bindText(1, value);
 
     if (statement->step() != SQLITE_DONE) {
-        LOG_ERROR("Failed to step statement to set value in database (%s)", query.utf8().data());
+        LOG_ERROR("Failed to step statement to set value in database (%s)", query.ascii().data());
         return false;
     }
 
     return true;
 }
 
-static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query, String& resultString)
+static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, const String& query, String& resultString)
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
-        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", statement.error(), query.utf8().data());
+        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", statement.error(), query.ascii().data());
         return false;
     }
 
@@ -146,7 +148,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
         return true;
     }
 
-    LOG_ERROR("Error (%i) reading text result from database (%s)", result, query.utf8().data());
+    LOG_ERROR("Error (%i) reading text result from database (%s)", result, query.ascii().data());
     return false;
 }
 
@@ -179,7 +181,7 @@ static HashMap<DatabaseGUID, HashSet<Database*>>& guidToDatabaseMap() WTF_REQUIR
 
 static inline DatabaseGUID guidForOriginAndName(const String& origin, const String& name) WTF_REQUIRES_LOCK(guidLock)
 {
-    static MainThreadNeverDestroyed<MemoryCompactRobinHoodHashMap<String, DatabaseGUID>> map;
+    static NeverDestroyed<HashMap<String, DatabaseGUID>> map;
     return map.get().ensure(makeString(origin, '/', name), [] {
         static DatabaseGUID lastUsedGUID;
         return ++lastUsedGUID;
@@ -364,10 +366,11 @@ ExceptionOr<void> Database::performOpenAndVerify(bool shouldSetVersionInNewDatab
                 return Exception { InvalidStateError, WTFMove(message) };
             }
 
-            if (!m_sqliteDatabase.tableExists(unqualifiedInfoTableName)) {
+            String tableName(unqualifiedInfoTableName);
+            if (!m_sqliteDatabase.tableExists(tableName)) {
                 m_new = true;
 
-                if (!m_sqliteDatabase.executeCommandSlow(makeString("CREATE TABLE ", unqualifiedInfoTableName, " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);"))) {
+                if (!m_sqliteDatabase.executeCommandSlow("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
                     String message = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();
@@ -449,7 +452,7 @@ void Database::closeDatabase()
 
 bool Database::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
-    auto query = makeString("SELECT value FROM ", fullyQualifiedInfoTableName(),  " WHERE key = '", versionKey, "';");
+    String query(String("SELECT value FROM ") + fullyQualifiedInfoTableName() +  " WHERE key = '" + versionKey + "';");
 
     m_databaseAuthorizer->disable();
 
@@ -469,7 +472,7 @@ bool Database::setVersionInDatabase(const String& version, bool shouldCacheVersi
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
-    auto query = makeString("INSERT INTO ", fullyQualifiedInfoTableName(),  " (key, value) VALUES ('", versionKey, "', ?);");
+    String query(String("INSERT INTO ") + fullyQualifiedInfoTableName() +  " (key, value) VALUES ('" + versionKey + "', ?);");
 
     m_databaseAuthorizer->disable();
 
@@ -579,20 +582,18 @@ void Database::markAsDeletedAndClose()
     close();
 }
 
-void Database::changeVersion(String&& oldVersion, String&& newVersion, RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
+void Database::changeVersion(const String& oldVersion, const String& newVersion, RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
-    runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), ChangeVersionWrapper::create(WTFMove(oldVersion), WTFMove(newVersion)), false);
+    runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), ChangeVersionWrapper::create(oldVersion, newVersion), false);
 }
 
 void Database::transaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
-    RELEASE_LOG_FAULT(SQLDatabase, "Database::transaction: Web SQL is deprecated.");
     runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), nullptr, false);
 }
 
 void Database::readTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback)
 {
-    RELEASE_LOG_FAULT(SQLDatabase, "Database::readTransaction: Web SQL is deprecated.");
     runTransaction(WTFMove(callback), WTFMove(errorCallback), WTFMove(successCallback), nullptr, true);
 }
 
@@ -684,7 +685,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
     if (!m_isTransactionQueueEnabled) {
         if (errorCallback) {
             m_document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = Ref { *errorCallback }]() {
-                errorCallback->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"_s));
+                errorCallback->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed"));
             });
         }
         return;

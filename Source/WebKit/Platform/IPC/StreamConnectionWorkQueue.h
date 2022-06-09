@@ -36,7 +36,7 @@
 
 namespace IPC {
 
-class WTF_CAPABILITY("is current") StreamConnectionWorkQueue final : public FunctionDispatcher, public ThreadSafeRefCounted<StreamConnectionWorkQueue> {
+class StreamConnectionWorkQueue final : public FunctionDispatcher {
 public:
     static Ref<StreamConnectionWorkQueue> create(const char* name)
     {
@@ -45,8 +45,8 @@ public:
 
     StreamConnectionWorkQueue(const char*);
     ~StreamConnectionWorkQueue();
-    void addStreamConnection(StreamServerConnection&);
-    void removeStreamConnection(StreamServerConnection&);
+    void addStreamConnection(StreamServerConnectionBase&);
+    void removeStreamConnection(StreamServerConnectionBase&);
 
     void dispatch(WTF::Function<void()>&&) final;
     void stopAndWaitForCompletion();
@@ -57,27 +57,16 @@ public:
 private:
     void startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
     void processStreams();
-#if ASSERT_ENABLED
-    void assertIsCurrent() const;
-#endif
 
     const char* const m_name;
 
     Semaphore m_wakeUpSemaphore;
     std::atomic<bool> m_shouldQuit { false };
 
-    mutable Lock m_lock;
+    Lock m_lock;
     RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);
     Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
-    HashCountedSet<Ref<StreamServerConnection>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
-    friend void assertIsCurrent(const StreamConnectionWorkQueue&);
+    HashCountedSet<Ref<StreamServerConnectionBase>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
 };
-
-inline void assertIsCurrent(const StreamConnectionWorkQueue& queue) WTF_ASSERTS_ACQUIRED_CAPABILITY(queue)
-{
-#if ASSERT_ENABLED
-    queue.assertIsCurrent();
-#endif
-}
 
 }

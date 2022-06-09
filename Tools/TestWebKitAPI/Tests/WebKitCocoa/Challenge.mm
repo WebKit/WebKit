@@ -141,7 +141,7 @@ RetainPtr<SecIdentityRef> testIdentity2()
     "miK1TXtLlWN06r43anQqZyRbu5IoHmHAybpk4Stq29wOSBoZdyarQWkloyiYJKdX"
     "oDdkKF8cwoBeAeiRLkT45stRNklBg4VlgCFELPOcWYMFOoSkQg19VS/VaHi48t+z"
     "668Bn1U3U9d/iNCXFM78iKqoJCBoURyirmG/tI6gfJiLn05Tz6nYz31Y40Fm1Swg"
-    "hgOy/TdJO/NjmTHBgpITP6lv69QvaV9z"_s);
+    "hgOy/TdJO/NjmTHBgpITP6lv69QvaV9z");
 
     String pemEncodedCertificate(""
     "MIIFgDCCA2gCCQD+QY1JRnM3IjANBgkqhkiG9w0BAQsFADCBgTELMAkGA1UEBhMC"
@@ -173,7 +173,7 @@ RetainPtr<SecIdentityRef> testIdentity2()
     "46izhou3GSKz3X1eYpYbZHF52dxmOUdvpSoqfmlMF1Egv94crD1xh9asdjg2DnXc"
     "948YxPaFjoOGd6Ync+fv9pJzjTjximbIiWm2r6yt2j9hAuKJXpNOIa4oIMAIGjCi"
     "JAH2nxKGuqtAK2hWbACu61RT5gAqAv/hB9JYnc2OiQ2VmjYkOk2GEdIjn0xSgX7W"
-    "mI/hHbxKMG3Rkv9q1Cx+WB/v1t8="_s);
+    "mI/hHbxKMG3Rkv9q1Cx+WB/v1t8=");
 
     auto privateKeyBytes = base64Decode(pemEncodedPrivateKey);
     auto certificateBytes = base64Decode(pemEncodedCertificate);
@@ -239,7 +239,7 @@ TEST(Challenge, SecIdentity)
 TEST(Challenge, DeallocateDuringChallenge)
 {
     using namespace TestWebKitAPI;
-    HTTPServer server({{ "/"_s, { "hi"_s }}}, HTTPServer::Protocol::Https);
+    HTTPServer server({{ "/", { "hi" }}}, HTTPServer::Protocol::Https);
 
     auto delegate = adoptNS([TestNavigationDelegate new]);
     delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
@@ -294,7 +294,7 @@ TEST(Challenge, DeallocateDuringChallenge)
 TEST(Challenge, ClientCertificate)
 {
     using namespace TestWebKitAPI;
-    HTTPServer server({ { "/"_s, { "hello"_s } } }, HTTPServer::Protocol::Https, [](sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t complete) {
+    HTTPServer server({ { "/", { "hello" } } }, HTTPServer::Protocol::Https, [](sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t complete) {
         complete(true);
     });
 
@@ -632,7 +632,7 @@ TEST(WebKit, FastServerTrust)
 
 TEST(WebKit, ErrorSecureCoding)
 {
-    HTTPServer server({{ "/"_s, { HTTPResponse::TerminateConnection::Yes }}});
+    HTTPServer server({{ "/", { HTTPResponse::TerminateConnection::Yes }}});
     auto webView = [[WKWebView new] autorelease];
     auto delegate = [[TestNavigationDelegate new] autorelease];
     webView.navigationDelegate = delegate;

@@ -35,7 +35,7 @@ class WebViewWindow;
 
 class MainWindow final : public toolkitten::Widget {
 public:
-    MainWindow(const char*);
+    MainWindow();
 
     WebViewWindow* activeWebView();
 

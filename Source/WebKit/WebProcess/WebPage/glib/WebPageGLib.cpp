@@ -48,35 +48,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPage::platformInitialize(const WebPageCreationParameters&)
-{
-#if USE(ATSPI)
-    // Create the accessible object (the plug) that will serve as the
-    // entry point to the Web process, and send a message to the UI
-    // process to connect the two worlds through the accessibility
-    // object there specifically placed for that purpose (the socket).
-#if PLATFORM(GTK) && USE(GTK4)
-    // FIXME: we need a way to connect DOM and app a11y tree in GTK4.
-#else
-    if (auto* page = corePage()) {
-        m_accessibilityRootObject = AccessibilityRootAtspi::create(*page);
-        m_accessibilityRootObject->registerObject([&](const String& plugID) {
-            if (!plugID.isEmpty())
-                send(Messages::WebPageProxy::BindAccessibilityTree(plugID));
-        });
-    }
-#endif
-#endif
-}
-
-void WebPage::platformDetach()
-{
-#if USE(ATSPI)
-    if (m_accessibilityRootObject)
-        m_accessibilityRootObject->unregisterObject();
-#endif
-}
-
 void WebPage::sendMessageToWebExtensionWithReply(UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     auto* extension = WebKitExtensionManager::singleton().extension();
@@ -114,22 +85,22 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 #if PLATFORM(GTK)
     const Editor& editor = frame.editor();
     if (selection.isRange()) {
-        if (editor.selectionHasStyle(CSSPropertyFontWeight, "bold"_s) == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyFontWeight, "bold") == TriState::True)
             postLayoutData.typingAttributes |= AttributeBold;
-        if (editor.selectionHasStyle(CSSPropertyFontStyle, "italic"_s) == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyFontStyle, "italic") == TriState::True)
             postLayoutData.typingAttributes |= AttributeItalics;
-        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s) == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline") == TriState::True)
             postLayoutData.typingAttributes |= AttributeUnderline;
-        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"_s) == TriState::True)
+        if (editor.selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through") == TriState::True)
             postLayoutData.typingAttributes |= AttributeStrikeThrough;
     } else if (selection.isCaret()) {
-        if (editor.selectionStartHasStyle(CSSPropertyFontWeight, "bold"_s))
+        if (editor.selectionStartHasStyle(CSSPropertyFontWeight, "bold"))
             postLayoutData.typingAttributes |= AttributeBold;
-        if (editor.selectionStartHasStyle(CSSPropertyFontStyle, "italic"_s))
+        if (editor.selectionStartHasStyle(CSSPropertyFontStyle, "italic"))
             postLayoutData.typingAttributes |= AttributeItalics;
-        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s))
+        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"))
             postLayoutData.typingAttributes |= AttributeUnderline;
-        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"_s))
+        if (editor.selectionStartHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "line-through"))
             postLayoutData.typingAttributes |= AttributeStrikeThrough;
     }
 #endif
@@ -163,15 +134,11 @@ static std::optional<InputMethodState> inputMethodSateForElement(Element* elemen
     if (is<HTMLInputElement>(*element)) {
         auto& inputElement = downcast<HTMLInputElement>(*element);
         state.setPurposeForInputElement(inputElement);
-#if ENABLE(AUTOCAPITALIZE)
         state.addHintsForAutocapitalizeType(inputElement.autocapitalizeType());
-#endif
     } else if (is<HTMLTextAreaElement>(*element) || (element->hasEditableStyle() && is<HTMLElement>(*element))) {
         auto& htmlElement = downcast<HTMLElement>(*element);
         state.setPurposeOrHintForInputMode(htmlElement.canonicalInputMode());
-#if ENABLE(AUTOCAPITALIZE)
         state.addHintsForAutocapitalizeType(htmlElement.autocapitalizeType());
-#endif
     }
 
     if (element->isSpellCheckingEnabled())

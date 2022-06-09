@@ -55,7 +55,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(StyledElement);
 
-static_assert(sizeof(StyledElement) == sizeof(Element), "styledelement should remain same size as element");
+COMPILE_ASSERT(sizeof(StyledElement) == sizeof(Element), styledelement_should_remain_same_size_as_element);
 
 using namespace HTMLNames;
 
@@ -65,7 +65,7 @@ void StyledElement::synchronizeStyleAttributeInternalImpl()
     ASSERT(elementData()->styleAttributeIsDirty());
     elementData()->setStyleAttributeIsDirty(false);
     if (const StyleProperties* inlineStyle = this->inlineStyle())
-        setSynchronizedLazyAttribute(styleAttr, inlineStyle->asTextAtom());
+        setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
 }
 
 StyledElement::~StyledElement()
@@ -89,36 +89,12 @@ public:
     }
 
 private:
-    ExceptionOr<RefPtr<CSSStyleValue>> get(const AtomString& property) const final
+    RefPtr<CSSStyleValue> get(const String& property) const final
     {
         ASSERT(m_element); // Hitting this assertion would imply a GC bug. Element is collected while this property map is alive.
         if (!m_element)
             return nullptr;
         return extractInlineProperty(property, *m_element);
-    }
-
-    ExceptionOr<Vector<RefPtr<CSSStyleValue>>> getAll(const AtomString&) const final
-    {
-        // FIXME: implement.
-        return Vector<RefPtr<CSSStyleValue>>();
-    }
-
-    unsigned size() const final
-    {
-        // FIXME: implement.
-        return 0;
-    }
-
-    Vector<StylePropertyMapEntry> entries() const final
-    {
-        // FIXME: implement.
-        return { };
-    }
-
-    ExceptionOr<bool> has(const AtomString&) const final
-    {
-        // FIXME: implement.
-        return false;
     }
 
     explicit StyledElementInlineStylePropertyMap(StyledElement& element)
@@ -128,7 +104,7 @@ private:
 
     void clearElement() override { m_element = nullptr; }
 
-    static RefPtr<CSSStyleValue> extractInlineProperty(const AtomString& name, StyledElement& element)
+    static RefPtr<CSSStyleValue> extractInlineProperty(const String& name, StyledElement& element)
     {
         if (!element.inlineStyle())
             return nullptr;
@@ -253,7 +229,7 @@ void StyledElement::invalidateStyleAttribute()
     if (styleResolver().ruleSets().hasComplexSelectorsForStyleAttribute()) {
         if (auto* inlineStyle = this->inlineStyle()) {
             elementData()->setStyleAttributeIsDirty(false);
-            auto newValue = inlineStyle->asTextAtom();
+            auto newValue = inlineStyle->asText();
             Style::AttributeChangeInvalidation styleInvalidation(*this, styleAttr, attributeWithoutSynchronization(styleAttr), newValue);
             setSynchronizedLazyAttribute(styleAttr, newValue);
         }

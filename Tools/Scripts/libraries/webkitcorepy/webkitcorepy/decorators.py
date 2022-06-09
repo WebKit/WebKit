@@ -80,8 +80,5 @@ class hybridmethod(object):
         wrapper.__doc__ = self.function.__doc__
         wrapper.__func__ = wrapper.im_func = self.function
         wrapper.__self__ = wrapper.im_self = context
-        for attribute in ['clear']:
-            if getattr(self.function, attribute, None):
-                setattr(wrapper, attribute, getattr(self.function, attribute))
 
         return wrapper

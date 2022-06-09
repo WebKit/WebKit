@@ -38,7 +38,6 @@ class CallFrame;
 namespace WebCore {
 
 class IDBKeyRange;
-class WebCoreOpaqueRoot;
 
 struct IDBKeyRangeData;
 
@@ -84,7 +83,7 @@ public:
     void ref();
     void deref();
 
-    WebCoreOpaqueRoot opaqueRoot();
+    void* objectStoreAsOpaqueRoot() { return &m_objectStore; }
 
 private:
     IDBIndex(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
@@ -110,7 +109,5 @@ private:
     // Indexes will never outlive ObjectStores so its okay to keep a raw C++ reference here.
     IDBObjectStore& m_objectStore;
 };
-
-WebCoreOpaqueRoot root(IDBIndex*);
 
 } // namespace WebCore

@@ -762,27 +762,6 @@ TString ResourcesHLSL::uniformBlocksHeader(
     return (interfaceBlocks.empty() ? "" : ("// Uniform Blocks\n\n" + interfaceBlocks));
 }
 
-void ResourcesHLSL::allocateShaderStorageBlockRegisters(
-    const ReferencedInterfaceBlocks &referencedInterfaceBlocks)
-{
-    for (const auto &interfaceBlockReference : referencedInterfaceBlocks)
-    {
-        const TInterfaceBlock &interfaceBlock = *interfaceBlockReference.second->block;
-        const TVariable *instanceVariable     = interfaceBlockReference.second->instanceVariable;
-
-        mShaderStorageBlockRegisterMap[interfaceBlock.name().data()] = mUAVRegister;
-
-        if (instanceVariable != nullptr && instanceVariable->getType().isArray())
-        {
-            mUAVRegister += instanceVariable->getType().getOutermostArraySize();
-        }
-        else
-        {
-            mUAVRegister += 1u;
-        }
-    }
-}
-
 TString ResourcesHLSL::shaderStorageBlocksHeader(
     const ReferencedInterfaceBlocks &referencedInterfaceBlocks)
 {
@@ -793,7 +772,8 @@ TString ResourcesHLSL::shaderStorageBlocksHeader(
         const TInterfaceBlock &interfaceBlock = *interfaceBlockReference.second->block;
         const TVariable *instanceVariable     = interfaceBlockReference.second->instanceVariable;
 
-        unsigned int activeRegister = mShaderStorageBlockRegisterMap[interfaceBlock.name().data()];
+        unsigned int activeRegister                                  = mUAVRegister;
+        mShaderStorageBlockRegisterMap[interfaceBlock.name().data()] = activeRegister;
 
         if (instanceVariable != nullptr && instanceVariable->getType().isArray())
         {
@@ -803,15 +783,17 @@ TString ResourcesHLSL::shaderStorageBlocksHeader(
                 interfaceBlocks += shaderStorageBlockString(
                     interfaceBlock, instanceVariable, activeRegister + arrayIndex, arrayIndex);
             }
+            mUAVRegister += instanceArraySize;
         }
         else
         {
             interfaceBlocks += shaderStorageBlockString(interfaceBlock, instanceVariable,
                                                         activeRegister, GL_INVALID_INDEX);
+            mUAVRegister += 1u;
         }
     }
 
-    return interfaceBlocks;
+    return (interfaceBlocks.empty() ? "" : ("// Shader Storage Blocks\n\n" + interfaceBlocks));
 }
 
 TString ResourcesHLSL::uniformBlockString(const TInterfaceBlock &interfaceBlock,

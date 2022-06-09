@@ -411,7 +411,8 @@ void webkit_dom_html_table_cell_element_set_align(WebKitDOMHTMLTableCellElement*
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::alignAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_cell_element_get_axis(WebKitDOMHTMLTableCellElement* self)
@@ -429,7 +430,8 @@ void webkit_dom_html_table_cell_element_set_axis(WebKitDOMHTMLTableCellElement* 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::axisAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::axisAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_cell_element_get_bg_color(WebKitDOMHTMLTableCellElement* self)
@@ -447,7 +449,8 @@ void webkit_dom_html_table_cell_element_set_bg_color(WebKitDOMHTMLTableCellEleme
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::bgcolorAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::bgcolorAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_cell_element_get_ch(WebKitDOMHTMLTableCellElement* self)
@@ -465,7 +468,8 @@ void webkit_dom_html_table_cell_element_set_ch(WebKitDOMHTMLTableCellElement* se
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_cell_element_get_ch_off(WebKitDOMHTMLTableCellElement* self)
@@ -483,7 +487,8 @@ void webkit_dom_html_table_cell_element_set_ch_off(WebKitDOMHTMLTableCellElement
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charoffAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::charoffAttr, convertedValue);
 }
 
 glong webkit_dom_html_table_cell_element_get_col_span(WebKitDOMHTMLTableCellElement* self)
@@ -535,7 +540,8 @@ void webkit_dom_html_table_cell_element_set_headers(WebKitDOMHTMLTableCellElemen
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::headersAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::headersAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_cell_element_get_height(WebKitDOMHTMLTableCellElement* self)
@@ -553,7 +559,8 @@ void webkit_dom_html_table_cell_element_set_height(WebKitDOMHTMLTableCellElement
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::heightAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::heightAttr, convertedValue);
 }
 
 gboolean webkit_dom_html_table_cell_element_get_no_wrap(WebKitDOMHTMLTableCellElement* self)
@@ -588,7 +595,8 @@ void webkit_dom_html_table_cell_element_set_v_align(WebKitDOMHTMLTableCellElemen
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valignAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::valignAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_cell_element_get_width(WebKitDOMHTMLTableCellElement* self)
@@ -606,7 +614,8 @@ void webkit_dom_html_table_cell_element_set_width(WebKitDOMHTMLTableCellElement*
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::widthAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_cell_element_get_abbr(WebKitDOMHTMLTableCellElement* self)
@@ -624,7 +633,8 @@ void webkit_dom_html_table_cell_element_set_abbr(WebKitDOMHTMLTableCellElement* 
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::abbrAttr, WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setAttributeWithoutSynchronization(WebCore::HTMLNames::abbrAttr, convertedValue);
 }
 
 gchar* webkit_dom_html_table_cell_element_get_scope(WebKitDOMHTMLTableCellElement* self)
@@ -642,7 +652,8 @@ void webkit_dom_html_table_cell_element_set_scope(WebKitDOMHTMLTableCellElement*
     g_return_if_fail(WEBKIT_DOM_IS_HTML_TABLE_CELL_ELEMENT(self));
     g_return_if_fail(value);
     WebCore::HTMLTableCellElement* item = WebKit::core(self);
-    item->setScope(WTF::AtomString::fromUTF8(value));
+    WTF::String convertedValue = WTF::String::fromUTF8(value);
+    item->setScope(convertedValue);
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

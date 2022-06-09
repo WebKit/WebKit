@@ -34,7 +34,6 @@ namespace Style {
 enum class Change : uint8_t {
     None,
     NonInherited,
-    FastPathInherited,
     Inherited,
     Renderer
 };

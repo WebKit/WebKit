@@ -39,7 +39,7 @@ const size_t numberOfStandardGamepadButtonsWithHomeButton = numberOfStandardGame
 
 const String& standardGamepadMappingString()
 {
-    static NeverDestroyed<String> standardGamepadMapping = "standard"_s;
+    static NeverDestroyed<String> standardGamepadMapping = "standard";
     return standardGamepadMapping;
 }
 
@@ -47,7 +47,7 @@ const String& standardGamepadMappingString()
 // https://immersive-web.github.io/webxr-gamepads-module/#dom-gamepadmappingtype-xr-standard
 const String& xrStandardGamepadMappingString()
 {
-    static NeverDestroyed<String> xrStandardGamepadMapping = "xr-standard"_s;
+    static NeverDestroyed<String> xrStandardGamepadMapping = "xr-standard";
     return xrStandardGamepadMapping;
 }
 #endif

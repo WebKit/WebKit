@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& qu
             return;
         }
 
-        auto channel = IOChannel::open(WTFMove(filename), IOChannel::Type::Read);
+        auto channel = IOChannel::open(filename, IOChannel::Type::Read);
         channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [completionHandler = WTFMove(completionHandler)](const Data& data, int error) mutable {
             ASSERT(RunLoop::isMain());
             if (error) {
@@ -258,8 +258,7 @@ void Caches::clear(CompletionHandler<void()>&& completionHandler)
     if (m_engine)
         m_engine->removeFile(cachesListFilename(m_rootPath));
     if (m_storage) {
-        String anyType;
-        m_storage->clear(WTFMove(anyType), -WallTime::infinity(), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_storage->clear(String { }, -WallTime::infinity(), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
             ASSERT(RunLoop::isMain());
             protectedThis->clearMemoryRepresentation();
             completionHandler();
@@ -280,17 +279,17 @@ void Caches::clearPendingWritingCachesToDiskCallbacks()
 
 Cache* Caches::find(const String& name)
 {
-    auto position = m_caches.findIf([&](const auto& item) { return item.name() == name; });
+    auto position = m_caches.findMatching([&](const auto& item) { return item.name() == name; });
     return (position != notFound) ? &m_caches[position] : nullptr;
 }
 
 Cache* Caches::find(uint64_t identifier)
 {
-    auto position = m_caches.findIf([&](const auto& item) { return item.identifier() == identifier; });
+    auto position = m_caches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
     if (position != notFound)
         return &m_caches[position];
 
-    position = m_removedCaches.findIf([&](const auto& item) { return item.identifier() == identifier; });
+    position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
     return (position != notFound) ? &m_removedCaches[position] : nullptr;
 }
 
@@ -324,7 +323,7 @@ void Caches::open(const String& name, CacheIdentifierCallback&& callback)
     makeDirty();
 
     uint64_t cacheIdentifier = m_engine->nextCacheIdentifier();
-    m_caches.append(Cache { *this, cacheIdentifier, Cache::State::Open, String { name }, createVersion4UUIDString() });
+    m_caches.append(Cache { *this, cacheIdentifier, Cache::State::Open, String { name }, createCanonicalUUIDString() });
 
     writeCachesToDisk([callback = WTFMove(callback), cacheIdentifier](std::optional<Error>&& error) mutable {
         callback(CacheIdentifierOperationResult { cacheIdentifier, !!error });
@@ -347,10 +346,10 @@ void Caches::remove(uint64_t identifier, CacheIdentifierCallback&& callback)
         return;
     }
 
-    auto position = m_caches.findIf([&](const auto& item) { return item.identifier() == identifier; });
+    auto position = m_caches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
 
     if (position == notFound) {
-        ASSERT(m_removedCaches.findIf([&](const auto& item) { return item.identifier() == identifier; }) != notFound);
+        ASSERT(m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == identifier; }) != notFound);
         callback(CacheIdentifierOperationResult { 0, false });
         return;
     }
@@ -369,12 +368,12 @@ bool Caches::hasActiveCache() const
 {
     if (m_removedCaches.size())
         return true;
-    return m_caches.findIf([](const auto& item) { return item.isActive(); }) != notFound;
+    return m_caches.findMatching([](const auto& item) { return item.isActive(); }) != notFound;
 }
 
 void Caches::dispose(Cache& cache)
 {
-    auto position = m_removedCaches.findIf([&](const auto& item) { return item.identifier() == cache.identifier(); });
+    auto position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); });
     if (position != notFound) {
         if (m_storage)
             m_storage->remove(cache.keys(), [] { });
@@ -382,7 +381,7 @@ void Caches::dispose(Cache& cache)
         m_removedCaches.remove(position);
         return;
     }
-    ASSERT(m_caches.findIf([&](const auto& item) { return item.identifier() == cache.identifier(); }) != notFound);
+    ASSERT(m_caches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); }) != notFound);
 
     // We cannot clear the memory representation in ephemeral sessions since we would loose all data.
     if (!shouldPersist())
@@ -452,7 +451,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
         return;
     }
 
-    m_engine->readFile(WTFMove(filename), [protectedThis = Ref { *this }, this, callback = WTFMove(callback)](const Data& data, int error) mutable {
+    m_engine->readFile(filename, [protectedThis = Ref { *this }, this, callback = WTFMove(callback)](const Data& data, int error) mutable {
         if (!m_engine) {
             callback(Vector<Cache> { });
             return;
@@ -525,10 +524,14 @@ void Caches::requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::Compl
         return;
     }
 
-    m_engine->requestSpace(m_origin, spaceRequired, [callback = WTFMove(callback)](bool granted) mutable {
-        if (!granted)
-            return callback(Error::QuotaExceeded);
-        callback({ });
+    m_engine->requestSpace(m_origin, spaceRequired, [callback = WTFMove(callback)](auto decision) mutable {
+        switch (decision) {
+        case WebCore::StorageQuotaManager::Decision::Deny:
+            callback(Error::QuotaExceeded);
+            return;
+        case WebCore::StorageQuotaManager::Decision::Grant:
+            callback({ });
+        };
     });
 }
 
@@ -659,9 +662,9 @@ void Caches::cacheInfos(uint64_t updateCounter, CacheInfosCallback&& callback)
 
     Vector<CacheInfo> cacheInfos;
     if (isDirty(updateCounter)) {
-        cacheInfos = m_caches.map([](auto& cache) {
-            return CacheInfo { cache.identifier(), cache.name() };
-        });
+        cacheInfos.reserveInitialCapacity(m_caches.size());
+        for (auto& cache : m_caches)
+            cacheInfos.uncheckedAppend(CacheInfo { cache.identifier(), cache.name() });
     }
     callback(CacheInfos { WTFMove(cacheInfos), m_updateCounter });
 }

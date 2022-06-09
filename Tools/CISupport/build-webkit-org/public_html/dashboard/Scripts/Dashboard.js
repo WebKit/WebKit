@@ -27,6 +27,7 @@ Dashboard = {
     Platform: {
         macOSMonterey: { name: "macos-monterey", readableName: "macOS Monterey", order: 1 },
         macOSBigSur: { name: "macos-bigsur", readableName: "macOS Big Sur", order: 2 },
+        macOSCatalina: { name: "macos-catalina", readableName: "macOS Catalina", order: 3 },
         iOS15Simulator: { name: "ios-simulator-15", readableName: "iOS 15 Simulator", order: 15 },
         iOS15Device: { name: "ios-15", readableName: "iOS 15", order: 16 },
         iOS14Simulator: { name: "ios-simulator-14", readableName: "iOS 14 Simulator", order: 17 },
@@ -44,11 +45,10 @@ Dashboard = {
         LinuxWPE: { name : "linux-wpe", readableName: "Linux WPE", order: 90 },
         LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 91 },
         LinuxJSCOnly: { name : "linux-jsconly", readableName: "Linux JSCOnly", order: 92 },
-        PlayStation: { name : "playstation", readableName: "PlayStation", order: 100 },
     },
     Branch: {},
     Repository: {
-        OpenSource: { name: "openSource", isGit: true, order: 0 },
+        OpenSource: { name: "openSource", isSVN: true, order: 0 },
     },
     get sortedPlatforms()
     {

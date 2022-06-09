@@ -28,7 +28,6 @@
 #include "config.h"
 #include "WorkerGlobalScope.h"
 
-#include "BlobURL.h"
 #include "CSSFontSelector.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -48,8 +47,6 @@
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
-#include "ServiceWorker.h"
-#include "ServiceWorkerClientData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
 #include "WorkerCacheStorageConnection.h"
@@ -93,7 +90,7 @@ static WorkQueue& sharedFileSystemStorageQueue()
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
-    : WorkerOrWorkletGlobalScope(type, params.sessionID, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread, params.clientIdentifier)
+    : WorkerOrWorkletGlobalScope(type, isMainThread() ? Ref { commonVM() } : JSC::VM::create(), &thread)
     , m_url(params.scriptURL)
     , m_inspectorIdentifier(params.inspectorIdentifier)
     , m_userAgent(params.userAgent)
@@ -118,7 +115,6 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     if (m_topOrigin->needsStorageAccessFromFileURLsQuirk())
         origin->grantStorageAccessFromFileURLsQuirk();
 
-    setStorageBlockingPolicy(m_settingsValues.storageBlockingPolicy);
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(origin)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
     setCrossOriginEmbedderPolicy(params.crossOriginEmbedderPolicy);
@@ -151,11 +147,6 @@ String WorkerGlobalScope::origin() const
 void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
-
-#if ENABLE(SERVICE_WORKER)
-    if (settingsValues().serviceWorkersEnabled)
-        swClientConnection().unregisterServiceWorkerClient(identifier());
-#endif
 
     stopIndexedDatabase();
 
@@ -235,20 +226,10 @@ void WorkerGlobalScope::suspend()
 {
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, true);
-
-#if ENABLE(SERVICE_WORKER)
-    if (settingsValues().serviceWorkersEnabled)
-        swClientConnection().unregisterServiceWorkerClient(identifier());
-#endif
 }
 
 void WorkerGlobalScope::resume()
 {
-#if ENABLE(SERVICE_WORKER)
-    if (settingsValues().serviceWorkersEnabled)
-        updateServiceWorkerClientData();
-#endif
-
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, false);
 }
@@ -367,14 +348,11 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
         return Exception { TypeError, "importScripts cannot be used if worker type is \"module\""_s };
 
     Vector<URL> completedURLs;
-    Vector<BlobURLHandle> protectedBlobURLs;
     completedURLs.reserveInitialCapacity(urls.size());
     for (auto& entry : urls) {
         URL url = completeURL(entry);
         if (!url.isValid())
             return Exception { SyntaxError };
-        if (url.protocolIsBlob())
-            protectedBlobURLs.append(BlobURLHandle { url });
         completedURLs.uncheckedAppend(WTFMove(url));
     }
 
@@ -400,7 +378,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
 
         auto scriptLoader = WorkerScriptLoader::create();
         auto cspEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective;
-        if (auto exception = scriptLoader->loadSynchronously(this, url, WorkerScriptLoader::Source::ClassicWorkerImport, FetchOptions::Mode::NoCors, cachePolicy, cspEnforcement, resourceRequestIdentifier()))
+        if (auto exception = scriptLoader->loadSynchronously(this, url, FetchOptions::Mode::NoCors, cachePolicy, cspEnforcement, resourceRequestIdentifier()))
             return WTFMove(*exception);
 
         InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script().toString());
@@ -669,17 +647,5 @@ void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScri
             sourceProvider.tryReplaceScriptBuffer(pair.value);
     }
 }
-
-#if ENABLE(SERVICE_WORKER)
-void WorkerGlobalScope::updateServiceWorkerClientData()
-{
-    if (!settingsValues().serviceWorkersEnabled)
-        return;
-
-    ASSERT(type() == WebCore::WorkerGlobalScope::Type::DedicatedWorker || type() == WebCore::WorkerGlobalScope::Type::SharedWorker);
-    auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
-    swClientConnection().registerServiceWorkerClient(clientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
-}
-#endif
 
 } // namespace WebCore

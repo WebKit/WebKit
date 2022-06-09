@@ -168,7 +168,7 @@ class GLShader : angle::NonCopyable
 };
 
 // Prefer ANGLE_GL_PROGRAM for local variables.
-class GLProgram : angle::NonCopyable
+class GLProgram
 {
   public:
     GLProgram() : mHandle(0) {}

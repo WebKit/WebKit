@@ -29,7 +29,7 @@ CSSDocumentation = {
     },
     "-webkit-appearance": {
         "description": "Changes the appearance of buttons and other controls to resemble native controls.",
-        "syntax": "none | button | checkbox | listbox | menulist | menulist-button | meter | progress-bar | push-button | radio | searchfield | slider-horizontal | slider-vertical | square-button | textarea | textfield | -apple-pay-button"
+        "syntax": "none | button | button-bevel | caret | checkbox | default-button | inner-spin-button | listbox | listitem | media-controls-background | media-controls-fullscreen-background | media-current-time-display | media-enter-fullscreen-button | media-exit-fullscreen-button | media-fullscreen-button | media-mute-button | media-overlay-play-button | media-play-button | media-seek-back-button | media-seek-forward-button | media-slider | media-sliderthumb | media-time-remaining-display | media-toggle-closed-captions-button | media-volume-slider | media-volume-slider-container | media-volume-sliderthumb | menulist | menulist-button | menulist-text | menulist-textfield | meter | progress-bar | progress-bar-value | push-button | radio | searchfield | searchfield-cancel-button | searchfield-decoration | searchfield-results-button | searchfield-results-decoration | slider-horizontal | slider-vertical | sliderthumb-horizontal | sliderthumb-vertical | square-button | textarea | textfield | -apple-pay-button"
     },
     "-webkit-backdrop-filter": {
         "description": "Applies a filter effect where the first filter in the list takes the element's background image as the input image."
@@ -2357,7 +2357,7 @@ CSSDocumentation = {
     },
     "text-align-last": {
         "description": "Describes how the last line of a block or a line right before a forced line break is aligned when 'text-align' is set to 'justify'.",
-        "syntax": "auto | start | end | left | right | center | justify | match-parent",
+        "syntax": "auto | start | end | left | right | center | justify",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-align-last"
     },
     "text-anchor": {

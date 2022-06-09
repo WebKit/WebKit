@@ -27,7 +27,6 @@ double
 //
 // CSS_PROP_FONT:
 //
-// This needs to be kept in sync with SystemFontDatabase::FontShorthand.
 caption
 icon
 menu
@@ -840,24 +839,72 @@ radio
 push-button
 square-button
 button
+button-bevel
 default-button
+inner-spin-button
 listbox
+listitem
+media-controls-background
+media-controls-dark-bar-background
+media-controls-fullscreen-background
+media-controls-light-bar-background
+media-current-time-display
+media-enter-fullscreen-button
+media-exit-fullscreen-button
+media-fullscreen-volume-slider
+media-fullscreen-volume-slider-thumb
+media-mute-button
+media-overlay-play-button
+media-play-button
+media-return-to-realtime-button
+media-rewind-button
+media-seek-back-button
+media-seek-forward-button
+media-slider
+media-sliderthumb
+media-time-remaining-display
+media-toggle-closed-captions-button
+media-volume-slider
+media-volume-slider-container
+media-volume-slider-mute-button
+media-volume-sliderthumb
 menulist
 menulist-button
+menulist-text
+menulist-textfield
 meter
 progress-bar
+progress-bar-value
 slider-horizontal
 slider-vertical
+sliderthumb-horizontal
+sliderthumb-vertical
+caret
 searchfield
+searchfield-decoration
+searchfield-results-decoration
+searchfield-results-button
+searchfield-cancel-button
+textfield
+relevancy-level-indicator
+continuous-capacity-level-indicator
+discrete-capacity-level-indicator
+rating-level-indicator
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 -apple-pay-button
 #endif
+#if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
+color-well
+#endif
+#if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
+list-button
+#endif
+textarea
 #if defined(ENABLE_ATTACHMENT_ELEMENT) && ENABLE_ATTACHMENT_ELEMENT
 attachment
 borderless-attachment
 #endif
-textarea
-textfield
+caps-lock-indicator
 
 //
 // CSS_PROP_BORDER_IMAGE
@@ -984,13 +1031,6 @@ jump-none
 jump-both
 // start
 // end
-
-//
-// animation-composition
-//
-// add
-accumulate
-replace
 
 //
 // CSS_PROP_ZOOM
@@ -1373,7 +1413,6 @@ span
 
 // grid-template-{columns|rows}
 minmax
-subgrid
 
 // grid-auto-flow
 auto-flow
@@ -1385,6 +1424,11 @@ each-line
 
 // -webkit-column-fill
 balance
+
+#if defined(ENABLE_CSS_TRAILING_WORD) && ENABLE_CSS_TRAILING_WORD
+// -apple-trailing-word
+-webkit-partially-balanced
+#endif
 
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
 // -apple-pay-button-style
@@ -1581,11 +1625,6 @@ layout
 paint
 #endif
 
-// container-type
-// none
-// size
-inline-size
-
 // offset-path
 // https://drafts.fxtf.org/motion-1/#offset-path-property
 ray
@@ -1595,8 +1634,3 @@ ray
 // farthest-corner
 sides
 // contain
-
-// for @media/@supports/@container
-and
-or
-not

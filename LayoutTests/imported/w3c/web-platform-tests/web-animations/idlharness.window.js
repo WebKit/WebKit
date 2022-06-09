@@ -5,7 +5,7 @@
 'use strict';
 
 idl_test(
-  ['web-animations', 'web-animations-2'],
+  ['web-animations'],
   ['dom', 'html'],
   idl_array => {
     idl_array.add_objects({

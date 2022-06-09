@@ -47,6 +47,7 @@
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PaymentCoordinator.h"
+#include "PluginViewBase.h"
 #include "RunJavaScriptParameters.h"
 #include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
@@ -58,7 +59,6 @@
 #include "WebCoreJITOperations.h"
 #include "WebCoreJSClientData.h"
 #include "runtime_root.h"
-#include <JavaScriptCore/AbstractModuleRecord.h>
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/InitializeThreading.h>
@@ -72,8 +72,6 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
-#include <JavaScriptCore/WebAssemblyModuleRecord.h>
-#include <wtf/GenerateProfiles.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SharedTask.h>
 #include <wtf/Threading.h>
@@ -84,8 +82,6 @@
 namespace WebCore {
 using namespace JSC;
 
-enum class WebCoreProfileTag { };
-
 void ScriptController::initializeMainThread()
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -93,7 +89,6 @@ void ScriptController::initializeMainThread()
     WTF::initializeMainThread();
     WebCore::populateJITOperations();
 #endif
-    WTF::registerProfileGenerationCallback<WebCoreProfileTag>("WebCore");
 }
 
 ScriptController::ScriptController(Frame& frame)
@@ -125,13 +120,7 @@ JSC::JSValue ScriptController::evaluateInWorldIgnoringException(const ScriptSour
 
 ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
 {
-    auto& vm = world.vm();
-    JSLockHolder lock(vm);
-
-    if (vm.hasPendingTerminationException()) {
-        ExceptionDetails details;
-        return makeUnexpected(details);
-    }
+    JSLockHolder lock(world.vm());
 
     const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
     const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();
@@ -146,8 +135,8 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     auto& proxy = jsWindowProxy(world);
     auto& globalObject = *proxy.window();
 
-    Ref protector { m_frame };
-    SetForScope sourceURLScope(m_sourceURL, &sourceURL);
+    Ref<Frame> protector(m_frame);
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
@@ -159,7 +148,7 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     std::optional<ExceptionDetails> optionalDetails;
     if (evaluationException) {
         ExceptionDetails details;
-        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), false, &details);
+        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), &details);
         optionalDetails = WTFMove(details);
     }
 
@@ -223,8 +212,7 @@ JSC::JSValue ScriptController::linkAndEvaluateModuleScriptInWorld(LoadableModule
     if (evaluationException) {
         // FIXME: Give a chance to dump the stack trace if the "crossorigin" attribute allows.
         // https://bugs.webkit.org/show_bug.cgi?id=164539
-        constexpr bool fromModule = true;
-        reportException(&lexicalGlobalObject, evaluationException, nullptr, fromModule);
+        reportException(&lexicalGlobalObject, evaluationException, nullptr);
         return jsUndefined();
     }
     return returnValue;
@@ -235,37 +223,26 @@ JSC::JSValue ScriptController::linkAndEvaluateModuleScript(LoadableModuleScript&
     return linkAndEvaluateModuleScriptInWorld(moduleScript, mainThreadNormalWorld());
 }
 
-JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModuleRecord& moduleRecord, DOMWrapperWorld& world, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
+JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleRecord& moduleRecord, DOMWrapperWorld& world, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
 {
-    JSC::VM& vm = world.vm();
-    JSLockHolder lock(vm);
+    JSLockHolder lock(world.vm());
+
+    const auto& jsSourceCode = moduleRecord.sourceCode();
 
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    Ref protector { m_frame };
-    SetForScope sourceURLScope(m_sourceURL, &sourceURL);
+    Ref<Frame> protector(m_frame);
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
-#if ENABLE(WEBASSEMBLY)
-    const bool isWasmModule = moduleRecord.inherits<WebAssemblyModuleRecord>();
-#else
-    constexpr bool isWasmModule = false;
-#endif
-    if (isWasmModule) {
-        // FIXME: Provide better inspector support for Wasm scripts.
-        InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), 1, 1);
-    } else {
-        auto* jsModuleRecord = jsDynamicCast<JSModuleRecord*>(&moduleRecord);
-        const auto& jsSourceCode = jsModuleRecord->sourceCode();
-        InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
-    }
+    InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
     auto returnValue = moduleRecord.evaluate(&lexicalGlobalObject, awaitedValue, resumeMode);
     InspectorInstrumentation::didEvaluateScript(m_frame);
 
     return returnValue;
 }
 
-JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
+JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, JSModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
 {
     return evaluateModule(sourceURL, moduleRecord, mainThreadNormalWorld(), awaitedValue, resumeMode);
 }
@@ -332,30 +309,14 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
     auto& rejectHandler = *JSNativeStdFunction::create(lexicalGlobalObject.vm(), proxy.window(), 1, String(), [moduleScript](JSGlobalObject* globalObject, CallFrame* callFrame) {
         VM& vm = globalObject->vm();
         JSValue errorValue = callFrame->argument(0);
-        auto scope = DECLARE_CATCH_SCOPE(vm);
         if (errorValue.isObject()) {
             auto* object = JSC::asObject(errorValue);
-            if (JSValue failureKindValue = object->getDirect(vm, builtinNames(vm).failureKindPrivateName())) {
+            if (JSValue failureKindValue = object->getDirect(vm, static_cast<JSVMClientData&>(*vm.clientData).builtinNames().failureKindPrivateName())) {
                 // This is host propagated error in the module loader pipeline.
                 switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
-                case ModuleFetchFailureKind::WasPropagatedError:
+                case ModuleFetchFailureKind::WasErrored:
                     moduleScript->notifyLoadFailed(LoadableScript::Error {
                         LoadableScript::ErrorType::CachedScript,
-                        std::nullopt,
-                        std::nullopt
-                    });
-                    break;
-                // For a fetch error that was not propagated from further in the
-                // pipeline, we include the console error message but do not
-                // include an error value as it should not be reported.
-                case ModuleFetchFailureKind::WasFetchError:
-                    moduleScript->notifyLoadFailed(LoadableScript::Error {
-                        LoadableScript::ErrorType::CachedScript,
-                        LoadableScript::ConsoleMessage {
-                            MessageSource::JS,
-                            MessageLevel::Error,
-                            retrieveErrorMessage(*globalObject, vm, errorValue, scope),
-                        },
                         std::nullopt
                     });
                     break;
@@ -367,16 +328,14 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
             }
         }
 
+        auto scope = DECLARE_CATCH_SCOPE(vm);
         moduleScript->notifyLoadFailed(LoadableScript::Error {
             LoadableScript::ErrorType::CachedScript,
             LoadableScript::ConsoleMessage {
                 MessageSource::JS,
                 MessageLevel::Error,
                 retrieveErrorMessage(*globalObject, vm, errorValue, scope),
-            },
-            // The error value is included so that it can be reported to the
-            // appropriate global object.
-            errorValue
+            }
         });
         return JSValue::encode(jsUndefined());
     });
@@ -492,9 +451,12 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::JSGlobalObj
 }
 
 #if !PLATFORM(COCOA)
-RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget*)
+RefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
-    return nullptr;
+    if (!is<PluginViewBase>(*widget))
+        return nullptr;
+
+    return downcast<PluginViewBase>(*widget).bindingInstance();
 }
 #endif
 
@@ -569,7 +531,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
 #if ENABLE(APP_BOUND_DOMAINS)
     if (m_frame.loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
         if (auto* document = m_frame.document())
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain.");
         SCRIPTCONTROLLER_RELEASE_LOG_ERROR(Loading, "executeScriptInWorld: Ignoring user script injection for non app-bound domain");
         return makeUnexpected(ExceptionDetails { "Ignoring user script injection for non-app bound domain"_s });
     }
@@ -617,7 +579,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
         auto scope = DECLARE_CATCH_SCOPE(globalObject.vm());
         auto jsArgument = serializedArgument->deserialize(globalObject, &globalObject);
         if (UNLIKELY(scope.exception())) {
-            errorMessage = "Unable to deserialize argument to execute asynchronous JavaScript function"_s;
+            errorMessage = "Unable to deserialize argument to execute asynchronous JavaScript function";
             break;
         }
 
@@ -638,8 +600,8 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
 
     const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();
 
-    Ref protector { m_frame };
-    SetForScope sourceURLScope(m_sourceURL, &sourceURL);
+    Ref<Frame> protector(m_frame);
+    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
@@ -652,14 +614,14 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
         if (evaluationException)
             break;
 
-        if (!functionObject || !functionObject.isCallable()) {
+        if (!functionObject || !functionObject.isCallable(world.vm())) {
             optionalDetails = { { "Unable to create JavaScript async function to call"_s } };
             break;
         }
 
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=205562
         // Getting CallData shouldn't be required to call into JS.
-        auto callData = JSC::getCallData(functionObject);
+        auto callData = getCallData(world.vm(), functionObject);
         if (callData.type == CallData::Type::None) {
             optionalDetails = { { "Unable to prepare JavaScript async function to be called"_s } };
             break;
@@ -672,7 +634,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
 
     if (evaluationException && !optionalDetails) {
         ExceptionDetails details;
-        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), false, &details);
+        reportException(&globalObject, evaluationException, sourceCode.cachedScript(), &details);
         optionalDetails = WTFMove(details);
     }
 
@@ -688,12 +650,23 @@ JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DO
 }
 ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    return executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture });
+    return executeUserAgentScriptInWorldInternal(world, { script, URL { }, false, std::nullopt, forceUserGesture });
+}
+
+ValueOrException ScriptController::executeUserAgentScriptInWorldInternal(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
+{
+    auto& document = *m_frame.document();
+    auto allowed = shouldAllowUserAgentScripts(document);
+    if (!allowed)
+        return makeUnexpected(allowed.error());
+
+    document.setHasEvaluatedUserAgentScripts();
+    return executeScriptInWorld(world, WTFMove(parameters));
 }
 
 void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveCompletionHandler)
 {
-    auto result = executeScriptInWorld(world, WTFMove(parameters));
+    auto result = executeUserAgentScriptInWorldInternal(world, WTFMove(parameters));
     
     if (parameters.runAsAsyncFunction == RunAsAsyncFunction::No || !result || !result.value().isObject()) {
         resolveCompletionHandler(result);
@@ -711,7 +684,7 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
         return;
     }
 
-    auto callData = JSC::getCallData(thenFunction);
+    auto callData = getCallData(world.vm(), thenFunction);
     if (callData.type == CallData::Type::None) {
         resolveCompletionHandler(result);
         return;
@@ -751,6 +724,17 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
     arguments.append(rejectHandler);
 
     call(&globalObject, thenFunction, callData, result.value(), arguments);
+}
+
+Expected<void, ExceptionDetails> ScriptController::shouldAllowUserAgentScripts(Document& document) const
+{
+#if ENABLE(APPLE_PAY)
+    if (auto page = m_frame.page())
+        return page->paymentCoordinator().shouldAllowUserAgentScripts(document);
+#else
+    UNUSED_PARAM(document);
+#endif
+    return { };
 }
 
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
@@ -822,25 +806,13 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=200523
         // The only reason we do a nestable save/restore of this flag here is because we sometimes nest javascript: url loads as
         // some will load synchronously. We'd like to remove those synchronous loads and then change this.
-        SetForScope willBeReplaced(m_willReplaceWithResultOfExecutingJavascriptURL, true);
+        SetForScope<bool> willBeReplaced(m_willReplaceWithResultOfExecutingJavascriptURL, true);
 
         // DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL can cause the DocumentLoader to get deref'ed and possible destroyed,
         // so protect it with a RefPtr.
         if (RefPtr<DocumentLoader> loader = m_frame.document()->loader())
             loader->writer().replaceDocumentWithResultOfExecutingJavascriptURL(scriptResult, ownerDocument.get());
     }
-}
-
-void ScriptController::reportExceptionFromScriptError(LoadableScript::Error error, bool isModule)
-{
-    auto& world = mainThreadNormalWorld();
-    JSC::VM& vm = world.vm();
-    JSLockHolder lock(vm);
-
-    auto& proxy = jsWindowProxy(world);
-    auto& lexicalGlobalObject = *proxy.window();
-
-    reportException(&lexicalGlobalObject, error.errorValue.value(), nullptr, isModule);
 }
 
 } // namespace WebCore

@@ -45,7 +45,7 @@
         return null;
     }
 
-    promise_test(async t => {
+    async_test(async t => {
         const delay = 100;
         const box = document.getElementById("box");
         const previousAnimationName = "foo";
@@ -74,7 +74,10 @@
 
         // Now, check the recorded values were correct.
         test.checkRecordedValues();
+
+        t.done();
     }, `Test that dynamically changing the name of a @keyframes rule starts animations using that name.`);
+    
   </script>
 </body>
 </html>

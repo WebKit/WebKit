@@ -94,7 +94,7 @@ bool PlatformDisplay::tryEnsureGstGLContext() const
     auto* sharedContext = const_cast<PlatformDisplay*>(this)->sharingGLContext();
     if (!sharedContext)
         return false;
-    GCGLContext contextHandle = sharedContext->platformContext();
+    PlatformGraphicsContextGL contextHandle = sharedContext->platformContext();
     if (!contextHandle)
         return false;
 

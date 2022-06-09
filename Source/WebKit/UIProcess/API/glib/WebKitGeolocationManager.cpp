@@ -32,10 +32,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 /**
- * WebKitGeolocationManager:
+ * SECTION:WebKitGeolocationManager
+ * @short_description: WebKitGeolocationManager
+ * @title: Geolocation manager
  * @see_also: #WebKitGeolocationPermissionRequest, #WebKitWebContext
- *
- * Geolocation manager.
  *
  * WebKitGeolocationManager provides API to get the geographical position of the user.
  * Once a #WebKitGeolocationPermissionRequest is allowed, when WebKit needs to know the
@@ -449,8 +449,6 @@ void webkit_geolocation_manager_failed(WebKitGeolocationManager* manager, const 
  * @manager: a #WebKitGeolocationManager
  *
  * Get whether high accuracy is enabled.
- *
- * Returns: Whether the setting is enabled.
  *
  * Since: 2.26
  */

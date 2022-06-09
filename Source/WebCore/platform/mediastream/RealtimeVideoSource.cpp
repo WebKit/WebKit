@@ -30,19 +30,14 @@
 
 #if PLATFORM(COCOA)
 #include "ImageTransferSessionVT.h"
-#include "VideoFrameCV.h"
 #endif
 
 namespace WebCore {
 
-RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface)
-    : RealtimeMediaSource(Type::Video, AtomString { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() }, source->pageIdentifier())
+RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source)
+    : RealtimeMediaSource(Type::Video, String { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() })
     , m_source(WTFMove(source))
-#if PLATFORM(COCOA)
-    , m_shouldUseIOSurface(shouldUseIOSurface)
-#endif
 {
-    UNUSED_PARAM(shouldUseIOSurface);
     m_source->addObserver(*this);
     m_currentSettings = m_source->settings();
     setSize(m_source->size());
@@ -51,14 +46,14 @@ RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& sourc
 
 RealtimeVideoSource::~RealtimeVideoSource()
 {
-    m_source->removeVideoFrameObserver(*this);
+    m_source->removeVideoSampleObserver(*this);
     m_source->removeObserver(*this);
 }
 
 void RealtimeVideoSource::whenReady(CompletionHandler<void(String)>&& callback)
 {
     m_source->whenReady([this, protectedThis = Ref { *this }, callback = WTFMove(callback)](auto message) mutable {
-        setName(m_source->name());
+        setName(String { m_source->name() });
         m_currentSettings = m_source->settings();
         setSize(m_source->size());
         setFrameRate(m_source->frameRate());
@@ -69,19 +64,13 @@ void RealtimeVideoSource::whenReady(CompletionHandler<void(String)>&& callback)
 void RealtimeVideoSource::startProducingData()
 {
     m_source->start();
-    m_source->addVideoFrameObserver(*this);
+    m_source->addVideoSampleObserver(*this);
 }
 
 void RealtimeVideoSource::stopProducingData()
 {
-    m_source->removeVideoFrameObserver(*this);
+    m_source->removeVideoSampleObserver(*this);
     m_source->stop();
-}
-
-void RealtimeVideoSource::endProducingData()
-{
-    m_source->removeVideoFrameObserver(*this);
-    m_source->requestToEnd(*this);
 }
 
 bool RealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
@@ -101,15 +90,12 @@ void RealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::opt
     ASSERT(sourceSize.height());
     ASSERT(sourceSize.width());
 
-    auto* currentPreset = m_source->currentPreset();
-    auto intrinsicSize = currentPreset ? currentPreset->size : sourceSize;
-
     if (!width)
-        width = intrinsicSize.width() * height.value() / intrinsicSize.height();
+        width = sourceSize.width() * height.value() / sourceSize.height();
     m_currentSettings.setWidth(*width);
 
     if (!height)
-        height = intrinsicSize.height() * width.value() / intrinsicSize.width();
+        height = sourceSize.height() * width.value() / sourceSize.width();
     m_currentSettings.setHeight(*height);
 
     if (frameRate)
@@ -125,12 +111,12 @@ void RealtimeVideoSource::sourceMutedChanged()
 
 void RealtimeVideoSource::sourceSettingsChanged()
 {
-    auto rotation = m_source->videoFrameRotation();
+    auto rotation = m_source->sampleRotation();
     auto size = this->size();
     if (size.isEmpty())
         size = m_source->size();
 
-    if (rotation == VideoFrame::Rotation::Left || rotation == VideoFrame::Rotation::Right)
+    if (rotation == MediaSample::VideoRotation::Left || rotation == MediaSample::VideoRotation::Right)
         size = size.transposedSize();
 
     m_currentSettings.setWidth(size.width());
@@ -154,6 +140,11 @@ bool RealtimeVideoSource::preventSourceFromStopping()
     return hasObserverPreventingStopping;
 }
 
+void RealtimeVideoSource::requestToEnd(RealtimeMediaSource::Observer&)
+{
+    m_source->requestToEnd(*this);
+}
+
 void RealtimeVideoSource::stopBeingObserved()
 {
     m_source->requestToEnd(*this);
@@ -172,23 +163,23 @@ void RealtimeVideoSource::sourceStopped()
 }
 
 #if PLATFORM(COCOA)
-RefPtr<VideoFrame> RealtimeVideoSource::adaptVideoFrame(VideoFrame& videoFrame)
+RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 {
-    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != videoFrame.pixelFormat())
-        m_imageTransferSession = ImageTransferSessionVT::create(videoFrame.pixelFormat(), m_shouldUseIOSurface);
+    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
+        m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat());
 
     ASSERT(m_imageTransferSession);
     if (!m_imageTransferSession)
         return nullptr;
 
-    auto newVideoFrame = m_imageTransferSession->convertVideoFrame(videoFrame, size());
-    ASSERT(newVideoFrame);
+    auto mediaSample = m_imageTransferSession->convertMediaSample(sample, size());
+    ASSERT(mediaSample);
 
-    return newVideoFrame;
+    return mediaSample;
 }
 #endif
 
-void RealtimeVideoSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata metadata)
+void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
 {
     if (m_frameDecimation > 1 && ++m_frameDecimationCounter % m_frameDecimation)
         return;
@@ -200,15 +191,15 @@ void RealtimeVideoSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrame
 
 #if PLATFORM(COCOA)
     auto size = this->size();
-    if (!size.isEmpty() && size != expandedIntSize(videoFrame.presentationSize())) {
-        if (auto newVideoFrame = adaptVideoFrame(videoFrame)) {
-            RealtimeMediaSource::videoFrameAvailable(*newVideoFrame, metadata);
+    if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
+        if (auto mediaSample = adaptVideoSample(sample)) {
+            RealtimeMediaSource::videoSampleAvailable(*mediaSample, metadata);
             return;
         }
     }
 #endif
 
-    RealtimeMediaSource::videoFrameAvailable(videoFrame, metadata);
+    RealtimeMediaSource::videoSampleAvailable(sample, metadata);
 }
 
 Ref<RealtimeMediaSource> RealtimeVideoSource::clone()

@@ -21,6 +21,24 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+accessibility/atk/AXObjectCacheAtk.cpp
+accessibility/atk/AccessibilityObjectAtk.cpp
+accessibility/atk/WebKitAccessible.cpp
+accessibility/atk/WebKitAccessibleHyperlink.cpp
+accessibility/atk/WebKitAccessibleInterfaceAction.cpp @no-unify
+accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
+accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
+accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
+accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
+accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
+accessibility/atk/WebKitAccessibleInterfaceImage.cpp
+accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
+accessibility/atk/WebKitAccessibleInterfaceTable.cpp
+accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp
+accessibility/atk/WebKitAccessibleInterfaceText.cpp
+accessibility/atk/WebKitAccessibleInterfaceValue.cpp
+accessibility/atk/WebKitAccessibleUtil.cpp
+
 accessibility/atspi/AccessibilityAtspi.cpp
 accessibility/atspi/AccessibilityObjectAtspi.cpp
 accessibility/atspi/AccessibilityObjectActionAtspi.cpp
@@ -36,6 +54,10 @@ accessibility/atspi/AccessibilityObjectTextAtspi.cpp
 accessibility/atspi/AccessibilityObjectValueAtspi.cpp
 accessibility/atspi/AccessibilityRootAtspi.cpp
 accessibility/atspi/AXObjectCacheAtspi.cpp
+
+accessibility/isolatedtree/atspi/AXIsolatedObjectAtspi.cpp
+
+editing/atk/FrameSelectionAtk.cpp
 
 editing/atspi/FrameSelectionAtspi.cpp
 
@@ -81,18 +103,12 @@ platform/graphics/egl/GLContextEGLLibWPE.cpp @no-unify
 platform/graphics/egl/GLContextEGLWayland.cpp @no-unify
 platform/graphics/egl/GLContextEGLX11.cpp @no-unify
 
-platform/graphics/gbm/GBMBufferSwapchain.cpp
-platform/graphics/gbm/GBMDevice.cpp
-platform/graphics/gbm/GraphicsContextGLGBM.cpp
-platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp
-
-platform/graphics/glx/GLContextGLX.cpp @no-unify
+platform/graphics/glx/GLContextGLX.cpp
 
 platform/graphics/gtk/ColorGtk.cpp
 platform/graphics/gtk/DisplayRefreshMonitorGtk.cpp
 platform/graphics/gtk/GdkCairoUtilities.cpp
 platform/graphics/gtk/ImageGtk.cpp
-platform/graphics/gtk/SystemFontDatabaseGTK.cpp
 
 platform/graphics/gstreamer/ImageGStreamerCairo.cpp
 
@@ -119,7 +135,7 @@ platform/gtk/RenderThemeGadget.cpp
 platform/gtk/RenderThemeScrollbar.cpp
 platform/gtk/ScrollbarThemeGtk.cpp
 platform/gtk/SelectionData.cpp
-platform/gtk/ValidationBubbleGtk.cpp
+platform/gtk/ThemeGtk.cpp
 platform/gtk/WidgetGtk.cpp
 
 platform/text/Hyphenation.cpp

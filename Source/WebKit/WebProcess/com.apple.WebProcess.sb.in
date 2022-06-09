@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2021 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -27,19 +27,11 @@
 (deny system-privilege)
 (allow system-audit file-read-metadata)
 
-;; We can remove the catch once we no longer need to support older macOS
-(catch (lambda)
-    (import "dyld-support.sb"))
-
 ;; Silence spurious logging due to rdar://20117923 and rdar://72366475
 (deny system-privilege (privilege-id PRIV_GLOBAL_PROC_INFO) (with no-report))
  
 #include "Shared/Sandbox/preferences.sb"
 
-#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
-#include <WebKitAdditions/SystemContentSandbox-macos.defs>
-#endif
- 
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
@@ -126,10 +118,7 @@
 ;;; Allow IPC to standard system agents.
 (allow ipc-posix-shm-read*
     (ipc-posix-name "apple.shm.notification_center")
-#if !ENABLE(CFPREFS_DIRECT_MODE)
-    (ipc-posix-name-prefix "apple.cfprefs.")
-#endif
-)
+    (ipc-posix-name-prefix "apple.cfprefs."))
 
 (define (IOAcceleratorMessageFilter)
     (apply-message-filter
@@ -226,7 +215,7 @@
             iokit-external-method
         )
         (allow iokit-async-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (iokit-method-number
                 17
                 40
@@ -234,7 +223,7 @@
 #endif
         )
         (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000 && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
             (iokit-method-number
                 0
                 1
@@ -460,16 +449,28 @@
     )
 
     ;; QuartzCore
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
-    (deny iokit-open (with no-log)
-        (iokit-registry-entry-class "AGPMClient"))
-#else
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-registry-entry-class "AGPMClient")))
-#endif
-
+    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AGPMClient")
+            )
+            (apply-message-filter
+                (deny (with telemetry)
+                    iokit-async-external-method
+                    iokit-external-trap
+                    iokit-external-method
+                )
+            )
+        )
+        ; else
+        (allow iokit-open
+            (require-all
+                (extension "com.apple.webkit.extension.iokit")
+                (iokit-registry-entry-class "AGPMClient")
+            )
+        )
+    )
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
             (require-all
@@ -764,6 +765,7 @@
     (iokit-property "IOPMIsPowerManaged")
     (iokit-property "IOPersonalityPublisher")
     (iokit-property "IOPlatformSerialNumber")
+    (iokit-property "IOPlatformUUID")
     (iokit-property "IOPowerManagement")
     (iokit-property "IOProbeScore")
     (iokit-property "IOPropertyMatch")
@@ -959,10 +961,8 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
-    (xpc-service-name "com.apple.audio.SandboxHelper"))
-#else
-(deny mach-lookup (with no-log)
-    (xpc-service-name "com.apple.audio.SandboxHelper"))
+    (xpc-service-name "com.apple.audio.SandboxHelper")
+)
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
@@ -1095,11 +1095,6 @@
 ;; This is to avoid warnings attempting to create extensions for these resources.
 (allow-read-directory-and-issue-read-extensions "/System/Library/PrivateFrameworks/WebInspectorUI.framework")
 
-#if USE(SYSTEM_CONTENT_PATH)
-(map allow-read-directory-and-issue-read-extensions
-    read-directory-and-issue-read-extension-secondary-paths)
-#endif
-
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
     (op file-read* path-filter)
@@ -1182,6 +1177,38 @@
         (require-all
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "AppleUpstreamUserClient")
+        )
+    )
+)
+
+(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
+    (allow iokit-open
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
+        )
+        (apply-message-filter
+            (deny (with telemetry) (with message "RootDomainUserClient")
+                iokit-external-method
+            )
+            (allow iokit-external-method
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+                (iokit-method-number
+                    3
+                )
+#endif
+            )
+            (deny (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap
+            )
+        )
+    )
+    ; else
+    (allow iokit-open
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
         )
     )
 )
@@ -1363,10 +1390,8 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
 (allow mach-lookup
-    (global-name "com.apple.tccd.system"))
-#else
-(deny mach-lookup (with no-log)
-    (global-name "com.apple.tccd.system"))
+    (global-name "com.apple.tccd.system")
+)
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
@@ -1384,11 +1409,6 @@
         (global-name "com.apple.mobileassetd.v2")
 ))
 #endif
-
-(allow mach-lookup
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.trustd.agent")))
 
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
@@ -1468,10 +1488,6 @@
        (global-name "com.apple.system.opendirectoryd.libinfo")
        (global-name "com.apple.system.opendirectoryd.membership"))
 )
-(allow mach-lookup
-    (require-all
-        (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.system.opendirectoryd.libinfo")))
 #else
 (allow file-read* file-write* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 #endif
@@ -1489,11 +1505,13 @@
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-(deny mach-lookup (with no-log)
-    (global-name-prefix "com.apple.distributed_notifications"))
+(deny mach-lookup
+    (global-name-prefix "com.apple.distributed_notifications")
+)
 #else
 (allow mach-lookup
-    (global-name-prefix "com.apple.distributed_notifications"))
+    (global-name-prefix "com.apple.distributed_notifications")
+)
 #endif
 
 (allow file-read-data
@@ -1747,15 +1765,25 @@
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
             "com.apple.nehelper"
             "com.apple.nesessionmanager.content-filter"
-#endif
             "com.apple.webinspector"
+            "com.apple.cfprefsd.agent"
+            "com.apple.cfprefsd.daemon"
             "com.apple.coreservices.launchservicesd"
             "com.apple.iconservices"
             "com.apple.iconservices.store"
             "com.apple.tccd"
+
+            ;;; FIXME(207716): The following should be removed when the GPU process is complete
+            "com.apple.accessibility.mediaaccessibilityd"
+            "com.apple.audio.AudioComponentRegistrar" "com.apple.audio.audiohald" "com.apple.coremedia.endpoint.xpc" "com.apple.coremedia.endpointstream.xpc"
+            "com.apple.coremedia.endpointplaybacksession.xpc" "com.apple.coremedia.endpointremotecontrolsession.xpc" "com.apple.coremedia.routediscoverer.xpc"
+            "com.apple.coremedia.routingcontext.xpc" "com.apple.coremedia.volumecontroller.xpc" "com.apple.lskdd" "com.apple.mediaremoted.xpc" "com.apple.trustd.agent"
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 120000
+            "com.apple.coremedia.samplebufferconsumer.xpc"
+#endif
+            ;;; FIXME(207716): End services to remove.
         )
     )
 )
@@ -1765,10 +1793,20 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.mach"))
         (global-name "com.apple.audio.AudioComponentRegistrar")))
-#else
-(deny mach-lookup (with no-log)
-    (global-name "com.apple.audio.AudioComponentRegistrar"))
 #endif
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (xpc-service-name
+            ;;; FIXME(207716): The following should be removed when the GPU process is complete
+            "com.apple.audio.SandboxHelper"
+            "com.apple.coremedia.videodecoder"
+            "com.apple.coremedia.videoencoder"
+            ;;; FIXME(207716): End services to remove.
+        )
+    )
+)
 
 ;; Caches for LaunchServices data needs to be able to mark the directory as 'hot'.
 (allow system-fsctl
@@ -1781,19 +1819,27 @@
 
 (when (defined? 'system-fcntl)
     (deny system-fcntl (with telemetry))
+     (allow system-fcntl
+        (fcntl-command
+            F_GETPATH)) ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
     (allow system-fcntl
        (fcntl-command
-            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
             F_BARRIERFSYNC
-            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
             F_GETCONFINED
             F_GETFL ;; LibJPEGReadPlugin::copyImageBlockSetStandard
-            F_GETPATH ;; used by dyld4 and CGFontURLCreate, getcwd (at least)
             F_GETSIGSINFO
-            F_NOCACHE ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
-            F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
+            F_NOCACHE
+            F_RDADVISE
             F_SETCONFINED
-            F_SETFD)) ;; libwebrtc.dylib (no backtrace)
+            F_ADDFILESIGS_RETURN ;; ImageLoaderMachO::loadCodeSignature
+            F_CHECK_LV ;; ImageLoaderMachO::loadCodeSignature
+            F_SPECULATIVE_READ ;; ImageLoaderMachO::mapSegments
+            F_SETFD ;; libwebrtc.dylib (no backtrace)
+            F_GETFD ;; libwebrtc.dylib (no backtrace)
+            F_RDADVISE ;; CoreNLP::ReadOnlyFile <- +[DDScannerService scanString:range:configuration:] <- WebCore::DictionaryLookup::rangeAtHitTestResult(WebCore::HitTestResult const&)
+            F_NOCACHE ;; Security::UnixPlusPlus::FileDesc::fcnt <- MTRegisterPluginFormatReaderBundleDirectory <- invocation function for block in WebCore::registerFormatReaderIfNecessary()
+            F_SETFL ;; CMCapture uses when camera is enabled
+            F_SETNOSIGPIPE)) ;; CMCapture uses when camera is enabled
 
     (define (appcache-fcntl-commands)
         (fcntl-command
@@ -1811,12 +1857,7 @@
     (with-filter (require-not (state-flag "AppCacheDisabled"))
         (allow system-fcntl (appcache-fcntl-commands)))
     (with-filter (state-flag "AppCacheDisabled")
-        (deny system-fcntl
-            (with telemetry)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-            (with telemetry-backtrace)
-#endif
-            (appcache-fcntl-commands)))
+        (allow system-fcntl (with report) (with telemetry) (appcache-fcntl-commands)))
 #else
     (allow system-fcntl (appcache-fcntl-commands))
 #endif
@@ -1842,6 +1883,10 @@
 (when (defined? 'socket-option-get)
     ;; getsockopt
     (deny socket-option-get (with telemetry))
+    (allow socket-option-get
+        (require-all
+            (socket-option-level SOL_SOCKET)
+            (socket-option-name SO_ERROR))) ;; libwebrtc; physical_socket_server.cc, ProcessEvents.  Called with fd=-1, so it fails.  Not technically needed, but the code needs changing
 )
 
 (when (defined? 'socket-option-set)
@@ -1854,24 +1899,58 @@
 (disable-syscall-inference)
 #endif
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-(deny user-preference-read (with enable-state-flag "WebContentProcessLaunched")
-    (preference-domain "com.apple.WebKit.WebContent.Launch"))
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+(define (syscall-unix-older-macOS)
+    (syscall-number
+        SYS___pthread_markcancel
+        SYS_abort_with_payload
+        SYS_chmod_extended
+        SYS_connect_nocancel
+        SYS_connectx
+        SYS_fgetattrlist ;; <rdar://problem/50931110>
+        SYS_fileport_makeport
+        SYS_fstat64_extended ;; <rdar://problem/61310019>
+        SYS_getpeername
+        SYS_getsockopt
+        SYS_guarded_write_np
+        SYS_lstat64_extended
+        SYS_lstat_extended
+        SYS_memorystatus_control ;; Needed for memory measurement infrastructure, see <rdar://problem/48647263>
+        SYS_mkdirat
+        SYS_open_dprotected_np ;; <rdar://problem/74473824>
+        SYS_pipe
+        SYS_process_policy
+        SYS_psynch_rw_rdlock ;; <rdar://problem/49060359>
+        SYS_pwrite
+        SYS_quotactl ;; <rdar://problem/49945031>
+        SYS_recvfrom
+        SYS_recvfrom_nocancel
+        SYS_rmdir
+        SYS_select
+        SYS_select_nocancel
+        SYS_sem_post
+        SYS_sem_wait
+        SYS_sendmsg_nocancel
+        SYS_sendto_nocancel
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
+        SYS_setattrlist ;; rdar://problem/74162777
+#endif
+        SYS_setpriority
+        SYS_setrlimit
+        SYS_setsockopt
+        SYS_shutdown
+        SYS_sigreturn
+        SYS_socketpair
+        SYS_stat64_extended ;; <rdar://problem/50473330>
+        SYS_terminate_with_payload ;; <rdar://problem/50026580>
+        SYS_thread_selfusage
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+        SYS_ulock_wait2 ;; <rdar://problem/58743778>
+#endif
+))
 #endif
 
-(define (syscall-unix-only-in-use-during-launch)
-    (syscall-number
-        SYS_csops
-        SYS_csrctl
-        SYS_fsgetpath
-        SYS_getaudit_addr
-        SYS_getfsstat64
-        SYS_getrlimit
-        SYS_kdebug_trace
-        SYS_pathconf
-        SYS_statfs64))
-
-(define (syscall-unix-in-use-after-launch)
+(define (syscall-unix-common)
     (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
@@ -1883,7 +1962,9 @@
         SYS_bsdthread_terminate
         SYS_close
         SYS_close_nocancel
+        SYS_csops
         SYS_csops_audittoken
+        SYS_csrctl
         SYS_exit
         SYS_faccessat ;; <rdar://problem/56690456>
         SYS_fcntl
@@ -1892,25 +1973,31 @@
         SYS_fileport_makefd
         SYS_flock
         SYS_fsetxattr ;; <rdar://problem/56332491>
+        SYS_fsgetpath
         SYS_fstat64
         SYS_fstatat64
         SYS_fstatfs64
         SYS_ftruncate
         SYS_getattrlist
         SYS_getattrlistbulk
+        SYS_getaudit_addr
         SYS_getdirentries64
         SYS_getentropy
         SYS_geteuid
+        SYS_getfsstat64
         SYS_getgid
         SYS_gethostuuid
+        SYS_getrlimit
         SYS_getrusage
         SYS_gettimeofday
         SYS_getuid
         SYS_getxattr
         SYS_ioctl
         SYS_issetugid
+        SYS_kdebug_trace
         SYS_kdebug_trace64
         SYS_kdebug_trace_string ;; Needed for performance sampling, see <rdar://problem/48829655>.
+        SYS_kevent ;; <rdar://89072361>
         SYS_kevent_id
         SYS_kevent_qos
         SYS_kqueue ;; See <rdar://problem/88241768>. Remove after <rdar://56634240> is resolved.
@@ -1931,6 +2018,7 @@
         SYS_open
         SYS_open_nocancel
         SYS_openat
+        SYS_pathconf
         SYS_pread
         SYS_proc_info
         SYS_psynch_cvbroad
@@ -1948,8 +2036,9 @@
         SYS_sendto
         SYS_sigaltstack
         SYS_sigprocmask
-        SYS_socket
         SYS_stat64
+        SYS_statfs64
+        SYS_socket
         SYS_sysctlbyname
         SYS_thread_selfid
 #if !PLATFORM(MAC)
@@ -1984,19 +2073,13 @@
         SYS_guarded_open_np
         SYS_guarded_pwrite_np
         SYS_kdebug_typefilter
-        SYS_kevent ;; <rdar://89072361>
         SYS_mlock
         SYS_munlock
         SYS_necp_client_action
         SYS_necp_open
         SYS_openat_nocancel
         SYS_proc_rlimit_control
-        SYS_psynch_rw_rdlock
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
         SYS_rmdir
-#endif
-        ;; FIXME: SYS_setsockopt can be removed when contentfiltering has moved to the Network process
-        SYS_setsockopt ;; <rdar://90249455>
         SYS_shm_open
         SYS_sigaction
         SYS_sysctl
@@ -2009,26 +2092,20 @@
         SYS_kqueue
         SYS_mkdirat
         SYS_open_dprotected_np
+        SYS_psynch_rw_rdlock
         SYS_setrlimit
         SYS_ulock_wait2
 #endif
 ))
 
 (when (defined? 'syscall-unix)
-    (deny syscall-unix (with telemetry) (with send-signal SIGKILL))
+    (deny syscall-unix (with send-signal SIGKILL))
     (allow syscall-unix
-        (syscall-unix-in-use-after-launch)
-        (syscall-unix-only-in-use-during-launch))
+        (syscall-unix-common))
 
-#if HAVE(SANDBOX_STATE_FLAGS)
-    (with-filter (state-flag "WebContentProcessLaunched")
-        (deny syscall-unix
-            (syscall-unix-only-in-use-during-launch))
-        (allow syscall-unix
-            (with report)
-            (with telemetry)
-            (with message "Unix syscall used after launch")
-            (syscall-unix-only-in-use-during-launch)))
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
+    (allow syscall-unix
+        (syscall-unix-older-macOS))
 #endif
 
     (if (equal? (param "CPU") "arm64")
@@ -2046,60 +2123,39 @@
     (if (defined? 'SYS_objc_bp_assist_cfg_np)
         (allow syscall-unix (syscall-number SYS_objc_bp_assist_cfg_np)))
 #endif
-    (when (defined? 'SYS_map_with_linking_np)
-        (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
+    (when (defined? 'SYS__map_with_linking_np)
+        (allow syscall-unix (syscall-number SYS__map_with_linking_np)))
 )
 
 (with-filter (uid 0)
     (allow syscall-unix (syscall-number SYS_gettid))) ;; Needed for base system, see <rdar://problem/48651255>
 
-#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-(if (equal? (param "CPU") "arm64")
-    (with-filter (extension "com.apple.webkit.camera")
-        (allow mach-lookup
-            (require-all
-                (extension "com.apple.webkit.extension.mach")
-                (global-name "com.apple.appleh13camerad")
-            ))))
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebContentSandboxAdditionsMac.sb>
 #endif
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
-(define (mach-bootstrap-message-numbers)
-    (message-number 204 207 301 711 800 804))
-
-(define (allow-mach-bootstrap-with-filter)
-    (allow mach-bootstrap
-        (apply-message-filter
-            (deny mach-message-send (with telemetry))
-            (allow mach-message-send
-                (mach-bootstrap-message-numbers)))))
-
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-bootstrap))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-#if HAVE(SANDBOX_STATE_FLAGS)
-    (begin
-        (if (require-ancestor-with-entitlement "com.apple.private.security.enable-state-flags")
-            (allow mach-bootstrap
-                (apply-message-filter
-                    (allow mach-message-send (with telemetry-backtrace))))
-        ;; else
-            (allow-mach-bootstrap-with-filter))
-
-        (with-filter
-            (require-any
-                (require-not (state-flag "WebContentProcessLaunched"))
-                (state-flag "EnableMachBootstrap"))
-            (allow-mach-bootstrap-with-filter))))
-#else
-    (allow-mach-bootstrap-with-filter))
-#endif // HAVE(SANDBOX_STATE_FLAGS)
-#else
     (allow mach-bootstrap
         (apply-message-filter
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
+            (deny mach-message-send (with telemetry))
+            (allow mach-message-send (message-number
+#else
             (deny xpc-message-send (with telemetry))
-            (allow xpc-message-send
-                (mach-bootstrap-message-numbers)))))
+            (allow xpc-message-send (message-number
 #endif
+                204
+                207
+                301
+                711
+                800
+                804
+                )
+            )
+        )
+    )
+)
 
 (if (and (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES") (defined? 'mach-kernel-endpoint))
     (allow mach-kernel-endpoint
@@ -2206,9 +2262,6 @@
         MSC__kernelrpc_mach_vm_purgable_control_trap
         MSC_host_create_mach_voucher_trap
         MSC_host_self_trap
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
-        MSC_iokit_user_client_trap
-#endif
         MSC_mach_generate_activity_id
         MSC_mach_msg_trap
         MSC_mach_reply_port

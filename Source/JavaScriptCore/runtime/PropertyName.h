@@ -139,7 +139,7 @@ ALWAYS_INLINE bool isCanonicalNumericIndexString(const PropertyName& propertyNam
         return false;
     if (property->isSymbol())
         return false;
-    if (equal(property, "-0"_s))
+    if (equal(property, "-0"))
         return true;
     double index = jsToNumber(property);
     NumberToStringBuffer buffer;

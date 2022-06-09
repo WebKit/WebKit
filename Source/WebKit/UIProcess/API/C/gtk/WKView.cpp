@@ -49,11 +49,6 @@ void WKViewSetFocus(WKViewRef viewRef, bool focused)
     webkitWebViewBaseSetFocus(toImpl(viewRef), focused);
 }
 
-void WKViewSetEditable(WKViewRef viewRef, bool editable)
-{
-    webkitWebViewBaseSetEditable(toImpl(viewRef), editable);
-}
-
 void WKViewSetEnableBackForwardNavigationGesture(WKViewRef viewRef, bool enabled)
 {
     webkitWebViewBaseSetEnableBackForwardNavigationGesture(toImpl(viewRef), enabled);
@@ -67,9 +62,4 @@ bool WKViewBeginBackSwipeForTesting(WKViewRef viewRef)
 bool WKViewCompleteBackSwipeForTesting(WKViewRef viewRef)
 {
     return webkitWebViewBaseCompleteBackSwipeForTesting(toImpl(viewRef));
-}
-
-GVariant* WKViewContentsOfUserInterfaceItem(WKViewRef viewRef, const char* userInterfaceItem)
-{
-    return webkitWebViewBaseContentsOfUserInterfaceItem(toImpl(viewRef), userInterfaceItem);
 }

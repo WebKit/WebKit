@@ -30,10 +30,8 @@
 namespace JSC {
 
 class CallFrame;
-template<typename> struct BaseInstruction;
-struct JSOpcodeTraits;
-using JSInstruction = BaseInstruction<JSOpcodeTraits>;
+struct Instruction;
 
-using SlowPathFunction = SlowPathReturnType(JIT_OPERATION_ATTRIBUTES*)(CallFrame*, const JSInstruction*);
+using SlowPathFunction = SlowPathReturnType(JIT_OPERATION_ATTRIBUTES*)(CallFrame*, const Instruction*);
 
 } // namespace JSC

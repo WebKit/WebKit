@@ -25,65 +25,41 @@
 
 #include "config.h"
 #include "MessageReceiveQueueMap.h"
-#include <wtf/text/TextStream.h>
 
 namespace IPC {
 
-void MessageReceiveQueueMap::addImpl(StoreType&& queue, const ReceiverMatcher& matcher)
+void MessageReceiveQueueMap::addImpl(StoreType&& queue, ReceiverName receiverName, uint64_t destinationID)
 {
-    if (!matcher.receiverName) {
-        ASSERT(!m_anyReceiverQueue);
-        m_anyReceiverQueue = WTFMove(queue);
-        return;
-    }
-    uint8_t receiverName = static_cast<uint8_t>(*matcher.receiverName);
-    if (!matcher.destinationID.has_value()) {
-        auto result = m_anyIDQueues.add(receiverName, WTFMove(queue));
-        ASSERT_UNUSED(result, result.isNewEntry);
-        return;
-    }
-    auto result = m_queues.add(std::make_pair(receiverName, *matcher.destinationID), WTFMove(queue));
-    ASSERT_UNUSED(result, result.isNewEntry);
+    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
+    ASSERT(!m_queues.contains(key));
+    m_queues.add(key, WTFMove(queue));
 }
 
-void MessageReceiveQueueMap::remove(const ReceiverMatcher& matcher)
+void MessageReceiveQueueMap::remove(ReceiverName receiverName, uint64_t destinationID)
 {
-    if (!matcher.receiverName) {
-        ASSERT(m_anyReceiverQueue);
-        m_anyReceiverQueue = nullptr;
-        return;
-    }
-    uint8_t receiverName = static_cast<uint8_t>(*matcher.receiverName);
-    if (!matcher.destinationID.has_value()) {
-        auto result = m_anyIDQueues.remove(receiverName);
-        ASSERT_UNUSED(result, result);
-        return;
-    }
-    auto result = m_queues.remove(std::make_pair(receiverName, *matcher.destinationID));
-    ASSERT_UNUSED(result, result);
+    auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
+    ASSERT(m_queues.contains(key));
+    m_queues.remove(key);
 }
 
 MessageReceiveQueue* MessageReceiveQueueMap::get(const Decoder& message) const
 {
-    uint8_t receiverName = static_cast<uint8_t>(message.messageReceiverName());
-    auto queueExtractor = WTF::makeVisitor(
-        [](const std::unique_ptr<MessageReceiveQueue>& queue) { return queue.get(); },
-        [](MessageReceiveQueue* queue) { return queue; }
-    );
-
-    {
-        auto it = m_anyIDQueues.find(receiverName);
-        if (it != m_anyIDQueues.end())
-            return std::visit(queueExtractor, it->value);
+    if (m_queues.isEmpty())
+        return nullptr;
+    auto key = std::make_pair(static_cast<uint8_t>(message.messageReceiverName()), 0);
+    auto it = m_queues.find(key);
+    if (it == m_queues.end()) {
+        key.second = message.destinationID();
+        if (key.second)
+            it = m_queues.find(key);
     }
-    {
-        auto it = m_queues.find(std::make_pair(receiverName, message.destinationID()));
-        if (it != m_queues.end())
-            return std::visit(queueExtractor, it->value);
-    }
-    if (m_anyReceiverQueue)
-        return std::visit(queueExtractor, *m_anyReceiverQueue);
-    return nullptr;
+    if (it == m_queues.end())
+        return nullptr;
+    return std::visit(
+        WTF::makeVisitor(
+            [](const std::unique_ptr<MessageReceiveQueue>& queue) { return queue.get(); },
+            [](MessageReceiveQueue* queue) { return queue; }
+        ), it->value);
 }
 
 }

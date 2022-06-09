@@ -35,11 +35,11 @@ namespace WebCore {
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePagePseudoSelector(StringView pseudoTypeString)
 {
     CSSSelector::PagePseudoClassType pseudoType;
-    if (equalLettersIgnoringASCIICase(pseudoTypeString, "first"_s))
+    if (equalLettersIgnoringASCIICase(pseudoTypeString, "first"))
         pseudoType = CSSSelector::PagePseudoClassFirst;
-    else if (equalLettersIgnoringASCIICase(pseudoTypeString, "left"_s))
+    else if (equalLettersIgnoringASCIICase(pseudoTypeString, "left"))
         pseudoType = CSSSelector::PagePseudoClassLeft;
-    else if (equalLettersIgnoringASCIICase(pseudoTypeString, "right"_s))
+    else if (equalLettersIgnoringASCIICase(pseudoTypeString, "right"))
         pseudoType = CSSSelector::PagePseudoClassRight;
     else
         return nullptr;
@@ -61,15 +61,15 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
     selector->m_selector->setPseudoElementType(pseudoType);
     AtomString name;
     if (pseudoType != CSSSelector::PseudoElementWebKitCustomLegacyPrefixed)
-        name = pseudoTypeString.convertToASCIILowercaseAtom();
+        name = pseudoTypeString.convertToASCIILowercase();
     else {
-        if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"_s))
-            name = "placeholder"_s;
-        else if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-file-upload-button"_s))
-            name = "file-selector-button"_s;
+        if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-input-placeholder"))
+            name = AtomString("placeholder", AtomString::ConstructFromLiteral);
+        else if (equalLettersIgnoringASCIICase(pseudoTypeString, "-webkit-file-upload-button"))
+            name = AtomString("file-selector-button", AtomString::ConstructFromLiteral);
         else {
             ASSERT_NOT_REACHED();
-            name = pseudoTypeString.convertToASCIILowercaseAtom();
+            name = pseudoTypeString.convertToASCIILowercase();
         }
     }
     selector->m_selector->setValue(name);
@@ -89,7 +89,7 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoClassSelector(S
         auto selector = makeUnique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::PseudoElement);
         selector->m_selector->setPseudoElementType(pseudoType.compatibilityPseudoElement);
-        selector->m_selector->setValue(pseudoTypeString.convertToASCIILowercaseAtom());
+        selector->m_selector->setValue(pseudoTypeString.convertToASCIILowercase());
         return selector;
     }
     return nullptr;

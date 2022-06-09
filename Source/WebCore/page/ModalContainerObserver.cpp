@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,8 +59,6 @@
 namespace WebCore {
 
 static constexpr size_t maxLengthForClickableElementText = 100;
-static constexpr double maxWidthForElementsThatLookClickable = 200;
-static constexpr double maxHeightForElementsThatLookClickable = 100;
 
 bool ModalContainerObserver::isNeededFor(const Document& document)
 {
@@ -149,22 +147,13 @@ static bool isInsideNavigationElement(const Text& textNode)
     return false;
 }
 
-struct TextSearchResult {
-    bool foundMatch { false };
-    bool containsAnyText { false };
-};
-
-static TextSearchResult searchForMatch(RenderLayerModelObject& renderer, const AtomString& searchTerm)
+static bool containsMatchingText(RenderLayerModelObject& renderer, const AtomString& searchTerm)
 {
-    TextSearchResult result;
     for (auto& textRenderer : descendantsOfType<RenderText>(renderer)) {
-        result.containsAnyText = true;
-        if (RefPtr textNode = textRenderer.textNode(); textNode && matchesSearchTerm(*textNode, searchTerm)) {
-            result.foundMatch = !isInsideNavigationElement(*textNode);
-            return result;
-        }
+        if (RefPtr textNode = textRenderer.textNode(); textNode && matchesSearchTerm(*textNode, searchTerm))
+            return !isInsideNavigationElement(*textNode);
     }
-    return result;
+    return false;
 }
 
 void ModalContainerObserver::searchForModalContainerOnBehalfOfFrameOwnerIfNeeded(HTMLFrameOwnerElement& owner)
@@ -224,15 +213,10 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
         if (!element || is<HTMLBodyElement>(*element) || element->isDocumentNode())
             continue;
 
-        if (m_elementsToIgnoreWhenSearching.contains(*element))
+        if (!m_elementsToIgnoreWhenSearching.add(*element).isNewEntry)
             continue;
 
-        auto [foundMatch, containsAnyText] = searchForMatch(renderer, searchTerm);
-
-        if (containsAnyText)
-            m_elementsToIgnoreWhenSearching.add(*element);
-
-        if (foundMatch) {
+        if (containsMatchingText(renderer, searchTerm)) {
             setContainer(*element);
             return;
         }
@@ -246,7 +230,7 @@ void ModalContainerObserver::updateModalContainerIfNeeded(const FrameView& view)
             if (!renderView)
                 continue;
 
-            if (searchForMatch(*renderView, searchTerm).foundMatch) {
+            if (containsMatchingText(*renderView, searchTerm)) {
                 setContainer(*element, &frameOwner);
                 return;
             }
@@ -297,15 +281,7 @@ HTMLFrameOwnerElement* ModalContainerObserver::frameOwnerForControls() const
     return m_containerAndFrameOwnerForControls.second.get();
 }
 
-static bool listensForUserActivation(const Element& element)
-{
-    return element.hasEventListeners(eventNames().clickEvent) || element.hasEventListeners(eventNames().mousedownEvent) || element.hasEventListeners(eventNames().mouseupEvent)
-        || element.hasEventListeners(eventNames().touchstartEvent) || element.hasEventListeners(eventNames().touchendEvent)
-        || element.hasEventListeners(eventNames().pointerdownEvent) || element.hasEventListeners(eventNames().pointerupEvent);
-}
-
-enum class ContainerListensForUserActivation : bool { No, Yes };
-static bool isClickableControl(const HTMLElement& element, ContainerListensForUserActivation containerListensForUserActivation)
+static bool isClickableControl(const HTMLElement& element)
 {
     if (element.isActuallyDisabled())
         return false;
@@ -336,28 +312,9 @@ static bool isClickableControl(const HTMLElement& element, ContainerListensForUs
         return equalIgnoringFragmentIdentifier(element.document().url(), href) || !href.protocolIsInHTTPFamily();
     }
 
-    if (listensForUserActivation(element))
-        return true;
-
-    if (containerListensForUserActivation == ContainerListensForUserActivation::No)
-        return false;
-
-    auto rendererAndRect = element.boundingAbsoluteRectWithoutLayout();
-    if (!rendererAndRect)
-        return false;
-
-    auto [renderer, rect] = *rendererAndRect;
-    if (!renderer || rect.isEmpty())
-        return false;
-
-    // If the modal container itself has event listeners for user activation, continue looking for elements that look like
-    // clickable elements (e.g. small nodes with pointer-style cursor).
-    if (renderer->style().cursor() == CursorType::Pointer) {
-        if (rect.width() <= maxWidthForElementsThatLookClickable && rect.height() <= maxHeightForElementsThatLookClickable)
-            return true;
-    }
-
-    return false;
+    return element.hasEventListeners(eventNames().clickEvent) || element.hasEventListeners(eventNames().mousedownEvent) || element.hasEventListeners(eventNames().mouseupEvent)
+        || element.hasEventListeners(eventNames().touchstartEvent) || element.hasEventListeners(eventNames().touchendEvent)
+        || element.hasEventListeners(eventNames().pointerdownEvent) || element.hasEventListeners(eventNames().pointerupEvent);
 }
 
 static void removeParentOrChildElements(Vector<Ref<HTMLElement>>& elements)
@@ -515,13 +472,13 @@ void ModalContainerObserver::collectClickableElementsTimerFired()
                     case ModalContainerDecision::HideAndIgnore:
                         break;
                     case ModalContainerDecision::HideAndAllow:
-                        if (auto index = positive.findIf(matchNonNull); index != notFound)
+                        if (auto index = positive.findMatching(matchNonNull); index != notFound)
                             return positive[index].get();
-                        if (auto index = neutral.findIf(matchNonNull); index != notFound)
+                        if (auto index = neutral.findMatching(matchNonNull); index != notFound)
                             return neutral[index].get();
                         break;
                     case ModalContainerDecision::HideAndDisallow:
-                        if (auto index = negative.findIf(matchNonNull); index != notFound)
+                        if (auto index = negative.findMatching(matchNonNull); index != notFound)
                             return negative[index].get();
                         break;
                     }
@@ -738,10 +695,9 @@ std::pair<Vector<WeakPtr<HTMLElement>>, Vector<String>> ModalContainerObserver::
     if (!containerForControls)
         return { };
 
-    auto containerListensForUserActivation = listensForUserActivation(*containerForControls) ? ContainerListensForUserActivation::Yes : ContainerListensForUserActivation::No;
     Vector<Ref<HTMLElement>> clickableControls;
     for (auto& child : descendantsOfType<HTMLElement>(*containerForControls)) {
-        if (isClickableControl(child, containerListensForUserActivation))
+        if (isClickableControl(child))
             clickableControls.append(child);
     }
 

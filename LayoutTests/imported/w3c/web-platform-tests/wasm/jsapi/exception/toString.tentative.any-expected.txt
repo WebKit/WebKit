@@ -1,4 +1,0 @@
-
-PASS Object.prototype.toString on an Exception
-PASS @@toStringTag exists on the prototype with the appropriate descriptor
-

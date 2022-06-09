@@ -25,6 +25,7 @@ fast/forms/ios/zoom-after-input-tap.html [ Skip ]
 media/video-background-playback.html [ Pass Crash ]
 fast/forms/ios/scroll-to-reveal-focused-select.html [ Crash Failure ]
 fast/forms/ios/time-picker-value-change.html [ Failure ]
+fast/forms/ios/choose-select-option.html [ Timeout ]
 fast/forms/ios/delete-in-input-in-iframe.html [ Timeout ]
 [ Debug ] fast/forms/ios/form-control-refresh/select/focus-select-in-touchend.html [ Timeout ]
 fast/forms/ios/typing-in-input-in-iframe.html [ Timeout ]
@@ -64,11 +65,6 @@ webkit.org/b/194234 media/modern-media-controls/media-documents/background-color
 
 webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
 
-# webkit.org/b/237689 These tests are constantly failing on iPad 
-webkit.org/b/237689 svg/filters/big-height-filter.svg [ Failure ]
-webkit.org/b/237689 svg/filters/big-sized-off-viewport-filter.svg [ Failure ]
-webkit.org/b/237689 svg/filters/big-width-filter.svg [ Failure ]
-
 webkit.org/b/194226 quicklook/word-legacy.html [ Failure ]
 webkit.org/b/194226 quicklook/word.html [ Failure ]
 
@@ -105,7 +101,7 @@ media/remove-video-element-in-pip-from-document.html [ Pass ]
 
 webkit.org/b/228622 [ Debug ] accessibility/ios-simulator/scroll-in-overflow-div.html [ Crash ]
 
-webkit.org/b/197960 imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Failure ]
+webkit.org/b/229566 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-form-submission.html [ Pass Failure ]
 
 webkit.org/b/228663 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 
@@ -116,15 +112,3 @@ webkit.org/b/231611 [ Debug ] imported/w3c/web-platform-tests/webrtc-encoded-tra
 webkit.org/b/231616 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Pass Failure Timeout ]
 
 webkit.org/b/231640 [ Debug ] webrtc/video-mute.html [ Pass Timeout ]
-
-# These fail due to color space issues in the specific iPad simulator used <rdar://84527732>
-webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
-webkit.org/b/292090 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
-webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
-webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
-webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
-webkit.org/b/292090 media/video-canvas-createPattern.html [ Failure ]
-
-# Failure only on iPad simulator
-webkit.org/b/178588 fast/css/button-height.html [ Failure ]
-webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ ImageOnlyFailure ]

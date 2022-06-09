@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+* Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -26,29 +26,24 @@
 #include "config.h"
 #include "JSAbortSignal.h"
 
-#include "WebCoreOpaqueRoot.h"
-
 namespace WebCore {
 
 bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, const char** reason)
 {
     auto& abortSignal = JSC::jsCast<JSAbortSignal*>(handle.slot()->asCell())->wrapped();
+    if (abortSignal.isFiringEventListeners()) {
+        if (UNLIKELY(reason))
+            *reason = "EventTarget firing event listeners";
+        return true;
+    }
+
     if (abortSignal.aborted())
         return false;
 
-    if (abortSignal.isFollowingSignal()) {
-        if (UNLIKELY(reason))
-            *reason = "Is Following Signal";
+    if (abortSignal.isFollowingSignal())
         return true;
-    }
 
-    if (abortSignal.hasAbortEventListener() && abortSignal.hasActiveTimeoutTimer()) {
-        if (UNLIKELY(reason))
-            *reason = "Has Active Abort Listener";
-        return true;
-    }
-
-    return containsWebCoreOpaqueRoot(visitor, abortSignal);
+    return visitor.containsOpaqueRoot(&abortSignal);
 }
 
 template<typename Visitor>

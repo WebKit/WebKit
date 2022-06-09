@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,7 +89,7 @@ String createTemporaryZipArchive(const String& path)
     return temporaryFile;
 }
 
-String openTemporaryFile(StringView prefix, PlatformFileHandle& platformFileHandle, StringView suffix)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileHandle, const String& suffix)
 {
     platformFileHandle = invalidPlatformFileHandle;
 
@@ -210,18 +210,15 @@ bool isSafeToUseMemoryMapForPath(const String& path)
     return true;
 }
 
-bool makeSafeToUseMemoryMapForPath(const String& path)
+void makeSafeToUseMemoryMapForPath(const String& path)
 {
     if (isSafeToUseMemoryMapForPath(path))
-        return true;
+        return;
     
     NSError *error = nil;
     BOOL success = [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey: NSFileProtectionCompleteUnlessOpen } ofItemAtPath:path error:&error];
-    if (error || !success) {
-        WTFLogAlways("makeSafeToUseMemoryMapForPath(%s) failed with error %@", path.utf8().data(), error);
-        return false;
-    }
-    return true;
+    ASSERT(!error);
+    ASSERT_UNUSED(success, success);
 }
 #endif
 
@@ -234,20 +231,6 @@ bool excludeFromBackup(const String& path)
     }
 
     return true;
-}
-
-NSString *systemDirectoryPath()
-{
-    static NeverDestroyed<RetainPtr<NSString>> path = ^{
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-        char *simulatorRoot = getenv("SIMULATOR_ROOT");
-        return simulatorRoot ? [NSString stringWithFormat:@"%s/System/", simulatorRoot] : @"/System/";
-#else
-        return @"/System/";
-#endif
-    }();
-
-    return path.get().get();
 }
 
 } // namespace FileSystemImpl

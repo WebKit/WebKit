@@ -48,6 +48,11 @@ namespace Style {
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
+inline PropertyCascade::Direction directionFromStyle(const RenderStyle& style)
+{
+    return { style.direction(), style.writingMode() };
+}
+
 inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 {
     switch (id) {
@@ -76,7 +81,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 }
 
 Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, PropertyCascade::IncludedProperties includedProperties)
-    : m_cascade(matchResult, cascadeLevel, includedProperties)
+    : m_cascade(matchResult, cascadeLevel, includedProperties, directionFromStyle(style))
     , m_state(*this, style, WTFMove(context))
 {
 }
@@ -86,7 +91,7 @@ Builder::~Builder() = default;
 void Builder::applyAllProperties()
 {
     applyHighPriorityProperties();
-    applyNonHighPriorityProperties();
+    applyLowPriorityProperties();
 }
 
 // High priority properties may affect resolution of other properties (they are mostly font related).
@@ -100,17 +105,17 @@ void Builder::applyHighPriorityProperties()
     applyProperties(CSSPropertyColorScheme, CSSPropertyColorScheme);
 #endif
 
-    applyProperties(firstHighPriorityProperty, lastHighPriorityProperty);
+    applyProperties(firstCSSProperty, lastHighPriorityProperty);
 
     m_state.updateFont();
 }
 
-void Builder::applyNonHighPriorityProperties()
+void Builder::applyLowPriorityProperties()
 {
     ASSERT(!m_state.fontDirty());
 
     applyCustomProperties();
-    applyProperties(firstLowPriorityProperty, lastLowPriorityProperty);
+    applyProperties(firstLowPriorityProperty, lastCSSProperty);
     applyDeferredProperties();
 
     ASSERT(!m_state.fontDirty());
@@ -118,8 +123,8 @@ void Builder::applyNonHighPriorityProperties()
 
 void Builder::applyDeferredProperties()
 {
-    for (auto id : m_cascade.deferredPropertyIDs())
-        applyCascadeProperty(m_cascade.deferredProperty(id));
+    for (auto& property : m_cascade.deferredProperties())
+        applyCascadeProperty(property);
 }
 
 void Builder::applyProperties(int firstProperty, int lastProperty)
@@ -135,10 +140,10 @@ inline void Builder::applyPropertiesImpl(int firstProperty, int lastProperty)
 {
     for (int id = firstProperty; id <= lastProperty; ++id) {
         CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
-        if (!m_cascade.hasNormalProperty(propertyID))
+        if (!m_cascade.hasProperty(propertyID))
             continue;
         ASSERT(propertyID != CSSPropertyCustom);
-        auto& property = m_cascade.normalProperty(propertyID);
+        auto& property = m_cascade.property(propertyID);
 
         if (trackCycles == CustomPropertyCycleTracking::Enabled) {
             if (UNLIKELY(m_state.m_inProgressProperties.get(propertyID))) {
@@ -167,7 +172,7 @@ void Builder::applyCustomProperties()
         applyCustomProperty(name);
 }
 
-void Builder::applyCustomProperty(const AtomString& name)
+void Builder::applyCustomProperty(const String& name)
 {
     if (m_state.m_appliedCustomProperties.contains(name) || !m_cascade.customProperties().contains(name))
         return;
@@ -205,7 +210,7 @@ void Builder::applyCustomProperty(const AtomString& name)
         }
 
         if (m_state.m_inProgressPropertiesCustom.contains(name)) {
-            SetForScope scopedLinkMatchMutation(m_state.m_linkMatch, index);
+            SetForScope<SelectorChecker::LinkMatchMask> scopedLinkMatchMutation(m_state.m_linkMatch, index);
             applyProperty(CSSPropertyCustom, valueToApply.get(), index);
         }
     }
@@ -234,7 +239,7 @@ inline void Builder::applyCascadeProperty(const PropertyCascade::Property& prope
 
     auto applyWithLinkMatch = [&](SelectorChecker::LinkMatchMask linkMatch) {
         if (property.cssValue[linkMatch]) {
-            SetForScope scopedLinkMatchMutation(m_state.m_linkMatch, linkMatch);
+            SetForScope<SelectorChecker::LinkMatchMask> scopedLinkMatchMutation(m_state.m_linkMatch, linkMatch);
             applyProperty(property.id, *property.cssValue[linkMatch], linkMatch);
         }
     };
@@ -266,10 +271,10 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
     auto valueToApply = resolveValue(id, value);
-    auto& style = m_state.style();
 
     if (CSSProperty::isDirectionAwareProperty(id)) {
-        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, style.direction(), style.writingMode());
+        auto direction = m_cascade.direction();
+        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, direction.textDirection, direction.writingMode);
         ASSERT(newId != id);
         return applyProperty(newId, valueToApply.get(), linkMatchMask);
     }
@@ -295,11 +300,6 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     bool isRevertLayer = valueToApply->isRevertLayerValue() || customPropertyValueID == CSSValueRevertLayer;
 
     if (isRevert || isRevertLayer) {
-        // In @keyframes, 'revert-layer' rolls back the cascaded value to the author level.
-        // We can just not apply the property in order to keep the value from the base style.
-        if (isRevertLayer && m_state.m_isBuildingKeyframeStyle)
-            return;
-
         auto* rollbackCascade = isRevert ? ensureRollbackCascadeForRevert() : ensureRollbackCascadeForRevertLayer();
 
         if (rollbackCascade) {
@@ -311,14 +311,9 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
                     applyRollbackCascadeProperty(property, linkMatchMask);
                     return;
                 }
-            } else if (id < firstDeferredProperty) {
-                if (rollbackCascade->hasNormalProperty(id)) {
-                    auto& property = rollbackCascade->normalProperty(id);
-                    applyRollbackCascadeProperty(property, linkMatchMask);
-                    return;
-                }
-            } else if (auto* property = rollbackCascade->lastDeferredPropertyResolvingRelated(id, style.direction(), style.writingMode())) {
-                applyRollbackCascadeProperty(*property, linkMatchMask);
+            } else if (rollbackCascade->hasProperty(id)) {
+                auto& property = rollbackCascade->property(id);
+                applyRollbackCascadeProperty(property, linkMatchMask);
                 return;
             }
         }
@@ -341,7 +336,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     }
 
     if (isInherit && !CSSProperty::isInheritedProperty(id))
-        style.setHasExplicitlyInheritedProperties();
+        m_state.style().setHasExplicitlyInheritedProperties();
 
 #if ENABLE(CSS_PAINTING_API)
     if (is<CSSPaintImageValue>(valueToApply)) {
@@ -350,7 +345,7 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
             Locker locker { paintWorklet->paintDefinitionLock() };
             if (auto* registration = paintWorklet->paintDefinitionMap().get(name)) {
                 for (auto& property : registration->inputProperties)
-                    style.addCustomPaintWatchProperty(property);
+                    m_state.style().addCustomPaintWatchProperty(property);
             }
         }
     }
@@ -399,7 +394,7 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevertLayer()
     auto& property = *m_state.m_currentProperty;
     auto rollbackLayerPriority = property.cascadeLayerPriority;
     if (!rollbackLayerPriority)
-        return ensureRollbackCascadeForRevert();
+        return nullptr;
 
     ASSERT(property.fromStyleAttribute == FromStyleAttribute::No || property.cascadeLayerPriority == RuleSet::cascadeLayerPriorityForUnlayered);
 

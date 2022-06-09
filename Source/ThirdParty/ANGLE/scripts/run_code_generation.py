@@ -80,12 +80,12 @@ def auto_script(script):
 
 
 generators = {
-    'ANGLE features':
-        'include/platform/gen_features.py',
     'ANGLE format':
         'src/libANGLE/renderer/gen_angle_format_table.py',
     'ANGLE load functions table':
         'src/libANGLE/renderer/gen_load_functions_table.py',
+    'ANGLE load texture border functions table':
+        'src/libANGLE/renderer/gen_load_texture_border_functions_table.py',
     'ANGLE shader preprocessor':
         'src/compiler/preprocessor/generate_parser.py',
     'ANGLE shader translator':
@@ -256,8 +256,11 @@ def main():
                 f = open(os.path.basename(script), "r")
                 if subprocess.call([get_executable_name(f.readline()),
                                     os.path.basename(script)]) != 0:
+                    print('Error Running ' + name + ' code generator')
                     sys.exit(1)
                 f.close()
+            else:
+                print('Verifying ' + name + ' code generator')
 
         # Update the hash dictionary.
         all_new_hashes[fname] = new_hashes

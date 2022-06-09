@@ -1689,7 +1689,7 @@ op :call_no_tls,
 op :call_indirect,
     args: {
         functionIndex: VirtualRegister,
-        typeIndex: unsigned,
+        signatureIndex: unsigned,
         stackOffset: unsigned,
         numberOfStackArgs: unsigned,
         tableIndex: unsigned,
@@ -1698,7 +1698,7 @@ op :call_indirect,
 op :call_indirect_no_tls,
     args: {
         functionIndex: VirtualRegister,
-        typeIndex: unsigned,
+        signatureIndex: unsigned,
         stackOffset: unsigned,
         numberOfStackArgs: unsigned,
         tableIndex: unsigned,
@@ -1707,7 +1707,7 @@ op :call_indirect_no_tls,
 op :call_ref,
     args: {
         functionReference: VirtualRegister,
-        typeIndex: unsigned,
+        signatureIndex: unsigned,
         stackOffset: unsigned,
         numberOfStackArgs: unsigned,
     }
@@ -1715,7 +1715,7 @@ op :call_ref,
 op :call_ref_no_tls,
     args: {
         functionReference: VirtualRegister,
-        typeIndex: unsigned,
+        signatureIndex: unsigned,
         stackOffset: unsigned,
         numberOfStackArgs: unsigned,
     }
@@ -1890,12 +1890,6 @@ op_group :CatchAll,
     ],
     args: {
         exception: VirtualRegister,
-    }
-
-op :rtt_canon,
-    args: {
-        dst: VirtualRegister,
-        typeIndex: unsigned,
     }
 
 end_section :Wasm

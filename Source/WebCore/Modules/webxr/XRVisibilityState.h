@@ -27,11 +27,13 @@
 
 #if ENABLE(WEBXR)
 
-#include "PlatformXR.h"
-
 namespace WebCore {
 
-using XRVisibilityState = PlatformXR::VisibilityState;
+enum class XRVisibilityState {
+    Visible,
+    VisibleBlurred,
+    Hidden
+};
 
 } // namespace WebCore
 

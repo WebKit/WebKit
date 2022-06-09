@@ -1,3 +1,4 @@
+X
 This tests that native elements and ARIA overrides result in the expected role, subrole and role description.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -9,13 +10,19 @@ a[href]
       AXRoleDescription: link
 
 a:not([href])
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 abbr:not([title])
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 abbr[title]
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 address
       AXRole: AXGroup
@@ -33,13 +40,19 @@ aside
       AXRoleDescription: complementary
 
 audio
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 b
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 bdo
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 blockquote
       AXRole: AXGroup
@@ -52,7 +65,9 @@ button
       AXRoleDescription: button
 
 canvas
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 cite
       AXRole: AXGroup
@@ -100,7 +115,9 @@ div
       AXRoleDescription: group
 
 em
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 fieldset
       AXRole: AXGroup
@@ -108,7 +125,9 @@ fieldset
       AXRoleDescription: group
 
 legend
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 figure
       AXRole: AXGroup
@@ -171,16 +190,24 @@ hr
       AXRoleDescription: separator
 
 i
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 img:not([src]):not([alt])
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 img[alt='']
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 img[src]:not([alt])
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 img[alt='X']
       AXRole: AXImage
@@ -193,7 +220,9 @@ img[usemap][alt='X']
       AXRoleDescription: image map
 
 img[usemap]:not([alt])
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 input[type='button']
       AXRole: AXButton
@@ -211,9 +240,9 @@ input[type='checkbox']
       AXRoleDescription: checkbox
 
 input[type='date']
-      AXRole: AXTextField
+      AXRole: AXGroup
       AXSubrole:
-      AXRoleDescription: date field
+      AXRoleDescription: group
 
 input[type='datetime']
       AXRole: AXTextField
@@ -221,9 +250,9 @@ input[type='datetime']
       AXRoleDescription: text field
 
 input[type='datetime-local']
-      AXRole: AXTextField
+      AXRole: AXGroup
       AXSubrole:
-      AXRoleDescription: date and time field
+      AXRoleDescription: group
 
 input[type='email']
       AXRole: AXTextField
@@ -236,7 +265,9 @@ input[type='file']
       AXRoleDescription: file upload button
 
 input[type='hidden']
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 input[type='image']
       AXRole: AXButton
@@ -244,9 +275,9 @@ input[type='image']
       AXRoleDescription: button
 
 input[type='month']
-      AXRole: AXTextField
+      AXRole: AXGroup
       AXSubrole:
-      AXRoleDescription: month and year field
+      AXRoleDescription: group
 
 input[type='number']
       AXRole: AXTextField
@@ -294,9 +325,9 @@ input[type='text']
       AXRoleDescription: text field
 
 input[type='time']
-      AXRole: AXTextField
+      AXRole: AXGroup
       AXSubrole:
-      AXRoleDescription: time field
+      AXRoleDescription: group
 
 input[type='url']
       AXRole: AXTextField
@@ -304,9 +335,9 @@ input[type='url']
       AXRoleDescription: URL field
 
 input[type='week']
-      AXRole: AXTextField
+      AXRole: AXGroup
       AXSubrole:
-      AXRoleDescription: week and year field
+      AXRoleDescription: group
 
 ins:not([datetime])
       AXRole: AXGroup
@@ -319,10 +350,14 @@ ins[datetime]
       AXRoleDescription: group
 
 map
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 area
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 mark
       AXRole: AXGroup
@@ -455,7 +490,9 @@ mi
       AXRoleDescription: group
 
 mprescripts
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 mi
       AXRole: AXGroup
@@ -533,10 +570,14 @@ progress
       AXRoleDescription: progress indicator
 
 q
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 s
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 samp
       AXRole: AXGroup
@@ -564,10 +605,14 @@ select:not([multiple])
       AXRoleDescription: pop up button
 
 option
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 optgroup
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 select[multiple]
       AXRole: AXList
@@ -585,16 +630,24 @@ optgroup
       AXRoleDescription: text
 
 small
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 span:not([onclick])
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 span[onclick]
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 strong
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 sub
       AXRole: AXGroup
@@ -607,7 +660,9 @@ sup
       AXRoleDescription: group
 
 svg
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 table
       AXRole: AXTable
@@ -615,10 +670,14 @@ table
       AXRoleDescription: table
 
 caption
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 thead
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 tr
       AXRole: AXRow
@@ -631,7 +690,9 @@ th
       AXRoleDescription: cell
 
 tbody
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 tr
       AXRole: AXRow
@@ -644,7 +705,9 @@ td
       AXRoleDescription: cell
 
 tfoot
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 tr
       AXRole: AXRow
@@ -687,7 +750,9 @@ var
       AXRoleDescription: group
 
 wbr
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 div[role=command]
       AXRole: AXGroup
@@ -1060,7 +1125,9 @@ div[role=grid]
       AXRoleDescription: table
 
 div[role=rowgroup]
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 div[role=row]
       AXRole: AXRow
@@ -1213,7 +1280,9 @@ div[role=paragraph]
       AXRoleDescription: group
 
 div[role=presentation]
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 div[role=progressbar]
       AXRole: AXProgressIndicator
@@ -1351,7 +1420,9 @@ div[role=treeitem]
       AXRoleDescription: outline row
 
 div[role=group]
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 div[role=treeitem]
       AXRole: AXRow
@@ -1364,7 +1435,9 @@ div[role=treegrid]
       AXRoleDescription: table
 
 div[role=rowgroup]
-      Could not get AX element.
+      AXRole:
+      AXSubrole:
+      AXRoleDescription:
 
 div[role=row]
       AXRole: AXRow
@@ -1386,8 +1459,7 @@ div[role=gridcell]
       AXSubrole:
       AXRoleDescription: cell
 
-
 PASS successfullyParsed is true
 
 TEST COMPLETE
-X
+

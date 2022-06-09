@@ -549,7 +549,6 @@ asm (
     "jr        $ra" "\n"
     "nop" "\n"
     ".set pop" "\n"
-    ".previous" "\n"
 );
 #endif // COMPILER(GCC_COMPATIBLE)
 

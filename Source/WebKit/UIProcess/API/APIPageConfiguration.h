@@ -26,12 +26,11 @@
 #pragma once
 
 #include "APIObject.h"
-#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashMap.h>
-#include <wtf/RobinHoodHashSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -157,8 +156,8 @@ public:
     bool loadsSubresources() const { return m_loadsSubresources; }
     void setLoadsSubresources(bool loads) { m_loadsSubresources = loads; }
 
-    const std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>& allowedNetworkHosts() const { return m_allowedNetworkHosts; }
-    void setAllowedNetworkHosts(std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>>&& hosts) { m_allowedNetworkHosts = WTFMove(hosts); }
+    const std::optional<HashSet<WTF::String>>& allowedNetworkHosts() const { return m_allowedNetworkHosts; }
+    void setAllowedNetworkHosts(std::optional<HashSet<WTF::String>>&& hosts) { m_allowedNetworkHosts = WTFMove(hosts); }
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool ignoresAppBoundDomains() const { return m_ignoresAppBoundDomains; }
@@ -192,9 +191,6 @@ public:
 
     bool isCaptivePortalModeExplicitlySet() const;
     bool captivePortalModeEnabled() const;
-
-    void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_contentSecurityPolicyModeForExtension = mode; }
-    WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
 
 private:
 
@@ -235,7 +231,7 @@ private:
     bool m_crossOriginAccessControlCheckEnabled { true };
     WTF::String m_processDisplayName;
     bool m_loadsSubresources { true };
-    std::optional<MemoryCompactLookupOnlyRobinHoodHashSet<WTF::String>> m_allowedNetworkHosts;
+    std::optional<HashSet<WTF::String>> m_allowedNetworkHosts;
     
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_ignoresAppBoundDomains { false };
@@ -255,8 +251,6 @@ private:
 #if HAVE(TOUCH_BAR)
     bool m_requiresUserActionForEditingControlsManager { false };
 #endif
-
-    WebCore::ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 };
 
 } // namespace API

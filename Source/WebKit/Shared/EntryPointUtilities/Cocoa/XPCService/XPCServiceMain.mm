@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,6 @@
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sys/sysctl.h>
-#import <wtf/BlockPtr.h>
-#import <wtf/Language.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -49,14 +47,18 @@ static void setAppleLanguagesPreference()
 
     if (xpc_object_t languages = xpc_dictionary_get_value(bootstrap.get(), "OverrideLanguages")) {
         @autoreleasepool {
-            Vector<String> newLanguages;
-            xpc_array_apply(languages, makeBlockPtr([&newLanguages](size_t index, xpc_object_t value) {
-                newLanguages.append(String::fromUTF8(xpc_string_get_string_ptr(value)));
+            NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
+            auto newArguments = adoptNS([existingArguments mutableCopy]);
+            RetainPtr<NSMutableArray> newLanguages = adoptNS([[NSMutableArray alloc] init]);
+            xpc_array_apply(languages, ^(size_t index, xpc_object_t value) {
+                [newLanguages addObject:[NSString stringWithCString:xpc_string_get_string_ptr(value) encoding:NSUTF8StringEncoding]];
                 return true;
-            }).get());
+            });
 
-            LOG_WITH_STREAM(Language, stream << "Bootstrap message contains OverrideLanguages: " << newLanguages);
-            overrideUserPreferredLanguages(newLanguages);
+            LOG_WITH_STREAM(Language, stream << "Bootstrap message contains OverrideLanguages: " << newLanguages.get());
+
+            [newArguments setValue:newLanguages.get() forKey:@"AppleLanguages"];
+            [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];
         }
     } else
         LOG(Language, "Bootstrap message does not contain OverrideLanguages");
@@ -101,8 +103,12 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(WEBCONTENT_SERVICE_INITIALIZER));
             else if (!strcmp(serviceName, "com.apple.WebKit.Networking"))
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(NETWORK_SERVICE_INITIALIZER));
+            else if (!strcmp(serviceName, "com.apple.WebKit.Plugin.64"))
+                entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(PLUGIN_SERVICE_INITIALIZER));
             else if (!strcmp(serviceName, "com.apple.WebKit.GPU"))
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(GPU_SERVICE_INITIALIZER));
+            else if (!strcmp(serviceName, "com.apple.WebKit.WebAuthn"))
+                entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(WEBAUTHN_SERVICE_INITIALIZER));
             else {
                 RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %{public}s", serviceName);
                 return;
@@ -199,7 +205,7 @@ int XPCServiceMain(int, const char**)
             }
         }
 #endif
-        auto webKitBundleVersion = String::fromLatin1(xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion"));
+        String webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion");
         String expectedBundleVersion = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
         if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
             auto errorMessage = makeString("WebKit framework version mismatch: ", webKitBundleVersion, " != ", expectedBundleVersion);

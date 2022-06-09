@@ -73,8 +73,8 @@ public:
         [task launch];
         NSData *data = [fileHandle readDataToEndOfFile];
         m_savedAppleLanguages = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        m_savedAppleLanguages = makeStringByReplacingAll(m_savedAppleLanguages, '\n', ""_s);
-        m_savedAppleLanguages = makeStringByReplacingAll(m_savedAppleLanguages, ' ', ""_s);
+        m_savedAppleLanguages.replace("\n", "");
+        m_savedAppleLanguages.replace(" ", "");
     }
 
     ~AppleLanguagesTest()
@@ -129,7 +129,7 @@ TEST_F(AppleLanguagesTest, DISABLED_UpdateAppleLanguages)
         return languages.isEmpty() ? emptyString() : languages[0];
     };
     unsigned timeout = 0;
-    while (getLanguageFromNSUserDefaults() != "en-GB"_s && ++timeout < 100)
+    while (getLanguageFromNSUserDefaults() != "en-GB" && ++timeout < 100)
         TestWebKitAPI::Util::sleep(0.1);
     EXPECT_WK_STREQ(@"en-GB", getLanguageFromNSUserDefaults());
 

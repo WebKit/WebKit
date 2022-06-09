@@ -79,7 +79,6 @@ public:
     void resetUserAgentMediaQueryStyle();
 
     bool hasViewportDependentMediaQueries() const;
-    bool hasContainerQueries() const;
 
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MediaQueryEvaluator&);
 

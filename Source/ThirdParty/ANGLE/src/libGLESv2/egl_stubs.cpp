@@ -381,8 +381,7 @@ EGLSurface GetCurrentSurface(Thread *thread, EGLint readdraw)
 
 EGLDisplay GetDisplay(Thread *thread, EGLNativeDisplayType display_id)
 {
-    return Display::GetDisplayFromNativeDisplay(EGL_PLATFORM_ANGLE_ANGLE, display_id,
-                                                AttributeMap());
+    return Display::GetDisplayFromNativeDisplay(display_id, AttributeMap());
 }
 
 EGLint GetError(Thread *thread)
@@ -397,24 +396,20 @@ EGLDisplay GetPlatformDisplay(Thread *thread,
                               void *native_display,
                               const AttributeMap &attribMap)
 {
-    switch (platform)
+    if (platform == EGL_PLATFORM_ANGLE_ANGLE)
     {
-        case EGL_PLATFORM_ANGLE_ANGLE:
-        case EGL_PLATFORM_GBM_KHR:
-        {
-            return Display::GetDisplayFromNativeDisplay(
-                platform, gl::bitCast<EGLNativeDisplayType>(native_display), attribMap);
-        }
-        case EGL_PLATFORM_DEVICE_EXT:
-        {
-            Device *eglDevice = static_cast<Device *>(native_display);
-            return Display::GetDisplayFromDevice(eglDevice, attribMap);
-        }
-        default:
-        {
-            UNREACHABLE();
-            return EGL_NO_DISPLAY;
-        }
+        return Display::GetDisplayFromNativeDisplay(
+            gl::bitCast<EGLNativeDisplayType>(native_display), attribMap);
+    }
+    else if (platform == EGL_PLATFORM_DEVICE_EXT)
+    {
+        Device *eglDevice = static_cast<Device *>(native_display);
+        return Display::GetDisplayFromDevice(eglDevice, attribMap);
+    }
+    else
+    {
+        UNREACHABLE();
+        return EGL_NO_DISPLAY;
     }
 }
 
@@ -657,7 +652,7 @@ EGLBoolean SwapInterval(Thread *thread, Display *display, EGLint interval)
     Surface *drawSurface        = static_cast<Surface *>(thread->getCurrentDrawSurface());
     const Config *surfaceConfig = drawSurface->getConfig();
     EGLint clampedInterval      = std::min(std::max(interval, surfaceConfig->minSwapInterval),
-                                           surfaceConfig->maxSwapInterval);
+                                      surfaceConfig->maxSwapInterval);
 
     drawSurface->setSwapInterval(clampedInterval);
 

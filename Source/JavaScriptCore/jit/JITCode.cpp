@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JITCode.h"
 
-#include "DFGJITCode.h"
 #include "FTLJITCode.h"
 
 #include <wtf/PrintStream.h>
@@ -45,49 +44,25 @@ JITCode::~JITCode()
 {
 }
 
-ASCIILiteral JITCode::typeName(JITType jitType)
+const char* JITCode::typeName(JITType jitType)
 {
     switch (jitType) {
     case JITType::None:
-        return "None"_s;
+        return "None";
     case JITType::HostCallThunk:
-        return "Host"_s;
+        return "Host";
     case JITType::InterpreterThunk:
-        return "LLInt"_s;
+        return "LLInt";
     case JITType::BaselineJIT:
-        return "Baseline"_s;
+        return "Baseline";
     case JITType::DFGJIT:
-        return "DFG"_s;
+        return "DFG";
     case JITType::FTLJIT:
-        return "FTL"_s;
+        return "FTL";
     default:
         CRASH();
-        return ""_s;
+        return "";
     }
-}
-
-bool JITCode::isUnlinked() const
-{
-    switch (m_jitType) {
-    case JITType::None:
-    case JITType::HostCallThunk:
-    case JITType::InterpreterThunk:
-    case JITType::BaselineJIT:
-        return true;
-    case JITType::DFGJIT:
-#if ENABLE(DFG_JIT)
-        return static_cast<const DFG::JITCode*>(this)->isUnlinked();
-#else
-        return false;
-#endif
-    case JITType::FTLJIT:
-#if ENABLE(FTL_JIT)
-        return static_cast<const FTL::JITCode*>(this)->isUnlinked();
-#else
-        return false;
-#endif
-    }
-    return true;
 }
 
 void JITCode::validateReferences(const TrackedReferences&)

@@ -30,7 +30,6 @@
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "PlatformSpeechSynthesizer.h"
 #include "SpeechSynthesisClient.h"
-#include "SpeechSynthesisErrorCode.h"
 #include "SpeechSynthesisUtterance.h"
 #include "SpeechSynthesisVoice.h"
 #include <wtf/Deque.h>
@@ -42,14 +41,9 @@ class Document;
 class PlatformSpeechSynthesizerClient;
 class SpeechSynthesisVoice;
 
-class SpeechSynthesis : public PlatformSpeechSynthesizerClient, public SpeechSynthesisClientObserver, public RefCounted<SpeechSynthesis>, public ContextDestructionObserver, public EventTargetWithInlineData {
-    WTF_MAKE_ISO_ALLOCATED(SpeechSynthesis);
+class SpeechSynthesis : public PlatformSpeechSynthesizerClient, public SpeechSynthesisClientObserver, public RefCounted<SpeechSynthesis> {
 public:
-    static Ref<SpeechSynthesis> create(ScriptExecutionContext&);
-    virtual ~SpeechSynthesis();
-
-    using RefCounted::ref;
-    using RefCounted::deref;
+    static Ref<SpeechSynthesis> create(WeakPtr<SpeechSynthesisClient>, Document&);
 
     bool pending() const;
     bool speaking() const;
@@ -66,7 +60,7 @@ public:
     WEBCORE_EXPORT void setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer>);
 
 private:
-    SpeechSynthesis(ScriptExecutionContext&);
+    SpeechSynthesis(WeakPtr<SpeechSynthesisClient>, Document&);
 
     // PlatformSpeechSynthesizerClient override methods.
     void voicesDidChange() override;
@@ -75,7 +69,7 @@ private:
     void didResumeSpeaking(PlatformSpeechSynthesisUtterance&) override;
     void didFinishSpeaking(PlatformSpeechSynthesisUtterance&) override;
     void speakingErrorOccurred(PlatformSpeechSynthesisUtterance&) override;
-    void boundaryEventOccurred(PlatformSpeechSynthesisUtterance&, SpeechBoundary, unsigned charIndex, unsigned charLength) override;
+    void boundaryEventOccurred(PlatformSpeechSynthesisUtterance&, SpeechBoundary, unsigned charIndex) override;
 
     // SpeechSynthesisClient override methods
     void didStartSpeaking() override;
@@ -83,14 +77,14 @@ private:
     void didPauseSpeaking() override;
     void didResumeSpeaking() override;
     void speakingErrorOccurred() override;
-    void boundaryEventOccurred(bool wordBoundary, unsigned charIndex, unsigned charLength) override;
+    void boundaryEventOccurred(bool wordBoundary, unsigned charIndex) override;
     void voicesChanged() override;
     
     void startSpeakingImmediately(SpeechSynthesisUtterance&);
     void handleSpeakingCompleted(SpeechSynthesisUtterance&, bool errorOccurred);
-    void fireEvent(const AtomString& type, SpeechSynthesisUtterance&, unsigned long charIndex, unsigned long charLength, const String& name) const;
-    void fireErrorEvent(const AtomString& type, SpeechSynthesisUtterance&, SpeechSynthesisErrorCode) const;
+    void fireEvent(const AtomString& type, SpeechSynthesisUtterance&, unsigned long charIndex, const String& name);
 
+#if PLATFORM(IOS_FAMILY)
     // Restrictions to change default behaviors.
     enum BehaviorRestrictionFlags {
         NoRestrictions = 0,
@@ -100,12 +94,7 @@ private:
 
     bool userGestureRequiredForSpeechStart() const { return m_restrictions & RequireUserGestureForSpeechStartRestriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
-    
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
-    EventTargetInterface eventTargetInterface() const final { return SpeechSynthesisEventTargetInterfaceType; }
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-    
+#endif
     PlatformSpeechSynthesizer& ensurePlatformSpeechSynthesizer();
     
     std::unique_ptr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
@@ -113,7 +102,9 @@ private:
     RefPtr<SpeechSynthesisUtterance> m_currentSpeechUtterance;
     Deque<Ref<SpeechSynthesisUtterance>> m_utteranceQueue;
     bool m_isPaused;
+#if PLATFORM(IOS_FAMILY)
     BehaviorRestrictions m_restrictions;
+#endif
     WeakPtr<SpeechSynthesisClient> m_speechSynthesisClient;
 };
 

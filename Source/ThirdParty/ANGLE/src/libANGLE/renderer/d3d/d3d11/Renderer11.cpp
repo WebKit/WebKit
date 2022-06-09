@@ -430,7 +430,6 @@ Renderer11::Renderer11(egl::Display *display)
     mRenderer11DeviceCaps.supportsVpRtIndexWriteFromVertexShader = false;
     mRenderer11DeviceCaps.supportsDXGI1_2                        = false;
     mRenderer11DeviceCaps.allowES3OnFL10_0                       = false;
-    mRenderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats  = false;
     mRenderer11DeviceCaps.B5G6R5support                          = 0;
     mRenderer11DeviceCaps.B4G4R4A4support                        = 0;
     mRenderer11DeviceCaps.B5G5R5A1support                        = 0;
@@ -1069,14 +1068,6 @@ void Renderer11::populateRenderer11DeviceCaps()
             mRenderer11DeviceCaps.supportsVpRtIndexWriteFromVertexShader =
                 (d3d11Options3.VPAndRTArrayIndexFromAnyShaderFeedingRasterizer == TRUE);
         }
-        D3D11_FEATURE_DATA_D3D11_OPTIONS2 d3d11Options2;
-        result = mDevice->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS2, &d3d11Options2,
-                                              sizeof(D3D11_FEATURE_DATA_D3D11_OPTIONS2));
-        if (SUCCEEDED(result))
-        {
-            mRenderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats =
-                d3d11Options2.TypedUAVLoadAdditionalFormats;
-        }
     }
 
     mRenderer11DeviceCaps.supportsMultisampledDepthStencilSRVs =
@@ -1094,7 +1085,7 @@ void Renderer11::populateRenderer11DeviceCaps()
                                  &mRenderer11DeviceCaps.B5G6R5maxSamples);
     }
 
-    if (getFeatures().allowES3OnFL100.enabled)
+    if (getFeatures().allowES3OnFL10_0.enabled)
     {
         mRenderer11DeviceCaps.allowES3OnFL10_0 = true;
     }
@@ -1283,7 +1274,7 @@ egl::ConfigSet Renderer11::generateConfigs()
                 config.transparentBlueValue  = 0;
                 config.optimalOrientation    = optimalSurfaceOrientation;
                 config.colorComponentType    = gl_egl::GLComponentTypeToEGLColorComponentType(
-                       colorBufferFormatInfo.componentType);
+                    colorBufferFormatInfo.componentType);
 
                 configs.add(config);
             }
@@ -1777,8 +1768,6 @@ angle::Result Renderer11::drawArrays(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    ANGLE_TRY(markRawBufferUsage(context));
-
     ProgramD3D *programD3D        = mStateManager.getProgramD3D();
     GLsizei adjustedInstanceCount = GetAdjustedInstanceCount(programD3D, instanceCount);
 
@@ -1871,8 +1860,6 @@ angle::Result Renderer11::drawElements(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    ANGLE_TRY(markRawBufferUsage(context));
-
     // Transform feedback is not allowed for DrawElements, this error should have been caught at the
     // API validation layer.
     const gl::State &glState = context->getState();
@@ -1958,8 +1945,6 @@ angle::Result Renderer11::drawArraysIndirect(const gl::Context *context, const v
         return angle::Result::Continue;
     }
 
-    ANGLE_TRY(markRawBufferUsage(context));
-
     const gl::State &glState = context->getState();
     ASSERT(!glState.isTransformFeedbackActiveUnpaused());
 
@@ -1981,8 +1966,6 @@ angle::Result Renderer11::drawElementsIndirect(const gl::Context *context, const
     {
         return angle::Result::Continue;
     }
-
-    ANGLE_TRY(markRawBufferUsage(context));
 
     const gl::State &glState = context->getState();
     ASSERT(!glState.isTransformFeedbackActiveUnpaused());
@@ -2930,10 +2913,10 @@ angle::Result Renderer11::createRenderTarget(const gl::Context *context,
             if (formatInfo.blitSRVFormat != formatInfo.srvFormat)
             {
                 D3D11_SHADER_RESOURCE_VIEW_DESC blitSRVDesc;
-                blitSRVDesc.Format                    = formatInfo.blitSRVFormat;
-                blitSRVDesc.ViewDimension             = (supportedSamples == 0)
-                                                            ? D3D11_SRV_DIMENSION_TEXTURE2D
-                                                            : D3D11_SRV_DIMENSION_TEXTURE2DMS;
+                blitSRVDesc.Format        = formatInfo.blitSRVFormat;
+                blitSRVDesc.ViewDimension = (supportedSamples == 0)
+                                                ? D3D11_SRV_DIMENSION_TEXTURE2D
+                                                : D3D11_SRV_DIMENSION_TEXTURE2DMS;
                 blitSRVDesc.Texture2D.MostDetailedMip = 0;
                 blitSRVDesc.Texture2D.MipLevels       = 1;
 
@@ -2949,9 +2932,9 @@ angle::Result Renderer11::createRenderTarget(const gl::Context *context,
         if (bindDSV)
         {
             D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
-            dsvDesc.Format             = formatInfo.dsvFormat;
-            dsvDesc.ViewDimension      = (supportedSamples == 0) ? D3D11_DSV_DIMENSION_TEXTURE2D
-                                                                 : D3D11_DSV_DIMENSION_TEXTURE2DMS;
+            dsvDesc.Format        = formatInfo.dsvFormat;
+            dsvDesc.ViewDimension = (supportedSamples == 0) ? D3D11_DSV_DIMENSION_TEXTURE2D
+                                                            : D3D11_DSV_DIMENSION_TEXTURE2DMS;
             dsvDesc.Texture2D.MipSlice = 0;
             dsvDesc.Flags              = 0;
 
@@ -2965,9 +2948,9 @@ angle::Result Renderer11::createRenderTarget(const gl::Context *context,
         else if (bindRTV)
         {
             D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-            rtvDesc.Format             = formatInfo.rtvFormat;
-            rtvDesc.ViewDimension      = (supportedSamples == 0) ? D3D11_RTV_DIMENSION_TEXTURE2D
-                                                                 : D3D11_RTV_DIMENSION_TEXTURE2DMS;
+            rtvDesc.Format        = formatInfo.rtvFormat;
+            rtvDesc.ViewDimension = (supportedSamples == 0) ? D3D11_RTV_DIMENSION_TEXTURE2D
+                                                            : D3D11_RTV_DIMENSION_TEXTURE2DMS;
             rtvDesc.Texture2D.MipSlice = 0;
 
             d3d11::RenderTargetView rtv;
@@ -3096,7 +3079,7 @@ angle::Result Renderer11::compileToExecutable(d3d::Context *context,
                                               gl::ShaderType type,
                                               const std::vector<D3DVarying> &streamOutVaryings,
                                               bool separatedOutputBuffers,
-                                              const CompilerWorkaroundsD3D &workarounds,
+                                              const angle::CompilerWorkaroundsD3D &workarounds,
                                               ShaderExecutableD3D **outExectuable)
 {
     std::stringstream profileStream;
@@ -3419,14 +3402,6 @@ TextureStorage *Renderer11::createTextureStorage2DMultisample(GLenum internalfor
                                               fixedSampleLocations, label);
 }
 
-TextureStorage *Renderer11::createTextureStorageBuffer(
-    const gl::OffsetBindingPointer<gl::Buffer> &buffer,
-    GLenum internalFormat,
-    const std::string &label)
-{
-    return new TextureStorage11_Buffer(this, buffer, internalFormat, label);
-}
-
 TextureStorage *Renderer11::createTextureStorage2DMultisampleArray(GLenum internalformat,
                                                                    GLsizei width,
                                                                    GLsizei height,
@@ -3580,8 +3555,6 @@ angle::Result Renderer11::packPixels(const gl::Context *context,
 angle::Result Renderer11::blitRenderbufferRect(const gl::Context *context,
                                                const gl::Rectangle &readRectIn,
                                                const gl::Rectangle &drawRectIn,
-                                               UINT readLayer,
-                                               UINT drawLayer,
                                                RenderTargetD3D *readRenderTarget,
                                                RenderTargetD3D *drawRenderTarget,
                                                GLenum filter,
@@ -3767,15 +3740,14 @@ angle::Result Renderer11::blitRenderbufferRect(const gl::Context *context,
     {
         UINT dstX = drawRect.x;
         UINT dstY = drawRect.y;
-        UINT dstZ = drawLayer;
 
         D3D11_BOX readBox;
         readBox.left   = readRect.x;
         readBox.right  = readRect.x + readRect.width;
         readBox.top    = readRect.y;
         readBox.bottom = readRect.y + readRect.height;
-        readBox.front  = readLayer;
-        readBox.back   = readLayer + 1;
+        readBox.front  = 0;
+        readBox.back   = 1;
 
         if (scissorNeeded)
         {
@@ -3805,9 +3777,9 @@ angle::Result Renderer11::blitRenderbufferRect(const gl::Context *context,
 
         // D3D11 needs depth-stencil CopySubresourceRegions to have a NULL pSrcBox
         // We also require complete framebuffer copies for depth-stencil blit.
-        D3D11_BOX *pSrcBox = wholeBufferCopy && readLayer == 0 ? nullptr : &readBox;
+        D3D11_BOX *pSrcBox = wholeBufferCopy ? nullptr : &readBox;
 
-        mDeviceContext->CopySubresourceRegion(drawTexture.get(), drawSubresource, dstX, dstY, dstZ,
+        mDeviceContext->CopySubresourceRegion(drawTexture.get(), drawSubresource, dstX, dstY, 0,
                                               readTexture.get(), readSubresource, pSrcBox);
     }
     else
@@ -4051,15 +4023,6 @@ void Renderer11::initializeFeatures(angle::FeaturesD3D *features) const
     ApplyFeatureOverrides(features, mDisplay->getState());
 }
 
-void Renderer11::initializeFrontendFeatures(angle::FrontendFeatures *features) const
-{
-    if (!mDisplay->getState().featuresAllDisabled)
-    {
-        d3d11::InitializeFrontendFeatures(mAdapterDescription, features);
-    }
-    ApplyFeatureOverrides(features, mDisplay->getState());
-}
-
 DeviceImpl *Renderer11::createEGLDevice()
 {
     return new DeviceD3D(EGL_D3D11_DEVICE_ANGLE, mDevice);
@@ -4111,7 +4074,7 @@ angle::Result Renderer11::dispatchCompute(const gl::Context *context,
     {
         ANGLE_TRY(markRawBufferUsage(context));
     }
-    ANGLE_TRY(markTypedBufferUsage(context));
+
     ANGLE_TRY(mStateManager.updateStateForCompute(context, numGroupsX, numGroupsY, numGroupsZ));
     mDeviceContext->Dispatch(numGroupsX, numGroupsY, numGroupsZ);
 
@@ -4320,26 +4283,6 @@ angle::Result Renderer11::mapResource(const gl::Context *context,
 {
     HRESULT hr = mDeviceContext->Map(resource, subResource, mapType, mapFlags, mappedResource);
     ANGLE_TRY_HR(GetImplAs<Context11>(context), hr, "Failed to map D3D11 resource.");
-    return angle::Result::Continue;
-}
-
-angle::Result Renderer11::markTypedBufferUsage(const gl::Context *context)
-{
-    const gl::State &glState = context->getState();
-    ProgramD3D *programD3D   = GetImplAs<ProgramD3D>(glState.getProgram());
-    gl::RangeUI imageRange   = programD3D->getUsedImageRange(gl::ShaderType::Compute, false);
-    for (unsigned int imageIndex = imageRange.low(); imageIndex < imageRange.high(); imageIndex++)
-    {
-        GLint imageUnitIndex = programD3D->getImageMapping(gl::ShaderType::Compute, imageIndex,
-                                                           false, context->getCaps());
-        ASSERT(imageUnitIndex != -1);
-        const gl::ImageUnit &imageUnit = glState.getImageUnit(imageUnitIndex);
-        if (imageUnit.texture.get()->getType() == gl::TextureType::Buffer)
-        {
-            Buffer11 *buffer11 = GetImplAs<Buffer11>(imageUnit.texture.get()->getBuffer().get());
-            ANGLE_TRY(buffer11->markTypedBufferUsage(context));
-        }
-    }
     return angle::Result::Continue;
 }
 

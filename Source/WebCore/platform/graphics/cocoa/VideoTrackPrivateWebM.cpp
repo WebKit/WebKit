@@ -96,11 +96,11 @@ String VideoTrackPrivateWebM::codec() const
     StringView codecID { m_track.codec_id.value().data(), (unsigned)m_track.codec_id.value().length() };
 
     // TODO: Specific codec parameters are parsed out of the sample header; they aren't typically contained in the WebM Track element.
-    if (codecID == "V_VP9"_s)
-        return "vp09"_s;
+    if (codecID == "V_VP9")
+        return "vp09";
 
-    if (codecID == "V_VP8"_s)
-        return "vp08"_s;
+    if (codecID == "V_VP8")
+        return "vp08";
 
     return emptyString();
 }

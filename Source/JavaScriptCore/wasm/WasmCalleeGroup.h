@@ -183,7 +183,6 @@ private:
     RefPtr<EntryPlan> m_plan;
     std::atomic<bool> m_compilationFinished { false };
     String m_errorMessage;
-public:
     Lock m_lock;
 };
 

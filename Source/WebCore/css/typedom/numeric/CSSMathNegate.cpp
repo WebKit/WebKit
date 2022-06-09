@@ -31,50 +31,20 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathNegate);
 
-static CSSNumericType copyType(const CSSNumberish& numberish)
+Ref<CSSMathNegate> CSSMathNegate::create(CSSNumberish&& numberish)
 {
-    return WTF::switchOn(numberish,
-        [] (double) { return CSSNumericType(); },
-        [] (const RefPtr<CSSNumericValue>& value) {
-            if (!value)
-                return CSSNumericType();
-            return value->type();
-        }
-    );
+    return adoptRef(*new CSSMathNegate(WTFMove(numberish)));
 }
 
 CSSMathNegate::CSSMathNegate(CSSNumberish&& numberish)
-    : CSSMathValue(copyType(numberish))
+    : CSSMathValue(CSSMathOperator::Negate)
     , m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
 {
-}
-
-void CSSMathNegate::serialize(StringBuilder& builder, OptionSet<SerializationArguments> arguments) const
-{
-    // https://drafts.css-houdini.org/css-typed-om/#calc-serialization
-    if (!arguments.contains(SerializationArguments::WithoutParentheses))
-        builder.append(arguments.contains(SerializationArguments::Nested) ? "(" : "calc(");
-    builder.append('-');
-    m_value->serialize(builder, arguments);
-    if (!arguments.contains(SerializationArguments::WithoutParentheses))
-        builder.append(')');
-}
-
-auto CSSMathNegate::toSumValue() const -> std::optional<SumValue>
-{
-    // https://drafts.css-houdini.org/css-typed-om/#create-a-sum-value
-    auto values = m_value->toSumValue();
-    if (!values)
-        return std::nullopt;
-    for (auto& value : *values)
-        value.value = value.value * -1;
-    return values;
 }
 
 } // namespace WebCore

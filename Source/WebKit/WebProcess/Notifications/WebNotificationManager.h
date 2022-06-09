@@ -29,7 +29,6 @@
 #include "WebProcessSupplement.h"
 #include <WebCore/NotificationClient.h>
 #include <optional>
-#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -56,7 +55,7 @@ public:
 
     static const char* supplementName();
     
-    bool show(WebCore::Notification&, WebPage*, CompletionHandler<void()>&&);
+    bool show(WebCore::Notification&, WebPage*);
     void cancel(WebCore::Notification&, WebPage*);
 
     // This callback comes from WebCore, not messaged from the UI process.
@@ -82,13 +81,12 @@ private:
     void didCloseNotifications(const Vector<UUID>& notificationIDs);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
 
-    template<typename U> bool sendNotificationMessage(U&& message, WebCore::Notification&, WebPage*);
-    template<typename U> bool sendNotificationMessageWithAsyncReply(U&& message, WebCore::Notification&, WebPage*, CompletionHandler<void()>&&);
-
     WebProcess& m_process;
 
 #if ENABLE(NOTIFICATIONS)
-    HashMap<UUID, Ref<WebCore::Notification>> m_nonPersistentNotifications;    
+    typedef HashMap<UUID, RefPtr<WebCore::Notification>> NotificationIDMap;
+    NotificationIDMap m_notificationIDMap;
+    
     HashMap<String, bool> m_permissionsMap;
 #endif
 };

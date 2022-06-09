@@ -402,7 +402,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=1200,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--release'],
             ) + 0,
@@ -418,7 +418,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=1200,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
             ) + 0,
@@ -434,7 +434,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=1200,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--release', '--wpe'],
             ) + 0,
@@ -449,7 +449,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=1200,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--debug'],
             ) + 2
@@ -474,7 +474,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
+                timeout=1200,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-jsc', '--release'],
             ) + 0,
@@ -489,7 +489,6 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=1800,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-jsc', '--debug'],
             ) + 2
@@ -509,12 +508,12 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(ShowIdentifier())
-        self.setProperty('got_revision', 'd3f2b739b65eda1eeb651991a3554dfaeebdfe0b')
+        self.setProperty('got_revision', '272692')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=600,
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/git-webkit', 'find', 'd3f2b739b65eda1eeb651991a3554dfaeebdfe0b']) +
+                        command=['python3', 'Tools/Scripts/git-webkit', 'find', 'r272692']) +
             ExpectShell.log('stdio', stdout='Identifier: 233939@main') +
             0,
         )
@@ -525,12 +524,12 @@ class TestShowIdentifier(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_failure(self):
         self.setupStep(ShowIdentifier())
-        self.setProperty('got_revision', 'd3f2b739b65eda1eeb651991a3554dfaeebdfe0b')
+        self.setProperty('got_revision', '272692')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=600,
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/git-webkit', 'find', 'd3f2b739b65eda1eeb651991a3554dfaeebdfe0b']) +
+                        command=['python3', 'Tools/Scripts/git-webkit', 'find', 'r272692']) +
             ExpectShell.log('stdio', stdout='Unexpected failure') +
             2,
         )
@@ -794,7 +793,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -818,7 +817,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -845,7 +844,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -870,7 +869,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -895,7 +894,7 @@ class TestRunWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=False,
-                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'iOS-14-Simulator-WK2-Tests-EWS',
                          '--build-number', '101', '--buildbot-worker', 'ews100',
@@ -937,7 +936,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 logEnviron=False,
-                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'Apple-iOS-14-Simulator-Debug-Build',
                          '--build-number', '101', '--buildbot-worker', 'bot100',
@@ -960,7 +959,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(
                 workdir='wkdir',
                 logEnviron=False,
-                command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
+                command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results',
                          '--no-new-test-results', '--clobber-old-results',
                          '--builder-name', 'Apple-iOS-14-Simulator-Debug-Build',
                          '--build-number', '101', '--buildbot-worker', 'bot100',
@@ -990,7 +989,6 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
 
     def configureStep(self, platform=None, fullPlatform=None, configuration=None):
         self.setupStep(RunJavaScriptCoreTests())
-        self.commandExtra = RunJavaScriptCoreTests.commandExtra
         if platform:
             self.setProperty('platform', platform)
         if fullPlatform:
@@ -1006,7 +1004,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--release', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'],
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
                         )
@@ -1020,7 +1018,7 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'] + self.commandExtra,
+                        command=['perl', 'Tools/Scripts/run-javascriptcore-tests', '--no-build', '--no-fail-fast', '--json-output={0}'.format(self.jsonFileName), '--debug', '--builder-name', 'JSC-Tests', '--build-number', '101', '--buildbot-worker', 'bot100', '--buildbot-master', CURRENT_HOSTNAME, '--report', 'https://results.webkit.org'],
                         logfiles={'json': self.jsonFileName},
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'}
                         )
@@ -1060,7 +1058,7 @@ class TestSetPermissions(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
-class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
+class TestSVNCleanup(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
         return self.setUpBuildStep()
@@ -1069,30 +1067,30 @@ class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def test_success(self):
-        self.setupStep(CleanUpGitIndexLock())
+        self.setupStep(SVNCleanup())
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=120,
+                timeout=600,
                 logEnviron=False,
-                command=['rm', '-f', '.git/index.lock'],
+                command=['svn', 'cleanup'],
             ) + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='Deleted .git/index.lock')
+        self.expectOutcome(result=SUCCESS, state_string='Run svn cleanup')
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(CleanUpGitIndexLock())
+        self.setupStep(SVNCleanup())
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=120,
+                timeout=600,
                 logEnviron=False,
-                command=['rm', '-f', '.git/index.lock'],
+                command=['svn', 'cleanup'],
             ) + 2
             + ExpectShell.log('stdio', stdout='Unexpected error.'),
         )
-        self.expectOutcome(result=FAILURE, state_string='Deleted .git/index.lock (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Run svn cleanup (failure)')
         return self.runStep()
 
 
@@ -1123,8 +1121,6 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
 ProductVersion:	12.0.1
 BuildVersion:	21A558'''),
-            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout='Configuration version: Software: System Software Overview: System Version: macOS 11.4 (20F71) Kernel Version: Darwin 20.5.0 Boot Volume: Macintosh HD Boot Mode: Normal Computer Name: bot1020 User Name: WebKit Build Worker (buildbot) Secure Virtual Memory: Enabled System Integrity Protection: Enabled Time since boot: 27 seconds Hardware: Hardware Overview: Model Name: Mac mini Model Identifier: Macmini8,1 Processor Name: 6-Core Intel Core i7 Processor Speed: 3.2 GHz Number of Processors: 1 Total Number of Cores: 6 L2 Cache (per Core): 256 KB L3 Cache: 12 MB Hyper-Threading Technology: Enabled Memory: 32 GB System Firmware Version: 1554.120.19.0.0 (iBridge: 18.16.14663.0.0,0) Serial Number (system): C07DXXXXXXXX Hardware UUID: F724DE6E-706A-5A54-8D16-000000000000 Provisioning UDID: E724DE6E-006A-5A54-8D16-000000000000 Activation Lock Status: Disabled Xcode 12.5 Build version 12E262'),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''MacOSX12.0.sdk - macOS 12.0 (macosx12.0)
 SDKVersion: 12.0
@@ -1141,6 +1137,8 @@ iOSSupportVersion: 15.0
 Xcode 13.1
 Build version 13A1030d''')
             + 0,
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=' 6:31  up 1 day, 19:05, 24 users, load averages: 4.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: Monterey (12.0.1), Xcode: 13.1')
         return self.runStep()
@@ -1164,8 +1162,6 @@ Build version 13A1030d''')
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
 ProductVersion:	11.6
 BuildVersion:	20G165'''),
-            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout='Sample system information'),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''iPhoneSimulator15.0.sdk - Simulator - iOS 15.0 (iphonesimulator15.0)
 SDKVersion: 15.0
@@ -1181,6 +1177,8 @@ ProductVersion: 15.0
 Xcode 13.0
 Build version 13A233''')
             + 0,
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=' 6:31  up 1 day, 19:05, 24 users, load averages: 4.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
         return self.runStep()
@@ -1197,10 +1195,10 @@ Build version 13A233''')
             + ExpectShell.log('stdio', stdout='''ProductName:	macOS
 ProductVersion:	11.6
 BuildVersion:	20G165'''),
-            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout='Sample system information'),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout='''Xcode 13.0\nBuild version 13A233'''),
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=' 6:31  up 22 seconds, 12:05, 2 users, load averages: 3.17 7.23 5.45'),
         )
         self.expectOutcome(result=SUCCESS, state_string='OS: Big Sur (11.6), Xcode: 13.0')
         return self.runStep()
@@ -1269,8 +1267,6 @@ BuildVersion:	20G165'''),
   File "/usr/lib/python2.7/os.py", line 382, in _execvpe
     func(fullname, *argrest)
 OSError: [Errno 2] No such file or directory'''),
-            ExpectShell(command=['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], workdir='wkdir', timeout=60, logEnviron=False) + 0
-            + ExpectShell.log('stdio', stdout='Sample system information'),
             ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
             + ExpectShell.log('stdio', stdout='''Upon execvpe xcodebuild ['xcodebuild', '-sdk', '-version'] in environment id 7696545612416
 :Traceback (most recent call last):
@@ -1284,6 +1280,7 @@ OSError: [Errno 2] No such file or directory'''),
     func(fullname, *argrest)
 OSError: [Errno 2] No such file or directory''')
             + 1,
+            ExpectShell(command=['uptime'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to print configuration')
         return self.runStep()

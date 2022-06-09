@@ -44,26 +44,26 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
 {
     // Needed for fonts on many sites to work with WebKit.
     // https://bugs.webkit.org/show_bug.cgi?id=147296
-    if (baseDomain == "typekit.net"_s || baseDomain == "typekit.com"_s)
+    if (baseDomain == "typekit.net" || baseDomain == "typekit.com")
         return true;
 
     // This site completely blocks the login page with WebKitGTK's standard user
     // agent and ask users to use Google Chrome or Microsoft Internet Explorer.
-    if (domain == "auth.mayohr.com"_s)
+    if (domain == "auth.mayohr.com")
         return true;
 
     // Bank of America shows an unsupported browser warning with WebKitGTK's
     // standard user agent.
-    if (baseDomain == "bankofamerica.com"_s)
+    if (baseDomain == "bankofamerica.com")
         return true;
 
     // Google Docs shows an unsupported browser warning with WebKitGTK's
     // standard user agent.
-    if (domain == "docs.google.com"_s)
+    if (domain == "docs.google.com")
         return true;
 
     // soundcloud.com serves broken MSE audio fragments with WebKitGTK's standard user agent.
-    if (baseDomain == "soundcloud.com"_s)
+    if (baseDomain == "soundcloud.com")
         return true;
 
     return false;
@@ -77,11 +77,11 @@ static bool urlRequiresFirefoxBrowser(const String& domain)
 {
     // Red Hat Bugzilla displays a warning page when performing searches with WebKitGTK's standard
     // user agent.
-    if (domain == "bugzilla.redhat.com"_s)
+    if (domain == "bugzilla.redhat.com")
         return true;
 
 #if ENABLE(THUNDER)
-    if (domain == "www.netflix.com"_s)
+    if (domain == "www.netflix.com")
         return true;
 #endif
 
@@ -91,38 +91,32 @@ static bool urlRequiresFirefoxBrowser(const String& domain)
 static bool urlRequiresMacintoshPlatform(const String& domain, const String& baseDomain)
 {
     // At least finance.yahoo.com displays a mobile version with WebKitGTK's standard user agent.
-    if (chassisType() != WTF::ChassisType::Mobile && baseDomain == "yahoo.com"_s)
+    if (chassisType() != WTF::ChassisType::Mobile && baseDomain == "yahoo.com")
         return true;
 
     // taobao.com displays a mobile version with WebKitGTK's standard user agent.
-    if (chassisType() != WTF::ChassisType::Mobile && baseDomain == "taobao.com"_s)
+    if (chassisType() != WTF::ChassisType::Mobile && baseDomain == "taobao.com")
         return true;
 
     // web.whatsapp.com completely blocks users with WebKitGTK's standard user agent.
-    if (baseDomain == "whatsapp.com"_s)
+    if (baseDomain == "whatsapp.com")
         return true;
 
     // paypal.com completely blocks users with WebKitGTK's standard user agent.
-    if (baseDomain == "paypal.com"_s)
+    if (baseDomain == "paypal.com")
         return true;
 
     // chase.com displays a huge "please update your browser" warning with
     // WebKitGTK's standard user agent.
-    if (baseDomain == "chase.com"_s)
+    if (baseDomain == "chase.com")
         return true;
 
     // Microsoft Outlook Web App forces users with WebKitGTK's standard user
     // agent to use the light version. Earlier versions even block users from
     // accessing the calendar.
-    if (domain == "outlook.office.com"_s
-        || domain == "mail.ntu.edu.tw"_s
-        || domain == "exchange.tu-berlin.de"_s)
-        return true;
-
-    // https://www.sspa.juntadeandalucia.es/servicioandaluzdesalud/clicsalud/pages/portada.jsf
-    // Andalusian Health Service discriminates against WebKitGTK's standard user
-    // agent with an unsupported browser warning.
-    if (domain == "www.sspa.juntadeandalucia.es"_s)
+    if (domain == "outlook.office.com"
+        || domain == "mail.ntu.edu.tw"
+        || domain == "exchange.tu-berlin.de")
         return true;
 
     return false;
@@ -132,17 +126,17 @@ static bool urlRequiresUnbrandedUserAgent(const String& domain)
 {
     // Google uses an ugly fallback login page if application branding is
     // appended to WebKitGTK's standard user agent.
-    if (domain == "accounts.google.com"_s)
+    if (domain == "accounts.google.com")
         return true;
 
     // Google Docs displays an unsupported browser warning if application
     // branding is appended to WebKitGTK's standard user agent.
-    if (domain == "docs.google.com"_s)
+    if (domain == "docs.google.com")
         return true;
 
     // Google Drive displays an unsupported browser warning if application
     // branding is appended to WebKitGTK's standard user agent.
-    if (domain == "drive.google.com"_s)
+    if (domain == "drive.google.com")
         return true;
 
     return false;
@@ -153,9 +147,8 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
     ASSERT(!url.isNull());
 
     String domain = url.host().toString();
-    UserAgentQuirks quirks;
-#if ENABLE(PUBLIC_SUFFIX_LIST)
     String baseDomain = topPrivatelyControlledDomain(domain);
+    UserAgentQuirks quirks;
 
     if (urlRequiresChromeBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsChromeBrowser);
@@ -164,10 +157,6 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
 
     if (urlRequiresMacintoshPlatform(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
-#else
-    if (urlRequiresFirefoxBrowser(domain))
-        quirks.add(UserAgentQuirks::NeedsFirefoxBrowser);
-#endif
 
     if (urlRequiresUnbrandedUserAgent(domain))
         quirks.add(UserAgentQuirks::NeedsUnbrandedUserAgent);

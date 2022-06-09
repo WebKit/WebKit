@@ -30,6 +30,4 @@
     SecureContext
 ] interface AuthenticatorAttestationResponse : AuthenticatorResponse {
     [SameObject] readonly attribute ArrayBuffer attestationObject;
-    sequence<AuthenticatorTransport> getTransports();
-    ArrayBuffer getAuthenticatorData();
 };

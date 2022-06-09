@@ -184,7 +184,6 @@ WI.DebugSetting = class DebugSetting extends WI.Setting
 };
 
 WI.settings = {
-    blackboxBreakpointEvaluations: new WI.Setting("blackbox-breakpoint-evaluations", true),
     canvasRecordingAutoCaptureEnabled: new WI.Setting("canvas-recording-auto-capture-enabled", false),
     canvasRecordingAutoCaptureFrameCount: new WI.Setting("canvas-recording-auto-capture-frame-count", 1),
     consoleAutoExpandTrace: new WI.Setting("console-auto-expand-trace", true),
@@ -197,7 +196,6 @@ WI.settings = {
     enableControlFlowProfiler: new WI.Setting("enable-control-flow-profiler", false),
     enableElementsTabIndependentStylesDetailsSidebarPanel: new WI.Setting("elements-tab-independent-styles-details-panel", true),
     enableLineWrapping: new WI.Setting("enable-line-wrapping", true),
-    flexOverlayShowOrderNumbers: new WI.Setting("flex-overlay-show-order-numbers", false),
     frontendAppearance: new WI.Setting("frontend-appearance", "system"),
     gridOverlayShowAreaNames: new WI.Setting("grid-overlay-show-area-names", false),
     gridOverlayShowExtendedGridLines: new WI.Setting("grid-overlay-show-extended-grid-lines", false),
@@ -228,11 +226,12 @@ WI.settings = {
     zoomFactor: new WI.Setting("zoom-factor", 1),
 
     // Experimental
+    experimentalEnablePreviewFeatures: new WI.Setting("experimental-enable-preview-features", true),
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
+    experimentalCollapseBlackboxedCallFrames: new WI.Setting("experimental-collapse-blackboxed-call-frames", false),
     experimentalAllowInspectingInspector: new WI.Setting("experimental-allow-inspecting-inspector", false),
     experimentalCSSCompletionFuzzyMatching: new WI.Setting("experimental-css-completion-fuzzy-matching", true),
-    experimentalCSSSortPropertyNameAutocompletionByUsage: new WI.Setting("experimental-css-sort-property-name-autocompletion-by-usage", true),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),
@@ -258,4 +257,19 @@ WI.settings = {
     debugEnableDiagnosticLogging: new WI.DebugSetting("debug-enable-diagnostic-logging", true),
     debugAutoLogDiagnosticEvents: new WI.DebugSetting("debug-auto-log-diagnostic-events", false),
     debugLayoutDirection: new WI.DebugSetting("debug-layout-direction-override", "system"),
+};
+
+WI.previewFeatures = [];
+
+// WebKit may by default enable certain features in a Technology Preview that are not enabled in trunk.
+// Provide a switch that will make non-preview builds behave like an experimental build, for those preview features.
+WI.canShowPreviewFeatures = function()
+{
+    let hasPreviewFeatures = WI.previewFeatures.length > 0;
+    return hasPreviewFeatures && WI.isExperimentalBuild;
+};
+
+WI.arePreviewFeaturesEnabled = function()
+{
+    return WI.canShowPreviewFeatures() && WI.settings.experimentalEnablePreviewFeatures.value;
 };

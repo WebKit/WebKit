@@ -1,3 +1,0 @@
-
-PASS Translate responsive to font size changes
-

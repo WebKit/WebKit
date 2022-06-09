@@ -392,7 +392,7 @@ class ShadowRoot(object):
     @classmethod
     def from_json(cls, json, session):
         uuid = json[ShadowRoot.identifier]
-        return cls(session, uuid)
+        return cls(uuid, session)
 
     def send_shadow_command(self, method, uri, body=None):
         url = "shadow/{}/{}".format(self.id, uri)

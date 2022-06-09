@@ -51,7 +51,6 @@
     [_excludeCredentials release];
     [_authenticatorSelection release];
     [_extensions release];
-    [_extensionsCBOR release];
     [super dealloc];
 }
 

@@ -32,10 +32,7 @@
 
 #import "GPUConnectionToWebProcess.h"
 #import "RemoteRenderingBackend.h"
-#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/RetainPtr.h>
-
-#import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -75,15 +72,8 @@ void GPUProcess::notifyPreferencesChanged(const String& domain, const String& ke
 void GPUProcess::dispatchSimulatedNotificationsForPreferenceChange(const String& key)
 {
 }
-#endif // ENABLE(CFPREFS_DIRECT_MODE)
 
-#if ENABLE(MEDIA_STREAM)
-void GPUProcess::sandboxWasUpatedForCapture()
-{
-    if ([PAL::getAVCaptureDeviceClass() respondsToSelector:@selector(ensureServerConnection)])
-        [PAL::getAVCaptureDeviceClass() ensureServerConnection];
-}
-#endif
+#endif // ENABLE(CFPREFS_DIRECT_MODE)
 
 } // namespace WebKit
 

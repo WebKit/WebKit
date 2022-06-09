@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,23 +35,63 @@
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
-#include "SourceImage.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace DisplayList {
 
-RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsMode drawGlyphsMode)
-    : Recorder(state, initialClip, initialCTM, drawGlyphsMode)
+RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, Delegate* delegate, DrawGlyphsRecorder::DeconstructDrawGlyphs deconstructDrawGlyphs)
+    : Recorder(state, initialClip, initialCTM, deconstructDrawGlyphs)
     , m_displayList(displayList)
+    , m_delegate(delegate)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
+}
+
+RecorderImpl::RecorderImpl(RecorderImpl& parent, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
+    : Recorder(parent, state, initialClip, initialCTM)
+    , m_displayList(parent.m_displayList)
+    , m_delegate(parent.m_delegate)
+    , m_isNested(true)
+{
 }
 
 RecorderImpl::~RecorderImpl()
 {
     ASSERT(stateStack().size() == 1); // If this fires, it indicates mismatched save/restore.
+    if (!m_isNested)
+        LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
+}
+
+void RecorderImpl::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& sourceRect)
+{
+    append<GetPixelBuffer>(outputFormat, sourceRect);
+}
+
+void RecorderImpl::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
+{
+    append<PutPixelBuffer>(pixelBuffer, srcRect, destPoint, destFormat);
+}
+
+bool RecorderImpl::canAppendItemOfType(ItemType type) const
+{
+    return !m_delegate || m_delegate->canAppendItemOfType(type);
+}
+
+bool RecorderImpl::canDrawImageBuffer(const ImageBuffer& imageBuffer) const
+{
+    return !m_delegate || m_delegate->isCachedImageBuffer(imageBuffer);
+}
+
+RenderingMode RecorderImpl::renderingMode() const
+{
+    return m_delegate ? m_delegate->renderingMode() : RenderingMode::Unaccelerated;
+}
+
+std::unique_ptr<GraphicsContext> RecorderImpl::createNestedContext(const FloatRect& initialClip, const AffineTransform& initialCTM)
+{
+    return makeUnique<RecorderImpl>(*this, GraphicsContextState { }, initialClip, initialCTM);
 }
 
 void RecorderImpl::recordSave()
@@ -104,9 +144,9 @@ void RecorderImpl::recordSetStrokeThickness(float thickness)
     append<SetStrokeThickness>(thickness);
 }
 
-void RecorderImpl::recordSetState(const GraphicsContextState& state)
+void RecorderImpl::recordSetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags changeFlags)
 {
-    append<SetState>(state);
+    append<SetState>(state, changeFlags);
 }
 
 void RecorderImpl::recordSetLineCap(LineCap lineCap)
@@ -144,9 +184,9 @@ void RecorderImpl::recordClipOut(const FloatRect& clipRect)
     append<ClipOut>(clipRect);
 }
 
-void RecorderImpl::recordClipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
+void RecorderImpl::recordClipToImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect)
 {
-    append<ClipToImageBuffer>(imageBuffer.renderingResourceIdentifier(), destinationRect);
+    append<ClipToImageBuffer>(imageBufferIdentifier, destinationRect);
 }
 
 void RecorderImpl::recordClipOutToPath(const Path& path)
@@ -159,12 +199,19 @@ void RecorderImpl::recordClipPath(const Path& path, WindRule rule)
     append<ClipPath>(path, rule);
 }
 
-void RecorderImpl::recordDrawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter)
+void RecorderImpl::recordBeginClipToDrawingCommands(const FloatRect& destination, DestinationColorSpace colorSpace)
 {
-    std::optional<RenderingResourceIdentifier> identifier;
-    if (sourceImage)
-        identifier = sourceImage->renderingResourceIdentifier();
-    append<DrawFilteredImageBuffer>(WTFMove(identifier), sourceImageRect, filter);
+    append<BeginClipToDrawingCommands>(destination, colorSpace);
+}
+
+void RecorderImpl::recordEndClipToDrawingCommands(const FloatRect& destination)
+{
+    append<EndClipToDrawingCommands>(destination);
+}
+
+void RecorderImpl::recordDrawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter)
+{
+    append<DrawFilteredImageBuffer>(sourceImageIdentifier, sourceImageRect, filter);
 }
 
 void RecorderImpl::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
@@ -172,14 +219,9 @@ void RecorderImpl::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* gl
     append<DrawGlyphs>(font, glyphs, advances, count, localAnchor, mode);
 }
 
-void RecorderImpl::recordDrawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
+void RecorderImpl::recordDrawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
-    append<DrawDecomposedGlyphs>(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs.bounds());
-}
-
-void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
-{
-    append<DrawImageBuffer>(imageBuffer.renderingResourceIdentifier(), destRect, srcRect, options);
+    append<DrawImageBuffer>(imageBufferIdentifier, destRect, srcRect, options);
 }
 
 void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -187,14 +229,9 @@ void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdenti
     append<DrawNativeImage>(imageIdentifier, imageSize, destRect, srcRect, options);
 }
 
-void RecorderImpl::recordDrawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
-    append<DrawSystemImage>(systemImage, destinationRect);
-}
-
-void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
-{
-    append<DrawPattern>(imageIdentifier, destRect, tileRect, transform, phase, spacing, options);
+    append<DrawPattern>(imageIdentifier, imageSize, destRect, tileRect, transform, phase, spacing, options);
 }
 
 void RecorderImpl::recordBeginTransparencyLayer(float opacity)
@@ -217,9 +254,9 @@ void RecorderImpl::recordDrawLine(const FloatPoint& point1, const FloatPoint& po
     append<DrawLine>(point1, point2);
 }
 
-void RecorderImpl::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle style)
+void RecorderImpl::recordDrawLinesForText(const FloatPoint& blockLocation, const FloatSize& localAnchor, float thickness, const DashArray& widths, bool printing, bool doubleLines)
 {
-    append<DrawLinesForText>(blockLocation, localAnchor, thickness, widths, printing, doubleLines, style);
+    append<DrawLinesForText>(blockLocation, localAnchor, thickness, widths, printing, doubleLines);
 }
 
 void RecorderImpl::recordDrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)
@@ -381,39 +418,25 @@ void RecorderImpl::recordApplyDeviceScaleFactor(float scaleFactor)
     append<ApplyDeviceScaleFactor>(scaleFactor);
 }
 
-bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
+void RecorderImpl::recordResourceUse(NativeImage& image)
 {
-    m_displayList.cacheNativeImage(nativeImage);
-    return true;
+    if (m_delegate)
+        m_delegate->recordNativeImageUse(image);
+    m_displayList.cacheNativeImage(image);
 }
 
-bool RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
+void RecorderImpl::recordResourceUse(Font& font)
 {
-    m_displayList.cacheImageBuffer(imageBuffer);
-    return true;
-}
-
-bool RecorderImpl::recordResourceUse(const SourceImage& image)
-{
-    if (auto imageBuffer = image.imageBufferIfExists())
-        return recordResourceUse(*imageBuffer);
-
-    if (auto nativeImage = image.nativeImageIfExists())
-        return recordResourceUse(*nativeImage);
-
-    return true;
-}
-
-bool RecorderImpl::recordResourceUse(Font& font)
-{
+    if (m_delegate)
+        m_delegate->recordFontUse(font);
     m_displayList.cacheFont(font);
-    return true;
 }
 
-bool RecorderImpl::recordResourceUse(DecomposedGlyphs& decomposedGlyphs)
+void RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
 {
-    m_displayList.cacheDecomposedGlyphs(decomposedGlyphs);
-    return true;
+    if (m_delegate)
+        m_delegate->recordImageBufferUse(imageBuffer);
+    m_displayList.cacheImageBuffer(imageBuffer);
 }
 
 // FIXME: share with ShadowData

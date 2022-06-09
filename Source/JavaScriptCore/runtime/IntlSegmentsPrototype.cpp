@@ -40,7 +40,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlSegmentsPrototypeFuncIterator);
 
 namespace JSC {
 
-const ClassInfo IntlSegmentsPrototype::s_info = { "%Segments%"_s, &Base::s_info, &segmentsPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmentsPrototype) };
+const ClassInfo IntlSegmentsPrototype::s_info = { "%Segments%", &Base::s_info, &segmentsPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmentsPrototype) };
 
 /* Source for IntlSegmentsPrototype.lut.h
 @begin segmentsPrototypeTable
@@ -68,7 +68,7 @@ IntlSegmentsPrototype::IntlSegmentsPrototype(VM& vm, Structure* structure)
 void IntlSegmentsPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    ASSERT(inherits(info()));
+    ASSERT(inherits(vm, info()));
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, intlSegmentsPrototypeFuncIterator, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
 }
 
@@ -78,7 +78,7 @@ JSC_DEFINE_HOST_FUNCTION(intlSegmentsPrototypeFuncContaining, (JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* segments = jsDynamicCast<IntlSegments*>(callFrame->thisValue());
+    auto* segments = jsDynamicCast<IntlSegments*>(vm, callFrame->thisValue());
     if (!segments)
         return throwVMTypeError(globalObject, scope, "%Segments.prototype%.containing called on value that's not a Segments"_s);
 
@@ -91,7 +91,7 @@ JSC_DEFINE_HOST_FUNCTION(intlSegmentsPrototypeFuncIterator, (JSGlobalObject* glo
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* segments = jsDynamicCast<IntlSegments*>(callFrame->thisValue());
+    auto* segments = jsDynamicCast<IntlSegments*>(vm, callFrame->thisValue());
     if (!segments)
         return throwVMTypeError(globalObject, scope, "%Segments.prototype%[@@iterator] called on value that's not a Segments"_s);
 

@@ -30,7 +30,6 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
 
 namespace JSC {
@@ -53,11 +52,8 @@ class ScriptModuleLoader final : private ModuleScriptLoaderClient {
     WTF_MAKE_NONCOPYABLE(ScriptModuleLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class OwnerType : uint8_t { Document, WorkerOrWorklet };
-    enum class ModuleType : uint8_t { Invalid, JavaScript, WebAssembly };
     explicit ScriptModuleLoader(ScriptExecutionContext&, OwnerType);
     ~ScriptModuleLoader();
-
-    UniqueRef<ScriptModuleLoader> shadowRealmLoader(JSC::JSGlobalObject* realmGlobal) const;
 
     ScriptExecutionContext& context() { return m_context; }
 
@@ -74,10 +70,9 @@ private:
     URL responseURLFromRequestURL(JSC::JSGlobalObject&, JSC::JSValue);
 
     ScriptExecutionContext& m_context;
-    MemoryCompactRobinHoodHashMap<String, URL> m_requestURLToResponseURLMap;
+    HashMap<String, URL> m_requestURLToResponseURLMap;
     HashSet<Ref<ModuleScriptLoader>> m_loaders;
     OwnerType m_ownerType;
-    JSC::JSGlobalObject* m_shadowRealmGlobal { nullptr };
 };
 
 } // namespace WebCore

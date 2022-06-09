@@ -71,11 +71,13 @@ RefPtr<DOMPlugin> DOMPluginArray::namedItem(const AtomString& propertyName)
     return nullptr;
 }
 
-Vector<AtomString> DOMPluginArray::supportedPropertyNames() const
+Vector<AtomString> DOMPluginArray::supportedPropertyNames()
 {
-    return m_publiclyVisiblePlugins.map([](auto& plugin) {
-        return AtomString { plugin->name() };
-    });
+    Vector<AtomString> result;
+    result.reserveInitialCapacity(m_publiclyVisiblePlugins.size());
+    for (auto& plugin : m_publiclyVisiblePlugins)
+        result.uncheckedAppend(plugin->name());
+    return result;
 }
 
 void DOMPluginArray::refresh(bool reloadPages)

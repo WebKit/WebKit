@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGViewportContainer);
 
 RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, RenderStyle&& style)
-    : LegacyRenderSVGContainer(element, WTFMove(style))
+    : RenderSVGContainer(element, WTFMove(style))
     , m_didTransformToRootUpdate(false)
     , m_isLayoutSizeChanged(false)
     , m_needsTransformUpdate(true)
@@ -43,7 +43,7 @@ RenderSVGViewportContainer::RenderSVGViewportContainer(SVGSVGElement& element, R
 
 SVGSVGElement& RenderSVGViewportContainer::svgSVGElement() const
 {
-    return downcast<SVGSVGElement>(LegacyRenderSVGContainer::element());
+    return downcast<SVGSVGElement>(RenderSVGContainer::element());
 }
 
 void RenderSVGViewportContainer::determineIfLayoutSizeChanged()
@@ -78,7 +78,7 @@ bool RenderSVGViewportContainer::calculateLocalTransform()
     if (!m_needsTransformUpdate)
         return false;
     
-    m_localToParentTransform = AffineTransform::makeTranslation(toFloatSize(m_viewport.location())) * viewportTransform();
+    m_localToParentTransform = AffineTransform::translation(m_viewport.x(), m_viewport.y()) * viewportTransform();
     m_needsTransformUpdate = false;
     return true;
 }
@@ -103,7 +103,7 @@ void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& 
     if (svgSVGElement().hasEmptyViewBox())
         return;
 
-    LegacyRenderSVGContainer::paint(paintInfo, paintOffset);
+    RenderSVGContainer::paint(paintInfo, paintOffset);
 }
 
 }

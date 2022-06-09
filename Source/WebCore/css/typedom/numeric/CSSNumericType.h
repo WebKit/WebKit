@@ -28,63 +28,18 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSNumericBaseType.h"
-#include <optional>
-#include <wtf/Markable.h>
-#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 
-class CSSNumericValue;
-enum class CSSUnitType : uint8_t;
-
-// https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-type
-class CSSNumericType {
-public:
-    using BaseTypeStorage = Markable<int, IntegralMarkableTraits<int, std::numeric_limits<int>::min()>>;
-    BaseTypeStorage length;
-    BaseTypeStorage angle;
-    BaseTypeStorage time;
-    BaseTypeStorage frequency;
-    BaseTypeStorage resolution;
-    BaseTypeStorage flex;
-    BaseTypeStorage percent;
-    Markable<CSSNumericBaseType, EnumMarkableTraits<CSSNumericBaseType>> percentHint;
-
-    static std::optional<CSSNumericType> create(CSSUnitType, int exponent = 1);
-    bool operator==(const CSSNumericType& other) const;
-    bool operator!=(const CSSNumericType& other) const { return !(*this == other); }
-    static std::optional<CSSNumericType> addTypes(const Vector<Ref<CSSNumericValue>>&);
-    static std::optional<CSSNumericType> addTypes(CSSNumericType, CSSNumericType);
-    static std::optional<CSSNumericType> multiplyTypes(const Vector<Ref<CSSNumericValue>>&);
-    static std::optional<CSSNumericType> multiplyTypes(const CSSNumericType&, const CSSNumericType&);
-    BaseTypeStorage& valueForType(CSSNumericBaseType);
-    const BaseTypeStorage& valueForType(CSSNumericBaseType type) const { return const_cast<CSSNumericType*>(this)->valueForType(type); }
-    void applyPercentHint(CSSNumericBaseType);
-    size_t nonZeroEntryCount() const;
-
-    template<CSSNumericBaseType type>
-    bool matches() const
-    {
-        // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-match
-        return (type == CSSNumericBaseType::Percent || !percentHint)
-            && nonZeroEntryCount() == 1
-            && valueForType(type)
-            && *valueForType(type);
-    }
-
-    bool matchesNumber() const
-    {
-        // https://drafts.css-houdini.org/css-typed-om/#cssnumericvalue-match
-        return !nonZeroEntryCount() && !percentHint;
-    }
-
-    template<CSSNumericBaseType type>
-    bool matchesTypeOrPercentage() const
-    {
-        return matches<type>() || matches<CSSNumericBaseType::Percent>();
-    }
-
-    String debugString() const;
+struct CSSNumericType {
+    long length;
+    long angle;
+    long time;
+    long frequency;
+    long resolution;
+    long flex;
+    long percent;
+    CSSNumericBaseType percentHint;
 };
 
 } // namespace WebCore

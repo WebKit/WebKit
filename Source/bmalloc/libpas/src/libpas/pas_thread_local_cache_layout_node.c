@@ -48,7 +48,7 @@ pas_thread_local_cache_layout_node_get_directory(pas_thread_local_cache_layout_n
 }
 
 pas_allocator_index
-pas_thread_local_cache_layout_node_num_allocator_indices(pas_thread_local_cache_layout_node node)
+pas_thread_local_cache_layout_num_allocator_indices(pas_thread_local_cache_layout_node node)
 {
     pas_segregated_size_directory* directory;
 
@@ -101,11 +101,9 @@ pas_thread_local_cache_layout_node_set_allocator_index(pas_thread_local_cache_la
     *allocator_index_ptr(node) = index;
 }
 
-void pas_thread_local_cache_layout_node_commit_and_construct(pas_thread_local_cache_layout_node node,
-                                                             pas_thread_local_cache* cache)
+void pas_thread_local_cache_layout_node_construct(pas_thread_local_cache_layout_node node,
+                                                  pas_thread_local_cache* cache)
 {
-    pas_thread_local_cache_layout_node_ensure_committed(node, cache);
-    
     if (pas_thread_local_cache_layout_node_represents_allocator(node)) {
         pas_local_allocator_construct(
             pas_thread_local_cache_get_local_allocator_direct_for_initialization(
@@ -126,34 +124,19 @@ void pas_thread_local_cache_layout_node_move(pas_thread_local_cache_layout_node 
                                              pas_thread_local_cache* from_cache)
 {
     pas_allocator_index allocator_index;
-    pas_local_allocator_scavenger_data* scavenger_data;
 
-    PAS_ASSERT(pas_thread_local_cache_layout_node_is_committed(node, to_cache));
-    
     allocator_index = pas_thread_local_cache_layout_node_get_allocator_index_generic(node);
-    
-    if (!pas_thread_local_cache_layout_node_is_committed(node, from_cache)) {
-        pas_thread_local_cache_layout_node_commit_and_construct(node, to_cache);
-        return;
-    }
-        
-    scavenger_data = pas_thread_local_cache_get_local_allocator_direct(from_cache, allocator_index);
-
-    if (scavenger_data->kind == pas_local_allocator_decommitted_kind) {
-        pas_thread_local_cache_layout_node_commit_and_construct(node, to_cache);
-        return;
-    }
     
     if (pas_thread_local_cache_layout_node_represents_allocator(node)) {
         pas_local_allocator_move(
             pas_thread_local_cache_get_local_allocator_direct_for_initialization(to_cache, allocator_index),
-            (pas_local_allocator*)scavenger_data);
+            pas_thread_local_cache_get_local_allocator_direct(from_cache, allocator_index));
         return;
     }
 
     pas_local_view_cache_move(
         pas_thread_local_cache_get_local_allocator_direct_for_initialization(to_cache, allocator_index),
-        (pas_local_view_cache*)scavenger_data);
+        pas_thread_local_cache_get_local_allocator_direct(from_cache, allocator_index));
 }
 
 void pas_thread_local_cache_layout_node_stop(pas_thread_local_cache_layout_node node,
@@ -178,58 +161,6 @@ void pas_thread_local_cache_layout_node_stop(pas_thread_local_cache_layout_node 
     }
 
     pas_local_view_cache_stop(allocator, page_lock_mode);
-}
-
-bool pas_thread_local_cache_layout_node_is_committed(pas_thread_local_cache_layout_node node,
-                                                     pas_thread_local_cache* cache)
-{
-    pas_allocator_index allocator_index;
-
-    allocator_index = pas_thread_local_cache_layout_node_get_allocator_index_generic(node);
-
-    return pas_thread_local_cache_is_committed(
-        cache,
-        allocator_index,
-        allocator_index + pas_thread_local_cache_layout_node_num_allocator_indices(node));
-}
-
-void pas_thread_local_cache_layout_node_ensure_committed(pas_thread_local_cache_layout_node node,
-                                                         pas_thread_local_cache* cache)
-{
-    pas_allocator_index allocator_index;
-
-    allocator_index = pas_thread_local_cache_layout_node_get_allocator_index_generic(node);
-
-    pas_thread_local_cache_ensure_committed(
-        cache,
-        allocator_index,
-        allocator_index + pas_thread_local_cache_layout_node_num_allocator_indices(node));
-}
-
-void pas_thread_local_cache_layout_node_prepare_to_decommit(pas_thread_local_cache_layout_node node,
-                                                            pas_thread_local_cache* cache,
-                                                            pas_range decommit_range)
-{
-    pas_allocator_index allocator_index;
-    pas_allocator_index end_allocator_index;
-    pas_range allocator_range;
-    pas_local_allocator_scavenger_data* scavenger_data;
-
-    PAS_ASSERT(pas_thread_local_cache_layout_node_is_committed(node, cache));
-
-    allocator_index = pas_thread_local_cache_layout_node_get_allocator_index_generic(node);
-    end_allocator_index = allocator_index + pas_thread_local_cache_layout_node_num_allocator_indices(node);
-    allocator_range = pas_range_create(
-        pas_thread_local_cache_offset_of_allocator(allocator_index),
-        pas_thread_local_cache_offset_of_allocator(end_allocator_index));
-
-    if (!pas_range_overlaps(allocator_range, decommit_range))
-        return;
-    
-    scavenger_data = (pas_local_allocator_scavenger_data*)
-        pas_thread_local_cache_get_local_allocator_direct(cache, allocator_index);
-
-    pas_local_allocator_scavenger_data_prepare_to_decommit(scavenger_data);
 }
 
 #endif /* LIBPAS_ENABLED */

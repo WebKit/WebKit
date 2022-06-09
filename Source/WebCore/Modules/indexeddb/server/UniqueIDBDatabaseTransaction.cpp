@@ -28,10 +28,9 @@
 
 #include "IDBIterateCursorData.h"
 #include "IDBResultData.h"
+#include "IDBServer.h"
 #include "Logging.h"
 #include "UniqueIDBDatabase.h"
-#include "UniqueIDBDatabaseConnection.h"
-#include "UniqueIDBDatabaseManager.h"
 
 namespace WebCore {
 namespace IDBServer {
@@ -51,14 +50,12 @@ UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConn
     if (m_transactionInfo.mode() == IDBTransactionMode::Versionchange)
         m_originalDatabaseInfo = makeUnique<IDBDatabaseInfo>(database->info());
 
-    if (auto* manager = databaseConnection().manager())
-        manager->registerTransaction(*this);
+    databaseConnection().server()->registerTransaction(*this);
 }
 
 UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction()
 {
-    if (auto* manager = databaseConnection().manager())
-        manager->unregisterTransaction(*this);
+    databaseConnection().server()->unregisterTransaction(*this);
 }
 
 UniqueIDBDatabaseConnection& UniqueIDBDatabaseTransaction::databaseConnection()

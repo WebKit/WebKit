@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,77 +25,40 @@
 
 #pragma once
 
-#import "Instance.h"
-#import <wtf/CompletionHandler.h>
+#import "WebGPU.h"
 #import <wtf/FastMalloc.h>
-#import <wtf/HashMap.h>
+#import <wtf/Function.h>
 #import <wtf/Ref.h>
-#import <wtf/ThreadSafeRefCounted.h>
+#import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
-
-struct WGPUQueueImpl {
-};
 
 namespace WebGPU {
 
 class Buffer;
 class CommandBuffer;
-class Device;
 
-// https://gpuweb.github.io/gpuweb/#gpuqueue
-// A device owns its default queue, not the other way around.
-class Queue : public WGPUQueueImpl, public ThreadSafeRefCounted<Queue> {
+class Queue : public RefCounted<Queue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Queue> create(id<MTLCommandQueue> commandQueue, Device& device)
+    static Ref<Queue> create()
     {
-        return adoptRef(*new Queue(commandQueue, device));
-    }
-    static Ref<Queue> createInvalid(Device& device)
-    {
-        return adoptRef(*new Queue(device));
+        return adoptRef(*new Queue());
     }
 
     ~Queue();
 
-    void onSubmittedWorkDone(uint64_t signalValue, CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback);
+    void onSubmittedWorkDone(uint64_t signalValue, WTF::Function<void(WGPUQueueWorkDoneStatus)>&& callback);
     void submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands);
     void writeBuffer(const Buffer&, uint64_t bufferOffset, const void* data, size_t);
-    void writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
-    void setLabel(String&&);
-
-    bool isValid() const { return m_commandQueue; }
-    void makeInvalid() { m_commandQueue = nil; }
-
-    id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
-
-    const Device& device() const { return m_device; }
+    void writeTexture(const WGPUImageCopyTexture* destination, const void* data, size_t dataSize, const WGPUTextureDataLayout*, const WGPUExtent3D* writeSize);
+    void setLabel(const char*);
 
 private:
-    Queue(id<MTLCommandQueue>, Device&);
-    Queue(Device&);
-
-    bool validateSubmit(const Vector<std::reference_wrapper<const CommandBuffer>>&) const;
-    bool validateWriteBuffer(const Buffer&, uint64_t bufferOffset, size_t) const;
-
-    void ensureBlitCommandEncoder();
-    void finalizeBlitCommandEncoder();
-
-    void commitMTLCommandBuffer(id<MTLCommandBuffer>);
-    bool isIdle() const { return m_submittedCommandBufferCount == m_completedCommandBufferCount; }
-
-    // This can be called on a background thread.
-    void scheduleWork(Instance::WorkItem&&);
-
-    id<MTLCommandQueue> m_commandQueue { nil };
-    id<MTLCommandBuffer> m_commandBuffer { nil };
-    id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
-    Device& m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
-
-    uint64_t m_submittedCommandBufferCount { 0 };
-    uint64_t m_completedCommandBufferCount { 0 };
-    using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(WGPUQueueWorkDoneStatus)>>;
-    HashMap<uint64_t, OnSubmittedWorkDoneCallbacks> m_onSubmittedWorkDoneCallbacks;
+    Queue();
 };
 
 } // namespace WebGPU
+
+struct WGPUQueueImpl {
+    Ref<WebGPU::Queue> queue;
+};

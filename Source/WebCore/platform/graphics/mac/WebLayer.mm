@@ -65,7 +65,7 @@
 
 - (void)renderInContext:(CGContextRef)context
 {
-    SetForScope change(_isRenderingInContext, YES);
+    SetForScope<BOOL> change(_isRenderingInContext, YES);
     [super renderInContext:context];
 }
 

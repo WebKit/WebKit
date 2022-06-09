@@ -38,17 +38,18 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
+#include <pal/SessionID.h>
 
 namespace WebCore {
 using namespace JSC;
 namespace IDBServer {
 
-Ref<MemoryObjectStore> MemoryObjectStore::create(const IDBObjectStoreInfo& info)
+Ref<MemoryObjectStore> MemoryObjectStore::create(PAL::SessionID sessionID, const IDBObjectStoreInfo& info)
 {
-    return adoptRef(*new MemoryObjectStore(info));
+    return adoptRef(*new MemoryObjectStore(sessionID, info));
 }
 
-MemoryObjectStore::MemoryObjectStore(const IDBObjectStoreInfo& info)
+MemoryObjectStore::MemoryObjectStore(PAL::SessionID, const IDBObjectStoreInfo& info)
     : m_info(info)
 {
 }
@@ -155,9 +156,12 @@ IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transacti
 
 void MemoryObjectStore::deleteAllIndexes(MemoryBackingStoreTransaction& transaction)
 {
-    auto indexIdentifiers = WTF::map(m_indexesByName, [](auto& entry) {
-        return entry.value->info().identifier();
-    });
+    Vector<uint64_t> indexIdentifiers;
+    indexIdentifiers.reserveInitialCapacity(m_indexesByName.size());
+
+    for (auto& index : m_indexesByName.values())
+        indexIdentifiers.uncheckedAppend(index->info().identifier());
+
     for (auto identifier : indexIdentifiers)
         deleteIndex(transaction, identifier);
 }
@@ -247,7 +251,7 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
 {
     IndexIDToIndexKeyMap indexKeys;
     callOnIDBSerializationThreadAndWait([info = m_info.isolatedCopy(), keyData = keyData.isolatedCopy(), value = value.isolatedCopy(), &indexKeys](auto& globalObject) {
-        indexKeys = generateIndexKeyMapForValueIsolatedCopy(globalObject, info, keyData, value);
+        indexKeys = generateIndexKeyMapForValue(globalObject, info, keyData, value);
     });
     return addRecord(transaction, keyData, indexKeys, value);
 }
@@ -306,19 +310,19 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
     IDBError error;
     Vector<std::pair<MemoryIndex*, IndexKey>> changedIndexRecords;
 
-    for (const auto& [indexID, indexKey] : indexKeys) {
-        auto* index = m_indexesByIdentifier.get(indexID);
+    for (const auto& entry : indexKeys) {
+        auto* index = m_indexesByIdentifier.get(entry.key);
         ASSERT(index);
         if (!index) {
-            error = IDBError { InvalidStateError, "Missing index metadata"_s };
+            error = IDBError { InvalidStateError, "Missing index metadata" };
             break;
         }
 
-        error = index->putIndexKey(key, indexKey);
+        error = index->putIndexKey(key, entry.value);
         if (!error.isNull())
             break;
 
-        changedIndexRecords.append(std::make_pair(index, indexKey));
+        changedIndexRecords.append(std::make_pair(index, entry.value));
     }
 
     // If any of the index puts failed, revert all of the ones that went through.
@@ -344,7 +348,7 @@ IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
 
             IndexKey indexKey;
             generateIndexKeyForValue(globalObject, indexInfo, jsValue, indexKey, info.keyPath(), key);
-            resultIndexKey = WTFMove(indexKey).isolatedCopy();
+            resultIndexKey = indexKey.isolatedCopy();
         });
 
         if (!resultIndexKey)

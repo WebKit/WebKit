@@ -75,11 +75,6 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #include <pal/system/SystemSleepListener.h>
 #endif
 
-
-#if ENABLE(IPC_TESTING_API)
-#include "IPCTester.h"
-#endif
-
 namespace API {
 class AutomationClient;
 class DownloadClient;
@@ -203,8 +198,6 @@ public:
     template<typename T> void sendToAllProcesses(const T& message);
     template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID);
 
-    template<typename T> static void sendToAllRemoteWorkerProcesses(const T& message);
-
     void processDidFinishLaunching(WebProcessProxy&);
 
     WebProcessCache& webProcessCache() { return m_webProcessCache.get(); }
@@ -236,7 +229,6 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void applicationIsAboutToSuspend();
     static void notifyProcessPoolsApplicationIsAboutToSuspend();
-    void setProcessesShouldSuspend(bool);
 #endif
 
     void handleMemoryPressureWarning(Critical);
@@ -361,30 +353,32 @@ public:
     void textCheckerStateChanged();
 
 #if ENABLE(GPU_PROCESS)
-    void gpuProcessDidFinishLaunching(ProcessID);
-    void gpuProcessExited(ProcessID, ProcessTerminationReason);
+    void gpuProcessExited(ProcessID, GPUProcessTerminationReason);
 
-    void createGPUProcessConnection(WebProcessProxy&, IPC::Attachment&&, WebKit::GPUProcessConnectionParameters&&);
+    void getGPUProcessConnection(WebProcessProxy&, GPUProcessConnectionParameters&&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);
 
     GPUProcessProxy& ensureGPUProcess();
     GPUProcessProxy* gpuProcess() const { return m_gpuProcess.get(); }
 #endif
+
+#if ENABLE(WEB_AUTHN)
+    void getWebAuthnProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetWebAuthnProcessConnectionDelayedReply&&);
+#endif
+
     // Network Process Management
-    void networkProcessDidTerminate(NetworkProcessProxy&, ProcessTerminationReason);
+    void networkProcessDidTerminate(NetworkProcessProxy&, NetworkProcessProxy::TerminationReason);
 
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
-    void removeFromRemoteWorkerProcesses(WebProcessProxy&);
-
 #if ENABLE(SERVICE_WORKER)
-    size_t serviceWorkerProxiesCount() const;
+    static void establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
+    void removeFromServiceWorkerProcesses(WebProcessProxy&);
+    size_t serviceWorkerProxiesCount() const { return serviceWorkerProcesses().computeSize(); }
+    void updateServiceWorkerUserAgent(const String& userAgent);
+    UserContentControllerIdentifier userContentControllerIdentifierForServiceWorkers();
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
 #endif
-    void serviceWorkerProcessCrashed(WebProcessProxy&, ProcessTerminationReason);
-
-    void updateRemoteWorkerUserAgent(const String& userAgent);
-    UserContentControllerIdentifier userContentControllerIdentifierForRemoteWorkers();
-    static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void()>&&);
+    void serviceWorkerProcessCrashed(WebProcessProxy&);
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
@@ -431,7 +425,6 @@ public:
 
     bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
     bool shouldTakeUIBackgroundAssertion() const { return m_shouldTakeUIBackgroundAssertion; }
-    static bool anyProcessPoolNeedsUIBackgroundAssertion();
 
 #if ENABLE(GAMEPAD)
     void gamepadConnected(const UIGamepad&, WebCore::EventMakesGamepadsVisible);
@@ -512,9 +505,16 @@ public:
     static void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
     static Vector<String> urlSchemesWithCustomProtocolHandlers();
 
-    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::CaptivePortalMode, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
+#if PLATFORM(IOS_FAMILY)
+    static String cacheDirectoryInContainerOrHomeDirectory(const String& subpath);
+    static String cookieStorageDirectory();
+    static String parentBundleDirectory();
+    static String networkingCachesDirectory();
+    static String webContentCachesDirectory();
+    static String containerTemporaryDirectory();
+#endif
 
-    bool hasAudibleMediaActivity() const { return !!m_audibleMediaActivity; }
+    Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::CaptivePortalMode, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
 
 private:
     void platformInitialize();
@@ -577,10 +577,6 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    static void captivePortalModeConfigUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
-#endif
-    
-#if PLATFORM(COCOA)
     static void accessibilityPreferencesChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void* postingObject, CFDictionaryRef userInfo);
 #endif
 
@@ -617,11 +613,13 @@ private:
 
     HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
-    static WeakHashSet<WebProcessProxy>& remoteWorkerProcesses();
-
-    std::optional<WebPreferencesStore> m_remoteWorkerPreferences;
-    RefPtr<WebUserContentControllerProxy> m_userContentControllerForRemoteWorkers;
-    String m_remoteWorkerUserAgent;
+#if ENABLE(SERVICE_WORKER)
+    static WeakHashSet<WebProcessProxy>& serviceWorkerProcesses();
+    bool m_waitingForWorkerContextProcessConnection { false };
+    String m_serviceWorkerUserAgent;
+    std::optional<WebPreferencesStore> m_serviceWorkerPreferences;
+    RefPtr<WebUserContentControllerProxy> m_userContentControllerForServiceWorker;
+#endif
 
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessProxy> m_gpuProcess;
@@ -736,6 +734,12 @@ private:
         String injectedBundlePath;
         String uiProcessBundleResourcePath;
 
+#if PLATFORM(IOS_FAMILY)
+        String cookieStorageDirectory;
+        String containerCachesDirectory;
+        String containerTemporaryDirectory;
+#endif
+
 #if PLATFORM(PLAYSTATION)
         String webProcessPath;
         String networkProcessPath;
@@ -798,10 +802,6 @@ private:
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::PowerObserver> m_powerObserver;
     std::unique_ptr<PAL::SystemSleepListener> m_systemSleepListener;
-    Vector<int> m_openDirectoryNotifyTokens;
-#endif
-#if ENABLE(IPC_TESTING_API)
-    IPCTester m_ipcTester;
 #endif
 };
 
@@ -820,15 +820,6 @@ void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::Session
     for (auto& process : m_processes) {
         if (process->canSendMessage() && !process->isPrewarmed() && process->sessionID() == sessionID)
             process->send(T(message), 0);
-    }
-}
-
-template<typename T>
-void WebProcessPool::sendToAllRemoteWorkerProcesses(const T& message)
-{
-    for (auto& process : remoteWorkerProcesses()) {
-        if (process.canSendMessage())
-            process.send(T(message), 0);
     }
 }
 

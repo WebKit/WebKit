@@ -1,17 +1,17 @@
 
-PASS Constructing a CSSMathSum with no arguments throws a SyntaxError
+FAIL Constructing a CSSMathSum with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
 PASS CSSMathSum can be constructed from a single number CSSUnitValue
 PASS CSSMathSum can be constructed from more than one number CSSUnitValue
 PASS CSSMathSum.operator is readonly
-PASS Constructing a CSSMathProduct with no arguments throws a SyntaxError
+FAIL Constructing a CSSMathProduct with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
 PASS CSSMathProduct can be constructed from a single number CSSUnitValue
 PASS CSSMathProduct can be constructed from more than one number CSSUnitValue
 PASS CSSMathProduct.operator is readonly
-PASS Constructing a CSSMathMin with no arguments throws a SyntaxError
+FAIL Constructing a CSSMathMin with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
 PASS CSSMathMin can be constructed from a single number CSSUnitValue
 PASS CSSMathMin can be constructed from more than one number CSSUnitValue
 PASS CSSMathMin.operator is readonly
-PASS Constructing a CSSMathMax with no arguments throws a SyntaxError
+FAIL Constructing a CSSMathMax with no arguments throws a SyntaxError assert_throws_dom: function "() => new subclass()" did not throw
 PASS CSSMathMax can be constructed from a single number CSSUnitValue
 PASS CSSMathMax can be constructed from more than one number CSSUnitValue
 PASS CSSMathMax.operator is readonly

@@ -1,0 +1,9 @@
+Blocked access to external URL https://www1.localhost:9443/html/browsers/origin/origin-keyed-agent-clusters/resources/frame.html
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Setting document.domain must not change same-originness Blocked a frame with origin "https://localhost:9443" from accessing a cross-origin frame. Protocols, domains, and ports must match.
+PASS The registrable domain suffix check must happen before the bail-out
+TIMEOUT Having an origin-keyed subdomain child try to set document.domain must not change the document.domain value it sees Test timed out
+

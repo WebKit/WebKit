@@ -26,9 +26,7 @@
 #include "config.h"
 #include "InjectedBundleCSSStyleDeclarationHandle.h"
 
-#include <JavaScriptCore/APICast.h>
 #include <WebCore/CSSStyleDeclaration.h>
-#include <WebCore/JSCSSStyleDeclaration.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -41,12 +39,6 @@ static DOMStyleDeclarationHandleCache& domStyleDeclarationHandleCache()
 {
     static NeverDestroyed<DOMStyleDeclarationHandleCache> cache;
     return cache;
-}
-
-RefPtr<InjectedBundleCSSStyleDeclarationHandle> InjectedBundleCSSStyleDeclarationHandle::getOrCreate(JSContextRef, JSObjectRef object)
-{
-    CSSStyleDeclaration* cssStyleDeclaration = JSCSSStyleDeclaration::toWrapped(toJS(object)->vm(), toJS(object));
-    return getOrCreate(cssStyleDeclaration);
 }
 
 RefPtr<InjectedBundleCSSStyleDeclarationHandle> InjectedBundleCSSStyleDeclarationHandle::getOrCreate(CSSStyleDeclaration* styleDeclaration)
@@ -71,11 +63,6 @@ InjectedBundleCSSStyleDeclarationHandle::InjectedBundleCSSStyleDeclarationHandle
 InjectedBundleCSSStyleDeclarationHandle::~InjectedBundleCSSStyleDeclarationHandle()
 {
     domStyleDeclarationHandleCache().remove(m_styleDeclaration.ptr());
-}
-
-CSSStyleDeclaration* InjectedBundleCSSStyleDeclarationHandle::coreCSSStyleDeclaration()
-{
-    return m_styleDeclaration.ptr();
 }
 
 } // namespace WebKit

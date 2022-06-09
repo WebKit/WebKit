@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #include "GPUOrigin2DDict.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
-#include "OffscreenCanvas.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h>
 #include <variant>
@@ -37,24 +36,16 @@
 namespace WebCore {
 
 struct GPUImageCopyExternalImage {
-#if ENABLE(OFFSCREEN_CANVAS)
-    using SourceType = std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
-#else
-    using SourceType = std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>>;
-#endif
-
     PAL::WebGPU::ImageCopyExternalImage convertToBacking() const
     {
         return {
             // FIXME: Handle the canvas element.
             origin ? std::optional { WebCore::convertToBacking(*origin) } : std::nullopt,
-            flipY,
         };
     }
 
-    SourceType source;
+    std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>> source;
     std::optional<GPUOrigin2D> origin;
-    bool flipY { false };
 };
 
 }

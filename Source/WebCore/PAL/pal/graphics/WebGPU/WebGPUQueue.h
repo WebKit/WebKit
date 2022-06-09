@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 #include <cstdint>
 #include <functional>
 #include <optional>
-#include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -59,15 +59,15 @@ public:
 
     virtual void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) = 0;
 
-    virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
+    virtual void onSubmittedWorkDone(WTF::Function<void()>&&) = 0;
 
     virtual void writeBuffer(
         const Buffer&,
         Size64 bufferOffset,
         const void* source,
         size_t byteLength,
-        Size64 dataOffset = 0,
-        std::optional<Size64> = std::nullopt) = 0;
+        Size64 dataOffset,
+        std::optional<Size64>) = 0;
 
     virtual void writeTexture(
         const ImageCopyTexture& destination,

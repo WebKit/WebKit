@@ -41,7 +41,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
@@ -138,9 +137,9 @@ static unsigned saturateAdd(unsigned a, unsigned b)
     return a + b;
 }
 
-ASCIILiteral WebSocket::subprotocolSeparator()
+const char* WebSocket::subprotocolSeparator()
 {
-    return ", "_s;
+    return ", ";
 }
 
 WebSocket::WebSocket(ScriptExecutionContext& context)
@@ -225,7 +224,7 @@ void WebSocket::failAsynchronously()
 ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& protocols)
 {
     LOG(Network, "WebSocket %p connect() url='%s'", this, url.utf8().data());
-    m_url = URL { url };
+    m_url = URL(URL(), url);
 
     ASSERT(scriptExecutionContext());
     auto& context = *scriptExecutionContext();
@@ -236,7 +235,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         return Exception { SyntaxError };
     }
 
-    if (!m_url.protocolIs("ws"_s) && !m_url.protocolIs("wss"_s)) {
+    if (!m_url.protocolIs("ws") && !m_url.protocolIs("wss")) {
         context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "Wrong url scheme for WebSocket " + m_url.stringCenterEllipsizedToLength());
         m_state = CLOSED;
         return Exception { SyntaxError };
@@ -344,26 +343,15 @@ ExceptionOr<void> WebSocket::send(const String& message)
     LOG(Network, "WebSocket %p send() Sending String '%s'", this, message.utf8().data());
     if (m_state == CONNECTING)
         return Exception { InvalidStateError };
-    auto utf8 = message.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
     // No exception is raised if the connection was once established but has subsequently been closed.
     if (m_state == CLOSING || m_state == CLOSED) {
-        size_t payloadSize = utf8.length();
+        size_t payloadSize = message.utf8().length();
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-    // FIXME: WebSocketChannel also has a m_bufferedAmount. Remove that one. This one is the correct one accessed by JS.
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, utf8.length());
     ASSERT(m_channel);
-    m_channel->send(WTFMove(utf8));
+    m_channel->send(message);
     return { };
 }
 
@@ -378,15 +366,6 @@ ExceptionOr<void> WebSocket::send(ArrayBuffer& binaryData)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.byteLength());
     ASSERT(m_channel);
     m_channel->send(binaryData, 0, binaryData.byteLength());
     return { };
@@ -404,15 +383,6 @@ ExceptionOr<void> WebSocket::send(ArrayBufferView& arrayBufferView)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, arrayBufferView.byteLength());
     ASSERT(m_channel);
     m_channel->send(*arrayBufferView.unsharedBuffer(), arrayBufferView.byteOffset(), arrayBufferView.byteLength());
     return { };
@@ -429,15 +399,6 @@ ExceptionOr<void> WebSocket::send(Blob& binaryData)
         m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
         return { };
     }
-#if HAVE(NSURLSESSION_WEBSOCKET)
-    bool shouldSynchronouslyUpdateBufferedAmount = RuntimeEnabledFeatures::sharedFeatures().isNSURLSessionWebSocketEnabled();
-#elif PLATFORM(MAC)
-    bool shouldSynchronouslyUpdateBufferedAmount = false;
-#else
-    bool shouldSynchronouslyUpdateBufferedAmount = true;
-#endif
-    if (shouldSynchronouslyUpdateBufferedAmount)
-        m_bufferedAmount = saturateAdd(m_bufferedAmount, binaryData.size());
     ASSERT(m_channel);
     m_channel->send(binaryData);
     return { };
@@ -463,7 +424,7 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
         return { };
     if (m_state == CONNECTING) {
         m_state = CLOSING;
-        m_channel->fail("WebSocket is closed before the connection is established."_s);
+        m_channel->fail("WebSocket is closed before the connection is established.");
         return { };
     }
     m_state = CLOSING;
@@ -516,11 +477,11 @@ String WebSocket::binaryType() const
 
 ExceptionOr<void> WebSocket::setBinaryType(const String& binaryType)
 {
-    if (binaryType == "blob"_s) {
+    if (binaryType == "blob") {
         m_binaryType = BinaryType::Blob;
         return { };
     }
-    if (binaryType == "arraybuffer"_s) {
+    if (binaryType == "arraybuffer") {
         m_binaryType = BinaryType::ArrayBuffer;
         return { };
     }
@@ -553,7 +514,7 @@ void WebSocket::suspend(ReasonForSuspension reason)
 
     if (reason == ReasonForSuspension::BackForwardCache) {
         // This will cause didClose() to be called.
-        m_channel->fail("WebSocket is closed due to suspension."_s);
+        m_channel->fail("WebSocket is closed due to suspension.");
         return;
     }
 
@@ -599,21 +560,21 @@ void WebSocket::didConnect()
     });
 }
 
-void WebSocket::didReceiveMessage(String&& message)
+void WebSocket::didReceiveMessage(const String& msg)
 {
-    LOG(Network, "WebSocket %p didReceiveMessage() Text message '%s'", this, message.utf8().data());
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, message = WTFMove(message)]() mutable {
+    LOG(Network, "WebSocket %p didReceiveMessage() Text message '%s'", this, msg.utf8().data());
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, msg] {
         if (m_state != OPEN)
             return;
 
         if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
             if (auto* inspector = m_channel->channelInspector()) {
-                auto utf8Message = message.utf8();
+                auto utf8Message = msg.utf8();
                 inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(utf8Message.dataAsUInt8Ptr(), utf8Message.length(), WebSocketFrame::OpCode::OpCodeText));
             }
         }
         ASSERT(scriptExecutionContext());
-        dispatchEvent(MessageEvent::create(WTFMove(message), SecurityOrigin::create(m_url)->toString()));
+        dispatchEvent(MessageEvent::create(msg, SecurityOrigin::create(m_url)->toString()));
     });
 }
 
@@ -641,10 +602,10 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
     });
 }
 
-void WebSocket::didReceiveMessageError(String&& reason)
+void WebSocket::didReceiveMessageError(const String& reason)
 {
     LOG(Network, "WebSocket %p didReceiveErrorMessage()", this);
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, reason = WTFMove(reason)] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, reason] {
         if (m_state == CLOSED)
             return;
         m_state = CLOSED;
@@ -710,8 +671,8 @@ void WebSocket::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompl
 
 void WebSocket::didUpgradeURL()
 {
-    ASSERT(m_url.protocolIs("ws"_s));
-    m_url.setProtocol("wss"_s);
+    ASSERT(m_url.protocolIs("ws"));
+    m_url.setProtocol("wss");
 }
 
 size_t WebSocket::getFramingOverhead(size_t payloadSize)

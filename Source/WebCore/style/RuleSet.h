@@ -105,13 +105,9 @@ public:
     bool hasShadowPseudoElementRules() const { return !m_shadowPseudoElementRules.isEmpty(); }
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
 
-    static constexpr auto cascadeLayerPriorityForPresentationalHints = std::numeric_limits<CascadeLayerPriority>::min();
     static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<CascadeLayerPriority>::max();
 
     CascadeLayerPriority cascadeLayerPriorityFor(const RuleData&) const;
-
-    bool hasContainerQueries() const { return !m_containerQueries.isEmpty(); }
-    Vector<const FilteredContainerQuery*> containerQueriesFor(const RuleData&) const;
 
 private:
     friend class RuleSetBuilder;
@@ -119,9 +115,8 @@ private:
     RuleSet();
 
     using CascadeLayerIdentifier = unsigned;
-    using ContainerQueryIdentifier = unsigned;
 
-    void addRule(RuleData&&, CascadeLayerIdentifier, ContainerQueryIdentifier);
+    void addRule(RuleData&&, CascadeLayerIdentifier);
 
     struct ResolverMutatingRule {
         Ref<StyleRuleBase> rule;
@@ -145,11 +140,6 @@ private:
     CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) { return m_cascadeLayers[identifier - 1]; }
     const CascadeLayer& cascadeLayerForIdentifier(CascadeLayerIdentifier identifier) const { return m_cascadeLayers[identifier - 1]; }
     CascadeLayerPriority cascadeLayerPriorityForIdentifier(CascadeLayerIdentifier) const;
-
-    struct ContainerQueryAndParent {
-        Ref<StyleRuleContainer> containerRule;
-        ContainerQueryIdentifier parent;
-    };
 
     struct DynamicMediaQueryRules {
         Vector<Ref<const MediaQuerySet>> mediaQuerySets;
@@ -192,9 +182,6 @@ private:
 
     Vector<ResolverMutatingRule> m_resolverMutatingRulesInLayers;
 
-    Vector<ContainerQueryAndParent> m_containerQueries;
-    Vector<ContainerQueryIdentifier> m_containerQueryIdentifierForRulePosition;
-
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };
 };
@@ -223,24 +210,6 @@ inline CascadeLayerPriority RuleSet::cascadeLayerPriorityFor(const RuleData& rul
     auto identifier = m_cascadeLayerIdentifierForRulePosition[ruleData.position()];
     return cascadeLayerPriorityForIdentifier(identifier);
 }
-
-inline Vector<const FilteredContainerQuery*> RuleSet::containerQueriesFor(const RuleData& ruleData) const
-{
-    if (m_containerQueryIdentifierForRulePosition.size() <= ruleData.position())
-        return { };
-
-    Vector<const FilteredContainerQuery*> queries;
-
-    auto identifier = m_containerQueryIdentifierForRulePosition[ruleData.position()];
-    while (identifier) {
-        auto& query = m_containerQueries[identifier - 1];
-        queries.append(&query.containerRule->filteredQuery());
-        identifier = query.parent;
-    };
-
-    return queries;
-}
-
 
 } // namespace Style
 } // namespace WebCore

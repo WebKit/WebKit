@@ -106,11 +106,11 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     size_t elementSize = sizeof(typename Adaptor::Type);
     ASSERT(buffer);
     if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length, elementSize)) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"_s));
+        throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"));
         return nullptr;
     }
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, elementSize)) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"_s));
+        throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"));
         return nullptr;
     }
     ConstructionContext context(vm, structure, WTFMove(buffer), byteOffset, length);
@@ -152,7 +152,7 @@ bool JSGenericTypedArrayView<Adaptor>::validateRange(
     if (canAccessRangeQuickly(offset, length))
         return true;
     
-    throwException(globalObject, scope, createRangeError(globalObject, "Range consisting of offset and length are out of bounds"_s));
+    throwException(globalObject, scope, createRangeError(globalObject, "Range consisting of offset and length are out of bounds"));
     return false;
 }
 
@@ -264,12 +264,12 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         if (!success)
             return false;
 
-        RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->classInfo()->typedArrayStorageType));
+        RELEASE_ASSERT(JSC::elementSize(Adaptor::typeValue) == JSC::elementSize(other->classInfo(vm)->typedArrayStorageType));
         memmove(typedVector() + offset, bitwise_cast<typename Adaptor::Type*>(other->vector()) + objectOffset, length * elementSize);
         return true;
     };
 
-    const ClassInfo* ci = object->classInfo();
+    const ClassInfo* ci = object->classInfo(vm);
     if (ci->typedArrayStorageType == Adaptor::typeValue)
         return memmoveFastPath(jsCast<JSArrayBufferView*>(object));
 
@@ -324,6 +324,16 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         if (!success)
             return false;
 
+        auto trySetIndex = [&](size_t index, JSValue value) -> bool {
+            bool success = setIndex(globalObject, index, value);
+            EXCEPTION_ASSERT(!scope.exception() || !success);
+            if (!success) {
+                if (isDetached())
+                    throwTypeError(globalObject, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+                return false;
+            }
+            return true;
+        };
         // It is not valid to ever call object->get() with an index of more than MAX_ARRAY_INDEX.
         // So we iterate in the optimized loop up to MAX_ARRAY_INDEX, then if there is anything to do beyond this, we rely on slower code.
         size_t safeUnadjustedLength = std::min(length, static_cast<size_t>(MAX_ARRAY_INDEX) + 1);
@@ -332,18 +342,14 @@ bool JSGenericTypedArrayView<Adaptor>::set(
             ASSERT(i + objectOffset <= MAX_ARRAY_INDEX);
             JSValue value = object->get(globalObject, static_cast<unsigned>(i + objectOffset));
             RETURN_IF_EXCEPTION(scope, false);
-            bool success = setIndex(globalObject, offset + i, value);
-            EXCEPTION_ASSERT(!scope.exception() || !success);
-            if (!success)
+            if (!trySetIndex(offset + i, value))
                 return false;
         }
         for (size_t i = safeLength; i < length; ++i) {
             Identifier ident = Identifier::from(vm, static_cast<uint64_t>(i + objectOffset));
             JSValue value = object->get(globalObject, ident);
             RETURN_IF_EXCEPTION(scope, false);
-            bool success = setIndex(globalObject, offset + i, value);
-            EXCEPTION_ASSERT(!scope.exception() || !success);
-            if (!success)
+            if (!trySetIndex(offset + i, value))
                 return false;
         }
         return true;

@@ -39,13 +39,13 @@ bool Matrix3DTransformOperation::operator==(const TransformOperation& other) con
 
 static Ref<TransformOperation> createOperation(TransformationMatrix& to, TransformationMatrix& from, const BlendingContext& context)
 {
-    to.blend(from, context.progress, context.compositeOperation);
+    to.blend(from, context.progress);
     return Matrix3DTransformOperation::create(to);
 }
 
 Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    if (!sharedPrimitiveType(from))
+    if (from && !from->isSameType(*this))
         return *this;
 
     // Convert the TransformOperations into matrices

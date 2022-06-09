@@ -103,8 +103,6 @@ struct _WebKitInputMethodContext {
 struct _WebKitInputMethodContextClass {
     GObjectClass parent_class;
 
-    /*< public >*/
-
     /* Signals */
     void     (* preedit_started)    (WebKitInputMethodContext        *context);
     void     (* preedit_changed)    (WebKitInputMethodContext        *context);
@@ -138,7 +136,6 @@ struct _WebKitInputMethodContextClass {
                                      guint                            selection_index);
     void     (* reset)              (WebKitInputMethodContext        *context);
 
-    /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

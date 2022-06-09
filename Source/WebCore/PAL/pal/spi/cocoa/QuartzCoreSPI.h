@@ -52,10 +52,6 @@
 #import <QuartzCore/CADisplayLinkPrivate.h>
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-#import <QuartzCore/CAFenceHandle.h>
-#endif
-
 #endif // __OBJC__
 
 #else
@@ -69,14 +65,8 @@ typedef struct _CARenderContext CARenderContext;
 @end
 #endif
 
-#if ENABLE(ARKIT_INLINE_PREVIEW)
-@interface CAFenceHandle : NSObject
-@end
-
-@interface CAFenceHandle ()
-- (mach_port_t)copyPort;
-- (void)invalidate;
-@end
+#if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
+@class CAFenceHandle;
 #endif
 
 @interface CAContext : NSObject

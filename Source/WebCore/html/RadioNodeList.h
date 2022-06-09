@@ -42,10 +42,10 @@ public:
 
 private:
     RadioNodeList(ContainerNode&, const AtomString& name);
-    bool isRootedAtTreeScope() const final { return m_isRootedAtTreeScope; }
+    bool isRootedAtDocument() const final { return m_isRootedAtDocument; }
 
     AtomString m_name;
-    bool m_isRootedAtTreeScope;
+    bool m_isRootedAtDocument;
 };
 
 } // namespace WebCore

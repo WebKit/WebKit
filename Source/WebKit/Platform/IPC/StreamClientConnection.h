@@ -57,34 +57,10 @@ class StreamClientConnection final {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
 public:
-    // Creates StreamClientConnection where the out of stream messages and server replies are
-    // sent through the passed IPC::Connection. The messages from the server are delivered to
-    // the caller through the passed IPC::Connection.
-    // Note: This function should be used only in cases where the
-    // stream server starts listening to messages with new identifiers on the same thread as
-    // in which the server IPC::Connection dispatch messages. At the time of writing,
-    // IPC::Connection dispatches messages only in main thread.
     StreamClientConnection(Connection&, size_t bufferSize);
 
-    struct StreamConnectionWithDedicatedConnection {
-        std::unique_ptr<StreamClientConnection> streamConnection;
-        Attachment connectionIdentifier;
-        // FIXME: Once IPC can treat handles as first class objects, add stream buffer as
-        // a handle here.
-    };
-
-    // Creates StreamClientConnection where the out of stream messages and server replies are
-    // sent through a dedidcated, new IPC::Connection. The messages from the server are delivered to
-    // the caller through the passed IPC::MessageReceiver.
-    // The caller should send StreamConnectionWithDedicatedConnection::connectionIdentifier and
-    // StreamClientConnection::streamBuffer() to the server via an existing IPC::Connection.
-    static StreamConnectionWithDedicatedConnection createWithDedicatedConnection(MessageReceiver&, size_t bufferSize);
-
-    ~StreamClientConnection();
-
     StreamConnectionBuffer& streamBuffer() { return m_buffer; }
-    void setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait);
-    bool hasSemaphores() const { return m_semaphores.has_value(); }
+    void setWakeUpSemaphore(IPC::Semaphore&&);
 
     void setWakeUpMessageHysteresis(unsigned hysteresis)
     {
@@ -93,24 +69,14 @@ public:
     }
     void sendDeferredWakeUpMessageIfNeeded();
 
-    void open();
-    void invalidate();
-
     template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);
 
     using SendSyncResult = Connection::SendSyncResult;
     template<typename T, typename U>
     SendSyncResult sendSync(T&& message, typename T::Reply&&, ObjectIdentifier<U> destinationID, Timeout);
 
-    template<typename T, typename U>
-    bool waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout, OptionSet<WaitForOption> = { });
-
-    StreamConnectionBuffer& bufferForTesting();
-    Connection& connectionForTesting();
-
 private:
-    class DedicatedConnectionClient;
-    StreamClientConnection(Ref<Connection>&&, size_t bufferSize, std::unique_ptr<DedicatedConnectionClient>&&);
+    friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
 
     struct Span {
         uint8_t* data;
@@ -150,20 +116,14 @@ private:
     uint8_t* data() const { return m_buffer.data(); }
     size_t dataSize() const { return m_buffer.dataSize(); }
 
-    Ref<Connection> m_connection;
-    std::unique_ptr<DedicatedConnectionClient> m_dedicatedConnectionClient;
+    Connection& m_connection;
     uint64_t m_currentDestinationID { 0 };
+
     size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;
-    struct Semaphores {
-        Semaphore wakeUp;
-        Semaphore clientWait;
-    };
-    std::optional<Semaphores> m_semaphores;
+    std::optional<Semaphore> m_wakeUpSemaphore;
     unsigned m_remainingMessageCountBeforeSendingWakeUp { 0 };
     unsigned m_wakeUpMessageHysteresis { 0 };
-
-    friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
 };
 
 template<typename T, typename U>
@@ -180,7 +140,7 @@ bool StreamClientConnection::send(T&& message, ObjectIdentifier<U> destinationID
             return true;
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    if (!m_connection->send(WTFMove(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply))
+    if (!m_connection.send(WTFMove(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply))
         return false;
     return true;
 }
@@ -215,13 +175,7 @@ StreamClientConnection::SendSyncResult StreamClientConnection::sendSync(T&& mess
             return WTFMove(*maybeSendResult);
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    return m_connection->sendSync(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout);
-}
-
-template<typename T, typename U>
-bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
-{
-    return m_connection->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
+    return m_connection.sendSync(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout);
 }
 
 template<typename T>
@@ -229,8 +183,8 @@ std::optional<StreamClientConnection::SendSyncResult> StreamClientConnection::tr
 {
     // In this function, SendSyncResult { } means error happened and caller should stop processing.
     // std::nullopt means we couldn't send through the stream, so try sending out of stream.
-    auto syncRequestID = m_connection->makeSyncRequestID();
-    if (!m_connection->pushPendingSyncRequestID(syncRequestID))
+    auto syncRequestID = m_connection.makeSyncRequestID();
+    if (!m_connection.pushPendingSyncRequestID(syncRequestID))
         return SendSyncResult { };
 
     auto result = [&]() -> std::optional<SendSyncResult> {
@@ -254,9 +208,9 @@ std::optional<StreamClientConnection::SendSyncResult> StreamClientConnection::tr
             }
         } else
             m_clientOffset = 0;
-        return m_connection->waitForSyncReply(syncRequestID, T::name(), timeout, { });
+        return m_connection.waitForSyncReply(syncRequestID, T::name(), timeout, { });
     }();
-    m_connection->popPendingSyncRequestID(syncRequestID);
+    m_connection.popPendingSyncRequestID(syncRequestID);
     if (result && *result) {
         auto& decoder = **result;
         std::optional<typename T::ReplyArguments> replyArguments;
@@ -311,8 +265,7 @@ inline std::optional<StreamClientConnection::Span> StreamClientConnection::tryAc
             break;
         ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
         if (clientLimit == oldClientLimit) {
-            if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
-                return std::nullopt;
+            m_buffer.clientWaitSemaphore().waitFor(timeout);
             clientLimit = sharedClientLimit().load(std::memory_order_acquire);
         } else
             clientLimit = oldClientLimit;
@@ -343,8 +296,7 @@ inline std::optional<StreamClientConnection::Span> StreamClientConnection::tryAc
         if (!clientLimit && (clientOffset == ClientOffset::serverIsSleepingTag || !clientOffset))
             break;
 
-        if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
-            return std::nullopt;
+        m_buffer.clientWaitSemaphore().waitFor(timeout);
         if (timeout.didTimeOut())
             return std::nullopt;
     }
