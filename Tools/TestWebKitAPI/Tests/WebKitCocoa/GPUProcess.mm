@@ -115,7 +115,12 @@ TEST(GPUProcess, RelaunchOnCrash)
     EXPECT_TRUE([webView _isPlayingAudio]);
 }
 
+// FIXME: Re-enable after webkit.org/b/240692 is resolved
+#if (PLATFORM(IOS))
+TEST(GPUProcess, DISABLED_WebProcessTerminationAfterTooManyGPUProcessCrashes)
+#else
 TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
