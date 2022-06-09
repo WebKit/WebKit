@@ -306,8 +306,6 @@ private:
     void renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, const char* functionName) final;
     void renderbufferStorageHelper(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height);
 
-    GCGLenum baseInternalFormatFromInternalFormat(GCGLenum internalformat);
-    bool isIntegerFormat(GCGLenum internalformat);
     bool setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer*);
 
     IntRect getTextureSourceSubRectangle(GCGLsizei width, GCGLsizei height);
@@ -321,10 +319,6 @@ private:
 
     bool validateTexFuncLayer(const char*, GCGLenum texTarget, GCGLint layer);
     GCGLint maxTextureLevelForTarget(GCGLenum target) final;
-
-#if !USE(ANGLE)
-    bool validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName);
-#endif
 
     void uncacheDeletedBuffer(const AbstractLocker&, WebGLBuffer*) final;
 

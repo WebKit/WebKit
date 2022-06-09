@@ -222,18 +222,9 @@ long long WebGL2RenderingContext::getInt64Parameter(GCGLenum pname)
 
 void WebGL2RenderingContext::initializeVertexArrayObjects()
 {
-#if !USE(ANGLE)
-    if (!isGLES2Compliant())
-        initVertexAttrib0();
-#endif
     m_defaultVertexArrayObject = WebGLVertexArrayObject::create(*this, WebGLVertexArrayObject::Type::Default);
     addContextObject(*m_defaultVertexArrayObject);
-#if USE(OPENGL_ES)
-    m_boundVertexArrayObject = m_defaultVertexArrayObject;
-#else
     bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
-#endif
-
 }
 
 bool WebGL2RenderingContext::validateBufferTarget(const char* functionName, GCGLenum target)
@@ -769,50 +760,6 @@ void WebGL2RenderingContext::framebufferTextureLayer(GCGLenum target, GCGLenum a
     applyStencilTest();
 }
 
-#if !USE(OPENGL_ES) && !USE(ANGLE)
-static bool isRenderableInternalformat(GCGLenum internalformat)
-{
-    // OpenGL ES 3: internalformat must be a color-renderable, depth-renderable, or stencil-renderable format, as shown in Table 1 below.
-    switch (internalformat) {
-    case GraphicsContextGL::R8:
-    case GraphicsContextGL::R8UI:
-    case GraphicsContextGL::R16UI:
-    case GraphicsContextGL::R16I:
-    case GraphicsContextGL::R32UI:
-    case GraphicsContextGL::R32I:
-    case GraphicsContextGL::RG8:
-    case GraphicsContextGL::RG8UI:
-    case GraphicsContextGL::RG8I:
-    case GraphicsContextGL::RG16UI:
-    case GraphicsContextGL::RG16I:
-    case GraphicsContextGL::RG32UI:
-    case GraphicsContextGL::RG32I:
-    case GraphicsContextGL::RGB8:
-    case GraphicsContextGL::RGB565:
-    case GraphicsContextGL::RGBA8:
-    case GraphicsContextGL::SRGB8_ALPHA8:
-    case GraphicsContextGL::RGB5_A1:
-    case GraphicsContextGL::RGBA4:
-    case GraphicsContextGL::RGB10_A2:
-    case GraphicsContextGL::RGBA8UI:
-    case GraphicsContextGL::RGBA8I:
-    case GraphicsContextGL::RGB10_A2UI:
-    case GraphicsContextGL::RGBA16UI:
-    case GraphicsContextGL::RGBA16I:
-    case GraphicsContextGL::RGBA32I:
-    case GraphicsContextGL::RGBA32UI:
-    case GraphicsContextGL::DEPTH_COMPONENT16:
-    case GraphicsContextGL::DEPTH_COMPONENT24:
-    case GraphicsContextGL::DEPTH_COMPONENT32F:
-    case GraphicsContextGL::DEPTH24_STENCIL8:
-    case GraphicsContextGL::DEPTH32F_STENCIL8:
-    case GraphicsContextGL::STENCIL_INDEX8:
-        return true;
-    }
-    return false;
-}
-#endif
-
 WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCGLenum internalformat, GCGLenum pname)
 {
     if (isContextLostOrPending())
@@ -823,7 +770,6 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
         return nullptr;
     }
 
-#if USE(OPENGL_ES) || USE(ANGLE)
     m_context->moveErrorsToSyntheticErrorList();
     GCGLint numValues = m_context->getInternalformati(target, internalformat, GraphicsContextGL::NUM_SAMPLE_COUNTS);
     if (m_context->moveErrorsToSyntheticErrorList() || numValues < 0)
@@ -837,38 +783,6 @@ WebGLAny WebGL2RenderingContext::getInternalformatParameter(GCGLenum target, GCG
         if (m_context->moveErrorsToSyntheticErrorList())
             return nullptr;
     }
-#else
-    // On desktop OpenGL 4.1 or below we must emulate glGetInternalformativ.
-
-    // GL_INVALID_ENUM is generated if target is not GL_RENDERBUFFER.
-    if (target != GraphicsContextGL::RENDERBUFFER) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getInternalformatParameter", "invalid target");
-        return nullptr;
-    }
-
-    // GL_INVALID_ENUM is generated if internalformat is not color-, depth-, or stencil-renderable.
-    if (!isRenderableInternalformat(internalformat)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getInternalformatParameter", "invalid internal format");
-        return nullptr;
-    }
-
-    Vector<GCGLint> samples;
-    // The way I understand this is that this will return a MINIMUM numSamples for all accepeted internalformats.
-    // However, the true value of this on supported GL versions is gleaned via a getInternalformativ call that depends on internalformat.
-    int numSamplesMask = getIntParameter(GraphicsContextGL::MAX_SAMPLES);
-
-    while (numSamplesMask > 0) {
-        samples.append(numSamplesMask);
-        numSamplesMask = numSamplesMask >> 1;
-    }
-
-    // Since multisampling is not supported for signed and unsigned integer internal formats,
-    // the value of GL_NUM_SAMPLE_COUNTS will be zero for such formats.
-    GCGLint numValues = isIntegerFormat(internalformat) ? 0 : samples.size();
-    Vector<GCGLint> params(numValues);
-    for (size_t i = 0; i < static_cast<size_t>(numValues); ++i)
-        params[i] = samples[i];
-#endif
 
     return Int32Array::tryCreate(params.data(), params.size());
 }
@@ -931,120 +845,21 @@ void WebGL2RenderingContext::renderbufferStorageMultisample(GCGLenum target, GCG
     applyStencilTest();
 }
 
-#if !USE(ANGLE)
-bool WebGL2RenderingContext::validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName)
-{
-    if (width < 0 || height < 0) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "width or height < 0");
-        return false;
-    }
-
-    if (width > m_maxTextureSize || height > m_maxTextureSize) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "texture dimensions are larger than the maximum texture size");
-        return false;
-    }
-
-    if (target == GraphicsContextGL::TEXTURE_CUBE_MAP) {
-        if (width != height) {
-            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "width != height for cube map");
-            return false;
-        }
-    } else if (target != GraphicsContextGL::TEXTURE_2D) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
-        return false;
-    }
-
-    if (levels < 0 || levels > m_maxTextureLevel) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "number of levels is out of bounds");
-        return false;
-    }
-
-    switch (internalFormat) {
-    case GraphicsContextGL::R8:
-    case GraphicsContextGL::R8_SNORM:
-    case GraphicsContextGL::R16F:
-    case GraphicsContextGL::R32F:
-    case GraphicsContextGL::R8UI:
-    case GraphicsContextGL::R8I:
-    case GraphicsContextGL::R16UI:
-    case GraphicsContextGL::R16I:
-    case GraphicsContextGL::R32UI:
-    case GraphicsContextGL::R32I:
-    case GraphicsContextGL::RG8:
-    case GraphicsContextGL::RG8_SNORM:
-    case GraphicsContextGL::RG16F:
-    case GraphicsContextGL::RG32F:
-    case GraphicsContextGL::RG8UI:
-    case GraphicsContextGL::RG8I:
-    case GraphicsContextGL::RG16UI:
-    case GraphicsContextGL::RG16I:
-    case GraphicsContextGL::RG32UI:
-    case GraphicsContextGL::RG32I:
-    case GraphicsContextGL::RGB8:
-    case GraphicsContextGL::SRGB8:
-    case GraphicsContextGL::RGB565:
-    case GraphicsContextGL::RGB8_SNORM:
-    case GraphicsContextGL::R11F_G11F_B10F:
-    case GraphicsContextGL::RGB9_E5:
-    case GraphicsContextGL::RGB16F:
-    case GraphicsContextGL::RGB32F:
-    case GraphicsContextGL::RGB8UI:
-    case GraphicsContextGL::RGB8I:
-    case GraphicsContextGL::RGB16UI:
-    case GraphicsContextGL::RGB16I:
-    case GraphicsContextGL::RGB32UI:
-    case GraphicsContextGL::RGB32I:
-    case GraphicsContextGL::RGBA8:
-    case GraphicsContextGL::SRGB8_ALPHA8:
-    case GraphicsContextGL::RGBA8_SNORM:
-    case GraphicsContextGL::RGB5_A1:
-    case GraphicsContextGL::RGBA4:
-    case GraphicsContextGL::RGB10_A2:
-    case GraphicsContextGL::RGBA16F:
-    case GraphicsContextGL::RGBA32F:
-    case GraphicsContextGL::RGBA8UI:
-    case GraphicsContextGL::RGBA8I:
-    case GraphicsContextGL::RGB10_A2UI:
-    case GraphicsContextGL::RGBA16UI:
-    case GraphicsContextGL::RGBA16I:
-    case GraphicsContextGL::RGBA32I:
-    case GraphicsContextGL::RGBA32UI:
-    case GraphicsContextGL::DEPTH_COMPONENT16:
-    case GraphicsContextGL::DEPTH_COMPONENT24:
-    case GraphicsContextGL::DEPTH_COMPONENT32F:
-    case GraphicsContextGL::DEPTH24_STENCIL8:
-    case GraphicsContextGL::DEPTH32F_STENCIL8:
-        break;
-    default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "Unknown internalFormat");
-        return false;
-    }
-
-    return true;
-}
-#endif
-
 WebGLAny WebGL2RenderingContext::getTexParameter(GCGLenum target, GCGLenum pname)
 {
     if (isContextLostOrPending() || !validateTextureBinding("getTexParameter", target))
         return nullptr;
     switch (pname) {
     case GraphicsContextGL::TEXTURE_BASE_LEVEL:
-        FALLTHROUGH;
     case GraphicsContextGL::TEXTURE_MAX_LEVEL:
-        FALLTHROUGH;
     case GraphicsContextGL::TEXTURE_COMPARE_FUNC:
-        FALLTHROUGH;
     case GraphicsContextGL::TEXTURE_COMPARE_MODE:
-        FALLTHROUGH;
     case GraphicsContextGL::TEXTURE_IMMUTABLE_LEVELS:
-        FALLTHROUGH;
     case GraphicsContextGL::TEXTURE_WRAP_R:
         return m_context->getTexParameteri(target, pname);
     case GraphicsContextGL::TEXTURE_IMMUTABLE_FORMAT:
         return static_cast<bool>(m_context->getTexParameteri(target, pname));
     case GraphicsContextGL::TEXTURE_MIN_LOD:
-        FALLTHROUGH;
     case GraphicsContextGL::TEXTURE_MAX_LOD:
         return m_context->getTexParameterf(target, pname);
     default:
@@ -3173,108 +2988,6 @@ void WebGL2RenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& v
 
     for (auto& entry : m_boundSamplers)
         addWebCoreOpaqueRoot(visitor, entry.get());
-}
-
-GCGLenum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GCGLenum internalformat)
-{
-    // Handles sized, unsized, and compressed internal formats.
-    switch (internalformat) {
-    case GraphicsContextGL::R8:
-    case GraphicsContextGL::R8_SNORM:
-    case GraphicsContextGL::R16F:
-    case GraphicsContextGL::R32F:
-    case GraphicsContextGL::COMPRESSED_R11_EAC:
-    case GraphicsContextGL::COMPRESSED_SIGNED_R11_EAC:
-        return GraphicsContextGL::RED;
-    case GraphicsContextGL::R8I:
-    case GraphicsContextGL::R8UI:
-    case GraphicsContextGL::R16I:
-    case GraphicsContextGL::R16UI:
-    case GraphicsContextGL::R32I:
-    case GraphicsContextGL::R32UI:
-        return GraphicsContextGL::RED_INTEGER;
-    case GraphicsContextGL::RG8:
-    case GraphicsContextGL::RG8_SNORM:
-    case GraphicsContextGL::RG16F:
-    case GraphicsContextGL::RG32F:
-    case GraphicsContextGL::COMPRESSED_RG11_EAC:
-    case GraphicsContextGL::COMPRESSED_SIGNED_RG11_EAC:
-        return GraphicsContextGL::RG;
-    case GraphicsContextGL::RG8I:
-    case GraphicsContextGL::RG8UI:
-    case GraphicsContextGL::RG16I:
-    case GraphicsContextGL::RG16UI:
-    case GraphicsContextGL::RG32I:
-    case GraphicsContextGL::RG32UI:
-        return GraphicsContextGL::RG_INTEGER;
-    case GraphicsContextGL::RGB8:
-    case GraphicsContextGL::RGB8_SNORM:
-    case GraphicsContextGL::RGB565:
-    case GraphicsContextGL::SRGB8:
-    case GraphicsContextGL::RGB16F:
-    case GraphicsContextGL::RGB32F:
-    case GraphicsContextGL::RGB:
-    case GraphicsContextGL::COMPRESSED_RGB8_ETC2:
-    case GraphicsContextGL::COMPRESSED_SRGB8_ETC2:
-        return GraphicsContextGL::RGB;
-    case GraphicsContextGL::RGB8I:
-    case GraphicsContextGL::RGB8UI:
-    case GraphicsContextGL::RGB16I:
-    case GraphicsContextGL::RGB16UI:
-    case GraphicsContextGL::RGB32I:
-    case GraphicsContextGL::RGB32UI:
-        return GraphicsContextGL::RGB_INTEGER;
-    case GraphicsContextGL::RGBA4:
-    case GraphicsContextGL::RGB5_A1:
-    case GraphicsContextGL::RGBA8:
-    case GraphicsContextGL::RGBA8_SNORM:
-    case GraphicsContextGL::RGB10_A2:
-    case GraphicsContextGL::SRGB8_ALPHA8:
-    case GraphicsContextGL::RGBA16F:
-    case GraphicsContextGL::RGBA32F:
-    case GraphicsContextGL::RGBA:
-    case GraphicsContextGL::COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
-    case GraphicsContextGL::COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2:
-    case GraphicsContextGL::COMPRESSED_RGBA8_ETC2_EAC:
-    case GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
-        return GraphicsContextGL::RGBA;
-    case GraphicsContextGL::RGBA8I:
-    case GraphicsContextGL::RGBA8UI:
-    case GraphicsContextGL::RGB10_A2UI:
-    case GraphicsContextGL::RGBA16I:
-    case GraphicsContextGL::RGBA16UI:
-    case GraphicsContextGL::RGBA32I:
-    case GraphicsContextGL::RGBA32UI:
-        return GraphicsContextGL::RGBA_INTEGER;
-    case GraphicsContextGL::DEPTH_COMPONENT16:
-    case GraphicsContextGL::DEPTH_COMPONENT24:
-    case GraphicsContextGL::DEPTH_COMPONENT32F:
-        return GraphicsContextGL::DEPTH_COMPONENT;
-    case GraphicsContextGL::DEPTH24_STENCIL8:
-    case GraphicsContextGL::DEPTH32F_STENCIL8:
-        return GraphicsContextGL::DEPTH_STENCIL;
-    case GraphicsContextGL::LUMINANCE:
-    case GraphicsContextGL::LUMINANCE_ALPHA:
-    case GraphicsContextGL::ALPHA:
-        return internalformat;
-    case GraphicsContextGL::STENCIL_INDEX8:
-        return GraphicsContextGL::STENCIL;
-    default:
-        ASSERT_NOT_REACHED();
-        return GraphicsContextGL::NONE;
-    }
-}
-
-bool WebGL2RenderingContext::isIntegerFormat(GCGLenum internalformat)
-{
-    switch (baseInternalFormatFromInternalFormat(internalformat)) {
-    case GraphicsContextGL::RED_INTEGER:
-    case GraphicsContextGL::RG_INTEGER:
-    case GraphicsContextGL::RGB_INTEGER:
-    case GraphicsContextGL::RGBA_INTEGER:
-        return true;
-    }
-    return false;
 }
 
 WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)

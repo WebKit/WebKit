@@ -49,12 +49,7 @@ WebGLExtension::ExtensionName EXTTextureNorm16::getName() const
 
 bool EXTTextureNorm16::supported(GraphicsContextGL& context)
 {
-#if USE(ANGLE)
     return context.supportsExtension("GL_EXT_texture_norm16"_s);
-#else
-    UNUSED_PARAM(context);
-    return false;
-#endif
 }
 
 } // namespace WebCore
