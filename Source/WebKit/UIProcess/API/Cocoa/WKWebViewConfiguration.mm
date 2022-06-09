@@ -42,7 +42,6 @@
 #import "WebURLSchemeHandlerCocoa.h"
 #import "_WKApplicationManifestInternal.h"
 #import "_WKVisitedLinkStore.h"
-#import "_WKWebsiteDataStoreInternal.h"
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
 #import <wtf/RetainPtr.h>
@@ -586,24 +585,6 @@ static NSString *defaultApplicationNameForUserAgent()
     auto handler = _pageConfiguration->urlSchemeHandlerForURLScheme(*canonicalScheme);
     return handler ? static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler() : nil;
 }
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (_WKWebsiteDataStore *)_websiteDataStore
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
-{
-    return self.websiteDataStore ? adoptNS([[_WKWebsiteDataStore alloc] initWithDataStore:self.websiteDataStore]).autorelease() : nullptr;
-}
-
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (void)_setWebsiteDataStore:(_WKWebsiteDataStore *)websiteDataStore
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
-{
-    self.websiteDataStore = websiteDataStore ? websiteDataStore->_dataStore.get() : nullptr;
-}
-
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)limitsNavigationsToAppBoundDomains
