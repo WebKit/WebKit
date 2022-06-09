@@ -2995,7 +2995,7 @@ void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
 {
     AVMediaSelectionGroup *legibleGroup = safeMediaSelectionGroupForLegibleMedia();
     if (!legibleGroup) {
-        INFO_LOG(LOGIDENTIFIER, "no mediaSelectionGroup");
+        ALWAYS_LOG(LOGIDENTIFIER, "no mediaSelectionGroup");
         return;
     }
 
@@ -3061,8 +3061,10 @@ void MediaPlayerPrivateAVFoundationObjC::processCue(NSArray *attributedStrings, 
 {
     ASSERT(time >= MediaTime::zeroTime());
 
-    if (!m_currentTextTrack)
+    if (!m_currentTextTrack) {
+        ALWAYS_LOG(LOGIDENTIFIER, "no current text track");
         return;
+    }
 
     m_currentTextTrack->processCue((__bridge CFArrayRef)attributedStrings, (__bridge CFArrayRef)nativeSamples, time);
 }
@@ -3082,7 +3084,7 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack(InbandTextTrackPriv
     if (m_currentTextTrack == track)
         return;
 
-    INFO_LOG(LOGIDENTIFIER, "selecting track with language ", track ? track->language() : emptyAtom());
+    ALWAYS_LOG(LOGIDENTIFIER, "selecting track with language ", track ? track->language() : emptyAtom());
 
     m_currentTextTrack = track;
 

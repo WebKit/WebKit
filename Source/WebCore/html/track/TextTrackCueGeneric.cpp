@@ -254,6 +254,8 @@ bool TextTrackCueGeneric::isPositionedAbove(const TextTrackCue* that) const
 
 void TextTrackCueGeneric::toJSON(JSON::Object& object) const
 {
+    VTTCue::toJSON(object);
+
     if (m_foregroundColor.isValid())
         object.setString("foregroundColor"_s, serializationForHTML(m_foregroundColor));
     if (m_backgroundColor.isValid())

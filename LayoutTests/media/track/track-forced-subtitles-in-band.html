@@ -3,25 +3,26 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-        <script src=../trackmenu-test.js></script>
         <script src=../video-test.js></script>
         <script>
 
-            function testVisibleCue()
+            async function testTracks()
             {
-                consoleWrite("");
-                consoleWrite("EVENT(seeked)");
-                consoleWrite("EVENT(cuechange)");
-                testExpected("video.textTracks[3].activeCues.length", 1);
-                consoleWrite("");
+                findMediaElement();
 
-                endTest();
-            }
-            
-            function testTracks()
-            {
+                if (window.internals) {
+                    run("internals.settings.setShouldDisplayTrackKind('Captions', false)");
+                    run("internals.settings.setShouldDisplayTrackKind('Subtitles', true)");
+                    run("internals.setUserPreferredLanguages(['en'])");
+                    run("internals.setPrimaryAudioTrackLanguageOverride('fr')");
+                    run("internals.setCaptionDisplayMode('ForcedOnly')");
+                }
+                video.src = '../content/CC+Subtitles.mov';
+
+                await waitFor(video, 'canplaythrough');
+
                 consoleWrite("<br><i>** Forced tracks should be in .textTracks, but not in the menu<" + "/i>");
-                testExpected("video.textTracks.length", 9);
+                testExpected("video.textTracks.length", 11);
 
                 consoleWrite("<br><i>** Only the 'fr' forced track should be showing<" + "/i>");
                 testExpected("video.textTracks[0].language", "en");
@@ -69,29 +70,44 @@
                 testExpected("video.textTracks[8].mode", "disabled");
                 consoleWrite("");
 
-                waitForEventsAndCall([[video, 'seeked'], [video.textTracks[3], 'cuechange']], testVisibleCue);
+                testExpected("video.textTracks[9].language", "es");
+                testExpected("video.textTracks[9].kind", "chapters");
+                testExpected("video.textTracks[9].mode", "hidden");
+                consoleWrite("");
 
+                testExpected("video.textTracks[10].language", "en");
+                testExpected("video.textTracks[10].kind", "chapters");
+                testExpected("video.textTracks[10].mode", "hidden");
+                consoleWrite("");
+
+                consoleWrite("<i>** A cue should become active when current time is within its active range<" + "/i>");
                 run("video.currentTime = 9.5");
+                let result = await Promise.race([
+                    Promise.all([
+                        waitFor(video, 'seeked', true), 
+                        waitFor(video.textTracks[3], 'cuechange', true)
+                    ]),
+                    new Promise((resolve, reject) => { setTimeout(resolve, 5000, 'timeout'); })
+                ]);
+
+                if (result === 'timeout') {
+                    consoleWrite('');
+                    failTest('Test timed out.');
+                }
+
+                consoleWrite('EVENT(seeked)');
+                consoleWrite('EVENT(cuechange)');
+
+                testExpected('video.textTracks[3].activeCues.length === 1', true);
+                consoleWrite('');
+
+                endTest();
             }
-
-            function setup()
-            {
-                findMediaElement();
-                run("internals.settings.setShouldDisplayTrackKind('Captions', false)");
-                run("internals.settings.setShouldDisplayTrackKind('Subtitles', true)");
-                run("internals.setUserPreferredLanguages(['en'])");
-                run("internals.setPrimaryAudioTrackLanguageOverride('fr')");
-                run("internals.setCaptionDisplayMode('ForcedOnly')");
-                video.src = '../content/CC+Subtitles.mov';
-
-                waitForEvent('canplaythrough', testTracks);
-            }
-
         </script>
     </head>
-    <body onload="setup()">
+    <body onload='testTracks()'>
         <p>Tests that forced subtitles are enable automatically.</p>
-        <video width="640" height="360" controls>
+        <video width=640 height=360 controls>
         </video>
     </body>
 </html>

@@ -9,7 +9,7 @@ RUN(internals.setCaptionDisplayMode('ForcedOnly'))
 EVENT(canplaythrough)
 
 ** Forced tracks should be in .textTracks, but not in the menu
-EXPECTED (video.textTracks.length == '9') OK
+EXPECTED (video.textTracks.length == '11') OK
 
 ** Only the 'fr' forced track should be showing
 EXPECTED (video.textTracks[0].language == 'en') OK
@@ -48,11 +48,19 @@ EXPECTED (video.textTracks[8].language == 'en') OK
 EXPECTED (video.textTracks[8].kind == 'captions') OK
 EXPECTED (video.textTracks[8].mode == 'disabled') OK
 
-RUN(video.currentTime = 9.5)
+EXPECTED (video.textTracks[9].language == 'es') OK
+EXPECTED (video.textTracks[9].kind == 'chapters') OK
+EXPECTED (video.textTracks[9].mode == 'hidden') OK
 
+EXPECTED (video.textTracks[10].language == 'en') OK
+EXPECTED (video.textTracks[10].kind == 'chapters') OK
+EXPECTED (video.textTracks[10].mode == 'hidden') OK
+
+** A cue should become active when current time is within its active range
+RUN(video.currentTime = 9.5)
 EVENT(seeked)
 EVENT(cuechange)
-EXPECTED (video.textTracks[3].activeCues.length == '1') OK
+EXPECTED (video.textTracks[3].activeCues.length === 1 == 'true') OK
 
 END OF TEST
 

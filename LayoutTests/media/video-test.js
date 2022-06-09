@@ -207,10 +207,8 @@ function waitForEventWithTimeout(element, type, time, message) {
         listener, 
         timeout,
     ]).then(result => {
-        if (result === 'timeout') {
-            Promise.reject(new Error(message));
-            return;
-        }
+        if (result === 'timeout')
+            return Promise.reject(new Error(message));
         
         consoleWrite(`EVENT(${result.type})`);
         return Promise.resolve(result);
