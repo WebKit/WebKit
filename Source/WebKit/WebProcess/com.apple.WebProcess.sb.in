@@ -2053,8 +2053,14 @@
 (with-filter (uid 0)
     (allow syscall-unix (syscall-number SYS_gettid))) ;; Needed for base system, see <rdar://problem/48651255>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebContentSandboxAdditionsMac.sb>
+#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
+(if (equal? (param "CPU") "arm64")
+    (with-filter (extension "com.apple.webkit.camera")
+        (allow mach-lookup
+            (require-all
+                (extension "com.apple.webkit.extension.mach")
+                (global-name "com.apple.appleh13camerad")
+            ))))
 #endif
 
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
