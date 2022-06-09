@@ -31,8 +31,10 @@
 #include "Connection.h"
 #include "RemoteMediaResource.h"
 #include "RemoteMediaResourceIdentifier.h"
+#include "SharedBufferReference.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/ResourceRequest.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -89,16 +91,24 @@ void RemoteMediaResourceManager::dataSent(RemoteMediaResourceIdentifier identifi
     resource->dataSent(bytesSent, totalBytesToBeSent);
 }
 
-void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, const SharedMemory::IPCHandle& bufferHandle)
+void RemoteMediaResourceManager::dataReceived(RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference&& buffer, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
 {
+    SharedMemory::Handle handle;
+
+    auto invokeCallbackAtScopeExit = makeScopeExit([&] {
+        completionHandler(SharedMemory::IPCHandle { WTFMove(handle), buffer.size() });
+    });
+
     auto* resource = m_remoteMediaResources.get(identifier);
     if (!resource || !resource->ready())
         return;
 
-    auto sharedMemory = SharedMemory::map(bufferHandle.handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
         return;
-    resource->dataReceived(sharedMemory->createSharedBuffer(bufferHandle.dataSize));
+    sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
+
+    resource->dataReceived(sharedMemory->createSharedBuffer(buffer.size()));
 }
 
 void RemoteMediaResourceManager::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)
