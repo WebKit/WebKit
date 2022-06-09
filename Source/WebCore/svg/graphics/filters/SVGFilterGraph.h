@@ -117,8 +117,41 @@ public:
     }
 
     NodeType* lastNode() const { return m_lastNode.get(); }
+    
+    template<typename Callback>
+    bool visit(Callback callback)
+    {
+        if (!lastNode())
+            return false;
+
+        Vector<Ref<NodeType>> stack;
+        return visit(*lastNode(), stack, 0, callback);
+    }
 
 private:
+    template<typename Callback>
+    bool visit(NodeType& node, Vector<Ref<NodeType>>& stack, unsigned level, Callback callback)
+    {
+        // A cycle is detected.
+        if (stack.containsIf([&](auto& item) { return item.ptr() == &node; }))
+            return false;
+
+        stack.append(node);
+
+        callback(node, level);
+
+        for (auto& input : getNodeInputs(node)) {
+            if (!visit(input, stack, level + 1, callback))
+                return false;
+        }
+
+        ASSERT(!stack.isEmpty());
+        ASSERT(stack.last().ptr() == &node);
+
+        stack.removeLast();
+        return true;
+    }
+
     HashMap<AtomString, Ref<NodeType>> m_builtinNodes;
     HashMap<AtomString, Ref<NodeType>> m_namedNodes;
     HashMap<Ref<NodeType>, NodeVector> m_nodeInputs;

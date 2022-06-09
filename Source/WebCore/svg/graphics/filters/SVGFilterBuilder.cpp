@@ -71,52 +71,6 @@ static ColorInterpolation colorInterpolationForElement(SVGElement& element)
 }
 #endif
 
-static bool appendSubGraphToExpression(const SVGFilterEffectsGraph& graph, const FilterEffectGeometryMap& effectGeometryMap, FilterEffect& effect, FilterEffectVector& stack, unsigned level, SVGFilterExpression& expression)
-{
-    // A cycle is detected.
-    if (stack.containsIf([&](auto& item) { return item.ptr() == &effect; }))
-        return false;
-
-    auto effectGeometry = [&](FilterEffect& effect) -> std::optional<FilterEffectGeometry> {
-        auto it = effectGeometryMap.find(effect);
-        if (it != effectGeometryMap.end())
-            return it->value;
-        return std::nullopt;
-    };
-
-    stack.append(effect);
-
-    expression.append({ effect, effectGeometry(effect), level });
-
-    for (auto& input : graph.getNodeInputs(effect)) {
-        if (!appendSubGraphToExpression(graph, effectGeometryMap, input, stack, level + 1, expression))
-            return false;
-    }
-
-    ASSERT(!stack.isEmpty());
-    ASSERT(stack.last().ptr() == &effect);
-
-    stack.removeLast();
-    return true;
-}
-
-static bool appendGraphToExpression(const SVGFilterEffectsGraph& graph, const FilterEffectGeometryMap& effectGeometryMap, SVGFilterExpression& expression)
-{
-    if (!graph.lastNode())
-        return false;
-
-    FilterEffectVector stack;
-    if (!appendSubGraphToExpression(graph, effectGeometryMap, *graph.lastNode(), stack, 0, expression))
-        return false;
-
-    if (expression.size() > maxTotalNumberFilterEffects)
-        return false;
-
-    expression.reverse();
-    expression.shrinkToFit();
-    return true;
-}
-
 std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFilterElement& filterElement, const SVGFilter& filter, const GraphicsContext& destinationContext)
 {
     if (filterElement.countChildNodes() > maxCountChildNodes)
@@ -151,46 +105,30 @@ std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFi
         graph.setNodeInputs(*effect, WTFMove(*inputs));
     }
 
+    auto effectGeometry = [&](FilterEffect& effect) -> std::optional<FilterEffectGeometry> {
+        auto it = effectGeometryMap.find(effect);
+        if (it != effectGeometryMap.end())
+            return it->value;
+        return std::nullopt;
+    };
+
     SVGFilterExpression expression;
-    if (!appendGraphToExpression(graph, effectGeometryMap, expression))
+    bool result = graph.visit([&](FilterEffect& effect, unsigned level) {
+        expression.append({ effect, effectGeometry(effect), level });
+    });
+
+    if (!result || expression.size() > maxTotalNumberFilterEffects)
         return std::nullopt;
 
+    expression.reverse();
+    expression.shrinkToFit();
     return expression;
 }
 
-static IntOutsets calculateSubGraphOutsets(const SVGFilterPrimitivesGraph& graph, SVGFilterPrimitiveStandardAttributes& primitive, Vector<Ref<SVGFilterPrimitiveStandardAttributes>>& stack, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
-{
-    // A cycle is detected.
-    if (stack.containsIf([&](auto& item) { return item.ptr() == &primitive; }))
-        return { };
-
-    stack.append(primitive);
-
-    IntOutsets outsets;
-    for (auto& input : graph.getNodeInputs(primitive))
-        outsets += calculateSubGraphOutsets(graph, input, stack, targetBoundingBox, primitiveUnits);
-    outsets += primitive.outsets(targetBoundingBox, primitiveUnits);
-
-    ASSERT(!stack.isEmpty());
-    ASSERT(stack.last().ptr() == &primitive);
-
-    stack.removeLast();
-    return outsets;
-}
-
-static IntOutsets calculateGraphOutsets(const SVGFilterPrimitivesGraph& graph, const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits)
-{
-    if (!graph.lastNode())
-        return { };
-    
-    Vector<Ref<SVGFilterPrimitiveStandardAttributes>> stack;
-    return calculateSubGraphOutsets(graph, *graph.lastNode(), stack, targetBoundingBox, primitiveUnits);
-}
-
-IntOutsets SVGFilterBuilder::calculateFilterOutsets(SVGFilterElement& filterElement, const FloatRect& targetBoundingBox)
+static std::optional<SVGFilterPrimitivesGraph> buildFilterPrimitivesGraph(SVGFilterElement& filterElement)
 {
     if (filterElement.countChildNodes() > maxCountChildNodes)
-        return { };
+        return std::nullopt;
 
     SVGFilterPrimitivesGraph graph;
 
@@ -201,7 +139,21 @@ IntOutsets SVGFilterBuilder::calculateFilterOutsets(SVGFilterElement& filterElem
         graph.setNodeInputs(effectElement, WTFMove(inputs));
     }
 
-    return calculateGraphOutsets(graph, targetBoundingBox, filterElement.primitiveUnits());
+    return graph;
+}
+
+IntOutsets SVGFilterBuilder::calculateFilterOutsets(SVGFilterElement& filterElement, const FloatRect& targetBoundingBox)
+{
+    auto graph = buildFilterPrimitivesGraph(filterElement);
+    if (!graph)
+        return { };
+
+    IntOutsets outsets;
+    bool result = graph->visit([&](SVGFilterPrimitiveStandardAttributes& primitive, unsigned) {
+        outsets += primitive.outsets(targetBoundingBox, filterElement.primitiveUnits());
+    });
+
+    return result ? outsets : IntOutsets();
 }
 
 } // namespace WebCore
