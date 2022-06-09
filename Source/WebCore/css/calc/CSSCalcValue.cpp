@@ -344,6 +344,11 @@ double CSSCalcValue::computeLengthPx(const CSSToLengthConversionData& conversion
     return clampToPermittedRange(m_expression->computeLengthPx(conversionData));
 }
 
+bool CSSCalcValue::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
+{
+    return m_expression->convertingToLengthRequiresNonNullStyle(lengthConversion);
+}
+
 bool CSSCalcValue::isCalcFunction(CSSValueID functionId)
 {
     switch (functionId) {

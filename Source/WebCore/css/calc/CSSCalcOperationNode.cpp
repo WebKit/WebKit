@@ -35,6 +35,7 @@
 #include "CSSUnits.h"
 #include "CalcExpressionOperation.h"
 #include "Logging.h"
+#include <wtf/Algorithms.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -1133,6 +1134,13 @@ void CSSCalcOperationNode::collectDirectRootComputationalDependencies(HashSet<CS
 {
     for (auto& child : m_children)
         child->collectDirectRootComputationalDependencies(values);
+}
+
+bool CSSCalcOperationNode::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
+{
+    return WTF::anyOf(m_children, [lengthConversion] (auto& child) {
+        return child->convertingToLengthRequiresNonNullStyle(lengthConversion);
+    });
 }
 
 void CSSCalcOperationNode::buildCSSText(const CSSCalcExpressionNode& node, StringBuilder& builder)

@@ -59,6 +59,8 @@ public:
 
     virtual void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const = 0;
     virtual void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const = 0;
+    virtual bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const = 0;
+
 
     CalculationCategory category() const { return m_category; }
 

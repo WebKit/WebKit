@@ -4378,8 +4378,11 @@ enum LengthConversion {
 
 inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
 {
-    ASSERT(isFontRelativeLength());
     // This matches the implementation in CSSPrimitiveValue::computeLengthDouble().
+    //
+    // FIXME: We should probably make CSSPrimitiveValue::computeLengthDouble and
+    // CSSPrimitiveValue::computeNonCalcLengthDouble (which has the style assertion)
+    // return std::optional<double> instead of having this check here.
     switch (primitiveUnitType()) {
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_EXS:
@@ -4387,6 +4390,8 @@ inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int length
     case CSSUnitType::CSS_IC:
     case CSSUnitType::CSS_LHS:
         return lengthConversion & (FixedIntegerConversion | FixedFloatConversion);
+    case CSSUnitType::CSS_CALC:
+        return m_value.calc->convertingToLengthRequiresNonNullStyle(lengthConversion);
     default:
         return false;
     }
@@ -4394,7 +4399,7 @@ inline bool CSSPrimitiveValue::convertingToLengthRequiresNonNullStyle(int length
 
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
 {
-    if (isFontRelativeLength() && convertingToLengthRequiresNonNullStyle(supported) && !conversionData.style())
+    if (convertingToLengthRequiresNonNullStyle(supported) && !conversionData.style())
         return Length(LengthType::Undefined);
     if ((supported & FixedIntegerConversion) && isLength())
         return computeLength<Length>(conversionData);

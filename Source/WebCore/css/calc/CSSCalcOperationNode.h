@@ -115,6 +115,7 @@ private:
 
     void collectDirectComputationalDependencies(HashSet<CSSPropertyID>&) const final;
     void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>&) const final;
+    bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const final;
 
     void dump(TextStream&) const final;
 

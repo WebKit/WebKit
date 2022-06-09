@@ -73,6 +73,8 @@ public:
 
     void dump(TextStream&) const;
 
+    bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const;
+
 private:
     CSSCalcValue(Ref<CSSCalcExpressionNode>&&, bool shouldClampToNonNegative);
 

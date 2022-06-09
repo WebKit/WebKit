@@ -216,6 +216,11 @@ void CSSCalcPrimitiveValueNode::collectDirectRootComputationalDependencies(HashS
     m_value->collectDirectRootComputationalDependencies(values);
 }
 
+bool CSSCalcPrimitiveValueNode::convertingToLengthRequiresNonNullStyle(int lengthConversion) const
+{
+    return m_value->convertingToLengthRequiresNonNullStyle(lengthConversion);
+}
+
 bool CSSCalcPrimitiveValueNode::isZero() const
 {
     return !m_value->doubleValue();
