@@ -81,7 +81,7 @@ audio::-webkit-media-controls-panel {
     line-height: 25px;
     user-select: none;
     background-color: transparent;
-    background-image: -webkit-linear-gradient(top,
+    background-image: linear-gradient(to bottom,
         rgba(0,  0,  0,  .92) 0,
         rgba(0,  0,  0,  .92) 1px,
         rgba(89, 89, 89, .92) 1px,
@@ -191,8 +191,8 @@ audio::-webkit-media-controls-panel .volume-box {
     -webkit-transform-origin: 11px 11px;
 
     background-color: transparent;
-    background-image: -webkit-linear-gradient(
-        left,
+    background-image: linear-gradient(
+        to right,
         rgba(17, 17, 17,  0.92),
         rgba(42, 42, 42, 0.92)
     );
@@ -233,8 +233,8 @@ video::-webkit-media-controls-volume-slider {
 
     border-radius: 5px !important;
     background-color: transparent !important;
-    background-image: -webkit-linear-gradient(
-        top,
+    background-image: linear-gradient(
+        to bottom,
         rgba(15, 15, 15, .85) 0,
         rgba(23, 23, 23, .85) 50%,
         rgba(15, 15, 15, .85) 100%
@@ -254,8 +254,8 @@ audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
     Slider thumbs are small, so forcing a compositing layer is inexpensive,
        and it keeps the slider from having to repaint while sliding. */
     transform: rotateZ(0) !important;
-    background-image: -webkit-linear-gradient(
-        left,
+    background-image: linear-gradient(
+        to right,
         rgba(99, 99, 99, 1),
         rgba(144, 144, 144, 1)
     ) !important;
@@ -265,8 +265,8 @@ video::-webkit-media-controls-volume-slider::-webkit-slider-thumb::-webkit-slide
 video::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb,
 audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb::-webkit-slider-thumb:active,
 audio::-webkit-media-controls-volume-slider::-webkit-slider-thumb:active::-webkit-slider-thumb {
-    background-image: -webkit-linear-gradient(
-        right top,
+    background-image: linear-gradient(
+        to bottom left,
         rgba(160, 160, 160, 1),
         rgba(221, 221, 221, 1)
     ) !important;
@@ -557,7 +557,7 @@ video:-webkit-full-screen::-webkit-media-controls-panel {
     margin: 0 auto 50px auto !important;
     padding-top: 10px !important;
 
-    background: -webkit-linear-gradient(top,
+    background: linear-gradient(to bottom,
         rgba(45, 45, 45, .97) 0,
         rgba(30, 30, 30, .97) 19px,
         rgba(25, 25, 25, .97) 19px,
@@ -598,7 +598,7 @@ video:-webkit-full-screen::-webkit-media-controls-panel .volume-box {
 video:-webkit-full-screen::-webkit-media-controls-volume-slider {
     height: 6px !important;
     border-radius: 3px !important;
-    background-image: -webkit-linear-gradient(top,
+    background-image: linear-gradient(to bottom,
         rgba(16, 16, 16, .300) 0,
         rgba(9,  9,  9,  .629) 100%
     ) !important;
