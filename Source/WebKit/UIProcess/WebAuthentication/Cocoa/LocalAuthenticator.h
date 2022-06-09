@@ -33,6 +33,11 @@
 
 OBJC_CLASS LAContext;
 
+namespace WebCore {
+class AuthenticatorAttestationResponse;
+class AuthenticatorAssertionResponse;
+}
+
 namespace WebKit {
 
 class LocalAuthenticator final : public Authenticator {
@@ -58,6 +63,8 @@ public:
 
 private:
     explicit LocalAuthenticator(UniqueRef<LocalConnection>&&);
+
+    void processClientExtensions(std::variant<Ref<WebCore::AuthenticatorAttestationResponse>, Ref<WebCore::AuthenticatorAssertionResponse>>);
 
     void makeCredential() final;
     void continueMakeCredentialAfterReceivingLAContext(LAContext *);

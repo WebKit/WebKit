@@ -54,7 +54,7 @@ public:
 
     WEBCORE_EXPORT ArrayBuffer* rawId() const;
     WEBCORE_EXPORT void setExtensions(AuthenticationExtensionsClientOutputs&&);
-    AuthenticationExtensionsClientOutputs extensions() const;
+    WEBCORE_EXPORT AuthenticationExtensionsClientOutputs extensions() const;
     void setClientDataJSON(Ref<ArrayBuffer>&&);
     ArrayBuffer* clientDataJSON() const;
     WEBCORE_EXPORT AuthenticatorAttachment attachment() const;

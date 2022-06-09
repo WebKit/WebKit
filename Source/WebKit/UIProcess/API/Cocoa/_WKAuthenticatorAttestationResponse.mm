@@ -42,4 +42,14 @@
     return self;
 }
 
+- (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensionOutputsCBOR:(NSData *)extensionOutputsCBOR attestationObject:(NSData *)attestationObject attachment:(_WKAuthenticatorAttachment)attachment transports:(NSArray<NSNumber *> *)transports
+{
+    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensionOutputsCBOR:WTFMove(extensionOutputsCBOR) attachment:attachment]))
+        return nil;
+
+    _attestationObject = attestationObject;
+    _transports = transports;
+    return self;
+}
+
 @end

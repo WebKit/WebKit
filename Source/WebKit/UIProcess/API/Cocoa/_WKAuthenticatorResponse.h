@@ -41,6 +41,7 @@ WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @property (nullable, nonatomic, readonly) NSData *clientDataJSON;
 @property (nonatomic, readonly) NSData *rawId;
 @property (nullable, nonatomic, readonly, strong) _WKAuthenticationExtensionsClientOutputs *extensions;
+@property (nullable, nonatomic, copy) NSData *extensionOutputsCBOR;
 
 @end
 

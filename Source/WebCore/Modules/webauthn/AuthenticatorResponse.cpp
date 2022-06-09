@@ -43,20 +43,23 @@ RefPtr<AuthenticatorResponse> AuthenticatorResponse::tryCreate(AuthenticatorResp
         if (!data.attestationObject)
             return nullptr;
 
-        return AuthenticatorAttestationResponse::create(data.rawId.releaseNonNull(), data.attestationObject.releaseNonNull(), attachment, WTFMove(data.transports));
+        auto response = AuthenticatorAttestationResponse::create(data.rawId.releaseNonNull(), data.attestationObject.releaseNonNull(), attachment, WTFMove(data.transports));
+        if (data.extensionOutputs)
+            response->setExtensions(WTFMove(*data.extensionOutputs));
+        return WTFMove(response);
     }
 
     if (!data.authenticatorData || !data.signature)
         return nullptr;
 
-    return AuthenticatorAssertionResponse::create(data.rawId.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle), AuthenticationExtensionsClientOutputs { data.appid }, attachment);
+    return AuthenticatorAssertionResponse::create(data.rawId.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle), WTFMove(data.extensionOutputs), attachment);
 }
 
 AuthenticatorResponseData AuthenticatorResponse::data() const
 {
     AuthenticatorResponseData data;
     data.rawId = m_rawId.copyRef();
-    data.appid = m_extensions.appid;
+    data.extensionOutputs = m_extensions;
     return data;
 }
 

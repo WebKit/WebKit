@@ -34,9 +34,13 @@ namespace WebCore {
 struct AuthenticationExtensionsClientInputs {
     String appid;
     bool googleLegacyAppidSupport;
+    bool credProps;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<AuthenticationExtensionsClientInputs> decode(Decoder&);
+
+    WEBCORE_EXPORT Vector<uint8_t> toCBOR() const;
+    WEBCORE_EXPORT static std::optional<AuthenticationExtensionsClientInputs> fromCBOR(const Vector<uint8_t>&);
 };
 
 template<class Encoder>

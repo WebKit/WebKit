@@ -42,6 +42,7 @@
 #import "_WKPublicKeyCredentialRequestOptions.h"
 #import "_WKPublicKeyCredentialRelyingPartyEntity.h"
 #import "_WKPublicKeyCredentialUserEntity.h"
+#import <WebCore/AuthenticationExtensionsClientInputs.h>
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorResponse.h>
 #import <WebCore/AuthenticatorResponseData.h>
@@ -104,6 +105,11 @@ static Vector<uint8_t> produceClientDataJsonHash(NSData *clientDataJson)
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     crypto->addBytes(clientDataJson.bytes, clientDataJson.length);
     return crypto->computeHash();
+}
+
+static inline RetainPtr<NSData> toNSData(const Vector<uint8_t>& data)
+{
+    return adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
 }
 #endif
 
@@ -825,7 +831,10 @@ static WebCore::CredentialRequestOptions::MediationRequirement toWebCore(_WKWebA
     if (options.authenticatorSelection)
         result.authenticatorSelection = authenticatorSelectionCriteria(options.authenticatorSelection);
     result.attestation = attestationConveyancePreference(options.attestation);
-    result.extensions = authenticationExtensionsClientInputs(options.extensions);
+    if (options.extensionsCBOR)
+        result.extensions = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(vectorFromNSData(options.extensionsCBOR));
+    else
+        result.extensions = authenticationExtensionsClientInputs(options.extensions);
 #endif
 
     return result;
@@ -842,14 +851,6 @@ static _WKAuthenticatorAttachment authenticatorAttachmentToWKAuthenticatorAttach
     }
 }
 
-static RetainPtr<_WKAuthenticationExtensionsClientOutputs> wkExtensionsClientOutputs(const WebCore::AuthenticatorResponseData& data)
-{
-    RetainPtr<_WKAuthenticationExtensionsClientOutputs> extensions;
-    if (data.appid)
-        extensions = adoptNS([[_WKAuthenticationExtensionsClientOutputs alloc] initWithAppid:data.appid.value()]);
-    return extensions;
-}
-
 static RetainPtr<NSArray<NSNumber *>> wkTransports(const Vector<WebCore::AuthenticatorTransport>& transports)
 {
     auto wkTransports = adoptNS([NSMutableArray<NSNumber *> new]);
@@ -861,7 +862,7 @@ static RetainPtr<NSArray<NSNumber *>> wkTransports(const Vector<WebCore::Authent
 
 static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestationResponse(const WebCore::AuthenticatorResponseData& data, NSData *clientDataJSON, WebCore::AuthenticatorAttachment attachment)
 {
-    auto value = adoptNS([[_WKAuthenticatorAttestationResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensions:wkExtensionsClientOutputs(data) attestationObject:[NSData dataWithBytes:data.attestationObject->data() length:data.attestationObject->byteLength()] attachment: authenticatorAttachmentToWKAuthenticatorAttachment(attachment) transports:wkTransports(data.transports).autorelease()]);
+    auto value = adoptNS([[_WKAuthenticatorAttestationResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensionOutputsCBOR:toNSData(data.extensionOutputs->toCBOR()).autorelease() attestationObject:[NSData dataWithBytes:data.attestationObject->data() length:data.attestationObject->byteLength()] attachment: authenticatorAttachmentToWKAuthenticatorAttachment(attachment) transports:wkTransports(data.transports).autorelease()]);
     
     return value;
 }
@@ -928,7 +929,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     if (data.userHandle)
         userHandle = [NSData dataWithBytes:data.userHandle->data() length:data.userHandle->byteLength()];
 
-    return adoptNS([[_WKAuthenticatorAssertionResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensions:wkExtensionsClientOutputs(data) authenticatorData:[NSData dataWithBytes:data.authenticatorData->data() length:data.authenticatorData->byteLength()] signature:[NSData dataWithBytes:data.signature->data() length:data.signature->byteLength()] userHandle:userHandle attachment:authenticatorAttachmentToWKAuthenticatorAttachment(attachment)]);
+    return adoptNS([[_WKAuthenticatorAssertionResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensionOutputsCBOR:toNSData(data.extensionOutputs->toCBOR()).get() authenticatorData:[NSData dataWithBytes:data.authenticatorData->data() length:data.authenticatorData->byteLength()] signature:[NSData dataWithBytes:data.signature->data() length:data.signature->byteLength()] userHandle:userHandle attachment:authenticatorAttachmentToWKAuthenticatorAttachment(attachment)]);
 }
 #endif
 

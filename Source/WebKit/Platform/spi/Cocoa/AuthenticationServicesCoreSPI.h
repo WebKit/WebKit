@@ -164,6 +164,7 @@ typedef NS_ENUM(NSUInteger, ASCPublicKeyCredentialKind) {
 @property (nonatomic, nullable, copy) NSData *clientDataHash;
 @property (nonatomic, nullable, readonly, copy) NSString *userVerificationPreference;
 @property (nonatomic, nullable, copy) ASCWebAuthenticationExtensionsClientInputs *extensions;
+@property (nonatomic, nullable, copy) NSData *extensionsCBOR;
 @property (nonatomic, nullable, copy) NSNumber *timeout;
 
 @property (nonatomic, nullable, readonly, copy) NSArray<ASCPublicKeyCredentialDescriptor *> *allowedCredentials;
@@ -202,6 +203,7 @@ typedef NS_ENUM(NSInteger, ASPublicKeyCredentialResidentKeyPreference) {
 @property (nonatomic, nullable, copy) NSString *userVerificationPreference;
 @property (nonatomic, nullable, copy) NSString *attestationPreference;
 @property (nonatomic, nullable, copy) ASCWebAuthenticationExtensionsClientInputs *extensions;
+@property (nonatomic, nullable, copy) NSData *extensionsCBOR;
 @property (nonatomic, nullable, copy) NSNumber *timeout;
 
 @property (nonatomic) BOOL shouldRequireResidentKey;
@@ -291,6 +293,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSData *attestationObject;
 @property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
 @property (nonatomic, copy) NSArray<NSNumber *> *transports;
+@property (nonatomic, copy, nullable) NSData *extensionOutputsCBOR;
 
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -306,6 +309,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSString *relyingPartyIdentifier;
 @property (nonatomic, copy, readonly) NSData *attestationObject;
 @property (nonatomic, copy) NSArray<NSNumber *> *transports;
+@property (nonatomic, copy, readonly, nullable) NSData *extensionOutputsCBOR;
 
 @end
 
@@ -321,6 +325,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSData *authenticatorData;
 @property (nonatomic, copy, readonly) NSData *signature;
 @property (nonatomic, copy, readonly, nullable) NSData *userHandle;
+@property (nonatomic, copy, readonly, nullable) NSData *extensionOutputsCBOR;
 
 @end
 
@@ -334,6 +339,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 @property (nonatomic, copy, readonly) NSData *signature;
 @property (nonatomic, copy, readonly, nullable) NSData *userHandle;
 @property (nonatomic, copy, readonly) NSData *rawClientDataJSON;
+@property (nonatomic, copy, readonly, nullable) NSData *extensionOutputsCBOR;
 
 @end
 

@@ -43,4 +43,15 @@
     return self;
 }
 
+- (instancetype)initWithClientDataJSON:(NSData *)clientDataJSON rawId:(NSData *)rawId extensionOutputsCBOR:(NSData *)extensionOutputsCBOR authenticatorData:(NSData *)authenticatorData signature:(NSData *)signature userHandle:(NSData *)userHandle attachment:(_WKAuthenticatorAttachment)attachment
+{
+    if (!(self = [super initWithClientDataJSON:clientDataJSON rawId:rawId extensionOutputsCBOR:extensionOutputsCBOR attachment:attachment]))
+        return nil;
+
+    _authenticatorData = authenticatorData;
+    _signature = signature;
+    _userHandle = userHandle;
+    return self;
+}
+
 @end

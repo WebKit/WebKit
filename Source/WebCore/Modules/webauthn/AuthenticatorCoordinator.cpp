@@ -155,7 +155,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
 
     // Step 11-12.
     // Only Google Legacy AppID Support Extension is supported.
-    options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, options.rp.id) };
+    options.extensions = AuthenticationExtensionsClientInputs { String(), processGoogleLegacyAppIdSupportExtension(options.extensions, options.rp.id), options.extensions && options.extensions->credProps };
 
     // Step 13-15.
     auto clientDataJson = buildClientDataJson(ClientDataType::Create, options.challenge, callerOrigin, scope);

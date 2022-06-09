@@ -318,6 +318,19 @@ void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext
     m_connection->verifyUser(accessControlRef, context, WTFMove(callback));
 }
 
+void LocalAuthenticator::processClientExtensions(std::variant<Ref<AuthenticatorAttestationResponse>, Ref<AuthenticatorAssertionResponse>> response)
+{
+    WTF::switchOn(response, [&](const Ref<AuthenticatorAttestationResponse>& response) {
+        auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
+        if (creationOptions.extensions && creationOptions.extensions->credProps) {
+            auto extensionOutputs = response->extensions();
+            
+            extensionOutputs.credProps = AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput { true /* rk */ };
+            response->setExtensions(WTFMove(extensionOutputs));
+        }
+    }, [&](const Ref<AuthenticatorAssertionResponse>& options) { });
+}
+
 void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessControlRef accessControlRef, LocalConnection::UserVerification verification, LAContext *context)
 {
     using namespace LocalAuthenticatorInternal;
@@ -415,7 +428,9 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
 
         auto authData = buildAuthData(creationOptions.rp.id, flags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
         auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
-        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports()));
+        auto response = AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports());
+        processClientExtensions(response);
+        receiveRespond(WTFMove(response));
         return;
     }
 
@@ -461,7 +476,9 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
 
     deleteDuplicateCredential();
-    receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports()));
+    auto response = AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform, transports());
+    processClientExtensions(response);
+    receiveRespond(WTFMove(response));
 }
 
 void LocalAuthenticator::getAssertion()
@@ -622,6 +639,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     // Step 13.
     response->setAuthenticatorData(WTFMove(authData));
     response->setSignature(toArrayBuffer((NSData *)signature.get()));
+    processClientExtensions(response);
     receiveRespond(WTFMove(response));
 }
 

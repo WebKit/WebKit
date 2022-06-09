@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticationExtensionsClientOutputs.h"
 #include "AuthenticatorTransport.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Forward.h>
@@ -42,7 +43,7 @@ struct AuthenticatorResponseData {
     RefPtr<ArrayBuffer> rawId;
 
     // Extensions
-    std::optional<bool> appid;
+    std::optional<AuthenticationExtensionsClientOutputs> extensionOutputs;
 
     // AuthenticatorAttestationResponse
     RefPtr<ArrayBuffer> attestationObject;
@@ -92,6 +93,7 @@ void AuthenticatorResponseData::encode(Encoder& encoder) const
     }
     encoder << false;
     encodeArrayBuffer(encoder, *rawId);
+    encoder << extensionOutputs;
 
     encoder << isAuthenticatorAttestationResponse;
 
@@ -105,9 +107,6 @@ void AuthenticatorResponseData::encode(Encoder& encoder) const
         return;
     encodeArrayBuffer(encoder, *authenticatorData);
     encodeArrayBuffer(encoder, *signature);
-
-    // Encode AppID before user handle to avoid the userHandle flag.
-    encoder << appid;
 
     if (!userHandle) {
         encoder << false;
@@ -132,6 +131,12 @@ std::optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decod
     result.rawId = decodeArrayBuffer(decoder);
     if (!result.rawId)
         return std::nullopt;
+    
+    std::optional<std::optional<AuthenticationExtensionsClientOutputs>> extensionOutputs;
+    decoder >> extensionOutputs;
+    if (!extensionOutputs)
+        return std::nullopt;
+    result.extensionOutputs = WTFMove(*extensionOutputs);
 
     std::optional<bool> isAuthenticatorAttestationResponse;
     decoder >> isAuthenticatorAttestationResponse;
@@ -159,12 +164,6 @@ std::optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decod
     result.signature = decodeArrayBuffer(decoder);
     if (!result.signature)
         return std::nullopt;
-
-    std::optional<std::optional<bool>> appid;
-    decoder >> appid;
-    if (!appid)
-        return std::nullopt;
-    result.appid = WTFMove(*appid);
 
     std::optional<bool> hasUserHandle;
     decoder >> hasUserHandle;
