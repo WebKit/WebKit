@@ -119,6 +119,8 @@ TextTrackRepresentationCocoa::TextTrackRepresentationCocoa(TextTrackRepresentati
 {
     [m_layer setDelegate:m_delegate.get()];
     [m_layer setContentsGravity:kCAGravityBottom];
+
+    [m_layer setName:@"TextTrackRepresentation"];
 }
 
 TextTrackRepresentationCocoa::~TextTrackRepresentationCocoa()
