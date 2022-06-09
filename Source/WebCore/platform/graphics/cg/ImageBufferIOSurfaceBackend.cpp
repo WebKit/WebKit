@@ -155,16 +155,20 @@ unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const
 
 void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
 {
+    if (!m_hasCGImageRefs)
+        return;
     // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.
     // This is necessary in cases where we know (a priori) that the IOSurface has been
     // modified, but QuartzCore may have a cached CGImageRef that does not reflect the
     // current state of the IOSurface.
     // See https://webkit.org/b/157966 and https://webkit.org/b/228682 for more context.
     context().fillRect({ });
+    m_hasCGImageRefs = false;
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
 {
+    m_hasCGImageRefs = true;
     return NativeImage::create(m_surface->createImage());
 }
 
@@ -181,15 +185,6 @@ void ImageBufferIOSurfaceBackend::finalizeDrawIntoContext(GraphicsContext& desti
         invalidateCachedNativeImage();
 }
 
-RetainPtr<CGImageRef> ImageBufferIOSurfaceBackend::copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution preserveResolution) const
-{
-    if (m_requiresDrawAfterPutPixelBuffer) {
-        invalidateCachedNativeImage();
-        m_requiresDrawAfterPutPixelBuffer = false;
-    }
-    return ImageBufferCGBackend::copyCGImageForEncoding(destinationUTI, preserveResolution);
-}
-
 RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& allocator) const
 {
     IOSurface::Locker lock(*m_surface);
@@ -198,9 +193,9 @@ RefPtr<PixelBuffer> ImageBufferIOSurfaceBackend::getPixelBuffer(const PixelBuffe
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
+    invalidateCachedNativeImage();
     IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
     ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
-    m_requiresDrawAfterPutPixelBuffer = true;
 }
 
 IOSurface* ImageBufferIOSurfaceBackend::surface()

@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+bool platformMIMETypeIsJPEG(const String& mimeType);
+
 Vector<uint8_t> data(cairo_surface_t*, const String& mimeType, std::optional<double> quality);
 
 } // namespace WebCore

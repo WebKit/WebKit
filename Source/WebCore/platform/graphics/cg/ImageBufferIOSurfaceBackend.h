@@ -79,14 +79,11 @@ protected:
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
     unsigned bytesPerRow() const override;
 
-    // ImageBufferCGBackend overrides.
-    RetainPtr<CGImageRef> copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution) const final;
-
     void finalizeDrawIntoContext(GraphicsContext& destinationContext) override;
     void invalidateCachedNativeImage() const;
 
     std::unique_ptr<IOSurface> m_surface;
-    mutable bool m_requiresDrawAfterPutPixelBuffer { false };
+    mutable bool m_hasCGImageRefs { false };
 
     mutable bool m_needsSetupContext { false };
     VolatilityState m_volatilityState { VolatilityState::NonVolatile };

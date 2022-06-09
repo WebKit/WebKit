@@ -36,10 +36,7 @@
 #include "ColorTransferFunctions.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCairo.h"
-#include "ImageBufferUtilitiesCairo.h"
-#include "MIMETypeRegistry.h"
 #include <cairo.h>
-#include <wtf/text/Base64.h>
 
 #if USE(CAIRO)
 
@@ -92,22 +89,6 @@ void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace&
     ASSERT(m_parameters.colorSpace == DestinationColorSpace::SRGB());
     UNUSED_PARAM(newColorSpace);
 #endif
-}
-
-String ImageBufferCairoBackend::toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const
-{
-    Vector<uint8_t> encodedImage = toData(mimeType, quality);
-    if (encodedImage.isEmpty())
-        return "data:,"_s;
-
-    return makeString("data:", mimeType, ";base64,", base64Encoded(encodedImage.data(), encodedImage.size()));
-}
-
-Vector<uint8_t> ImageBufferCairoBackend::toData(const String& mimeType, std::optional<double> quality) const
-{
-    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-    cairo_surface_t* image = cairo_get_target(context().platformContext()->cr());
-    return data(image, mimeType, quality);
 }
 
 } // namespace WebCore
