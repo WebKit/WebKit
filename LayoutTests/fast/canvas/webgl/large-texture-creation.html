@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WebGL Framebuffer Test</title>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="2" height="2"> </canvas>
+<script>
+description("Test creating a max-size texture.");
+
+debug("");
+debug("Canvas.getContext");
+
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var canvas = document.getElementById("canvas");
+var gl = create3DContext(canvas);
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+
+  debug("");
+  
+  texSize = gl.getParameter(gl.MAX_TEXTURE_SIZE)
+  var tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D,
+                0,                 // level
+                gl.RGBA,           // internalFormat
+                texSize,      // width
+                texSize,     // height
+                0,                 // border
+                gl.RGBA,           // format
+                gl.FLOAT,  // type
+                null);             // data
+  err = gl.getError();
+  glErrorShouldBe(gl, [gl.NO_ERROR, gl.OUT_OF_MEMORY], "unexpected result when creating MAX_TEXTURE_SIZE texture")
+}
+
+debug("");
+
+</script>
+</body>
+</html>
+

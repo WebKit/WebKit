@@ -273,11 +273,10 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
     {
         return angle::Result::Stop;
     }
-    refOut->reset(new Texture(context, desc, mips, renderTargetOnly, allowFormatView, memoryLess));
-    if (!refOut || !refOut->get())
-    {
-        ANGLE_MTL_CHECK(context, false, GL_OUT_OF_MEMORY);
-    }
+    ASSERT(refOut);
+    Texture *newTexture = new Texture(context, desc, mips, renderTargetOnly, allowFormatView, memoryLess);
+    ANGLE_MTL_CHECK(context, newTexture->valid(), GL_OUT_OF_MEMORY);
+    refOut->reset(newTexture);
     if (!mtlFormat.hasDepthAndStencilBits())
     {
         refOut->get()->setColorWritableMask(GetEmulatedColorWriteMask(mtlFormat));
@@ -301,13 +300,10 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
                                    bool renderTargetOnly,
                                    TextureRef *refOut)
 {
-
-    refOut->reset(new Texture(context, desc, surfaceRef, slice, renderTargetOnly));
-
-    if (!(*refOut) || !(*refOut)->get())
-    {
-        ANGLE_MTL_CHECK(context, false, GL_OUT_OF_MEMORY);
-    }
+    ASSERT(refOut);
+    Texture *newTexture = new Texture(context, desc, surfaceRef, slice, renderTargetOnly);
+    ANGLE_MTL_CHECK(context, newTexture->valid(), GL_OUT_OF_MEMORY);
+    refOut->reset(newTexture);
     if (!mtlFormat.hasDepthAndStencilBits())
     {
         refOut->get()->setColorWritableMask(GetEmulatedColorWriteMask(mtlFormat));
