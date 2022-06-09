@@ -63,8 +63,8 @@ private:
 
     void resolveComposedTree();
 
-    enum class QueryContainerAction : uint8_t { None, Resolve };
-    QueryContainerAction determineQueryContainerAction(const Element&, const RenderStyle*, ContainerType previousContainerType);
+    enum class QueryContainerAction : uint8_t { None, Continue, Layout };
+    QueryContainerAction updateQueryContainer(Element&, const RenderStyle&, ContainerType previousContainerType);
 
     enum class DescendantsToResolve : uint8_t { None, ChildrenWithExplicitInherit, Children, All };
     std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&, ResolutionType);
@@ -129,8 +129,7 @@ private:
     Vector<Parent, 32> m_parentStack;
     bool m_didSeePendingStylesheet { false };
 
-    Vector<Ref<const Element>> m_unresolvedQueryContainers;
-    HashSet<Ref<const Element>> m_resolvedQueryContainers;
+    HashSet<RefPtr<Element>> m_unresolvedQueryContainers;
 
     std::unique_ptr<Update> m_update;
 };
