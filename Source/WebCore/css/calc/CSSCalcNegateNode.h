@@ -58,6 +58,7 @@ private:
 
     void collectDirectComputationalDependencies(HashSet<CSSPropertyID>& properties) const final { m_child->collectDirectComputationalDependencies(properties); }
     void collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>& properties) const final { m_child->collectDirectRootComputationalDependencies(properties); }
+    bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const final { return m_child->convertingToLengthRequiresNonNullStyle(lengthConversion); }
 
     void dump(TextStream&) const final;
 
