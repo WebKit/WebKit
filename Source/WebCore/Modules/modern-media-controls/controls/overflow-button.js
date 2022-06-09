@@ -30,7 +30,7 @@ class OverflowButton extends Button
     {
         super({
             cssClassName: "overflow",
-            iconName: layoutDelegate?.layoutTraits?.overflowButtonHasCircle() ? Icons.OverflowCircle : Icons.Overflow,
+            iconName: Icons.Overflow,
             layoutDelegate,
         });
 

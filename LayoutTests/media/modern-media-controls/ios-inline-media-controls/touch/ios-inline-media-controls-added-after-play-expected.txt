@@ -4,6 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 'play' event.
+PASS media.paused is false
 PASS shadowRoot.querySelector('button.play-pause') became different from null
 PASS shadowRoot.querySelector('button.play-pause').getBoundingClientRect().width became different from 0
 Tapping start button...

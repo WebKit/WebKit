@@ -86,11 +86,6 @@ class LayoutTraits
         throw "Derived class must implement this function.";
     }
 
-    overflowButtonHasCircle()
-    {
-        return false;
-    }
-
     supportsTouches()
     {
         // Can be overridden by subclasses.

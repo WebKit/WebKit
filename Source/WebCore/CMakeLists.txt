@@ -2101,6 +2101,7 @@ set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/buttons-container.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/controls-bar.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/inline-media-controls.css"
+    "${WEBCORE_DIR}/Modules/modern-media-controls/controls/ios-inline-media-controls.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/macos-inline-media-controls.css"
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-inline-media-controls.css"

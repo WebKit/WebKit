@@ -40,6 +40,16 @@
     height: 5px;
 }
 
+.slider.allows-relative-scrubbing > .custom-slider {
+    transition-property: top, height;
+    transition-duration: 0.5s;
+}
+
+.slider.allows-relative-scrubbing > .custom-slider.changing {
+    top: 0.5px;
+    height: 15px;
+}
+
 .slider > .custom-slider > * {
     position: absolute;
 }
@@ -50,11 +60,21 @@
     mix-blend-mode: plus-lighter;
 }
 
+.slider.allows-relative-scrubbing > .custom-slider > .fill {
+    transition-property: border-radius;
+    transition-duration: 0.5s;
+}
+
 .slider > .custom-slider > .fill.primary {
     left: 0;
     background-color: rgba(255, 255, 255, 0.45);
     border-top-left-radius: 4.5px;
     border-bottom-left-radius: 4.5px;
+}
+
+.slider.allows-relative-scrubbing > .custom-slider.changing > .fill.primary {
+    border-top-left-radius: 7.5px;
+    border-bottom-left-radius: 7.5px;
 }
 
 .slider > .custom-slider > .fill.track {
@@ -64,10 +84,20 @@
     border-bottom-right-radius: 4.5px;
 }
 
+.slider.allows-relative-scrubbing > .custom-slider.changing > .fill.track {
+    border-top-right-radius: 7.5px;
+    border-bottom-right-radius: 7.5px;
+}
+
 .slider > .custom-slider > .fill.secondary {
     background-color: rgba(255, 255, 255, 0.08);
     border-top-right-radius: 4.5px;
     border-bottom-right-radius: 4.5px;
+}
+
+.slider.allows-relative-scrubbing > .custom-slider.changing > .fill.secondary {
+    border-top-right-radius: 7.5px;
+    border-bottom-right-radius: 7.5px;
 }
 
 .slider > .custom-slider > .knob {
@@ -108,15 +138,21 @@
     outline: none;
 }
 
+.slider.allows-relative-scrubbing > input {
+    pointer-events: all;
+    touch-action: none;
+}
 
 .ios .slider > input {
-    /* On iOS only, we want to only capture events on the thumb and not the track. */
-    pointer-events: none;
-
     /* Make sure we don't show any UI as we drag the scrubber on iOS. */
     user-select: none !important;
     -webkit-touch-callout: none !important;
     -webkit-tap-highlight-color: transparent;
+}
+
+.ios .slider:not(.allows-relative-scrubbing) > input {
+    /* On iOS only, we want to only capture events on the thumb and not the track. */
+    pointer-events: none;
 }
 
 .slider > input::-webkit-slider-thumb {

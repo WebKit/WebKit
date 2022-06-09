@@ -12,7 +12,9 @@ window.jsTestIsAsync = true;
 
 const KNOB_WIDTH = 9;
 
-const slider = new Slider;
+const layoutDelegate = null;
+
+const slider = new Slider(layoutDelegate);
 slider.x = 10;
 slider.y = 32;
 slider.width = 200 + KNOB_WIDTH;

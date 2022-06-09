@@ -8,7 +8,9 @@ description("Testing the <code>Slider</code> computed style.");
 
 window.jsTestIsAsync = true;
 
-const slider = new Slider;
+const layoutDelegate = null;
+
+const slider = new Slider(layoutDelegate);
 slider.width = 200;
 slider.height = 25;
 

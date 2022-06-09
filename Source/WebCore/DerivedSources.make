@@ -1759,6 +1759,7 @@ MODERN_MEDIA_CONTROLS_STYLE_SHEETS = \
     $(WebCore)/Modules/modern-media-controls/controls/buttons-container.css \
     $(WebCore)/Modules/modern-media-controls/controls/controls-bar.css \
     $(WebCore)/Modules/modern-media-controls/controls/inline-media-controls.css \
+    $(WebCore)/Modules/modern-media-controls/controls/ios-inline-media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/macos-inline-media-controls.css \
     $(WebCore)/Modules/modern-media-controls/controls/media-controls.css \

@@ -6,7 +6,9 @@
 
 description("Testing the <code>Slider</code> constructor.");
 
-const slider = new Slider;
+const layoutDelegate = null;
+
+const slider = new Slider(layoutDelegate);
 
 shouldBeEqualToString("slider.element.localName", "div");
 shouldBeEqualToString("slider.element.className.trim()", "slider");
@@ -18,7 +20,7 @@ shouldBeEqualToString("slider.children[1].element.min", "0");
 shouldBeEqualToString("slider.children[1].element.max", "1");
 shouldBeEqualToString("slider.children[1].element.step", "0.001");
 
-const sliderWithCSSClassName = new Slider("foo");
+const sliderWithCSSClassName = new Slider(layoutDelegate, "foo");
 shouldBeEqualToString("sliderWithCSSClassName.element.className", "slider foo");
 
 </script>

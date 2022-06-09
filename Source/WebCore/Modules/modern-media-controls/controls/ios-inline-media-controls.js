@@ -63,6 +63,78 @@ class IOSInlineMediaControls extends InlineMediaControls
 
     // Protected
 
+    layout()
+    {
+        if (this.timeControl) {
+            this.timeControl.scrubber.allowsRelativeScrubbing = this._shouldUseMultilineLayout;
+            this.timeControl.scrubber.knobStyle = this._shouldUseMultilineLayout ? Slider.KnobStyle.None : Slider.KnobStyle.Circle;
+        }
+
+        if (this.playPauseButton)
+            this.playPauseButton.scaleFactor = this._shouldUseMultilineLayout ? 3 : 1;
+
+        if (this.skipForwardButton)
+            this.skipForwardButton.scaleFactor = this._shouldUseMultilineLayout ? 2 : 1;
+
+        if (this.skipBackButton)
+            this.skipBackButton.scaleFactor = this._shouldUseMultilineLayout ? 2 : 1;
+
+        if (this._topLeftControlsBarContainer) {
+            this._topLeftControlsBarContainer.leftMargin = this._shouldUseMultilineLayout ? 2 : ButtonsContainer.Defaults.LeftMargin;
+            this._topLeftControlsBarContainer.rightMargin = this._shouldUseMultilineLayout ? 2 : ButtonsContainer.Defaults.RightMargin;
+        }
+
+        if (this._topRightControlsBarContainer) {
+            this._topRightControlsBarContainer.leftMargin = this._shouldUseMultilineLayout ? 2 : ButtonsContainer.Defaults.LeftMargin;
+            this._topRightControlsBarContainer.rightMargin = this._shouldUseMultilineLayout ? 2 : ButtonsContainer.Defaults.RightMargin;
+        }
+
+        if (this.leftContainer)
+            this.leftContainer.leftMargin = this._shouldUseMultilineLayout ? 2 : ButtonsContainer.Defaults.LeftMargin;
+        if (this.rightContainer)
+            this.rightContainer.rightMargin = this._shouldUseMultilineLayout ? 8 : ButtonsContainer.Defaults.RightMargin;
+
+        if (this._centerControlsBarContainer)
+            this._centerControlsBarContainer.buttonMargin = this._shouldUseMultilineLayout ? 48 : ButtonsContainer.Defaults.ButtonMargin;
+
+        if (this.topLeftControlsBar)
+            this.topLeftControlsBar.hasBackgroundTint = !this._shouldUseMultilineLayout;
+        if (this.topRightControlsBar)
+            this.topRightControlsBar.hasBackgroundTint = !this._shouldUseMultilineLayout;
+        if (this.centerControlsBar)
+            this.centerControlsBar.hasBackgroundTint = !this._shouldUseMultilineLayout;
+        if (this.bottomControlsBar)
+            this.bottomControlsBar.hasBackgroundTint = !this._shouldUseMultilineLayout;
+
+        super.layout();
+
+        if (this.playPauseButton?.style === Button.Styles.Corner)
+            this.playPauseButton.scaleFactor = 1;
+    }
+
+    centerContainerButtons() {
+        if (this._shouldUseMultilineLayout)
+            return [this.skipBackButton, this.playPauseButton, this.skipForwardButton];
+        return [];
+    }
+
+    leftContainerButtons()
+    {
+        if (this._shouldUseMultilineLayout)
+            return [];
+        return [this.skipBackButton, this.playPauseButton, this.skipForwardButton];
+    }
+
+    droppableButtons()
+    {
+        let buttons = super.droppableButtons();
+        if (this._shouldUseMultilineLayout) {
+            buttons.delete(this.skipForwardButton);
+            buttons.delete(this.skipBackButton);
+        }
+        return buttons;
+    }
+
     gestureRecognizerStateDidChange(recognizer)
     {
         if (recognizer.state === GestureRecognizer.States.Cancelled) {
@@ -79,6 +151,11 @@ class IOSInlineMediaControls extends InlineMediaControls
     }
 
     // Private
+
+    get _shouldUseMultilineLayout()
+    {
+        return !this._shouldUseSingleBarLayout && !this._shouldUseAudioLayout;
+    }
 
     _updateGestureRecognizers()
     {

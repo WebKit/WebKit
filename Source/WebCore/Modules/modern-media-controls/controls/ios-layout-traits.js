@@ -77,7 +77,7 @@ class IOSLayoutTraits extends LayoutTraits
 
     skipDuration()
     {
-        return 15;
+        return 10;
     }
 
     promoteSubMenusWhenShowingMediaControlsContextMenu()

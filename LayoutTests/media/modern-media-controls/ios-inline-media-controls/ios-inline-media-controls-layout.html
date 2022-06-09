@@ -23,28 +23,30 @@ scheduler.frameDidFire = function()
     if (iconButtons.some(button => button.width == 0))
         return;
 
-    shouldBe("mediaControls.children.length", "3");
+    shouldBe("mediaControls.children.length", "4");
     shouldBe("mediaControls.children[0]", "mediaControls.topLeftControlsBar");
-    shouldBe("mediaControls.children[1]", "mediaControls.bottomControlsBar");
-    shouldBe("mediaControls.children[2]", "mediaControls.topRightControlsBar");
+    shouldBe("mediaControls.children[1]", "mediaControls.centerControlsBar");
+    shouldBe("mediaControls.children[2]", "mediaControls.bottomControlsBar");
+    shouldBe("mediaControls.children[3]", "mediaControls.topRightControlsBar");
 
-    shouldBe("mediaControls.topLeftControlsBar.children.length", "2");
-    shouldBeTrue("mediaControls.topLeftControlsBar.children[0] instanceof BackgroundTint");
-    shouldBeTrue("mediaControls.topLeftControlsBar.children[1] instanceof ButtonsContainer");
-    shouldBe("mediaControls.topLeftControlsBar.children[1].children.length", "2");
-    shouldBe("mediaControls.topLeftControlsBar.children[1].children[0]", "mediaControls.pipButton");
-    shouldBe("mediaControls.topLeftControlsBar.children[1].children[1]", "mediaControls.fullscreenButton");
+    shouldBe("mediaControls.topLeftControlsBar.children.length", "1");
+    shouldBeTrue("mediaControls.topLeftControlsBar.children[0] instanceof ButtonsContainer");
+    shouldBe("mediaControls.topLeftControlsBar.children[0].children.length", "2");
+    shouldBe("mediaControls.topLeftControlsBar.children[0].children[0]", "mediaControls.pipButton");
+    shouldBe("mediaControls.topLeftControlsBar.children[0].children[1]", "mediaControls.fullscreenButton");
 
-    shouldBe("mediaControls.bottomControlsBar.children.length", "4");
-    shouldBeTrue("mediaControls.bottomControlsBar.children[0] instanceof BackgroundTint");
-    shouldBe("mediaControls.bottomControlsBar.children[1]", "mediaControls.leftContainer");
-    shouldBe("mediaControls.bottomControlsBar.children[2]", "mediaControls.timeControl");
-    shouldBe("mediaControls.bottomControlsBar.children[3]", "mediaControls.rightContainer");
+    shouldBe("mediaControls.centerControlsBar.children.length", "1");
+    shouldBeTrue("mediaControls.centerControlsBar.children[0] instanceof ButtonsContainer");
+    shouldBe("mediaControls.centerControlsBar.children[0].children.length", "3");
+    shouldBe("mediaControls.centerControlsBar.children[0].children[0]", "mediaControls.skipBackButton");
+    shouldBe("mediaControls.centerControlsBar.children[0].children[1]", "mediaControls.playPauseButton");
+    shouldBe("mediaControls.centerControlsBar.children[0].children[2]", "mediaControls.skipForwardButton");
 
-    shouldBe("mediaControls.leftContainer.children.length", "3");
-    shouldBe("mediaControls.leftContainer.children[0]", "mediaControls.skipBackButton");
-    shouldBe("mediaControls.leftContainer.children[1]", "mediaControls.playPauseButton");
-    shouldBe("mediaControls.leftContainer.children[2]", "mediaControls.skipForwardButton");
+    shouldBe("mediaControls.bottomControlsBar.children.length", "2");
+    shouldBe("mediaControls.bottomControlsBar.children[0]", "mediaControls.timeControl");
+    shouldBe("mediaControls.bottomControlsBar.children[1]", "mediaControls.rightContainer");
+
+    shouldBe("mediaControls.leftContainer.children.length", "0");
 
     shouldBe("mediaControls.timeControl.children.length", "3");
     shouldBe("mediaControls.timeControl.children[0]", "mediaControls.timeControl.elapsedTimeLabel");
@@ -55,11 +57,10 @@ scheduler.frameDidFire = function()
     shouldBe("mediaControls.rightContainer.children[0]", "mediaControls.airplayButton");
     shouldBe("mediaControls.rightContainer.children[1]", "mediaControls.tracksButton");
 
-    shouldBe("mediaControls.topRightControlsBar.children.length", "2");
-    shouldBeTrue("mediaControls.topRightControlsBar.children[0] instanceof BackgroundTint");
-    shouldBeTrue("mediaControls.topRightControlsBar.children[1] instanceof ButtonsContainer");
-    shouldBe("mediaControls.topRightControlsBar.children[1].children.length", "1");
-    shouldBe("mediaControls.topRightControlsBar.children[1].children[0]", "mediaControls.muteButton");
+    shouldBe("mediaControls.topRightControlsBar.children.length", "1");
+    shouldBeTrue("mediaControls.topRightControlsBar.children[0] instanceof ButtonsContainer");
+    shouldBe("mediaControls.topRightControlsBar.children[0].children.length", "1");
+    shouldBe("mediaControls.topRightControlsBar.children[0].children[0]", "mediaControls.muteButton");
 
     finishMediaControlsTest();
 };
