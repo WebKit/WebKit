@@ -47,6 +47,7 @@ std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> hstsWebViewAn
     [storeConfiguration setAllowsHSTSWithUntrustedRootCertificate:YES];
     auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
     [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    [[viewConfiguration websiteDataStore] _setResourceLoadStatisticsEnabled:YES];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
@@ -91,12 +92,7 @@ TEST(HSTS, Basic)
     EXPECT_WK_STREQ(webView.get().URL.absoluteString, "https://example.com/");
 }
 
-// FIXME: Re-enable after webkit.org/b/241342 is resolved
-#if (PLATFORM(IOS))
-TEST(HSTS, DISABLED_ThirdParty)
-#else
 TEST(HSTS, ThirdParty)
-#endif
 {
     auto httpsServer = hstsServer();
 
