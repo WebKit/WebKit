@@ -43,6 +43,7 @@
 namespace IPC {
 class Connection;
 class Decoder;
+class SharedBufferReference;
 }
 
 namespace WebCore {
@@ -88,7 +89,7 @@ private:
     void setActive(bool);
     void canSwitchToType(const WebCore::ContentType&, CompletionHandler<void(bool)>&&);
     void setMode(WebCore::SourceBufferAppendMode);
-    void append(const SharedMemory::IPCHandle&);
+    void append(IPC::SharedBufferReference&&, CompletionHandler<void(WebKit::SharedMemory::IPCHandle&&)>&&);
     void abort();
     void resetParserState();
     void removedFromMediaSource();
