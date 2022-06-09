@@ -91,6 +91,9 @@ void VideoLayerManagerObjC::didDestroyVideoLayer()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    setTextTrackRepresentationLayer(nil);
+#endif
     [m_videoLayer removeFromSuperlayer];
 
     m_videoInlineLayer = nil;
