@@ -53,7 +53,7 @@ PredefinedColorSpace ImageData::computeColorSpace(std::optional<ImageDataSetting
 Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer)
 {
     auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
-    return adoptRef(*new ImageData(pixelBuffer->size(), ByteArrayPixelBuffer::data(WTFMove(pixelBuffer)), *colorSpace));
+    return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace));
 }
 
 RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer)

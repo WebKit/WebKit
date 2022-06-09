@@ -87,13 +87,6 @@ ByteArrayPixelBuffer::ByteArrayPixelBuffer(const PixelBufferFormat& format, cons
 {
 }
 
-Ref<JSC::Uint8ClampedArray> ByteArrayPixelBuffer::data(Ref<ByteArrayPixelBuffer> pixelBuffer)
-{
-    if (pixelBuffer->hasOneRef())
-        return WTFMove(pixelBuffer->m_data);
-    return pixelBuffer->m_data;
-}
-
 RefPtr<PixelBuffer> ByteArrayPixelBuffer::createScratchPixelBuffer(const IntSize& size) const
 {
     return ByteArrayPixelBuffer::tryCreate(m_format, size);
