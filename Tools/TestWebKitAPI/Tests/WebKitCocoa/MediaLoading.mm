@@ -31,6 +31,8 @@
 #import "TestWKWebView.h"
 #import <wtf/text/StringConcatenateNumbers.h>
 
+#import <pal/cocoa/AVFoundationSoftLink.h>
+
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 namespace TestWebKitAPI {
@@ -187,6 +189,9 @@ TEST(MediaLoading, RangeRequestSynthesisWithoutContentLength)
 
 TEST(MediaLoading, CaptivePortalHLS)
 {
+    if (!PAL::canLoad_AVFoundation_AVURLAssetAllowableTypeCategoriesKey())
+        return;
+    
     constexpr auto hlsPlayTestHTML = "<script>"
         "function createVideoElement() {"
             "let video = document.createElement('video');"
