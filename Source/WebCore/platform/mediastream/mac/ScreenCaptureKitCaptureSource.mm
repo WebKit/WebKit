@@ -36,6 +36,7 @@
 #import "RealtimeVideoUtilities.h"
 #import "ScreenCaptureKitSharingSessionManager.h"
 #import <ScreenCaptureKit/ScreenCaptureKit.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/ScreenCaptureKitSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
