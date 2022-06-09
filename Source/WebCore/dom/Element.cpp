@@ -2267,8 +2267,8 @@ void Element::invalidateStyleForSubtreeInternal()
 
 void Element::invalidateForQueryContainerChange()
 {
-    // FIXME: This doesn't really need to recompute the element style.
-    Node::invalidateStyle(Style::Validity::ElementInvalid);
+    // FIXME: Ideally we would just recompute things that are actually affected by containers queries within the subtree.
+    Node::invalidateStyle(Style::Validity::SubtreeInvalid);
 }
 
 void Element::invalidateEventListenerRegions()

@@ -2095,13 +2095,15 @@ void Document::resolveStyle(ResolveStyleType type)
         Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeUpdate));
         auto styleUpdate = resolver.resolve();
 
-        while (resolver.hasUnresolvedQueryContainers() && styleUpdate) {
-            SetForScope resolvingContainerQueriesScope(m_isResolvingContainerQueries, true);
+        while (resolver.hasUnresolvedQueryContainers()) {
+            if (styleUpdate) {
+                SetForScope resolvingContainerQueriesScope(m_isResolvingContainerQueries, true);
+                
+                updateRenderTree(WTFMove(styleUpdate));
 
-            updateRenderTree(WTFMove(styleUpdate));
-
-            if (frameView.layoutContext().needsLayout())
-                frameView.layoutContext().layout();
+                if (frameView.layoutContext().needsLayout())
+                    frameView.layoutContext().layout();
+            }
 
             styleUpdate = resolver.resolve();
         }
