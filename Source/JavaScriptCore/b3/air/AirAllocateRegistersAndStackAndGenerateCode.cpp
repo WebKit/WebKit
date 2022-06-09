@@ -609,7 +609,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
             bool needsToGenerate = ([&] () -> bool {
                 // FIXME: We should consider trying to figure out if we can also elide Mov32s
-                if (!(inst.kind.opcode == Move || inst.kind.opcode == MoveDouble))
+                if (!(inst.kind.opcode == Move || inst.kind.opcode == MoveDouble || (is32Bit() && inst.kind.opcode == Move32)))
                     return true;
 
                 ASSERT(inst.args.size() >= 2);
