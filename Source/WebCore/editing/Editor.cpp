@@ -2546,7 +2546,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
     auto adjacentWords = VisibleSelection(startOfWord(wordStart, LeftWordIfOnBoundary), endOfWord(wordStart, RightWordIfOnBoundary));
     auto adjacentWordRange = adjacentWords.toNormalizedRange();
 
-#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
     if (isGrammarCheckingEnabled()) {
         textCheckingOptions.add(TextCheckingType::Grammar);
         textCheckingOptions.add(TextCheckingType::Correction);
@@ -2879,7 +2879,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
 
         bool resultRangeIsAcceptableForReplacement = automaticReplacementStartLocation <= resultEndLocation && resultEndLocation <= automaticReplacementEndLocation;
         // In this case the result range just has to touch the automatic replacement range, so we can handle replacing non-word text such as punctuation.
-#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
         if (!resultRangeIsAcceptableForReplacement && shouldCheckForCorrection && resultType == TextCheckingType::Correction)
             resultRangeIsAcceptableForReplacement = results[i].details.size() > 0;
         if (!resultRangeIsAcceptableForReplacement && shouldMarkGrammar && shouldCheckForCorrection && resultType == TextCheckingType::Correction) {
@@ -2934,7 +2934,7 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
 
             String replacedString = plainText(rangeToReplace);
             bool existingMarkersPermitReplacement = m_alternativeTextController->processMarkersOnTextToBeReplacedByResult(results[i], rangeToReplace, replacedString);
-#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
             if (!existingMarkersPermitReplacement && shouldCheckForCorrection && resultType == TextCheckingType::Correction)
                 existingMarkersPermitReplacement = results[i].details.size() > 0;
 #endif

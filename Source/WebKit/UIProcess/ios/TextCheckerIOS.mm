@@ -46,7 +46,7 @@ static TextCheckerState& mutableState()
     static NeverDestroyed state = [] {
         TextCheckerState initialState;
         initialState.isContinuousSpellCheckingEnabled = TextChecker::isContinuousSpellCheckingAllowed();
-#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
         initialState.isGrammarCheckingEnabled = [UITextChecker respondsToSelector:@selector(grammarCheckingEnabled)] && [UITextChecker grammarCheckingEnabled];
 #else
         initialState.isGrammarCheckingEnabled = false;
@@ -81,7 +81,7 @@ bool TextChecker::setContinuousSpellCheckingEnabled(bool enabled)
 
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
 {
-#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
     if (state().isGrammarCheckingEnabled == isGrammarCheckingEnabled)
         return;
 
@@ -222,7 +222,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
     auto stringToCheck = text.createNSStringWithoutCopying();
     auto range = NSMakeRange(0, [stringToCheck length]);
 
-#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
     if ([textChecker respondsToSelector:@selector(checkString:range:types:languages:options:)]) {
         NSTextCheckingTypes types = 0;
         if (checkingTypes.contains(TextCheckingType::Spelling))

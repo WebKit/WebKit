@@ -63,7 +63,7 @@ namespace WebCore {
 
 static RetainPtr<CGColorRef> grammarColor(bool useDarkMode)
 {
-#if ENABLE(MAC_CATALYST_GRAMMAR_CHECKING)
+#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
     static bool useBlueForGrammar = false;
     static std::once_flag flag;
     std::call_once(flag, [] {
