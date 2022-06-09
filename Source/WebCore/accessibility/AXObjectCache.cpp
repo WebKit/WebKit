@@ -1958,6 +1958,13 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXMaximumValueChanged);
     else if (attrName == aria_valueminAttr)
         postNotification(element, AXMinimumValueChanged);
+    else if (attrName == aria_multilineAttr) {
+        if (auto* axObject = get(element)) {
+            // The role of textarea and textfield objects is dependent on whether they can span multiple lines, so recompute it here.
+            if (axObject->roleValue() == AccessibilityRole::TextArea || axObject->roleValue() == AccessibilityRole::TextField)
+                axObject->updateRole();
+        }
+    }
     else if (attrName == aria_multiselectableAttr)
         postNotification(element, AXMultiSelectableStateChanged);
     else if (attrName == aria_posinsetAttr)
