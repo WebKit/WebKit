@@ -123,4 +123,11 @@ const uint8_t* SharedBufferReference::data() const
     return downcast<SharedBuffer>(m_buffer.get())->data();
 }
 
+RefPtr<WebKit::SharedMemory> SharedBufferReference::sharedCopy() const
+{
+    if (!m_size)
+        return nullptr;
+    return SharedMemory::copyBuffer(*unsafeBuffer());
+}
+
 } // namespace IPC

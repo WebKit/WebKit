@@ -32,12 +32,14 @@
 #include "InitializationSegmentInfo.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"
+#include "SharedBufferReference.h"
 #include "SourceBufferPrivateRemoteMessages.h"
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/ContentType.h>
 #include <WebCore/MediaDescription.h>
 #include <WebCore/PlatformTimeRanges.h>
 #include <WebCore/VideoTrackPrivate.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -194,13 +196,20 @@ void RemoteSourceBufferProxy::sourceBufferPrivateBufferedDirtyChanged(bool flag)
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedDirtyChanged(flag), m_identifier);
 }
 
-void RemoteSourceBufferProxy::append(const SharedMemory::IPCHandle& bufferHandle)
+void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
 {
-    auto sharedMemory = SharedMemory::map(bufferHandle.handle, SharedMemory::Protection::ReadOnly);
+    SharedMemory::Handle handle;
+
+    auto invokeCallbackAtScopeExit = makeScopeExit([&] {
+        completionHandler(SharedMemory::IPCHandle { WTFMove(handle), buffer.size() });
+    });
+
+    auto sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
         return;
+    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()));
 
-    m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(bufferHandle.dataSize));
+    sharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
 }
 
 void RemoteSourceBufferProxy::abort()

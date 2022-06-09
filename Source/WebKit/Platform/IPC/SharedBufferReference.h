@@ -32,10 +32,6 @@
 #include <WebCore/SharedBuffer.h>
 #include <optional>
 
-namespace WebKit {
-class SharedMemory;
-}
-
 namespace IPC {
 
 class Decoder;
@@ -75,6 +71,7 @@ public:
     // once it's deserialised over IPC.
     RefPtr<WebCore::SharedBuffer> unsafeBuffer() const;
     const uint8_t* data() const;
+    RefPtr<WebKit::SharedMemory> sharedCopy() const;
 
     void encode(Encoder&) const;
     static WARN_UNUSED_RETURN std::optional<SharedBufferReference> decode(Decoder&);

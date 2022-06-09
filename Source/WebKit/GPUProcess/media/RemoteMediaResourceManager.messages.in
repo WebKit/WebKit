@@ -29,7 +29,7 @@ messages -> RemoteMediaResourceManager NotRefCounted {
     ResponseReceived(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::ResourceResponse response, bool didPassAccessControlCheck) -> (enum:bool WebCore::ShouldContinuePolicyCheck shouldContinue) Async
     RedirectReceived(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::ResourceRequest request, WebCore::ResourceResponse response) -> (WebCore::ResourceRequest returnRequest) Async
     DataSent(WebKit::RemoteMediaResourceIdentifier identifier, uint64_t bytesSent, uint64_t totalBytesToBeSent)
-    DataReceived(WebKit::RemoteMediaResourceIdentifier identifier, WebKit::SharedMemory::IPCHandle data)
+    DataReceived(WebKit::RemoteMediaResourceIdentifier identifier, IPC::SharedBufferReference data) -> (WebKit::SharedMemory::IPCHandle remoteData)
     AccessControlCheckFailed(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::ResourceError error)
     LoadFailed(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::ResourceError error)
     LoadFinished(WebKit::RemoteMediaResourceIdentifier identifier, WebCore::NetworkLoadMetrics metrics)
