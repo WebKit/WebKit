@@ -76,6 +76,8 @@ Adjuster::Adjuster(const Document& document, const RenderStyle& parentStyle, con
 {
 }
 
+#if ENABLE(EXCLUDE_MARGINS)
+#else
 static void addIntrinsicMargins(RenderStyle& style)
 {
     // Intrinsic margin value.
@@ -97,6 +99,7 @@ static void addIntrinsicMargins(RenderStyle& style)
             style.setMarginBottom(Length(intrinsicMargin, LengthType::Fixed));
     }
 }
+#endif
 
 static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Document& document)
 {
@@ -504,6 +507,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     style.adjustAnimations();
     style.adjustTransitions();
 
+#if ENABLE(EXCLUDE_MARGINS)
+#else
     // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
     // alter fonts and heights/widths.
     if (is<HTMLFormControlElement>(m_element) && style.computedFontPixelSize() >= 11) {
@@ -512,6 +517,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (!is<HTMLInputElement>(*m_element) || !downcast<HTMLInputElement>(*m_element).isImageButton())
             addIntrinsicMargins(style);
     }
+#endif
 
     // Let the theme also have a crack at adjusting the style.
     if (style.hasAppearance())

@@ -545,6 +545,19 @@ DisallowSyncXHRDuringPageDismissalEnabled:
     WebCore:
       default: true
 
+ExludeMarginsFromFormControlElement:
+  type: bool
+  humanReadableName: "Exclude margins from control element"
+  humanReadableDescription: "Exclude margins from control element"
+  condition: ENABLE(EXCLUDE_MARGINS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 ExposeSpeakersEnabled:
   type: bool

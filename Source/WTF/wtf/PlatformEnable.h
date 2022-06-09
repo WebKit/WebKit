@@ -116,6 +116,10 @@
 #define ENABLE_CURSOR_VISIBILITY 0
 #endif
 
+#if !defined(ENABLE_EXCLUDE_MARGINS)
+#define ENABLE_EXCLUDE_MARGINS 0
+#endif
+
 #if !defined(ENABLE_AIRPLAY_PICKER)
 #define ENABLE_AIRPLAY_PICKER 0
 #endif
