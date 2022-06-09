@@ -906,6 +906,9 @@ void WebGL2RenderingContext::invalidateSubFramebuffer(GCGLenum target, const Vec
 
 void WebGL2RenderingContext::readBuffer(GCGLenum src)
 {
+    if (isContextLostOrPending())
+        return;
+
     if (src == GraphicsContextGL::BACK) {
         // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
         if (m_readFramebufferBinding) {
