@@ -103,18 +103,15 @@ static bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const 
 }
 #endif
 
-static bool platformSupportsMetal(bool isWebGL2)
+static bool platformSupportsMetal()
 {
     auto device = adoptNS(MTLCreateSystemDefaultDevice());
 
     if (device) {
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-        // A8 devices (iPad Mini 4, iPad Air 2) cannot use WebGL2 via Metal.
+        // A8 devices (iPad Mini 4, iPad Air 2) cannot use WebGL via Metal.
         // This check can be removed once they are no longer supported.
-        if (isWebGL2)
-            return [device supportsFamily:MTLGPUFamilyApple3];
-#else
-        UNUSED_PARAM(isWebGL2);
+        return [device supportsFamily:MTLGPUFamilyApple3];
 #endif
         return true;
     }
@@ -230,7 +227,7 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
 {
     GraphicsContextGLAttributes attributes = contextAttributes();
     m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
-    if (attributes.useMetal && !platformSupportsMetal(m_isForWebGL2)) {
+    if (attributes.useMetal && !platformSupportsMetal()) {
         attributes.useMetal = false;
         setContextAttributes(attributes);
     }
