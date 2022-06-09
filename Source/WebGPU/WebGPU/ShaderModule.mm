@@ -122,7 +122,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
 auto ShaderModule::convertCheckResult(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult) -> CheckResult
 {
     return WTF::switchOn(WTFMove(checkResult), [](auto&& check) -> CheckResult {
-        return WTFMove(check);
+        return std::forward<decltype(check)>(check);
     });
 }
 
