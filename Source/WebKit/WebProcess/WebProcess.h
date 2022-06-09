@@ -396,6 +396,9 @@ private:
     WebProcess();
     ~WebProcess();
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    void initializeWebExtensions(const UserData&);
+#endif
     void initializeWebProcess(WebProcessCreationParameters&&);
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void setWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);

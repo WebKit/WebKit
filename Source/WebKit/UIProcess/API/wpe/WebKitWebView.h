@@ -270,6 +270,7 @@ struct _WebKitWebViewClass {
     gboolean       (* show_option_menu)            (WebKitWebView               *web_view,
                                                     WebKitOptionMenu            *menu,
                                                     WebKitRectangle             *rectangle);
+    void           (* initialize_web_extensions)   (WebKitWebView               *web_view);
 
     /*< private >*/
     void (*_webkit_reserved0) (void);
@@ -277,7 +278,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
-    void (*_webkit_reserved5) (void);
 };
 
 WEBKIT_API GType
@@ -615,6 +615,10 @@ webkit_web_view_get_display_capture_state            (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_set_display_capture_state            (WebKitWebView             *web_view,
                                                       WebKitMediaCaptureState    state);
+WEBKIT_API void
+webkit_web_view_set_web_extensions_initialization_user_data
+                                                    (WebKitWebView              *web_view,
+                                                     GVariant                   *user_data);
 
 G_END_DECLS
 

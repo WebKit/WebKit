@@ -31,6 +31,7 @@
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
+class WebPageProxy;
 class WebProcessPool;
 }
 
@@ -44,6 +45,9 @@ public:
     virtual void didReceiveMessageFromInjectedBundle(WebKit::WebProcessPool&, const WTF::String&, API::Object*) { }
     virtual void didReceiveSynchronousMessageFromInjectedBundle(WebKit::WebProcessPool&, const WTF::String&, API::Object*, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler) { completionHandler(nullptr); }
     virtual RefPtr<API::Object> getInjectedBundleInitializationUserData(WebKit::WebProcessPool&) { return nullptr; }
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    virtual RefPtr<API::Object> getInjectedBundleInitializationUserDataByPage(WebKit::WebProcessPool&, WebKit::WebPageProxy&) { return nullptr; }
+#endif
 };
 
 } // namespace API
