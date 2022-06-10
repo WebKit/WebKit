@@ -431,8 +431,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     accessibilityPreferencesDidChange(parameters.accessibilityPreferences);
 
-    if (!isParentProcessAFullWebBrowser(*this))
-        disableURLSchemeCheckInDataDetectors();
+    disableURLSchemeCheckInDataDetectors();
 
     // Soft link frameworks related to Data Detection before we disconnect from launchd because these frameworks connect to
     // launchd temporarily at link time to register XPC services. See rdar://93598951 (my feature request to stop doing that)
