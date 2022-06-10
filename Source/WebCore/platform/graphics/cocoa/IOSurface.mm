@@ -462,6 +462,11 @@ void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&
     if (!accelerator) {
         IOSurfaceAcceleratorCreate(nullptr, nullptr, &accelerator);
 
+        if (!accelerator) {
+            callback(nullptr);
+            return;
+        }
+
         auto runLoopSource = IOSurfaceAcceleratorGetRunLoopSource(accelerator);
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, kCFRunLoopDefaultMode);
     }
