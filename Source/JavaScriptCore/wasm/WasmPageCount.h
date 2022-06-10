@@ -98,7 +98,12 @@ public:
 
     static constexpr uint32_t pageSize = 64 * KB;
 private:
-    static constexpr uint32_t maxPageCount = static_cast<uint32_t>(MAX_ARRAY_BUFFER_SIZE / static_cast<uint64_t>(pageSize));
+    // The spec requires we are able to instantiate a memory with a *maximum* size of 64K pages.
+    // This does not mean the memory can necessarily grow that big, and where the
+    // MAX_ARRAY_BUFFER_SIZE is smaller (e.g.: on 32-bit platforms), trying to grow the memory
+    // that large will fail, which is acceptable according to the spec. Nevertheless, we should
+    // be able to parse such a memory and instantiate it with a smaller initial size.
+    static constexpr uint32_t maxPageCount = std::max<uint32_t>(64*1024, MAX_ARRAY_BUFFER_SIZE / static_cast<uint64_t>(pageSize));
 
     uint32_t m_pageCount;
 };

@@ -39,11 +39,21 @@ class JSCell;
 class CalleeBits {
 public:
     CalleeBits() = default;
-    CalleeBits(void* ptr) : m_ptr(ptr) { } 
+    CalleeBits(int64_t value)
+#if USE(JSVALUE64)
+        : m_ptr { reinterpret_cast<void*>(value) }
+#elif USE(JSVALUE32_64)
+        : m_ptr { reinterpret_cast<void*>(JSValue::decode(value).payload()) }
+        , m_tag { JSValue::decode(value).tag() }
+#endif
+    { }
 
     CalleeBits& operator=(JSCell* cell)
     {
         m_ptr = cell;
+#if USE(JSVALUE32_64)
+        m_tag = JSValue::CellTag;
+#endif
         ASSERT(isCell());
         return *this;
     }
@@ -51,18 +61,24 @@ public:
 #if ENABLE(WEBASSEMBLY)
     static void* boxWasm(Wasm::Callee* callee)
     {
-        CalleeBits result(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(callee) | JSValue::WasmTag));
+#if USE(JSVALUE64)
+        CalleeBits result { reinterpret_cast<int64_t>(callee) | JSValue::WasmTag };
         ASSERT(result.isWasm());
         return result.rawPtr();
+#elif USE(JSVALUE32_64)
+        return callee; // The pointer is as is, but the corresponding tag field needs to be set to WasmTag separately.
+#endif
     }
 #endif
 
     bool isWasm() const
     {
-#if ENABLE(WEBASSEMBLY)
-        return (reinterpret_cast<uintptr_t>(m_ptr) & JSValue::WasmMask) == JSValue::WasmTag;
-#else
+#if !ENABLE(WEBASSEMBLY)
         return false;
+#elif USE(JSVALUE64)
+        return (reinterpret_cast<uintptr_t>(m_ptr) & JSValue::WasmMask) == JSValue::WasmTag;
+#elif USE(JSVALUE32_64)
+        return m_tag == JSValue::WasmTag;
 #endif
     }
     bool isCell() const { return !isWasm(); }
@@ -77,14 +93,21 @@ public:
     Wasm::Callee* asWasmCallee() const
     {
         ASSERT(isWasm());
+#if USE(JSVALUE64)
         return reinterpret_cast<Wasm::Callee*>(reinterpret_cast<uintptr_t>(m_ptr) & ~JSValue::WasmTag);
+#elif USE(JSVALUE32_64)
+        return reinterpret_cast<Wasm::Callee*>(m_ptr);
+#endif
     }
 #endif
 
     void* rawPtr() const { return m_ptr; }
-    
+
 private:
     void* m_ptr { nullptr };
+#if USE(JSVALUE32_64)
+    uint32_t m_tag { JSValue::EmptyValueTag };
+#endif
 };
 
 } // namespace JSC

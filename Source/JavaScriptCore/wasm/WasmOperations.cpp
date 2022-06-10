@@ -468,43 +468,43 @@ JSC_DEFINE_JIT_OPERATION(operationWasmUnwind, void, (CallFrame* callFrame))
     ASSERT(!!vm.callFrameForCatch);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationConvertToI64, int64_t, (CallFrame* callFrame, JSValue v))
+JSC_DEFINE_JIT_OPERATION(operationConvertToI64, int64_t, (CallFrame* callFrame, EncodedJSValue v))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
     // https://bugs.webkit.org/show_bug.cgi?id=203206
     VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);
-    return v.toBigInt64(callFrame->lexicalGlobalObject(vm));
+    return JSValue::decode(v).toBigInt64(callFrame->lexicalGlobalObject(vm));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationConvertToF64, double, (CallFrame* callFrame, JSValue v))
+JSC_DEFINE_JIT_OPERATION(operationConvertToF64, double, (CallFrame* callFrame, EncodedJSValue v))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
     // https://bugs.webkit.org/show_bug.cgi?id=203206
     VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);
-    return v.toNumber(callFrame->lexicalGlobalObject(vm));
+    return JSValue::decode(v).toNumber(callFrame->lexicalGlobalObject(vm));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationConvertToI32, int32_t, (CallFrame* callFrame, JSValue v))
+JSC_DEFINE_JIT_OPERATION(operationConvertToI32, int32_t, (CallFrame* callFrame, EncodedJSValue v))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
     // https://bugs.webkit.org/show_bug.cgi?id=203206
     VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);
-    return v.toInt32(callFrame->lexicalGlobalObject(vm));
+    return JSValue::decode(v).toInt32(callFrame->lexicalGlobalObject(vm));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationConvertToF32, float, (CallFrame* callFrame, JSValue v))
+JSC_DEFINE_JIT_OPERATION(operationConvertToF32, float, (CallFrame* callFrame, EncodedJSValue v))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
     // https://bugs.webkit.org/show_bug.cgi?id=203206
     VM& vm = callFrame->deprecatedVM();
     NativeCallFrameTracer tracer(vm, callFrame);
-    return static_cast<float>(v.toNumber(callFrame->lexicalGlobalObject(vm)));
+    return static_cast<float>(JSValue::decode(v).toNumber(callFrame->lexicalGlobalObject(vm)));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame* callFrame, Instance* instance, int64_t value))
+JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame* callFrame, Instance* instance, EncodedWasmValue value))
 {
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
@@ -514,7 +514,7 @@ JSC_DEFINE_JIT_OPERATION(operationConvertToBigInt, EncodedJSValue, (CallFrame* c
 }
 
 // https://webassembly.github.io/multi-value/js-api/index.html#run-a-host-function
-JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, Instance* instance, const TypeDefinition* type, JSValue result, uint64_t* registerResults, uint64_t* calleeFramePointer))
+JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, Instance* instance, const TypeDefinition* type, EncodedJSValue encResult, uint64_t* registerResults, uint64_t* calleeFramePointer))
 {
     // FIXME: Consider passing JSWebAssemblyInstance* instead.
     // https://bugs.webkit.org/show_bug.cgi?id=203206
@@ -531,6 +531,7 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
 
     unsigned iterationCount = 0;
     MarkedArgumentBuffer buffer;
+    JSValue result = JSValue::decode(encResult);
     forEachInIterable(globalObject, result, [&] (VM&, JSGlobalObject*, JSValue value) -> void {
         if (buffer.size() < signature->returnCount())
             buffer.append(value);
@@ -580,8 +581,10 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
         RETURN_IF_EXCEPTION(scope, void());
 
         auto rep = wasmCallInfo.results[index];
-        if (rep.isReg())
-            registerResults[registerResultOffsets.find(rep.reg())->offset() / sizeof(uint64_t)] = unboxedValue;
+        if (rep.isGPR())
+            registerResults[registerResultOffsets.find(rep.jsr().payloadGPR())->offset() / sizeof(uint64_t)] = unboxedValue;
+        else if (rep.isFPR())
+            registerResults[registerResultOffsets.find(rep.fpr())->offset() / sizeof(uint64_t)] = unboxedValue;
         else
             calleeFramePointer[rep.offsetFromFP() / sizeof(uint64_t)] = unboxedValue;
     }
@@ -607,12 +610,16 @@ JSC_DEFINE_JIT_OPERATION(operationAllocateResultsArray, JSArray*, (CallFrame* ca
     auto wasmCallInfo = wasmCallingConvention().callInformationFor(*type);
     RegisterAtOffsetList registerResults = wasmCallInfo.computeResultsOffsetList();
 
-    static_assert(sizeof(JSValue) == sizeof(CPURegister), "The code below relies on this.");
     for (unsigned i = 0; i < signature->returnCount(); ++i) {
         ValueLocation loc = wasmCallInfo.results[i];
         JSValue value;
-        if (loc.isReg())
-            value = stackPointerFromCallee[(registerResults.find(loc.reg())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
+        if (loc.isGPR()) {
+#if USE(JSVALE32_64)
+            ASSERT(registerResults.find(loc.jsr().payloadGPR())->offset() + 4 == registerResults.find(loc.jsr().tagGPR())->offset());
+#endif
+            value = stackPointerFromCallee[(registerResults.find(loc.jsr().payloadGPR())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
+        } else if (loc.isFPR())
+            value = stackPointerFromCallee[(registerResults.find(loc.fpr())->offset() + wasmCallInfo.headerAndArgumentStackSizeInBytes) / sizeof(JSValue)];
         else
             value = stackPointerFromCallee[loc.offsetFromSP() / sizeof(JSValue)];
         result->initializeIndex(initializationScope, i, value);
@@ -953,7 +960,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmThrow, void*, (Instance* instance, CallFra
     // to the exception handler. If we did this, we could remove this terrible hack.
     // https://bugs.webkit.org/show_bug.cgi?id=170440
     vm.calleeForWasmCatch = callFrame->callee();
-    bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(jsInstance->module());
+    Register* calleeSlot = bitwise_cast<Register*>(callFrame) + static_cast<int>(CallFrameSlot::callee);
+    *calleeSlot = bitwise_cast<JSCell*>(jsInstance->module());
     return vm.targetMachinePCForThrow;
 }
 
@@ -979,7 +987,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRethrow, void*, (Instance* instance, CallF
     // to the exception handler. If we did this, we could remove this terrible hack.
     // https://bugs.webkit.org/show_bug.cgi?id=170440
     vm.calleeForWasmCatch = callFrame->callee();
-    bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(jsInstance->module());
+    Register* calleeSlot = bitwise_cast<Register*>(callFrame) + static_cast<int>(CallFrameSlot::callee);
+    *calleeSlot = bitwise_cast<JSCell*>(jsInstance->module());
     return vm.targetMachinePCForThrow;
 }
 
@@ -1014,12 +1023,14 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSException, void*, (CallFrame* callFram
     // to the exception handler. If we did this, we could remove this terrible hack.
     // https://bugs.webkit.org/show_bug.cgi?id=170440
     vm.calleeForWasmCatch = callFrame->callee();
-    bitwise_cast<uint64_t*>(callFrame)[static_cast<int>(CallFrameSlot::callee)] = bitwise_cast<uint64_t>(instance->module());
+    Register* calleeSlot = bitwise_cast<Register*>(callFrame) + static_cast<int>(CallFrameSlot::callee);
+    *calleeSlot = bitwise_cast<JSCell*>(instance->module());
     return vm.targetMachinePCForThrow;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, PointerPair, (Instance* instance))
 {
+#if USE(JSVALUE64)
     JSWebAssemblyInstance* jsInstance = instance->owner<JSWebAssemblyInstance>();
     JSGlobalObject* globalObject = jsInstance->globalObject();
     VM& vm = globalObject->vm();
@@ -1039,6 +1050,13 @@ JSC_DEFINE_JIT_OPERATION(operationWasmRetrieveAndClearExceptionIfCatchable, Poin
     if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
         payload = bitwise_cast<void*>(wasmException->payload().data());
     return PointerPair { bitwise_cast<void*>(JSValue::encode(thrownValue)), payload };
+#elif USE(JSVALUE32_64)
+    // Note: This function needs to return a pointer and a JSValue, so will need to
+    // change signature on JSVALE32_64, nevertheless, for now it's unused.
+    UNREACHABLE_FOR_PLATFORM();
+    UNUSED_PARAM(instance);
+    return { nullptr, nullptr };
+#endif
 }
 
 } } // namespace JSC::Wasm

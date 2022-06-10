@@ -57,8 +57,13 @@ struct CallInformation {
     {
         RegisterSet usedResultRegisters;
         for (ValueLocation loc : results) {
-            if (loc.isReg())
-                usedResultRegisters.set(loc.reg());
+            if (loc.isGPR()) {
+                usedResultRegisters.set(loc.jsr().payloadGPR());
+#if USE(JSVALUE32_64)
+                usedResultRegisters.set(loc.jsr().tagGPR());
+#endif
+            } else if (loc.isFPR())
+                usedResultRegisters.set(loc.fpr());
         }
 
         RegisterAtOffsetList savedRegs(usedResultRegisters, RegisterAtOffsetList::ZeroBased);
@@ -77,8 +82,8 @@ class WasmCallingConvention {
 public:
     static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
 
-    WasmCallingConvention(Vector<Reg>&& gprs, Vector<Reg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves, RegisterSet&& callerSaves)
-        : gprArgs(WTFMove(gprs))
+    WasmCallingConvention(Vector<JSValueRegs>&& jsrs, Vector<FPRReg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves, RegisterSet&& callerSaves)
+        : jsrArgs(WTFMove(jsrs))
         , fprArgs(WTFMove(fprs))
         , prologueScratchGPRs(WTFMove(scratches))
         , calleeSaveRegisters(WTFMove(calleeSaves))
@@ -88,10 +93,11 @@ public:
     WTF_MAKE_NONCOPYABLE(WasmCallingConvention);
 
 private:
-    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<Reg>& regArgs, size_t& count, size_t& stackOffset) const
+    template<typename RegType>
+    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset) const
     {
         if (count < regArgs.size())
-            return ArgumentLocation::reg(regArgs[count++]);
+            return ArgumentLocation { regArgs[count++] };
 
         count++;
         ArgumentLocation result = role == CallRole::Caller ? ArgumentLocation::stackArgument(stackOffset) : ArgumentLocation::stack(stackOffset);
@@ -110,7 +116,7 @@ private:
         case TypeKind::Ref:
         case TypeKind::RefNull:
         case TypeKind::Rtt:
-            return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
+            return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:
             return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset);
@@ -155,8 +161,8 @@ public:
         return result;
     }
 
-    const Vector<Reg> gprArgs;
-    const Vector<Reg> fprArgs;
+    const Vector<JSValueRegs> jsrArgs;
+    const Vector<FPRReg> fprArgs;
     const Vector<GPRReg> prologueScratchGPRs;
     const RegisterSet calleeSaveRegisters;
     const RegisterSet callerSaveRegisters;
@@ -171,8 +177,8 @@ public:
     // Wasm::Context*'s instance.
     static constexpr ptrdiff_t instanceStackOffset = CallFrameSlot::thisArgument * sizeof(EncodedJSValue);
 
-    JSCallingConvention(Vector<Reg>&& gprs, Vector<Reg>&& fprs, RegisterSet&& calleeSaves, RegisterSet&& callerSaves)
-        : gprArgs(WTFMove(gprs))
+    JSCallingConvention(Vector<JSValueRegs>&& gprs, Vector<FPRReg>&& fprs, RegisterSet&& calleeSaves, RegisterSet&& callerSaves)
+        : jsrArgs(WTFMove(gprs))
         , fprArgs(WTFMove(fprs))
         , calleeSaveRegisters(WTFMove(calleeSaves))
         , callerSaveRegisters(WTFMove(callerSaves))
@@ -180,10 +186,11 @@ public:
 
     WTF_MAKE_NONCOPYABLE(JSCallingConvention);
 private:
-    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<Reg>& regArgs, size_t& count, size_t& stackOffset) const
+    template <typename RegType>
+    ArgumentLocation marshallLocationImpl(CallRole role, const Vector<RegType>& regArgs, size_t& count, size_t& stackOffset) const
     {
         if (count < regArgs.size())
-            return ArgumentLocation::reg(regArgs[count++]);
+            return ArgumentLocation { regArgs[count++] };
 
         count++;
         ArgumentLocation result = role == CallRole::Caller ? ArgumentLocation::stackArgument(stackOffset) : ArgumentLocation::stack(stackOffset);
@@ -201,7 +208,7 @@ private:
         case TypeKind::Externref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-            return marshallLocationImpl(role, gprArgs, gpArgumentCount, stackOffset);
+            return marshallLocationImpl(role, jsrArgs, gpArgumentCount, stackOffset);
         case TypeKind::F32:
         case TypeKind::F64:
             return marshallLocationImpl(role, fprArgs, fpArgumentCount, stackOffset);
@@ -224,12 +231,12 @@ public:
         for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i)
             params.append(marshallLocation(role, signature.as<FunctionSignature>()->argumentType(i), gpArgumentCount, fpArgumentCount, stackOffset));
 
-        Vector<ArgumentLocation, 1> results { ArgumentLocation::reg(GPRInfo::returnValueGPR) };
+        Vector<ArgumentLocation, 1> results { ArgumentLocation { JSRInfo::returnValueJSR } };
         return CallInformation(WTFMove(params), WTFMove(results), stackOffset);
     }
 
-    const Vector<Reg> gprArgs;
-    const Vector<Reg> fprArgs;
+    const Vector<JSValueRegs> jsrArgs;
+    const Vector<FPRReg> fprArgs;
     const RegisterSet calleeSaveRegisters;
     const RegisterSet callerSaveRegisters;
 };

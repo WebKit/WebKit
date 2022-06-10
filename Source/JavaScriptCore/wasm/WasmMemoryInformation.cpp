@@ -41,8 +41,15 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
         unsigned numberOfPinnedRegisters = 2;
         if (!Context::useFastTLS())
             ++numberOfPinnedRegisters;
+#if CPU(X86_64) || CPU(ARM64)
         GPRReg baseMemoryPointer = GPRInfo::regCS3;
         GPRReg boundsCheckingSizeRegister = GPRInfo::regCS4;
+#elif CPU(ARM)
+        // Not enough registers. regCS0 is the wasm instance, regCS1 is LLInt PB
+        numberOfPinnedRegisters -= 2;
+        GPRReg baseMemoryPointer = InvalidGPRReg;
+        GPRReg boundsCheckingSizeRegister = InvalidGPRReg;
+#endif
         GPRReg wasmContextInstancePointer = InvalidGPRReg;
         if (!Context::useFastTLS())
             wasmContextInstancePointer = GPRInfo::regCS0;

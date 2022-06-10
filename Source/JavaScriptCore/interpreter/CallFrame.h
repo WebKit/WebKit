@@ -167,8 +167,8 @@ namespace JSC  {
         // to see if it's a cell, and if it's not, we throw an exception.
         inline JSValue guaranteedJSValueCallee() const;
         inline JSObject* jsCallee() const;
-        CalleeBits callee() const { return CalleeBits(this[static_cast<int>(CallFrameSlot::callee)].pointer()); }
-        SUPPRESS_ASAN CalleeBits unsafeCallee() const { return CalleeBits(this[static_cast<int>(CallFrameSlot::callee)].asanUnsafePointer()); }
+        CalleeBits callee() const { return CalleeBits(this[static_cast<int>(CallFrameSlot::callee)].unboxedInt64()); }
+        SUPPRESS_ASAN CalleeBits unsafeCallee() const { return CalleeBits(this[static_cast<int>(CallFrameSlot::callee)].asanUnsafeUnboxedInt64()); }
         CodeBlock* codeBlock() const;
         CodeBlock** addressOfCodeBlock() const { return bitwise_cast<CodeBlock**>(this + static_cast<int>(CallFrameSlot::codeBlock)); }
         inline SUPPRESS_ASAN CodeBlock* unsafeCodeBlock() const;

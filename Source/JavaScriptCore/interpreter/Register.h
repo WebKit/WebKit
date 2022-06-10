@@ -72,6 +72,10 @@ namespace JSC {
         int64_t unboxedInt64() const;
         int64_t asanUnsafeUnboxedInt64() const;
         bool unboxedBoolean() const;
+#if ENABLE(WEBASSEMBLY) && USE(JSVALUE32_64)
+        float unboxedFloat() const;
+        float asanUnsafeUnboxedFloat() const;
+#endif
         double unboxedDouble() const;
         double asanUnsafeUnboxedDouble() const;
         JSCell* unboxedCell() const;
@@ -187,6 +191,18 @@ namespace JSC {
     {
         return !!payload();
     }
+
+#if ENABLE(WEBASSEMBLY) && USE(JSVALUE32_64)
+    ALWAYS_INLINE float Register::unboxedFloat() const
+    {
+        return bitwise_cast<float>(payload());
+    }
+
+    SUPPRESS_ASAN ALWAYS_INLINE float Register::asanUnsafeUnboxedFloat() const
+    {
+        return bitwise_cast<float>(payload());
+    }
+#endif
 
     ALWAYS_INLINE double Register::unboxedDouble() const
     {

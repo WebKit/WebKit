@@ -41,25 +41,27 @@ class ValueLocation {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Kind : uint8_t {
-        Register,
+        GPRRegister,
+        FPRRegister,
         Stack,
         StackArgument,
     };
 
     ValueLocation()
-        : m_kind(Register)
+        : m_kind(GPRRegister)
     {
     }
 
-    explicit ValueLocation(Reg reg)
-        : m_kind(Register)
+    explicit ValueLocation(JSValueRegs regs)
+        : m_kind(GPRRegister)
     {
-        u.reg = reg;
+        u.jsr = regs;
     }
 
-    static ValueLocation reg(Reg reg)
+    explicit ValueLocation(FPRReg reg)
+        : m_kind(FPRRegister)
     {
-        return ValueLocation(reg);
+        u.fpr = reg;
     }
 
     static ValueLocation stack(intptr_t offsetFromFP)
@@ -80,29 +82,28 @@ public:
 
     Kind kind() const { return m_kind; }
 
-    bool isReg() const { return kind() == Register; }
+    bool isGPR() const { return kind() == GPRRegister; }
+    bool isFPR() const { return kind() == FPRRegister; }
+    bool isStack() const { return kind() == Stack; }
+    bool isStackArgument() const { return kind() == StackArgument; }
 
-    Reg reg() const
+    JSValueRegs jsr() const
     {
-        ASSERT(isReg());
-        return u.reg;
+        ASSERT(isGPR());
+        return u.jsr;
     }
 
-    bool isGPR() const { return isReg() && reg().isGPR(); }
-    bool isFPR() const { return isReg() && reg().isFPR(); }
-
-    GPRReg gpr() const { return reg().gpr(); }
-    FPRReg fpr() const { return reg().fpr(); }
-
-    bool isStack() const { return kind() == Stack; }
+    FPRReg fpr() const
+    {
+        ASSERT(isFPR());
+        return u.fpr;
+    }
 
     intptr_t offsetFromFP() const
     {
         ASSERT(isStack());
         return u.offsetFromFP;
     }
-
-    bool isStackArgument() const { return kind() == StackArgument; }
 
     intptr_t offsetFromSP() const
     {
@@ -114,7 +115,8 @@ public:
 
 private:
     union U {
-        Reg reg;
+        JSValueRegs jsr;
+        FPRReg fpr;
         intptr_t offsetFromFP;
         intptr_t offsetFromSP;
 

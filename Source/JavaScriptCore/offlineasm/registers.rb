@@ -58,7 +58,8 @@ GPRS =
      "csr7",
      "csr8",
      "csr9",
-     "csr10"
+     "csr10",
+     "invalidGPR"
     ]
 
 FPRS =

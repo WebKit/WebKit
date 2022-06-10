@@ -40,14 +40,67 @@ struct NameSection;
 struct IndexOrName {
     typedef size_t Index;
 
-    IndexOrName() { m_indexName.index = emptyTag; }
-    IndexOrName(Index, std::pair<const Name*, RefPtr<NameSection>>&&);
-    bool isEmpty() const { return bitwise_cast<Index>(m_indexName) & emptyTag; }
-    bool isIndex() const { return bitwise_cast<Index>(m_indexName) & indexTag; }
-    bool isName() const { return !(isEmpty() || isName()); }
-    NameSection* nameSection() const { return m_nameSection.get(); }
+private:
+#if USE(JSVALUE32_64)
+    enum class Kind : uint8_t {
+        Empty,
+        Index,
+        Name
+    };
+#endif
+public:
 
-    friend String makeString(const IndexOrName&);
+    IndexOrName()
+    {
+#if USE(JSVALUE64)
+        m_indexName.index = emptyTag;
+#elif USE(JSVALUE32_64)
+        m_kind = Kind::Empty;
+#endif
+    }
+
+    IndexOrName(Index, std::pair<const Name*, RefPtr<NameSection>>&&);
+
+    bool isEmpty() const
+    {
+#if USE(JSVALUE64)
+        return bitwise_cast<Index>(m_indexName) & emptyTag;
+#elif USE(JSVALUE32_64)
+        return m_kind == Kind::Empty;
+#endif
+    }
+
+    bool isIndex() const
+    {
+#if USE(JSVALUE64)
+        return bitwise_cast<Index>(m_indexName) & indexTag;
+#elif USE(JSVALUE32_64)
+        return m_kind == Kind::Index;
+#endif
+    }
+
+    bool isName() const
+    {
+        return !(isEmpty() || isIndex());
+    }
+
+    Index index() const
+    {
+        ASSERT(isIndex());
+#if USE(JSVALUE64)
+        return m_indexName.index & ~indexTag;
+#elif USE(JSVALUE32_64)
+        return m_indexName.index;
+#endif
+    }
+
+    const Name* name() const
+    {
+        ASSERT(isName());
+        return m_indexName.name;
+    }
+
+    NameSection* nameSection() const { return m_nameSection.get(); }
 
 private:
     union {
@@ -56,10 +109,15 @@ private:
     } m_indexName;
     RefPtr<NameSection> m_nameSection;
 
+#if USE(JSVALUE64)
     // Use the top bits as tags. Neither pointers nor the function index space should use them.
     static constexpr Index indexTag = 1ull << (CHAR_BIT * sizeof(Index) - 1);
     static constexpr Index emptyTag = 1ull << (CHAR_BIT * sizeof(Index) - 2);
     static constexpr Index allTags = indexTag | emptyTag;
+#elif USE(JSVALUE32_64)
+    // Use an explicit tag as pointers might have high bits set
+    Kind m_kind;
+#endif
 };
 
 String makeString(const IndexOrName&);

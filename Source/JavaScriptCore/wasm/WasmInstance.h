@@ -106,8 +106,22 @@ public:
     void updateCachedMemory()
     {
         if (m_memory != nullptr) {
-            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->memory(), memory()->boundsCheckingSize());
-            m_cachedBoundsCheckingSize = memory()->boundsCheckingSize();
+            // Note: In MemoryMode::BoundsChecking, mappedCapacity() == size().
+            // We assert this in the constructor of MemoryHandle.
+#if CPU(ARM)
+            // Shared memory requires signaling memory which is not available
+            // on ARMv7 yet. In order to get more of the test suite to run, we
+            // can still use a shared memory by using bounds checking, by using
+            // the actual size here, but this means we cannot grow the shared
+            // memory safely in case it's used by multiple threads. Once the
+            // signal handler are available, m_cachedBoundsCheckingSize should
+            // be set to use memory()->mappedCapacity() like other platforms,
+            // and at that point growing the shared memory will be safe.
+            m_cachedBoundsCheckingSize = memory()->size();
+#else
+            m_cachedBoundsCheckingSize = memory()->mappedCapacity();
+#endif
+            m_cachedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>(memory()->memory(), m_cachedBoundsCheckingSize);
             ASSERT(memory()->memory() == cachedMemory());
         }
     }

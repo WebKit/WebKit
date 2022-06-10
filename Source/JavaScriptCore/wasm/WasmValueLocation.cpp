@@ -35,8 +35,11 @@ void ValueLocation::dump(PrintStream& out) const
 {
     out.print(m_kind);
     switch (m_kind) {
-    case Register:
-        out.print("(", reg(), ")");
+    case GPRRegister:
+        out.print("(", jsr(), ")");
+        return;
+    case FPRRegister:
+        out.print("(", fpr(), ")");
         return;
     case Stack:
         out.print("(", offsetFromFP(), ")");
@@ -57,8 +60,11 @@ using namespace JSC::Wasm;
 void printInternal(PrintStream& out, ValueLocation::Kind kind)
 {
     switch (kind) {
-    case ValueLocation::Register:
-        out.print("Register");
+    case ValueLocation::GPRRegister:
+        out.print("GPRRegister");
+        return;
+    case ValueLocation::FPRRegister:
+        out.print("FPRRegister");
         return;
     case ValueLocation::Stack:
         out.print("Stack");
