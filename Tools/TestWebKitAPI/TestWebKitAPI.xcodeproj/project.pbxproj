@@ -120,6 +120,7 @@
 		1CF59AE221E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */; };
 		1CF59AE321E68932006E37EC /* ForceLightAppearanceInBundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */; };
 		1CF59AE521E6977D006E37EC /* dark-mode.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1CF59AE421E696FB006E37EC /* dark-mode.html */; };
+		1CFD5D3F2851B62100A0E30B /* EnumeratedArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CFD5D3E2851B62100A0E30B /* EnumeratedArray.cpp */; };
 		1D67BFDC2433E0A7006B5047 /* PreemptVideoFullscreen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */; };
 		1D67BFDD2433EE66006B5047 /* two-videos.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1D67BFD92433DFD8006B5047 /* two-videos.html */; };
 		1DAA52CC243BE805001A3159 /* one-video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1DAA52CB243BE621001A3159 /* one-video.html */; };
@@ -1754,6 +1755,7 @@
 		1CF59ADF21E68925006E37EC /* ForceLightAppearanceInBundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle.mm; sourceTree = "<group>"; };
 		1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle_Bundle.mm; sourceTree = "<group>"; };
 		1CF59AE421E696FB006E37EC /* dark-mode.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dark-mode.html"; sourceTree = "<group>"; };
+		1CFD5D3E2851B62100A0E30B /* EnumeratedArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumeratedArray.cpp; sourceTree = "<group>"; };
 		1D12BEBF245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExitPiPOnSuspendVideoElement.mm; sourceTree = "<group>"; };
 		1D5BE6AD2673EC5F00CB0B12 /* audio-buffer-size.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "audio-buffer-size.html"; sourceTree = "<group>"; };
 		1D67BFD92433DFD8006B5047 /* two-videos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "two-videos.html"; sourceTree = "<group>"; };
@@ -4525,6 +4527,7 @@
 				1A3524A91D627BD40031729B /* DeletedAddressOfOperator.h */,
 				E4A757D3178AEA5B00B5D7A4 /* Deque.cpp */,
 				E36B87A2276221860059D2F9 /* EmbeddedFixedVector.cpp */,
+				1CFD5D3E2851B62100A0E30B /* EnumeratedArray.cpp */,
 				1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */,
 				AD7C434C1DD2A5470026888B /* Expected.cpp */,
 				A310827121F296EC00C28B97 /* FileSystem.cpp */,
@@ -5314,6 +5317,7 @@
 				7C83DEA91D0A590C00FEBCF3 /* CString.cpp in Sources */,
 				7C83DEAD1D0A590C00FEBCF3 /* Deque.cpp in Sources */,
 				E36B87A3276221870059D2F9 /* EmbeddedFixedVector.cpp in Sources */,
+				1CFD5D3F2851B62100A0E30B /* EnumeratedArray.cpp in Sources */,
 				1AF7B21F1D6CD14D008C126C /* EnumTraits.cpp in Sources */,
 				AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */,
 				A310827221F296FF00C28B97 /* FileSystem.cpp in Sources */,

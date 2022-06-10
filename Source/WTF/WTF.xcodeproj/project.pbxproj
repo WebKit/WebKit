@@ -65,6 +65,7 @@
 		1C96836926BE76B600A2A2F9 /* LoggingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C96836826BE76B600A2A2F9 /* LoggingCocoa.mm */; };
 		1CA85CA9241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CA85CA8241B0B260071C2F5 /* RuntimeApplicationChecksCocoa.cpp */; };
 		1CF18F3B26BB579E004B1722 /* LogChannels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CF18F3926BB579E004B1722 /* LogChannels.cpp */; };
+		1CFD5D3D2851AB3E00A0E30B /* EnumeratedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CFD5D3B2851AB3E00A0E30B /* EnumeratedArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1FA47C8A152502DA00568D1B /* WebCoreThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA47C88152502DA00568D1B /* WebCoreThread.cpp */; };
 		2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD892915C0390200285083 /* GregorianDateTime.cpp */; };
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
@@ -365,6 +366,7 @@
 		1CCDB1511E566BC5006C73C0 /* CFStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFStringSPI.h; sourceTree = "<group>"; };
 		1CF18F3926BB579E004B1722 /* LogChannels.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogChannels.cpp; sourceTree = "<group>"; };
 		1CF18F3A26BB579E004B1722 /* LogChannels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogChannels.h; sourceTree = "<group>"; };
+		1CFD5D3B2851AB3E00A0E30B /* EnumeratedArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnumeratedArray.h; sourceTree = "<group>"; };
 		1FA47C88152502DA00568D1B /* WebCoreThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreThread.cpp; sourceTree = "<group>"; };
 		1FA47C89152502DA00568D1B /* WebCoreThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreThread.h; sourceTree = "<group>"; };
 		24F1B248619F412296D1C19C /* RandomDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomDevice.h; sourceTree = "<group>"; };
@@ -1077,6 +1079,7 @@
 				A8A47298151A825A004123FF /* dtoa.h */,
 				E3538D4C276220880075DA50 /* EmbeddedFixedVector.h */,
 				5338EBA423AB04D100382662 /* EnumClassOperatorOverloads.h */,
+				1CFD5D3B2851AB3E00A0E30B /* EnumeratedArray.h */,
 				1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */,
 				AD7C434A1DD2A4A70026888B /* Expected.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
@@ -1132,9 +1135,9 @@
 				E33667492722550900259122 /* Int128.cpp */,
 				F6D67D3226F90142006E0349 /* Int128.h */,
 				33FD4811265CB38000ABE4F4 /* InterferenceGraph.h */,
-				5295B00427920C54006D746A /* IterationStatus.h */,
 				0F7EB85B1FA8FF4100F1ABCB /* IsoMalloc.h */,
 				0F7EB85C1FA8FF4200F1ABCB /* IsoMallocInlines.h */,
+				5295B00427920C54006D746A /* IterationStatus.h */,
 				7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */,
 				7CDD7FF9186D2A54007433CD /* IteratorRange.h */,
 				7A05093E1FB9DCC500B33FB8 /* JSONValues.cpp */,

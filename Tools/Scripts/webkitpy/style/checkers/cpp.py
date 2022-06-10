@@ -2997,7 +2997,7 @@ def check_braces(clean_lines, line_number, file_state, error):
         # on the previous non-blank line is '{' because it's likely to
         # indicate the begining of a nested code block.
         previous_line = get_previous_non_blank_line(clean_lines, line_number)[0]
-        if ((not search(r'[;:}{)=]\s*$|\)\s*((const|override|const override|final|const final)\s*)?(->\s*\S+)?\s*$', previous_line)
+        if ((not search(r'[;:}{)=]\s*$|\)\s*((const|override|const override|final|const final|noexcept|const noexcept)\s*)?(->\s*\S+)?\s*$', previous_line)
              or search(r'\b(if|for|while|switch|else|CF_OPTIONS|NS_ENUM|NS_ERROR_ENUM|NS_OPTIONS)\b', previous_line)
              or regex_for_lambdas_and_blocks(previous_line, line_number, file_state, error))
             and previous_line.find('#') < 0
