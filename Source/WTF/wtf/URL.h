@@ -61,7 +61,7 @@ public:
     bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
     // Resolves the relative URL with the given base URL. If provided, the
-    // URLTextEncoding is used to encode non-ASCII characers. The base URL can be
+    // URLTextEncoding is used to encode non-ASCII characters. The base URL can be
     // null or empty, in which case the relative URL will be interpreted as absolute.
     WTF_EXPORT_PRIVATE URL(const URL& base, const String& relative, const URLTextEncoding* = nullptr);
 
