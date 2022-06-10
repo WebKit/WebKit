@@ -78,7 +78,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 @property (nonatomic) BOOL configureJSCForTesting WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
-@property (nonatomic, nullable, copy) NSString *timeZoneOverride WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSString *timeZoneOverride WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 @end
 

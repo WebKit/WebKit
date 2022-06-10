@@ -32,4 +32,4 @@ typedef NS_ENUM(NSInteger, _WKResidentKeyRequirement) {
     _WKResidentKeyRequirementRequired,
     _WKResidentKeyRequirementPreferred,
     _WKResidentKeyRequirementDiscouraged,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.0), ios(16.0));

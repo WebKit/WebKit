@@ -83,7 +83,7 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
     WKFullscreenStateEnteringFullscreen,
     WKFullscreenStateInFullscreen,
     WKFullscreenStateExitingFullscreen,
-} NS_SWIFT_NAME(WKWebView.FullscreenState) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} NS_SWIFT_NAME(WKWebView.FullscreenState) WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 /*! @abstract A copy of the configuration with which the web view was
  initialized. */
@@ -623,7 +623,7 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  its native UI components when the fullscreen state changes. The application should observe the fullscreenState
  property of WKWebView in order to receive notifications regarding the fullscreen state change.
  */
-@property (nonatomic, readonly) WKFullscreenState fullscreenState WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) WKFullscreenState fullscreenState WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 /*! @abstract Insets from the @link frame @/link that represent the smallest and largest possible size of the
  visual area of the @link WKWebView @/link based on the state of the surrounding UI.
@@ -639,22 +639,22 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
  larger than minimumViewportInset.
  */
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly) UIEdgeInsets minimumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
-@property (nonatomic, readonly) UIEdgeInsets maximumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)setMinimumViewportInset:(UIEdgeInsets)minimumViewportInset maximumViewportInset:(UIEdgeInsets)maximumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly) UIEdgeInsets minimumViewportInset WK_API_AVAILABLE(ios(15.5));
+@property (nonatomic, readonly) UIEdgeInsets maximumViewportInset WK_API_AVAILABLE(ios(15.5));
+- (void)setMinimumViewportInset:(UIEdgeInsets)minimumViewportInset maximumViewportInset:(UIEdgeInsets)maximumViewportInset WK_API_AVAILABLE(ios(15.5));
 #else
-@property (nonatomic, readonly) NSEdgeInsets minimumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
-@property (nonatomic, readonly) NSEdgeInsets maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
-- (void)setMinimumViewportInset:(NSEdgeInsets)minimumViewportInset maximumViewportInset:(NSEdgeInsets)maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, readonly) NSEdgeInsets minimumViewportInset WK_API_AVAILABLE(macos(13.0));
+@property (nonatomic, readonly) NSEdgeInsets maximumViewportInset WK_API_AVAILABLE(macos(13.0));
+- (void)setMinimumViewportInset:(NSEdgeInsets)minimumViewportInset maximumViewportInset:(NSEdgeInsets)maximumViewportInset WK_API_AVAILABLE(macos(13.0));
 #endif
 
 #if TARGET_OS_IOS
 
 /*! @abstract Enables the web view's built-in find interaction. */
-@property (nonatomic, readwrite, getter=isFindInteractionEnabled) BOOL findInteractionEnabled WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readwrite, getter=isFindInteractionEnabled) BOOL findInteractionEnabled WK_API_AVAILABLE(ios(16.0));
 
 /*! @abstract If  @link findInteractionEnabled @/link is set to true, returns this web view's built-in find interaction. Otherwise, nil. */
-@property (nonatomic, nullable, readonly) UIFindInteraction *findInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, nullable, readonly) UIFindInteraction *findInteraction WK_API_AVAILABLE(ios(16.0));
 
 #endif
 

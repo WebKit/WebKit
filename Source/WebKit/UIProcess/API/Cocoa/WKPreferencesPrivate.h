@@ -37,7 +37,7 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
     _WKWheelEventHandlerRegion = 1 << 1,
     _WKTouchActionRegion = 1 << 2,
     _WKEditableElementRegion = 1 << 3,
-    _WKInteractionRegion WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 1 << 4,
+    _WKInteractionRegion WK_API_AVAILABLE(macos(13.0), ios(16.0)) = 1 << 4,
 } WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
@@ -117,7 +117,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 
 @property (nonatomic, setter=_setPeerConnectionEnabled:) BOOL _peerConnectionEnabled WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, setter=_setMediaDevicesEnabled:) BOOL _mediaDevicesEnabled WK_API_AVAILABLE(macos(10.13), ios(11.0));
-@property (nonatomic, setter=_setGetUserMediaRequiresFocus:) BOOL _getUserMediaRequiresFocus WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setGetUserMediaRequiresFocus:) BOOL _getUserMediaRequiresFocus WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, setter=_setScreenCaptureEnabled:) BOOL _screenCaptureEnabled WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, setter=_setMockCaptureDevicesEnabled:) BOOL _mockCaptureDevicesEnabled WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nonatomic, setter=_setMockCaptureDevicesPromptEnabled:) BOOL _mockCaptureDevicesPromptEnabled WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
@@ -158,7 +158,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setShouldIgnoreMetaViewport:) BOOL _shouldIgnoreMetaViewport WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, setter=_setVideoQualityIncludesDisplayCompositingEnabled:) BOOL _videoQualityIncludesDisplayCompositingEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 @property (nonatomic, setter=_setDeviceOrientationEventEnabled:) BOOL _deviceOrientationEventEnabled WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
-@property (nonatomic, setter=_setNeedsSiteSpecificQuirks:) BOOL _needsSiteSpecificQuirks WK_API_DEPRECATED_WITH_REPLACEMENT("siteSpecificQuirksModeEnabled", macos(10.13.4, WK_MAC_TBA), ios(13.0, WK_IOS_TBA));
+@property (nonatomic, setter=_setNeedsSiteSpecificQuirks:) BOOL _needsSiteSpecificQuirks WK_API_DEPRECATED_WITH_REPLACEMENT("siteSpecificQuirksModeEnabled", macos(10.13.4, 13.0), ios(13.0, 16.0));
 @property (nonatomic, setter=_setItpDebugModeEnabled:) BOOL _itpDebugModeEnabled WK_API_AVAILABLE(macos(10.15), ios(13.0));
 @property (nonatomic, setter=_setMediaSourceEnabled:) BOOL _mediaSourceEnabled WK_API_AVAILABLE(macos(10.13.4), ios(13.0));
 @property (nonatomic, setter=_setSecureContextChecksEnabled:) BOOL _secureContextChecksEnabled WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
@@ -173,12 +173,12 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setMediaSessionEnabled:) BOOL _mediaSessionEnabled WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, getter=_isExtensibleSSOEnabled, setter=_setExtensibleSSOEnabled:) BOOL _extensibleSSOEnabled WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, setter=_setRequiresPageVisibilityToPlayAudio:) BOOL _requiresPageVisibilityToPlayAudio WK_API_AVAILABLE(macos(12.0), ios(15.0));
-@property (nonatomic, setter=_setFileSystemAccessEnabled:) BOOL _fileSystemAccessEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setStorageAPIEnabled:) BOOL _storageAPIEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setAccessHandleEnabled:) BOOL _accessHandleEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setNotificationsEnabled:) BOOL _notificationsEnabled WK_API_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setPushAPIEnabled:) BOOL _pushAPIEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setModelDocumentEnabled:) BOOL _modelDocumentEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setFileSystemAccessEnabled:) BOOL _fileSystemAccessEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic, setter=_setStorageAPIEnabled:) BOOL _storageAPIEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic, setter=_setAccessHandleEnabled:) BOOL _accessHandleEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic, setter=_setNotificationsEnabled:) BOOL _notificationsEnabled WK_API_AVAILABLE(macos(10.13.4), ios(16.0));
+@property (nonatomic, setter=_setPushAPIEnabled:) BOOL _pushAPIEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic, setter=_setModelDocumentEnabled:) BOOL _modelDocumentEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));
@@ -186,7 +186,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setDefaultTextEncodingName:) NSString *_defaultTextEncodingName WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setAuthorAndUserStylesEnabled:) BOOL _authorAndUserStylesEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setDOMTimersThrottlingEnabled:) BOOL _domTimersThrottlingEnabled WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setWebArchiveTestingModeEnabled:) BOOL _webArchiveTestingModeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, setter=_setWebArchiveTestingModeEnabled:) BOOL _webArchiveTestingModeEnabled WK_API_AVAILABLE(macos(13.0));
 @property (nonatomic, setter=_setLocalFileContentSniffingEnabled:) BOOL _localFileContentSniffingEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setUsesPageCache:) BOOL _usesPageCache WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setPageCacheSupportsPlugins:) BOOL _pageCacheSupportsPlugins WK_API_AVAILABLE(macos(10.13.4));
@@ -228,9 +228,9 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 
 @interface WKPreferences (WKPrivateDeprecated)
 
-@property (nonatomic, setter=_setRequestAnimationFrameEnabled:) BOOL _requestAnimationFrameEnabled WK_API_DEPRECATED("requestAnimationFrame is always enabled", macos(10.15.4, WK_MAC_TBA), ios(13.4, WK_IOS_TBA));
+@property (nonatomic, setter=_setRequestAnimationFrameEnabled:) BOOL _requestAnimationFrameEnabled WK_API_DEPRECATED("requestAnimationFrame is always enabled", macos(10.15.4, 13.0), ios(13.4, 16.0));
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setSubpixelCSSOMElementMetricsEnabled:) BOOL _subpixelCSSOMElementMetricsEnabled WK_API_DEPRECATED("Subpixel CSSOM element metrics are no longer supported", macos(10.13.4, 10.15));
-@property (nonatomic, setter=_setWebArchiveDebugModeEnabled:) BOOL _webArchiveDebugModeEnabled WK_API_DEPRECATED("WebArchive Debug Mode is no longer supported", macos(10.13.4, WK_MAC_TBA));
+@property (nonatomic, setter=_setWebArchiveDebugModeEnabled:) BOOL _webArchiveDebugModeEnabled WK_API_DEPRECATED("WebArchive Debug Mode is no longer supported", macos(10.13.4, 13.0));
 #endif
 @end

@@ -26,7 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(13.0), ios(16.0))
 @interface _WKSystemPreferences : NSObject
 
 + (BOOL)isCaptivePortalModeEnabled;

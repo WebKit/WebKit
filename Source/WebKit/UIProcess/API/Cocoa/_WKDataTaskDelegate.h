@@ -31,12 +31,12 @@
 typedef NS_ENUM(NSInteger, _WKDataTaskRedirectPolicy) {
     _WKDataTaskRedirectPolicyCancel,
     _WKDataTaskRedirectPolicyAllow,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 typedef NS_ENUM(NSInteger, _WKDataTaskResponsePolicy) {
     _WKDataTaskResponsePolicyCancel,
     _WKDataTaskResponsePolicyAllow,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 NS_ASSUME_NONNULL_BEGIN
 

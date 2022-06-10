@@ -73,7 +73,7 @@
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL bundleIdentifierIfNotInContainer:(NSString *)bundleIdentifier;
 
-+ (void)_setWebProcessCountLimit:(unsigned)limit WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)_setWebProcessCountLimit:(unsigned)limit WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_warmInitialProcess WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_automationCapabilitiesDidChange WK_API_AVAILABLE(macos(10.12), ios(10.0));
@@ -92,7 +92,7 @@
 - (_WKDownload *)_downloadURLRequest:(NSURLRequest *)request websiteDataStore:(WKWebsiteDataStore *)dataStore originatingWebView:(WKWebView *)webView WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView _downloadRequest", macos(10.10, 12.0), ios(8.0, 15.0));
 - (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData websiteDataStore:(WKWebsiteDataStore *)dataStore  path:(NSString *)path originatingWebView:(WKWebView *)webView WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.resumeDownloadFromResumeData:completionHandler:", macos(10.10, 12.0), ios(8.0, 15.0));
 
-+ (void)_setLinkedOnOrAfterEverything WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)_setLinkedOnOrAfterEverything WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateServiceWorkers WK_API_AVAILABLE(macos(10.14), ios(12.0));
@@ -117,7 +117,7 @@
 - (void)_clearWebProcessCache WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (void)_setUseSeparateServiceWorkerProcess:(BOOL)forceServiceWorkerProcess WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (pid_t)_gpuProcessIdentifier WK_API_AVAILABLE(macos(12.0), ios(15.0));
-- (BOOL)_hasAudibleMediaActivity WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (BOOL)_hasAudibleMediaActivity WK_API_AVAILABLE(macos(13.0), ios(16.0));
 - (BOOL)_requestWebProcessTermination:(pid_t)pid WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 // Test only. Returns web processes running web pages (does not include web processes running service workers)
@@ -127,8 +127,8 @@
 + (void)_forceGameControllerFramework WK_API_AVAILABLE(macos(10.13), ios(11.0));
 + (void)_setLinkedOnOrAfterEverythingForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 + (void)_setLinkedOnOrBeforeEverythingForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
-+ (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-+ (void)_clearCaptivePortalModeEnabledGloballyForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)_setCaptivePortalModeEnabledGloballyForTesting:(BOOL)isEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
++ (void)_clearCaptivePortalModeEnabledGloballyForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_preconnectToServer:(NSURL *)serverURL WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView._preconnectToServer", macos(10.13.4, 10.15.4), ios(11.3, 13.4));
 

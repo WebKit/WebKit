@@ -46,7 +46,7 @@ typedef NS_ENUM(NSInteger, _WKApplicationManifestIconPurpose) {
     _WKApplicationManifestIconPurposeAny = (1 << 0),
     _WKApplicationManifestIconPurposeMonochrome = (1 << 1),
     _WKApplicationManifestIconPurposeMaskable = (1 << 2),
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @interface _WKApplicationManifest : NSObject <NSSecureCoding>
@@ -57,7 +57,7 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @property (nonatomic, readonly, nullable, copy) NSURL *scope;
 @property (nonatomic, readonly, copy) NSURL *startURL;
 @property (nonatomic, readonly) _WKApplicationManifestDisplayMode displayMode;
-@property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestIcon *> *icons WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestIcon *> *icons WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly, nullable, copy) UIColor *themeColor WK_API_AVAILABLE(ios(15.0));
@@ -69,7 +69,7 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 
 @end
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(13.0), ios(16.0))
 @interface _WKApplicationManifestIcon : NSObject <NSSecureCoding>
 
 @property (nonatomic, readonly, copy) NSURL *src;

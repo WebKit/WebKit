@@ -65,14 +65,14 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteMouseEventPolicy) {
 typedef NS_OPTIONS(NSUInteger, _WKWebsiteModalContainerObservationPolicy) {
     _WKWebsiteModalContainerObservationPolicyDisabled,
     _WKWebsiteModalContainerObservationPolicyPrompt,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 // Allow overriding the system color-scheme with a per-website preference.
 typedef NS_OPTIONS(NSUInteger, _WKWebsiteColorSchemePreference) {
     _WKWebsiteColorSchemePreferenceNoPreference,
     _WKWebsiteColorSchemePreferenceLight,
     _WKWebsiteColorSchemePreferenceDark,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 @class _WKCustomHeaderFields;
 @class WKUserContentController;
@@ -81,7 +81,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteColorSchemePreference) {
 @interface WKWebpagePreferences (WKPrivate)
 
 @property (nonatomic, setter=_setContentBlockersEnabled:) BOOL _contentBlockersEnabled;
-@property (nonatomic, copy, setter=_setActiveContentRuleListActionPatterns:) NSDictionary<NSString *, NSSet<NSString *> *> *_activeContentRuleListActionPatterns WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, copy, setter=_setActiveContentRuleListActionPatterns:) NSDictionary<NSString *, NSSet<NSString *> *> *_activeContentRuleListActionPatterns WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, setter=_setAllowedAutoplayQuirks:) _WKWebsiteAutoplayQuirk _allowedAutoplayQuirks;
 @property (nonatomic, setter=_setAutoplayPolicy:) _WKWebsiteAutoplayPolicy _autoplayPolicy;
 @property (nonatomic, copy, setter=_setCustomHeaderFields:) NSArray<_WKCustomHeaderFields *> *_customHeaderFields;
@@ -97,9 +97,9 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteColorSchemePreference) {
 @property (nonatomic, copy, setter=_setApplicationNameForUserAgentWithModernCompatibility:) NSString *_applicationNameForUserAgentWithModernCompatibility;
 
 @property (nonatomic, setter=_setMouseEventPolicy:) _WKWebsiteMouseEventPolicy _mouseEventPolicy WK_API_AVAILABLE(macos(11.0), ios(14.0));
-@property (nonatomic, setter=_setModalContainerObservationPolicy:) _WKWebsiteModalContainerObservationPolicy _modalContainerObservationPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setModalContainerObservationPolicy:) _WKWebsiteModalContainerObservationPolicy _modalContainerObservationPolicy WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-@property (nonatomic, setter=_setCaptivePortalModeEnabled:) BOOL _captivePortalModeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setCaptivePortalModeEnabled:) BOOL _captivePortalModeEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 @property (nonatomic, setter=_setColorSchemePreference:) _WKWebsiteColorSchemePreference _colorSchemePreference;
 

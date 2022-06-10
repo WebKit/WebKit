@@ -52,11 +52,11 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic, nullable, copy) NSString *dataConnectionServiceType WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic) BOOL preventsSystemHTTPProxyAuthentication WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic) BOOL requiresSecureHTTPSProxyConnection WK_API_AVAILABLE(macos(11.0), ios(14.0));
-@property (nonatomic) BOOL shouldRunServiceWorkersOnMainThreadForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) NSUInteger overrideServiceWorkerRegistrationCountTestingValue WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL shouldRunServiceWorkersOnMainThreadForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic) NSUInteger overrideServiceWorkerRegistrationCountTestingValue WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 // FIXME: rdar://86641948 Remove acceptInsecureCertificatesForWebSockets once HAVE(NSURLSESSION_WEBSOCKET) is supported on all Cocoa platforms.
-@property (nonatomic, setter=_setShouldAcceptInsecureCertificatesForWebSockets:) BOOL _shouldAcceptInsecureCertificatesForWebSockets WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setShouldAcceptInsecureCertificatesForWebSockets:) BOOL _shouldAcceptInsecureCertificatesForWebSockets WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 // These properties only make sense for persistent data stores, and will throw
 // an exception if set for non-persistent stores.
@@ -65,7 +65,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic, copy, setter=_setWebSQLDatabaseDirectory:) NSURL *_webSQLDatabaseDirectory;
 @property (nonatomic, copy, setter=_setCookieStorageFile:) NSURL *_cookieStorageFile;
 @property (nonatomic, copy, setter=_setResourceLoadStatisticsDirectory:) NSURL *_resourceLoadStatisticsDirectory WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-@property (nonatomic, nullable, copy) NSURL *privateClickMeasurementStorageDirectory WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSURL *privateClickMeasurementStorageDirectory WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, copy, setter=_setCacheStorageDirectory:) NSURL *_cacheStorageDirectory WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic, copy, setter=_setServiceWorkerRegistrationDirectory:) NSURL *_serviceWorkerRegistrationDirectory WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 @property (nonatomic) BOOL serviceWorkerProcessTerminationDelayEnabled WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
@@ -81,17 +81,17 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic, nullable, copy, setter=setHSTSStorageDirectory:) NSURL *hstsStorageDirectory WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic) BOOL enableInAppBrowserPrivacyForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic) BOOL allowsHSTSWithUntrustedRootCertificate WK_API_AVAILABLE(macos(12.0), ios(15.0));
-@property (nonatomic, nullable, copy, setter=setPCMMachServiceName:) NSString *pcmMachServiceName WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, nullable, copy, setter=setWebPushMachServiceName:) NSString *webPushMachServiceName WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy, setter=setPCMMachServiceName:) NSString *pcmMachServiceName WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic, nullable, copy, setter=setWebPushMachServiceName:) NSString *webPushMachServiceName WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 @property (nonatomic, nullable, copy) NSURL *alternativeServicesStorageDirectory WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic, nullable, copy) NSURL *standaloneApplicationURL WK_API_AVAILABLE(macos(11.0), ios(14.0));
-@property (nonatomic, nullable, copy) NSURL *generalStorageDirectory WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) BOOL shouldUseCustomStoragePaths WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, nullable, copy) NSURL *generalStorageDirectory WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic) BOOL shouldUseCustomStoragePaths WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 // Testing only.
 @property (nonatomic) BOOL allLoadsBlockedByDeviceManagementRestrictionsForTesting WK_API_AVAILABLE(macos(10.15), ios(13.0));
-@property (nonatomic) BOOL webPushDaemonUsesMockBundlesForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL webPushDaemonUsesMockBundlesForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 @end
 

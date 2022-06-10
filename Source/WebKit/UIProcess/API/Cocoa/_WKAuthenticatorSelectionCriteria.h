@@ -42,7 +42,7 @@ WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
 @property (nonatomic) _WKAuthenticatorAttachment authenticatorAttachment;
 
 /* (@discussion The default value is _WKResidentKeyRequirementNotPresent */
-@property (nonatomic) _WKResidentKeyRequirement residentKey WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) _WKResidentKeyRequirement residentKey WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 /*!@discussion The default value is NO.*/
 @property (nonatomic) BOOL requireResidentKey;
