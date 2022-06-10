@@ -48,14 +48,14 @@ static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderO
     return false;
 }
 
-static float minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
+static float minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalTop, const RenderElement* decorationRenderer)
 {
     auto minLogicalTop = textRunLogicalTop;
     for (auto run = lineBox->firstLeafBox(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        if (!(run->style().textDecorationsInEffect() & textDecorationLine))
+        if (!run->style().textDecorationsInEffect().contains(TextDecorationLine::Underline))
             continue; // If the text decoration isn't in effect on the child, then it must be outside of |decorationRenderer|'s hierarchy.
 
         if (decorationRenderer && decorationRenderer->isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(*decorationRenderer), &run->renderer()))
@@ -67,14 +67,14 @@ static float minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIte
     return minLogicalTop;
 }
 
-static float maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
+static float maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalBottom, const RenderElement* decorationRenderer)
 {
     auto maxLogicalBottom = textRunLogicalBottom;
     for (auto run = lineBox->firstLeafBox(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        if (!(run->style().textDecorationsInEffect() & textDecorationLine))
+        if (!run->style().textDecorationsInEffect().contains(TextDecorationLine::Underline))
             continue; // If the text decoration isn't in effect on the child, then it must be outside of |decorationRenderer|'s hierarchy.
 
         if (decorationRenderer && decorationRenderer->isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(*decorationRenderer), &run->renderer()))
@@ -86,7 +86,7 @@ static float maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBox
     return maxLogicalBottom;
 }
 
-static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer, OptionSet<TextDecorationLine> textDecorationLine, bool firstLine)
+static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer, bool firstLine)
 {
     const RenderElement* current = renderer.parent();
     do {
@@ -96,7 +96,7 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
             return nullptr;
 
         const RenderStyle& styleToUse = firstLine ? current->firstLineStyle() : current->style();
-        if (styleToUse.textDecorationLine() & textDecorationLine)
+        if (styleToUse.textDecorationLine().contains(TextDecorationLine::Underline))
             return current;
         current = current->parent();
     } while (current && (!current->element() || (!is<HTMLAnchorElement>(*current->element()) && !current->element()->hasTagName(HTMLNames::fontTag))));
@@ -107,12 +107,12 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
 float textRunLogicalOffsetFromLineBottom(const InlineIterator::TextBoxIterator& textRun)
 {
     float offset = 0.f;
-    auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecorationLine::Underline, textRun->lineBox()->isFirst());
+    auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), textRun->lineBox()->isFirst());
     if (textRun->renderer().style().isFlippedLinesWritingMode()) {
-        auto minLogicalTop = minLogicalTopForTextDecorationLine(textRun->lineBox(), textRun->logicalTop(), decorationRenderer, TextDecorationLine::Underline);
+        auto minLogicalTop = minLogicalTopForTextDecorationLine(textRun->lineBox(), textRun->logicalTop(), decorationRenderer);
         offset = textRun->logicalTop() - minLogicalTop;
     } else {
-        offset = maxLogicalBottomForTextDecorationLine(textRun->lineBox(), textRun->logicalBottom(), decorationRenderer, TextDecorationLine::Underline);
+        offset = maxLogicalBottomForTextDecorationLine(textRun->lineBox(), textRun->logicalBottom(), decorationRenderer);
         offset -= textRun->logicalBottom();
     }
     return offset;
