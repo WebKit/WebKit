@@ -5842,6 +5842,15 @@ OverscrollBehavior FrameView::verticalOverscrollBehavior()  const
         return scrollingObject->style().overscrollBehaviorY();
     return OverscrollBehavior::Auto;
 }
+
+bool FrameView::isVisibleToHitTesting() const
+{
+    bool isVisibleToHitTest = true;
+    if (HTMLFrameOwnerElement* owner = frame().ownerElement())
+        isVisibleToHitTest = owner->renderer() && owner->renderer()->visibleToHitTesting();
+    return isVisibleToHitTest;
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

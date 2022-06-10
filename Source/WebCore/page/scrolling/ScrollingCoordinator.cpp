@@ -37,6 +37,7 @@
 #include "PluginViewBase.h"
 #include "Region.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerScrollableArea.h"
 #include "RenderView.h"
 #include "ScrollAnimator.h"
 #include "Settings.h"
@@ -125,7 +126,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     if (auto* scrollableAreas = frameView->scrollableAreas()) {
         for (auto& scrollableArea : *scrollableAreas) {
             // Composited scrollable areas can be scrolled off the main thread.
-            if (scrollableArea->usesAsyncScrolling())
+            if (!scrollableArea->isVisibleToHitTesting() || scrollableArea->usesAsyncScrolling())
                 continue;
 
             bool isInsideFixed;

@@ -117,6 +117,8 @@ public:
     WEBCORE_EXPORT void setCanHaveScrollbars(bool) final;
     WEBCORE_EXPORT void updateCanHaveScrollbars();
 
+    bool isVisibleToHitTesting() const final;
+
     Ref<Scrollbar> createScrollbar(ScrollbarOrientation) final;
 
     bool avoidScrollbarCreation() const final;
