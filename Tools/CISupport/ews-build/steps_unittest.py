@@ -6317,7 +6317,7 @@ class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):
 <pre>
 [Merge-Queue] Add http credential helper
 <a href="https://bugs.webkit.org/show_bug.cgi?id=238553">https://bugs.webkit.org/show_bug.cgi?id=238553</a>
-&lt;rdar://problem/91044821 &gt;
+&lt;rdar://problem/91044821&gt;
 
 Reviewed by NOBODY (OOPS!).
 

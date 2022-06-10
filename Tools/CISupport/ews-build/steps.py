@@ -5111,7 +5111,7 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
     ESCAPE_TABLE = {
         '"': '&quot;',
         "'": '&apos;',
-        '>': ' &gt;',
+        '>': '&gt;',
         '<': '&lt;',
         '&': '&amp;',
     }
@@ -5126,7 +5126,7 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
     @classmethod
     def escape_html(cls, message):
         message = ''.join(cls.ESCAPE_TABLE.get(c, c) for c in message)
-        return re.sub(r'(https?://[^\s<>,:;]+)', r'<a href="\1">\1</a>', message)
+        return re.sub(r'(https?://[^\s<>,:;]+?)(?=[\s<>,:;]|(&gt))', r'<a href="\1">\1</a>', message)
 
     def __init__(self, **kwargs):
         super(UpdatePullRequest, self).__init__(logEnviron=False, timeout=300, **kwargs)
