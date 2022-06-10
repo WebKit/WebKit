@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -260,6 +260,19 @@ static const char* samlResponse =
     return self;
 }
 
+- (void)extendExpectations:(NSArray *)additionalMessages
+{
+    _expectedMessages = [_expectedMessages arrayByAddingObjectsFromArray:additionalMessages];
+    allMessagesReceived = false;
+}
+
+- (void)resetExpectations:(NSArray *)expectedMessages
+{
+    _messages = adoptNS([[NSMutableArray alloc] init]);
+    _expectedMessages = expectedMessages;
+    allMessagesReceived = false;
+}
+
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     auto curIndex = [_messages count];
@@ -370,6 +383,16 @@ static void checkAuthorizationOptions(bool userActionInitiated, String initiator
     EXPECT_EQ(((NSNumber *)[gAuthorization authorizationOptions][SOAuthorizationOptionInitiatingAction]).intValue, initiatingAction);
 }
 
+#define SWIZZLE_SOAUTH(SOAuthClass) \
+    ClassMethodSwizzler swizzler1(SOAuthClass, @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL)); \
+    InstanceMethodSwizzler swizzler2(SOAuthClass, @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate)); \
+    InstanceMethodSwizzler swizzler3(SOAuthClass, @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL)); \
+    InstanceMethodSwizzler swizzler4(SOAuthClass, @selector(cancelAuthorization), reinterpret_cast<IMP>(overrideCancelAuthorization)); \
+    InstanceMethodSwizzler swizzler5(SOAuthClass, @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+
+#define SWIZZLE_AKAUTH() \
+    ClassMethodSwizzler swizzler6([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain)); \
+
 namespace TestWebKitAPI {
 
 TEST(SOAuthorizationRedirect, NoInterceptions)
@@ -391,10 +414,7 @@ TEST(SOAuthorizationRedirect, NoInterceptions)
 TEST(SOAuthorizationRedirect, DisableSSO)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -418,6 +438,7 @@ TEST(SOAuthorizationRedirect, DisableSSO)
 TEST(SOAuthorizationRedirect, InterceptionError)
 {
     resetState();
+    // This test relies on us not swizzling most of the SOAuthorizationClass methods.
     ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
     InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
 
@@ -437,10 +458,7 @@ TEST(SOAuthorizationRedirect, InterceptionError)
 TEST(SOAuthorizationRedirect, InterceptionDoNotHandle)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -462,10 +480,7 @@ TEST(SOAuthorizationRedirect, InterceptionDoNotHandle)
 TEST(SOAuthorizationRedirect, InterceptionCancel)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -487,10 +502,7 @@ TEST(SOAuthorizationRedirect, InterceptionCancel)
 TEST(SOAuthorizationRedirect, InterceptionCompleteWithoutData)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -512,10 +524,7 @@ TEST(SOAuthorizationRedirect, InterceptionCompleteWithoutData)
 TEST(SOAuthorizationRedirect, InterceptionUnexpectedCompletion)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -538,10 +547,7 @@ TEST(SOAuthorizationRedirect, InterceptionUnexpectedCompletion)
 TEST(SOAuthorizationRedirect, InterceptionSucceed1)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -574,10 +580,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed1)
 TEST(SOAuthorizationRedirect, InterceptionSucceed2)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto delegate = adoptNS([[TestSOAuthorizationBasicDelegate alloc] init]);
@@ -610,10 +613,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed2)
 TEST(SOAuthorizationRedirect, InterceptionSucceed3)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
@@ -647,10 +647,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed3)
 TEST(SOAuthorizationRedirect, InterceptionSucceed4)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -679,10 +676,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed4)
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithOtherHttpStatusCode)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -705,10 +699,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithOtherHttpStatusCode)
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithCookie)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -742,10 +733,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithCookie)
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithCookies)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -780,10 +768,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithCookies)
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithRedirectionAndCookie)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
@@ -821,10 +806,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithRedirectionAndCookie)
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithDifferentOrigin)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -847,10 +829,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithDifferentOrigin)
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithWaitingSession)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -885,10 +864,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithWaitingSession)
 TEST(SOAuthorizationRedirect, InterceptionAbortedWithWaitingSession)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -917,10 +893,7 @@ TEST(SOAuthorizationRedirect, InterceptionAbortedWithWaitingSession)
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithActiveSessionDidMoveWindow)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -950,10 +923,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithActiveSessionDidMoveWindow)
 TEST(SOAuthorizationRedirect, InterceptionSucceedTwice)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -985,12 +955,8 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedTwice)
 TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSession)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(cancelAuthorization), reinterpret_cast<IMP>(overrideCancelAuthorization));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
-
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -1025,10 +991,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSession)
 TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressWaitingSession)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1070,14 +1033,15 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressWaitingSession)
 TEST(SOAuthorizationRedirect, InterceptionSucceedSAML)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"SAML"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
 
@@ -1094,16 +1058,13 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSAML)
     // Pass a HTTP 200 response with a html to mimic a SAML response.
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:samlResponse length:strlen(samlResponse)]).get()];
-    [webView waitForMessage:@"SAML"];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationRedirect, InterceptionSucceedSAMLWithPSON)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple3" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
@@ -1137,10 +1098,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSAMLWithPSON)
 TEST(SOAuthorizationRedirect, AuthorizationOptions)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
@@ -1159,10 +1117,7 @@ TEST(SOAuthorizationRedirect, AuthorizationOptions)
 TEST(SOAuthorizationRedirect, InterceptionDidNotHandleTwice)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1182,10 +1137,7 @@ TEST(SOAuthorizationRedirect, InterceptionDidNotHandleTwice)
 TEST(SOAuthorizationRedirect, InterceptionCompleteTwice)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1207,8 +1159,7 @@ TEST(SOAuthorizationRedirect, InterceptionCompleteTwice)
 TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyIgnore)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1227,10 +1178,7 @@ TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyIgnore)
 TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyAllowAsync)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1257,8 +1205,7 @@ TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyAllowAsync)
 TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyIgnoreAsync)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1281,10 +1228,7 @@ TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyIgnoreAsync)
 TEST(SOAuthorizationRedirect, InterceptionSucceedWithUI)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1316,10 +1260,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithUI)
 TEST(SOAuthorizationRedirect, InterceptionCancelWithUI)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1350,10 +1291,7 @@ TEST(SOAuthorizationRedirect, InterceptionCancelWithUI)
 TEST(SOAuthorizationRedirect, InterceptionErrorWithUI)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1383,11 +1321,7 @@ TEST(SOAuthorizationRedirect, InterceptionErrorWithUI)
 TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSessionWithUI)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(cancelAuthorization), reinterpret_cast<IMP>(overrideCancelAuthorization));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1426,10 +1360,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSessionWithUI)
 TEST(SOAuthorizationRedirect, ShowUITwice)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1465,10 +1396,7 @@ TEST(SOAuthorizationRedirect, ShowUITwice)
 TEST(SOAuthorizationRedirect, NSNotificationCenter)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1498,10 +1426,7 @@ TEST(SOAuthorizationRedirect, NSNotificationCenter)
 TEST(SOAuthorizationRedirect, DismissUIDuringMiniaturization)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1541,10 +1466,7 @@ TEST(SOAuthorizationRedirect, DismissUIDuringMiniaturization)
 TEST(SOAuthorizationRedirect, DismissUIDuringHiding)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1584,10 +1506,7 @@ TEST(SOAuthorizationRedirect, DismissUIDuringHiding)
 TEST(SOAuthorizationRedirect, DismissUIDuringMiniaturizationThenAnother)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1634,10 +1553,7 @@ TEST(SOAuthorizationRedirect, DismissUIDuringMiniaturizationThenAnother)
 TEST(SOAuthorizationRedirect, DismissUIDuringHidingThenAnother)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -1714,10 +1630,7 @@ TEST(SOAuthorizationPopUp, NoInterceptions)
 TEST(SOAuthorizationPopUp, NoInterceptionsSubFrame)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1742,10 +1655,7 @@ TEST(SOAuthorizationPopUp, NoInterceptionsSubFrame)
 TEST(SOAuthorizationPopUp, NoInterceptionsWithoutUserGesture)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     // The default value of javaScriptCanOpenWindowsAutomatically is NO on iOS, and YES on macOS.
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1764,10 +1674,7 @@ TEST(SOAuthorizationPopUp, NoInterceptionsWithoutUserGesture)
 TEST(SOAuthorizationPopUp, InterceptionError)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1804,16 +1711,17 @@ TEST(SOAuthorizationPopUp, InterceptionError)
 TEST(SOAuthorizationPopUp, InterceptionCancel)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     auto testHtml = generateHtml(openerTemplate, testURL.get().absoluteString);
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"WindowClosed."]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
@@ -1833,22 +1741,23 @@ TEST(SOAuthorizationPopUp, InterceptionCancel)
     @autoreleasepool {
         [gDelegate authorizationDidCancel:gAuthorization];
     }
-    [webView waitForMessage:@"WindowClosed."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByItself)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
@@ -1870,23 +1779,23 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByItself)
     @autoreleasepool {
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
     }
-    [webView waitForMessage:@"Hello."];
-    [webView waitForMessage:@"WindowClosed."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByParent)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string(), emptyString(), "event.source.close();"_s); // The parent closes the pop up.
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
@@ -1908,23 +1817,23 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByParent)
     @autoreleasepool {
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
     }
-    [webView waitForMessage:@"Hello."];
-    [webView waitForMessage:@"WindowClosed."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByWebKit)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
@@ -1946,17 +1855,13 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByWebKit)
     @autoreleasepool {
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
     }
-    [webView waitForMessage:@"Hello."];
-    [webView waitForMessage:@"WindowClosed."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationPopUp, InterceptionSucceedWithOtherHttpStatusCode)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1997,16 +1902,17 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedWithOtherHttpStatusCode)
 TEST(SOAuthorizationPopUp, InterceptionSucceedWithCookie)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
@@ -2028,23 +1934,23 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedWithCookie)
     @autoreleasepool {
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
     }
-    [webView waitForMessage:@"Hello."];
-    [webView waitForMessage:@"WindowClosed."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationPopUp, InterceptionSucceedTwice)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
@@ -2063,25 +1969,22 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedTwice)
         checkAuthorizationOptions(true, "file://"_s, 1);
         EXPECT_TRUE(policyForAppSSOPerformed);
 
+        [messageHandler resetExpectations:@[@"Hello.", @"WindowClosed."]];
+
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
         auto resonseHtmlCString = generateHtml(newWindowResponseTemplate, emptyString()).utf8();
         // The secret WKWebView needs to be destroyed right the way.
         @autoreleasepool {
             [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
         }
-        [webView waitForMessage:@"Hello."];
-        [webView waitForMessage:@"WindowClosed."];
+        Util::run(&allMessagesReceived);
     }
 }
 
 TEST(SOAuthorizationPopUp, InterceptionSucceedSuppressActiveSession)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(cancelAuthorization), reinterpret_cast<IMP>(overrideCancelAuthorization));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
@@ -2104,7 +2007,12 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedSuppressActiveSession)
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     // Suppress the last active session.
-    auto newWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:webView.get().configuration]);
+    
+    auto configuration = adoptNS([webView.get().configuration copy]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto newWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     configureSOAuthorizationWebView(newWebView.get(), delegate.get());
 
     navigationCompleted = false;
@@ -2136,23 +2044,23 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedSuppressActiveSession)
     @autoreleasepool {
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
     }
-    [newWebView waitForMessage:@"Hello."];
-    [newWebView waitForMessage:@"WindowClosed."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationPopUp, InterceptionSucceedNewWindowNavigation)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string(), makeString("newWindow.location = '", baseURL.get().absoluteString.UTF8String, "';")); // Starts a new navigation on the new window.
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
@@ -2174,17 +2082,13 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedNewWindowNavigation)
     @autoreleasepool {
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
     }
-    [webView waitForMessage:@"Hello."];
-    [webView waitForMessage:@"WindowClosed."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationPopUp, AuthorizationOptions)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string());
@@ -2209,8 +2113,7 @@ TEST(SOAuthorizationPopUp, AuthorizationOptions)
 TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyIgnore)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string());
@@ -2236,16 +2139,17 @@ TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyIgnore)
 TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyAllowAsync)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler4(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
     [delegate setIsAsyncExecution:true];
@@ -2268,16 +2172,14 @@ TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyAllowAsync)
     @autoreleasepool {
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
     }
-    [webView waitForMessage:@"Hello."];
-    [webView waitForMessage:@"WindowClosed."];
+    Util::run(&allMessagesReceived);
 }
 
 
 TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyIgnoreAsync)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(openerTemplate, testURL.string());
@@ -2308,22 +2210,23 @@ TEST(SOAuthorizationSubFrame, NoInterceptions)
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"GetSessionCookie" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     auto testHtml = generateHtml(parentTemplate, testURL.get().absoluteString);
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@""]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
     [webView loadHTMLString:testHtml baseURL:baseURL.get()];
-    [webView waitForMessage:@""];
+    Util::run(&allMessagesReceived);
     EXPECT_FALSE(policyForAppSSOPerformed);
 }
 
 TEST(SOAuthorizationSubFrame, NoInterceptionsNonAppleFirstPartyMainFrame)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     auto testHtml = generateHtml(parentTemplate, URL { "http://www.example.com"_str }.string());
 
@@ -2342,32 +2245,31 @@ TEST(SOAuthorizationSubFrame, NoInterceptionsNonAppleFirstPartyMainFrame)
 TEST(SOAuthorizationSubFrame, InterceptionError)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"GetSessionCookie" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     auto testHtml = generateHtml(parentTemplate, testURL.get().absoluteString);
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[[NSNull null], @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
     [webView loadHTMLString:testHtml baseURL:baseURL.get()];
-    [webView waitForMessage:@"null"];
-    [webView waitForMessage:@"SOAuthorizationDidStart"];
+    Util::run(&allMessagesReceived);
+
     checkAuthorizationOptions(false, "file://"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
+    [messageHandler extendExpectations:@[@"null", @"SOAuthorizationDidCancel", @""]];
+    
     [gDelegate authorization:gAuthorization didCompleteWithError:adoptNS([[NSError alloc] initWithDomain:NSCocoaErrorDomain code:0 userInfo:nil]).get()];
-    [webView waitForMessage:@"null"];
-    [webView waitForMessage:@"SOAuthorizationDidCancel"];
-    [webView waitForMessage:@""];
-    // Trys to wait until the iframe load is finished.
-    Util::sleep(0.5);
+    Util::run(&allMessagesReceived);
     // Make sure we don't load the request of the iframe to the main frame.
     EXPECT_WK_STREQ("", finalURL);
 }
@@ -2375,32 +2277,31 @@ TEST(SOAuthorizationSubFrame, InterceptionError)
 TEST(SOAuthorizationSubFrame, InterceptionCancel)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"GetSessionCookie" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     auto testHtml = generateHtml(parentTemplate, testURL.get().absoluteString);
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[[NSNull null], @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
     [webView loadHTMLString:testHtml baseURL:baseURL.get()];
-    [webView waitForMessage:@"null"];
-    [webView waitForMessage:@"SOAuthorizationDidStart"];
+    Util::run(&allMessagesReceived);
+
     checkAuthorizationOptions(false, "file://"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
 
+    [messageHandler extendExpectations:@[@"null", @"SOAuthorizationDidCancel", @""]];
+
     [gDelegate authorizationDidCancel:gAuthorization];
-    [webView waitForMessage:@"null"];
-    [webView waitForMessage:@"SOAuthorizationDidCancel"];
-    [webView waitForMessage:@""];
-    // Trys to wait until the iframe load is finished.
-    Util::sleep(0.5);
+    Util::run(&allMessagesReceived);
     // Make sure we don't load the request of the iframe to the main frame.
     EXPECT_WK_STREQ("", finalURL);
 }
@@ -2408,64 +2309,65 @@ TEST(SOAuthorizationSubFrame, InterceptionCancel)
 TEST(SOAuthorizationSubFrame, InterceptionSuccess)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(parentTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"http://www.example.com", @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
     [webView loadHTMLString:testHtml baseURL:nil];
-    [webView waitForMessage:@"http://www.example.com"];
-    [webView waitForMessage:@"SOAuthorizationDidStart"];
+    Util::run(&allMessagesReceived);
+
     checkAuthorizationOptions(false, "null"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
+
+    [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello."]];
 
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
     auto iframeHtmlCString = generateHtml(iframeTemplate, emptyString()).utf8();
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
-    [webView waitForMessage:@"http://www.example.com"];
-    [webView waitForMessage:@"Hello."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationSubFrame, InterceptionSucceedWithOtherHttpStatusCode)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"GetSessionCookie" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     auto testHtml = generateHtml(parentTemplate, testURL.get().absoluteString);
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[[NSNull null], @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
     [webView loadHTMLString:testHtml baseURL:baseURL.get()];
-    [webView waitForMessage:@"null"];
-    [webView waitForMessage:@"SOAuthorizationDidStart"];
+    Util::run(&allMessagesReceived);
+
     checkAuthorizationOptions(false, "file://"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
+
+    [messageHandler extendExpectations:@[@"null", @"SOAuthorizationDidCancel", @""]];
 
     // Will fallback to web path.
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:400 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
     auto iframeHtmlCString = generateHtml(iframeTemplate, emptyString()).utf8();
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
-    [webView waitForMessage:@"null"];
-    [webView waitForMessage:@"SOAuthorizationDidCancel"];
-    [webView waitForMessage:@""];
-    // Trys to wait until the iframe load is finished.
-    Util::sleep(0.5);
+    Util::run(&allMessagesReceived);
     // Make sure we don't load the request of the iframe to the main frame.
     EXPECT_WK_STREQ("", finalURL);
 }
@@ -2474,45 +2376,48 @@ TEST(SOAuthorizationSubFrame, InterceptionSucceedWithOtherHttpStatusCode)
 TEST(SOAuthorizationSubFrame, InterceptionSucceedWithCookie)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(parentTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"http://www.example.com", @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
     [webView loadHTMLString:testHtml baseURL:nil];
-    [webView waitForMessage:@"http://www.example.com"];
-    [webView waitForMessage:@"SOAuthorizationDidStart"];
+    Util::run(&allMessagesReceived);
+
     checkAuthorizationOptions(false, "null"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
+
+    [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello."]];
 
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Set-Cookie" : @"sessionid=38afes7a8;"}]);
     auto iframeHtmlCString = generateHtml(iframeTemplate, emptyString()).utf8();
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
-    [webView waitForMessage:@"http://www.example.com"];
-    [webView waitForMessage:@"Hello."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationSubFrame, InterceptionSuccessTwice)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(parentTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
@@ -2521,47 +2426,50 @@ TEST(SOAuthorizationSubFrame, InterceptionSuccessTwice)
         navigationCompleted = false;
         policyForAppSSOPerformed = false;
 
+        [messageHandler resetExpectations:@[@"http://www.example.com", @"SOAuthorizationDidStart"]];
+        
         [webView loadHTMLString:testHtml baseURL:nil];
-        [webView waitForMessage:@"http://www.example.com"];
-        [webView waitForMessage:@"SOAuthorizationDidStart"];
+        Util::run(&allMessagesReceived);
+
         checkAuthorizationOptions(false, "null"_s, 2);
         EXPECT_TRUE(policyForAppSSOPerformed);
+
+        [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello."]];
 
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
         auto iframeHtmlCString = generateHtml(iframeTemplate, emptyString()).utf8();
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
-        [webView waitForMessage:@"http://www.example.com"];
-        [webView waitForMessage:@"Hello."];
+        Util::run(&allMessagesReceived);
     }
 }
 
 TEST(SOAuthorizationSubFrame, AuthorizationOptions)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(parentTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"http://www.example.com", @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
     [webView loadHTMLString:testHtml baseURL:(NSURL *)URL { "http://www.apple.com"_str }];
-    [webView waitForMessage:@"http://www.example.com"];
-    [webView waitForMessage:@"SOAuthorizationDidStart"];
+    Util::run(&allMessagesReceived);
+
     checkAuthorizationOptions(false, "http://www.apple.com"_s, 2);
 }
 
 TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnore)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(parentTemplate, testURL.string());
@@ -2581,38 +2489,39 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnore)
 TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyAllowAsync)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(parentTemplate, testURL.string());
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"http://www.example.com", @"SOAuthorizationDidStart"]]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
     [delegate setIsAsyncExecution:true];
 
     [webView loadHTMLString:testHtml baseURL:nil];
-    [webView waitForMessage:@"http://www.example.com"];
-    [webView waitForMessage:@"SOAuthorizationDidStart"];
+    Util::run(&allMessagesReceived);
+
     checkAuthorizationOptions(false, "null"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
+
+    [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello."]];
 
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
     auto iframeHtmlCString = generateHtml(iframeTemplate, emptyString()).utf8();
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:iframeHtmlCString.data() length:iframeHtmlCString.length()]).get()];
-    [webView waitForMessage:@"http://www.example.com"];
-    [webView waitForMessage:@"Hello."];
+    Util::run(&allMessagesReceived);
 }
 
 TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnoreAsync)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(parentTemplate, testURL.string());
@@ -2634,11 +2543,8 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnoreAsync)
 TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     HTTPServer server([parentHtml = generateHtml(parentTemplate, "simple.html"_s), frameHtml = generateHtml(iframeTemplate, "parent.postMessage('Referrer: ' + document.referrer, '*');"_s)] (const Connection& connection) {
         RetainPtr<NSString> firstResponse = [NSString stringWithFormat:
@@ -2685,11 +2591,8 @@ TEST(SOAuthorizationSubFrame, InterceptionErrorWithReferrer)
 TEST(SOAuthorizationSubFrame, InterceptionErrorMessageOrder)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     RetainPtr<NSURL> baseURL = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"GetSessionCookie" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -2713,11 +2616,8 @@ TEST(SOAuthorizationSubFrame, InterceptionErrorMessageOrder)
 TEST(SOAuthorizationSubFrame, InterceptionSuccessMessageOrder)
 {
     resetState();
-    ClassMethodSwizzler swizzler1(PAL::getSOAuthorizationClass(), @selector(canPerformAuthorizationWithURL:responseCode:), reinterpret_cast<IMP>(overrideCanPerformAuthorizationWithURL));
-    InstanceMethodSwizzler swizzler2(PAL::getSOAuthorizationClass(), @selector(setDelegate:), reinterpret_cast<IMP>(overrideSetDelegate));
-    InstanceMethodSwizzler swizzler3(PAL::getSOAuthorizationClass(), @selector(beginAuthorizationWithURL:httpHeaders:httpBody:), reinterpret_cast<IMP>(overrideBeginAuthorizationWithURL));
-    ClassMethodSwizzler swizzler4([AKAuthorizationController class], @selector(isURLFromAppleOwnedDomain:), reinterpret_cast<IMP>(overrideIsURLFromAppleOwnedDomain));
-    InstanceMethodSwizzler swizzler5(PAL::getSOAuthorizationClass(), @selector(getAuthorizationHintsWithURL:responseCode:completion:), reinterpret_cast<IMP>(overrideGetAuthorizationHintsWithURL));
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
+    SWIZZLE_AKAUTH();
 
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateHtml(parentTemplate, testURL.string());
@@ -2741,5 +2641,8 @@ TEST(SOAuthorizationSubFrame, InterceptionSuccessMessageOrder)
 }
 
 } // namespace TestWebKitAPI
+
+#undef SWIZZLE_SOAUTH
+#undef SWIZZLE_AKAUTH
 
 #endif
