@@ -34,10 +34,12 @@
 
 namespace WebKit {
 
+#if HAVE(LSDATABASECONTEXT)
 static bool hasSystemContentDatabase()
 {
     return [LSDatabaseContext.sharedDatabaseContext respondsToSelector:@selector(getSystemContentDatabaseObject4WebKit:)];
 }
+#endif
 
 LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess&)
 {
