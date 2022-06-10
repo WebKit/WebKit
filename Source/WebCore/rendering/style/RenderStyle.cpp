@@ -685,7 +685,7 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         // is specified. We can take an early out here.
         if (textUnderlinePosition() == TextUnderlinePosition::Under || other.textUnderlinePosition() == TextUnderlinePosition::Under)
             return true;
-        return visualOverflowForDecorations(*this, { }) != visualOverflowForDecorations(other, { });
+        return visualOverflowForDecorations(*this) != visualOverflowForDecorations(other);
     }
 
     auto hasOutlineInVisualOverflow = this->hasOutlineInVisualOverflow();

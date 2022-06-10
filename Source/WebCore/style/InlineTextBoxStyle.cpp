@@ -172,10 +172,8 @@ WavyStrokeParameters getWavyStrokeParameters(float fontSize)
     return result;
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineIterator::TextBoxIterator& textRun)
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, std::optional<float> underlineOffset)
 {
-    ASSERT(!textRun || textRun->style() == lineStyle);
-    
     auto decoration = lineStyle.textDecorationsInEffect();
     if (decoration.isEmpty())
         return GlyphOverflow();
@@ -183,11 +181,11 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     float strokeThickness = lineStyle.textDecorationThickness().resolve(lineStyle.computedFontSize(), lineStyle.metricsOfPrimaryFont());
     WavyStrokeParameters wavyStrokeParameters;
     float wavyOffset = 0;
-        
+
     TextDecorationStyle decorationStyle = lineStyle.textDecorationStyle();
     float height = lineStyle.fontCascade().metricsOfPrimaryFont().floatHeight();
     GlyphOverflow overflowResult;
-    
+
     if (decorationStyle == TextDecorationStyle::Wavy) {
         wavyStrokeParameters = getWavyStrokeParameters(lineStyle.computedFontPixelSize());
         wavyOffset = wavyOffsetFromDecoration();
@@ -198,27 +196,13 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     // These metrics must match where underlines get drawn.
     // FIXME: Share the code in TextDecorationPainter::paintBackgroundDecorations() so we can just query it for the painted geometry.
     if (decoration & TextDecorationLine::Underline) {
-        // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
-        int underlineOffset = 1;
-        float textDecorationBaseFontSize = 16;
-        auto defaultGap = lineStyle.computedFontSize() / textDecorationBaseFontSize;
-        // FIXME: RenderStyle calls us with empty textRun but only when TextUnderlinePosition is not Under.
-        ASSERT(textRun || lineStyle.textUnderlinePosition() != TextUnderlinePosition::Under);
-        if (!textRun)
-            underlineOffset += computeUnderlineOffset({ lineStyle, defaultGap });
-        else {
-            underlineOffset += computeUnderlineOffset({ lineStyle
-                , defaultGap
-                , UnderlineOffsetArguments::TextUnderlinePositionUnder { textRun->lineBox()->baselineType(), textRun->logicalBottom() - textRun->logicalTop(), textRunLogicalOffsetFromLineBottom(textRun) }
-            });
-        }
-
+        ASSERT(underlineOffset);
         if (decorationStyle == TextDecorationStyle::Wavy) {
-            overflowResult.extendBottom(underlineOffset + wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
-            overflowResult.extendTop(-(underlineOffset + wavyOffset - wavyStrokeParameters.controlPointDistance - strokeThickness));
+            overflowResult.extendBottom(*underlineOffset + wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
+            overflowResult.extendTop(-(*underlineOffset + wavyOffset - wavyStrokeParameters.controlPointDistance - strokeThickness));
         } else {
-            overflowResult.extendBottom(underlineOffset + strokeThickness - height);
-            overflowResult.extendTop(-underlineOffset);
+            overflowResult.extendBottom(*underlineOffset + strokeThickness - height);
+            overflowResult.extendTop(-*underlineOffset);
         }
     }
     if (decoration & TextDecorationLine::Overline) {
@@ -249,6 +233,35 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         overflowResult.extendBottom(rect.maxY() - height);
     }
     return overflowResult;
+}
+
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineIterator::TextBoxIterator& textRun)
+{
+    ASSERT(!textRun || textRun->style() == lineStyle);
+
+    if (!lineStyle.textDecorationsInEffect().contains(TextDecorationLine::Underline))
+        return visualOverflowForDecorations(lineStyle, std::optional<float> { });
+
+    // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
+    int underlineOffset = 1;
+    float textDecorationBaseFontSize = 16;
+    auto defaultGap = lineStyle.computedFontSize() / textDecorationBaseFontSize;
+    // FIXME: RenderStyle calls us with empty textRun but only when TextUnderlinePosition is not Under.
+    ASSERT(textRun || lineStyle.textUnderlinePosition() != TextUnderlinePosition::Under);
+    if (!textRun)
+        underlineOffset += computeUnderlineOffset({ lineStyle, defaultGap });
+    else {
+        underlineOffset += computeUnderlineOffset({ lineStyle
+            , defaultGap
+            , UnderlineOffsetArguments::TextUnderlinePositionUnder { textRun->lineBox()->baselineType(), textRun->logicalBottom() - textRun->logicalTop(), textRunLogicalOffsetFromLineBottom(textRun) }
+        });
+    }
+    return visualOverflowForDecorations(lineStyle, underlineOffset);
+}
+
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle)
+{
+    return visualOverflowForDecorations(lineStyle, InlineIterator::TextBoxIterator { });
 }
     
 }
