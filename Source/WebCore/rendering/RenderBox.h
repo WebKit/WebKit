@@ -597,7 +597,7 @@ override;
     void applyTopLeftLocationOffset(LayoutPoint& point) const
     {
         // This is inlined for speed, since it is used by updateLayerPosition() during scrolling.
-        if (!document().view()->hasFlippedBlockRenderers())
+        if (!document().view() || !document().view()->hasFlippedBlockRenderers())
             point.move(m_frameRect.x(), m_frameRect.y());
         else
             applyTopLeftLocationOffsetWithFlipping(point);
