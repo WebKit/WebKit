@@ -58,12 +58,14 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
 struct UnderlineOffsetArguments {
     const RenderStyle& lineStyle;
     float defaultGap { 0 };
-    const RenderText* renderer { nullptr };
-    FontBaseline baselineType { AlphabeticBaseline };
-    float textRunLogicalTop { 0 };
-    float textRunLogicalBottom { 0 };
-    InlineIterator::LineBoxIterator lineBox { };
+    struct TextUnderlinePositionUnder {
+        FontBaseline baselineType { AlphabeticBaseline };
+        float textRunLogicalHeight { 0 };
+        float textRunOffsetFromLineBottom { 0 };
+    };
+    std::optional<TextUnderlinePositionUnder> textUnderlinePositionUnder { };
 };
 float computeUnderlineOffset(const UnderlineOffsetArguments&);
-    
+float textRunLogicalOffsetFromLineBottom(const InlineIterator::TextBoxIterator&);
+
 } // namespace WebCore

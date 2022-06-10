@@ -282,11 +282,10 @@ void TextDecorationPainter::paintBackgroundDecorations(const TextRun& textRun, c
             auto defaultGap = m_lineStyle.computedFontSize() / textDecorationBaseFontSize;
             float offset = computeUnderlineOffset({ m_lineStyle
                 , defaultGap
-                , &m_textBox->renderer()
-                , m_textBox->lineBox()->baselineType()
-                , m_textBox->logicalTop()
-                , m_textBox->logicalBottom()
-                , m_textBox->lineBox()
+                , UnderlineOffsetArguments::TextUnderlinePositionUnder { m_textBox->lineBox()->baselineType(),
+                    m_textBox->logicalBottom() - m_textBox->logicalTop(),
+                    textRunLogicalOffsetFromLineBottom(m_textBox)
+                }
             });
             float wavyOffset = m_styles.underlineStyle == TextDecorationStyle::Wavy ? m_wavyOffset : 0;
             FloatRect rect(localOrigin, FloatSize(m_width, textDecorationThickness));

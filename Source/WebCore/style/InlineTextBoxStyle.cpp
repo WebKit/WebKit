@@ -103,7 +103,21 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
 
     return current;
 }
-    
+
+float textRunLogicalOffsetFromLineBottom(const InlineIterator::TextBoxIterator& textRun)
+{
+    float offset = 0.f;
+    auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecorationLine::Underline, textRun->lineBox()->isFirst());
+    if (textRun->renderer().style().isFlippedLinesWritingMode()) {
+        auto minLogicalTop = minLogicalTopForTextDecorationLine(textRun->lineBox(), textRun->logicalTop(), decorationRenderer, TextDecorationLine::Underline);
+        offset = textRun->logicalTop() - minLogicalTop;
+    } else {
+        offset = maxLogicalBottomForTextDecorationLine(textRun->lineBox(), textRun->logicalBottom(), decorationRenderer, TextDecorationLine::Underline);
+        offset -= textRun->logicalBottom();
+    }
+    return offset;
+}
+
 float computeUnderlineOffset(const UnderlineOffsetArguments& context)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
@@ -124,12 +138,12 @@ float computeUnderlineOffset(const UnderlineOffsetArguments& context)
 
     auto resolvedUnderlinePosition = underlinePosition;
     if (resolvedUnderlinePosition == TextUnderlinePosition::Auto && underlineOffset.isAuto()) {
-        if (context.renderer)
-            resolvedUnderlinePosition = context.baselineType == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
+        if (context.textUnderlinePositionUnder)
+            resolvedUnderlinePosition = context.textUnderlinePositionUnder->baselineType == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
         else
             resolvedUnderlinePosition = TextUnderlinePosition::Auto;
     }
-    
+
     switch (resolvedUnderlinePosition) {
     case TextUnderlinePosition::Auto:
         if (underlineOffset.isAuto())
@@ -138,20 +152,9 @@ float computeUnderlineOffset(const UnderlineOffsetArguments& context)
     case TextUnderlinePosition::FromFont:
         return fontMetrics.ascent() + fontMetrics.underlinePosition() + underlineOffset.lengthOr(0);
     case TextUnderlinePosition::Under: {
-        ASSERT(context.lineBox && context.renderer);
+        ASSERT(context.textUnderlinePositionUnder);
         // Position underline relative to the bottom edge of the lowest element's content box.
-        auto* decorationRenderer = enclosingRendererWithTextDecoration(*context.renderer, TextDecorationLine::Underline, context.lineBox->isFirst());
-        
-        float offset;
-        if (context.renderer->style().isFlippedLinesWritingMode()) {
-            auto minLogicalTop = minLogicalTopForTextDecorationLine(context.lineBox, context.textRunLogicalTop, decorationRenderer, TextDecorationLine::Underline);
-            offset = context.textRunLogicalTop - minLogicalTop;
-        } else {
-            offset = maxLogicalBottomForTextDecorationLine(context.lineBox, context.textRunLogicalBottom, decorationRenderer, TextDecorationLine::Underline);
-            offset -= context.textRunLogicalBottom;
-        }
-        auto textRunLogicalHeight = context.textRunLogicalBottom - context.textRunLogicalTop;
-        auto desiredOffset = textRunLogicalHeight + gap + std::max(offset, 0.0f) + underlineOffset.lengthOr(0);
+        auto desiredOffset = context.textUnderlinePositionUnder->textRunLogicalHeight + gap + std::max(context.textUnderlinePositionUnder->textRunOffsetFromLineBottom, 0.0f) + underlineOffset.lengthOr(0);
         return std::max<float>(desiredOffset, fontMetrics.ascent());
     }
     }
@@ -159,7 +162,7 @@ float computeUnderlineOffset(const UnderlineOffsetArguments& context)
     ASSERT_NOT_REACHED();
     return fontMetrics.ascent() + gap;
 }
-    
+
 WavyStrokeParameters getWavyStrokeParameters(float fontSize)
 {
     WavyStrokeParameters result;
@@ -199,18 +202,14 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         int underlineOffset = 1;
         float textDecorationBaseFontSize = 16;
         auto defaultGap = lineStyle.computedFontSize() / textDecorationBaseFontSize;
-        // FIXME: RenderStyle calls us with empty textRun but only when TextUnderlinePosition is not Under. 
+        // FIXME: RenderStyle calls us with empty textRun but only when TextUnderlinePosition is not Under.
         ASSERT(textRun || lineStyle.textUnderlinePosition() != TextUnderlinePosition::Under);
         if (!textRun)
             underlineOffset += computeUnderlineOffset({ lineStyle, defaultGap });
         else {
             underlineOffset += computeUnderlineOffset({ lineStyle
                 , defaultGap
-                , &textRun->renderer()
-                , textRun->lineBox()->baselineType()
-                , textRun->logicalTop()
-                , textRun->logicalBottom()
-                , textRun->lineBox()
+                , UnderlineOffsetArguments::TextUnderlinePositionUnder { textRun->lineBox()->baselineType(), textRun->logicalBottom() - textRun->logicalTop(), textRunLogicalOffsetFromLineBottom(textRun) }
             });
         }
 
