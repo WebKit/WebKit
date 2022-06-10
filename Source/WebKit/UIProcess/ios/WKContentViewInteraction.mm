@@ -4869,20 +4869,22 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     });
 }
 
-- (UTF32Char)_characterBeforeCaretSelection
-{
-    return _lastInsertedCharacterToOverrideCharacterBeforeSelection.value_or(_page->editorState().postLayoutData().characterBeforeSelection);
-}
-
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount
 {
+    if (amount == -1 && _lastInsertedCharacterToOverrideCharacterBeforeSelection)
+        return *_lastInsertedCharacterToOverrideCharacterBeforeSelection;
+
+    auto& state = _page->editorState();
+    if (!state.isContentEditable || state.selectionIsNone || state.selectionIsRange)
+        return 0;
+
     switch (amount) {
     case 0:
-        return _page->editorState().postLayoutData().characterAfterSelection;
+        return state.postLayoutData().characterAfterSelection;
     case -1:
-        return self._characterBeforeCaretSelection;
+        return state.postLayoutData().characterBeforeSelection;
     case -2:
-        return _page->editorState().postLayoutData().twoCharacterBeforeSelection;
+        return state.postLayoutData().twoCharacterBeforeSelection;
     default:
         return 0;
     }
