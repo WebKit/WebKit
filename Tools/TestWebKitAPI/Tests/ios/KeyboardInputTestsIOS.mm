@@ -624,7 +624,7 @@ TEST(KeyboardInputTests, OverrideInputViewAndInputAccessoryView)
     EXPECT_EQ(inputView.get(), [contentView inputView]);
 }
 
-TEST(KeyboardInputTests, DisableSmartQuotesAndDashes)
+TEST(KeyboardInputTests, DisableSpellChecking)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
@@ -633,27 +633,28 @@ TEST(KeyboardInputTests, DisableSmartQuotesAndDashes)
     }];
     [webView _setInputDelegate:inputDelegate.get()];
 
-    auto checkSmartQuotesAndDashesType = [&] (UITextSmartDashesType dashesType, UITextSmartQuotesType quotesType) {
+    auto checkSmartQuotesAndDashesType = [&] (UITextSmartDashesType dashesType, UITextSmartQuotesType quotesType, UITextSpellCheckingType spellCheckingType) {
         UITextInputTraits *traits = [[webView textInputContentView] textInputTraits];
         EXPECT_EQ(dashesType, traits.smartDashesType);
         EXPECT_EQ(quotesType, traits.smartQuotesType);
+        EXPECT_EQ(spellCheckingType, traits.spellCheckingType);
     };
 
     [webView synchronouslyLoadHTMLString:@"<div id='foo' contenteditable spellcheck='false'></div><textarea id='bar' spellcheck='false'></textarea><input id='baz' spellcheck='false'>"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"foo.focus()"];
-    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo);
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo, UITextSpellCheckingTypeNo);
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"bar.focus()"];
-    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo);
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo, UITextSpellCheckingTypeNo);
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"baz.focus()"];
-    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo);
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeNo, UITextSmartQuotesTypeNo, UITextSpellCheckingTypeNo);
 
     [webView synchronouslyLoadHTMLString:@"<div id='foo' contenteditable></div><textarea id='bar' spellcheck='true'></textarea><input id='baz'>"];
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"foo.focus()"];
-    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault);
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault, UITextSpellCheckingTypeDefault);
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"bar.focus()"];
-    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault);
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault, UITextSpellCheckingTypeDefault);
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"baz.focus()"];
-    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault);
+    checkSmartQuotesAndDashesType(UITextSmartDashesTypeDefault, UITextSmartQuotesTypeDefault, UITextSpellCheckingTypeDefault);
 }
 
 TEST(KeyboardInputTests, SelectionClipRectsWhenPresentingInputView)
