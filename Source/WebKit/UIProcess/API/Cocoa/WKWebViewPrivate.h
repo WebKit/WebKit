@@ -725,6 +725,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 - (void)_prepareForMoveToWindow:(NSWindow *)targetWindow completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(10.13));
 
+- (void)_simulateMouseMove:(NSEvent *)event WK_API_AVAILABLE(macos(13.0));
+
 @end
 
 #endif // !TARGET_OS_IPHONE

@@ -1690,6 +1690,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     });
 }
 
+- (void)_simulateMouseMove:(NSEvent *)event
+{
+    return _impl->mouseMoved(event);
+}
+
 @end // WKWebView (WKPrivateMac)
 
 #endif // PLATFORM(MAC)

@@ -32,6 +32,7 @@
 #import "WebAutomationSessionMacros.h"
 #import "WebInspectorUIProxy.h"
 #import "WebPageProxy.h"
+#import "WKWebViewPrivate.h"
 #import "_WKAutomationSession.h"
 #import <Carbon/Carbon.h>
 #import <WebCore/IntPoint.h>
@@ -73,8 +74,7 @@ static const void *synthesizedAutomationEventAssociatedObjectKey = &synthesizedA
 void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArray *eventsToSend)
 {
     NSWindow *window = page.platformWindow();
-    [window makeKeyAndOrderFront:nil];
-    page.makeFirstResponder();
+    auto webView = page.cocoaView();
 
     for (NSEvent *event in eventsToSend) {
         LOG(Automation, "Sending event[%p] to window[%p]: %@", event, window, event);
@@ -86,6 +86,16 @@ void WebAutomationSession::sendSynthesizedEventsToPage(WebPageProxy& page, NSArr
 
         markEventAsSynthesizedForAutomation(event);
         [window sendEvent:event];
+
+        // NSEventTypeMouseMoved events are not forwarded from the WKWebView to the underlying view implementation,
+        // which prevents these synthetic events from being dispatched as events in JavaScript. We still dispatch the
+        // event to the window as well to avoid any side effects of providing incomplete events to other parts of the
+        // window. NSEventTypeMouseEntered and NSEventTypeMouseExited events are also affected, but we do not currently
+        // dispatch events with those types.
+        if (event.type == NSEventTypeMouseMoved) {
+            LOG(Automation, "Simulating event[%p] of type NSEventTypeMouseMoved for web view[%p]: %@", event, webView.get(), event);
+            [webView _simulateMouseMove:event];
+        }
     }
 }
 

@@ -38,7 +38,7 @@
 #import <WebKit/WKString.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
-#import <WebKit/WKWebViewPrivateForTestingMac.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
