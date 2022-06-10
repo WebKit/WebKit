@@ -604,7 +604,8 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
             return;
         }
 
-        auto exception = activePaymentHandler()->merchantValidationCompleted(m_merchantSessionPromise->result());
+        Ref activePaymentHandler = *this->activePaymentHandler();
+        auto exception = activePaymentHandler->merchantValidationCompleted(m_merchantSessionPromise->result());
         if (exception.hasException()) {
             abortWithException(exception.releaseException());
             return;
