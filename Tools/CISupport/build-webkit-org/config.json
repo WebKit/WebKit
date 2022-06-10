@@ -143,7 +143,8 @@
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "triggers": [
                           "monterey-applesilicon-release-tests-test262" ,"monterey-release-tests-test262", "monterey-release-tests-wk1", "monterey-release-tests-wk2",
-                          "monterey-release-applesilicon-tests-wk1", "monterey-release-applesilicon-tests-wk2", "monterey-applesilicon-release-tests-jsc"
+                          "monterey-release-applesilicon-tests-wk1", "monterey-release-applesilicon-tests-wk2", "monterey-applesilicon-release-tests-jsc",
+                          "monterey-release-tests-wk2-accessibility-isolated-tree"
                       ],
                       "workernames": ["bot185", "bot187"]
                     },
@@ -174,6 +175,11 @@
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot1023"]
+                    },
+                    { "name": "Apple-Monterey-Release-WK2-Accessibility-Isolated-Tree-Tests", "factory": "TestLayoutFactory",
+                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "additionalArguments": ["--no-retry-failures", "--accessibility-isolated-tree", "accessibility/"],
+                      "workernames": ["bot179"]
                     },
                     { "name": "Apple-Monterey-Debug-Build", "factory": "BuildFactory",
                       "platform": "mac-monterey", "configuration": "debug", "architectures": ["x86_64", "arm64"],
@@ -642,6 +648,9 @@
                     },
                     { "type": "Triggerable", "name": "monterey-release-applesilicon-tests-wk2",
                       "builderNames": ["Apple-Monterey-Release-AppleSilicon-WK2-Tests"]
+                    },
+                    { "type": "Triggerable", "name": "monterey-release-tests-wk2-accessibility-isolated-tree",
+                      "builderNames": ["Apple-Monterey-Release-WK2-Accessibility-Isolated-Tree-Tests"]
                     },
                     { "type": "Triggerable", "name": "monterey-debug-tests-wk1",
                       "builderNames": ["Apple-Monterey-Debug-WK1-Tests"]
