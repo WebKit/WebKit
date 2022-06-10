@@ -1564,6 +1564,18 @@ VorbisDecoderEnabled:
     WebKit:
       default: true
 
+WebAPIsInShadowRealmEnabled:
+  type: bool
+  humanReadableName: "Web APIs in ShadowRealm"
+  humanReadableDescription: "Enable Web APIs to be exposed in ShadowRealm"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebAnimationsCompositeOperationsEnabled:
   type: bool
   humanReadableName: "Web Animations composite operations"

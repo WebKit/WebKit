@@ -501,6 +501,15 @@ sub GenerateConstructorAttributes
       $extendedAttributes->{"Conditional"} = $existingConditional;
     }
 
+    if ($globalContext eq "ShadowRealm" && $extendedAttributes->{"Exposed"} eq "*") {
+        my $enabledBySetting = "WebAPIsInShadowRealmEnabled";
+        my $existingEnabledBySetting = $extendedAttributes->{"EnabledBySetting"};
+        if ($existingEnabledBySetting) {
+            $enabledBySetting .= "&" . $existingEnabledBySetting;
+        }
+        $extendedAttributes->{"EnabledBySetting"} = $enabledBySetting;
+    }
+
     my $code = "    ";
     my @extendedAttributesList;
     foreach my $attributeName (sort keys %{$extendedAttributes}) {
