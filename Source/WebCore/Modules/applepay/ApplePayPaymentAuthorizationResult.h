@@ -28,13 +28,10 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayError.h"
+#include "ApplePayPaymentOrderDetails.h"
 #include <optional>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePayPaymentAuthorizationResultAdditions.h>
-#endif
 
 namespace WebCore {
 
@@ -52,8 +49,8 @@ struct ApplePayPaymentAuthorizationResult {
     Status status; // required
     Vector<RefPtr<ApplePayError>> errors;
 
-#if defined(ApplePayPaymentAuthorizationResultAdditions_members)
-    ApplePayPaymentAuthorizationResultAdditions_members
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+    std::optional<ApplePayPaymentOrderDetails> orderDetails;
 #endif
 
     WEBCORE_EXPORT bool isFinalState() const;
@@ -67,8 +64,8 @@ void ApplePayPaymentAuthorizationResult::encode(Encoder& encoder) const
 {
     encoder << status;
     encoder << errors;
-#if defined(ApplePayPaymentAuthorizationResultAdditions_encode)
-    ApplePayPaymentAuthorizationResultAdditions_encode
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+    encoder << orderDetails;
 #endif
 }
 
@@ -83,8 +80,8 @@ std::optional<ApplePayPaymentAuthorizationResult> ApplePayPaymentAuthorizationRe
 
     DECODE(status, Status)
     DECODE(errors, Vector<RefPtr<ApplePayError>>)
-#if defined(ApplePayPaymentAuthorizationResultAdditions_decode_members)
-    ApplePayPaymentAuthorizationResultAdditions_decode_members
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+    DECODE(orderDetails, std::optional<ApplePayPaymentOrderDetails>)
 #endif
 
 #undef DECODE
@@ -92,8 +89,8 @@ std::optional<ApplePayPaymentAuthorizationResult> ApplePayPaymentAuthorizationRe
     return { {
         WTFMove(*status),
         WTFMove(*errors),
-#if defined(ApplePayPaymentAuthorizationResultAdditions_decode_return)
-    ApplePayPaymentAuthorizationResultAdditions_decode_return
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+        WTFMove(*orderDetails),
 #endif
     } };
 }

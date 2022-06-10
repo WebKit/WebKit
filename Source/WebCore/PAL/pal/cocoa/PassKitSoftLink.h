@@ -62,8 +62,24 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentInstallmentItem)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKRecurringPaymentSummaryItem)
 #endif
 
+#if HAVE(PASSKIT_RECURRING_PAYMENTS)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKRecurringPaymentRequest)
+#endif
+
 #if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKDeferredPaymentSummaryItem)
+#endif
+
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKAutomaticReloadPaymentSummaryItem)
+#endif
+
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_PAYMENTS)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKAutomaticReloadPaymentRequest)
+#endif
+
+#if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentTokenContext)
 #endif
 
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
@@ -76,6 +92,10 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKDateComponentsRange)
 
 #if HAVE(PASSKIT_COUPON_CODE)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentRequestCouponCodeUpdate)
+#endif
+
+#if HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentOrderDetails)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -116,9 +136,5 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKitCore, PKPaymentErrorPostalAddressUserI
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKitCore, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion))
 #define PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication PAL::softLink_PassKitCore_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/PassKitSoftLinkAdditions.h>
-#endif
 
 #endif // USE(PASSKIT)

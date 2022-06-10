@@ -27,6 +27,8 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include <wtf/Forward.h>
+
 OBJC_CLASS PKShippingMethod;
 OBJC_CLASS PKShippingMethods;
 

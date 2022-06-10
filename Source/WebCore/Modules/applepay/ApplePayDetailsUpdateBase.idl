@@ -25,7 +25,13 @@
 
 [
     Conditional=APPLE_PAY,
-] dictionary ApplePayDetailsUpdateBase : ApplePayDetailsUpdateData {
+] dictionary ApplePayDetailsUpdateBase {
     required ApplePayLineItem newTotal;
     sequence<ApplePayLineItem> newLineItems;
+
+    [Conditional=APPLE_PAY_RECURRING_PAYMENTS] ApplePayRecurringPaymentRequest newRecurringPaymentRequest;
+
+    [Conditional=APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS] ApplePayAutomaticReloadPaymentRequest newAutomaticReloadPaymentRequest;
+
+    [Conditional=APPLE_PAY_MULTI_MERCHANT_PAYMENTS] sequence<ApplePayPaymentTokenContext> newMultiTokenContexts;
 };

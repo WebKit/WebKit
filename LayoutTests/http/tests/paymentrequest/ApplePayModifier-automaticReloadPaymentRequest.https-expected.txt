@@ -1,0 +1,26 @@
+
+PASS The default value of `automaticReloadPaymentRequest` should be `null` if `data` is not provided as part of the request.
+PASS The default value of `automaticReloadPaymentRequest` should be `null` if `data` is not provided as part of an update.
+PASS Should not error if optional properties are not provided as part of the request.
+PASS Should not error if optional properties are not provided as part of an update.
+PASS Should propagate all data as part of the request.
+PASS Should propagate all data as part of an update.
+PASS Should error when `automaticReloadBilling` is missing `paymentTiming` as part of the request.
+PASS Should error when `automaticReloadBilling` is missing `paymentTiming` as part of an update.
+PASS Should error when `automaticReloadBilling` has an invalid `paymentTiming` as part of the request.
+PASS Should error when `automaticReloadBilling` has an invalid `paymentTiming` as part of an update.
+PASS Should error when `automaticReloadBilling` is missing `label` as part of the request.
+PASS Should error when `automaticReloadBilling` is missing `label` as part of an update.
+PASS Should error when `automaticReloadBilling` is missing `amount` as part of the request.
+PASS Should error when `automaticReloadBilling` is missing `amount` as part of an update.
+PASS Should error when `automaticReloadBilling` has an invalid `amount` as part of the request.
+PASS Should error when `automaticReloadBilling` has an invalid `amount` as part of an update.
+PASS Should error when `automaticReloadBilling` is missing `automaticReloadPaymentThresholdAmount` as part of the request.
+PASS Should error when `automaticReloadBilling` is missing `automaticReloadPaymentThresholdAmount` as part of an update.
+PASS Should error when `automaticReloadBilling` has an invalid `automaticReloadPaymentThresholdAmount` as part of the request.
+PASS Should error when `automaticReloadBilling` has an invalid `automaticReloadPaymentThresholdAmount` as part of an update.
+PASS Should error when `managementURL` is not a valid URL as part of the request.
+PASS Should error when `managementURL` is not a valid URL as part of an update.
+PASS Should error when `tokenNotificationURL` is not a valid URL as part of the request.
+PASS Should error when `tokenNotificationURL` is not a valid URL as part of an update.
+

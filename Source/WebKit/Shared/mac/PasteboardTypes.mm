@@ -27,6 +27,7 @@
 #import "PasteboardTypes.h"
 
 #import <WebCore/LegacyNSPasteboardTypes.h>
+#import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
 

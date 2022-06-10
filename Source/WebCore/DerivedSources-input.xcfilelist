@@ -174,6 +174,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUVertexStepMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/NavigatorGPU.idl
 $(PROJECT_DIR)/Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl
 $(PROJECT_DIR)/Modules/applepay-ams-ui/ApplePayAMSUIRequest.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayAutomaticReloadPaymentRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayCancelEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayContactField.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayCouponCodeChangedEvent.idl
@@ -182,7 +183,6 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayCouponCodeUpdate.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDateComponents.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDateComponentsRange.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateBase.idl
-$(PROJECT_DIR)/Modules/applepay/ApplePayDetailsUpdateData.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayError.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorCode.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayErrorContactField.idl
@@ -200,10 +200,13 @@ $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethod.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodType.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentMethodUpdate.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayPaymentOrderDetails.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentPass.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayPaymentTiming.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayPaymentTokenContext.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayRecurringPaymentDateUnit.idl
+$(PROJECT_DIR)/Modules/applepay/ApplePayRecurringPaymentRequest.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePayRequestBase.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySession.idl
 $(PROJECT_DIR)/Modules/applepay/ApplePaySessionError.idl

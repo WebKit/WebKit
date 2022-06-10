@@ -39,10 +39,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MockPaymentCoordinatorAdditions.h>
-#endif
-
 namespace WebCore {
 
 class ApplePaySessionPaymentRequest;
@@ -88,6 +84,18 @@ public:
     std::optional<ApplePayShippingContactEditingMode> shippingContactEditingMode() const { return m_shippingContactEditingMode; }
 #endif
 
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    const std::optional<ApplePayRecurringPaymentRequest>& recurringPaymentRequest() const { return m_recurringPaymentRequest; }
+#endif
+
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    const std::optional<ApplePayAutomaticReloadPaymentRequest>& automaticReloadPaymentRequest() const { return m_automaticReloadPaymentRequest; }
+#endif
+
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    const std::optional<Vector<ApplePayPaymentTokenContext>>& multiTokenContexts() const { return m_multiTokenContexts; }
+#endif
+
     void ref() const { }
     void deref() const { }
 
@@ -116,9 +124,6 @@ private:
 
     void dispatchIfShowing(Function<void()>&&);
 
-    void merge(const ApplePaySessionPaymentRequest&);
-    void merge(ApplePayDetailsUpdateBase&);
-
     Page& m_page;
     bool m_canMakePayments { true };
     bool m_canMakePaymentsWithActiveCard { true };
@@ -143,8 +148,16 @@ private:
     ApplePaySetupConfiguration m_setupConfiguration;
     Vector<Ref<ApplePaySetupFeature>> m_setupFeatures;
 
-#if defined(MockPaymentCoordinatorAdditions_members)
-    MockPaymentCoordinatorAdditions_members
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    std::optional<ApplePayRecurringPaymentRequest> m_recurringPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    std::optional<ApplePayAutomaticReloadPaymentRequest> m_automaticReloadPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    std::optional<Vector<ApplePayPaymentTokenContext>> m_multiTokenContexts;
 #endif
 };
 

@@ -196,8 +196,14 @@ void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode(Encoder& enco
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
     encoder << request.shippingContactEditingMode();
 #endif
-#if defined(WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_encode)
-    WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_encode
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    encoder << request.recurringPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    encoder << request.automaticReloadPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    encoder << request.multiTokenContexts();
 #endif
 }
 
@@ -312,8 +318,28 @@ bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& deco
     request.setShippingContactEditingMode(WTFMove(*shippingContactEditingMode));
 #endif
 
-#if defined(WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_decode)
-    WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_decode
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    std::optional<std::optional<WebCore::ApplePayRecurringPaymentRequest>> recurringPaymentRequest;
+    decoder >> recurringPaymentRequest;
+    if (!recurringPaymentRequest)
+        return false;
+    request.setRecurringPaymentRequest(WTFMove(*recurringPaymentRequest));
+#endif
+
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    std::optional<std::optional<WebCore::ApplePayAutomaticReloadPaymentRequest>> automaticReloadPaymentRequest;
+    decoder >> automaticReloadPaymentRequest;
+    if (!automaticReloadPaymentRequest)
+        return false;
+    request.setAutomaticReloadPaymentRequest(WTFMove(*automaticReloadPaymentRequest));
+#endif
+
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    std::optional<std::optional<Vector<WebCore::ApplePayPaymentTokenContext>>> multiTokenContexts;
+    decoder >> multiTokenContexts;
+    if (!multiTokenContexts)
+        return false;
+    request.setMultiTokenContexts(WTFMove(*multiTokenContexts));
 #endif
 
     return true;

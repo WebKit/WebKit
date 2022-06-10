@@ -30,4 +30,10 @@
     ApplePayLineItem total;
     sequence<ApplePayLineItem> additionalLineItems;
     [Conditional=APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS] sequence<ApplePayShippingMethod> additionalShippingMethods;
+
+    [Conditional=APPLE_PAY_RECURRING_PAYMENTS] ApplePayRecurringPaymentRequest recurringPaymentRequest;
+
+    [Conditional=APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS] ApplePayAutomaticReloadPaymentRequest automaticReloadPaymentRequest;
+
+    [Conditional=APPLE_PAY_MULTI_MERCHANT_PAYMENTS] sequence<ApplePayPaymentTokenContext> multiTokenContexts;
 };

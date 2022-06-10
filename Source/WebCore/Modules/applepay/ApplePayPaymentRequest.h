@@ -27,15 +27,14 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "ApplePayAutomaticReloadPaymentRequest.h"
 #include "ApplePayLineItem.h"
 #include "ApplePayPaymentContact.h"
+#include "ApplePayPaymentTokenContext.h"
+#include "ApplePayRecurringPaymentRequest.h"
 #include "ApplePayRequestBase.h"
 #include "ApplePaySessionPaymentRequest.h"
 #include "ApplePayShippingMethod.h"
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePayPaymentRequestAdditions.h>
-#endif
 
 namespace WebCore {
 
@@ -50,8 +49,16 @@ struct ApplePayPaymentRequest : ApplePayRequestBase {
     ApplePayLineItem total;
     std::optional<Vector<ApplePayLineItem>> lineItems;
 
-#if defined(ApplePayPaymentRequestAdditions_members)
-    ApplePayPaymentRequestAdditions_members
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    std::optional<ApplePayRecurringPaymentRequest> recurringPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    std::optional<ApplePayAutomaticReloadPaymentRequest> automaticReloadPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    std::optional<Vector<ApplePayPaymentTokenContext>> multiTokenContexts;
 #endif
 };
 

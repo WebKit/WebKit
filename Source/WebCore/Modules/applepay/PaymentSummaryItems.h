@@ -28,6 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 OBJC_CLASS NSArray;
+OBJC_CLASS PKAutomaticReloadPaymentSummaryItem;
 OBJC_CLASS PKDeferredPaymentSummaryItem;
 OBJC_CLASS PKPaymentSummaryItem;
 OBJC_CLASS PKRecurringPaymentSummaryItem;
@@ -44,13 +45,13 @@ WEBCORE_EXPORT PKRecurringPaymentSummaryItem *platformRecurringSummaryItem(const
 WEBCORE_EXPORT PKDeferredPaymentSummaryItem *platformDeferredSummaryItem(const ApplePayLineItem&);
 #endif
 
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
+WEBCORE_EXPORT PKAutomaticReloadPaymentSummaryItem *platformAutomaticReloadSummaryItem(const ApplePayLineItem&);
+#endif
+
 WEBCORE_EXPORT PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem&);
 WEBCORE_EXPORT NSArray *platformSummaryItems(const ApplePayLineItem& total, const Vector<ApplePayLineItem>&);
 
 } // namespace WebCore
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/PaymentSummaryItemsAdditions.h>
-#endif
 
 #endif // ENABLE(APPLE_PAY)

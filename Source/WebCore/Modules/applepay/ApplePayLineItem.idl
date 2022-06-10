@@ -47,4 +47,6 @@
     [Conditional=APPLE_PAY_RECURRING_LINE_ITEM] Date recurringPaymentEndDate;
 
     [Conditional=APPLE_PAY_DEFERRED_LINE_ITEM] Date deferredPaymentDate;
+
+    [Conditional=APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM] DOMString automaticReloadPaymentThresholdAmount; // required
 };

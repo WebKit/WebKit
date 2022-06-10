@@ -33,10 +33,6 @@
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePayLineItemAdditions.h>
-#endif
-
 namespace WebCore {
 
 struct ApplePayLineItem final {
@@ -62,8 +58,8 @@ struct ApplePayLineItem final {
     WallTime deferredPaymentDate { WallTime::nan() };
 #endif
 
-#if defined(ApplePayLineItemAdditions_members)
-    ApplePayLineItemAdditions_members
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    String automaticReloadPaymentThresholdAmount; /* required */
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
@@ -86,8 +82,8 @@ void ApplePayLineItem::encode(Encoder& encoder) const
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     encoder << deferredPaymentDate;
 #endif
-#if defined(ApplePayLineItemAdditions_encode)
-    ApplePayLineItemAdditions_encode
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    encoder << automaticReloadPaymentThresholdAmount;
 #endif
 }
 
@@ -113,8 +109,8 @@ std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     DECODE(deferredPaymentDate, WallTime)
 #endif
-#if defined(ApplePayLineItemAdditions_decode_members)
-    ApplePayLineItemAdditions_decode_members
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    DECODE(automaticReloadPaymentThresholdAmount, String)
 #endif
 
 #undef DECODE
@@ -133,8 +129,8 @@ std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
         WTFMove(*deferredPaymentDate),
 #endif
-#if defined(ApplePayLineItemAdditions_decode_return)
-    ApplePayLineItemAdditions_decode_return
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+        WTFMove(*automaticReloadPaymentThresholdAmount),
 #endif
     } };
 }

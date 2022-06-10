@@ -29,8 +29,10 @@
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER) && PLATFORM(MAC)
 
 #import "Logging.h"
+#import "NativeWebWheelEvent.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
+#import <wtf/cf/TypeCastsCF.h>
 
 namespace WebKit {
 

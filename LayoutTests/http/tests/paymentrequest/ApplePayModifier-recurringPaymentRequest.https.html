@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `recurringPaymentRequest` as part of `ApplePayModifier`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const paymentDescription = "paymentDescription";
+const regularBilling = { label: "regularBilling", amount: "5", type: "final", paymentTiming: "recurring", recurringPaymentIntervalUnit: "year", recurringPaymentIntervalCount: 2 };
+const trialBilling = { label: "trialBilling", amount: "10", type: "final", paymentTiming: "recurring", recurringPaymentIntervalUnit: "year", recurringPaymentIntervalCount: 2 };
+const billingAgreement = "billingAgreement";
+const managementURL = "http://managementURL.com";
+const tokenNotificationURL = "http://tokenNotificationURL.com";
+
+function modifiersWithData(data) {
+    return [ { supportedMethods: 'https://apple.com/apple-pay', data } ];
+}
+
+function testValidRecurringPaymentRequest(description, {initialRecurringPaymentRequest, expectedRecurringPaymentRequest}) {
+    user_activation_test(async (test) => {
+        let detailsInit = validPaymentDetails();
+        if (initialRecurringPaymentRequest !== undefined)
+            detailsInit.modifiers = modifiersWithData({ recurringPaymentRequest: initialRecurringPaymentRequest });
+
+        let request = new PaymentRequest([validPaymentMethod()], detailsInit);
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualRecurringPaymentRequest = internals.mockPaymentCoordinator.recurringPaymentRequest;
+        if (actualRecurringPaymentRequest)
+            assert_object_equals(actualRecurringPaymentRequest, expectedRecurringPaymentRequest, "check that the `recurringPaymentRequest` matches");
+        else
+            assert_equals(actualRecurringPaymentRequest, expectedRecurringPaymentRequest, "check that the `recurringPaymentRequest` matches");
+
+        await response.complete("success");
+    }, description + " as part of the request.");
+
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            let detailsUpdate = { };
+            if (initialRecurringPaymentRequest !== undefined)
+                detailsUpdate.modifiers = modifiersWithData({ recurringPaymentRequest: initialRecurringPaymentRequest });
+            event.updateWith(detailsUpdate);
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualRecurringPaymentRequest = internals.mockPaymentCoordinator.recurringPaymentRequest;
+        if (actualRecurringPaymentRequest)
+            assert_object_equals(actualRecurringPaymentRequest, expectedRecurringPaymentRequest, "check that the `recurringPaymentRequest` matches");
+        else
+            assert_equals(actualRecurringPaymentRequest, expectedRecurringPaymentRequest, "check that the `recurringPaymentRequest` matches");
+
+        await response.complete("success");
+    }, description + " as part of an update.");
+}
+
+testValidRecurringPaymentRequest("The default value of `recurringPaymentRequest` should be `null` if `data` is not provided", {
+    initialRecurringPaymentRequest: undefined,
+    expectedRecurringPaymentRequest: null,
+});
+
+testValidRecurringPaymentRequest("Should not error if optional properties are not provided", {
+    initialRecurringPaymentRequest: { paymentDescription, regularBilling, managementURL },
+    expectedRecurringPaymentRequest: { paymentDescription, regularBilling, managementURL },
+});
+testValidRecurringPaymentRequest("Should propagate all data", {
+    initialRecurringPaymentRequest: { paymentDescription, regularBilling, trialBilling, billingAgreement, managementURL, tokenNotificationURL },
+    expectedRecurringPaymentRequest: { paymentDescription, regularBilling, trialBilling, billingAgreement, managementURL, tokenNotificationURL },
+});
+
+function testInvalidRecurringPaymentRequest(description, {recurringPaymentRequest, expectedErrorSubstring}) {
+    user_activation_test(async (test) => {
+        let detailsInit = validPaymentDetails();
+        detailsInit.modifiers = modifiersWithData({ recurringPaymentRequest });
+
+        let request = new PaymentRequest([validPaymentMethod()], detailsInit);
+        try {
+            let response = await request.show();
+            internals.mockPaymentCoordinator.cancelPayment();
+            assert_true(false, "should error about " + expectedErrorSubstring);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), "should error about " + expectedErrorSubstring);
+        }
+    }, description + " as part of the request.");
+
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ modifiers: modifiersWithData({ recurringPaymentRequest }) });
+        });
+
+        try {
+            let response = await request.show();
+            internals.mockPaymentCoordinator.cancelPayment();
+            assert_true(false, "should error about " + expectedErrorSubstring);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), "should error about " + expectedErrorSubstring);
+        }
+    }, description + " as part of an update.");
+}
+
+testInvalidRecurringPaymentRequest("Should error when `regularBilling` is missing `paymentTiming`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling: { } , managementURL },
+    expectedErrorSubstring: "'regularBilling' must be a 'recurring' line item",
+});
+testInvalidRecurringPaymentRequest("Should error when `regularBilling` has an invalid `paymentTiming`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling: { paymentTiming: "deferred" } , managementURL },
+    expectedErrorSubstring: "'regularBilling' must be a 'recurring' line item",
+});
+testInvalidRecurringPaymentRequest("Should error when `regularBilling` is missing `label`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling: { paymentTiming: "recurring" } , managementURL },
+    expectedErrorSubstring: "Missing label for 'regularBilling'",
+});
+testInvalidRecurringPaymentRequest("Should error when `regularBilling` is missing `amount`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling: { paymentTiming: "recurring", label: "regularBillingBad" } , managementURL },
+    expectedErrorSubstring: "not a valid amount",
+});
+testInvalidRecurringPaymentRequest("Should error when `regularBilling` has an invalid `amount`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling: { paymentTiming: "recurring", label: "regularBillingBad", amount: "invalid" } , managementURL },
+    expectedErrorSubstring: "not a valid amount",
+});
+
+testInvalidRecurringPaymentRequest("Should error when `trialBilling` is missing `paymentTiming`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling, trialBilling: { } , managementURL },
+    expectedErrorSubstring: "'trialBilling' must be a 'recurring' line item",
+});
+testInvalidRecurringPaymentRequest("Should error when `trialBilling` has an invalid `paymentTiming`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling, trialBilling: { paymentTiming: "deferred" } , managementURL },
+    expectedErrorSubstring: "'trialBilling' must be a 'recurring' line item",
+});
+testInvalidRecurringPaymentRequest("Should error when `trialBilling` is missing `label`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling, trialBilling: { paymentTiming: "recurring" } , managementURL },
+    expectedErrorSubstring: "Missing label for 'trialBilling'",
+});
+testInvalidRecurringPaymentRequest("Should error when `trialBilling` is missing `amount`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling, trialBilling: { paymentTiming: "recurring", label: "trialBillingBad" } , managementURL },
+    expectedErrorSubstring: "not a valid amount",
+});
+testInvalidRecurringPaymentRequest("Should error when `trialBilling` has an invalid `amount`", {
+    recurringPaymentRequest: { paymentDescription, regularBilling, trialBilling: { paymentTiming: "recurring", label: "trialBillingBad", amount: "invalid" } , managementURL },
+    expectedErrorSubstring: "not a valid amount",
+});
+
+testInvalidRecurringPaymentRequest("Should error when `managementURL` is not a valid URL", {
+    recurringPaymentRequest: { paymentDescription, regularBilling, managementURL: 42 },
+    expectedErrorSubstring: "not a valid URL",
+});
+
+testInvalidRecurringPaymentRequest("Should error when `tokenNotificationURL` is not a valid URL", {
+    recurringPaymentRequest: { paymentDescription, regularBilling, managementURL, tokenNotificationURL: 42 },
+    expectedErrorSubstring: "not a valid URL",
+});
+
+done();
+</script>
+

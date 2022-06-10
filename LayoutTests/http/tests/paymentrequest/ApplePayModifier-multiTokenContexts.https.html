@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `multiTokenContexts` as part of `ApplePayModifier`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const merchantIdentifier = "merchantIdentifier";
+const externalIdentifier = "externalIdentifier";
+const merchantName = "merchantName";
+const merchantDomain = "merchantDomain";
+const amount = "42";
+
+function modifiersWithData(data) {
+    return [ { supportedMethods: 'https://apple.com/apple-pay', data } ];
+}
+
+function testValidMultiCokenContexts(description, {initialMultiCokenContexts, expectedMultiCokenContexts}) {
+    user_activation_test(async (test) => {
+        let detailsInit = validPaymentDetails();
+        if (initialMultiCokenContexts !== undefined)
+            detailsInit.modifiers = modifiersWithData({ multiTokenContexts: initialMultiCokenContexts });
+
+        let request = new PaymentRequest([validPaymentMethod()], detailsInit);
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualMultiCokenContexts = internals.mockPaymentCoordinator.multiTokenContexts;
+        if (actualMultiCokenContexts)
+            assert_object_equals(actualMultiCokenContexts, expectedMultiCokenContexts, "check that the `multiTokenContexts` matches");
+        else
+            assert_equals(actualMultiCokenContexts, expectedMultiCokenContexts, "check that the `multiTokenContexts` matches");
+
+        await response.complete("success");
+    }, description + " as part of the request.");
+
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            let detailsUpdate = { };
+            if (initialMultiCokenContexts !== undefined)
+                detailsUpdate.modifiers = modifiersWithData({ multiTokenContexts: initialMultiCokenContexts });
+            event.updateWith(detailsUpdate);
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualMultiCokenContexts = internals.mockPaymentCoordinator.multiTokenContexts;
+        if (actualMultiCokenContexts)
+            assert_object_equals(actualMultiCokenContexts, expectedMultiCokenContexts, "check that the `multiTokenContexts` matches");
+        else
+            assert_equals(actualMultiCokenContexts, expectedMultiCokenContexts, "check that the `multiTokenContexts` matches");
+
+        await response.complete("success");
+    }, description + " as part of an update.");
+}
+
+testValidMultiCokenContexts("The default value of `multiTokenContexts` should be `null` if `data` is not provided", {
+    initialMultiCokenContexts: undefined,
+    expectedMultiCokenContexts: null,
+});
+testValidMultiCokenContexts("The value of `multiTokenContexts` should be empty if `data` is provided as `[]`", {
+    initialMultiCokenContexts: [ ],
+    expectedMultiCokenContexts: [ ],
+});
+
+testValidMultiCokenContexts("Should not error if optional properties are not provided", {
+    initialMultiCokenContexts: [ { merchantIdentifier, externalIdentifier, merchantName, amount } ],
+    expectedMultiCokenContexts: [ { merchantIdentifier, externalIdentifier, merchantName, amount } ],
+});
+testValidMultiCokenContexts("Should propagate all data", {
+    initialMultiCokenContexts: [ { merchantIdentifier, externalIdentifier, merchantName, merchantDomain, amount } ],
+    expectedMultiCokenContexts: [ { merchantIdentifier, externalIdentifier, merchantName, merchantDomain, amount } ],
+});
+
+function testInvalidMultiCokenContexts(description, {multiTokenContexts, expectedErrorSubstring}) {
+    user_activation_test(async (test) => {
+        let detailsInit = validPaymentDetails();
+        detailsInit.modifiers = modifiersWithData({ multiTokenContexts });
+
+        let request = new PaymentRequest([validPaymentMethod()], detailsInit);
+        try {
+            let response = await request.show();
+            internals.mockPaymentCoordinator.cancelPayment();
+            assert_true(false, "should error about " + expectedErrorSubstring);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), "should error about " + expectedErrorSubstring);
+        }
+    }, description + " as part of the request.");
+
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ modifiers: modifiersWithData({ multiTokenContexts }) });
+        });
+
+        try {
+            let response = await request.show();
+            internals.mockPaymentCoordinator.cancelPayment();
+            assert_true(false, "should error about " + expectedErrorSubstring);
+        } catch (e) {
+            assert_true(e.message.includes(expectedErrorSubstring), "should error about " + expectedErrorSubstring);
+        }
+    }, description + " as part of an update.");
+}
+
+testInvalidMultiCokenContexts("Should error when an `amount` in `multiTokenContexts` is not a valid amount", {
+    multiTokenContexts: [ { merchantIdentifier, externalIdentifier, merchantName, amount: "invalid" } ],
+    expectedErrorSubstring: "not a valid amount",
+});
+
+done();
+</script>
+

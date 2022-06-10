@@ -60,16 +60,15 @@ using DidChangeCouponCodeCompletion = BlockPtr<void(PKPaymentRequestCouponCodeUp
 - (void)completeMerchantValidation:(PKPaymentMerchantSession *)session error:(NSError *)error;
 - (void)completePaymentMethodSelection:(PKPaymentRequestPaymentMethodUpdate *)paymentMethodUpdate;
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors;
+#if HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)
+- (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors orderDetails:(PKPaymentOrderDetails *)orderDetails;
+#endif
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate;
 - (void)completeShippingMethodSelection:(PKPaymentRequestShippingMethodUpdate *)shippingMethodUpdate;
 #if HAVE(PASSKIT_COUPON_CODE)
 - (void)completeCouponCodeChange:(PKPaymentRequestCouponCodeUpdate *)couponCodeUpdate;
 #endif
 - (void)invalidate;
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditionsAfter.h>
-#endif
 
 @end
 

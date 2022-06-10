@@ -88,6 +88,18 @@
     auto result = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:status errors:errors]);
     std::exchange(_didAuthorizePaymentCompletion, nil)(result.get());
 }
+
+#if HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)
+
+- (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors orderDetails:(PKPaymentOrderDetails *)orderDetails
+{
+    auto result = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:status errors:errors]);
+    [result setOrderDetails:orderDetails];
+    std::exchange(_didAuthorizePaymentCompletion, nil)(result.get());
+}
+
+#endif // HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)
+
 - (void)completeShippingContactSelection:(PKPaymentRequestShippingContactUpdate *)shippingContactUpdate
 {
     RetainPtr update = shippingContactUpdate;
@@ -163,10 +175,6 @@
     if (_didAuthorizePaymentCompletion)
         [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
 }
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditionsAfter.mm>
-#endif
 
 @end
 

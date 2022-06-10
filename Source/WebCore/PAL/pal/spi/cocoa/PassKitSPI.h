@@ -31,11 +31,43 @@
 #endif
 #endif
 
+#if HAVE(PASSKIT_RECURRING_PAYMENTS)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKRecurringPaymentRequest.h>
+#else
+#import <PassKit/PKRecurringPaymentRequest.h>
+#endif
+#endif
+
 #if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
 #if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
 #import <PassKitCore/PKDeferredPaymentSummaryItem.h>
 #else
 #import <PassKit/PKDeferredPaymentSummaryItem.h>
+#endif
+#endif
+
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKAutomaticReloadPaymentSummaryItem.h>
+#else
+#import <PassKit/PKAutomaticReloadPaymentSummaryItem.h>
+#endif
+#endif
+
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_PAYMENTS)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKAutomaticReloadPaymentRequest.h>
+#else
+#import <PassKit/PKAutomaticReloadPaymentRequest.h>
+#endif
+#endif
+
+#if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
+#if HAVE(PASSKIT_MODULARIZATION) && USE(APPLE_INTERNAL_SDK)
+#import <PassKitCore/PKPaymentTokenContext.h>
+#else
+#import <PassKit/PKPaymentTokenContext.h>
 #endif
 #endif
 
@@ -120,8 +152,6 @@ WTF_EXTERN_C_END
 #import <PassKit/PKPaymentSetupViewController.h>
 #endif
 #endif // HAVE(PASSKIT_MODULARIZATION)
-
-#import <WebKitAdditions/PassKitSPIAdditions.h>
 
 #else // USE(APPLE_INTERNAL_SDK)
 

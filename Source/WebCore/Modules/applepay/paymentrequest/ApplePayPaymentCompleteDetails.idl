@@ -26,4 +26,5 @@
 [
     Conditional=APPLE_PAY&PAYMENT_REQUEST
 ] dictionary ApplePayPaymentCompleteDetails {
+    [Conditional=APPLE_PAY_PAYMENT_ORDER_DETAILS] ApplePayPaymentOrderDetails orderDetails;
 };

@@ -27,10 +27,6 @@
 
 #include <wtf/Forward.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePayPaymentTimingAdditions.h>
-#endif
-
 namespace WebCore {
 
 enum class ApplePayPaymentTiming : uint8_t {
@@ -41,8 +37,8 @@ enum class ApplePayPaymentTiming : uint8_t {
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
     Deferred,
 #endif
-#if defined(ApplePayPaymentTimingAdditions_members)
-    ApplePayPaymentTimingAdditions_members
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    AutomaticReload,
 #endif
 };
 
@@ -60,8 +56,8 @@ template<> struct EnumTraits<WebCore::ApplePayPaymentTiming> {
 #if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
         , WebCore::ApplePayPaymentTiming::Deferred
 #endif
-#if defined(ApplePayPaymentTimingAdditions_EnumTraits)
-    ApplePayPaymentTimingAdditions_EnumTraits
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+        , WebCore::ApplePayPaymentTiming::AutomaticReload
 #endif
     >;
 };

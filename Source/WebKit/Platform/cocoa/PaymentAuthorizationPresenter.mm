@@ -28,10 +28,12 @@
 
 #if USE(PASSKIT) && ENABLE(APPLE_PAY)
 
+#import "AutomaticReloadPaymentRequest.h"
+#import "PaymentTokenContext.h"
+#import "RecurringPaymentRequest.h"
 #import "WKPaymentAuthorizationDelegate.h"
 #import "WebPaymentCoordinatorProxyCocoa.h"
 #import <WebCore/ApplePayCouponCodeUpdate.h>
-#import <WebCore/ApplePayDetailsUpdateData.h>
 #import <WebCore/ApplePayError.h>
 #import <WebCore/ApplePayErrorCode.h>
 #import <WebCore/ApplePayErrorContactField.h>
@@ -44,10 +46,6 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/PaymentAuthorizationPresenterAdditions.mm>
-#endif
 
 // FIXME: Stop soft linking Contacts once the dependency cycle is removed on macOS (<rdar://problem/70887934>),
 // or when Contacts can be upward linked (<rdar://problem/36135137>).
@@ -209,10 +207,6 @@ void PaymentAuthorizationPresenter::completeMerchantValidation(const WebCore::Pa
     [platformDelegate() completeMerchantValidation:merchantSession.pkPaymentMerchantSession() error:nil];
 }
 
-#if !USE(APPLE_INTERNAL_SDK)
-static void merge(PKPaymentRequestUpdate *, WebCore::ApplePayDetailsUpdateBase&) { }
-#endif
-
 void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
 {
     ASSERT(platformDelegate());
@@ -232,10 +226,21 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional
     }).get()];
 #endif
 #endif
+#if HAVE(PASSKIT_RECURRING_PAYMENTS)
+    if (auto& recurringPaymentRequest = update->newRecurringPaymentRequest)
+        [paymentMethodUpdate setRecurringPaymentRequest:platformRecurringPaymentRequest(WTFMove(*recurringPaymentRequest)).get()];
+#endif
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_PAYMENTS)
+    if (auto& automaticReloadPaymentRequest = update->newAutomaticReloadPaymentRequest)
+        [paymentMethodUpdate setAutomaticReloadPaymentRequest:platformAutomaticReloadPaymentRequest(WTFMove(*automaticReloadPaymentRequest)).get()];
+#endif
+#if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
+    if (auto& multiTokenContexts = update->newMultiTokenContexts)
+        [paymentMethodUpdate setMultiTokenContexts:platformPaymentTokenContexts(WTFMove(*multiTokenContexts)).get()];
+#endif
 #if HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
     [paymentMethodUpdate setInstallmentGroupIdentifier:WTFMove(update->installmentGroupIdentifier)];
 #endif // HAVE(PASSKIT_INSTALLMENTS) && ENABLE(APPLE_PAY_INSTALLMENTS)
-    merge(paymentMethodUpdate.get(), *update);
     [platformDelegate() completePaymentMethodSelection:paymentMethodUpdate.get()];
 }
 
@@ -247,8 +252,12 @@ void PaymentAuthorizationPresenter::completePaymentSession(WebCore::ApplePayPaym
     auto status = toPKPaymentAuthorizationStatus(result.status);
     auto errors = toNSErrors(result.errors);
 
-#if defined(PaymentAuthorizationPresenterAdditions_completePaymentSession)
-    PaymentAuthorizationPresenterAdditions_completePaymentSession
+#if HAVE(PASSKIT_PAYMENT_ORDER_DETAILS)
+    if (auto orderDetails = WTFMove(result.orderDetails)) {
+        auto platformOrderDetails = adoptNS([PAL::allocPKPaymentOrderDetailsInstance() initWithOrderTypeIdentifier:WTFMove(orderDetails->orderTypeIdentifier) orderIdentifier:WTFMove(orderDetails->orderIdentifier) webServiceURL:[NSURL URLWithString:WTFMove(orderDetails->webServiceURL)] authenticationToken:WTFMove(orderDetails->authenticationToken)]);
+        [platformDelegate() completePaymentSession:status errors:errors.get() orderDetails:platformOrderDetails.get()];
+        return;
+    }
 #endif
 
     [platformDelegate() completePaymentSession:status errors:errors.get()];
@@ -271,7 +280,18 @@ void PaymentAuthorizationPresenter::completeShippingContactSelection(std::option
         return toPKShippingMethod(method);
     }).get()];
 #endif
-    merge(shippingContactUpdate.get(), *update);
+#if HAVE(PASSKIT_RECURRING_PAYMENTS)
+    if (auto& recurringPaymentRequest = update->newRecurringPaymentRequest)
+        [shippingContactUpdate setRecurringPaymentRequest:platformRecurringPaymentRequest(WTFMove(*recurringPaymentRequest)).get()];
+#endif
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_PAYMENTS)
+    if (auto& automaticReloadPaymentRequest = update->newAutomaticReloadPaymentRequest)
+        [shippingContactUpdate setAutomaticReloadPaymentRequest:platformAutomaticReloadPaymentRequest(WTFMove(*automaticReloadPaymentRequest)).get()];
+#endif
+#if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
+    if (auto& multiTokenContexts = update->newMultiTokenContexts)
+        [shippingContactUpdate setMultiTokenContexts:platformPaymentTokenContexts(WTFMove(*multiTokenContexts)).get()];
+#endif
     [platformDelegate() completeShippingContactSelection:shippingContactUpdate.get()];
 }
 
@@ -291,7 +311,18 @@ void PaymentAuthorizationPresenter::completeShippingMethodSelection(std::optiona
         return toPKShippingMethod(method);
     }).get()];
 #endif
-    merge(shippingMethodUpdate.get(), *update);
+#if HAVE(PASSKIT_RECURRING_PAYMENTS)
+    if (auto& recurringPaymentRequest = update->newRecurringPaymentRequest)
+        [shippingMethodUpdate setRecurringPaymentRequest:platformRecurringPaymentRequest(WTFMove(*recurringPaymentRequest)).get()];
+#endif
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_PAYMENTS)
+    if (auto& automaticReloadPaymentRequest = update->newAutomaticReloadPaymentRequest)
+        [shippingMethodUpdate setAutomaticReloadPaymentRequest:platformAutomaticReloadPaymentRequest(WTFMove(*automaticReloadPaymentRequest)).get()];
+#endif
+#if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
+    if (auto& multiTokenContexts = update->newMultiTokenContexts)
+        [shippingMethodUpdate setMultiTokenContexts:platformPaymentTokenContexts(WTFMove(*multiTokenContexts)).get()];
+#endif
     [platformDelegate() completeShippingMethodSelection:shippingMethodUpdate.get()];
 }
 
@@ -314,7 +345,18 @@ void PaymentAuthorizationPresenter::completeCouponCodeChange(std::optional<WebCo
         return toPKShippingMethod(method);
     }).get()];
 #endif
-    merge(couponCodeUpdate.get(), *update);
+#if HAVE(PASSKIT_RECURRING_PAYMENTS)
+    if (auto& recurringPaymentRequest = update->newRecurringPaymentRequest)
+        [couponCodeUpdate setRecurringPaymentRequest:platformRecurringPaymentRequest(WTFMove(*recurringPaymentRequest)).get()];
+#endif
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_PAYMENTS)
+    if (auto& automaticReloadPaymentRequest = update->newAutomaticReloadPaymentRequest)
+        [couponCodeUpdate setAutomaticReloadPaymentRequest:platformAutomaticReloadPaymentRequest(WTFMove(*automaticReloadPaymentRequest)).get()];
+#endif
+#if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
+    if (auto& multiTokenContexts = update->newMultiTokenContexts)
+        [couponCodeUpdate setMultiTokenContexts:platformPaymentTokenContexts(WTFMove(*multiTokenContexts)).get()];
+#endif
     [platformDelegate() completeCouponCodeChange:couponCodeUpdate.get()];
 }
 

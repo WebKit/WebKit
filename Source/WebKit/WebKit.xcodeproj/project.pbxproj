@@ -1494,6 +1494,9 @@
 		93E799DC276121080074008A /* StorageAreaBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799D6276121080074008A /* StorageAreaBase.h */; };
 		93F549B41E3174B7000E7239 /* WKSnapshotConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F549B31E3174B7000E7239 /* WKSnapshotConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		950F2880252414EA00B74F1C /* WKMouseDeviceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */; };
+		950FECF1285027110002DE4E /* AutomaticReloadPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 950FECF0285026EA0002DE4E /* AutomaticReloadPaymentRequest.h */; };
+		950FECF4285027200002DE4E /* RecurringPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 950FECF22850271E0002DE4E /* RecurringPaymentRequest.h */; };
+		950FECF5285027200002DE4E /* PaymentTokenContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 950FECF32850271F0002DE4E /* PaymentTokenContext.h */; };
 		952BC0A12797A368003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 952BC09E2797A366003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h */; };
 		952BC0A32797A368003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 952BC0A02797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9565083926D87A2B00E15CB7 /* AppleMediaServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 9565083726D87A2B00E15CB7 /* AppleMediaServicesSPI.h */; };
@@ -5761,6 +5764,12 @@
 		93F549B51E3174DA000E7239 /* WKSnapshotConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKSnapshotConfiguration.mm; sourceTree = "<group>"; };
 		950F287E252414E900B74F1C /* WKMouseDeviceObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKMouseDeviceObserver.h; path = ios/WKMouseDeviceObserver.h; sourceTree = "<group>"; };
 		950F287F252414EA00B74F1C /* WKMouseDeviceObserver.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKMouseDeviceObserver.mm; path = ios/WKMouseDeviceObserver.mm; sourceTree = "<group>"; };
+		950FECF0285026EA0002DE4E /* AutomaticReloadPaymentRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutomaticReloadPaymentRequest.h; sourceTree = "<group>"; };
+		950FECF22850271E0002DE4E /* RecurringPaymentRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecurringPaymentRequest.h; sourceTree = "<group>"; };
+		950FECF32850271F0002DE4E /* PaymentTokenContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentTokenContext.h; sourceTree = "<group>"; };
+		950FECF6285027430002DE4E /* PaymentTokenContextCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PaymentTokenContextCocoa.mm; sourceTree = "<group>"; };
+		950FECF7285027430002DE4E /* RecurringPaymentRequestCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RecurringPaymentRequestCocoa.mm; sourceTree = "<group>"; };
+		950FECF8285027440002DE4E /* AutomaticReloadPaymentRequestCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomaticReloadPaymentRequestCocoa.mm; sourceTree = "<group>"; };
 		952BC09E2797A366003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInCSSStyleDeclarationHandleInternal.h; sourceTree = "<group>"; };
 		952BC09F2797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessPlugInCSSStyleDeclarationHandle.mm; sourceTree = "<group>"; };
 		952BC0A02797A367003F3D25 /* WKWebProcessPlugInCSSStyleDeclarationHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInCSSStyleDeclarationHandle.h; sourceTree = "<group>"; };
@@ -8075,8 +8084,11 @@
 				1AB1F77C1D1B30A9007C9BD1 /* mac */,
 				5C53DCDD24465BF900A93124 /* ApplePayPaymentSetupFeatures.mm */,
 				5C53DCDF24465BF900A93124 /* ApplePayPaymentSetupFeaturesWebKit.h */,
+				950FECF0285026EA0002DE4E /* AutomaticReloadPaymentRequest.h */,
 				5C53DCE024465BF900A93124 /* PaymentSetupConfiguration.mm */,
 				5C53DCDE24465BF900A93124 /* PaymentSetupConfigurationWebKit.h */,
+				950FECF32850271F0002DE4E /* PaymentTokenContext.h */,
+				950FECF22850271E0002DE4E /* RecurringPaymentRequest.h */,
 				1AB1F7881D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.cpp */,
 				1AB1F7891D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h */,
 				1AB1F78A1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.messages.in */,
@@ -8087,6 +8099,9 @@
 		1AB1F7771D1B30A9007C9BD1 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				950FECF8285027440002DE4E /* AutomaticReloadPaymentRequestCocoa.mm */,
+				950FECF6285027430002DE4E /* PaymentTokenContextCocoa.mm */,
+				950FECF7285027430002DE4E /* RecurringPaymentRequestCocoa.mm */,
 				A1798B4B222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h */,
 				1AB1F7791D1B30A9007C9BD1 /* WebPaymentCoordinatorProxyCocoa.mm */,
 			);
@@ -13873,6 +13888,7 @@
 				57DCEDAF214C603B0016B847 /* AuthenticatorManager.h in Headers */,
 				57773991258037430059348B /* AuthenticatorPresenterCoordinator.h in Headers */,
 				57DCEDB0214C60420016B847 /* AuthenticatorTransportService.h in Headers */,
+				950FECF1285027110002DE4E /* AutomaticReloadPaymentRequest.h in Headers */,
 				9955A6EF1C79810800EB6A93 /* Automation.json in Headers */,
 				9955A6F51C7986E000EB6A93 /* AutomationBackendDispatchers.h in Headers */,
 				99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */,
@@ -14309,6 +14325,7 @@
 				A1798B512230A10E000764BD /* PaymentAuthorizationController.h in Headers */,
 				A1798B3E222D97A2000764BD /* PaymentAuthorizationPresenter.h in Headers */,
 				A1798B43222D98DF000764BD /* PaymentAuthorizationViewController.h in Headers */,
+				950FECF5285027200002DE4E /* PaymentTokenContext.h in Headers */,
 				C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */,
 				5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */,
 				832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */,
@@ -14358,6 +14375,7 @@
 				93B631F127ABACA900443A44 /* QuotaManager.h in Headers */,
 				5CB6AE442609799C00B6ED5A /* ReasonSPI.h in Headers */,
 				7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */,
+				950FECF4285027200002DE4E /* RecurringPaymentRequest.h in Headers */,
 				57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */,
 				9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */,
 				9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */,

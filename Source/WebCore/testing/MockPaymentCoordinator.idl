@@ -53,4 +53,10 @@
     [Conditional=APPLE_PAY_COUPON_CODE] readonly attribute DOMString? couponCode;
 
     [Conditional=APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE] readonly attribute ApplePayShippingContactEditingMode? shippingContactEditingMode;
+
+    [Conditional=APPLE_PAY_RECURRING_PAYMENTS] readonly attribute ApplePayRecurringPaymentRequest? recurringPaymentRequest;
+
+    [Conditional=APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS] readonly attribute ApplePayAutomaticReloadPaymentRequest? automaticReloadPaymentRequest;
+
+    [Conditional=APPLE_PAY_MULTI_MERCHANT_PAYMENTS] readonly attribute sequence<ApplePayPaymentTokenContext>? multiTokenContexts;
 };

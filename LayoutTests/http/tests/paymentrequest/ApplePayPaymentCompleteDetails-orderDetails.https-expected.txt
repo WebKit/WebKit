@@ -1,0 +1,9 @@
+
+PASS Should not error if all properties are provided
+PASS Should error if `orderDetails` is not an object
+PASS Should error if `orderTypeIdentifier` is not provided
+PASS Should error if `orderIdentifier` is not provided
+PASS Should error if `webServiceURL` is not provided
+PASS Should error if `webServiceURL` is not a valid URL
+PASS Should error if `authenticationToken` is not provided
+

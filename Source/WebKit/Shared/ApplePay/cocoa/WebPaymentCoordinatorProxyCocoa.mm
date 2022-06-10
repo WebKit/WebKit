@@ -30,7 +30,10 @@
 
 #import "APIUIClient.h"
 #import "ApplePayPaymentSetupFeaturesWebKit.h"
+#import "AutomaticReloadPaymentRequest.h"
 #import "PaymentSetupConfigurationWebKit.h"
+#import "PaymentTokenContext.h"
+#import "RecurringPaymentRequest.h"
 #import "WKPaymentAuthorizationDelegate.h"
 #import "WebPageProxy.h"
 #import "WebPaymentCoordinatorProxy.h"
@@ -48,10 +51,6 @@
 #import <wtf/cocoa/VectorCocoa.h>
 
 #import <pal/cocoa/PassKitSoftLink.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPaymentCoordinatorProxyCocoaAdditions.mm>
-#endif
 
 // FIXME: We don't support any platforms without -setThumbnailURLs:, so this can be removed.
 @interface PKPaymentRequest ()
@@ -256,10 +255,6 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
     }
 }
 
-#if !USE(APPLE_INTERNAL_SDK)
-static void merge(PKPaymentRequest *, const WebCore::ApplePaySessionPaymentRequest&) { }
-#endif
-
 RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     auto result = adoptNS([PAL::allocPKPaymentRequestInstance() init]);
@@ -342,7 +337,20 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
         [result setShippingContactEditingMode:toPKShippingContactEditingMode(*shippingContactEditingMode)];
 #endif
 
-    merge(result.get(), paymentRequest);
+#if HAVE(PASSKIT_RECURRING_PAYMENTS)
+    if (auto& recurringPaymentRequest = paymentRequest.recurringPaymentRequest())
+        [result setRecurringPaymentRequest:platformRecurringPaymentRequest(*recurringPaymentRequest).get()];
+#endif
+
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_PAYMENTS)
+    if (auto& automaticReloadPaymentRequest = paymentRequest.automaticReloadPaymentRequest())
+        [result setAutomaticReloadPaymentRequest:platformAutomaticReloadPaymentRequest(*automaticReloadPaymentRequest).get()];
+#endif
+
+#if HAVE(PASSKIT_MULTI_MERCHANT_PAYMENTS)
+    if (auto& multiTokenContexts = paymentRequest.multiTokenContexts())
+        [result setMultiTokenContexts:platformPaymentTokenContexts(*multiTokenContexts).get()];
+#endif
 
     return result;
 }

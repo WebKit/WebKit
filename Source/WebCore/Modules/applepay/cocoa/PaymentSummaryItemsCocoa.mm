@@ -52,10 +52,6 @@ static PKPaymentSummaryItemType toPKPaymentSummaryItemType(ApplePayLineItem::Typ
 
 } // namespace WebCore
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/PaymentSummaryItemsCocoaAdditions.mm>
-#endif
-
 namespace WebCore {
 
 #if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM) || HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
@@ -117,6 +113,18 @@ PKDeferredPaymentSummaryItem *platformDeferredSummaryItem(const ApplePayLineItem
 
 #endif // HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
 
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
+
+PKAutomaticReloadPaymentSummaryItem *platformAutomaticReloadSummaryItem(const ApplePayLineItem& lineItem)
+{
+    ASSERT(lineItem.paymentTiming == ApplePayPaymentTiming::AutomaticReload);
+    PKAutomaticReloadPaymentSummaryItem *summaryItem = [PAL::getPKAutomaticReloadPaymentSummaryItemClass() summaryItemWithLabel:lineItem.label amount:toDecimalNumber(lineItem.amount) type:toPKPaymentSummaryItemType(lineItem.type)];
+    summaryItem.thresholdAmount = toDecimalNumber(lineItem.automaticReloadPaymentThresholdAmount);
+    return summaryItem;
+}
+
+#endif // HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
+
 PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem& lineItem)
 {
     switch (lineItem.paymentTiming) {
@@ -133,8 +141,9 @@ PKPaymentSummaryItem *platformSummaryItem(const ApplePayLineItem& lineItem)
         return platformDeferredSummaryItem(lineItem);
 #endif
 
-#if defined(PaymentSummaryItemsCocoaAdditions_platformSummaryItem)
-    PaymentSummaryItemsCocoaAdditions_platformSummaryItem
+#if HAVE(PASSKIT_AUTOMATIC_RELOAD_SUMMARY_ITEM)
+    case ApplePayPaymentTiming::AutomaticReload:
+        return platformAutomaticReloadSummaryItem(lineItem);
 #endif
     }
 

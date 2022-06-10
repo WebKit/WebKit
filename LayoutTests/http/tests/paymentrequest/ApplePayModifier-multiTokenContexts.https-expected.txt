@@ -1,0 +1,12 @@
+
+PASS The default value of `multiTokenContexts` should be `null` if `data` is not provided as part of the request.
+PASS The default value of `multiTokenContexts` should be `null` if `data` is not provided as part of an update.
+PASS The value of `multiTokenContexts` should be empty if `data` is provided as `[]` as part of the request.
+PASS The value of `multiTokenContexts` should be empty if `data` is provided as `[]` as part of an update.
+PASS Should not error if optional properties are not provided as part of the request.
+PASS Should not error if optional properties are not provided as part of an update.
+PASS Should propagate all data as part of the request.
+PASS Should propagate all data as part of an update.
+PASS Should error when an `amount` in `multiTokenContexts` is not a valid amount as part of the request.
+PASS Should error when an `amount` in `multiTokenContexts` is not a valid amount as part of an update.
+

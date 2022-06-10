@@ -46,10 +46,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MockPaymentCoordinatorAdditions.cpp>
-#endif
-
 namespace WebCore {
 
 MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
@@ -122,7 +118,15 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 #if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
     m_shippingContactEditingMode = request.shippingContactEditingMode();
 #endif
-    merge(request);
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = request.recurringPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = request.automaticReloadPaymentRequest();
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = request.multiTokenContexts();
+#endif
 
     ASSERT(showCount == hideCount);
     ++showCount;
@@ -149,7 +153,15 @@ void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<Apple
 #if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
     m_shippingMethods = WTFMove(shippingMethodUpdate->newShippingMethods);
 #endif
-    merge(*shippingMethodUpdate);
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = WTFMove(shippingMethodUpdate->newRecurringPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = WTFMove(shippingMethodUpdate->newAutomaticReloadPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = WTFMove(shippingMethodUpdate->newMultiTokenContexts);
+#endif
 }
 
 static Vector<MockPaymentError> convert(Vector<RefPtr<ApplePayError>>&& errors)
@@ -171,7 +183,15 @@ void MockPaymentCoordinator::completeShippingContactSelection(std::optional<Appl
     m_lineItems = WTFMove(shippingContactUpdate->newLineItems);
     m_shippingMethods = WTFMove(shippingContactUpdate->newShippingMethods);
     m_errors = convert(WTFMove(shippingContactUpdate->errors));
-    merge(*shippingContactUpdate);
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = WTFMove(shippingContactUpdate->newRecurringPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = WTFMove(shippingContactUpdate->newAutomaticReloadPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = WTFMove(shippingContactUpdate->newMultiTokenContexts);
+#endif
 }
 
 void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&& paymentMethodUpdate)
@@ -185,7 +205,15 @@ void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<AppleP
     m_shippingMethods = WTFMove(paymentMethodUpdate->newShippingMethods);
     m_errors = convert(WTFMove(paymentMethodUpdate->errors));
 #endif
-    merge(*paymentMethodUpdate);
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = WTFMove(paymentMethodUpdate->newRecurringPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = WTFMove(paymentMethodUpdate->newAutomaticReloadPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = WTFMove(paymentMethodUpdate->newMultiTokenContexts);
+#endif
 }
 
 #if ENABLE(APPLE_PAY_COUPON_CODE)
@@ -199,7 +227,15 @@ void MockPaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCoup
     m_lineItems = WTFMove(couponCodeUpdate->newLineItems);
     m_shippingMethods = WTFMove(couponCodeUpdate->newShippingMethods);
     m_errors = convert(WTFMove(couponCodeUpdate->errors));
-    merge(*couponCodeUpdate);
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    m_recurringPaymentRequest = WTFMove(couponCodeUpdate->newRecurringPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    m_automaticReloadPaymentRequest = WTFMove(couponCodeUpdate->newAutomaticReloadPaymentRequest);
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    m_multiTokenContexts = WTFMove(couponCodeUpdate->newMultiTokenContexts);
+#endif
 }
 
 #endif // ENABLE(APPLE_PAY_COUPON_CODE)
@@ -296,11 +332,6 @@ void MockPaymentCoordinator::beginApplePaySetup(const ApplePaySetupConfiguration
     m_setupConfiguration = configuration;
     completionHandler(true);
 }
-
-#if !USE(APPLE_INTERNAL_SDK)
-void MockPaymentCoordinator::merge(const ApplePaySessionPaymentRequest&) { }
-void MockPaymentCoordinator::merge(ApplePayDetailsUpdateBase&) { }
-#endif
 
 } // namespace WebCore
 

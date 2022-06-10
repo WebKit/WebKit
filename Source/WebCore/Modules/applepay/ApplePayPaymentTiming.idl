@@ -31,4 +31,7 @@ enum ApplePayPaymentTiming {
 #if defined(ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM) && ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM
     , "deferred"
 #endif
+#if defined(ENABLE_APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM) && ENABLE_APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM
+    , "automaticReload"
+#endif
 };

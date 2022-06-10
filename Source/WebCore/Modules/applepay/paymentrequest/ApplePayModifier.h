@@ -27,13 +27,12 @@
 
 #if ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
 
+#include "ApplePayAutomaticReloadPaymentRequest.h"
 #include "ApplePayLineItem.h"
 #include "ApplePayPaymentMethodType.h"
+#include "ApplePayPaymentTokenContext.h"
+#include "ApplePayRecurringPaymentRequest.h"
 #include "ApplePayShippingMethod.h"
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePayModifierAdditions.h>
-#endif
 
 namespace WebCore {
 
@@ -45,8 +44,16 @@ struct ApplePayModifier {
     Vector<ApplePayShippingMethod> additionalShippingMethods;
 #endif
 
-#if defined(ApplePayModifierAdditions_members)
-    ApplePayModifierAdditions_members
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    std::optional<ApplePayRecurringPaymentRequest> recurringPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    std::optional<ApplePayAutomaticReloadPaymentRequest> automaticReloadPaymentRequest;
+#endif
+
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    std::optional<Vector<ApplePayPaymentTokenContext>> multiTokenContexts;
 #endif
 };
 
