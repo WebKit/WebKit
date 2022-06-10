@@ -266,10 +266,6 @@ private:
     
     OptionSet<SpeakAs> speakAsProperty() const override;
     
-    const String liveRegionStatus() const override;
-    const String liveRegionRelevant() const override;
-    bool liveRegionAtomic() const override;
-
     bool inheritsPresentationalRole() const override;
 
     bool shouldGetTextFromNode(AccessibilityTextUnderElementMode) const;

@@ -3264,46 +3264,6 @@ bool AccessibilityRenderObject::canHaveChildren() const
     return AccessibilityNodeObject::canHaveChildren();
 }
 
-const String AccessibilityRenderObject::liveRegionStatus() const
-{
-    const AtomString& liveRegionStatus = getAttribute(aria_liveAttr);
-    // These roles have implicit live region status.
-    if (liveRegionStatus.isEmpty())
-        return defaultLiveRegionStatusForRole(roleValue());
-
-    return liveRegionStatus;
-}
-
-const String AccessibilityRenderObject::liveRegionRelevant() const
-{
-    static MainThreadNeverDestroyed<const AtomString> defaultLiveRegionRelevant("additions text"_s);
-    const AtomString& relevant = getAttribute(aria_relevantAttr);
-
-    // Default aria-relevant = "additions text".
-    if (relevant.isEmpty())
-        return "additions text"_s;
-    
-    return relevant;
-}
-
-bool AccessibilityRenderObject::liveRegionAtomic() const
-{
-    const AtomString& atomic = getAttribute(aria_atomicAttr);
-    if (equalLettersIgnoringASCIICase(atomic, "true"_s))
-        return true;
-    if (equalLettersIgnoringASCIICase(atomic, "false"_s))
-        return false;
-
-    // WAI-ARIA "alert" and "status" roles have an implicit aria-atomic value of true.
-    switch (roleValue()) {
-    case AccessibilityRole::ApplicationAlert:
-    case AccessibilityRole::ApplicationStatus:
-        return true;
-    default:
-        return false;
-    }
-}
-
 bool AccessibilityRenderObject::canHaveSelectedChildren() const
 {
     switch (roleValue()) {

@@ -213,6 +213,12 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXMultiSelectableStateChanged:
         break;
+    case AXIsAtomicChanged:
+        break;
+    case AXLiveRegionRelevantChanged:
+        break;
+    case AXLiveRegionStatusChanged:
+        break;
     }
 }
 

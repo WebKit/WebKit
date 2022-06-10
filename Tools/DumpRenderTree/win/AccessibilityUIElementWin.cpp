@@ -523,6 +523,21 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
     return 0;
 }
 
+bool AccessibilityUIElement::isAtomicLiveRegion() const
+{
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const
+{
+    return 0;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
+{
+    return 0;
+}
+
 double AccessibilityUIElement::intValue() const
 {
     if (!m_element)

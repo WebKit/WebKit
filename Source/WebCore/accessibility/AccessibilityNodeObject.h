@@ -173,6 +173,10 @@ protected:
 
     bool elementAttributeValue(const QualifiedName&) const;
 
+    const String liveRegionStatus() const override;
+    const String liveRegionRelevant() const override;
+    bool liveRegionAtomic() const override;
+
     bool isLabelable() const;
     AccessibilityObject* correspondingControlForLabelElement() const override;
     AccessibilityObject* correspondingLabelForControlElement() const override;

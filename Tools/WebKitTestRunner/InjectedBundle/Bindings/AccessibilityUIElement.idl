@@ -58,6 +58,8 @@
     readonly attribute DOMString valueDescription;
     readonly attribute DOMString url;
     readonly attribute DOMString speakAs;
+    readonly attribute DOMString liveRegionRelevant;
+    readonly attribute DOMString liveRegionStatus;
     readonly attribute DOMString orientation;
     readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;
@@ -82,6 +84,7 @@
     readonly attribute long minValue;
     readonly attribute long maxValue;
     
+    readonly attribute boolean isAtomicLiveRegion;
     readonly attribute boolean isBusy;
     readonly attribute boolean isEnabled;
     readonly attribute boolean isRequired;

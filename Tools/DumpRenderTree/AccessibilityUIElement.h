@@ -133,6 +133,8 @@ public:
     JSRetainPtr<JSStringRef> accessibilityValue() const;
     void setValue(JSStringRef);
     JSRetainPtr<JSStringRef> helpText() const;
+    JSRetainPtr<JSStringRef> liveRegionRelevant() const;
+    JSRetainPtr<JSStringRef> liveRegionStatus() const;
     JSRetainPtr<JSStringRef> orientation() const;
     double x();
     double y();
@@ -145,6 +147,7 @@ public:
     JSRetainPtr<JSStringRef> valueDescription();
     int insertionPointLineNumber();
     JSRetainPtr<JSStringRef> selectedTextRange();
+    bool isAtomicLiveRegion() const;
     bool isBusy() const;
     bool isEnabled();
     bool isRequired() const;

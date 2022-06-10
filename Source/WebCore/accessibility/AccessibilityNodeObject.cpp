@@ -1304,6 +1304,43 @@ bool AccessibilityNodeObject::elementAttributeValue(const QualifiedName& attribu
     return equalLettersIgnoringASCIICase(getAttribute(attributeName), "true"_s);
 }
 
+const String AccessibilityNodeObject::liveRegionStatus() const
+{
+    const auto& liveRegionStatus = getAttribute(aria_liveAttr);
+    if (liveRegionStatus.isEmpty())
+        return defaultLiveRegionStatusForRole(roleValue());
+
+    return liveRegionStatus;
+}
+
+const String AccessibilityNodeObject::liveRegionRelevant() const
+{
+    const auto& relevant = getAttribute(aria_relevantAttr);
+    // Default aria-relevant = "additions text".
+    if (relevant.isEmpty())
+        return "additions text"_s;
+
+    return relevant;
+}
+
+bool AccessibilityNodeObject::liveRegionAtomic() const
+{
+    const auto& atomic = getAttribute(aria_atomicAttr);
+    if (equalLettersIgnoringASCIICase(atomic, "true"_s))
+        return true;
+    if (equalLettersIgnoringASCIICase(atomic, "false"_s))
+        return false;
+
+    // WAI-ARIA "alert" and "status" roles have an implicit aria-atomic value of true.
+    switch (roleValue()) {
+    case AccessibilityRole::ApplicationAlert:
+    case AccessibilityRole::ApplicationStatus:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool AccessibilityNodeObject::isGenericFocusableElement() const
 {
     if (!canSetFocusAttribute())

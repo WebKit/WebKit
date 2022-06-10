@@ -1244,6 +1244,18 @@ static JSValueRef getHelpTextCallback(JSContextRef context, JSObjectRef thisObje
     return JSValueMakeString(context, language.get());
 }
 
+static JSValueRef getLiveRegionRelevantCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    auto liveRegionRelevant = toAXElement(thisObject)->liveRegionRelevant();
+    return JSValueMakeString(context, liveRegionRelevant.get());
+}
+
+static JSValueRef getLiveRegionStatusCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    auto liveRegionStatus = toAXElement(thisObject)->liveRegionStatus();
+    return JSValueMakeString(context, liveRegionStatus.get());
+}
+
 static JSValueRef getOrientationCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     auto orientation = toAXElement(thisObject)->orientation();
@@ -1325,6 +1337,11 @@ static JSValueRef getSelectedTextRangeCallback(JSContextRef context, JSObjectRef
 {
     auto selectedTextRange = toAXElement(thisObject)->selectedTextRange();
     return JSValueMakeString(context, selectedTextRange.get());
+}
+
+static JSValueRef getIsAtomicLiveRegionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isAtomicLiveRegion());
 }
 
 static JSValueRef getIsBusyCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -1929,6 +1946,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "columnCount", columnCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "insertionPointLineNumber", getInsertionPointLineNumberCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedTextRange", getSelectedTextRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isAtomicLiveRegion", getIsAtomicLiveRegionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isBusy", getIsBusyCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isEnabled", getIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isRequired", getIsRequiredCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -1953,6 +1971,8 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "documentURI", getDocumentURICallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "url", getURLCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isValid", getIsValidCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "liveRegionRelevant", getLiveRegionRelevantCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "liveRegionStatus", getLiveRegionStatusCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "orientation", getOrientationCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaIsGrabbed", getARIAIsGrabbedCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "ariaDropEffects", getARIADropEffectsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

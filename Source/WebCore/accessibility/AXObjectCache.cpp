@@ -1940,6 +1940,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
 
     if (attrName == aria_activedescendantAttr)
         handleActiveDescendantChanged(*element);
+    else if (attrName == aria_atomicAttr)
+        postNotification(element, AXIsAtomicChanged);
     else if (attrName == aria_busyAttr)
         postNotification(element, AXObjectCache::AXElementBusyChanged);
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
@@ -1954,6 +1956,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXGrabbedStateChanged);
     else if (attrName == aria_levelAttr)
         postNotification(element, AXLevelChanged);
+    else if (attrName == aria_liveAttr)
+        postNotification(element, AXLiveRegionStatusChanged);
     else if (attrName == aria_valuemaxAttr)
         postNotification(element, AXMaximumValueChanged);
     else if (attrName == aria_valueminAttr)
@@ -1969,6 +1973,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXMultiSelectableStateChanged);
     else if (attrName == aria_posinsetAttr)
         postNotification(element, AXPositionInSetChanged);
+    else if (attrName == aria_relevantAttr)
+        postNotification(element, AXLiveRegionRelevantChanged);
     else if (attrName == aria_selectedAttr)
         selectedStateChanged(element);
     else if (attrName == aria_setsizeAttr)
@@ -3560,7 +3566,10 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXGrabbedStateChanged:
         case AXHasPopupChanged:
         case AXInvalidStatusChanged:
+        case AXIsAtomicChanged:
         case AXLevelChanged:
+        case AXLiveRegionStatusChanged:
+        case AXLiveRegionRelevantChanged:
         case AXMenuListValueChanged:
         case AXMultiSelectableStateChanged:
         case AXPressedStateChanged:

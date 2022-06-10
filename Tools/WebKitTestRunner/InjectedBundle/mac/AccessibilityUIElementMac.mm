@@ -805,6 +805,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
     return nullptr;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
+{
+    return stringAttributeValue(@"AXARIALive");
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const
+{
+    return stringAttributeValue(@"AXARIARelevant");
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -981,6 +991,11 @@ bool AccessibilityUIElement::isDecrementActionSupported()
     END_AX_OBJC_EXCEPTIONS
 
     return false;
+}
+
+bool AccessibilityUIElement::isAtomicLiveRegion() const
+{
+    return boolAttributeValue(@"AXARIAAtomic");
 }
 
 bool AccessibilityUIElement::isBusy() const

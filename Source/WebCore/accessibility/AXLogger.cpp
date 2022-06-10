@@ -406,6 +406,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXImageOverlayChanged:
         stream << "AXImageOverlayChanged";
         break;
+    case AXObjectCache::AXNotification::AXIsAtomicChanged:
+        stream << "AXIsAtomicChanged";
+        break;
     case AXObjectCache::AXNotification::AXLanguageChanged:
         stream << "AXLanguageChanged";
         break;
@@ -459,6 +462,12 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXLiveRegionChanged:
         stream << "AXLiveRegionChanged";
+        break;
+    case AXObjectCache::AXNotification::AXLiveRegionRelevantChanged:
+        stream << "AXLiveRegionRelevantChanged";
+        break;
+    case AXObjectCache::AXNotification::AXLiveRegionStatusChanged:
+        stream << "AXLiveRegionStatusChanged";
         break;
     case AXObjectCache::AXNotification::AXMenuListItemSelected:
         stream << "AXMenuListItemSelected";

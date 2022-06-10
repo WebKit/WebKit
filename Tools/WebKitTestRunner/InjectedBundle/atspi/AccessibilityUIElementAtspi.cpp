@@ -881,6 +881,21 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
     return OpaqueJSString::tryCreate(orientationValue).leakRef();
 }
 
+bool AccessibilityUIElement::isAtomicLiveRegion() const
+{
+    return false;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const
+{
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
+{
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
     m_element->updateBackingStore();

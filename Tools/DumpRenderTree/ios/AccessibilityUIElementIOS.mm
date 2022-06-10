@@ -75,6 +75,9 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSUInteger)accessibilityARIARowIndex;
 - (NSUInteger)accessibilityARIAColumnIndex;
 - (BOOL)accessibilityARIAIsBusy;
+- (BOOL)accessibilityARIALiveRegionIsAtomic;
+- (NSString *)accessibilityARIALiveRegionStatus;
+- (NSString *)accessibilityARIARelevantStatus;
 - (UIAccessibilityTraits)_axContainedByFieldsetTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
@@ -812,6 +815,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::description()
     return concatenateAttributeAndValue(@"AXLabel", [m_element accessibilityLabel]);
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionRelevant() const
+{
+    return [[m_element accessibilityARIARelevantStatus] createJSStringRef];
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::liveRegionStatus() const
+{
+    return [[m_element accessibilityARIALiveRegionStatus] createJSStringRef];
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 {
     return WTR::createJSString();
@@ -860,6 +873,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
 int AccessibilityUIElement::insertionPointLineNumber()
 {
     return -1;
+}
+
+bool AccessibilityUIElement::isAtomicLiveRegion() const
+{
+    return [m_element accessibilityARIALiveRegionIsAtomic];
 }
 
 bool AccessibilityUIElement::isBusy() const
