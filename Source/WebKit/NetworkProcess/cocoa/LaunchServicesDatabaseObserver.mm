@@ -34,19 +34,9 @@
 
 namespace WebKit {
 
-#if HAVE(LSDATABASECONTEXT)
-static bool hasSystemContentDatabase()
-{
-    return [LSDatabaseContext.sharedDatabaseContext respondsToSelector:@selector(getSystemContentDatabaseObject4WebKit:)];
-}
-#endif
-
 LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver(NetworkProcess&)
 {
 #if HAVE(LSDATABASECONTEXT)
-    if (hasSystemContentDatabase())
-        return;
-
     m_observer = [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
         auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
@@ -74,20 +64,6 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
     }
 
 #if HAVE(LSDATABASECONTEXT)
-    if (hasSystemContentDatabase()) {
-        [LSDatabaseContext.sharedDatabaseContext getSystemContentDatabaseObject4WebKit:makeBlockPtr([connection = connection] (xpc_object_t _Nullable object, NSError * _Nullable error) {
-            if (!object)
-                return;
-            auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-            xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
-            xpc_dictionary_set_value(message.get(), LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseKey, object);
-
-            xpc_connection_send_message(connection.get(), message.get());
-
-        }).get()];
-        return;
-    }
-
     RetainPtr<id> observer = [LSDatabaseContext.sharedDatabaseContext addDatabaseChangeObserver4WebKit:^(xpc_object_t change) {
         auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(message.get(), XPCEndpoint::xpcMessageNameKey, LaunchServicesDatabaseXPCConstants::xpcUpdateLaunchServicesDatabaseMessageName);
@@ -107,8 +83,6 @@ void LaunchServicesDatabaseObserver::startObserving(OSObjectPtr<xpc_connection_t
 LaunchServicesDatabaseObserver::~LaunchServicesDatabaseObserver()
 {
 #if HAVE(LSDATABASECONTEXT)
-    if (hasSystemContentDatabase())
-        return;
     [LSDatabaseContext.sharedDatabaseContext removeDatabaseChangeObserver4WebKit:m_observer.get()];
 #endif
 }
