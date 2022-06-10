@@ -65,6 +65,7 @@ set(WTF_PUBLIC_HEADERS
     EmbeddedFixedVector.h
     EnumClassOperatorOverloads.h
     EnumTraits.h
+    EnumeratedArray.h
     Expected.h
     ExportMacros.h
     FailureAction.h

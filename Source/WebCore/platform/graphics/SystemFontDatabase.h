@@ -28,6 +28,7 @@
 #include "FontSelectionAlgorithm.h"
 #include <array>
 #include <optional>
+#include <wtf/EnumeratedArray.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -65,10 +66,8 @@ public:
         AppleSystemTitle3,
         AppleSystemTitle4,
 #endif
-        StatusBar,
+        StatusBar, // This has to be kept in sync with SystemFontShorthandCache below.
     };
-    using FontShorthandUnderlyingType = std::underlying_type<FontShorthand>::type;
-    static constexpr auto fontShorthandCount = static_cast<FontShorthandUnderlyingType>(FontShorthand::StatusBar) + 1;
 
     const AtomString& systemFontShorthandFamily(FontShorthand);
     float systemFontShorthandSize(FontShorthand);
@@ -88,7 +87,7 @@ private:
     const SystemFontShorthandInfo& systemFontShorthandInfo(FontShorthand);
     static SystemFontShorthandInfo platformSystemFontShorthandInfo(FontShorthand);
 
-    using SystemFontShorthandCache = std::array<std::optional<SystemFontShorthandInfo>, fontShorthandCount>;
+    using SystemFontShorthandCache = EnumeratedArray<FontShorthand, std::optional<SystemFontShorthandInfo>, FontShorthand::StatusBar>;
     SystemFontShorthandCache m_systemFontShorthandCache;
 };
 

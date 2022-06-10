@@ -31,12 +31,11 @@ namespace WebCore {
 SystemFontDatabase::SystemFontDatabase() = default;
 
 auto SystemFontDatabase::systemFontShorthandInfo(FontShorthand fontShorthand) -> const SystemFontShorthandInfo& {
-    auto index = static_cast<FontShorthandUnderlyingType>(fontShorthand);
-    if (auto& entry = m_systemFontShorthandCache[index])
+    if (auto& entry = m_systemFontShorthandCache[fontShorthand])
         return *entry;
 
-    m_systemFontShorthandCache[index] = platformSystemFontShorthandInfo(fontShorthand);
-    return *m_systemFontShorthandCache[index];
+    m_systemFontShorthandCache[fontShorthand] = platformSystemFontShorthandInfo(fontShorthand);
+    return *m_systemFontShorthandCache[fontShorthand];
 }
 
 const AtomString& SystemFontDatabase::systemFontShorthandFamily(FontShorthand fontShorthand)
