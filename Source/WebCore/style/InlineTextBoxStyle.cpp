@@ -48,8 +48,9 @@ static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderO
     return false;
 }
 
-static void minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
+static float minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
 {
+    auto minLogicalTop = textRunLogicalTop;
     for (auto run = lineBox->firstLeafBox(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
@@ -63,10 +64,12 @@ static void minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIter
         if (run->isText() || run->style().textDecorationSkipInk() == TextDecorationSkipInk::None)
             minLogicalTop = std::min<float>(minLogicalTop, run->logicalTop());
     }
+    return minLogicalTop;
 }
 
-static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
+static float maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float textRunLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
 {
+    auto maxLogicalBottom = textRunLogicalBottom;
     for (auto run = lineBox->firstLeafBox(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
@@ -80,6 +83,7 @@ static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBoxI
         if (run->isText() || run->style().textDecorationSkipInk() == TextDecorationSkipInk::None)
             maxLogicalBottom = std::max<float>(maxLogicalBottom, run->logicalBottom());
     }
+    return maxLogicalBottom;
 }
 
 static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer, OptionSet<TextDecorationLine> textDecorationLine, bool firstLine)
@@ -140,12 +144,10 @@ float computeUnderlineOffset(const UnderlineOffsetArguments& context)
         
         float offset;
         if (context.renderer->style().isFlippedLinesWritingMode()) {
-            offset = context.textRunLogicalTop;
-            minLogicalTopForTextDecorationLine(context.lineBox, offset, decorationRenderer, TextDecorationLine::Underline);
-            offset = context.textRunLogicalTop - offset;
+            auto minLogicalTop = minLogicalTopForTextDecorationLine(context.lineBox, context.textRunLogicalTop, decorationRenderer, TextDecorationLine::Underline);
+            offset = context.textRunLogicalTop - minLogicalTop;
         } else {
-            offset = context.textRunLogicalBottom;
-            maxLogicalBottomForTextDecorationLine(context.lineBox, offset, decorationRenderer, TextDecorationLine::Underline);
+            offset = maxLogicalBottomForTextDecorationLine(context.lineBox, context.textRunLogicalBottom, decorationRenderer, TextDecorationLine::Underline);
             offset -= context.textRunLogicalBottom;
         }
         auto textRunLogicalHeight = context.textRunLogicalBottom - context.textRunLogicalTop;
