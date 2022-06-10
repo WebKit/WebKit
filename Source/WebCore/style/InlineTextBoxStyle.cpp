@@ -29,7 +29,6 @@
 #include "FontCascade.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
-#include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
@@ -101,10 +100,10 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
     return current;
 }
     
-float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const InlineIterator::TextBoxIterator& textRun, float defaultGap)
+float computeUnderlineOffset(const UnderlineOffsetArguments& context)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
-    float gap = std::max<int>(1, std::ceil(defaultGap / 2.0f));
+    float gap = std::max<int>(1, std::ceil(context.defaultGap / 2.0f));
     
     // FIXME: The code for visual overflow detection passes in a null inline text box. This means it is now
     // broken for the case where auto needs to behave like "under".
@@ -115,11 +114,14 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
     // even if it is horizontal, but detecting this has performance implications. For now we only work with
     // vertical text, since we already determined the baseline type to be ideographic in that
     // case.
-    
+    auto underlinePosition = context.lineStyle.textUnderlinePosition();
+    auto underlineOffset = context.lineStyle.textUnderlineOffset();
+    auto& fontMetrics = context.lineStyle.metricsOfPrimaryFont();
+
     auto resolvedUnderlinePosition = underlinePosition;
     if (resolvedUnderlinePosition == TextUnderlinePosition::Auto && underlineOffset.isAuto()) {
-        if (textRun)
-            resolvedUnderlinePosition = textRun->lineBox()->baselineType() == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
+        if (context.renderer)
+            resolvedUnderlinePosition = context.baselineType == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
         else
             resolvedUnderlinePosition = TextUnderlinePosition::Auto;
     }
@@ -132,22 +134,22 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
     case TextUnderlinePosition::FromFont:
         return fontMetrics.ascent() + fontMetrics.underlinePosition() + underlineOffset.lengthOr(0);
     case TextUnderlinePosition::Under: {
-        ASSERT(textRun);
+        ASSERT(context.lineBox && context.renderer);
         // Position underline relative to the bottom edge of the lowest element's content box.
-        auto lineBox = textRun->lineBox();
-        auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecorationLine::Underline, lineBox->isFirst());
+        auto* decorationRenderer = enclosingRendererWithTextDecoration(*context.renderer, TextDecorationLine::Underline, context.lineBox->isFirst());
         
         float offset;
-        if (textRun->renderer().style().isFlippedLinesWritingMode()) {
-            offset = textRun->logicalTop();
-            minLogicalTopForTextDecorationLine(lineBox, offset, decorationRenderer, TextDecorationLine::Underline);
-            offset = textRun->logicalTop() - offset;
+        if (context.renderer->style().isFlippedLinesWritingMode()) {
+            offset = context.textRunLogicalTop;
+            minLogicalTopForTextDecorationLine(context.lineBox, offset, decorationRenderer, TextDecorationLine::Underline);
+            offset = context.textRunLogicalTop - offset;
         } else {
-            offset = textRun->logicalBottom();
-            maxLogicalBottomForTextDecorationLine(lineBox, offset, decorationRenderer, TextDecorationLine::Underline);
-            offset -= textRun->logicalBottom();
+            offset = context.textRunLogicalBottom;
+            maxLogicalBottomForTextDecorationLine(context.lineBox, offset, decorationRenderer, TextDecorationLine::Underline);
+            offset -= context.textRunLogicalBottom;
         }
-        auto desiredOffset = textRun->logicalHeight() + gap + std::max(offset, 0.0f) + underlineOffset.lengthOr(0);
+        auto textRunLogicalHeight = context.textRunLogicalBottom - context.textRunLogicalTop;
+        auto desiredOffset = textRunLogicalHeight + gap + std::max(offset, 0.0f) + underlineOffset.lengthOr(0);
         return std::max<float>(desiredOffset, fontMetrics.ascent());
     }
     }
@@ -195,7 +197,21 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
         int underlineOffset = 1;
         float textDecorationBaseFontSize = 16;
         auto defaultGap = lineStyle.computedFontSize() / textDecorationBaseFontSize;
-        underlineOffset += computeUnderlineOffset(lineStyle.textUnderlinePosition(), lineStyle.textUnderlineOffset(), lineStyle.metricsOfPrimaryFont(), textRun, defaultGap);
+        // FIXME: RenderStyle calls us with empty textRun but only when TextUnderlinePosition is not Under. 
+        ASSERT(textRun || lineStyle.textUnderlinePosition() != TextUnderlinePosition::Under);
+        if (!textRun)
+            underlineOffset += computeUnderlineOffset({ lineStyle, defaultGap });
+        else {
+            underlineOffset += computeUnderlineOffset({ lineStyle
+                , defaultGap
+                , &textRun->renderer()
+                , textRun->lineBox()->baselineType()
+                , textRun->logicalTop()
+                , textRun->logicalBottom()
+                , textRun->lineBox()
+            });
+        }
+
         if (decorationStyle == TextDecorationStyle::Wavy) {
             overflowResult.extendBottom(underlineOffset + wavyOffset + wavyStrokeParameters.controlPointDistance + strokeThickness - height);
             overflowResult.extendTop(-(underlineOffset + wavyOffset - wavyStrokeParameters.controlPointDistance - strokeThickness));
