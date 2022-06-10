@@ -6580,6 +6580,9 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
         return RenderingContext { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*context) } };
 #endif
 
+    if (is<ImageBitmapRenderingContext>(*context))
+        return RenderingContext { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*context) } };
+
     return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
 }
 
