@@ -65,6 +65,8 @@ public:
     bool scrolledToBottom() const final;
     bool scrolledToLeft() const final;
     bool scrolledToRight() const final;
+    
+    bool isVisibleToHitTesting() const final { return visibleToHitTesting(); };
 
 private:
     void willBeDestroyed() override;
