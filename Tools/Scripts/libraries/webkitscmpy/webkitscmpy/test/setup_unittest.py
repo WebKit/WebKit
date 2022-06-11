@@ -119,7 +119,7 @@ Set git editor to 'SVN_LOG_EDITOR' for this repository
 
     def test_github_checkout(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
-            MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'disabled', '1', 'y'), \
+            MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'y', 'disabled', '1', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
             wkmocks.Environment(EMAIL_ADDRESS='', SVN_LOG_EDITOR=''):
 
@@ -150,6 +150,8 @@ Enter git user email for this repository:
 Set 'Tim Apple' as the git user name for this repository ([Yes]/No): 
 Enter git user name for this repository: 
 Auto-color status, diff, and branch for this repository? ([Yes]/Skip): 
+Would you like to automatically rebase your branch when creating or
+updating a pull request? ([Yes]/No/Later): 
 Would you like to create new branches to retain history when you overwrite
 a pull request branch? ([when-user-owned]/disabled/always/never): 
 Pick a commit message editor for this repository:
@@ -173,6 +175,8 @@ No project git config found, continuing
 Setting better Objective-C diffing behavior for this repository...
 Set better Objective-C diffing behavior for this repository!
 Using a rebase merge strategy for this repository
+Setting auto update on PR creation...
+Enabled auto update on PR creation
 Setting git editor for {repository}...
 Using the default git editor for this repository
 Saving GitHub credentials in system credential store...

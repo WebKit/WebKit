@@ -267,7 +267,11 @@ class PullRequest(Command):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
             return 1
 
-        rebasing = args.rebase or (args.rebase is None and repository.config().get('pull.rebase'))
+        rebasing = args.rebase if args.rebase is not None else repository.config().get(
+            'webkitscmpy.auto-rebase-branch',
+            repository.config().get('pull.rebase', 'true'),
+        ) == 'true'
+
         if rebasing:
             log.info("Rebasing '{}' on '{}'...".format(repository.branch, branch_point.branch))
             if repository.pull(rebase=True, branch=branch_point.branch):

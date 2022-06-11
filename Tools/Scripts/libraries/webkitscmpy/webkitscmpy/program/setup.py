@@ -250,6 +250,25 @@ class Setup(Command):
             sys.stderr.write('Failed to use {} as the merge strategy for this repository\n'.format('merge commits' if args.merge else 'rebase'))
             result += 1
 
+        need_prompt_auto_update = args.all or not local_config.get('webkitscmpy.auto-rebase-branch')
+        if not args.merge and not args.defaults and need_prompt_auto_update:
+            log.info('Setting auto update on PR creation...')
+            response = Terminal.choose(
+                'Would you like to automatically rebase your branch when creating or\nupdating a pull request?',
+                default='Yes', options=('Yes', 'No', 'Later'),
+            )
+            if response in ['Yes', 'No']:
+                if run(
+                    [local.Git.executable(), 'config', 'webkitscmpy.auto-rebase-branch', 'true' if response == 'Yes' else 'false'],
+                    capture_output=True, cwd=repository.root_path,
+                ).returncode:
+                    sys.stderr.write('Failed to {} auto update\n'.format('enable' if response == 'Yes' else 'disable'))
+                    result += 1
+                else:
+                    log.info('{} auto update on PR creation'.format('Enabled' if response == 'Yes' else 'Disabled'))
+            else:
+                log.info('Skipped explicit auto update configuration')
+
         if args.all or not local_config.get('webkitscmpy.history'):
             if repository.config(location='project')['webkitscmpy.history'] == 'never':
                 pr_history = 'never'
