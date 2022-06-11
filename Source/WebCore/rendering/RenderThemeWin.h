@@ -139,9 +139,6 @@ private:
     RenderThemeWin();
     virtual ~RenderThemeWin();
 
-    // System fonts.
-    FontCascadeDescription systemFont(CSSValueID) const override;
-
     void addIntrinsicMargins(RenderStyle&) const;
     void close();
 

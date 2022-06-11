@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include "CSSOffsetRotateValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CalcExpressionLength.h"
@@ -142,6 +143,7 @@ public:
     static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStretch(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
+    static FontVariantCaps convertFontVariantCaps(BuilderState&, const CSSValue&);
     static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
     static SVGLengthValue convertSVGLengthValue(BuilderState&, const CSSValue&);
     static Vector<SVGLengthValue> convertSVGLengthVector(BuilderState&, const CSSValue&);
@@ -1340,8 +1342,20 @@ inline FontSelectionValue BuilderConverter::convertFontWeight(BuilderState& buil
             return FontCascadeDescription::bolderWeight(builderState.parentStyle().fontDescription().weight());
         if (valueID == CSSValueLighter)
             return FontCascadeDescription::lighterWeight(builderState.parentStyle().fontDescription().weight());
+        if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
+            return SystemFontDatabase::singleton().systemFontShorthandWeight(CSSPropertyParserHelpers::lowerFontShorthand(valueID));
     }
     return convertFontWeightFromValue(value);
+}
+
+inline FontVariantCaps BuilderConverter::convertFontVariantCaps(BuilderState&, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    auto valueID = primitiveValue.valueID();
+    if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
+        return FontVariantCaps::Normal;
+
+    return static_cast<FontVariantCaps>(primitiveValue);
 }
 
 inline FontSelectionValue BuilderConverter::convertFontStretch(BuilderState&, const CSSValue& value)
@@ -1535,7 +1549,11 @@ inline GlyphOrientation BuilderConverter::convertGlyphOrientationOrAuto(BuilderS
 inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& builderState, const CSSValue& value, float multiplier)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueNormal)
+    auto valueID = primitiveValue.valueID();
+    if (valueID == CSSValueNormal)
+        return RenderStyle::initialLineHeight();
+
+    if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
         return RenderStyle::initialLineHeight();
 
     if (primitiveValue.isLength()) {
@@ -1665,5 +1683,5 @@ inline OffsetRotation BuilderConverter::convertOffsetRotate(BuilderState&, const
     return OffsetRotation(hasAuto, angleInDegrees);
 }
 
-}
-}
+} // namespace Style
+} // namespace WebCore

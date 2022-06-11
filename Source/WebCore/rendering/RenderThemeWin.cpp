@@ -308,60 +308,6 @@ Color RenderThemeWin::platformInactiveSelectionForegroundColor(OptionSet<StyleCo
     return platformActiveSelectionForegroundColor(options);
 }
 
-FontCascadeDescription RenderThemeWin::systemFont(CSSValueID valueID) const
-{
-    static bool initialized;
-    static NONCLIENTMETRICS ncm;
-
-    if (!initialized) {
-        initialized = true;
-        ncm.cbSize = sizeof(NONCLIENTMETRICS);
-        ::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(ncm), &ncm, 0);
-    }
- 
-    LOGFONT logFont;
-    bool shouldUseDefaultControlFontPixelSize = false;
-    switch (valueID) {
-    case CSSValueIcon:
-        ::SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(logFont), &logFont, 0);
-        break;
-    case CSSValueMenu:
-        logFont = ncm.lfMenuFont;
-        break;
-    case CSSValueMessageBox:
-        logFont = ncm.lfMessageFont;
-        break;
-    case CSSValueStatusBar:
-        logFont = ncm.lfStatusFont;
-        break;
-    case CSSValueCaption:
-        logFont = ncm.lfCaptionFont;
-        break;
-    case CSSValueSmallCaption:
-        logFont = ncm.lfSmCaptionFont;
-        break;
-    case CSSValueWebkitSmallControl:
-    case CSSValueWebkitMiniControl: // Just map to small.
-    case CSSValueWebkitControl: // Just map to small.
-        shouldUseDefaultControlFontPixelSize = true;
-        FALLTHROUGH;
-    default: { // Everything else uses the stock GUI font.
-        HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
-        if (!hGDI)
-            return FontCascadeDescription();
-        if (::GetObject(hGDI, sizeof(logFont), &logFont) <= 0)
-            return FontCascadeDescription();
-    }
-    }
-    FontCascadeDescription fontDescription;
-    fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setOneFamily(logFont.lfFaceName);
-    fontDescription.setSpecifiedSize(shouldUseDefaultControlFontPixelSize ? defaultControlFontPixelSize : abs(logFont.lfHeight));
-    fontDescription.setWeight(logFont.lfWeight >= 700 ? boldWeightValue() : normalWeightValue()); // FIXME: Use real weight.
-    fontDescription.setIsItalic(logFont.lfItalic);
-    return fontDescription;
-}
-
 bool RenderThemeWin::supportsFocus(ControlPart appearance) const
 {
     switch (appearance) {

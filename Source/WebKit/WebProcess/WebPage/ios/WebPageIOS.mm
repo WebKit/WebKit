@@ -141,6 +141,7 @@
 #import <WebCore/ShadowRoot.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleProperties.h>
+#import <WebCore/SystemFontDatabase.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/TextPlaceholderElement.h>
@@ -4233,6 +4234,7 @@ void WebPage::drawToPDFiOS(WebCore::FrameIdentifier frameID, const PrintInfo& pr
 void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
 {
     setContentSizeCategory(contentSizeCategory);
+    SystemFontDatabase::singleton().clear();
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
 }
 

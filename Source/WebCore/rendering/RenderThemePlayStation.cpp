@@ -37,10 +37,4 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
-FontCascadeDescription RenderThemePlayStation::systemFont(CSSValueID) const
-{
-    notImplemented();
-    return FontCascadeDescription();
-}
-
 } // namespace WebCore

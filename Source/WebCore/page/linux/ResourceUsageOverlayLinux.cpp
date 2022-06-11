@@ -33,8 +33,8 @@
 #include "CommonVM.h"
 #include "GraphicsContext.h"
 #include "Page.h"
-#include "RenderTheme.h"
 #include "ResourceUsageThread.h"
+#include "SystemFontDatabase.h"
 #include <JavaScriptCore/VM.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -75,7 +75,11 @@ public:
     ResourceUsageOverlayPainter(ResourceUsageOverlay& overlay)
         : m_overlay(overlay)
     {
-        auto fontDescription = RenderTheme::singleton().systemFont(CSSValueMessageBox);
+        auto& systemFontDatabase = SystemFontDatabase::singleton();
+        auto messageBox = SystemFontDatabase::FontShorthand::MessageBox;
+        FontCascadeDescription fontDescription;
+        fontDescription.setOneFamily(systemFontDatabase.systemFontShorthandFamily(messageBox));
+        fontDescription.setWeight(systemFontDatabase.systemFontShorthandWeight(messageBox));
         fontDescription.setComputedSize(gFontSize);
         m_textFont = FontCascade(WTFMove(fontDescription), 0, 0);
         m_textFont.update(nullptr);

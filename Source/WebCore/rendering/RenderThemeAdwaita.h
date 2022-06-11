@@ -45,8 +45,6 @@ private:
     bool supportsFocusRing(const RenderStyle&) const final;
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
-    FontCascadeDescription systemFont(CSSValueID) const override { return FontCascadeDescription(); };
-
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
     Color platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const final;

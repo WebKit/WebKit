@@ -423,6 +423,82 @@ void StyleProperties::appendFontLonghandValueIfExplicit(CSSPropertyID propertyID
         commonValue = String();
 }
 
+std::optional<CSSValueID> StyleProperties::isSingleFontShorthand() const
+{
+    // Intentionally don't check font-stretch here, because it isn't set by the font shorthand in CSSPropertyParser::consumeSystemFont().
+
+    auto sizePropertyIndex = findPropertyIndex(CSSPropertyFontSize);
+    auto familyPropertyIndex = findPropertyIndex(CSSPropertyFontFamily);
+    auto stylePropertyIndex = findPropertyIndex(CSSPropertyFontStyle);
+    auto variantCapsPropertyIndex = findPropertyIndex(CSSPropertyFontVariantCaps);
+    auto weightPropertyIndex = findPropertyIndex(CSSPropertyFontWeight);
+    auto lineHeightPropertyIndex = findPropertyIndex(CSSPropertyLineHeight);
+
+    if (sizePropertyIndex == -1
+        || familyPropertyIndex == -1
+        || stylePropertyIndex == -1
+        || variantCapsPropertyIndex == -1
+        || weightPropertyIndex == -1
+        || lineHeightPropertyIndex == -1)
+        return std::nullopt;
+
+    auto sizeProperty = propertyAt(sizePropertyIndex);
+    auto familyProperty = propertyAt(familyPropertyIndex);
+    auto styleProperty = propertyAt(stylePropertyIndex);
+    auto variantCapsProperty = propertyAt(variantCapsPropertyIndex);
+    auto weightProperty = propertyAt(weightPropertyIndex);
+    auto lineHeightProperty = propertyAt(lineHeightPropertyIndex);
+
+    if (sizeProperty.isImplicit()
+        || familyProperty.isImplicit()
+        || styleProperty.isImplicit()
+        || variantCapsProperty.isImplicit()
+        || weightProperty.isImplicit()
+        || lineHeightProperty.isImplicit())
+        return std::nullopt;
+
+    auto* sizeValue = sizeProperty.value();
+    auto* familyValue = familyProperty.value();
+    auto* styleValue = styleProperty.value();
+    auto* variantCapsValue = variantCapsProperty.value();
+    auto* weightValue = weightProperty.value();
+    auto* lineHeightValue = lineHeightProperty.value();
+
+    if (!is<CSSPrimitiveValue>(sizeValue)
+        || !is<CSSPrimitiveValue>(familyValue)
+        || !is<CSSPrimitiveValue>(styleValue)
+        || !is<CSSPrimitiveValue>(variantCapsValue)
+        || !is<CSSPrimitiveValue>(weightValue)
+        || !is<CSSPrimitiveValue>(lineHeightValue))
+        return std::nullopt;
+
+    auto& sizePrimitiveValue = downcast<CSSPrimitiveValue>(*sizeValue);
+    auto& familyPrimitiveValue = downcast<CSSPrimitiveValue>(*familyValue);
+    auto& stylePrimitiveValue = downcast<CSSPrimitiveValue>(*styleValue);
+    auto& variantCapsPrimitiveValue = downcast<CSSPrimitiveValue>(*variantCapsValue);
+    auto& weightPrimitiveValue = downcast<CSSPrimitiveValue>(*weightValue);
+    auto& lineHeightPrimitiveValue = downcast<CSSPrimitiveValue>(*lineHeightValue);
+
+    auto sizeValueID = sizePrimitiveValue.valueID();
+    auto familyValueID = familyPrimitiveValue.valueID();
+    auto styleValueID = stylePrimitiveValue.valueID();
+    auto variantCapsValueID = variantCapsPrimitiveValue.valueID();
+    auto weightValueID = weightPrimitiveValue.valueID();
+    auto lineHeightValueID = lineHeightPrimitiveValue.valueID();
+
+    if (sizeValueID != familyValueID
+        || sizeValueID != styleValueID
+        || sizeValueID != variantCapsValueID
+        || sizeValueID != weightValueID
+        || sizeValueID != lineHeightValueID)
+        return std::nullopt;
+
+    if (sizeValueID == CSSValueInvalid)
+        return std::nullopt;
+
+    return sizeValueID;
+}
+
 String StyleProperties::fontValue() const
 {
     int fontSizePropertyIndex = findPropertyIndex(CSSPropertyFontSize);
@@ -434,6 +510,9 @@ String StyleProperties::fontValue() const
     PropertyReference fontFamilyProperty = propertyAt(fontFamilyPropertyIndex);
     if (fontSizeProperty.isImplicit() || fontFamilyProperty.isImplicit())
         return emptyString();
+
+    if (auto shorthand = isSingleFontShorthand())
+        return getValueNameAtomString(shorthand.value());
 
     String commonValue = fontSizeProperty.value()->cssText();
     StringBuilder result;

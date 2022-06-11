@@ -37,38 +37,6 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
-FontCascadeDescription RenderThemeGtk::systemFont(CSSValueID) const
-{
-    GtkSettings* settings = gtk_settings_get_default();
-    if (!settings)
-        return FontCascadeDescription();
-
-    // This will be a font selection string like "Sans 10" so we cannot use it as the family name.
-    GUniqueOutPtr<gchar> fontName;
-    g_object_get(settings, "gtk-font-name", &fontName.outPtr(), nullptr);
-    if (!fontName || !fontName.get()[0])
-        return FontCascadeDescription();
-
-    PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.get());
-    if (!pangoDescription)
-        return FontCascadeDescription();
-
-    FontCascadeDescription fontDescription;
-    fontDescription.setOneFamily(pango_font_description_get_family(pangoDescription));
-
-    int size = pango_font_description_get_size(pangoDescription) / PANGO_SCALE;
-    // If the size of the font is in points, we need to convert it to pixels.
-    if (!pango_font_description_get_size_is_absolute(pangoDescription))
-        size = size * (screenDPI() / 72.0);
-
-    fontDescription.setSpecifiedSize(size);
-    fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setWeight(normalWeightValue());
-    fontDescription.setItalic(FontSelectionValue());
-    pango_font_description_free(pangoDescription);
-    return fontDescription;
-}
-
 Seconds RenderThemeGtk::caretBlinkInterval() const
 {
     gboolean shouldBlink;
