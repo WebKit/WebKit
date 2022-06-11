@@ -38,7 +38,7 @@ public:
     WEBCORE_EXPORT static SystemFontDatabase& singleton();
 
     enum class FontShorthand {
-        // This needs to be kept in sync with CSSValue.
+        // This needs to be kept in sync with CSSValue and CSSPropertyParserHelpers::lowerFontShorthand().
         Caption,
         Icon,
         Menu,
@@ -68,6 +68,7 @@ public:
 #endif
         StatusBar, // This has to be kept in sync with SystemFontShorthandCache below.
     };
+    using FontShorthandUnderlyingType = std::underlying_type<FontShorthand>::type;
 
     const AtomString& systemFontShorthandFamily(FontShorthand);
     float systemFontShorthandSize(FontShorthand);

@@ -167,6 +167,7 @@ private:
     String textDecorationSkipValue() const;
     String offsetValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
+    std::optional<CSSValueID> isSingleFontShorthand() const;
     bool shorthandHasVariableReference(CSSPropertyID, String&) const;
     StringBuilder asTextInternal() const;
 

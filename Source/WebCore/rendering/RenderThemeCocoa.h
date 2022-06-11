@@ -46,8 +46,6 @@ private:
     bool paintApplePayButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
-    FontCascadeDescription systemFont(CSSValueID systemFontID) const override;
-
 #if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
     String mediaControlsStyleSheet() override;
     Vector<String, 2> mediaControlsScripts() override;

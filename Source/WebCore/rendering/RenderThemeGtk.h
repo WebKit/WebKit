@@ -29,7 +29,6 @@ class RenderThemeGtk final : public RenderThemeAdwaita {
 private:
     virtual ~RenderThemeGtk() = default;
 
-    FontCascadeDescription systemFont(CSSValueID) const override;
     Seconds caretBlinkInterval() const override;
 };
 

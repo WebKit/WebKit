@@ -56,8 +56,6 @@ private:
     bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return true; }
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
-    FontCascadeDescription systemFont(CSSValueID) const override { return FontCascadeDescription(); };
-
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const final;
     Color platformActiveSelectionForegroundColor(OptionSet<StyleColorOptions>) const final;
