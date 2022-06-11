@@ -581,11 +581,11 @@
 /* FIXME: This section of the file has not been cleaned up yet and needs major work. */
 
 /* FIXME: JSC_OBJC_API_ENABLED does not match the normal ENABLE naming convention. */
-#if !PLATFORM(COCOA)
-#if !defined(JSC_OBJC_API_ENABLED)
+//#if !PLATFORM(COCOA)
+//#if !defined(JSC_OBJC_API_ENABLED)
 #define JSC_OBJC_API_ENABLED 0
-#endif
-#endif
+//#endif
+//#endif
 
 /* The JIT is enabled by default on all x86-64 & ARM64 platforms. */
 #if !defined(ENABLE_JIT) && (CPU(X86_64) || (CPU(ARM64) && CPU(ADDRESS64)))

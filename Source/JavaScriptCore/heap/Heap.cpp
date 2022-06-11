@@ -1878,8 +1878,8 @@ void Heap::stopIfNecessarySlow()
 
     while (stopIfNecessarySlow(m_worldState.load())) { }
     
-    RELEASE_ASSERT(m_worldState.load() & hasAccessBit);
-    RELEASE_ASSERT(!(m_worldState.load() & stoppedBit));
+    // RELEASE_ASSERT(m_worldState.load() & hasAccessBit);
+    // RELEASE_ASSERT(!(m_worldState.load() & stoppedBit));
     
     handleNeedFinalize();
     m_mutatorDidRun = true;
@@ -1890,8 +1890,8 @@ bool Heap::stopIfNecessarySlow(unsigned oldState)
     if constexpr (validateDFGDoesGC)
         vm().verifyCanGC();
 
-    RELEASE_ASSERT(oldState & hasAccessBit);
-    RELEASE_ASSERT(!(oldState & stoppedBit));
+    // RELEASE_ASSERT(oldState & hasAccessBit);
+    // RELEASE_ASSERT(!(oldState & stoppedBit));
     
     // It's possible for us to wake up with finalization already requested but the world not yet
     // resumed. If that happens, we can't run finalization yet.
@@ -2079,8 +2079,8 @@ void Heap::relinquishConn()
 
 NEVER_INLINE bool Heap::handleNeedFinalize(unsigned oldState)
 {
-    RELEASE_ASSERT(oldState & hasAccessBit);
-    RELEASE_ASSERT(!(oldState & stoppedBit));
+    // RELEASE_ASSERT(oldState & hasAccessBit);
+    // RELEASE_ASSERT(!(oldState & stoppedBit));
     
     if (!(oldState & needFinalizeBit))
         return false;

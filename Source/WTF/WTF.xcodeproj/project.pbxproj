@@ -101,6 +101,7 @@
 		7AF023B52061E17000A8EFD6 /* ProcessPrivilege.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */; };
 		7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AFEC6B01EB22B5900DADE36 /* UUID.cpp */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
+		833C394827F14C8F004491D1 /* ForkExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 833C394727F14C8E004491D1 /* ForkExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */; };
 		93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 93853DD228755A6600FF4E2B /* EscapedFormsForJSON.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93934BD318A1E8C300D0D6A1 /* StringViewCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93934BD218A1E8C300D0D6A1 /* StringViewCocoa.mm */; };
@@ -1224,6 +1225,7 @@
 		7E29C33D15FFD79B00516D61 /* ObjCRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCRuntimeExtras.h; sourceTree = "<group>"; };
 		8134013615B092FD001FF0B8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64.cpp; sourceTree = "<group>"; };
 		8134013715B092FD001FF0B8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		833C394727F14C8E004491D1 /* ForkExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ForkExtras.h; path = wtf/ForkExtras.h; sourceTree = "<group>"; };
 		8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectIdentifier.cpp; sourceTree = "<group>"; };
 		83A8AC3D1FABBE94002064AC /* ObjectIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectIdentifier.h; sourceTree = "<group>"; };
 		83ABB3C020B3823200BA3306 /* WeakObjCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjCPtr.h; sourceTree = "<group>"; };
@@ -1844,6 +1846,7 @@
 		5D247B5714689B8600E78B76 = {
 			isa = PBXGroup;
 			children = (
+				833C394727F14C8E004491D1 /* ForkExtras.h */,
 				5D247B6D14689C4700E78B76 /* Configurations */,
 				DDE9931F278D0FAA00F60D26 /* Frameworks */,
 				5D247B6314689B8600E78B76 /* Products */,
@@ -2900,6 +2903,7 @@
 				DDF307E927C086DF006A526F /* ASCIIFastPath.h in Headers */,
 				DDF307EB27C086DF006A526F /* ASCIILiteral.h in Headers */,
 				DD3DC8DB27A4BF8E007E5B61 /* Assertions.h in Headers */,
+				833C394827F14C8F004491D1 /* ForkExtras.h in Headers */,
 				DD3DC90C27A4BF8E007E5B61 /* Atomics.h in Headers */,
 				DDF307CE27C086DF006A526F /* AtomString.h in Headers */,
 				DDF307E327C086DF006A526F /* AtomStringHash.h in Headers */,

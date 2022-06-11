@@ -5,10 +5,11 @@
 # -----------------------------------------------------------------------------
 if (NOT HAS_RUN_WEBKIT_COMMON)
     set(HAS_RUN_WEBKIT_COMMON TRUE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
 
     if (NOT CMAKE_BUILD_TYPE)
-        message(WARNING "No CMAKE_BUILD_TYPE value specified, defaulting to RelWithDebInfo.")
-        set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build." FORCE)
+        message(WARNING "No CMAKE_BUILD_TYPE value specified, defaulting to Release.")
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
     else ()
         message(STATUS "The CMake build type is: ${CMAKE_BUILD_TYPE}")
     endif ()
@@ -237,10 +238,8 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
     # Job pool to avoid running too many memory hungry processes
     # -----------------------------------------------------------------------------
-    if (DEFINED ENV{WEBKIT_NINJA_LINK_MAX})
-        list(APPEND WK_POOLS "link_pool_jobs=$ENV{WEBKIT_NINJA_LINK_MAX}")
-    elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
-        list(APPEND WK_POOLS link_pool_jobs=4)
+    if (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+        set_property(GLOBAL PROPERTY JOB_POOLS link_pool_jobs=4)
     else ()
         list(APPEND WK_POOLS link_pool_jobs=2)
     endif ()

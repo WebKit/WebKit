@@ -915,18 +915,32 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 
     llint/LLIntOpcode.h
 
+
+    bytecode/UnlinkedFunctionCodeBlock.h
+    bytecode/UnlinkedModuleProgramCodeBlock.h
+    bytecode/UnlinkedProgramCodeBlock.h
+    bytecode/ParseHash.h
+    bytecompiler/Label.h
+
+    parser/ExecutableInfo.h
     parser/Lexer.h
+    parser/ModuleScopeData.h
+    parser/Nodes.h
+    parser/Parser.h
     parser/ParserArena.h
     parser/ParserError.h
+    parser/ParserFunctionInfo.h
     parser/ParserModes.h
     parser/ParserTokens.h
     parser/ResultType.h
     parser/SourceCode.h
+    parser/SourceCodeKey.h
     parser/SourceProvider.h
     parser/SourceProviderCache.h
     parser/SourceProviderCacheItem.h
     parser/UnlinkedSourceCode.h
     parser/VariableEnvironment.h
+
 
     profiler/ProfilerBytecode.h
     profiler/ProfilerBytecodeSequence.h
@@ -944,6 +958,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     profiler/ProfilerOriginStack.h
     profiler/ProfilerProfiledBytecodes.h
     profiler/ProfilerUID.h
+
+    runtime/AggregateError.h
 
     runtime/AbstractModuleRecord.h
     runtime/ArgList.h
@@ -984,7 +1000,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CatchScope.h
     runtime/CellSize.h
     runtime/ClassInfo.h
-    runtime/ClonedArguments.h
+    runtime/CodeCache.h
     runtime/CodeSpecializationKind.h
     runtime/CommonIdentifiers.h
     runtime/CompilationResult.h
@@ -1019,6 +1035,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/EnsureStillAliveHere.h
     runtime/EnumerationMode.h
     runtime/Error.h
+    runtime/ErrorConstructor.h
     runtime/ErrorHandlingScope.h
     runtime/ErrorInstance.h
     runtime/ErrorPrototype.h
@@ -1315,7 +1332,49 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     yarr/YarrParser.h
     yarr/YarrPattern.h
     yarr/YarrUnicodeProperties.h
+
+    bytecode/Opcode.h
+    llint/LLIntOpcode.h
+
+    runtime/LazyClassStructureInlines.h
+    runtime/LazyPropertyInlines.h
+    runtime/JSTypedArrayViewPrototype.h
+    runtime/JSTypedArrayPrototypes.h
+    API/JSWeakValue.h
+
+    jit/JIT.h
+    bytecode/StructureStubInfo.h
+    bytecode/PolymorphicAccess.h
+    bytecode/AccessCase.h
+    bytecode/ObjectPropertyConditionSet.h
+    bytecode/PolyProtoAccessChain.h
+    bytecode/PutKind.h
+    bytecode/StructureStubClearingWatchpoint.h
+    bytecode/AdaptiveInferredPropertyValueWatchpointBase.h
+    bytecode/StubInfoSummary.h
+    runtime/CommonSlowPaths.h
+    runtime/DirectArguments.h
+    runtime/GenericArguments.h
+    runtime/ScopedArguments.h
+    runtime/JSLexicalEnvironment.h
+    jit/JITDisassembler.h
+    jit/JITInlineCacheGenerator.h
+    jit/JITMathIC.h
+    jit/JITAddGenerator.h
+    jit/JITMathICInlineResult.h
+    jit/SnippetOperand.h
+    jit/JITMulGenerator.h
+    jit/JITNegGenerator.h
+    jit/JITSubGenerator.h
+    bytecode/Repatch.h
+    jit/JITRightShiftGenerator.h
+    jit/JITBitBinaryOpGenerator.h
+    jit/JSInterfaceJIT.h
+    llint/LLIntData.h
+    bytecode/FunctionCodeBlock.h
 )
+
+
 
 if (USE_INSPECTOR_SOCKET_SERVER)
     list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS

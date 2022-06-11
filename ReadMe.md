@@ -1,3 +1,19 @@
+# WebKit with patches
+
+This is a fork of WebKit used by a new JavaScript bundler. It's not designed for usage outside the bundler.
+
+The changes to WebKit are as follows:
+
+- Many of the locks in the C API are removed. Locking is handled internally by the bundler.
+- `JSString` iterator that exposes the pointer of each nested `JSRopeString`'s underlying buffer to a callback without flattening/allocating an entirely new string. This is useful for native code piping strings from JavaScript to elsewhere, or manually allocating strings outside of `WTF::String`. `console.log` or server-side rendering (when not using streams) are examples.
+- `ExternalStringImpl` now supports static strings. This is somewhat of a hack; the better solution for this case is a script that generates all the static strings at compile time using `NeverDestroyed<StaticStringImpl>`, however need to figure out a way to do that well from Zig.
+- Several additional methods exposed in the C API, such as a fast path for checking string equality from UTF8. In a future version, all the changes to the C API should be removed in place of a new API that looks more like WebCore but with C bindings.
+- `OptionsJSC.cmake` changes to always build with debug symbols, amongst other things.
+
+Still need to figure out how to get the remote inspector to work.
+
+---
+
 # WebKit
 
 WebKit is a cross-platform web browser engine. On iOS and macOS, it powers Safari, Mail, iBooks, and many other applications.
@@ -47,7 +63,7 @@ For performance testing, and other purposes, use `--release` instead.
 
 You can open `WebKit.xcworkspace` to build and debug WebKit within Xcode.
 
-If you don't use a custom build location in Xcode preferences, you have to update the workspace settings to use `WebKitBuild` directory.  In menu bar, choose File > Workspace Settings, then click the Advanced button, select "Custom", "Relative to Workspace", and enter `WebKitBuild` for both Products and Intermediates.
+If you don't use a custom build location in Xcode preferences, you have to update the workspace settings to use `WebKitBuild` directory. In menu bar, choose File > Workspace Settings, then click the Advanced button, select "Custom", "Relative to Workspace", and enter `WebKitBuild` for both Products and Intermediates.
 
 ### Embedded Builds
 
@@ -66,6 +82,7 @@ Tools/Scripts/build-webkit --debug --<platform>-simulator
 ```
 
 or embedded devices:
+
 ```
 Tools/Scripts/build-webkit --debug --<platform>-device
 ```
@@ -155,4 +172,3 @@ Pass one of `--gtk`, `--jsc-only`, or `--wpe` to indicate the port to use.
 ## Contribute
 
 Congratulations! You’re up and running. Now you can begin coding in WebKit and contribute your fixes and new features to the project. For details on submitting your code to the project, read [Contributing Code](https://webkit.org/contributing-code/).
-

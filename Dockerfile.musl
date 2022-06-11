@@ -1,0 +1,66 @@
+FROM alpine:3.15 as base
+
+RUN apk update
+RUN apk add --no-cache cmake make clang clang-static clang-dev llvm12-dev llvm12-static musl-dev git lld  libgcc gcc  g++ libstdc++ build-base lld-dev lld-static llvm12-libs libc-dev xz zlib zlib-dev libxml2 libxml2-dev
+
+ENV CXX=clang++
+ENV CC=clang
+ENV LDFLAGS='-L/usr/include -L/usr/include/llvm12'
+ENV CXXFLAGS="-I/usr/include -I/usr/include/llvm12"
+ENV PATH="/usr/bin:/usr/local/bin:/zig/bin:$PATH"
+
+FROM base as build_webkit
+
+RUN apk add --no-cache cpio curl file gnupg icu-dev ninja ruby unzip rsync perl python2 openssl-dev openssl linux-headers
+
+ENV WEBKIT_OUT_DIR=/webkit
+# These are unnecessary on musl
+# ENV CFLAGS="$CFLAGS -ffat-lto-objects"
+# ENV CXXFLAGS="$CXXFLAGS -ffat-lto-objects"
+
+WORKDIR /webkit-build
+
+COPY . /webkit-src
+
+RUN --mount=type=tmpfs,target=/webkit-build; \
+    cmake \
+    -DPORT="JSCOnly" \
+    -DENABLE_STATIC_JSC=ON \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DUSE_THIN_ARCHIVES=OFF \
+    -DENABLE_FTL_JIT=ON \
+    -G Ninja \
+    -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_C_COMPILER=clang \
+    /webkit-src && \
+    cd /webkit-build && \
+    cmake --build /webkit-build --config release -- "jsc" && \
+    mkdir -p ${WEBKIT_OUT_DIR}/lib ${WEBKIT_OUT_DIR}/include/JavaScriptCore && \
+    cp -r /webkit-build/lib/*.a $WEBKIT_OUT_DIR/lib && \
+    cp /webkit-build/*.h $WEBKIT_OUT_DIR/include && \
+    find /webkit-build/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} $WEBKIT_OUT_DIR/include/JavaScriptCore/ \; && \
+    find /webkit-build/JavaScriptCore/PrivateHeaders/JavaScriptCore/ -name "*.h" -exec cp {} $WEBKIT_OUT_DIR/include/JavaScriptCore/ \; && \
+    cp -r /webkit-build/WTF/Headers/wtf/ $WEBKIT_OUT_DIR/include && \
+    cp -r /webkit-build/bmalloc/Headers/bmalloc/ $WEBKIT_OUT_DIR/include && echo "Done";
+
+
+FROM base as build_icu
+
+RUN apk add --no-cache cpio curl icu-dev tar
+
+
+WORKDIR /icu-src
+RUN --mount=type=tmpfs,target=/icu-src; curl -L https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz > icu4c-66_1-src.tgz && \
+    tar -xzf icu4c-66_1-src.tgz && \
+    rm icu4c-66_1-src.tgz && \
+    cd icu/source && \
+    ./configure --enable-static --disable-shared && \
+    make -j$(nproc) && \
+    mkdir -p /icu && \
+    cp -r lib/*.a /icu
+
+
+FROM alpine:3.15 as webkit
+
+COPY --from=build_webkit /webkit /webkit
+COPY --from=build_icu /icu/*.a /webkit/lib
