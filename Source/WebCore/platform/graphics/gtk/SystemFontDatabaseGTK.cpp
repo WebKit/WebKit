@@ -22,8 +22,11 @@
 #include "config.h"
 #include "SystemFontDatabase.h"
 
+#include "PlatformScreen.h"
 #include "WebKitFontFamilyNames.h"
+#include <gtk/gtk.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 

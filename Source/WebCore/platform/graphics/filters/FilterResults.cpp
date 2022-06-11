@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FilterResults.h"
 
+#include "ImageBuffer.h"
+
 namespace WebCore {
 
 FilterResults::FilterResults(std::unique_ptr<ImageBufferAllocator>&& allocator)
