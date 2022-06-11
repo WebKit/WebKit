@@ -6,7 +6,7 @@ export DOCKER_BUILDKIT=1
 
 export BUILDKIT_ARCH=$(uname -m)
 export ARCH=${BUILDKIT_ARCH}
-export LTO_FLAG=${LTO_FLAG:-""}
+
 if [ "$BUILDKIT_ARCH" == "amd64" ]; then
     export BUILDKIT_ARCH="amd64"
     export ARCH=x64
@@ -40,7 +40,19 @@ if [ "$WEBKIT_RELEASE_TYPE" == "relwithdebuginfo" ]; then
     CONTAINER_NAME=bun-webkit-linux-$BUILDKIT_ARCH-dbg
 fi
 
-mkdir -p $temp
-rm -rf $temp/bun-webkit
+temp=$(mktemp -d)
 
-docker buildx build -f Dockerfile -t $CONTAINER_NAME --build-arg LTO_FLAG=$LTO_FLAG --progress=plain --platform=linux/$BUILDKIT_ARCH --target=artifact --output type=local,dest=$temp/bun-webkit .
+docker build . -t $CONTAINER_NAME --progress=plain --platform=linux/$BUILDKIT_ARCH
+
+if $? -ne 0; then
+    echo "Failed to build container"
+    exit 1
+fi
+
+id=$(docker create $CONTAINER_NAME:latest)
+docker cp $id:/output $temp/bun-webkit
+
+cd $temp && tar -cf $CONTAINER_NAME.tar bun-webkit && gzip $CONTAINER_NAME.tar >$CONTAINER_NAME.tar.gz
+docker rm -v $id
+
+gh release upload $TAG $temp/$CONTAINER_NAME.tar.gz --clobber --repo Jarred-Sumner/webkit

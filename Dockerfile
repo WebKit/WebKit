@@ -1,61 +1,77 @@
-ARG MARCH_FLAG=""
-ARG WEBKIT_RELEASE_TYPE=Release
-ARG CPU=native
-ARG LTO_FLAG="-flto='full'"
+# BuildKit is required to build this
+# Enable via DOCKER_BUILDKIT=1 
+FROM ubuntu:20.04
 
-FROM bitnami/minideb:bullseye as base
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install --no-install-recommends -y wget gnupg2 curl lsb-release wget software-properties-common
 
-ARG MARCH_FLAG
-ARG WEBKIT_RELEASE_TYPE
-ARG CPU
-ARG LTO_FLAG
-RUN install_packages ca-certificates curl wget lsb-release software-properties-common gnupg gnupg1 gnupg2
+RUN wget https://apt.llvm.org/llvm.sh --no-check-certificate
+RUN chmod +x llvm.sh
+RUN ./llvm.sh 13
 
-RUN wget https://apt.llvm.org/llvm.sh && \
-    chmod +x llvm.sh && \
-    ./llvm.sh 13
-
-RUN install_packages \
+# Use the same version of LLVM/clang used to build Zig
+# This prevents the allocation failure
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    bc \
+    build-essential \
+    ca-certificates \
+    clang-13 \
+    clang-format-13 \
     cmake \
+    cpio \
     curl \
     file \
+    g++ \
+    gcc \
     git \
-    gnupg \
-    libc-dev \
-    libxml2 \
-    libxml2-dev \
+    gnupg2 \
+    libicu66 \ 
+    libc++-13-dev \
+    libc++abi-13-dev \
+    libclang-13-dev \
+    liblld-13-dev \
+    libssl-dev \
+    lld-13 \
     make \
     ninja-build \
     perl \
-    python3 \
+    python2 \
     rsync \
     ruby \
+    software-properties-common \
     unzip \
-    bash tar gzip \
-    libicu-dev
+    wget
 
-ENV CXX=clang++-13
-ENV CC=clang-13
+RUN update-alternatives --install /usr/bin/ld ld /usr/bin/lld-13 90 && \
+    update-alternatives --install /usr/bin/cc cc /usr/bin/clang-13 90 && \
+    update-alternatives --install /usr/bin/cpp cpp /usr/bin/clang++-13 90 && \
+    update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++-13 90
 
 
 ENV WEBKIT_OUT_DIR=/webkitbuild
-RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
-RUN cp -r /usr/lib/$(uname -m)-linux-gnu/libicu* /output/lib
+ENV CC=clang-13 
+ENV CXX=clang++-13
 
 COPY . /webkit
 WORKDIR /webkit
 
+RUN mkdir -p /output/lib /output/include /output/include/JavaScriptCore /output/include/wtf /output/include/bmalloc
 
+ARG WEBKIT_RELEASE_TYPE=Release
 
-ENV CPU=${CPU}
-ENV MARCH_FLAG=${MARCH_FLAG}
-ENV LTO_FLAG=${LTO_FLAG}
+# | Explanation                                                                                    |                                                Flag 
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
+# | Use the "JSCOnly" WebKit port                                                                  |                                  -DPORT="JSCOnly" |
+# | Build JavaScriptCore as a static library                                                       |                            -DENABLE_STATIC_JSC=ON |
+# | Build for release mode but include debug symbols                                               |               -DCMAKE_BUILD_TYPE=relwithdebuginfo |            
+# | The .a files shouldn't be symlinks to UnifiedSource.cpp files or else you can't move the files |                           -DUSE_THIN_ARCHIVES=OFF |        
+# | Enable the FTL Just-In-Time Compiler                                                           |                               -DENABLE_FTL_JIT=ON |        
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+# Using tmpfs this way makes it compile 2x faster
+# But means everything has to be one "RUN" statement
 RUN --mount=type=tmpfs,target=/webkitbuild \
-    export CFLAGS="$CFLAGS $LTO_FLAG -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
-    export CXXFLAGS="$CXXFLAGS $LTO_FLAG -ffat-lto-objects $MARCH_FLAG -mtune=$CPU" && \
     cd /webkitbuild && \
     cmake \
     -DPORT="JSCOnly" \
@@ -64,29 +80,15 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     -DUSE_THIN_ARCHIVES=OFF \
     -DENABLE_FTL_JIT=ON \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-    -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
     -G Ninja \ 
     -DCMAKE_CXX_COMPILER=$(which clang++-13) \
-    -DCMAKE_C_COMPILER=$(which clang-13) \
-    -DCMAKE_C_FLAGS="$CFLAGS" \
-    -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
+    -DCMAKE_C_COMPILER=$(which clang-13) \ 
     /webkit && \
     cd /webkitbuild && \
-    CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE --target "jsc" && \
+    CFLAGS="$CFLAGS -ffat-lto-objects" CXXFLAGS="$CXXFLAGS -ffat-lto-objects" cmake --build /webkitbuild --config $WEBKIT_RELEASE_TYPE -- "jsc" -j$(nproc) && \
     cp -r $WEBKIT_OUT_DIR/lib/*.a /output/lib && \
     cp $WEBKIT_OUT_DIR/*.h /output/include && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/Headers/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
     find $WEBKIT_OUT_DIR/JavaScriptCore/PrivateHeaders/JavaScriptCore/ -name "*.h" -exec cp {} /output/include/JavaScriptCore/ \; && \
     cp -r $WEBKIT_OUT_DIR/WTF/Headers/wtf/ /output/include && \
-    cp -r $WEBKIT_OUT_DIR/bmalloc/Headers/bmalloc/ /output/include && \
-    mkdir -p /output/Source/JavaScriptCore && \
-    cp -r /webkit/Source/JavaScriptCore/Scripts /output/Source/JavaScriptCore && \
-    cp /webkit/Source/JavaScriptCore/create_hash_table /output/Source/JavaScriptCore && \
-    echo "";
-
-
-
-FROM scratch as artifact
-
-COPY --from=base /output /
-
+    cp -r $WEBKIT_OUT_DIR/bmalloc/Headers/bmalloc/ /output/include; echo "";
