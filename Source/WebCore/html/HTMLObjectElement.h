@@ -93,6 +93,8 @@ private:
 
     FormNamedItem* asFormNamedItem() final { return this; }
     FormAssociatedElement* asFormAssociatedElement() final { return this; }
+
+    // These functions can be called concurrently for ValidityState.
     HTMLObjectElement& asHTMLElement() final { return *this; }
     const HTMLObjectElement& asHTMLElement() const final { return *this; }
 

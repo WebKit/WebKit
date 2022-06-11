@@ -181,8 +181,10 @@ private:
     void startDelayingUpdateValidity() { ++m_delayedUpdateValidityCount; }
     void endDelayingUpdateValidity();
 
+    // These functions can be called concurrently for ValidityState.
     HTMLElement& asHTMLElement() final { return *this; }
     const HTMLFormControlElement& asHTMLElement() const final { return *this; }
+
     FormNamedItem* asFormNamedItem() final { return this; }
     FormAssociatedElement* asFormAssociatedElement() final { return this; }
 

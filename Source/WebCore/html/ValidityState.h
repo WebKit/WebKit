@@ -1,7 +1,7 @@
 /*
  * This file is part of the WebKit project.
  *
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +31,9 @@ namespace WebCore {
 // but that would have a small runtime cost, and no significant benefit. We'd prefer to implement this
 // as a typedef of FormAssociatedElement, but that would require changes to bindings generation.
 class ValidityState : public FormAssociatedElement {
+public:
+    Element* element() { return &asHTMLElement(); }
+    Node* opaqueRootConcurrently() { return &asHTMLElement(); }
 };
 
 inline ValidityState* FormAssociatedElement::validity()
