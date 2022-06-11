@@ -29,6 +29,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "FontCascade.h"
+#include "InlineTextBoxStyle.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
 #include "TextUtil.h"
@@ -102,6 +103,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     else
         processNonBidiContent(lineContent, lineBox, displayLine, boxes);
     processOverflownRunsForEllipsis(boxes, displayLine.right());
+    collectInkOverflowForTextDecorations(boxes, displayLine);
     collectInkOverflowForInlineBoxes(boxes);
     return boxes;
 }
@@ -788,7 +790,7 @@ void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(DisplayBoxes&
     for (size_t index = boxes.size(); index--;) {
         auto& displayBox = boxes[index];
 
-        auto mayHaveInkOverflow = displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox() || displayBox.isNonRootInlineBox();
+        auto mayHaveInkOverflow = displayBox.isText() || displayBox.isAtomicInlineLevelBox() || displayBox.isGenericInlineLevelBox() || displayBox.isNonRootInlineBox();
         if (!mayHaveInkOverflow)
             continue;
         if (displayBox.isNonRootInlineBox() && !accumulatedInkOverflowRect.isEmpty())
@@ -802,6 +804,75 @@ void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(DisplayBoxes&
             accumulatedInkOverflowRect = displayBox.inkOverflow();
         else
             accumulatedInkOverflowRect.expandToContain(displayBox.inkOverflow());
+    }
+}
+
+static float logicalBottomForTextDecorationContent(const DisplayBoxes& boxes, bool isHorizontalWritingMode)
+{
+    auto logicalBottom = std::optional<float> { };
+    for (auto& displayBox : boxes) {
+        if (displayBox.isRootInlineBox())
+            continue;
+        if (!displayBox.style().textDecorationsInEffect().contains(TextDecorationLine::Underline))
+            continue;
+        if (displayBox.isText() || displayBox.style().textDecorationSkipInk() == TextDecorationSkipInk::None) {
+            auto contentLogicalBottom = isHorizontalWritingMode ? displayBox.bottom() : displayBox.right();
+            logicalBottom = logicalBottom ? std::max(*logicalBottom, contentLogicalBottom) : contentLogicalBottom;
+        }
+    }
+    // This function is not called unless there's at least one run on the line with TextDecorationLine::Underline.
+    ASSERT(logicalBottom);
+    return logicalBottom.value_or(0.f);
+}
+
+void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(DisplayBoxes& boxes, const InlineDisplay::Line& displayLine)
+{
+    auto logicalBottomForTextDecoration = std::optional<float> { };
+    auto writingMode = root().style().writingMode();
+    auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(writingMode);
+
+    for (auto& displayBox : boxes) {
+        if (!displayBox.isText())
+            continue;
+
+        auto& style = displayBox.style();
+        auto textDecorations = style.textDecorationsInEffect();
+        if (!textDecorations)
+            continue;
+
+        auto underlineOffset = [&]() -> std::optional<float> {
+            if (!textDecorations.contains(TextDecorationLine::Underline))
+                return { };
+            if (!logicalBottomForTextDecoration)
+                logicalBottomForTextDecoration = logicalBottomForTextDecorationContent(boxes, isHorizontalWritingMode);
+            auto textRunLogicalOffsetFromLineBottom = *logicalBottomForTextDecoration - (isHorizontalWritingMode ? displayBox.bottom() : displayBox.right());
+            // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
+            return computeUnderlineOffset({ style, defaultGap(style), UnderlineOffsetArguments::TextUnderlinePositionUnder { displayLine.baselineType(), displayBox.height(), textRunLogicalOffsetFromLineBottom } }) + 1.0f;
+        };
+
+        auto decorationOverflow = visualOverflowForDecorations(style, underlineOffset());
+        if (!decorationOverflow.isEmpty()) {
+            m_contentHasInkOverflow = true;
+            auto inflatedVisualOverflowRect = [&] {
+                auto inkOverflowRect = displayBox.inkOverflow();
+                switch (writingMode) {
+                case WritingMode::TopToBottom:
+                    inkOverflowRect.inflate(decorationOverflow.left, decorationOverflow.top, decorationOverflow.right, decorationOverflow.bottom);
+                    break;
+                case WritingMode::LeftToRight:
+                    inkOverflowRect.inflate(decorationOverflow.bottom, decorationOverflow.right, decorationOverflow.top, decorationOverflow.left);
+                    break;
+                case WritingMode::RightToLeft:
+                    inkOverflowRect.inflate(decorationOverflow.top, decorationOverflow.right, decorationOverflow.bottom, decorationOverflow.left);
+                    break;
+                default:
+                    ASSERT_NOT_REACHED();
+                    break;
+                }
+                return inkOverflowRect;
+            };
+            displayBox.adjustInkOverflow(inflatedVisualOverflowRect());
+        }
     }
 }
 

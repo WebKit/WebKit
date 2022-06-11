@@ -137,7 +137,7 @@ struct Box {
     {
         auto offset = physicalTop - top();
         m_unflippedVisualRect.setY(physicalTop);
-        m_inkOverflow.shiftMaxYEdgeTo(m_inkOverflow.y() + offset);
+        m_inkOverflow.setY(m_inkOverflow.y() + offset);
     }
     void setBottom(float physicalBottom)
     {

@@ -53,6 +53,7 @@ private:
     void processBidiContent(const LineBuilder::LineContent&, const LineBox&, const InlineDisplay::Line&, DisplayBoxes&);
     void processOverflownRunsForEllipsis(DisplayBoxes&, InlineLayoutUnit lineBoxRight);
     void collectInkOverflowForInlineBoxes(DisplayBoxes&);
+    void collectInkOverflowForTextDecorations(DisplayBoxes&, const InlineDisplay::Line&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);

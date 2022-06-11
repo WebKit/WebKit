@@ -244,15 +244,13 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
 
     // Compensate for the integral ceiling in GraphicsContext::computeLineBoundsAndAntialiasingModeForText()
     int underlineOffset = 1;
-    float textDecorationBaseFontSize = 16;
-    auto defaultGap = lineStyle.computedFontSize() / textDecorationBaseFontSize;
     // FIXME: RenderStyle calls us with empty textRun but only when TextUnderlinePosition is not Under.
     ASSERT(textRun || lineStyle.textUnderlinePosition() != TextUnderlinePosition::Under);
     if (!textRun)
-        underlineOffset += computeUnderlineOffset({ lineStyle, defaultGap });
+        underlineOffset += computeUnderlineOffset({ lineStyle, defaultGap(lineStyle) });
     else {
         underlineOffset += computeUnderlineOffset({ lineStyle
-            , defaultGap
+            , defaultGap(lineStyle)
             , UnderlineOffsetArguments::TextUnderlinePositionUnder { textRun->lineBox()->baselineType(), textRun->logicalBottom() - textRun->logicalTop(), textRunLogicalOffsetFromLineBottom(textRun) }
         });
     }
@@ -263,5 +261,11 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle)
 {
     return visualOverflowForDecorations(lineStyle, InlineIterator::TextBoxIterator { });
 }
-    
+
+float defaultGap(const RenderStyle& lineStyle)
+{
+    const float textDecorationBaseFontSize = 16.f;
+    return lineStyle.computedFontSize() / textDecorationBaseFontSize;
+}
+
 }
