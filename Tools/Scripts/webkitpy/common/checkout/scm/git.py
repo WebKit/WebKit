@@ -361,7 +361,7 @@ class Git(SCM, SVNRepository):
         if not commit_message or merge_base == head:
             command = [self.executable_name, 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames']
         else:
-            command = [self.executable_name, 'format-patch', '--stdout', '--binary']
+            command = [self.executable_name, 'format-patch', '--no-signature', '--stdout', '--binary']
 
         # Put code changes at the top of the patch and layout tests
         # at the bottom, this makes for easier reviewing.
