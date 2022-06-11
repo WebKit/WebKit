@@ -77,7 +77,8 @@ void updateRequestReferrer(ResourceRequest& request, ReferrerPolicy referrerPoli
 void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& securityOrigin, StoredCredentialsPolicy storedCredentialsPolicy)
 {
     request.removeCredentials();
-    request.setAllowCookies(storedCredentialsPolicy == StoredCredentialsPolicy::Use);
+    if (request.allowCookies())
+        request.setAllowCookies(storedCredentialsPolicy == StoredCredentialsPolicy::Use);
     request.setHTTPOrigin(securityOrigin.toString());
 }
 

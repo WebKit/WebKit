@@ -24,19 +24,24 @@
  */
 
 #import "config.h"
-#import <WebKit/WKFoundation.h>
 
+#import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import <WebKit/WKContentRuleList.h>
 #import <WebKit/WKContentRuleListStorePrivate.h>
+#import <WebKit/WKFoundation.h>
+#import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKContentRuleListAction.h>
 #import <WebKit/_WKUserContentExtensionStore.h>
 #import <WebKit/_WKUserContentFilter.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
@@ -204,6 +209,83 @@ TEST_F(WKContentRuleListStoreTest, Removal)
         doneRemoving = true;
     }];
     TestWebKitAPI::Util::run(&doneRemoving);
+}
+
+TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
+{
+    using namespace TestWebKitAPI;
+
+    auto cookiePresentWhenBlocking = [] (bool blockCookies) {
+
+        std::optional<bool> requestHadCookieResult;
+
+        HTTPServer server(HTTPServer::UseCoroutines::Yes, [&] (Connection connection) -> Task {
+            while (true) {
+                auto request = co_await connection.awaitableReceiveHTTPRequest();
+                auto path = HTTPServer::parsePath(request);
+                auto response = [&] {
+                    if (path == "/com"_s)
+                        return HTTPResponse({ { "Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s } }, "<script>alert('hi')</script>"_s);
+                    if (path == "/org"_s)
+                        return HTTPResponse("<script>fetch('https://example.com/cookie-check', {credentials: 'include'})</script>"_s);
+                    if (path == "/cookie-check"_s) {
+                        auto cookieHeader = "Cookie: testCookie=42";
+                        requestHadCookieResult = memmem(request.data(), request.size(), cookieHeader, strlen(cookieHeader));
+                        return HTTPResponse("hi"_s);
+                    }
+                    RELEASE_ASSERT_NOT_REACHED();
+                }();
+                co_await connection.awaitableSend(response.serialize());
+            }
+        }, HTTPServer::Protocol::HttpsProxy);
+
+        auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        [storeConfiguration setAllowsServerPreconnect:NO];
+        [storeConfiguration setProxyConfiguration:@{
+            (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+            (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
+        }];
+
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+        [dataStore _setResourceLoadStatisticsEnabled:NO];
+        __block bool setPolicy { false };
+        [dataStore.get().httpCookieStore _setCookieAcceptPolicy:NSHTTPCookieAcceptPolicyAlways completionHandler:^{
+            setPolicy = true;
+        }];
+        Util::run(&setPolicy);
+
+        auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+        [viewConfiguration setWebsiteDataStore:dataStore.get()];
+
+        if (blockCookies) {
+            __block bool doneCompiling { false };
+            NSString *json = @"[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"cookie-check\"}}]";
+            [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"TestBlockCookies" encodedContentRuleList:json completionHandler:^(WKContentRuleList *compiledRuleList, NSError *error) {
+                EXPECT_FALSE(error);
+                [[viewConfiguration userContentController] addContentRuleList:compiledRuleList];
+                doneCompiling = true;
+            }];
+            TestWebKitAPI::Util::run(&doneCompiling);
+        }
+
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+        auto delegate = adoptNS([TestNavigationDelegate new]);
+        delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        };
+        webView.get().navigationDelegate = delegate.get();
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/com"]]];
+        [delegate waitForDidFinishNavigation];
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.org/org"]]];
+        while (!requestHadCookieResult)
+            Util::spinRunLoop();
+        return *requestHadCookieResult;
+    };
+
+    EXPECT_FALSE(cookiePresentWhenBlocking(true));
+    EXPECT_TRUE(cookiePresentWhenBlocking(false));
 }
 
 TEST_F(WKContentRuleListStoreTest, NonExistingIdentifierRemove)
