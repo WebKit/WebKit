@@ -1755,6 +1755,7 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
         // deleted and only dirtied. In that case, we can layout the replaced
         // elements at the same time.
         bool hasInlineChild = false;
+        auto hasDirtyRenderCounterWithInlineBoxParent = false;
         Vector<RenderBox*> replacedChildren;
         for (InlineWalker walker(m_flow); !walker.atEnd(); walker.advance()) {
             RenderObject& o = *walker.current();
@@ -1791,14 +1792,27 @@ void LegacyLineLayout::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repain
                         box.layoutIfNeeded();
                 }
             } else if (o.isTextOrLineBreak() || is<RenderInline>(o)) {
-                if (layoutState.isFullLayout() || o.selfNeedsLayout())
+                if (layoutState.isFullLayout() || o.selfNeedsLayout()) {
                     dirtyLineBoxesForRenderer(o, layoutState.isFullLayout());
+                    hasDirtyRenderCounterWithInlineBoxParent = hasDirtyRenderCounterWithInlineBoxParent || (is<RenderCounter>(o) && is<RenderInline>(o.parent()));
+                }
                 o.clearNeedsLayout();
             }
         }
 
         for (size_t i = 0; i < replacedChildren.size(); i++)
             replacedChildren[i]->layoutIfNeeded();
+
+        auto clearNeedsLayoutIfNeeded = [&] {
+            if (!hasDirtyRenderCounterWithInlineBoxParent)
+                return;
+            for (InlineWalker walker(m_flow); !walker.atEnd(); walker.advance()) {
+                auto& renderer = *walker.current();
+                if (is<RenderCounter>(renderer) || is<RenderInline>(renderer))
+                    renderer.clearNeedsLayout();
+            }
+        };
+        clearNeedsLayoutIfNeeded();
 
         layoutRunsAndFloats(layoutState, hasInlineChild);
     }
