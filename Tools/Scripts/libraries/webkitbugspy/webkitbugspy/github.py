@@ -111,7 +111,8 @@ class Tracker(GenericTracker):
             expiration = response.headers.get('github-authentication-token-expiration', None)
             if expiration:
                 expiration = int(calendar.timegm(datetime.strptime(expiration, '%Y-%m-%d %H:%M:%S UTC').timetuple()))
-            if (expiration is None or expiration > time.time()) and response.status_code == 200 and response.json().get('login') == username:
+                expiring_soon = expiration - 12 * 60 * 60  # Consider a token expiring in the next 12 hours to be expired
+            if (expiration is None or expiring_soon > int(time.time())) and response.status_code == 200 and response.json().get('login') == username:
                 return True
             sys.stderr.write('Login to {} for {} failed\n'.format(self.api_url, username))
             return False
