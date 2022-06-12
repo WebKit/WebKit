@@ -352,7 +352,10 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
     } else
         positionedObjects.append(&box);
 
-    m_width.addUncommittedWidth(inlineLogicalWidth(box));
+    if (auto inlineBoxStartWidth = inlineLogicalWidth(box)) {
+        m_width.addUncommittedWidth(inlineBoxStartWidth);
+        m_appliedStartWidth = true;
+    }
     // Reset prior line break context characters.
     m_renderTextInfo.lineBreakIterator.resetPriorContext();
 }
@@ -637,9 +640,6 @@ inline float BreakingContext::computeAdditionalBetweenWordsWidth(RenderText& ren
 
 inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool& hyphenated,  unsigned& consecutiveHyphenatedLines)
 {
-    if (!m_current.offset())
-        m_appliedStartWidth = false;
-
     auto& renderer = downcast<RenderText>(*m_current.renderer());
     bool isSVGText = renderer.isSVGInlineText();
 
@@ -1050,6 +1050,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             m_atEnd = true;
         }
     }
+    m_appliedStartWidth = false;
     return false;
 }
 
