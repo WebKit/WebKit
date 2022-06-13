@@ -4588,7 +4588,7 @@
             ],
             "codegen-properties": {
                 "converter": "TextAlign",
-                "custom": "Initial|Value"
+                "custom": "All"
             },
             "specification": {
                 "category": "css-22",

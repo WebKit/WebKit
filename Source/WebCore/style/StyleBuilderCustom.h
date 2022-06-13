@@ -112,6 +112,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(OutlineStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Size);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Stroke);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(TextAlign);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextEmphasisStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextIndent);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextShadow);
@@ -137,8 +138,6 @@ public:
     static void applyValueVerticalAlign(BuilderState&, CSSValue&);
 
     // Custom handling of initial + value only.
-    static void applyInitialTextAlign(BuilderState&);
-    static void applyValueTextAlign(BuilderState&, CSSValue&);
     static void applyInitialTextAlignLast(BuilderState&);
     static void applyValueTextAlignLast(BuilderState&, CSSValue&);
 
@@ -203,6 +202,12 @@ inline void BuilderCustom::applyInitialTextAlign(BuilderState& builderState)
 inline void BuilderCustom::applyValueTextAlign(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setTextAlign(BuilderConverter::convertTextAlign(builderState, value));
+    builderState.style().setHasExplicitlySetTextAlign(true);
+}
+
+inline void BuilderCustom::applyInheritTextAlign(BuilderState& builderState)
+{
+    builderState.style().setTextAlign(builderState.parentStyle().textAlign());
     builderState.style().setHasExplicitlySetTextAlign(true);
 }
 
