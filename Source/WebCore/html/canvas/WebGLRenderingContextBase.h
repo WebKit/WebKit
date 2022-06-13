@@ -138,6 +138,39 @@ using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
 class VideoFrame;
 #endif
 
+class InspectorScopedShaderProgramHighlight {
+public:
+    InspectorScopedShaderProgramHighlight(WebGLRenderingContextBase&, WebGLProgram*);
+
+    ~InspectorScopedShaderProgramHighlight();
+
+private:
+    void showHighlight();
+    void hideHighlight();
+
+    template <typename T>
+    void saveBlendValue(GCGLenum attachment, T& destination);
+
+    bool hasBufferBinding(GCGLenum pname);
+
+    bool hasFramebufferParameterAttachment(GCGLenum attachment);
+
+    struct {
+        RefPtr<Float32Array> color;
+        unsigned equationRGB { 0 };
+        unsigned equationAlpha { 0 };
+        unsigned srcRGB { 0 };
+        unsigned srcAlpha { 0 };
+        unsigned dstRGB { 0 };
+        unsigned dstAlpha { 0 };
+        bool enabled { false };
+    } m_savedBlend;
+
+    WebGLRenderingContextBase& m_context;
+    WebGLProgram* m_program { nullptr };
+    bool m_didApply { false };
+};
+
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:

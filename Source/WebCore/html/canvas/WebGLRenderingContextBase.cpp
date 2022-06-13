@@ -671,122 +671,103 @@ static bool possibleFormatAndTypeForInternalFormat(GCGLenum internalFormat, GCGL
 
 #endif
 
-class InspectorScopedShaderProgramHighlight {
-public:
-    InspectorScopedShaderProgramHighlight(WebGLRenderingContextBase& context, WebGLProgram* program)
-        : m_context(context)
-        , m_program(program)
-    {
-        showHightlight();
-    }
+InspectorScopedShaderProgramHighlight::InspectorScopedShaderProgramHighlight(WebGLRenderingContextBase& context, WebGLProgram* program)
+    : m_context(context)
+    , m_program(program)
+{
+    showHighlight();
+}
 
-    ~InspectorScopedShaderProgramHighlight()
-    {
-        hideHighlight();
-    }
+InspectorScopedShaderProgramHighlight::~InspectorScopedShaderProgramHighlight()
+{
+    hideHighlight();
+}
 
-private:
-    void showHightlight()
-    {
-        if (!m_program || LIKELY(!InspectorInstrumentation::isWebGLProgramHighlighted(m_context, *m_program)))
+void InspectorScopedShaderProgramHighlight::showHighlight()
+{
+    if (!m_program || LIKELY(!InspectorInstrumentation::isWebGLProgramHighlighted(m_context, *m_program)))
+        return;
+
+    if (hasBufferBinding(GraphicsContextGL::FRAMEBUFFER_BINDING)) {
+        if (!hasBufferBinding(GraphicsContextGL::RENDERBUFFER_BINDING))
             return;
-
-        if (hasBufferBinding(GraphicsContextGL::FRAMEBUFFER_BINDING)) {
-            if (!hasBufferBinding(GraphicsContextGL::RENDERBUFFER_BINDING))
-                return;
-            if (hasFramebufferParameterAttachment(GraphicsContextGL::DEPTH_ATTACHMENT))
-                return;
-            if (hasFramebufferParameterAttachment(GraphicsContextGL::STENCIL_ATTACHMENT))
-                return;
+        if (hasFramebufferParameterAttachment(GraphicsContextGL::DEPTH_ATTACHMENT))
+            return;
+        if (hasFramebufferParameterAttachment(GraphicsContextGL::STENCIL_ATTACHMENT))
+            return;
 #if ENABLE(WEBGL2)
-            if (hasFramebufferParameterAttachment(GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT))
-                return;
-#endif
-        }
-
-        saveBlendValue(GraphicsContextGL::BLEND_COLOR, m_savedBlend.color);
-        saveBlendValue(GraphicsContextGL::BLEND_EQUATION_RGB, m_savedBlend.equationRGB);
-        saveBlendValue(GraphicsContextGL::BLEND_EQUATION_ALPHA, m_savedBlend.equationAlpha);
-        saveBlendValue(GraphicsContextGL::BLEND_SRC_RGB, m_savedBlend.srcRGB);
-        saveBlendValue(GraphicsContextGL::BLEND_SRC_ALPHA, m_savedBlend.srcAlpha);
-        saveBlendValue(GraphicsContextGL::BLEND_DST_RGB, m_savedBlend.dstRGB);
-        saveBlendValue(GraphicsContextGL::BLEND_DST_ALPHA, m_savedBlend.dstAlpha);
-        saveBlendValue(GraphicsContextGL::BLEND, m_savedBlend.enabled);
-
-        static const GCGLfloat red = 111.0 / 255.0;
-        static const GCGLfloat green = 168.0 / 255.0;
-        static const GCGLfloat blue = 220.0 / 255.0;
-        static const GCGLfloat alpha = 2.0 / 3.0;
-
-        m_context.enable(GraphicsContextGL::BLEND);
-        m_context.blendColor(red, green, blue, alpha);
-        m_context.blendEquation(GraphicsContextGL::FUNC_ADD);
-        m_context.blendFunc(GraphicsContextGL::CONSTANT_COLOR, GraphicsContextGL::ONE_MINUS_SRC_ALPHA);
-
-        m_didApply = true;
-    }
-
-    void hideHighlight()
-    {
-        if (!m_didApply)
+        if (hasFramebufferParameterAttachment(GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT))
             return;
-
-        if (!m_savedBlend.enabled)
-            m_context.disable(GraphicsContextGL::BLEND);
-
-        const RefPtr<Float32Array>& color = m_savedBlend.color;
-        m_context.blendColor(color->item(0), color->item(1), color->item(2), color->item(3));
-        m_context.blendEquationSeparate(m_savedBlend.equationRGB, m_savedBlend.equationAlpha);
-        m_context.blendFuncSeparate(m_savedBlend.srcRGB, m_savedBlend.dstRGB, m_savedBlend.srcAlpha, m_savedBlend.dstAlpha);
-
-        m_savedBlend.color = nullptr;
-
-        m_didApply = false;
+#endif
     }
 
-    template <typename T>
-    void saveBlendValue(GCGLenum attachment, T& destination)
-    {
-        WebGLAny param = m_context.getParameter(attachment);
-        if (std::holds_alternative<T>(param))
-            destination = std::get<T>(param);
-    }
+    saveBlendValue(GraphicsContextGL::BLEND_COLOR, m_savedBlend.color);
+    saveBlendValue(GraphicsContextGL::BLEND_EQUATION_RGB, m_savedBlend.equationRGB);
+    saveBlendValue(GraphicsContextGL::BLEND_EQUATION_ALPHA, m_savedBlend.equationAlpha);
+    saveBlendValue(GraphicsContextGL::BLEND_SRC_RGB, m_savedBlend.srcRGB);
+    saveBlendValue(GraphicsContextGL::BLEND_SRC_ALPHA, m_savedBlend.srcAlpha);
+    saveBlendValue(GraphicsContextGL::BLEND_DST_RGB, m_savedBlend.dstRGB);
+    saveBlendValue(GraphicsContextGL::BLEND_DST_ALPHA, m_savedBlend.dstAlpha);
+    saveBlendValue(GraphicsContextGL::BLEND, m_savedBlend.enabled);
 
-    bool hasBufferBinding(GCGLenum pname)
-    {
-        WebGLAny binding = m_context.getParameter(pname);
-        if (pname == GraphicsContextGL::FRAMEBUFFER_BINDING)
-            return std::holds_alternative<RefPtr<WebGLFramebuffer>>(binding) && std::get<RefPtr<WebGLFramebuffer>>(binding);
-        if (pname == GraphicsContextGL::RENDERBUFFER_BINDING)
-            return std::holds_alternative<RefPtr<WebGLRenderbuffer>>(binding) && std::get<RefPtr<WebGLRenderbuffer>>(binding);
+    static const GCGLfloat red = 111.0 / 255.0;
+    static const GCGLfloat green = 168.0 / 255.0;
+    static const GCGLfloat blue = 220.0 / 255.0;
+    static const GCGLfloat alpha = 2.0 / 3.0;
+
+    m_context.enable(GraphicsContextGL::BLEND);
+    m_context.blendColor(red, green, blue, alpha);
+    m_context.blendEquation(GraphicsContextGL::FUNC_ADD);
+    m_context.blendFunc(GraphicsContextGL::CONSTANT_COLOR, GraphicsContextGL::ONE_MINUS_SRC_ALPHA);
+
+    m_didApply = true;
+}
+
+void InspectorScopedShaderProgramHighlight::hideHighlight()
+{
+    if (!m_didApply)
+        return;
+
+    if (!m_savedBlend.enabled)
+        m_context.disable(GraphicsContextGL::BLEND);
+
+    const RefPtr<Float32Array>& color = m_savedBlend.color;
+    m_context.blendColor(color->item(0), color->item(1), color->item(2), color->item(3));
+    m_context.blendEquationSeparate(m_savedBlend.equationRGB, m_savedBlend.equationAlpha);
+    m_context.blendFuncSeparate(m_savedBlend.srcRGB, m_savedBlend.dstRGB, m_savedBlend.srcAlpha, m_savedBlend.dstAlpha);
+
+    m_savedBlend.color = nullptr;
+
+    m_didApply = false;
+}
+
+template <typename T>
+void InspectorScopedShaderProgramHighlight::saveBlendValue(GCGLenum attachment, T& destination)
+{
+    WebGLAny param = m_context.getParameter(attachment);
+    if (std::holds_alternative<T>(param))
+        destination = std::get<T>(param);
+}
+
+bool InspectorScopedShaderProgramHighlight::hasBufferBinding(GCGLenum pname)
+{
+    WebGLAny binding = m_context.getParameter(pname);
+    if (pname == GraphicsContextGL::FRAMEBUFFER_BINDING)
+        return std::holds_alternative<RefPtr<WebGLFramebuffer>>(binding) && std::get<RefPtr<WebGLFramebuffer>>(binding);
+    if (pname == GraphicsContextGL::RENDERBUFFER_BINDING)
+        return std::holds_alternative<RefPtr<WebGLRenderbuffer>>(binding) && std::get<RefPtr<WebGLRenderbuffer>>(binding);
+    return false;
+}
+
+bool InspectorScopedShaderProgramHighlight::hasFramebufferParameterAttachment(GCGLenum attachment)
+{
+    WebGLAny attachmentParameter = m_context.getFramebufferAttachmentParameter(GraphicsContextGL::FRAMEBUFFER, attachment, GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
+    if (!std::holds_alternative<unsigned>(attachmentParameter))
         return false;
-    }
-
-    bool hasFramebufferParameterAttachment(GCGLenum attachment)
-    {
-        WebGLAny attachmentParameter = m_context.getFramebufferAttachmentParameter(GraphicsContextGL::FRAMEBUFFER, attachment, GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
-        if (!std::holds_alternative<unsigned>(attachmentParameter))
-            return false;
-        if (std::get<unsigned>(attachmentParameter) != static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER))
-            return false;
-        return true;
-    }
-
-    struct {
-        RefPtr<Float32Array> color;
-        unsigned equationRGB { 0 };
-        unsigned equationAlpha { 0 };
-        unsigned srcRGB { 0 };
-        unsigned srcAlpha { 0 };
-        unsigned dstRGB { 0 };
-        unsigned dstAlpha { 0 };
-        bool enabled { false };
-    } m_savedBlend;
-
-    WebGLRenderingContextBase& m_context;
-    WebGLProgram* m_program { nullptr };
-    bool m_didApply { false };
-};
+    if (std::get<unsigned>(attachmentParameter) != static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER))
+        return false;
+    return true;
+}
 
 static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
 {
@@ -8010,6 +7991,9 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
     if (!validateVertexArrayObject("drawArraysInstanced"))
         return;
 
+    if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
+        return;
+
     clearIfComposited(ClearCallerDrawOrClear);
 
 #if !USE(ANGLE)
@@ -8027,7 +8011,11 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
         checkTextureCompleteness("drawArraysInstanced", true);
 #endif
 
-    m_context->drawArraysInstanced(mode, first, count, primcount);
+    {
+        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
+
+        m_context->drawArraysInstanced(mode, first, count, primcount);
+    }
 
 #if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
@@ -8051,6 +8039,9 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
     if (!validateVertexArrayObject("drawElementsInstanced"))
         return;
 
+    if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
+        return;
+
     clearIfComposited(ClearCallerDrawOrClear);
 
 #if !USE(ANGLE)
@@ -8070,7 +8061,11 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
         checkTextureCompleteness("drawElementsInstanced", true);
 #endif
 
-    m_context->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
+    {
+        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
+
+        m_context->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
+    }
 
 #if !USE(ANGLE)
     if (!isGLES2Compliant() && vertexAttrib0Simulated)
