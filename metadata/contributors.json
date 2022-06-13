@@ -1327,6 +1327,7 @@
          "clopez@igalia.com"
       ],
       "expertise" : "The WebKitGTK and WPE ports, Tools, Build/test infrastructure",
+      "github" : "clopez",
       "name" : "Carlos Alberto Lopez Perez",
       "nicks" : [
          "clopez"
