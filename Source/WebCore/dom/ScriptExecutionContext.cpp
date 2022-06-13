@@ -652,6 +652,18 @@ bool ScriptExecutionContext::postTaskTo(ScriptExecutionContextIdentifier identif
     return true;
 }
 
+bool ScriptExecutionContext::postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier identifier, Task&& task, const String& mode)
+{
+    Locker locker { allScriptExecutionContextsMapLock };
+    auto* context = allScriptExecutionContextsMap().get(identifier);
+
+    if (!context || !is<WorkerOrWorkletGlobalScope>(context))
+        return false;
+
+    downcast<WorkerOrWorkletGlobalScope>(context)->workerOrWorkletThread()->runLoop().postTaskForMode(WTFMove(task), mode);
+    return true;
+}
+
 bool ScriptExecutionContext::ensureOnContextThread(ScriptExecutionContextIdentifier identifier, Task&& task)
 {
     ScriptExecutionContext* context = nullptr;

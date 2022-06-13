@@ -96,9 +96,9 @@ private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(UniqueRef<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
+    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode);
 
     // WorkerLoaderProxy
-    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;

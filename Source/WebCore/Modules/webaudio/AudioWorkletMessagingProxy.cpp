@@ -100,11 +100,6 @@ void AudioWorkletMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&&
     m_document->postTask(WTFMove(task));
 }
 
-bool AudioWorkletMessagingProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
-{
-    return postTaskForModeToWorkletGlobalScope(WTFMove(task), mode);
-}
-
 void AudioWorkletMessagingProxy::postTaskToAudioWorklet(Function<void(AudioWorklet&)>&& task)
 {
     m_document->postTask([this, protectedThis = Ref { *this }, task = WTFMove(task)](ScriptExecutionContext&) {

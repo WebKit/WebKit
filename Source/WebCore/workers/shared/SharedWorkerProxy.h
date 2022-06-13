@@ -60,7 +60,6 @@ public:
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
-    bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;
     void postMessageToDebugger(const String&) final;
     void setResourceCachingDisabledByWebInspector(bool) final;
 

@@ -199,15 +199,6 @@ void SharedWorkerProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
     m_scriptExecutionContext->postTask(WTFMove(task));
 }
 
-bool SharedWorkerProxy::postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
-{
-    if (m_askedToTerminate)
-        return false;
-
-    m_workerThread->runLoop().postTaskForMode(WTFMove(task), mode);
-    return true;
-}
-
 void SharedWorkerProxy::postMessageToDebugger(const String&)
 {
 
