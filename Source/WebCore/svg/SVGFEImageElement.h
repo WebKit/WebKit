@@ -56,7 +56,7 @@ private:
 
     std::tuple<RefPtr<ImageBuffer>, FloatRect> imageBufferForEffect(const GraphicsContext& destinationContext) const;
 
-    RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+    RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     void clearResourceReferences();
     void requestImageResource();

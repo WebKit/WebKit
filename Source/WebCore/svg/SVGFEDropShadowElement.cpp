@@ -87,13 +87,53 @@ void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const Ato
 
 void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
         return;
     }
 
+    if (attrName == SVGNames::stdDeviationAttr && (stdDeviationX() < 0 || stdDeviationY() < 0)) {
+        InstanceInvalidationGuard guard(*this);
+        markFilterEffectForRebuild();
+        return;
+    }
+
+    if (attrName == SVGNames::stdDeviationAttr || attrName == SVGNames::dxAttr || attrName == SVGNames::dyAttr) {
+        InstanceInvalidationGuard guard(*this);
+        primitiveAttributeChanged(attrName);
+        return;
+    }
+
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+}
+
+bool SVGFEDropShadowElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
+{
+    auto& feDropShadow = downcast<FEDropShadow>(effect);
+
+    if (attrName == SVGNames::stdDeviationAttr) {
+        bool stdDeviationXChanged = feDropShadow.setStdDeviationX(stdDeviationX());
+        bool stdDeviationYChanged = feDropShadow.setStdDeviationY(stdDeviationY());
+        return stdDeviationXChanged || stdDeviationYChanged;
+    }
+
+    if (attrName == SVGNames::dxAttr)
+        return feDropShadow.setDx(dx());
+    if (attrName == SVGNames::dyAttr)
+        return feDropShadow.setDy(dy());
+
+    RenderObject* renderer = this->renderer();
+    ASSERT(renderer);
+    const RenderStyle& style = renderer->style();
+
+    if (attrName == SVGNames::flood_colorAttr)
+        return feDropShadow.setShadowColor(style.svgStyle().floodColor());
+    if (attrName == SVGNames::flood_opacityAttr)
+        return feDropShadow.setShadowOpacity(style.svgStyle().floodOpacity());
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 IntOutsets SVGFEDropShadowElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
@@ -103,7 +143,7 @@ IntOutsets SVGFEDropShadowElement::outsets(const FloatRect& targetBoundingBox, S
     return FEDropShadow::calculateOutsets(offset, stdDeviation);
 }
 
-RefPtr<FilterEffect> SVGFEDropShadowElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEDropShadowElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     RenderObject* renderer = this->renderer();
     if (!renderer)

@@ -44,6 +44,13 @@ Ref<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGFEMergeElement(tagName, document));
 }
 
+void SVGFEMergeElement::childrenChanged(const ChildChange& change)
+{
+    SVGFilterPrimitiveStandardAttributes::childrenChanged(change);
+    InstanceInvalidationGuard guard(*this);
+    markFilterEffectForRebuild();
+}
+
 Vector<AtomString> SVGFEMergeElement::filterEffectInputsNames() const
 {
     Vector<AtomString> inputsNames;
@@ -52,7 +59,7 @@ Vector<AtomString> SVGFEMergeElement::filterEffectInputsNames() const
     return inputsNames;
 }
 
-RefPtr<FilterEffect> SVGFEMergeElement::filterEffect(const FilterEffectVector& inputs, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEMergeElement::createFilterEffect(const FilterEffectVector& inputs, const GraphicsContext&) const
 {
     return FEMerge::create(inputs.size());
 }

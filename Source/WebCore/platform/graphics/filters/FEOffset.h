@@ -31,10 +31,10 @@ public:
     WEBCORE_EXPORT static Ref<FEOffset> create(float dx, float dy);
 
     float dx() const { return m_dx; }
-    void setDx(float);
+    bool setDx(float);
 
     float dy() const { return m_dy; }
-    void setDy(float);
+    bool setDy(float);
 
     static IntOutsets calculateOutsets(const FloatSize& offset);
 

@@ -68,7 +68,7 @@ void SVGFETileElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFETileElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFETileElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     return FETile::create();
 }

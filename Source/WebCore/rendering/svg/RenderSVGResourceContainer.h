@@ -45,6 +45,7 @@ public:
     void markAllClientsForRepaint();
     void addClientRenderLayer(RenderLayer*);
     void removeClientRenderLayer(RenderLayer*);
+    void markAllClientLayersForInvalidation();
 
 protected:
     RenderSVGResourceContainer(SVGElement&, RenderStyle&&);
@@ -60,7 +61,6 @@ protected:
     virtual bool selfNeedsClientInvalidation() const { return everHadLayout() && selfNeedsLayout(); }
 
     void markAllClientsForInvalidation(InvalidationMode);
-    void markAllClientLayersForInvalidation();
     void markClientForInvalidation(RenderObject&, InvalidationMode);
 
 private:

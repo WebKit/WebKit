@@ -50,11 +50,12 @@ public:
     SVGAnimatedLength& heightAnimated() { return m_height; }
     SVGAnimatedString& resultAnimated() { return m_result; }
 
-    // Returns true, if the new value is different from the old one.
-    virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
+    void primitiveAttributeChanged(const QualifiedName&);
+    void markFilterEffectForRebuild();
+
     virtual Vector<AtomString> filterEffectInputsNames() const { return { }; }
     virtual IntOutsets outsets(const FloatRect&, SVGUnitTypes::SVGUnitType) const { return { }; }
-    virtual RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const = 0;
+    RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext);
 
     static void invalidateFilterPrimitiveParent(SVGElement*);
 
@@ -65,7 +66,8 @@ protected:
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
 
-    void primitiveAttributeChanged(const QualifiedName& attributeName);
+    virtual bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) { return false; }
+    virtual RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const = 0;
 
 private:
     bool isFilterEffect() const override { return true; }
@@ -73,6 +75,8 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool rendererIsNeeded(const RenderStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override { return false; }
+
+    RefPtr<FilterEffect> m_effect;
 
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
@@ -82,12 +86,6 @@ private:
     Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%"_s) };
     Ref<SVGAnimatedString> m_result { SVGAnimatedString::create(this) };
 };
-
-inline void SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged(const QualifiedName& attribute)
-{
-    if (auto* primitiveRenderer = renderer())
-        static_cast<RenderSVGResourceFilterPrimitive*>(primitiveRenderer)->primitiveAttributeChanged(attribute);
-}
 
 } // namespace WebCore
 

@@ -264,8 +264,7 @@ static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const Referenc
 
     auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
 
-    SVGFilterBuilder builder;
-    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
+    return SVGFilter::create(*filterElement, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
 }
 
 bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)

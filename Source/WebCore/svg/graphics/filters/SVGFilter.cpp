@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, SVGFilterBuilder& builder, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
+RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, RenderingMode renderingMode, const FloatSize& filterScale, ClipOperation clipOperation, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
 {
     auto filter = adoptRef(*new SVGFilter(renderingMode, filterScale, clipOperation, filterRegion, targetBoundingBox, filterElement.primitiveUnits()));
 
-    auto expression = builder.buildFilterExpression(filterElement, filter, destinationContext);
+    auto expression = SVGFilterBuilder::buildFilterExpression(filterElement, filter, destinationContext);
     if (!expression)
         return nullptr;
 

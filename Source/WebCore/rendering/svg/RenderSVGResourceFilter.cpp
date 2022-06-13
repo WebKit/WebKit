@@ -25,24 +25,14 @@
 #include "config.h"
 #include "RenderSVGResourceFilter.h"
 
-#include "ElementChildIterator.h"
 #include "FilterEffect.h"
 #include "FloatPoint.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
-#include "Image.h"
-#include "ImageData.h"
 #include "IntRect.h"
 #include "Logging.h"
 #include "RenderSVGResourceFilterInlines.h"
-#include "RenderSVGResourceFilterPrimitive.h"
-#include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
-#include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGNames.h"
 #include "SVGRenderingContext.h"
-#include "Settings.h"
-#include "SourceGraphic.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -129,8 +119,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     auto renderingMode = renderer.page().acceleratedFiltersEnabled() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 
     // Create the SVGFilter object.
-    filterData->builder = makeUnique<SVGFilterBuilder>();
-    filterData->filter = SVGFilter::create(filterElement(), *filterData->builder, renderingMode, filterScale, Filter::ClipOperation::Intersect, filterData->boundaries, targetBoundingBox, *context);
+    filterData->filter = SVGFilter::create(filterElement(), renderingMode, filterScale, Filter::ClipOperation::Intersect, filterData->boundaries, targetBoundingBox, *context);
     if (!filterData->filter) {
         m_rendererFilterDataMap.remove(&renderer);
         return false;
@@ -225,31 +214,27 @@ FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& objec
     return SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), object.objectBoundingBox());
 }
 
-void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, const QualifiedName& attribute)
+void RenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
 {
-    SVGFilterPrimitiveStandardAttributes* primitve = static_cast<SVGFilterPrimitiveStandardAttributes*>(object->node());
-
-    LOG(Filters, "RenderSVGResourceFilter %p primitiveAttributeChanged renderer %p", this, object);
+    LOG(Filters, "RenderSVGResourceFilter %p markFilterForRepaint effect %p", this, &effect);
 
     for (const auto& objectFilterDataPair : m_rendererFilterDataMap) {
         const auto& filterData = objectFilterDataPair.value;
         if (filterData->state != FilterData::Built)
             continue;
 
-        SVGFilterBuilder* builder = filterData->builder.get();
-        FilterEffect* effect = builder->effectByRenderer(object);
-        if (!effect)
-            continue;
-        // Since all effects shares the same attribute value, all
-        // or none of them will be changed.
-        if (!primitve->setFilterEffectAttribute(effect, attribute))
-            return;
-        filterData->results.clearEffectResult(*effect);
-
         // Repaint the image on the screen.
         markClientForInvalidation(*objectFilterDataPair.key, RepaintInvalidation);
+
+        filterData->results.clearEffectResult(effect);
     }
-    markAllClientLayersForInvalidation();
+}
+
+void RenderSVGResourceFilter::markFilterForRebuild()
+{
+    LOG(Filters, "RenderSVGResourceFilter %p markFilterForRebuild", this);
+
+    removeAllClientsFromCache();
 }
 
 FloatRect RenderSVGResourceFilter::drawingRegion(RenderObject* object) const

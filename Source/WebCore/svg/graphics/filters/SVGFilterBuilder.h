@@ -23,7 +23,6 @@
 
 #include "SVGFilterExpression.h"
 #include "SVGUnitTypes.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -34,18 +33,9 @@ class SVGFilter;
 class SVGFilterElement;
 
 class SVGFilterBuilder {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
-    SVGFilterBuilder() = default;
-
-    std::optional<SVGFilterExpression> buildFilterExpression(SVGFilterElement&, const SVGFilter&, const GraphicsContext& destinationContext);
+    static std::optional<SVGFilterExpression> buildFilterExpression(SVGFilterElement&, const SVGFilter&, const GraphicsContext& destinationContext);
     static IntOutsets calculateFilterOutsets(SVGFilterElement&, const FloatRect& targetBoundingBox);
-
-    // Required to change the attributes of a filter during an svgAttributeChanged.
-    FilterEffect* effectByRenderer(RenderObject* object) { return m_effectRenderer.get(object); }
-
-private:
-    HashMap<RenderObject*, FilterEffect*> m_effectRenderer;
 };
     
 } // namespace WebCore

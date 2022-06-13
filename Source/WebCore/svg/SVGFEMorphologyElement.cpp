@@ -80,15 +80,15 @@ void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const Ato
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
-bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
 {
-    FEMorphology* morphology = static_cast<FEMorphology*>(effect);
+    auto& feMorphology = downcast<FEMorphology>(effect);
     if (attrName == SVGNames::operatorAttr)
-        return morphology->setMorphologyOperator(svgOperator());
+        return feMorphology.setMorphologyOperator(svgOperator());
     if (attrName == SVGNames::radiusAttr) {
         // Both setRadius functions should be evaluated separately.
-        bool isRadiusXChanged = morphology->setRadiusX(radiusX());
-        bool isRadiusYChanged = morphology->setRadiusY(radiusY());
+        bool isRadiusXChanged = feMorphology.setRadiusX(radiusX());
+        bool isRadiusYChanged = feMorphology.setRadiusY(radiusY());
         return isRadiusXChanged || isRadiusYChanged;
     }
 
@@ -98,21 +98,22 @@ bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, cons
 
 void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::inAttr)
-            updateSVGRendererForElementChange();
-        else {
-            ASSERT(attrName == SVGNames::operatorAttr || attrName == SVGNames::radiusAttr);
-            primitiveAttributeChanged(attrName);
-        }
+        updateSVGRendererForElementChange();
+        return;
+    }
+
+    if (attrName == SVGNames::operatorAttr || attrName == SVGNames::radiusAttr) {
+        InstanceInvalidationGuard guard(*this);
+        primitiveAttributeChanged(attrName);
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEMorphologyElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEMorphologyElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     if (radiusX() < 0 || radiusY() < 0)
         return nullptr;

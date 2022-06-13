@@ -62,7 +62,18 @@ void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, co
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
-RefPtr<FilterEffect> SVGFEComponentTransferElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+void SVGFEComponentTransferElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    if (attrName == SVGNames::inAttr) {
+        InstanceInvalidationGuard guard(*this);
+        updateSVGRendererForElementChange();
+        return;
+    }
+
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+}
+
+RefPtr<FilterEffect> SVGFEComponentTransferElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     ComponentTransferFunction red;
     ComponentTransferFunction green;

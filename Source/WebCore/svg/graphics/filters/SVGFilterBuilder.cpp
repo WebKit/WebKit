@@ -98,9 +98,6 @@ std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFi
             effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
 #endif
 
-        if (auto renderer = effectElement.renderer())
-            m_effectRenderer.add(renderer, effect.get());
-
         graph.addNamedNode(AtomString { effectElement.result() }, { *effect });
         graph.setNodeInputs(*effect, WTFMove(*inputs));
     }

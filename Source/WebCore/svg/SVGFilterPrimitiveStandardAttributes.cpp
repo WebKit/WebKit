@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -66,11 +66,28 @@ void SVGFilterPrimitiveStandardAttributes::parseAttribute(const QualifiedName& n
     SVGElement::parseAttribute(name, value);
 }
 
-bool SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute(FilterEffect*, const QualifiedName&)
+RefPtr<FilterEffect> SVGFilterPrimitiveStandardAttributes::filterEffect(const FilterEffectVector& inputs, const GraphicsContext& destinationContext)
 {
-    // When all filters support this method, it will be changed to a pure virtual method.
-    ASSERT_NOT_REACHED();
-    return false;
+    if (!m_effect)
+        m_effect = createFilterEffect(inputs, destinationContext);
+    return m_effect;
+}
+
+void SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged(const QualifiedName& attribute)
+{
+    if (m_effect && !setFilterEffectAttribute(*m_effect, attribute))
+        return;
+
+    if (auto* renderer = this->renderer())
+        static_cast<RenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRepaint(m_effect.get());
+}
+
+void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRebuild()
+{
+    if (auto* renderer = this->renderer())
+        static_cast<RenderSVGResourceFilterPrimitive*>(renderer)->markFilterEffectForRebuild();
+
+    m_effect = nullptr;
 }
 
 void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedName& attrName)

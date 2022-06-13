@@ -43,14 +43,20 @@ FEOffset::FEOffset(float dx, float dy)
 {
 }
 
-void FEOffset::setDx(float dx)
+bool FEOffset::setDx(float dx)
 {
+    if (m_dx == dx)
+        return false;
     m_dx = dx;
+    return true;
 }
 
-void FEOffset::setDy(float dy)
+bool FEOffset::setDy(float dy)
 {
+    if (m_dy == dy)
+        return false;
     m_dy = dy;
+    return true;
 }
 
 FloatRect FEOffset::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const

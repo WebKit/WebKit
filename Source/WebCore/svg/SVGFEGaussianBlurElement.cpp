@@ -85,13 +85,42 @@ void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const A
 
 void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
         updateSVGRendererForElementChange();
         return;
     }
 
+    if (attrName == SVGNames::stdDeviationAttr && (stdDeviationX() < 0 || stdDeviationY() < 0)) {
+        InstanceInvalidationGuard guard(*this);
+        markFilterEffectForRebuild();
+        return;
+    }
+
+    if (attrName == SVGNames::stdDeviationAttr || attrName == SVGNames::edgeModeAttr) {
+        InstanceInvalidationGuard guard(*this);
+        primitiveAttributeChanged(attrName);
+        return;
+    }
+
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+}
+
+bool SVGFEGaussianBlurElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
+{
+    auto& feGaussianBlur = downcast<FEGaussianBlur>(effect);
+
+    if (attrName == SVGNames::stdDeviationAttr) {
+        bool stdDeviationXChanged = feGaussianBlur.setStdDeviationX(stdDeviationX());
+        bool stdDeviationYChanged = feGaussianBlur.setStdDeviationY(stdDeviationY());
+        return stdDeviationXChanged || stdDeviationYChanged;
+    }
+
+    if (attrName == SVGNames::edgeModeAttr)
+        return feGaussianBlur.setEdgeMode(edgeMode());
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 IntOutsets SVGFEGaussianBlurElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
@@ -100,7 +129,7 @@ IntOutsets SVGFEGaussianBlurElement::outsets(const FloatRect& targetBoundingBox,
     return FEGaussianBlur::calculateOutsets(stdDeviation);
 }
 
-RefPtr<FilterEffect> SVGFEGaussianBlurElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEGaussianBlurElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     if (stdDeviationX() < 0 || stdDeviationY() < 0)
         return nullptr;

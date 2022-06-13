@@ -71,11 +71,11 @@ void SVGFEBlendElement::parseAttribute(const QualifiedName& name, const AtomStri
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
-bool SVGFEBlendElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+bool SVGFEBlendElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
 {
-    FEBlend* blend = static_cast<FEBlend*>(effect);
+    auto& feBlend = downcast<FEBlend>(effect);
     if (attrName == SVGNames::modeAttr)
-        return blend->setBlendMode(mode());
+        return feBlend.setBlendMode(mode());
 
     ASSERT_NOT_REACHED();
     return false;
@@ -97,7 +97,7 @@ void SVGFEBlendElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEBlendElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEBlendElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     return FEBlend::create(mode());
 }

@@ -45,7 +45,6 @@ public:
     FilterData() = default;
 
     RefPtr<SVGFilter> filter;
-    std::unique_ptr<SVGFilterBuilder> builder;
     RefPtr<ImageBuffer> sourceGraphicBuffer;
     GraphicsContext* savedContext { nullptr };
     FloatRect boundaries;
@@ -73,12 +72,11 @@ public:
 
     FloatRect resourceBoundingBox(const RenderObject&) override;
 
-    std::unique_ptr<SVGFilterBuilder> buildPrimitives(SVGFilter&) const;
-
     inline SVGUnitTypes::SVGUnitType filterUnits() const;
     inline SVGUnitTypes::SVGUnitType primitiveUnits() const;
 
-    void primitiveAttributeChanged(RenderObject*, const QualifiedName&);
+    void markFilterForRepaint(FilterEffect&);
+    void markFilterForRebuild();
 
     RenderSVGResourceType resourceType() const override { return FilterResourceType; }
 
