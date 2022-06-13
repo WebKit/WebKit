@@ -39,7 +39,7 @@ struct SimpleRange;
 enum class AutoFillButtonType : uint8_t { None, Credentials, Contacts, StrongPassword, CreditCard };
 enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardDirection, SelectionHasBackwardDirection };
 enum TextFieldEventBehavior { DispatchNoEvent, DispatchChangeEvent, DispatchInputAndChangeEvent };
-enum TextControlSetValueSelection { SetSelectionToEnd, Clamp, DoNotSet };
+enum TextControlSetValueSelection { SetSelectionToStart, SetSelectionToEnd, Clamp, DoNotSet };
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
     WTF_MAKE_ISO_ALLOCATED(HTMLTextFormControlElement);

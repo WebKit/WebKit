@@ -419,6 +419,8 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
         // We don't change text selection here but need to update caret to
         // the end of the text value except for initialize.
         cacheSelection(endOfString, endOfString, SelectionHasNoDirection);
+    } else if (selection == TextControlSetValueSelection::SetSelectionToStart) {
+        cacheSelection(0, 0, SelectionHasNoDirection);
     } else if (shouldClamp)
         cacheSelection(std::min(endOfString, selectionStartValue), std::min(endOfString, selectionEndValue), SelectionHasNoDirection);
 
@@ -583,7 +585,7 @@ void HTMLTextAreaElement::copyNonAttributePropertiesFromElement(const Element& s
 {
     auto& sourceElement = downcast<HTMLTextAreaElement>(source);
 
-    setValueCommon(sourceElement.value(), DispatchNoEvent, TextControlSetValueSelection::SetSelectionToEnd);
+    setValueCommon(sourceElement.value(), DispatchNoEvent, TextControlSetValueSelection::SetSelectionToStart);
     m_isDirty = sourceElement.m_isDirty;
     HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);
 
