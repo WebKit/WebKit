@@ -145,7 +145,7 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
     return nullptr;
 }
 
-RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
+RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(const AXID& axID) const
 {
     // In isolated tree mode 2, only access m_readerThreadNodeMap on the AX thread.
     ASSERT(m_usedOnAXThread ? !isMainThread() : isMainThread());
@@ -155,17 +155,42 @@ RefPtr<AXIsolatedObject> AXIsolatedTree::nodeForID(AXID axID) const
     return axID.isValid() ? m_readerThreadNodeMap.get(axID) : nullptr;
 }
 
-Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& axIDs) const
+Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const Vector<AXID>& axIDs)
 {
     AXTRACE("AXIsolatedTree::objectsForIDs"_s);
+    ASSERT(!isMainThread());
+
     Vector<RefPtr<AXCoreObject>> result;
     result.reserveInitialCapacity(axIDs.size());
     for (auto& axID : axIDs) {
-        if (auto object = nodeForID(axID))
+        auto object = nodeForID(axID);
+        if (object) {
             result.uncheckedAppend(object);
+            continue;
+        }
+
+        // There is no isolated object for this AXID. This can happen if the corresponding live object is ignored.
+        // If there is a live object for this ID and it is an ignored target of a relationship, create an isolated object for it.
+        object = Accessibility::retrieveValueFromMainThread<RefPtr<AXIsolatedObject>>([&axID, this] () -> RefPtr<AXIsolatedObject> {
+            auto* cache = axObjectCache();
+            if (!cache || !cache->relationTargetIDs().contains(axID))
+                return nullptr;
+
+            auto* axObject = cache->objectForID(axID);
+            if (!axObject || !axObject->accessibilityIsIgnored())
+                return nullptr;
+
+            auto object = AXIsolatedObject::create(*axObject, const_cast<AXIsolatedTree*>(this));
+            ASSERT(axObject->wrapper());
+            object->attachPlatformWrapper(axObject->wrapper());
+            return object;
+        });
+        if (object) {
+            m_readerThreadNodeMap.add(axID, *object);
+            result.uncheckedAppend(object);
+        }
     }
     result.shrinkToFit();
-
     return result;
 }
 
@@ -263,9 +288,10 @@ void AXIsolatedTree::queueRemovalsAndUnresolvedChanges(const Vector<AXID>& subtr
         if (auto* cache = axObjectCache()) {
             resolvedAppends.reserveInitialCapacity(m_unresolvedPendingAppends.size());
             for (const auto& unresolvedAppend : m_unresolvedPendingAppends) {
-                if (auto* axObject = cache->objectFromAXID(unresolvedAppend.key))
+                if (auto* axObject = cache->objectForID(unresolvedAppend.key)) {
                     if (auto nodeChange = nodeChangeForObject(*axObject, unresolvedAppend.value))
                         resolvedAppends.uncheckedAppend(WTFMove(*nodeChange));
+                }
             }
             m_unresolvedPendingAppends.clear();
         }

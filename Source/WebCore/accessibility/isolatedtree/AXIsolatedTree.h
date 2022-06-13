@@ -332,8 +332,8 @@ public:
 
     RefPtr<AXIsolatedObject> rootNode();
     RefPtr<AXIsolatedObject> focusedNode();
-    RefPtr<AXIsolatedObject> nodeForID(AXID) const;
-    Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
+    RefPtr<AXIsolatedObject> nodeForID(const AXID&) const;
+    Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&);
 
     struct NodeChange {
         Ref<AXIsolatedObject> isolatedObject;

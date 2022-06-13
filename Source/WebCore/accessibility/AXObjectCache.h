@@ -223,7 +223,7 @@ public:
     bool nodeIsTextControl(const Node*);
 
     AXID platformGenerateAXID() const;
-    AccessibilityObject* objectFromAXID(AXID id) const { return m_objects.get(id); }
+    AccessibilityObject* objectForID(const AXID& id) const { return m_objects.get(id); }
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
 
     // Text marker utilities.
@@ -510,6 +510,7 @@ private:
     void updateRelationsIfNeeded();
     void relationsNeedUpdate(bool);
     HashMap<AXID, AXRelations> relations();
+    const HashSet<AXID>& relationTargetIDs();
 
     Document& m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
@@ -571,6 +572,7 @@ private:
     // Relationships between objects.
     HashMap<AXID, AXRelations> m_relations;
     bool m_relationsNeedUpdate { true };
+    HashSet<AXID> m_relationTargets;
 
 #if USE(ATSPI)
     ListHashSet<RefPtr<AXCoreObject>> m_deferredParentChangedList;

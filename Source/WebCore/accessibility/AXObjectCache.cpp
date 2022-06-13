@@ -958,7 +958,7 @@ Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& ax
 
     return axIDs.map([this] (const auto& axID) -> RefPtr<AXCoreObject> {
         ASSERT(axID.isValid());
-        return objectFromAXID(axID);
+        return objectForID(axID);
     });
 }
 
@@ -3843,6 +3843,7 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
         }
         targetsIterator->value.append(target->objectID());
     }
+    m_relationTargets.add(target->objectID());
 
     if (addingSymmetricRelation == AddingSymmetricRelation::No) {
         if (auto symmetric = symmetricRelation(relationType); symmetric != AXRelationType::None)
@@ -3859,6 +3860,7 @@ void AXObjectCache::updateRelationsIfNeeded()
     relationsNeedUpdate(false);
     AXLOG("Updating relations.");
     m_relations.clear();
+    m_relationTargets.clear();
 
     struct RelationOrigin {
         Element* originElement { nullptr };
@@ -3917,6 +3919,12 @@ HashMap<AXID, AXRelations> AXObjectCache::relations()
 {
     updateRelationsIfNeeded();
     return m_relations;
+}
+
+const HashSet<AXID>& AXObjectCache::relationTargetIDs()
+{
+    updateRelationsIfNeeded();
+    return m_relationTargets;
 }
 
 std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject& object, AXRelationType relationType)

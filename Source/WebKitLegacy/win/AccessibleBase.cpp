@@ -1039,7 +1039,7 @@ HRESULT AccessibleBase::getAccessibilityObjectForChild(VARIANT vChild, Accessibi
         if (!document)
             return E_FAIL;
 
-        childObj = document->axObjectCache()->objectFromAXID(makeObjectIdentifier<AXIDType>(-vChild.lVal));
+        childObj = document->axObjectCache()->objectForID(makeObjectIdentifier<AXIDType>(-vChild.lVal));
     } else {
         size_t childIndex = static_cast<size_t>(vChild.lVal - 1);
 

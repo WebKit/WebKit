@@ -76,8 +76,6 @@ void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isR
 {
     ASSERT(is<AccessibilityObject>(coreObject));
     auto& object = downcast<AccessibilityObject>(coreObject);
-    // We should never create an isolated object from an ignored object.
-    ASSERT(!object.accessibilityIsIgnored());
 
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
@@ -413,7 +411,7 @@ AXCoreObject* AXIsolatedObject::associatedAXObject() const
         return nullptr;
 
     auto* axObjectCache = this->axObjectCache();
-    return axObjectCache ? axObjectCache->objectFromAXID(m_id) : nullptr;
+    return axObjectCache ? axObjectCache->objectForID(m_id) : nullptr;
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
