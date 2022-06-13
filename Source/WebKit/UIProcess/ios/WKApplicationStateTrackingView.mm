@@ -51,7 +51,7 @@
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
-    if (!_applicationStateTracker || newWindow)
+    if ((self.window && !self._contentView.window) || newWindow)
         return;
 
     auto page = [_webViewToTrack _page];

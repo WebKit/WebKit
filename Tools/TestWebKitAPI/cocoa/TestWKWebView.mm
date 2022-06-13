@@ -58,19 +58,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 {
     return @"com.apple.TestWebKitAPI";
 }
-
-@implementation WKWebView (WKWebViewTestingQuirks)
-
-// TestWebKitAPI is currently not a UIApplication so we are unable to track if it is in
-// the background or not (https://bugs.webkit.org/show_bug.cgi?id=175204). This can
-// cause our processes to get suspended on iOS. We work around this by having
-// WKWebView._isBackground always return NO in the context of API tests.
-- (BOOL)_isBackground
-{
-    return NO;
-}
-@end
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
 @implementation WKWebView (TestWebKitAPI)
 
