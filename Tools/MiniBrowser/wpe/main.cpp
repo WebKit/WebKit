@@ -31,6 +31,10 @@
 #include <memory>
 #include <wpe/webkit.h>
 
+#if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
+#include <gst/gst.h>
+#endif
+
 #if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
 #include <atk/atk.h>
 #endif
@@ -187,6 +191,10 @@ int main(int argc, char *argv[])
 
     GOptionContext* context = g_option_context_new(nullptr);
     g_option_context_add_main_entries(context, commandLineOptions, nullptr);
+
+#if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
+    g_option_context_add_group(context, gst_init_get_option_group());
+#endif
 
     GError* error = nullptr;
     if (!g_option_context_parse(context, &argc, &argv, &error)) {

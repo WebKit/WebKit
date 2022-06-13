@@ -46,6 +46,11 @@ set(MiniBrowser_DEPENDENCIES
     WebProcess
 )
 
+if (NOT USE_GSTREAMER_FULL)
+  list(APPEND MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES ${GSTREAMER_INCLUDE_DIRS})
+  list(APPEND MiniBrowser_PRIVATE_LIBRARIES ${GSTREAMER_LIBRARIES})
+endif ()
+
 add_custom_command(
     OUTPUT ${MiniBrowser_DERIVED_SOURCES_DIR}/BrowserMarshal.c
            ${MiniBrowser_DERIVED_SOURCES_DIR}/BrowserMarshal.h
