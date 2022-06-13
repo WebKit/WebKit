@@ -3177,7 +3177,6 @@
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
 				532424B1254905FE00A6975B /* Check For Inappropriate Files In Framework */,
-				1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */,
 				537CF83A22EFBFB100C6EBB3 /* Check .xcfilelists */,
 				650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */,
 				6517572027CEE91400D9FE40 /* Copy Frameworks to Secondary Path */,
@@ -3255,20 +3254,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Symlink WebKitPluginHost";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    exit 0\nfi\n\n[[ -h \"${TARGET_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\" ]] || ln -s Versions/Current/WebKitPluginHost.app \"${TARGET_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginHost.app\"\n[[ ${WK_USE_OVERRIDE_FRAMEWORKS_DIR} == \"YES\" ]] || [[ -h \"${TARGET_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginAgent\" ]] || ln -s Versions/Current/WebKitPluginAgent \"${TARGET_BUILD_DIR}/WebKitLegacy.framework/WebKitPluginAgent\"\n\nif [[ \"${CONFIGURATION}\" != \"Production\" && ${ACTION} == \"build\"  && ! -e \"${TARGET_BUILD_DIR}/WebKitLegacy.framework/Versions/A/WebKitPluginHost.app\" ]]; then\n    if [[ -e \"/System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app\" ]]; then\n        ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${TARGET_BUILD_DIR}/WebKitLegacy.framework/Versions/A/WebKitPluginHost.app\"\n    else\n        ln -s /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/WebKitLegacy.framework/WebKitPluginHost.app \"${TARGET_BUILD_DIR}/WebKitLegacy.framework/Versions/A/WebKitPluginHost.app\"\n    fi\nfi\n";
-		};
 		1C395DE20C6BE8E0000D1E52 /* Generate Export Files */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
