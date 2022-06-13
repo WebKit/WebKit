@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Logging.h"
+#import "ProcessStateMonitor.h"
 #import "RunningBoardServicesSPI.h"
 #import "WebProcessPool.h"
 #import <UIKit/UIApplication.h>
@@ -64,6 +65,7 @@ static bool processHasActiveRunTimeLimitation()
 
 - (void)addAssertionNeedingBackgroundTask:(ProcessAndUIAssertion&)assertion;
 - (void)removeAssertionNeedingBackgroundTask:(ProcessAndUIAssertion&)assertion;
+- (void)setProcessStateMonitorEnabled:(BOOL)enabled;
 
 @end
 
@@ -73,6 +75,7 @@ static bool processHasActiveRunTimeLimitation()
     std::atomic<bool> _backgroundTaskWasInvalidated;
     WeakHashSet<ProcessAndUIAssertion> _assertionsNeedingBackgroundTask;
     dispatch_block_t _pendingTaskReleaseTask;
+    std::unique_ptr<WebKit::ProcessStateMonitor> m_processStateMonitor;
 }
 
 + (WKProcessAssertionBackgroundTaskManager *)shared
@@ -242,12 +245,30 @@ static bool processHasActiveRunTimeLimitation()
         return;
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: endBackgroundTask", self);
-    if (processHasActiveRunTimeLimitation())
+    if (processHasActiveRunTimeLimitation()) {
         WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
+        if (m_processStateMonitor)
+            m_processStateMonitor->processWillBeSuspendedImmediately();
+    }
 
     [_backgroundTask removeObserver:self];
     [_backgroundTask invalidate];
     _backgroundTask = nullptr;
+}
+
+- (void)setProcessStateMonitorEnabled:(BOOL)enabled
+{
+    if (!enabled) {
+        m_processStateMonitor = nullptr;
+        return;
+    }
+
+    if (!m_processStateMonitor) {
+        m_processStateMonitor = makeUnique<WebKit::ProcessStateMonitor>([](bool suspended) {
+            for (auto& processPool : WebKit::WebProcessPool::allProcessPools())
+                processPool->setProcessesShouldSuspend(suspended);
+        });
+    }
 }
 
 @end
@@ -452,6 +473,11 @@ ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, Pr
     : ProcessAssertion(pid, reason, assertionType)
 {
     updateRunInBackgroundCount();
+}
+
+void ProcessAndUIAssertion::setProcessStateMonitorEnabled(bool enabled)
+{
+    [[WKProcessAssertionBackgroundTaskManager shared] setProcessStateMonitorEnabled:enabled];
 }
 
 ProcessAndUIAssertion::~ProcessAndUIAssertion()

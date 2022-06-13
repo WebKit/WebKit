@@ -30,6 +30,7 @@
 
 #import "EndowmentStateTracker.h"
 #import "Logging.h"
+#import "ProcessAssertion.h"
 #import "SandboxUtilities.h"
 #import "UIKitSPI.h"
 #import <wtf/ObjCRuntimeExtras.h>
@@ -49,6 +50,28 @@ static NSNotificationName const viewServiceForegroundNotificationName = @"_UIVie
 #endif
 
 namespace WebKit {
+
+static WeakHashSet<ApplicationStateTracker>& allApplicationStateTrackers()
+{
+    static NeverDestroyed<WeakHashSet<ApplicationStateTracker>> trackers;
+    return trackers;
+}
+
+static void updateApplicationBackgroundState()
+{
+    static bool s_isApplicationInBackground = false;
+    auto isAnyStateTrackerInForeground = []() -> bool {
+        return WTF::anyOf(allApplicationStateTrackers(), [](auto& tracker) {
+            return !tracker.isInBackground();
+        });
+    };
+    bool isApplicationInBackground = !isAnyStateTrackerInForeground();
+    if (s_isApplicationInBackground == isApplicationInBackground)
+        return;
+
+    s_isApplicationInBackground = isApplicationInBackground;
+    ProcessAndUIAssertion::setProcessStateMonitorEnabled(isApplicationInBackground);
+}
 
 ApplicationType applicationType(UIWindow *window)
 {
@@ -161,6 +184,9 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
         break;
     }
     }
+
+    allApplicationStateTrackers().add(*this);
+    updateApplicationBackgroundState();
 }
 
 ApplicationStateTracker::~ApplicationStateTracker()
@@ -173,11 +199,15 @@ ApplicationStateTracker::~ApplicationStateTracker()
     [notificationCenter removeObserver:m_willEnterForegroundObserver];
     [notificationCenter removeObserver:m_willBeginSnapshotSequenceObserver];
     [notificationCenter removeObserver:m_didCompleteSnapshotSequenceObserver];
+
+    allApplicationStateTrackers().remove(*this);
+    updateApplicationBackgroundState();
 }
 
 void ApplicationStateTracker::applicationDidEnterBackground()
 {
     m_isInBackground = true;
+    updateApplicationBackgroundState();
 
     if (auto view = m_view.get())
         wtfObjCMsgSend<void>(view.get(), m_didEnterBackgroundSelector);
@@ -192,6 +222,7 @@ void ApplicationStateTracker::applicationDidFinishSnapshottingAfterEnteringBackg
 void ApplicationStateTracker::applicationWillEnterForeground()
 {
     m_isInBackground = false;
+    updateApplicationBackgroundState();
 
     if (auto view = m_view.get())
         wtfObjCMsgSend<void>(view.get(), m_willEnterForegroundSelector);

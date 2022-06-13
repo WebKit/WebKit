@@ -992,8 +992,12 @@ void WebProcessPool::setProcessesShouldSuspend(bool shouldSuspend)
 {
     WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "setProcessesShouldSuspend: Processes should suspend %d", shouldSuspend);
 
+    if (m_processesShouldSuspend == shouldSuspend)
+        return;
+
+    m_processesShouldSuspend = shouldSuspend;
     for (auto& process : m_processes)
-        process->throttler().setAllowsActivities(!shouldSuspend);
+        process->throttler().setAllowsActivities(!m_processesShouldSuspend);
 }
 
 #endif

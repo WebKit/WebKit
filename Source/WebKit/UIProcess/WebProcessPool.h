@@ -515,6 +515,9 @@ public:
     Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::CaptivePortalMode, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
 
     bool hasAudibleMediaActivity() const { return !!m_audibleMediaActivity; }
+#if PLATFORM(IOS_FAMILY)
+    bool processesShouldSuspend() const { return m_processesShouldSuspend; }
+#endif
 
 private:
     void platformInitialize();
@@ -802,6 +805,10 @@ private:
 #endif
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    bool m_processesShouldSuspend { false };
 #endif
 };
 
