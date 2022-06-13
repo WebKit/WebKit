@@ -74,7 +74,7 @@ my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
 my $noExperimentalFeatures = 0;
 my $ltoMode = "default";
-my $useWorkspace = undef;
+my $useWorkspace = 1;
 my $startTime = time();
 my $archs32bit = 0;
 my $skipLibraryUpdate = 0;
@@ -122,7 +122,7 @@ Usage: $programName [options] [options to pass to build system]
   --coverage                        Enable code coverage support (Mac only)
   --analyze                         Enable static anaylsis (Apple platforms only)
   --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
-  --[no-]use-workspace              Use WebKit.xcworkspace and XCBuild (Apple platforms only)
+  --no-use-workspace                Build projects one at a time instead of using WebKit.xcworkspace (Apple platforms only)
 
   --ftw                             Build the FTW Windows port
   --gtk                             Build the GTK+ port
@@ -242,6 +242,10 @@ if (isAppleCocoaWebKit()) {
 
     # In workspaces, build order is determined by XCBuild.
     if (!$useWorkspace) {
+        print STDERR "warning: Building with --no-use-workspace is " .
+        "deprecated.\nIf you have a workflow requirement that depends " .
+        "on building targets in manual order, please document it in " .
+        "https://bugs.webkit.org/show_bug.cgi?id=241295.\n";
         # ANGLE and libwebrtc must come before WebCore
         splice @projects, 0, 0, ("Source/ThirdParty/ANGLE");
         # if (not $archs32bit and (portName() eq Mac or portName() eq iOS or portName() eq watchOS)) {

@@ -28,9 +28,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8D1107260486CEB800E47090"
-               BuildableName = "MiniBrowser.app"
-               BlueprintName = "MiniBrowser"
+               BlueprintIdentifier = "DD403C872851B13F00D899FC"
+               BuildableName = "MiniBrowser (Platform filters)"
+               BlueprintName = "MiniBrowser (Platform filters)"
                ReferencedContainer = "container:Tools/MiniBrowser/MiniBrowser.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

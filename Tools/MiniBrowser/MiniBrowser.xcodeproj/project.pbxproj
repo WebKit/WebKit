@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		DD403C872851B13F00D899FC /* MiniBrowser (Platform filters) */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DD403C8A2851B13F00D899FC /* Build configuration list for PBXAggregateTarget "MiniBrowser (Platform filters)" */;
+			buildPhases = (
+			);
+			dependencies = (
+				DD403C8C2851B14300D899FC /* PBXTargetDependency */,
+			);
+			name = "MiniBrowser (Platform filters)";
+			productName = "MiniBrowser (Mac-only)";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FE643A0161FA8940059E3FF /* BrowserWindowController.m */; };
 		0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */; };
@@ -20,6 +34,16 @@
 		BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58150DA1D0A300B32029 /* MainMenu.xib */; };
 		BC72B89611E57E0F001EB4EA /* BrowserWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC3294A2116A9852008635D0 /* BrowserWindow.xib */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DD403C8B2851B14300D899FC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = MiniBrowser;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0FE6439F161FA8940059E3FF /* BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserWindowController.h; path = mac/BrowserWindowController.h; sourceTree = "<group>"; };
@@ -53,6 +77,7 @@
 		BCA8CBDD11E578A000812FB7 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		BCA8CBDE11E578A000812FB7 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MiniBrowser.xcconfig; sourceTree = "<group>"; };
+		DD403C5328500F6400D899FC /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +163,7 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 				1AFFEF761860EE6800DA465E /* Cocoa.framework */,
 				5C9332AE24C1349C0036DECE /* SecurityInterface.framework */,
+				DD403C5328500F6400D899FC /* WebKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -204,6 +230,7 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* MiniBrowser */,
+				DD403C872851B13F00D899FC /* MiniBrowser (Platform filters) */,
 			);
 		};
 /* End PBXProject section */
@@ -239,6 +266,17 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		DD403C8C2851B14300D899FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				macos,
+			);
+			target = 8D1107260486CEB800E47090 /* MiniBrowser */;
+			targetProxy = DD403C8B2851B14300D899FC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -269,6 +307,18 @@
 			};
 			name = Release;
 		};
+		DD403C882851B13F00D899FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		DD403C892851B13F00D899FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -286,6 +336,15 @@
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD403C8A2851B13F00D899FC /* Build configuration list for PBXAggregateTarget "MiniBrowser (Platform filters)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DD403C882851B13F00D899FC /* Debug */,
+				DD403C892851B13F00D899FC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
