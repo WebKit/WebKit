@@ -1361,7 +1361,10 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cle
                               m_colorMask[3] ? m_clearColor[3] : 0);
     } else
         m_context->clearColor(0, 0, 0, 0);
-    m_context->colorMask(true, true, true, true);
+    if (m_oesDrawBuffersIndexed)
+        m_context->colorMaskiOES(0, true, true, true, true);
+    else
+        m_context->colorMask(true, true, true, true);
     GCGLbitfield clearMask = GraphicsContextGL::COLOR_BUFFER_BIT;
     if (contextAttributes.depth) {
         if (!combinedClear || !m_depthMask || !(mask & GraphicsContextGL::DEPTH_BUFFER_BIT))
@@ -1405,8 +1408,10 @@ void WebGLRenderingContextBase::restoreStateAfterClear()
         m_context->enable(GraphicsContextGL::SCISSOR_TEST);
     m_context->clearColor(m_clearColor[0], m_clearColor[1],
                           m_clearColor[2], m_clearColor[3]);
-    m_context->colorMask(m_colorMask[0], m_colorMask[1],
-                         m_colorMask[2], m_colorMask[3]);
+    if (m_oesDrawBuffersIndexed)
+        m_context->colorMaskiOES(0, m_colorMask[0], m_colorMask[1], m_colorMask[2], m_colorMask[3]);
+    else
+        m_context->colorMask(m_colorMask[0], m_colorMask[1], m_colorMask[2], m_colorMask[3]);
     m_context->clearDepth(m_clearDepth);
     m_context->clearStencil(m_clearStencil);
     m_context->stencilMaskSeparate(GraphicsContextGL::FRONT, m_stencilMask);

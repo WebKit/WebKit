@@ -105,6 +105,14 @@ void OESDrawBuffersIndexed::colorMaskiOES(GCGLuint buf, GCGLboolean red, GCGLboo
     if (!m_context || m_context->isContextLost())
         return;
 
+    // Used in WebGLRenderingContextBase::clearIfComposited
+    if (!buf) {
+        m_context->m_colorMask[0] = red;
+        m_context->m_colorMask[1] = green;
+        m_context->m_colorMask[2] = blue;
+        m_context->m_colorMask[3] = alpha;
+    }
+
     m_context->graphicsContextGL()->colorMaskiOES(buf, red, green, blue, alpha);
 }
 
