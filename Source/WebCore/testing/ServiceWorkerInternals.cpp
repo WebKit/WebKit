@@ -29,6 +29,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "FetchEvent.h"
+#include "FetchRequest.h"
 #include "JSFetchResponse.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionData.h"

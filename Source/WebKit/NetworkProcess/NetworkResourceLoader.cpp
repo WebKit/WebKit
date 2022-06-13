@@ -1180,6 +1180,9 @@ void NetworkResourceLoader::didFinishWithRedirectResponse(WebCore::ResourceReque
     networkLoadMetrics.markComplete();
     networkLoadMetrics.responseBodyBytesReceived = 0;
     networkLoadMetrics.responseBodyDecodedSize = 0;
+
+    if (m_serviceWorkerFetchTask)
+        networkLoadMetrics.fetchStart = m_serviceWorkerFetchTask->startTime();
     send(Messages::WebResourceLoader::DidFinishResourceLoad { networkLoadMetrics });
 
     cleanup(LoadResult::Success);

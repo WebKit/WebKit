@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FetchRequest.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebCoreOpaqueRoot.h"
 

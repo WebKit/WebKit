@@ -99,6 +99,12 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
 
     promise.resolve();
 
+    if (response->isAvailableNavigationPreload()) {
+        client->usePreload();
+        response->markAsDisturbed();
+        return;
+    }
+
     if (resourceResponse.isRedirection() && resourceResponse.httpHeaderFields().contains(HTTPHeaderName::Location)) {
         client->didReceiveRedirection(resourceResponse);
         return;
@@ -202,9 +208,10 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
     init.handled = DOMPromise::create(jsDOMGlobalObject, *promise);
 
     auto event = FetchEvent::create(*globalScope.globalObject(), eventNames().fetchEvent, WTFMove(init), Event::IsTrusted::Yes);
-
-    if (isServiceWorkerNavigationPreloadEnabled)
+    if (isServiceWorkerNavigationPreloadEnabled) {
+        client->setFetchEvent(event.copyRef());
         event->setNavigationPreloadIdentifier(fetchIdentifier);
+    }
 
     CertificateInfo certificateInfo = globalScope.certificateInfo();
 

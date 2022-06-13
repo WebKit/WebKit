@@ -28,6 +28,7 @@
 
 #include "CachedResourceRequestInitiators.h"
 #include "EventNames.h"
+#include "FetchRequest.h"
 #include "JSDOMPromise.h"
 #include "JSFetchResponse.h"
 #include "Logging.h"
@@ -163,30 +164,43 @@ FetchEvent::PreloadResponsePromise& FetchEvent::preloadResponse(ScriptExecutionC
             }
             return *m_preloadResponsePromise;
         }
-
-        auto request = FetchRequest::create(context, { }, FetchHeaders::create(), ResourceRequest { m_request->internalRequest() } , FetchOptions { m_request->fetchOptions() }, String { m_request->internalRequestReferrer() });
-        request->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
-        FetchResponse::fetch(context, request.get(), [protectedThis = Ref { *this }](auto&& result) {
-            if (result.hasException()) {
-                protectedThis->m_preloadResponsePromise->reject(result.releaseException());
-                return;
-            }
-
-            Ref response = result.releaseReturnValue();
-            auto* context = response->scriptExecutionContext();
-            if (!context)
-                return;
-            auto* globalObject = context->globalObject();
-            if (!globalObject)
-                return;
-
-            auto& vm = globalObject->vm();
-            JSC::JSLockHolder lock(vm);
-            JSC::Strong<JSC::Unknown> value { vm, toJS(globalObject, JSC::jsCast<JSDOMGlobalObject*>(globalObject), response.get()) };
-            protectedThis->m_preloadResponsePromise->resolve(value);
-        }, cachedResourceRequestInitiators().navigation);
     }
     return *m_preloadResponsePromise;
+}
+
+void FetchEvent::navigationPreloadIsReady(ResourceResponse&& response)
+{
+    auto* globalObject = m_handled->globalObject();
+    auto* context = globalObject ? globalObject->scriptExecutionContext() : nullptr;
+    if (!context)
+        return;
+
+    if (!m_preloadResponsePromise)
+        m_preloadResponsePromise = makeUnique<PreloadResponsePromise>();
+
+    auto request = FetchRequest::create(*context, { }, FetchHeaders::create(), ResourceRequest { m_request->internalRequest() } , FetchOptions { m_request->fetchOptions() }, String { m_request->internalRequestReferrer() });
+    request->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
+
+    auto fetchResponse = FetchResponse::createFetchResponse(*context, request.get(), { });
+    fetchResponse->setReceivedInternalResponse(response, FetchOptions::Credentials::Include);
+    fetchResponse->setIsNavigationPreload(true);
+
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    JSC::Strong<JSC::Unknown> value { vm, toJS(globalObject, JSC::jsCast<JSDOMGlobalObject*>(globalObject), fetchResponse.get()) };
+    m_preloadResponsePromise->resolve(value);
+
+    // We postpone the load to leave some time for the service worker to use the preload before loading it.
+    context->postTask([fetchResponse = WTFMove(fetchResponse), request = WTFMove(request)](auto& context) {
+        fetchResponse->startLoader(context, request.get(), cachedResourceRequestInitiators().navigation);
+    });
+}
+
+void FetchEvent::navigationPreloadFailed(ResourceError&& error)
+{
+    if (!m_preloadResponsePromise)
+        m_preloadResponsePromise = makeUnique<PreloadResponsePromise>();
+    m_preloadResponsePromise->reject(Exception { TypeError, error.sanitizedDescription() });
 }
 
 } // namespace WebCore

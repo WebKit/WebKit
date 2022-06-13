@@ -30,6 +30,7 @@ messages -> ServiceWorkerFetchTask NotRefCounted {
     DidReceiveData(IPC::SharedBufferReference data, int64_t encodedDataLength)
     DidReceiveFormData(IPC::FormDataReference data)
     DidFinish(WebCore::NetworkLoadMetrics metrics)
+    UsePreload()
 }
 
 #endif // ENABLE(SERVICE_WORKER)

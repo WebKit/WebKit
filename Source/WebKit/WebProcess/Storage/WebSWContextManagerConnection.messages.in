@@ -46,6 +46,9 @@ messages -> WebSWContextManagerConnection {
     SetThrottleState(bool isThrottleable)
 
     ConvertFetchToDownload(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier identifier)
+
+    NavigationPreloadIsReady(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier identifier, WebCore::ResourceResponse response)
+    NavigationPreloadFailed(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::FetchIdentifier identifier, WebCore::ResourceError error)
 }
 
 #endif

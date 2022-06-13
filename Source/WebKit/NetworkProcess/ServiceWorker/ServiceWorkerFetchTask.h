@@ -90,6 +90,8 @@ public:
 
     bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
+    MonotonicTime startTime() const;
+
 private:
     enum class ShouldSetSource : bool { No, Yes };
     void didReceiveRedirectResponse(WebCore::ResourceResponse&&);
@@ -99,6 +101,7 @@ private:
     void didFinish(const WebCore::NetworkLoadMetrics&);
     void didFail(const WebCore::ResourceError&);
     void didNotHandle();
+    void usePreload();
 
     void processRedirectResponse(WebCore::ResourceResponse&&, ShouldSetSource);
     void processResponse(WebCore::ResourceResponse&&, bool needsContinueDidReceiveResponseMessage, ShouldSetSource);
@@ -111,6 +114,7 @@ private:
     void loadBodyFromPreloader();
     void cancelPreloadIfNecessary();
     NetworkSession* session();
+    void preloadResponseIsReady();
 
     template<typename Message> bool sendToServiceWorker(Message&&);
     template<typename Message> bool sendToClient(Message&&);

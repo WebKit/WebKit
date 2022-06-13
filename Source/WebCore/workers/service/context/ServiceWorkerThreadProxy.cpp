@@ -269,6 +269,24 @@ void ServiceWorkerThreadProxy::convertFetchToDownload(SWServerConnectionIdentifi
     }, WorkerRunLoop::defaultMode());
 }
 
+void ServiceWorkerThreadProxy::navigationPreloadIsReady(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, ResourceResponse&& response)
+{
+    ASSERT(!isMainThread());
+    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier, responseData = response.crossThreadData()] (auto&) mutable {
+        if (auto client = m_ongoingFetchTasks.get({ connectionIdentifier, fetchIdentifier }))
+            client->navigationPreloadIsReady(ResourceResponse::fromCrossThreadData(WTFMove(responseData)));
+    }, WorkerRunLoop::defaultMode());
+}
+
+void ServiceWorkerThreadProxy::navigationPreloadFailed(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier, ResourceError&& error)
+{
+    ASSERT(!isMainThread());
+    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, connectionIdentifier, fetchIdentifier, error = WTFMove(error).isolatedCopy()] (auto&) mutable {
+        if (auto client = m_ongoingFetchTasks.get({ connectionIdentifier, fetchIdentifier }))
+            client->navigationPreloadFailed(WTFMove(error));
+    }, WorkerRunLoop::defaultMode());
+}
+
 void ServiceWorkerThreadProxy::continueDidReceiveFetchResponse(SWServerConnectionIdentifier connectionIdentifier, FetchIdentifier fetchIdentifier)
 {
     ASSERT(!isMainThread());

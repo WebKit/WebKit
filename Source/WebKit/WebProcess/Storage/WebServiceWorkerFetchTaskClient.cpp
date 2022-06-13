@@ -35,6 +35,7 @@
 #include "SharedBufferReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
+#include <WebCore/FetchEvent.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SWContextManager.h>
@@ -225,6 +226,53 @@ void WebServiceWorkerFetchTaskClient::setCancelledCallback(Function<void()>&& ca
     m_cancelledCallback = WTFMove(callback);
 }
 
+void WebServiceWorkerFetchTaskClient::setFetchEvent(Ref<WebCore::FetchEvent>&& event)
+{
+    m_event = WTFMove(event);
+
+    if (!m_preloadResponse.isNull()) {
+        m_event->navigationPreloadIsReady(WTFMove(m_preloadResponse));
+        m_event = nullptr;
+        return;
+    }
+
+    if (!m_preloadError.isNull()) {
+        m_event->navigationPreloadFailed(WTFMove(m_preloadError));
+        m_event = nullptr;
+    }
+}
+
+void WebServiceWorkerFetchTaskClient::navigationPreloadIsReady(ResourceResponse&& response)
+{
+    if (!m_event) {
+        m_preloadResponse = WTFMove(response);
+        return;
+    }
+
+    m_event->navigationPreloadIsReady(WTFMove(response));
+    m_event = nullptr;
+}
+
+void WebServiceWorkerFetchTaskClient::navigationPreloadFailed(ResourceError&& error)
+{
+    if (!m_event) {
+        m_preloadError = WTFMove(error);
+        return;
+    }
+    m_event->navigationPreloadFailed(WTFMove(error));
+    m_event = nullptr;
+}
+      
+void WebServiceWorkerFetchTaskClient::usePreload()
+{
+    if (!m_connection)
+        return;
+
+    m_connection->send(Messages::ServiceWorkerFetchTask::UsePreload { }, m_fetchIdentifier);
+
+    cleanup();
+}
+
 void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerFrameLoaderClient::continueDidReceiveResponse, has connection %d, didFinish %d, response type %ld", !!m_connection, m_didFinish, static_cast<long>(m_responseData.index()));
@@ -252,7 +300,7 @@ void WebServiceWorkerFetchTaskClient::continueDidReceiveResponse()
 void WebServiceWorkerFetchTaskClient::cleanup()
 {
     m_connection = nullptr;
-
+    m_event = nullptr;
     ensureOnMainRunLoop([serviceWorkerIdentifier = m_serviceWorkerIdentifier, serverConnectionIdentifier = m_serverConnectionIdentifier, fetchIdentifier = m_fetchIdentifier] {
         if (auto* proxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
             proxy->removeFetch(serverConnectionIdentifier, fetchIdentifier);

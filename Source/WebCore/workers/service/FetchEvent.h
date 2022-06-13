@@ -29,7 +29,8 @@
 
 #include "DOMPromiseProxy.h"
 #include "ExtendableEvent.h"
-#include "FetchRequest.h"
+#include "FetchIdentifier.h"
+#include "ResourceError.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 
@@ -40,8 +41,8 @@ class JSGlobalObject;
 namespace WebCore {
 
 class DOMPromise;
+class FetchRequest;
 class FetchResponse;
-class ResourceError;
 
 class FetchEvent final : public ExtendableEvent {
     WTF_MAKE_ISO_ALLOCATED(FetchEvent);
@@ -81,6 +82,8 @@ public:
     PreloadResponsePromise& preloadResponse(ScriptExecutionContext&);
 
     void setNavigationPreloadIdentifier(FetchIdentifier);
+    WEBCORE_EXPORT void navigationPreloadIsReady(ResourceResponse&&);
+    WEBCORE_EXPORT void navigationPreloadFailed(ResourceError&&);
 
 private:
     WEBCORE_EXPORT FetchEvent(JSC::JSGlobalObject&, const AtomString&, Init&&, IsTrusted);

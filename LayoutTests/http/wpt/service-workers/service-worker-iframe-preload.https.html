@@ -64,11 +64,11 @@ promise_test(async (test) => {
     activeWorker.postMessage("fetch");
 
     const response = await fetchPromise;
-    assert_equals(await response.text(), "before-navigation");
+    assert_equals(await response.text(), "nothing");
 
     const frame = await iframePromise;
-    assert_equals(frame.contentWindow.value, "nothing");
-}, "Service worker load uses preload if available and fetch event was not handled");
+    assert_equals(frame.contentWindow.document.body.innerText, "before-navigation");
+}, "Service worker load uses preload that starts as soon as possible");
 </script>
 </body>
 </html>

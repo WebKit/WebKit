@@ -65,6 +65,8 @@ public:
 
     bool convertToDownload(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
+    MonotonicTime startTime() const { return m_startTime; }
+
 private:
     // NetworkLoadClient.
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final { }
@@ -100,6 +102,7 @@ private:
     bool m_isStarted { false };
     bool m_isCancelled { false };
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
+    MonotonicTime m_startTime;
 };
 
 } // namespace WebKit

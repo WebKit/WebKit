@@ -164,11 +164,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/fetch/FetchBodyConsumer.h
     Modules/fetch/FetchBodySource.h
-    Modules/fetch/FetchRequestCredentials.h
     Modules/fetch/FetchHeaders.h
     Modules/fetch/FetchIdentifier.h
     Modules/fetch/FetchLoader.h
     Modules/fetch/FetchLoaderClient.h
+    Modules/fetch/FetchRequestCredentials.h
 
     Modules/filesystemaccess/FileSystemDirectoryHandle.h
     Modules/filesystemaccess/FileSystemFileHandle.h
@@ -425,6 +425,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/BufferSource.h
     bindings/js/CachedScriptFetcher.h
     bindings/js/CommonVM.h
+    bindings/js/DOMPromiseProxy.h
     bindings/js/DOMWrapperWorld.h
     bindings/js/ExceptionDetails.h
     bindings/js/GCController.h
@@ -2026,6 +2027,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/WorkerThreadType.h
     workers/WorkerType.h
 
+    workers/service/ExtendableEvent.h
+    workers/service/ExtendableEventInit.h
+    workers/service/FetchEvent.h
     workers/service/NavigationPreloadState.h
     workers/service/SWClientConnection.h
     workers/service/ServiceWorkerClientData.h

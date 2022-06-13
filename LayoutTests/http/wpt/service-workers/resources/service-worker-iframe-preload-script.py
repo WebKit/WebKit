@@ -17,7 +17,7 @@ def main(request, response):
     if not value:
         response.headers.set(b"Cache-Control", b"no-cache")
         response.headers.set(b"Content-Type", b"text/html")
-        return "<html><body><script>window.value = 'nothing';</script></body></html>"
+        return "nothing"
 
     response.headers.set(b"Cache-Control", b"no-cache")
     response.headers.set(b"Content-Type", b"text/ascii")

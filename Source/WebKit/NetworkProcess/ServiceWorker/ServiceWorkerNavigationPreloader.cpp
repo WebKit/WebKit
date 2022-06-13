@@ -45,10 +45,10 @@ ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSessio
     , m_parameters(WTFMove(parameters))
     , m_state(state)
     , m_shouldCaptureExtraNetworkLoadMetrics(shouldCaptureExtraNetworkLoadMetrics())
+    , m_startTime(MonotonicTime::now())
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader %p", this);
-    if (!m_state.enabled || parameters.isMainFrameNavigation)
-        start();
+    start();
 }
 
 void ServiceWorkerNavigationPreloader::start()
@@ -164,6 +164,9 @@ void ServiceWorkerNavigationPreloader::didReceiveResponse(ResourceResponse&& res
 {
     RELEASE_LOG(ServiceWorker, "ServiceWorkerNavigationPreloader::didReceiveResponse %p", this);
 
+    if (response.isRedirection())
+        response.setTainting(ResourceResponse::Tainting::Opaqueredirect);
+
     if (response.httpStatusCode() == 304 && m_cacheEntry) {
         auto cacheEntry = WTFMove(m_cacheEntry);
         loadWithCacheEntry(*cacheEntry);
@@ -217,8 +220,6 @@ void ServiceWorkerNavigationPreloader::didComplete()
 
 void ServiceWorkerNavigationPreloader::waitForResponse(ResponseCallback&& callback)
 {
-    start();
-
     if (!m_error.isNull()) {
         callback();
         return;
