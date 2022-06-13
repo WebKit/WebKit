@@ -1608,7 +1608,19 @@ void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GC
         return;
     if (!validateVertexArrayObject("drawRangeElements"))
         return;
-    m_context->drawRangeElements(mode, start, end, count, type, offset);
+
+    if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
+        return;
+
+    clearIfComposited(ClearCallerDrawOrClear);
+
+    {
+        InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
+
+        m_context->drawRangeElements(mode, start, end, count, type, offset);
+    }
+
+    markContextChangedAndNotifyCanvasObserver();
 }
 
 void WebGL2RenderingContext::drawBuffers(const Vector<GCGLenum>& buffers)
