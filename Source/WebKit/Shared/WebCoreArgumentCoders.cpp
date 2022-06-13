@@ -168,114 +168,6 @@ DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineStrokeColor)
 
 #undef DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE
 
-static void encodeSharedBuffer(Encoder& encoder, const FragmentedSharedBuffer* buffer)
-{
-    bool isNull = !buffer;
-    encoder << isNull;
-    if (isNull)
-        return;
-
-    uint64_t bufferSize = buffer->size();
-    encoder << bufferSize;
-    if (!bufferSize)
-        return;
-
-#if USE(UNIX_DOMAIN_SOCKETS)
-    // Do not use shared memory for FragmentedSharedBuffer encoding in Unix, because it's easy to reach the
-    // maximum number of file descriptors open per process when sending large data in small chunks
-    // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is
-    // too large. See https://bugs.webkit.org/show_bug.cgi?id=208571.
-    for (const auto& element : *buffer)
-        encoder.encodeFixedLengthData(element.segment->data(), element.segment->size(), 1);
-#else
-    SharedMemory::Handle handle;
-    {
-        auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
-        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    }
-    encoder << SharedMemory::IPCHandle { WTFMove(handle), bufferSize };
-#endif
-}
-
-static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
-{
-    std::optional<bool> isNull;
-    decoder >> isNull;
-    if (!isNull)
-        return false;
-
-    if (*isNull) {
-        buffer = nullptr;
-        return true;
-    }
-
-    uint64_t bufferSize = 0;
-    if (!decoder.decode(bufferSize))
-        return false;
-
-    if (!bufferSize) {
-        buffer = SharedBuffer::create();
-        return true;
-    }
-
-#if USE(UNIX_DOMAIN_SOCKETS)
-    if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
-        return false;
-
-    Vector<uint8_t> data;
-    data.grow(bufferSize);
-    if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
-        return false;
-
-    buffer = SharedBuffer::create(WTFMove(data));
-#else
-    SharedMemory::IPCHandle ipcHandle;
-    if (!decoder.decode(ipcHandle))
-        return false;
-
-    auto sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
-    if (!sharedMemoryBuffer)
-        return false;
-
-    if (sharedMemoryBuffer->size() < bufferSize)
-        return false;
-
-    buffer = SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
-#endif
-
-    return true;
-}
-
-static void encodeTypesAndData(Encoder& encoder, const Vector<String>& types, const Vector<RefPtr<SharedBuffer>>& data)
-{
-    ASSERT(types.size() == data.size());
-    encoder << types;
-    encoder << static_cast<uint64_t>(data.size());
-    for (auto& buffer : data)
-        encodeSharedBuffer(encoder, buffer.get());
-}
-
-static WARN_UNUSED_RETURN bool decodeTypesAndData(Decoder& decoder, Vector<String>& types, Vector<RefPtr<SharedBuffer>>& data)
-{
-    if (!decoder.decode(types))
-        return false;
-
-    uint64_t dataSize;
-    if (!decoder.decode(dataSize))
-        return false;
-
-    ASSERT(dataSize == types.size());
-
-    for (uint64_t i = 0; i < dataSize; i++) {
-        RefPtr<SharedBuffer> buffer;
-        if (!decodeSharedBuffer(decoder, buffer))
-            return false;
-        data.append(buffer);
-    }
-
-    return true;
-}
-
 void ArgumentCoder<CacheQueryOptions>::encode(Encoder& encoder, const CacheQueryOptions& options)
 {
     encoder << options.ignoreSearch;
@@ -364,7 +256,7 @@ void ArgumentCoder<DOMCacheEngine::Record>::encode(Encoder& encoder, const DOMCa
 
     WTF::switchOn(record.responseBody, [&](const Ref<SharedBuffer>& buffer) {
         encoder << true;
-        encodeSharedBuffer(encoder, buffer.ptr());
+        encoder << buffer;
     }, [&](const Ref<FormData>& formData) {
         encoder << false;
         encoder << true;
@@ -420,11 +312,10 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
         return std::nullopt;
 
     if (hasSharedBufferBody) {
-        RefPtr<SharedBuffer> buffer;
-        if (!decodeSharedBuffer(decoder, buffer))
+        auto buffer = decoder.decode<Ref<SharedBuffer>>();
+        if (!buffer)
             return std::nullopt;
-        if (buffer)
-            responseBody = buffer.releaseNonNull();
+        responseBody = WTFMove(*buffer);
     } else {
         bool hasFormDataBody;
         if (!decoder.decode(hasFormDataBody))
@@ -1586,7 +1477,7 @@ void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const 
     bool hasBuffer = std::holds_alternative<Ref<SharedBuffer>>(platformData);
     encoder << hasBuffer;
     if (hasBuffer)
-        encodeSharedBuffer(encoder, std::get<Ref<SharedBuffer>>(platformData).ptr());
+        encoder << std::get<Ref<SharedBuffer>>(platformData);
 }
 
 bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, PasteboardCustomData::Entry& data)
@@ -1616,10 +1507,10 @@ bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, Pasteb
         return false;
 
     if (hasBuffer) {
-        RefPtr<SharedBuffer> value;
-        if (!decodeSharedBuffer(decoder, value) || !value)
+        auto buffer = decoder.decode<Ref<SharedBuffer>>();
+        if (!buffer)
             return false;
-        data.platformData = { value.releaseNonNull() };
+        data.platformData = { WTFMove(*buffer) };
     }
 
     return true;
@@ -1728,12 +1619,13 @@ void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const Pastebo
     encoder << content.dataInStringFormat;
     encoder << content.dataInHTMLFormat;
 
-    encodeSharedBuffer(encoder, content.dataInWebArchiveFormat.get());
-    encodeSharedBuffer(encoder, content.dataInRTFDFormat.get());
-    encodeSharedBuffer(encoder, content.dataInRTFFormat.get());
-    encodeSharedBuffer(encoder, content.dataInAttributedStringFormat.get());
+    encoder << content.dataInWebArchiveFormat;
+    encoder << content.dataInRTFDFormat;
+    encoder << content.dataInRTFFormat;
+    encoder << content.dataInAttributedStringFormat;
 
-    encodeTypesAndData(encoder, content.clientTypes, content.clientData);
+    encoder << content.clientTypes;
+    encoder << content.clientData;
 }
 
 bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWebContent& content)
@@ -1746,16 +1638,20 @@ bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWeb
         return false;
     if (!decoder.decode(content.dataInHTMLFormat))
         return false;
-    if (!decodeSharedBuffer(decoder, content.dataInWebArchiveFormat))
+
+    if (!decoder.decode(content.dataInWebArchiveFormat))
         return false;
-    if (!decodeSharedBuffer(decoder, content.dataInRTFDFormat))
+    if (!decoder.decode(content.dataInRTFDFormat))
         return false;
-    if (!decodeSharedBuffer(decoder, content.dataInRTFFormat))
+    if (!decoder.decode(content.dataInRTFFormat))
         return false;
-    if (!decodeSharedBuffer(decoder, content.dataInAttributedStringFormat))
+    if (!decoder.decode(content.dataInAttributedStringFormat))
         return false;
-    if (!decodeTypesAndData(decoder, content.clientTypes, content.clientData))
+    if (!decoder.decode(content.clientTypes))
         return false;
+    if (!decoder.decode(content.clientData))
+        return false;
+
     return true;
 }
 
@@ -1767,9 +1663,9 @@ void ArgumentCoder<PasteboardImage>::encode(Encoder& encoder, const PasteboardIm
     encoder << pasteboardImage.resourceMIMEType;
     encoder << pasteboardImage.suggestedName;
     encoder << pasteboardImage.imageSize;
-    if (pasteboardImage.resourceData)
-        encodeSharedBuffer(encoder, pasteboardImage.resourceData.get());
-    encodeTypesAndData(encoder, pasteboardImage.clientTypes, pasteboardImage.clientData);
+    encoder << pasteboardImage.resourceData;
+    encoder << pasteboardImage.clientTypes;
+    encoder << pasteboardImage.clientData;
 }
 
 bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& pasteboardImage)
@@ -1786,10 +1682,13 @@ bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& p
         return false;
     if (!decoder.decode(pasteboardImage.imageSize))
         return false;
-    if (!decodeSharedBuffer(decoder, pasteboardImage.resourceData))
+    if (!decoder.decode(pasteboardImage.resourceData))
         return false;
-    if (!decodeTypesAndData(decoder, pasteboardImage.clientTypes, pasteboardImage.clientData))
+    if (!decoder.decode(pasteboardImage.clientTypes))
         return false;
+    if (!decoder.decode(pasteboardImage.clientData))
+        return false;
+
     return true;
 }
 
@@ -1867,14 +1766,14 @@ bool ArgumentCoder<FileChooserSettings>::decode(Decoder& decoder, FileChooserSet
 void ArgumentCoder<RawFile>::encode(Encoder& encoder, const RawFile& file)
 {
     encoder << file.fileName;
-    encodeSharedBuffer(encoder, file.fileData.get());
+    encoder << file.fileData;
 }
 
 bool ArgumentCoder<RawFile>::decode(Decoder& decoder, RawFile& file)
 {
     if (!decoder.decode(file.fileName))
         return false;
-    if (!decodeSharedBuffer(decoder, file.fileData))
+    if (!decoder.decode(file.fileData))
         return false;
     return true;
 }
@@ -2891,7 +2790,8 @@ void ArgumentCoder<PromisedAttachmentInfo>::encode(Encoder& encoder, const Promi
 #if ENABLE(ATTACHMENT_ELEMENT)
     encoder << info.attachmentIdentifier;
 #endif
-    encodeTypesAndData(encoder, info.additionalTypes, info.additionalData);
+    encoder << info.additionalTypes;
+    encoder << info.additionalData;
 }
 
 bool ArgumentCoder<PromisedAttachmentInfo>::decode(Decoder& decoder, PromisedAttachmentInfo& info)
@@ -2901,7 +2801,9 @@ bool ArgumentCoder<PromisedAttachmentInfo>::decode(Decoder& decoder, PromisedAtt
         return false;
 #endif
 
-    if (!decodeTypesAndData(decoder, info.additionalTypes, info.additionalData))
+    if (!decoder.decode(info.additionalTypes))
+        return false;
+    if (!decoder.decode(info.additionalData))
         return false;
 
     return true;
@@ -2998,19 +2900,14 @@ void ArgumentCoder<SerializedAttachmentData>::encode(IPC::Encoder& encoder, cons
 
 std::optional<SerializedAttachmentData> ArgumentCoder<WebCore::SerializedAttachmentData>::decode(IPC::Decoder& decoder)
 {
-    String identifier;
-    if (!decoder.decode(identifier))
+    auto identifier = decoder.decode<String>();
+    auto mimeType = decoder.decode<String>();
+    auto data = decoder.decode<Ref<SharedBuffer>>();
+
+    if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
 
-    String mimeType;
-    if (!decoder.decode(mimeType))
-        return std::nullopt;
-
-    RefPtr<SharedBuffer> buffer;
-    if (!decoder.decode(buffer))
-        return std::nullopt;
-
-    return { { WTFMove(identifier), WTFMove(mimeType), buffer.releaseNonNull() } };
+    return { { WTFMove(*identifier), WTFMove(*mimeType), WTFMove(*data) } };
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
@@ -3044,60 +2941,75 @@ std::optional<SerializedPlatformDataCueValue> ArgumentCoder<WebCore::SerializedP
 }
 #endif
 
-void ArgumentCoder<RefPtr<WebCore::FragmentedSharedBuffer>>::encode(Encoder& encoder, const RefPtr<WebCore::FragmentedSharedBuffer>& buffer)
+void ArgumentCoder<WebCore::FragmentedSharedBuffer>::encode(Encoder& encoder, const WebCore::FragmentedSharedBuffer& buffer)
 {
-    encodeSharedBuffer(encoder, buffer.get());
+    uint64_t bufferSize = buffer.size();
+    encoder << bufferSize;
+    if (!bufferSize)
+        return;
+
+#if USE(UNIX_DOMAIN_SOCKETS)
+    // Do not use shared memory for FragmentedSharedBuffer encoding in Unix, because it's easy to reach the
+    // maximum number of file descriptors open per process when sending large data in small chunks
+    // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is
+    // too large. See https://bugs.webkit.org/show_bug.cgi?id=208571.
+    for (const auto& element : buffer)
+        encoder.encodeFixedLengthData(element.segment->data(), element.segment->size(), 1);
+#else
+    SharedMemory::Handle handle;
+    {
+        auto sharedMemoryBuffer = SharedMemory::copyBuffer(buffer);
+        sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    }
+    encoder << SharedMemory::IPCHandle { WTFMove(handle), bufferSize };
+#endif
 }
 
-std::optional<RefPtr<FragmentedSharedBuffer>> ArgumentCoder<RefPtr<WebCore::FragmentedSharedBuffer>>::decode(Decoder& decoder)
+std::optional<Ref<WebCore::FragmentedSharedBuffer>> ArgumentCoder<WebCore::FragmentedSharedBuffer>::decode(Decoder& decoder)
 {
-    RefPtr<SharedBuffer> buffer;
-    if (!decodeSharedBuffer(decoder, buffer))
+    uint64_t bufferSize = 0;
+    if (!decoder.decode(bufferSize))
         return std::nullopt;
 
-    return buffer;
-}
+    if (!bufferSize)
+        return SharedBuffer::create();
 
-void ArgumentCoder<Ref<WebCore::FragmentedSharedBuffer>>::encode(Encoder& encoder, const Ref<WebCore::FragmentedSharedBuffer>& buffer)
-{
-    encodeSharedBuffer(encoder, buffer.ptr());
-}
-
-std::optional<Ref<FragmentedSharedBuffer>> ArgumentCoder<Ref<WebCore::FragmentedSharedBuffer>>::decode(Decoder& decoder)
-{
-    RefPtr<SharedBuffer> buffer;
-    if (!decodeSharedBuffer(decoder, buffer) || !buffer)
+#if USE(UNIX_DOMAIN_SOCKETS)
+    if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
         return std::nullopt;
 
-    return buffer.releaseNonNull();
-}
-
-void ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::encode(Encoder& encoder, const RefPtr<WebCore::SharedBuffer>& buffer)
-{
-    encodeSharedBuffer(encoder, buffer.get());
-}
-
-std::optional<RefPtr<SharedBuffer>> ArgumentCoder<RefPtr<WebCore::SharedBuffer>>::decode(Decoder& decoder)
-{
-    RefPtr<SharedBuffer> buffer;
-    if (!decodeSharedBuffer(decoder, buffer))
+    Vector<uint8_t> data;
+    data.grow(bufferSize);
+    if (!decoder.decodeFixedLengthData(data.data(), data.size(), 1))
         return std::nullopt;
 
-    return buffer;
-}
-
-void ArgumentCoder<Ref<WebCore::SharedBuffer>>::encode(Encoder& encoder, const Ref<WebCore::SharedBuffer>& buffer)
-{
-    encodeSharedBuffer(encoder, buffer.ptr());
-}
-
-std::optional<Ref<SharedBuffer>> ArgumentCoder<Ref<WebCore::SharedBuffer>>::decode(Decoder& decoder)
-{
-    RefPtr<SharedBuffer> buffer;
-    if (!decodeSharedBuffer(decoder, buffer) || !buffer)
+    return SharedBuffer::create(WTFMove(data));
+#else
+    SharedMemory::IPCHandle ipcHandle;
+    if (!decoder.decode(ipcHandle))
         return std::nullopt;
 
-    return buffer.releaseNonNull();
+    auto sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryBuffer)
+        return std::nullopt;
+
+    if (sharedMemoryBuffer->size() < bufferSize)
+        return std::nullopt;
+
+    return SharedBuffer::create(static_cast<unsigned char*>(sharedMemoryBuffer->data()), bufferSize);
+#endif
+}
+
+void ArgumentCoder<WebCore::SharedBuffer>::encode(Encoder& encoder, const WebCore::SharedBuffer& buffer)
+{
+    encoder << static_cast<const WebCore::FragmentedSharedBuffer&>(buffer);
+}
+
+std::optional<Ref<WebCore::SharedBuffer>> ArgumentCoder<WebCore::SharedBuffer>::decode(Decoder& decoder)
+{
+    if (auto buffer = decoder.decode<Ref<FragmentedSharedBuffer>>())
+        return (*buffer)->makeContiguous();
+    return std::nullopt;
 }
 
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
@@ -3143,7 +3055,7 @@ void ArgumentCoder<WebCore::ScriptBuffer>::encode(Encoder& encoder, const WebCor
         return;
     }
 #endif
-    encodeSharedBuffer(encoder, script.buffer());
+    encoder << RefPtr { script.buffer() };
 }
 
 std::optional<WebCore::ScriptBuffer> ArgumentCoder<WebCore::ScriptBuffer>::decode(Decoder& decoder)
@@ -3157,11 +3069,9 @@ std::optional<WebCore::ScriptBuffer> ArgumentCoder<WebCore::ScriptBuffer>::decod
         return decodeScriptBufferAsShareableResourceHandle(decoder);
 #endif
 
-    RefPtr<SharedBuffer> buffer;
-    if (!decodeSharedBuffer(decoder, buffer))
-        return std::nullopt;
-
-    return WebCore::ScriptBuffer { WTFMove(buffer) };
+    if (auto buffer = decoder.decode<RefPtr<FragmentedSharedBuffer>>())
+        return WebCore::ScriptBuffer { WTFMove(*buffer) };
+    return std::nullopt;
 }
 
 template<typename Encoder>
@@ -3223,9 +3133,7 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
 void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::Message& message)
 {
     encoder << message.first;
-
-    RefPtr<SharedBuffer> messageData = message.second.copyRef();
-    encoder << messageData;
+    encoder << message.second;
 }
 
 std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMInstanceSession::Message>::decode(Decoder& decoder)
@@ -3234,11 +3142,11 @@ std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMI
     if (!decoder.decode(type))
         return std::nullopt;
 
-    RefPtr<SharedBuffer> buffer;
-    if (!decoder.decode(buffer) || !buffer)
+    auto buffer = decoder.decode<Ref<SharedBuffer>>();
+    if (UNLIKELY(!buffer))
         return std::nullopt;
 
-    return std::make_optional<WebCore::CDMInstanceSession::Message>({ type, buffer.releaseNonNull() });
+    return std::make_optional<WebCore::CDMInstanceSession::Message>({ type, WTFMove(*buffer) });
 }
 #endif // ENABLE(ENCRYPTED_MEDIA)
 

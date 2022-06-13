@@ -752,23 +752,13 @@ template<> struct ArgumentCoder<WebCore::SerializedPlatformDataCueValue> {
 };
 #endif
 
-template<> struct ArgumentCoder<RefPtr<WebCore::FragmentedSharedBuffer>> {
-    static void encode(Encoder&, const RefPtr<WebCore::FragmentedSharedBuffer>&);
-    static std::optional<RefPtr<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Ref<WebCore::FragmentedSharedBuffer>> {
-    static void encode(Encoder&, const Ref<WebCore::FragmentedSharedBuffer>&);
+template<> struct ArgumentCoder<WebCore::FragmentedSharedBuffer> {
+    static void encode(Encoder&, const WebCore::FragmentedSharedBuffer&);
     static std::optional<Ref<WebCore::FragmentedSharedBuffer>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<RefPtr<WebCore::SharedBuffer>> {
-    static void encode(Encoder&, const RefPtr<WebCore::SharedBuffer>&);
-    static std::optional<RefPtr<WebCore::SharedBuffer>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Ref<WebCore::SharedBuffer>> {
-    static void encode(Encoder&, const Ref<WebCore::SharedBuffer>&);
+template<> struct ArgumentCoder<WebCore::SharedBuffer> {
+    static void encode(Encoder&, const WebCore::SharedBuffer&);
     static std::optional<Ref<WebCore::SharedBuffer>> decode(Decoder&);
 };
 
