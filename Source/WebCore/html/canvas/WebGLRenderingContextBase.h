@@ -446,6 +446,7 @@ protected:
 
     friend class EXTTextureCompressionBPTC;
     friend class EXTTextureCompressionRGTC;
+    friend class OESDrawBuffersIndexed;
     friend class OESVertexArrayObject;
     friend class WebGLCompressedTextureASTC;
     friend class WebGLCompressedTextureATC;
