@@ -1157,17 +1157,16 @@ void WebMParser::VideoTrackData::flushPendingSamples()
     // We set its duration to the track's default duration, or if not known the time of the last sample processed.
     if (!m_pendingMediaSamples.size())
         return;
-    ASSERT(m_lastPresentationTime);
     auto track = this->track();
 
+    MediaTime presentationTime = m_lastPresentationTime ? *m_lastPresentationTime : m_pendingMediaSamples.first().presentationTime;
     MediaTime duration;
     if (track.default_duration.is_present())
-        duration = MediaTime(track.default_duration.value() * m_lastPresentationTime->timeScale() / k_us_in_seconds, m_lastPresentationTime->timeScale());
+        duration = MediaTime(track.default_duration.value() * presentationTime.timeScale() / k_us_in_seconds, presentationTime.timeScale());
     else if (m_lastDuration)
         duration = *m_lastDuration;
-    processPendingMediaSamples(*m_lastPresentationTime + duration);
+    processPendingMediaSamples(presentationTime + duration);
     m_lastPresentationTime.reset();
-    m_lastDuration.reset();
 }
 
 void WebMParser::AudioTrackData::resetCompletedFramesState()
