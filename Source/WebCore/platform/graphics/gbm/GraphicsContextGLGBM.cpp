@@ -355,12 +355,7 @@ void GraphicsContextGLGBM::prepareTexture()
     if (contextAttributes().antialias)
         resolveMultisamplingIfNecessary();
 
-    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
     GL_Flush();
-
-    if (m_state.boundDrawFBO != m_fbo)
-        GL_BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
 }
 
 bool GraphicsContextGLGBM::reshapeDisplayBufferBacking()
