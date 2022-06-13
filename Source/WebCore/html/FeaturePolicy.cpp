@@ -288,7 +288,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     if (!isPaymentInitialized)
         policy.m_paymentRule.allowedList.add(document.securityOrigin().data());
     if (!isWebShareInitialized)
-        policy.m_webShareRule.allowedList.add(document.securityOrigin().data());
+        policy.m_webShareRule.type = FeaturePolicy::AllowRule::Type::All;
 #if ENABLE(DEVICE_ORIENTATION)
     if (!isGyroscopeInitialized)
         policy.m_gyroscopeRule.allowedList.add(document.securityOrigin().data());
