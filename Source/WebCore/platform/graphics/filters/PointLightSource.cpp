@@ -5,7 +5,7 @@
  * Copyright (C) 2010 Zoltan Herczeg <zherczeg@webkit.org>
  * Copyright (C) 2011 University of Szeged
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,17 +45,18 @@ Ref<PointLightSource> PointLightSource::create(const FloatPoint3D& position)
 
 PointLightSource::PointLightSource(const FloatPoint3D& position)
     : LightSource(LS_POINT)
-    , m_userSpacePosition(position)
+    , m_position(position)
 {
 }
 
 void PointLightSource::initPaintingData(const Filter& filter, const FilterImage& result, PaintingData&) const
 {
-    auto absolutePosition = filter.scaledByFilterScale(m_userSpacePosition.xy());
+    auto position = filter.resolvedPoint3D(m_position);
+    auto absolutePosition = filter.scaledByFilterScale(position.xy());
     m_bufferPosition.setXY(result.mappedAbsolutePoint(absolutePosition));
 
-    // To scale Z, map a point offset from m_userSpacePosition in the x direction by z.
-    auto absoluteMappedZ = filter.scaledByFilterScale(FloatPoint { m_userSpacePosition.x() + m_userSpacePosition.z(), m_userSpacePosition.y() });
+    // To scale Z, map a point offset from position in the x direction by z.
+    auto absoluteMappedZ = filter.scaledByFilterScale(FloatPoint { position.x() + position.z(), position.y() });
     m_bufferPosition.setZ(result.mappedAbsolutePoint(absoluteMappedZ).x() - m_bufferPosition.x());
 }
 
@@ -72,25 +73,25 @@ LightSource::ComputedLightingData PointLightSource::computePixelLightingData(con
 
 bool PointLightSource::setX(float x)
 {
-    if (m_userSpacePosition.x() == x)
+    if (m_position.x() == x)
         return false;
-    m_userSpacePosition.setX(x);
+    m_position.setX(x);
     return true;
 }
 
 bool PointLightSource::setY(float y)
 {
-    if (m_userSpacePosition.y() == y)
+    if (m_position.y() == y)
         return false;
-    m_userSpacePosition.setY(y);
+    m_position.setY(y);
     return true;
 }
 
 bool PointLightSource::setZ(float z)
 {
-    if (m_userSpacePosition.z() == z)
+    if (m_position.z() == z)
         return false;
-    m_userSpacePosition.setZ(z);
+    m_position.setZ(z);
     return true;
 }
 

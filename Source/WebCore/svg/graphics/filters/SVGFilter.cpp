@@ -24,6 +24,7 @@
 #include "SVGFilter.h"
 
 #include "FilterResults.h"
+#include "GeometryUtilities.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
 #include "SourceGraphic.h"
@@ -75,6 +76,21 @@ FloatSize SVGFilter::calculateResolvedSize(const FloatSize& size, const FloatRec
 FloatSize SVGFilter::resolvedSize(const FloatSize& size) const
 {
     return calculateResolvedSize(size, m_targetBoundingBox, m_primitiveUnits);
+}
+
+FloatPoint3D SVGFilter::resolvedPoint3D(const FloatPoint3D& point) const
+{
+    if (m_primitiveUnits != SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        return point;
+
+    FloatPoint3D resolvedPoint;
+    resolvedPoint.setX(m_targetBoundingBox.x() + point.x() * m_targetBoundingBox.width());
+    resolvedPoint.setY(m_targetBoundingBox.y() + point.y() * m_targetBoundingBox.height());
+
+    // https://www.w3.org/TR/SVG/filters.html#fePointLightZAttribute and https://www.w3.org/TR/SVG/coords.html#Units_viewport_percentage
+    resolvedPoint.setZ(point.z() * euclidianDistance(m_targetBoundingBox.minXMinYCorner(), m_targetBoundingBox.maxXMaxYCorner()) / sqrtOfTwoFloat);
+
+    return resolvedPoint;
 }
 
 bool SVGFilter::supportsAcceleratedRendering() const

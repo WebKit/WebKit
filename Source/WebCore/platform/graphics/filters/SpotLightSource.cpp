@@ -6,7 +6,7 @@
  * Copyright (C) 2010 Zoltan Herczeg <zherczeg@webkit.org>
  * Copyright (C) 2011 University of Szeged
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,10 +48,10 @@ Ref<SpotLightSource> SpotLightSource::create(const FloatPoint3D& position, const
     return adoptRef(*new SpotLightSource(position, direction, specularExponent, limitingConeAngle));
 }
 
-SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
+SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& pointsAt, float specularExponent, float limitingConeAngle)
     : LightSource(LS_SPOT)
-    , m_userSpacePosition(position)
-    , m_userSpacePointsAt(direction)
+    , m_position(position)
+    , m_pointsAt(pointsAt)
     , m_specularExponent(specularExponent)
     , m_limitingConeAngle(limitingConeAngle)
 {
@@ -59,14 +59,17 @@ SpotLightSource::SpotLightSource(const FloatPoint3D& position, const FloatPoint3
 
 void SpotLightSource::initPaintingData(const Filter& filter, const FilterImage& result, PaintingData& paintingData) const
 {
-    auto absolutePosition = filter.scaledByFilterScale(m_userSpacePosition.xy());
+    auto position = filter.resolvedPoint3D(m_position);
+    auto pointsAt = filter.resolvedPoint3D(m_pointsAt);
+
+    auto absolutePosition = filter.scaledByFilterScale(position.xy());
     m_bufferPosition.setXY(result.mappedAbsolutePoint(absolutePosition));
 
-    // To scale Z, map a point offset from m_userSpacePosition in the x direction by z.
-    auto absoluteMappedZ = filter.scaledByFilterScale(FloatPoint { m_userSpacePosition.x() + m_userSpacePosition.z(), m_userSpacePosition.y() });
+    // To scale Z, map a point offset from position in the x direction by z.
+    auto absoluteMappedZ = filter.scaledByFilterScale(FloatPoint { position.x() + position.z(), position.y() });
     m_bufferPosition.setZ(result.mappedAbsolutePoint(absoluteMappedZ).x() - m_bufferPosition.x());
     
-    paintingData.directionVector = m_userSpacePointsAt - m_userSpacePosition;
+    paintingData.directionVector = pointsAt - position;
     paintingData.directionVector.normalize();
 
     if (!m_limitingConeAngle) {
@@ -135,49 +138,49 @@ LightSource::ComputedLightingData SpotLightSource::computePixelLightingData(cons
 
 bool SpotLightSource::setX(float x)
 {
-    if (m_userSpacePosition.x() == x)
+    if (m_position.x() == x)
         return false;
-    m_userSpacePosition.setX(x);
+    m_position.setX(x);
     return true;
 }
 
 bool SpotLightSource::setY(float y)
 {
-    if (m_userSpacePosition.y() == y)
+    if (m_position.y() == y)
         return false;
-    m_userSpacePosition.setY(y);
+    m_position.setY(y);
     return true;
 }
 
 bool SpotLightSource::setZ(float z)
 {
-    if (m_userSpacePosition.z() == z)
+    if (m_position.z() == z)
         return false;
-    m_userSpacePosition.setZ(z);
+    m_position.setZ(z);
     return true;
 }
 
 bool SpotLightSource::setPointsAtX(float pointsAtX)
 {
-    if (m_userSpacePointsAt.x() == pointsAtX)
+    if (m_pointsAt.x() == pointsAtX)
         return false;
-    m_userSpacePointsAt.setX(pointsAtX);
+    m_pointsAt.setX(pointsAtX);
     return true;
 }
 
 bool SpotLightSource::setPointsAtY(float pointsAtY)
 {
-    if (m_userSpacePointsAt.y() == pointsAtY)
+    if (m_pointsAt.y() == pointsAtY)
         return false;
-    m_userSpacePointsAt.setY(pointsAtY);
+    m_pointsAt.setY(pointsAtY);
     return true;
 }
 
 bool SpotLightSource::setPointsAtZ(float pointsAtZ)
 {
-    if (m_userSpacePointsAt.z() == pointsAtZ)
+    if (m_pointsAt.z() == pointsAtZ)
         return false;
-    m_userSpacePointsAt.setZ(pointsAtZ);
+    m_pointsAt.setZ(pointsAtZ);
     return true;
 }
 

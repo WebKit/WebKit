@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,8 +31,9 @@ public:
 private:
     SVGFEPointLightElement(const QualifiedName&, Document&);
 
-    Ref<LightSource> lightSource(const SVGFilter&) const override;
+    Ref<LightSource> lightSource() const override;
 };
+
 static_assert(sizeof(SVGFEPointLightElement) == sizeof(SVGFELightElement));
 
 } // namespace WebCore

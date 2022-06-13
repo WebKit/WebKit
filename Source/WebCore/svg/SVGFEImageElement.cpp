@@ -210,7 +210,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     return { imageBuffer, imageRect };
 }
 
-RefPtr<FilterEffect> SVGFEImageElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const
+RefPtr<FilterEffect> SVGFEImageElement::filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const
 {
     if (m_cachedImage) {
         auto image = m_cachedImage->imageForRenderer(renderer());

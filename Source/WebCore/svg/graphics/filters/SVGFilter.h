@@ -60,6 +60,7 @@ private:
     void setExpression(SVGFilterExpression&& expression) { m_expression = WTFMove(expression); }
 
     FloatSize resolvedSize(const FloatSize&) const final;
+    FloatPoint3D resolvedPoint3D(const FloatPoint3D&) const final;
 
     bool supportsAcceleratedRendering() const final;
 

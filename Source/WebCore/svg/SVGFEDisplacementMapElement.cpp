@@ -113,7 +113,7 @@ void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrN
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEDisplacementMapElement::filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEDisplacementMapElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     return FEDisplacementMap::create(xChannelSelector(), yChannelSelector(), scale());
 }

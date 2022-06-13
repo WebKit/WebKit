@@ -54,7 +54,7 @@ public:
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
     virtual Vector<AtomString> filterEffectInputsNames() const { return { }; }
     virtual IntOutsets outsets(const FloatRect&, SVGUnitTypes::SVGUnitType) const { return { }; }
-    virtual RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const = 0;
+    virtual RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const = 0;
 
     static void invalidateFilterPrimitiveParent(SVGElement*);
 

@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Oliver Hunt <oliver@nerget.com>
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,7 +32,7 @@ class SVGFilter;
 class SVGFELightElement : public SVGElement {
     WTF_MAKE_ISO_ALLOCATED(SVGFELightElement);
 public:
-    virtual Ref<LightSource> lightSource(const SVGFilter&) const = 0;
+    virtual Ref<LightSource> lightSource() const = 0;
     static SVGFELightElement* findLightElement(const SVGElement*);
 
     float azimuth() const { return m_azimuth->currentValue(); }

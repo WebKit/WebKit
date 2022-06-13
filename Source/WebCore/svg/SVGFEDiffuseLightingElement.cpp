@@ -148,17 +148,17 @@ void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightE
     primitiveAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEDiffuseLightingElement::filterEffect(const SVGFilter& filter, const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEDiffuseLightingElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     RefPtr lightElement = SVGFELightElement::findLightElement(this);
     if (!lightElement)
         return nullptr;
-    
-    auto lightSource = lightElement->lightSource(filter);
 
-    RenderObject* renderer = this->renderer();
+    auto* renderer = this->renderer();
     if (!renderer)
         return nullptr;
+
+    auto lightSource = lightElement->lightSource();
 
     Color color = renderer->style().colorByApplyingColorFilter(renderer->style().svgStyle().lightingColor());
 

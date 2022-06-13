@@ -23,6 +23,7 @@
 
 #include "FilterEffectVector.h"
 #include "FilterFunction.h"
+#include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 #include "ImageBuffer.h"
@@ -53,6 +54,7 @@ public:
     void setClipOperation(ClipOperation clipOperation) { m_clipOperation = clipOperation; }
 
     virtual FloatSize resolvedSize(const FloatSize& size) const { return size; }
+    virtual FloatPoint3D resolvedPoint3D(const FloatPoint3D& point) const { return point; }
 
     FloatPoint scaledByFilterScale(const FloatPoint&) const;
     FloatSize scaledByFilterScale(const FloatSize&) const;

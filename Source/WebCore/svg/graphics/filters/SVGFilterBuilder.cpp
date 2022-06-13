@@ -84,7 +84,7 @@ std::optional<SVGFilterExpression> SVGFilterBuilder::buildFilterExpression(SVGFi
         if (!inputs)
             return std::nullopt;
 
-        auto effect = effectElement.filterEffect(filter, *inputs, destinationContext);
+        auto effect = effectElement.filterEffect(*inputs, destinationContext);
         if (!effect)
             return std::nullopt;
 

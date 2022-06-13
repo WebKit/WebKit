@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,13 +21,8 @@
 #include "config.h"
 #include "SVGFEPointLightElement.h"
 
-#include "FilterEffectVector.h"
-#include "GeometryUtilities.h"
-#include "ImageBuffer.h"
 #include "PointLightSource.h"
-#include "SVGFilter.h"
 #include "SVGNames.h"
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -41,21 +37,9 @@ Ref<SVGFEPointLightElement> SVGFEPointLightElement::create(const QualifiedName& 
     return adoptRef(*new SVGFEPointLightElement(tagName, document));
 }
 
-Ref<LightSource> SVGFEPointLightElement::lightSource(const SVGFilter& filter) const
+Ref<LightSource> SVGFEPointLightElement::lightSource() const
 {
-    FloatPoint3D position;
-    if (filter.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        FloatRect referenceBox = filter.targetBoundingBox();
-        
-        position.setX(referenceBox.x() + x() * referenceBox.width());
-        position.setY(referenceBox.y() + y() * referenceBox.height());
-
-        // https://www.w3.org/TR/SVG/filters.html#fePointLightZAttribute and https://www.w3.org/TR/SVG/coords.html#Units_viewport_percentage
-        position.setZ(z() * euclidianDistance(referenceBox.minXMinYCorner(), referenceBox.maxXMaxYCorner()) / sqrtOfTwoFloat);
-    } else
-        position = FloatPoint3D(x(), y(), z());
-    
-    return PointLightSource::create(position);
+    return PointLightSource::create({ x(), y(), z() });
 }
 
-}
+} // namespace WebCore

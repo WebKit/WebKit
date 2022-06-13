@@ -87,7 +87,7 @@ private:
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
-    RefPtr<FilterEffect> filterEffect(const SVGFilter&, const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+    RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Oliver Hunt <ojh16@student.canterbury.ac.nz>
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,7 +37,7 @@ Ref<SVGFEDistantLightElement> SVGFEDistantLightElement::create(const QualifiedNa
     return adoptRef(*new SVGFEDistantLightElement(tagName, document));
 }
 
-Ref<LightSource> SVGFEDistantLightElement::lightSource(const SVGFilter&) const
+Ref<LightSource> SVGFEDistantLightElement::lightSource() const
 {
     return DistantLightSource::create(azimuth(), elevation());
 }
