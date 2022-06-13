@@ -1,15 +1,12 @@
 
 (async () => {
-    if (!window.testRunner)
-        return;
+    window.testRunner?.waitUntilDone();
 
-    testRunner.waitUntilDone();
+    await Promise.all(document.getAnimations().map(animation => animation.ready));
 
-    const script = document.createElement("script");
-    script.src = "../resources/ui-helper.js";
-    script.addEventListener("load", async event => {
-        await UIHelper.ensureStablePresentationUpdate();
-        testRunner.notifyDone();
-    });
-    document.body.appendChild(script);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+
+    window.testRunner?.notifyDone();
 })();
