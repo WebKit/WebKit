@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+function doTest() {
+  let canvasElement = document.getElementById("canvas");
+  let dpr = window.devicePixelRatio || 1;
+
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
+  canvas.style.transform = "scale(" + 1/dpr + ", " + 1/dpr + ")";
+
+  let ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  ctx.fillStyle = 'green';
+  ctx.fillRect(0, 0, 500, 500);
+        
+  if (window.testRunner) {
+    document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_BACKING_STORE_ATTACHED | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+    testRunner.notifyDone();
+  }
+}
+    
+window.addEventListener('load', doTest, false);
+</script>
+</head>
+
+<body onload="setup()">
+<div style="opacity:0.5">
+<canvas id="canvas" width="500" height="500" style="transform-origin:top left"></canvas>
+<pre id="layers">Layer tree goes here in DRT</pre>
+</div>
+</body>
+
+</html>

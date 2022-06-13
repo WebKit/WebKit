@@ -658,6 +658,7 @@ private:
     std::unique_ptr<DisplayList::InMemoryDisplayList> m_displayList;
 
     ContentsLayerPurpose m_contentsLayerPurpose { ContentsLayerPurpose::None };
+    float m_transformScale { 1.f };
     bool m_isCommittingChanges { false };
 
     bool m_needsFullRepaint : 1;

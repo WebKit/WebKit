@@ -1919,6 +1919,25 @@ void GraphicsLayerCA::platformCALayerLayerDisplay(PlatformCALayer* layer)
     m_contentsDisplayDelegate->display(*layer);
 }
 
+static float scaleFromTransform(const TransformationMatrix& t)
+{
+    if (t.isIdentityOrTranslation())
+        return 1;
+
+    TransformationMatrix::Decomposed2Type decomposeData;
+    if (!t.decompose2(decomposeData))
+        return 1;
+
+    // We only get to set a single scale for both dimensions, so
+    // only handle the case where the matrix is scaling both dimensions
+    // by the same amount.
+    // FIXME: We could do an approximate equality comparison here to
+    // catch more cases.
+    if (fabs(decomposeData.scaleX) == fabs(decomposeData.scaleY))
+        return fabs(decomposeData.scaleX);
+    return 1;
+}
+
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool& layerChanged)
 {
     SetForScope committingChangesChange(m_isCommittingChanges, true);
@@ -1927,6 +1946,20 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         // Ensure that we cap layer depth in commitLayerChangesAfterSublayers().
         if (commitState.treeDepth > cMaxLayerTreeDepth)
             addUncommittedChanges(ChildrenChanged);
+    }
+
+    // FIXME: Just being a leaf without animations might be
+    // too broad. Can we check for will-change? RenderReplaced?
+    float transformScale = 1.f;
+    if (children().isEmpty() && m_animations.isEmpty()) {
+        // We only currently handle downscales to reduce the memory
+        // usage of layers that will be immediately downscaled again.
+        transformScale = std::min(scaleFromTransform(transform()), 1.f);
+        pageScaleFactor *= transformScale;
+    }
+    if (transformScale != m_transformScale) {
+        m_transformScale = transformScale;
+        addUncommittedChanges(ContentsScaleChanged);
     }
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
