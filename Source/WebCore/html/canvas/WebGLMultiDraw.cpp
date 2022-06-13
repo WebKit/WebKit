@@ -73,7 +73,7 @@ void WebGLMultiDraw::multiDrawArraysWEBGL(GCGLenum mode, Int32List firstsList, G
     if (m_context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*m_context, *m_context->m_currentProgram))
         return;
 
-    m_context->clearIfComposited(WebGLRenderingContextBase::ClearCallerDrawOrClear);
+    m_context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
         InspectorScopedShaderProgramHighlight scopedHighlight(*m_context, m_context->m_currentProgram.get());
@@ -102,7 +102,7 @@ void WebGLMultiDraw::multiDrawArraysInstancedWEBGL(GCGLenum mode, Int32List firs
     if (m_context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*m_context, *m_context->m_currentProgram))
         return;
 
-    m_context->clearIfComposited(WebGLRenderingContextBase::ClearCallerDrawOrClear);
+    m_context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
         InspectorScopedShaderProgramHighlight scopedHighlight(*m_context, m_context->m_currentProgram.get());
@@ -130,7 +130,7 @@ void WebGLMultiDraw::multiDrawElementsWEBGL(GCGLenum mode, Int32List countsList,
     if (m_context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*m_context, *m_context->m_currentProgram))
         return;
 
-    m_context->clearIfComposited(WebGLRenderingContextBase::ClearCallerDrawOrClear);
+    m_context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
         InspectorScopedShaderProgramHighlight scopedHighlight(*m_context, m_context->m_currentProgram.get());
@@ -159,7 +159,7 @@ void WebGLMultiDraw::multiDrawElementsInstancedWEBGL(GCGLenum mode, Int32List co
     if (m_context->m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*m_context, *m_context->m_currentProgram))
         return;
 
-    m_context->clearIfComposited(WebGLRenderingContextBase::ClearCallerDrawOrClear);
+    m_context->clearIfComposited(WebGLRenderingContextBase::CallerTypeDrawOrClear);
 
     {
         InspectorScopedShaderProgramHighlight scopedHighlight(*m_context, m_context->m_currentProgram.get());

@@ -519,8 +519,16 @@ protected:
 
     void setGraphicsContextGL(Ref<GraphicsContextGL>&&);
     void destroyGraphicsContextGL();
+
+    enum CallerType {
+        // Caller is a user-level draw or clear call.
+        CallerTypeDrawOrClear,
+        // Caller is anything else, including blits, readbacks or copies.
+        CallerTypeOther,
+    };
+
     void markContextChanged();
-    void markContextChangedAndNotifyCanvasObserver();
+    void markContextChangedAndNotifyCanvasObserver(CallerType = CallerTypeDrawOrClear);
 
     void addActivityStateChangeObserverIfNecessary();
     void removeActivityStateChangeObserver();
@@ -797,17 +805,10 @@ protected:
     RefPtr<Float32Array> getWebGLFloatArrayParameter(GCGLenum);
     RefPtr<Int32Array> getWebGLIntArrayParameter(GCGLenum);
 
-    enum ClearCaller {
-        // Caller of ClearIfComposited is a user-level draw or clear call.
-        ClearCallerDrawOrClear,
-        // Caller of ClearIfComposited is anything else, including
-        // readbacks or copies.
-        ClearCallerOther,
-    };
     // Clear the backbuffer if it was composited since the last operation.
     // clearMask is set to the bitfield of any clear that would happen anyway at this time
     // and the function returns true if that clear is now unnecessary.
-    bool clearIfComposited(ClearCaller, GCGLbitfield clearMask = 0);
+    bool clearIfComposited(CallerType, GCGLbitfield clearMask = 0);
 
     // Helper to restore state that clearing the framebuffer may destroy.
     void restoreStateAfterClear();

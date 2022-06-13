@@ -703,7 +703,7 @@ void WebGL2RenderingContext::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLi
     if (isContextLostOrPending())
         return;
     m_context->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-    markContextChangedAndNotifyCanvasObserver();
+    markContextChangedAndNotifyCanvasObserver(CallerTypeOther);
 }
 
 void WebGL2RenderingContext::deleteFramebuffer(WebGLFramebuffer* framebuffer)
@@ -1144,7 +1144,7 @@ void WebGL2RenderingContext::copyTexSubImage3D(GCGLenum target, GCGLint level, G
         return;
     if (!validateTexture3DBinding("copyTexSubImage3D", target))
         return;
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     m_context->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
@@ -1612,7 +1612,7 @@ void WebGL2RenderingContext::drawRangeElements(GCGLenum mode, GCGLuint start, GC
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
     {
         InspectorScopedShaderProgramHighlight scopedHighlight(*this, m_currentProgram.get());
@@ -3392,7 +3392,7 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
     // taint the origin using the WebGL API.
     ASSERT(canvasBase().originClean());
 
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
 
     m_context->readnPixels(x, y, width, height, format, type, offset);
 }

@@ -1294,8 +1294,12 @@ void WebGLRenderingContextBase::markContextChanged()
     }
 }
 
-void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver()
+void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLRenderingContextBase::CallerType caller)
 {
+    // Draw and clear ops with rasterizer discard enabled do not change the canvas.
+    if (caller == CallerTypeDrawOrClear && m_rasterizerDiscardEnabled)
+        return;
+
     // If we're not touching the default framebuffer, nothing visible has changed.
     if (m_framebufferBinding)
         return;
@@ -1311,7 +1315,7 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver()
     canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
 }
 
-bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::ClearCaller caller, GCGLbitfield mask)
+bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::CallerType caller, GCGLbitfield mask)
 {
     if (isContextLostOrPending())
         return false;
@@ -1324,7 +1328,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cle
 
     GCGLbitfield buffersNeedingClearing = m_context->getBuffersToAutoClear();
 
-    if (!buffersNeedingClearing || (mask && m_framebufferBinding) || (m_rasterizerDiscardEnabled && caller == ClearCallerDrawOrClear))
+    if (!buffersNeedingClearing || (mask && m_framebufferBinding) || (m_rasterizerDiscardEnabled && caller == CallerTypeDrawOrClear))
         return false;
 
     // Use the underlying GraphicsContext3D's attributes to take into
@@ -1429,7 +1433,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
         return;
     }
 
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
 
     if (!m_markedCanvasDirty && !m_layerCleared)
         return;
@@ -1451,7 +1455,7 @@ RefPtr<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffe
 {
     if (isContextLostOrPending())
         return nullptr;
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     return m_context->paintRenderingResultsToPixelBuffer();
 }
 
@@ -1917,7 +1921,7 @@ void WebGLRenderingContextBase::clear(GCGLbitfield mask)
         return;
     }
 #endif
-    if (!clearIfComposited(ClearCallerDrawOrClear, mask))
+    if (!clearIfComposited(CallerTypeDrawOrClear, mask))
         m_context->clear(mask);
     markContextChangedAndNotifyCanvasObserver();
 }
@@ -2094,7 +2098,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
 #if USE(ANGLE)
     if (!validateTexture2DBinding("copyTexSubImage2D", target))
         return;
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 #else
     if (!validateTexFuncLevel("copyTexSubImage2D", target, level))
@@ -2125,7 +2129,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
         synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "copyTexSubImage2D", reason);
         return;
     }
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
 
     GCGLint clippedX, clippedY;
     GCGLsizei clippedWidth, clippedHeight;
@@ -2801,7 +2805,7 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
 #if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
@@ -2850,7 +2854,7 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
 #if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
@@ -4644,7 +4648,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     }
 #endif // USE(ANGLE)
 
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     void* data = pixels.baseAddress();
 
 #if USE(ANGLE)
@@ -5902,7 +5906,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
     if (!tex)
         return;
 #if USE(ANGLE)
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     m_context->copyTexImage2D(target, level, internalFormat, x, y, width, height, border);
 #else
     if (!isTexInternalFormatColorBufferCombinationValid(internalFormat, getBoundReadFramebufferColorFormat())) {
@@ -5918,7 +5922,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
         synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "copyTexImage2D", reason);
         return;
     }
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
 
     GCGLint clippedX, clippedY;
     GCGLsizei clippedWidth, clippedHeight;
@@ -7994,7 +7998,7 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
 #if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
@@ -8042,7 +8046,7 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
 #if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
