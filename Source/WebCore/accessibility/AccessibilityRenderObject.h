@@ -142,7 +142,6 @@ public:
     void setSelectedTextRange(const PlainTextRange&) override;
     bool setValue(const String&) override;
     void setSelectedRows(AccessibilityChildrenVector&) override;
-    AccessibilityOrientation orientation() const override;
 
     void addChildren() override;
     bool canHaveChildren() const override;

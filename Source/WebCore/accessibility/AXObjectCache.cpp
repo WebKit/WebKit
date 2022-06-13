@@ -1971,6 +1971,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     }
     else if (attrName == aria_multiselectableAttr)
         postNotification(element, AXMultiSelectableStateChanged);
+    else if (attrName == aria_orientationAttr)
+        postNotification(element, AXOrientationChanged);
     else if (attrName == aria_posinsetAttr)
         postNotification(element, AXPositionInSetChanged);
     else if (attrName == aria_relevantAttr)
@@ -3534,6 +3536,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXMinimumValueChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::MinValueForRange);
             tree->updateNodeProperty(*notification.first, AXPropertyName::ValueForRange);
+            break;
+        case AXOrientationChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::Orientation);
             break;
         case AXPositionInSetChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::PosInSet);

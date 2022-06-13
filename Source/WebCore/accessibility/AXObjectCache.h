@@ -313,6 +313,7 @@ public:
         AXMenuOpened,
         AXMinimumValueChanged,
         AXMultiSelectableStateChanged,
+        AXOrientationChanged,
         AXRowCountChanged,
         AXRowCollapsed,
         AXRowExpanded,

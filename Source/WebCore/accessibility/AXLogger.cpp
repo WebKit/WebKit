@@ -433,6 +433,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXNewDocumentLoadComplete:
         stream << "AXNewDocumentLoadComplete";
         break;
+    case AXObjectCache::AXNotification::AXOrientationChanged:
+        stream << "AXOrientationChanged";
+        break;
     case AXObjectCache::AXNotification::AXPageScrolled:
         stream << "AXPageScrolled";
         break;

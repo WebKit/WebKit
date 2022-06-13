@@ -397,6 +397,9 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     case AXPropertyName::MinValueForRange:
         propertyMap.set(AXPropertyName::MinValueForRange, axObject.minValueForRange());
         break;
+    case AXPropertyName::Orientation:
+        propertyMap.set(AXPropertyName::Orientation, static_cast<int>(axObject.orientation()));
+        break;
     case AXPropertyName::PosInSet:
         propertyMap.set(AXPropertyName::PosInSet, axObject.posInSet());
         break;
