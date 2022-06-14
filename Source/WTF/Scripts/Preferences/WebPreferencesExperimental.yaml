@@ -411,11 +411,11 @@ CSSTextAlignLastEnabled:
   humanReadableDescription: "Enable the property text-align-last, defined in CSS Text 3"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSTextJustifyEnabled:
   type: bool
