@@ -32,6 +32,7 @@
 #include <WebCore/FetchLoader.h>
 #include <WebCore/FetchLoaderClient.h>
 #include <WebCore/NetworkLoadMetrics.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebCore/ServiceWorkerFetch.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/SharedBuffer.h>
