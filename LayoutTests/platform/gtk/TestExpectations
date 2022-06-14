@@ -156,6 +156,8 @@ webkit.org/b/238208 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-a
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-repeat-2.html [ ImageOnlyFailure ]
+
 # Download
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Failure ]
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]

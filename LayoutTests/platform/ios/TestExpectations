@@ -1583,6 +1583,15 @@ webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-ru
 # Antialiasing differences
 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-svg-child-will-change.html [ ImageOnlyFailure ]
 
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-1b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-2b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-1a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1a.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1b.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1e.html [ ImageOnlyFailure ]
+
 fast/filter-image/clipped-filter.html [ ImageOnlyFailure ]
 fast/flexbox/flex-hang.html [ Failure ]
 fast/flexbox/overhanging-floats-removed.html [ Failure ]
