@@ -1027,7 +1027,7 @@ webkit.org/b/207632 tiled-drawing/scrolling/sticky/sticky-during-rubberband.html
 
 webkit.org/b/207631 tiled-drawing/scrolling/fixed/fixed-during-rubberband.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/207635 fast/events/before-input-prevent-insert-replacement.html [ Pass Failure ] 
+webkit.org/b/207635 fast/events/before-input-prevent-insert-replacement.html [ Pass Failure ]
 
 webkit.org/b/207728 [ Release ] accessibility/press-targets-center-point.html [ Pass Failure ]
 
@@ -1381,7 +1381,7 @@ webkit.org/b/224463 [ BigSur arm64 ] webrtc/disable-encryption.html [ Pass Timeo
 
 webkit.org/b/224633 media/presentationmodechanged-fired-once.html [ Pass Timeout ]
 
-webkit.org/b/228713 [ BigSur Debug arm64 ] compositing/video/video-object-fit.html [ Pass Timeout ] 
+webkit.org/b/228713 [ BigSur Debug arm64 ] compositing/video/video-object-fit.html [ Pass Timeout ]
 
 webkit.org/b/224698 [ BigSur Release arm64 ] inspector/console/console-oom.html [ Pass Crash ]
 
@@ -1389,7 +1389,7 @@ webkit.org/b/224257 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-p
 
 webkit.org/b/238033 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Failure ]
 
-webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ] 
+webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
 
 webkit.org/b/225430 [ BigSur arm64 ] http/tests/inspector/network/resource-sizes-network.html [ Pass Failure ]
 
@@ -1721,5 +1721,3 @@ webkit.org/b/241191 [ Monterey Debug ] webgl/1.0.3/conformance/attribs/gl-vertex
 webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-object-percentage.html [ Pass Crash ]
 
 webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
-
-webkit.org/b/241572 [ Debug ] http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Pass Crash ]

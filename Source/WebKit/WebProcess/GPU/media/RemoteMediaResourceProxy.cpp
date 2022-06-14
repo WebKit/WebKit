@@ -76,8 +76,8 @@ void RemoteMediaResourceProxy::dataReceived(WebCore::PlatformMediaResource&, con
 {
     m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceManager::DataReceived(m_id, IPC::SharedBufferReference { buffer }), [] (auto&& bufferHandle) {
         // Take ownership of shared memory and mark it as media-related memory.
-        if (!bufferHandle.handle.isNull())
-            bufferHandle.handle.takeOwnershipOfMemory(MemoryLedger::Media);
+        if (bufferHandle)
+            bufferHandle->handle.takeOwnershipOfMemory(MemoryLedger::Media);
     }, 0);
 }
 
