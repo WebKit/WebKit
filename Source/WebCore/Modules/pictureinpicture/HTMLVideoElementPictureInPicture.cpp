@@ -189,13 +189,7 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 
 void HTMLVideoElementPictureInPicture::pictureInPictureWindowResized(const IntSize& windowSize)
 {
-    if (m_pictureInPictureWindow->width() == windowSize.width() && m_pictureInPictureWindow->height() == windowSize.height())
-        return;
-
     m_pictureInPictureWindow->setSize(windowSize);
-    auto resizeEvent = Event::create(eventNames().resizeEvent, Event::CanBubble::Yes, Event::IsCancelable::No);
-    resizeEvent->setTarget(m_pictureInPictureWindow);
-    m_videoElement.scheduleEvent(WTFMove(resizeEvent));
 }
 
 #if !RELEASE_LOG_DISABLED
