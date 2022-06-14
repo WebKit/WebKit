@@ -10434,10 +10434,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     // The limit matches the limit set on existing WKWebView find API.
     constexpr auto maxMatches = 1000;
-    _page->findTextRangesForStringMatches(string, findOptions, maxMatches, [string, aggregator = retainPtr(aggregator)](const Vector<WebKit::WebFoundTextRange> ranges) {
+    _page->findTextRangesForStringMatches(string, findOptions, maxMatches, [string = retainPtr(string), aggregator = retainPtr(aggregator)](const Vector<WebKit::WebFoundTextRange> ranges) {
         for (auto& range : ranges) {
             WKFoundTextRange *textRange = [WKFoundTextRange foundTextRangeWithWebFoundTextRange:range];
-            [aggregator foundRange:textRange forSearchString:string inDocument:nil];
+            [aggregator foundRange:textRange forSearchString:string.get() inDocument:nil];
         }
 
         [aggregator finishedSearching];

@@ -357,4 +357,11 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)didInsertFinalDictationResult;
 @end
 
+#if HAVE(UIFINDINTERACTION)
+@interface UITextSearchOptions ()
+@property (nonatomic, readwrite) UITextSearchMatchMethod wordMatchMethod;
+@property (nonatomic, readwrite) NSStringCompareOptions stringCompareOptions;
+@end
+#endif
+
 #endif // PLATFORM(IOS_FAMILY)
