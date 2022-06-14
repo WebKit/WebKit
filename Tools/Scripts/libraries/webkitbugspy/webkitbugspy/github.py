@@ -48,6 +48,7 @@ class Tracker(GenericTracker):
     REFRESH_TOKEN_PROMPT = "Is your API token out of date? Run 'git-webkit setup' to refresh credentials\n"
     DEFAULT_COMPONENT_COLOR = 'FFFFFF'
     DEFAULT_VERSION_COLOR = 'EEEEEE'
+    ACCEPT_HEADER = 'application/vnd.github.v3+json'
 
 
     class Encoder(GenericTracker.Encoder):
@@ -105,7 +106,7 @@ class Tracker(GenericTracker):
                 return False
             response = self.session.get(
                 '{}/user'.format(self.api_url),
-                headers=dict(Accept='application/vnd.github.v3+json'),
+                headers=dict(Accept=self.ACCEPT_HEADER),
                 auth=HTTPBasicAuth(username, access_token),
             )
             expiration = response.headers.get('github-authentication-token-expiration', None)
@@ -144,7 +145,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
     def request(self, path=None, params=None, method='GET', headers=None, authenticated=None, paginate=True, json=None, error_message=None):
         headers = {key: value for key, value in headers.items()} if headers else dict()
-        headers['Accept'] = headers.get('Accept', 'application/vnd.github.v3+json')
+        headers['Accept'] = headers.get('Accept', self.ACCEPT_HEADER)
 
         username, access_token = self.credentials(required=bool(authenticated))
         auth = HTTPBasicAuth(username, access_token) if username and access_token else None
@@ -196,7 +197,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         url = '{api_url}/users/{username}'.format(api_url=self.api_url, username=username)
         response = self.session.get(
             url, auth=HTTPBasicAuth(*self.credentials(required=True)),
-            headers=dict(Accept='application/vnd.github.v3+json'),
+            headers=dict(Accept=self.ACCEPT_HEADER),
         )
         if response.status_code // 100 != 2:
             sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))

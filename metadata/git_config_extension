@@ -8,5 +8,7 @@
 [webkitscmpy "remotes"]
         origin = git@github.com:WebKit/WebKit.git
         apple = git@github.com:apple/WebKit.git
+[webkitscmpy "access"]
+        apple = apple/teams/WebKit
 [webkitscmpy "pre-pr"]
         style-checker = python3 Tools/Scripts/check-webkit-style
