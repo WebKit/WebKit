@@ -4694,7 +4694,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (_removeBackgroundData->element != _page->editorState().postLayoutData().selectedEditableImage)
         return nil;
 
-    return [self menuWithInlineAction:WebCore::contextMenuItemTitleRemoveBackground() identifier:@"WKActionRemoveBackground" handler:[](WKContentView *view) {
+    return [self menuWithInlineAction:WebCore::contextMenuItemTitleRemoveBackground() image:[UIImage _systemImageNamed:@"circle.rectangle.filled.pattern.diagonalline"] identifier:@"WKActionRemoveBackground" handler:[](WKContentView *view) {
         auto data = std::exchange(view->_removeBackgroundData, { });
         if (!data)
             return;
@@ -9875,9 +9875,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #endif
 }
 
-- (UIMenu *)menuWithInlineAction:(NSString *)title identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
+- (UIMenu *)menuWithInlineAction:(NSString *)title image:(UIImage *)image identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
 {
-    auto action = [UIAction actionWithTitle:title image:nil identifier:identifier handler:makeBlockPtr([handler = WTFMove(handler), weakSelf = WeakObjCPtr<WKContentView>(self)](UIAction *) mutable {
+    auto action = [UIAction actionWithTitle:title image:image identifier:identifier handler:makeBlockPtr([handler = WTFMove(handler), weakSelf = WeakObjCPtr<WKContentView>(self)](UIAction *) mutable {
         if (auto strongSelf = weakSelf.get())
             handler(strongSelf.get());
     }).get()];
@@ -9893,7 +9893,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     bool isVisible = _page->appHighlightsVisibility();
     auto title = isVisible ? WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote() : WebCore::contextMenuItemTagAddHighlightToNewQuickNote();
-    return [self menuWithInlineAction:title identifier:@"WKActionCreateQuickNote" handler:[isVisible](WKContentView *view) mutable {
+    return [self menuWithInlineAction:title image:nil identifier:@"WKActionCreateQuickNote" handler:[isVisible](WKContentView *view) mutable {
         view->_page->createAppHighlightInSelectedRange(isVisible ? WebCore::CreateNewGroupForHighlight::No : WebCore::CreateNewGroupForHighlight::Yes, WebCore::HighlightRequestOriginatedInApp::No);
     }];
 }

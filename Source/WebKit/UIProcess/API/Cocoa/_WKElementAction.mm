@@ -268,7 +268,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
         return nil;
 #endif
     case _WKElementActionTypeCopyCroppedImage:
-        return [UIImage systemImageNamed:@"person.fill.viewfinder"];
+        return [UIImage _systemImageNamed:@"circle.dashed.rectangle"];
     }
 }
 
