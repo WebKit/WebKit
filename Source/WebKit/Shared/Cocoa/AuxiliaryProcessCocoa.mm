@@ -32,6 +32,7 @@
 #import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <mach/task.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/SoftLinking.h>
