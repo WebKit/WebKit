@@ -397,7 +397,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(TextureMapperPaintOptions& opt
 
     // Having both overlap and non-overlap regions carries some overhead. Avoid it if the overlap area
     // is big anyway.
-    if (overlapRegion.bounds().size().area() > nonOverlapRegion.bounds().size().area()) {
+    if (overlapRegion.totalArea() > nonOverlapRegion.totalArea()) {
         overlapRegion.unite(nonOverlapRegion);
         nonOverlapRegion = Region();
     }

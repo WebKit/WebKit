@@ -692,6 +692,7 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html 
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-translate3d-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ Pass ]
 
+webkit.org/b/241568 imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-003.html [ ImageOnlyFailure ]
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
