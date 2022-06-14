@@ -2,6 +2,7 @@ import logging
 import os
 import re
 import subprocess
+import shutil
 import sys
 import time
 
@@ -66,7 +67,9 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
                 self._server_port = connections[0].laddr[1]
         except ImportError:
             try:
-                output = subprocess.check_output(['/usr/sbin/lsof', '-a', '-P', '-iTCP', '-sTCP:LISTEN', '-p', str(self._server_process.pid)])
+                # lsof on Linux is shipped on /usr/bin typically, but on Mac on /usr/sbin
+                lsof_path = shutil.which('lsof') or '/usr/sbin/lsof'
+                output = subprocess.check_output([lsof_path, '-a', '-P', '-iTCP', '-sTCP:LISTEN', '-p', str(self._server_process.pid)])
                 self._server_port = int(re.search(r'TCP .*:(\d+) \(LISTEN\)', str(output)).group(1))
             except Exception as error:
                 _log.info('Error: %s' % error)
