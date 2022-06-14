@@ -22,7 +22,7 @@
 
 
 import argparse
-import ConfigParser
+import configparser
 import json
 import logging
 import os
@@ -81,7 +81,7 @@ class BrowserPerfDashRunner(object):
     def _parse_config_file(self, config_file):
         if not os.path.isfile(config_file):
             raise Exception('Can not open config file for uploading results at: {config_file}'.format(config_file=config_file))
-        self._config_parser = ConfigParser.RawConfigParser()
+        self._config_parser = configparser.RawConfigParser()
         self._config_parser.read(config_file)
 
     def _get_test_version_string(self, plan_name):
@@ -108,10 +108,10 @@ class BrowserPerfDashRunner(object):
         for server in self._config_parser.sections():
             self._result_data['bot_id'] = self._config_parser.get(server, 'bot_id')
             self._result_data['bot_password'] = self._config_parser.get(server, 'bot_password')
-            post_data = urllib.urlencode(self._result_data)
+            post_data = urllib.parse.urlencode(self._result_data).encode('utf-8')
             post_url = self._config_parser.get(server, 'post_url')
             try:
-                post_request = urllib.urlopen(post_url, post_data)
+                post_request = urllib.request.urlopen(post_url, post_data)
                 if post_request.getcode() == 200:
                     _log.info('Sucesfully uploaded results to server {server_name} for test {test_name} and browser {browser_name} version {browser_version}'.format(
                                server_name=server, test_name=self._result_data['test_id'], browser_name=self._result_data['browser_id'], browser_version=self._result_data['browser_version']))
