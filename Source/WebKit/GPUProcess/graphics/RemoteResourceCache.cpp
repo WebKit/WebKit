@@ -53,12 +53,6 @@ void RemoteResourceCache::cacheNativeImage(Ref<NativeImage>&& image, QualifiedRe
     m_resourceHeap.add(renderingResourceIdentifier, WTFMove(image));
 }
 
-void RemoteResourceCache::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs, QualifiedRenderingResourceIdentifier renderingResourceIdentifier)
-{
-    ASSERT(renderingResourceIdentifier.object() == decomposedGlyphs->renderingResourceIdentifier());
-    m_resourceHeap.add(renderingResourceIdentifier, WTFMove(decomposedGlyphs));
-}
-
 NativeImage* RemoteResourceCache::cachedNativeImage(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
 {
     return m_resourceHeap.getNativeImage(renderingResourceIdentifier);
@@ -80,11 +74,6 @@ Font* RemoteResourceCache::cachedFont(QualifiedRenderingResourceIdentifier rende
     return m_resourceHeap.getFont(renderingResourceIdentifier);
 }
 
-DecomposedGlyphs* RemoteResourceCache::cachedDecomposedGlyphs(QualifiedRenderingResourceIdentifier renderingResourceIdentifier) const
-{
-    return m_resourceHeap.getDecomposedGlyphs(renderingResourceIdentifier);
-}
-
 void RemoteResourceCache::deleteAllFonts()
 {
     m_resourceHeap.deleteAllFonts();
@@ -94,8 +83,7 @@ bool RemoteResourceCache::releaseRemoteResource(QualifiedRenderingResourceIdenti
 {
     if (m_resourceHeap.removeImageBuffer(renderingResourceIdentifier)
         || m_resourceHeap.removeNativeImage(renderingResourceIdentifier)
-        || m_resourceHeap.removeFont(renderingResourceIdentifier)
-        || m_resourceHeap.removeDecomposedGlyphs(renderingResourceIdentifier))
+        || m_resourceHeap.removeFont(renderingResourceIdentifier))
         return true;
 
     // Caching the remote resource should have happened before releasing it.

@@ -257,30 +257,6 @@ void RemoteDisplayListRecorder::drawGlyphsWithQualifiedIdentifier(DisplayList::D
     handleItem(WTFMove(item), *font);
 }
 
-void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier fontIdentifier, RenderingResourceIdentifier decomposedGlyphsIdentifier, const FloatRect& bounds)
-{
-    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
-    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
-    drawDecomposedGlyphsWithQualifiedIdentifiers({ fontIdentifier, m_webProcessIdentifier }, { decomposedGlyphsIdentifier, m_webProcessIdentifier }, bounds);
-}
-
-void RemoteDisplayListRecorder::drawDecomposedGlyphsWithQualifiedIdentifiers(QualifiedRenderingResourceIdentifier fontIdentifier, QualifiedRenderingResourceIdentifier decomposedGlyphsIdentifier, const FloatRect& bounds)
-{
-    RefPtr font = resourceCache().cachedFont(fontIdentifier);
-    if (!font) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr decomposedGlyphs = resourceCache().cachedDecomposedGlyphs(decomposedGlyphsIdentifier);
-    if (!decomposedGlyphsIdentifier) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    handleItem(DisplayList::DrawDecomposedGlyphs(fontIdentifier.object(), decomposedGlyphsIdentifier.object(), bounds), *font, *decomposedGlyphs);
-}
-
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,

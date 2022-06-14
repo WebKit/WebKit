@@ -45,7 +45,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(ImageBuffer& imageBuffer, RemoteRenderingBackendProxy& renderingBackend, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : DisplayList::Recorder({ }, initialClip, initialCTM, DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
+    : DisplayList::Recorder({ }, initialClip, initialCTM, DeconstructDrawGlyphs::Yes)
     , m_destinationBufferIdentifier(imageBuffer.renderingResourceIdentifier())
     , m_imageBuffer(imageBuffer)
     , m_renderingBackend(renderingBackend)
@@ -183,11 +183,6 @@ void RemoteDisplayListRecorderProxy::recordDrawFilteredImageBuffer(ImageBuffer* 
 void RemoteDisplayListRecorderProxy::recordDrawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode)
 {
     send(Messages::RemoteDisplayListRecorder::DrawGlyphs(DisplayList::DrawGlyphs { font, glyphs, advances, count, localAnchor, mode }));
-}
-
-void RemoteDisplayListRecorderProxy::recordDrawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
-{
-    send(Messages::RemoteDisplayListRecorder::DrawDecomposedGlyphs(font.renderingResourceIdentifier(), decomposedGlyphs.renderingResourceIdentifier(), decomposedGlyphs.bounds()));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -436,17 +431,6 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(Font& font)
     }
 
     m_renderingBackend->remoteResourceCacheProxy().recordFontUse(font);
-    return true;
-}
-
-bool RemoteDisplayListRecorderProxy::recordResourceUse(DecomposedGlyphs& decomposedGlyphs)
-{
-    if (UNLIKELY(!m_renderingBackend)) {
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    m_renderingBackend->remoteResourceCacheProxy().recordDecomposedGlyphsUse(decomposedGlyphs);
     return true;
 }
 

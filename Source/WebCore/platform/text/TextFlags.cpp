@@ -30,24 +30,6 @@
 
 namespace WebCore {
 
-WTF::TextStream& operator<<(TextStream& ts, ExpansionBehavior::Behavior behavior)
-{
-    switch (behavior) {
-    case ExpansionBehavior::Behavior::Forbid: ts << "forbid"; break;
-    case ExpansionBehavior::Behavior::Allow: ts << "allow"; break;
-    case ExpansionBehavior::Behavior::Force: ts << "force"; break;
-    }
-    return ts;
-}
-
-WTF::TextStream& operator<<(TextStream& ts, ExpansionBehavior expansionBehavior)
-{
-    ts << expansionBehavior.left;
-    ts << ' ';
-    ts << expansionBehavior.right;
-    return ts;
-}
-
 WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
 {
     switch (kerning) {
