@@ -107,8 +107,10 @@ const String& PerformanceResourceTiming::nextHopProtocol() const
 
 double PerformanceResourceTiming::workerStart() const
 {
-    // FIXME: <https://webkit.org/b/179377> Implement PerformanceResourceTiming.workerStart in ServiceWorkers
-    return 0.0;
+    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+        return 0.0;
+
+    return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.networkLoadMetrics().workerStart);
 }
 
 double PerformanceResourceTiming::redirectStart() const
