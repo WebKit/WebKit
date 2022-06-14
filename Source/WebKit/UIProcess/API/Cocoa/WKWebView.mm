@@ -2601,6 +2601,13 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
         _page->disableURLSchemeCheckInDataDetectors();
 }
 
+- (BOOL)_gpuProcessHasAccessToMachService:(NSString *)service
+{
+    if (!_page)
+        return FALSE;
+    return _page->gpuProcessHasAccessToMachService(service);
+}
+
 - (void)_switchFromStaticFontRegistryToUserFontRegistry
 {
     THROW_IF_SUSPENDED;

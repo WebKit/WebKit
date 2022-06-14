@@ -881,6 +881,11 @@ void WebPageProxy::disableURLSchemeCheckInDataDetectors() const
     process().send(Messages::WebProcess::DisableURLSchemeCheckInDataDetectors(), 0);
 }
 
+bool WebPageProxy::gpuProcessHasAccessToMachService(const String& service) const
+{
+    return false;
+}
+
 void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 {
     process().send(Messages::WebProcess::SwitchFromStaticFontRegistryToUserFontRegistry(process().fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions::EnableMachBootstrap)), 0);
