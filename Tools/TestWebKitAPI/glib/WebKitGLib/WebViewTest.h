@@ -49,7 +49,7 @@ public:
     void quitMainLoop();
     void quitMainLoopAfterProcessingPendingEvents();
     void wait(double seconds);
-    void waitUntilLoadFinished();
+    void waitUntilLoadFinished(WebKitWebView* = nullptr);
     void waitUntilTitleChangedTo(const char* expectedTitle);
     void waitUntilTitleChanged();
     void waitUntilIsWebProcessResponsiveChanged();
