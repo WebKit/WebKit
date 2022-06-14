@@ -300,7 +300,7 @@ static ScrollingScope nextScrollingScope()
     return ++currentScope;
 }
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderLayer);
+WTF_MAKE_ISO_ALLOCATED_IMPL(RenderLayer);
 
 RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     : m_isRenderViewLayer(renderer.isRenderView())
