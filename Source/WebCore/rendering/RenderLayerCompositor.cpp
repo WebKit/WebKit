@@ -2595,6 +2595,11 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
 {
     auto& renderer = rendererForCompositingTests(layer);
 
+    if (!renderer.layer()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
     // The root layer always has a compositing layer, but it may not have backing.
     return requiresCompositingForTransform(renderer)
         || requiresCompositingForAnimation(renderer)
