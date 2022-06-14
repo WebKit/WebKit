@@ -3,7 +3,7 @@ set -eu
 
 datestring=$(date -Idate)
 
-version=$($PWD/../glib/svn-revision)
+version=$($PWD/../Scripts/git-webkit find HEAD --json | jq --raw-output .identifier)
 
 cat >$1 <<EOF
 # no-commit
