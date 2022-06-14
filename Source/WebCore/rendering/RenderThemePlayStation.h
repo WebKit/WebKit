@@ -33,9 +33,6 @@ namespace WebCore {
 class RenderThemePlayStation final : public RenderTheme {
 public:
     friend NeverDestroyed<RenderThemePlayStation>;
-
-private:
-    FontCascadeDescription systemFont(CSSValueID systemFontID) const final;
 };
 
 } // namespace WebCore
