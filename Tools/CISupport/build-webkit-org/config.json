@@ -119,6 +119,7 @@
                     { "name": "gtk-linux-bot-18", "platform": "gtk" },
                     { "name": "gtk-linux-bot-19", "platform": "gtk" },
                     { "name": "gtk-linux-bot-20", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-21", "platform": "gtk" },
 
                     { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -135,7 +136,8 @@
                     { "name": "wpe-linux-bot-7", "platform": "wpe" },
                     { "name": "wpe-linux-bot-8", "platform": "wpe" },
                     { "name": "wpe-linux-bot-9", "platform": "wpe" },
-                    { "name": "wpe-linux-bot-10", "platform": "wpe" }
+                    { "name": "wpe-linux-bot-10", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-11", "platform": "wpe" }
                   ],
 
     "builders":   [
@@ -467,10 +469,16 @@
                       "workernames": ["gtk-linux-bot-10"]
                     },
                     {
-                      "name": "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory",
+                      "name": "GTK-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "BuildFactory",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-experimental-features"],
                       "workernames": ["gtk-linux-bot-11"]
+                    },
+                    {
+                      "name": "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-experimental-features"],
+                      "workernames": ["gtk-linux-bot-21"]
                     },
                     {
                       "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "factory": "BuildAndGenerateMiniBrowserBundleFactory",
@@ -613,10 +621,16 @@
                       "workernames": ["wpe-linux-bot-9"]
                     },
                     {
-                      "name": "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory",
+                      "name": "WPE-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "BuildFactory",
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-experimental-features"],
                       "workernames": ["wpe-linux-bot-10"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-experimental-features"],
+                      "workernames": ["wpe-linux-bot-11"]
                     }
                   ],
 
@@ -624,7 +638,9 @@
                       "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
                                        "GTK-Linux-64-bit-Release-Clang",
                                        "GTK-Linux-64-bit-Release-Debian-Stable-Build",
+                                       "GTK-Linux-64-bit-Release-Ubuntu-2004-Build",
                                        "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                       "WPE-Linux-64-bit-Release-Ubuntu-2004-Build",
                                        "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",
                                        "JSCOnly-Linux-AArch64-Release",
                                        "JSCOnly-Linux-ARMv7-Thumb2-Release", "JSCOnly-Linux-ARMv7-Thumb2-SoftFP-Release",
