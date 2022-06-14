@@ -195,9 +195,11 @@ static void loadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebVi
     g_main_loop_quit(test->m_mainLoop);
 }
 
-void WebViewTest::waitUntilLoadFinished()
+void WebViewTest::waitUntilLoadFinished(WebKitWebView* webView)
 {
-    g_signal_connect(m_webView, "load-changed", G_CALLBACK(loadChanged), this);
+    if (!webView)
+        webView = m_webView;
+    g_signal_connect(webView, "load-changed", G_CALLBACK(loadChanged), this);
     g_main_loop_run(m_mainLoop);
 }
 

@@ -21,6 +21,7 @@
 
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
+#include "WebKitWebViewInternal.h"
 #include <WebCore/SoupVersioning.h>
 #include <libsoup/soup.h>
 #include <limits.h>
@@ -991,6 +992,32 @@ static void testMemoryPressureSettings(MemoryPressureTest* test, gconstpointer)
     g_assert_cmpuint(test->m_terminationReason, ==, WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT);
 }
 
+static void testNoWebProcessLeakAfterWebKitWebContextDestroy(WebViewTest* test, gconstpointer)
+{
+    webkitSetCachedProcessSuspensionDelayForTesting(0);
+    GRefPtr<WebKitWebContext> webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, nullptr)));
+    GRefPtr<WebKitWebView> webView = Test::adoptView(Test::createWebView(webContext.get()));
+    webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/").data());
+    test->waitUntilLoadFinished(webView.get());
+    bool didRunForceRepaintCallback = false;
+    webkitWebViewForceRepaintForTesting(webView.get(), [] (gpointer data) {
+        *static_cast<bool*>(data) = true;
+    }, &didRunForceRepaintCallback);
+    webView.clear();
+    // Wait for shutdownPreventingScope created in WebPageProxy::close to be destroyed.
+    while (g_main_context_pending(nullptr))
+        g_main_context_iteration(nullptr, TRUE);
+    webContext.clear();
+    while (!didRunForceRepaintCallback)
+        test->wait(0.1);
+    // At this point page web process should have exited and the callback is expected to have
+    // been invoked during the IPC connection destruction.
+    //
+    // Ideally we'd check that underlying WebProcesPool, and WebProcessProxy have been destroyed too
+    // but there is no public API for that.
+    g_assert_true(didRunForceRepaintCallback);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -1008,6 +1035,7 @@ void beforeAll()
     WebViewTest::add("WebKitSecurityManager", "file-xhr", testWebContextSecurityFileXHR);
     ProxyTest::add("WebKitWebContext", "proxy", testWebContextProxySettings);
     MemoryPressureTest::add("WebKitWebContext", "memory-pressure", testMemoryPressureSettings);
+    WebViewTest::add("WebKitWebContext", "no-web-process-leak", testNoWebProcessLeakAfterWebKitWebContextDestroy);
 }
 
 void afterAll()

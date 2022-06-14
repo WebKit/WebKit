@@ -27,3 +27,6 @@
 typedef struct _WebKitWebView WebKitWebView;
 
 WK_EXPORT void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView*, const gchar*, GCancellable*, GAsyncReadyCallback, gpointer);
+typedef void (*ForceRepaintCallback) (gpointer userData);
+WK_EXPORT void webkitWebViewForceRepaintForTesting(WebKitWebView*, ForceRepaintCallback, gpointer userData);
+WK_EXPORT void webkitSetCachedProcessSuspensionDelayForTesting(double seconds);

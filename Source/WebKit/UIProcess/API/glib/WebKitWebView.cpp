@@ -5056,3 +5056,17 @@ void webkit_web_view_set_display_capture_state(WebKitWebView* webView, WebKitMed
 
     webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Display, state);
 }
+
+void webkitWebViewForceRepaintForTesting(WebKitWebView* webView, ForceRepaintCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    getPage(webView).forceRepaint([callback, userData]() {
+        callback(userData);
+    });
+}
+
+void webkitSetCachedProcessSuspensionDelayForTesting(double seconds)
+{
+    WebKit::WebsiteDataStore::setCachedProcessSuspensionDelayForTesting(Seconds(seconds));
+}
