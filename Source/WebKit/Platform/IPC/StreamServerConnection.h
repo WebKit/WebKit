@@ -75,11 +75,16 @@ public:
 
     Connection& connection() { return m_connection; }
 
-    enum DispatchResult : bool {
-        HasNoMessages,
-        HasMoreMessages
+    enum class DispatchResult : int {
+        NoMessages,
+        DidDispatchMessages,
+        HasIncompleteMessages
     };
-    DispatchResult dispatchStreamMessages(size_t messageLimit);
+    enum class SleepIfNoMessages : bool {
+        No,
+        Yes
+    };
+    DispatchResult dispatchStreamMessages(size_t messageLimit, SleepIfNoMessages);
 
     void open();
     void invalidate();
@@ -100,7 +105,7 @@ private:
         uint8_t* data;
         size_t size;
     };
-    std::optional<Span> tryAcquire();
+    std::optional<Span> tryAcquire(SleepIfNoMessages);
     Span acquireAll();
 
     void release(size_t readSize);

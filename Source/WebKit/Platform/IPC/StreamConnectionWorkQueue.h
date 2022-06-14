@@ -56,7 +56,7 @@ public:
     Semaphore& wakeUpSemaphore();
 private:
     void startProcessingThread() WTF_REQUIRES_LOCK(m_lock);
-    void processStreams();
+    void processStreams(Vector<Ref<StreamServerConnection>>&& connections);
 #if ASSERT_ENABLED
     void assertIsCurrent() const;
 #endif
@@ -64,7 +64,12 @@ private:
     const char* const m_name;
 
     Semaphore m_wakeUpSemaphore;
-    std::atomic<bool> m_shouldQuit { false };
+    enum class RunState : int {
+        Run,
+        ReloadState,
+        Quit
+    };
+    std::atomic<RunState> m_runState { RunState::Run };
 
     mutable Lock m_lock;
     RefPtr<Thread> m_processingThread WTF_GUARDED_BY_LOCK(m_lock);

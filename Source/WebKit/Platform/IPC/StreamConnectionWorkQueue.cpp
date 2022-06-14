@@ -45,13 +45,16 @@ StreamConnectionWorkQueue::~StreamConnectionWorkQueue()
 
 void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
 {
-    ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
+    ASSERT(m_runState != RunState::Quit); // Re-entering during shutdown not supported.
     {
         Locker locker { m_lock };
         m_functions.append(WTFMove(function));
-        if (!m_shouldQuit && !m_processingThread) {
-            startProcessingThread();
-            return;
+        if (m_runState != RunState::Quit) {
+            m_runState = RunState::ReloadState;
+            if (!m_processingThread) {
+                startProcessingThread();
+                return;
+            }
         }
     }
     wakeUp();
@@ -62,9 +65,12 @@ void StreamConnectionWorkQueue::addStreamConnection(StreamServerConnection& conn
     {
         Locker locker { m_lock };
         m_connections.add(connection);
-        if (!m_shouldQuit && !m_processingThread) {
-            startProcessingThread();
-            return;
+        if (m_runState != RunState::Quit) {
+            m_runState = RunState::ReloadState;
+            if (!m_processingThread) {
+                startProcessingThread();
+                return;
+            }
         }
     }
     wakeUp();
@@ -75,13 +81,15 @@ void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnection& c
     {
         Locker locker { m_lock };
         m_connections.remove(connection);
+        if (m_runState != RunState::Quit)
+            m_runState = RunState::ReloadState;
     }
     wakeUp();
 }
 
 void StreamConnectionWorkQueue::stopAndWaitForCompletion()
 {
-    m_shouldQuit = true;
+    m_runState = RunState::Quit;
     RefPtr<Thread> processingThread;
     {
         Locker locker { m_lock };
@@ -107,40 +115,70 @@ IPC::Semaphore& StreamConnectionWorkQueue::wakeUpSemaphore()
 void StreamConnectionWorkQueue::startProcessingThread()
 {
     auto task = [this]() mutable {
-        for (;;) {
-            processStreams();
-            if (m_shouldQuit) {
-                processStreams();
-                return;
+        bool shouldQuit = false;
+        while (!shouldQuit) {
+            Vector<Ref<StreamServerConnection>> connections;
+            {
+                Deque<Function<void()>> functions;
+                {
+                    Locker locker { m_lock };
+                    functions.swap(m_functions);
+                    connections = copyToVector(m_connections.values());
+                    if (m_runState == RunState::Quit)
+                        shouldQuit = true; // After RunState::Quit is toggled, the work queue should run the dispatched functions one last time.
+                    else
+                        m_runState =  RunState::Run;
+                }
+                for (auto& function : functions)
+                    WTFMove(function)();
             }
-            m_wakeUpSemaphore.wait();
+            processStreams(WTFMove(connections));
         }
     };
     m_processingThread = Thread::create(m_name, WTFMove(task), ThreadType::Graphics, Thread::QOS::UserInteractive);
 }
 
-void StreamConnectionWorkQueue::processStreams()
+void StreamConnectionWorkQueue::processStreams(Vector<Ref<StreamServerConnection>>&& connections)
 {
     constexpr size_t defaultMessageLimit = 1000;
-    bool hasMoreToProcess = false;
-    do {
+
+    // When server consumes faster than client produces:
+    //    Avoid client kernel calls to signal by not marking the server as sleeping, wait with very short deadline.
+    //    Only mark the server sleeping on the last Wait step. After this, the client will spend time in signal.
+    // Use the heuristic: if we did process any messages, it is probable that there will be more messages even though currently
+    // we might have none.
+
+    enum IdleStep {
+        Wait100us,
+        Wait,
+    };
+    int idleStep = IdleStep::Wait100us;
+
+    using DispatchResult = StreamServerConnection::DispatchResult;
+    using SleepIfNoMessages = StreamServerConnection::SleepIfNoMessages;
+
+    while (m_runState == RunState::Run) {
 #if USE(FOUNDATION)
         AutodrainedPool perProcessingIterationPool;
 #endif
-        Deque<WTF::Function<void()>> functions;
-        Vector<Ref<StreamServerConnection>> connections;
-        {
-            Locker locker { m_lock };
-            functions.swap(m_functions);
-            connections = copyToVector(m_connections.values());
+        SleepIfNoMessages willSleep = idleStep >= IdleStep::Wait ? SleepIfNoMessages::Yes : SleepIfNoMessages::No;
+        for (auto& connection : connections) {
+            if (connection->dispatchStreamMessages(defaultMessageLimit, willSleep) != DispatchResult::NoMessages) {
+                willSleep = SleepIfNoMessages::No;
+                idleStep = IdleStep::Wait100us;
+            }
         }
-        for (auto& function : functions)
-            WTFMove(function)();
-
-        hasMoreToProcess = false;
-        for (auto& connection : connections)
-            hasMoreToProcess |= connection->dispatchStreamMessages(defaultMessageLimit) == StreamServerConnection::HasMoreMessages;
-    } while (hasMoreToProcess);
+        if (idleStep >= IdleStep::Wait) {
+            m_wakeUpSemaphore.wait();
+            // We don't want to set willSleep to Yes, so start next iteration with previous step.
+            // For spurious wakeups, we do not reset immediately to full Wait but that is ok.
+            idleStep = IdleStep::Wait - 1;
+        } else if (idleStep >= IdleStep::Wait100us) {
+            if (!m_wakeUpSemaphore.waitFor(100_us))
+                ++idleStep;
+        } else
+            ++idleStep;
+    }
 }
 
 #if ASSERT_ENABLED

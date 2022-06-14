@@ -238,11 +238,10 @@ std::optional<StreamClientConnection::SendSyncResult> StreamClientConnection::tr
         if (!(messageEncoder << syncRequestID << message.arguments()))
             return std::nullopt;
         auto wakeupResult = release(messageEncoder.size());
-
-        if (wakeupResult == StreamClientConnection::WakeUpServer::Yes)
-            wakeUpServer();
-        else
-            sendDeferredWakeUpMessageIfNeeded();
+        UNUSED_VARIABLE(wakeupResult);
+        // Always signal the receiver, since we do not want to buffer calls in case server is idle-waiting.
+        // Also, the kernel might be able to switch the thread to the server.
+        wakeUpServer();
         if constexpr(T::isReplyStreamEncodable) {
             auto replySpan = tryAcquireAll(timeout);
             if (!replySpan)

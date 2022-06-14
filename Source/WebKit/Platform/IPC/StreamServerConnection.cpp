@@ -140,14 +140,14 @@ void StreamServerConnection::enqueueMessage(Connection&, std::unique_ptr<Decoder
     m_workQueue.wakeUp();
 }
 
-std::optional<StreamServerConnection::Span> StreamServerConnection::tryAcquire()
+std::optional<StreamServerConnection::Span> StreamServerConnection::tryAcquire(SleepIfNoMessages sleepIfNoMessages)
 {
     ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
     if (serverLimit == ServerLimit::serverIsSleepingTag)
         return std::nullopt;
 
     auto result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
-    if (result.size < minimumMessageSize) {
+    if (result.size < minimumMessageSize && sleepIfNoMessages == SleepIfNoMessages::Yes) {
         serverLimit = sharedServerLimit().compareExchangeStrong(serverLimit, ServerLimit::serverIsSleepingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
         result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
     }
@@ -222,29 +222,29 @@ size_t StreamServerConnection::clampedLimit(ServerLimit serverLimit) const
     return std::min(limit, dataSize() - 1);
 }
 
-StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit)
+StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit, SleepIfNoMessages sleepIfNoMessages)
 {
     RefPtr<StreamMessageReceiver> currentReceiver;
     // FIXME: Implement WTF::isValid(ReceiverName).
     uint8_t currentReceiverName = static_cast<uint8_t>(ReceiverName::Invalid);
 
     for (size_t i = 0; i < messageLimit; ++i) {
-        auto span = tryAcquire();
+        auto span = tryAcquire(sleepIfNoMessages);
         if (!span)
-            return DispatchResult::HasNoMessages;
+            return i ? DispatchResult::DidDispatchMessages : DispatchResult::NoMessages;
         IPC::Decoder decoder { span->data, span->size, m_currentDestinationID };
         if (!decoder.isValid()) {
             m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
-            return DispatchResult::HasNoMessages;
+            return DispatchResult::NoMessages;
         }
         if (decoder.messageName() == MessageName::SetStreamDestinationID) {
             if (!processSetStreamDestinationID(WTFMove(decoder), currentReceiver))
-                return DispatchResult::HasNoMessages;
+                return DispatchResult::HasIncompleteMessages;
             continue;
         }
         if (decoder.messageName() == MessageName::ProcessOutOfStreamMessage) {
             if (!dispatchOutOfStreamMessage(WTFMove(decoder)))
-                return DispatchResult::HasNoMessages;
+                return DispatchResult::HasIncompleteMessages;
             continue;
         }
         if (currentReceiverName != static_cast<uint8_t>(decoder.messageReceiverName())) {
@@ -255,7 +255,7 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             auto key = std::make_pair(static_cast<uint8_t>(currentReceiverName), m_currentDestinationID);
             if (!ReceiversMap::isValidKey(key)) {
                 m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
-                return DispatchResult::HasNoMessages;
+                return DispatchResult::NoMessages;
             }
             Locker locker { m_receiversLock };
             currentReceiver = m_receivers.get(key);
@@ -268,12 +268,12 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             // a stream connection until possibility of skipping is implemented properly.
             Locker locker { m_receiversLock };
             ASSERT(m_receivers.isEmpty());
-            return DispatchResult::HasNoMessages;
+            return DispatchResult::NoMessages;
         }
         if (!dispatchStreamMessage(WTFMove(decoder), *currentReceiver))
-            return DispatchResult::HasNoMessages;
+            return DispatchResult::NoMessages;
     }
-    return DispatchResult::HasMoreMessages;
+    return DispatchResult::DidDispatchMessages;
 }
 
 bool StreamServerConnection::processSetStreamDestinationID(Decoder&& decoder, RefPtr<StreamMessageReceiver>& currentReceiver)
