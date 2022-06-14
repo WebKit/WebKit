@@ -689,6 +689,10 @@ private:
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
 #endif
 
+#if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
+    RetainPtr<NSObject> m_powerLogObserver;
+#endif
+
 #if PLATFORM(COCOA)
     std::unique_ptr<WebCore::PowerSourceNotifier> m_powerSourceNotifier;
     RetainPtr<NSObject> m_activationObserver;

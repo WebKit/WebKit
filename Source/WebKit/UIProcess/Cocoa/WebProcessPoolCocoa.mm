@@ -95,6 +95,10 @@
 #import "UIKitSPI.h"
 #endif
 
+#if HAVE(POWERLOG_TASK_MODE_QUERY)
+#import <pal/spi/mac/PowerLogSPI.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #endif
@@ -703,6 +707,12 @@ void WebProcessPool::registerNotificationObservers()
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
+#if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
+    m_powerLogObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kPLTaskingStartNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+        if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+            gpuProcess->enablePowerLogging();
+    }];
+#endif // HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
 }
 
 void WebProcessPool::unregisterNotificationObservers()
@@ -753,7 +763,9 @@ void WebProcessPool::unregisterNotificationObservers()
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     removeCFNotificationObserver(kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
-
+#if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
+    [[NSNotificationCenter defaultCenter] removeObserver:m_powerLogObserver.get()];
+#endif
     m_weakObserver = nil;
 }
 

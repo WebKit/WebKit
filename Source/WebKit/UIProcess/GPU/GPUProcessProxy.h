@@ -102,6 +102,11 @@ public:
     void setScreenProperties(const WebCore::ScreenProperties&);
 #endif
 
+#if HAVE(POWERLOG_TASK_MODE_QUERY)
+    void enablePowerLogging();
+    static bool isPowerLoggingInTaskMode();
+#endif
+
     void updatePreferences(WebProcessProxy&);
     void updateScreenPropertiesIfNeeded();
 

@@ -201,6 +201,10 @@ private:
     void openDirectoryCacheInvalidated(SandboxExtension::Handle&&);
 #endif
 
+#if HAVE(POWERLOG_TASK_MODE_QUERY)
+    void enablePowerLogging(SandboxExtension::Handle&&);
+#endif
+
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
     MonotonicTime m_creationTime { MonotonicTime::now() };

@@ -62,6 +62,10 @@
 #include <wtf/FileSystem.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/BlockPtr.h>
+#endif
+
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
 
 namespace WebKit {
@@ -470,6 +474,18 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->gpuProcessDidFinishLaunching(processIdentifier());
+
+#if HAVE(POWERLOG_TASK_MODE_QUERY)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] () mutable {
+        if (!isPowerLoggingInTaskMode())
+            return;
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis)] () {
+            if (!weakThis)
+                return;
+            weakThis->enablePowerLogging();
+        });
+    }).get());
+#endif
 }
 
 void GPUProcessProxy::updateProcessAssertion()
