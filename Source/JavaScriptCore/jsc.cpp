@@ -844,8 +844,40 @@ static URL currentWorkingDirectory()
     return URL::fileURLWithFileSystemPath(directoryString);
 }
 
-static URL absolutePath(const String& fileName)
+// FIXME: We may wish to support module specifiers beginning with a (back)slash on Windows. We could either:
+// - align with V8 and SM:  treat '/foo' as './foo'
+// - align with PowerShell: treat '/foo' as 'C:/foo'
+static bool isAbsolutePath(StringView path)
 {
+#if OS(WINDOWS)
+    // Just look for local drives like C:\.
+    return path.length() > 2 && isASCIIAlpha(path[0]) && path[1] == ':' && (path[2] == '\\' || path[2] == '/');
+#else
+    return path.startsWith('/');
+#endif
+}
+
+static bool isDottedRelativePath(StringView path)
+{
+#if OS(WINDOWS)
+    auto length = path.length();
+    if (length < 2 || path[0] != '.')
+        return false;
+
+    if (path[1] == '/' || path[1] == '\\')
+        return true;
+
+    return length > 2 && path[1] == '.' && (path[2] == '/' || path[2] == '\\');
+#else
+    return path.startsWith("./"_s) || path.startsWith("../"_s);
+#endif
+}
+
+static URL absoluteFileURL(const String& fileName)
+{
+    if (isAbsolutePath(fileName))
+        return URL::fileURLWithFileSystemPath(fileName);
+
     auto directoryName = currentWorkingDirectory();
     if (!directoryName.isValid())
         return URL::fileURLWithFileSystemPath(fileName);
@@ -872,10 +904,11 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     if (!referrer.isLocalFile())
         RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '", referrer.string(), "', while trying to resolve module '", specifier, "'."))));
 
-    if (!specifier.startsWith('/') && !specifier.startsWith("./"_s) && !specifier.startsWith("../"_s))
-        RELEASE_AND_RETURN(scope, rejectWithError(createTypeError(globalObject, makeString("Module specifier, '"_s, specifier, "' does not start with \"/\", \"./\", or \"../\". Referenced from: "_s, referrer.fileSystemPath()))));
+    bool specifierIsAbsolute = isAbsolutePath(specifier);
+    if (!specifierIsAbsolute && !isDottedRelativePath(specifier))
+        RELEASE_AND_RETURN(scope, rejectWithError(createTypeError(globalObject, makeString("Module specifier, '"_s, specifier, "' is not absolute and does not start with \"./\" or \"../\". Referenced from: "_s, referrer.fileSystemPath()))));
 
-    URL moduleURL(referrer, specifier);
+    auto moduleURL = specifierIsAbsolute ? URL::fileURLWithFileSystemPath(specifier) : URL(referrer, specifier);
     if (!moduleURL.isLocalFile())
         RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Module url, '", moduleURL.string(), "' does not map to a local file."))));
 
@@ -899,8 +932,9 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
 
     auto resolvePath = [&] (const URL& directoryURL) -> Identifier {
         String specifier = key.impl();
-        if (!specifier.startsWith('/') && !specifier.startsWith("./"_s) && !specifier.startsWith("../"_s)) {
-            throwTypeError(globalObject, scope, makeString("Module specifier, '"_s, specifier, "' does not start with \"/\", \"./\", or \"../\". Referenced from: "_s, directoryURL.fileSystemPath()));
+        bool specifierIsAbsolute = isAbsolutePath(specifier);
+        if (!specifierIsAbsolute && !isDottedRelativePath(specifier)) {
+            throwTypeError(globalObject, scope, makeString("Module specifier, '"_s, specifier, "' is not absolute and does not start with \"./\" or \"../\". Referenced from: "_s, directoryURL.fileSystemPath()));
             return { };
         }
 
@@ -909,7 +943,7 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
             return { };
         }
 
-        URL resolvedURL(directoryURL, specifier);
+        auto resolvedURL = specifierIsAbsolute ? URL::fileURLWithFileSystemPath(specifier) : URL(directoryURL, specifier);
         if (!resolvedURL.isValid()) {
             throwException(globalObject, scope, createError(globalObject, makeString("Resolved module url is not valid: ", resolvedURL.string())));
             return { };
@@ -1550,7 +1584,7 @@ JSC_DEFINE_HOST_FUNCTION(functionRun, (JSGlobalObject* globalObject, CallFrame* 
     NakedPtr<Exception> exception;
     StopWatch stopWatch;
     stopWatch.start();
-    evaluate(realm, jscSource(script, SourceOrigin { absolutePath(fileName) }, fileName), JSValue(), exception);
+    evaluate(realm, jscSource(script, SourceOrigin { absoluteFileURL(fileName) }, fileName), JSValue(), exception);
     stopWatch.stop();
 
     if (exception) {
@@ -1612,7 +1646,7 @@ static URL computeFilePath(VM& vm, JSGlobalObject* globalObject, CallFrame* call
             return URL();
         }
     } else
-        path = absolutePath(fileName);
+        path = absoluteFileURL(fileName);
     return path;
 }
 
@@ -1702,7 +1736,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCheckSyntax, (JSGlobalObject* globalObject, Cal
     stopWatch.start();
 
     JSValue syntaxException;
-    bool validSyntax = checkSyntax(globalObject, jscSource(script, SourceOrigin { absolutePath(fileName) }, fileName), &syntaxException);
+    bool validSyntax = checkSyntax(globalObject, jscSource(script, SourceOrigin { absoluteFileURL(fileName) }, fileName), &syntaxException);
     stopWatch.stop();
 
     if (!validSyntax)
@@ -3251,8 +3285,8 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
                 scriptBuffer.append("\"use strict\";\n", strlen("\"use strict\";\n"));
 
             if (isModule) {
-                // If the passed file isn't an absolute path append "./" so the module loader doesn't think this is a bare-name specifier.
-                fileName = fileName.startsWith('/') ? fileName : makeString("./", fileName);
+                // If necessary, prepend "./" so the module loader doesn't think this is a bare-name specifier.
+                fileName = isAbsolutePath(fileName) || isDottedRelativePath(fileName) ? fileName : makeString('.', pathSeparator(), fileName);
                 promise = loadAndEvaluateModule(globalObject, fileName, jsUndefined(), jsUndefined());
                 RETURN_IF_EXCEPTION(scope, void());
             } else {
@@ -3269,7 +3303,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
         }
 
         bool isLastFile = i == scripts.size() - 1;
-        SourceOrigin sourceOrigin { absolutePath(fileName) };
+        SourceOrigin sourceOrigin { absoluteFileURL(fileName) };
         if (isModule) {
             if (!promise) {
                 // FIXME: This should use an absolute file URL https://bugs.webkit.org/show_bug.cgi?id=193077
