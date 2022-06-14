@@ -1466,54 +1466,12 @@ template<> struct ArgumentCoder<PasteboardCustomData::Entry> {
 
 void ArgumentCoder<PasteboardCustomData::Entry>::encode(Encoder& encoder, const PasteboardCustomData::Entry& data)
 {
-    encoder << data.type << data.customData;
-
-    auto& platformData = data.platformData;
-    bool hasString = std::holds_alternative<String>(platformData);
-    encoder << hasString;
-    if (hasString)
-        encoder << std::get<String>(platformData);
-
-    bool hasBuffer = std::holds_alternative<Ref<SharedBuffer>>(platformData);
-    encoder << hasBuffer;
-    if (hasBuffer)
-        encoder << std::get<Ref<SharedBuffer>>(platformData);
+    encoder << data.type << data.customData << data.platformData;
 }
 
 bool ArgumentCoder<PasteboardCustomData::Entry>::decode(Decoder& decoder, PasteboardCustomData::Entry& data)
 {
-    if (!decoder.decode(data.type))
-        return false;
-
-    if (!decoder.decode(data.customData))
-        return false;
-
-    bool hasString;
-    if (!decoder.decode(hasString))
-        return false;
-
-    if (hasString) {
-        String value;
-        if (!decoder.decode(value))
-            return false;
-        data.platformData = { WTFMove(value) };
-    }
-
-    bool hasBuffer;
-    if (!decoder.decode(hasBuffer))
-        return false;
-
-    if (hasString && hasBuffer)
-        return false;
-
-    if (hasBuffer) {
-        auto buffer = decoder.decode<Ref<SharedBuffer>>();
-        if (!buffer)
-            return false;
-        data.platformData = { WTFMove(*buffer) };
-    }
-
-    return true;
+    return decoder.decode(data.type) && decoder.decode(data.customData) && decoder.decode(data.platformData);
 }
 
 void ArgumentCoder<PasteboardCustomData>::encode(Encoder& encoder, const PasteboardCustomData& data)
