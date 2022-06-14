@@ -4609,7 +4609,6 @@
             ],
             "codegen-properties": {
                 "converter": "TextAlignLast",
-                "custom": "Initial|Value",
                 "settings-flag": "cssTextAlignLastEnabled"
             },
             "specification": {
