@@ -66,6 +66,22 @@ void SVGFilterPrimitiveStandardAttributes::parseAttribute(const QualifiedName& n
     SVGElement::parseAttribute(name, value);
 }
 
+OptionSet<FilterEffectGeometry::Flags> SVGFilterPrimitiveStandardAttributes::effectGeometryFlags() const
+{
+    OptionSet<FilterEffectGeometry::Flags> flags;
+
+    if (hasAttribute(SVGNames::xAttr))
+        flags.add(FilterEffectGeometry::Flags::HasX);
+    if (hasAttribute(SVGNames::yAttr))
+        flags.add(FilterEffectGeometry::Flags::HasY);
+    if (hasAttribute(SVGNames::widthAttr))
+        flags.add(FilterEffectGeometry::Flags::HasWidth);
+    if (hasAttribute(SVGNames::heightAttr))
+        flags.add(FilterEffectGeometry::Flags::HasHeight);
+
+    return flags;
+}
+
 RefPtr<FilterEffect> SVGFilterPrimitiveStandardAttributes::filterEffect(const FilterEffectVector& inputs, const GraphicsContext& destinationContext)
 {
     if (!m_effect)

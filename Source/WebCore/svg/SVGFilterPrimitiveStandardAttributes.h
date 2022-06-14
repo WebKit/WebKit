@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "FilterEffectGeometry.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGElement.h"
@@ -50,12 +51,14 @@ public:
     SVGAnimatedLength& heightAnimated() { return m_height; }
     SVGAnimatedString& resultAnimated() { return m_result; }
 
-    void primitiveAttributeChanged(const QualifiedName&);
-    void markFilterEffectForRebuild();
+    OptionSet<FilterEffectGeometry::Flags> effectGeometryFlags() const;
 
     virtual Vector<AtomString> filterEffectInputsNames() const { return { }; }
     virtual IntOutsets outsets(const FloatRect&, SVGUnitTypes::SVGUnitType) const { return { }; }
     RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext);
+
+    void primitiveAttributeChanged(const QualifiedName&);
+    void markFilterEffectForRebuild();
 
     static void invalidateFilterPrimitiveParent(SVGElement*);
 
