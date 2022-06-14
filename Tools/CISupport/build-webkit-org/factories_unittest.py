@@ -1235,6 +1235,17 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
+        'GTK-Linux-64-bit-Release-Ubuntu-2004-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'compile-webkit'
+        ],
         'GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804': [
             'configure-build',
             'configuration',
@@ -1633,7 +1644,19 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'jhbuild',
             'compile-webkit'
-        ]
+        ],
+        'WPE-Linux-64-bit-Release-Ubuntu-2004-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit'
+        ],
     }
 
     def setUp(self):

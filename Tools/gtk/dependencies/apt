@@ -7,7 +7,6 @@ PACKAGES+=(
     geoclue-2.0
     gnome-common
     libedit-dev
-    libenchant-dev
     libfaad-dev
     libffi-dev
     libgirepository1.0-dev
@@ -35,6 +34,7 @@ PACKAGES+=(
     libxtst-dev
     nasm
     xfonts-utils
+    $(aptIfExists libenchant-dev)
 
     # These are dependencies necessary for running tests.
     cups-daemon
@@ -42,17 +42,16 @@ PACKAGES+=(
     hunspell
     hunspell-en-gb
     hunspell-en-us
-    python-psutil
-    python-yaml
     weston
     xvfb
+    $(aptIfExists python-psutil)
+    $(aptIfExists python-yaml)
 
     # These are dependencies necessary for building the jhbuild.
     bison
     flex
     gobject-introspection
     icon-naming-utils
-    libcroco3-dev
     libcups2-dev
     libdrm-dev
     libevdev-dev
@@ -75,18 +74,19 @@ PACKAGES+=(
     libxfont-dev
     libxkbcommon-x11-dev
     libxkbfile-dev
-    python-dev
     ragel
-    x11proto-bigreqs-dev
-    x11proto-composite-dev
     x11proto-gl-dev
     x11proto-input-dev
     x11proto-randr-dev
-    x11proto-resource-dev
     x11proto-scrnsaver-dev
     x11proto-video-dev
-    x11proto-xcmisc-dev
     x11proto-xf86dri-dev
     xtrans-dev
     xutils-dev
+    $(aptIfExists libcroco3-dev)
+    $(aptIfExists python-dev)
+    $(aptIfExists x11proto-bigreqs-dev)
+    $(aptIfExists x11proto-composite-dev)
+    $(aptIfExists x11proto-resource-dev)
+    $(aptIfExists x11proto-xcmisc-dev)
 )
