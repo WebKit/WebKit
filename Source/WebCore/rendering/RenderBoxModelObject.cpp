@@ -975,7 +975,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 downcast<BitmapImage>(*image).updateFromSettings(settings());
 
             ImagePaintingOptions options = {
-                op == CompositeOperator::SourceOver ? bgLayer.composite() : op,
+                op == CompositeOperator::SourceOver ? bgLayer.compositeForPainting() : op,
                 bgLayer.blendMode(),
                 decodingModeForImageDraw(*image, paintInfo),
                 ImageOrientation::FromImage,
