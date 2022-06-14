@@ -41,7 +41,7 @@ const PinnedRegisterInfo& PinnedRegisterInfo::get()
         unsigned numberOfPinnedRegisters = 2;
         if (!Context::useFastTLS())
             ++numberOfPinnedRegisters;
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
         GPRReg baseMemoryPointer = GPRInfo::regCS3;
         GPRReg boundsCheckingSizeRegister = GPRInfo::regCS4;
 #elif CPU(ARM)
