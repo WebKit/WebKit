@@ -491,6 +491,15 @@ webkit_web_view_run_javascript_in_world_finish       (WebKitWebView             
                                                       GError                   **error);
 
 WEBKIT_API void
+webkit_web_view_run_async_javascript_function_in_world (WebKitWebView           *web_view,
+                                                        const gchar             *body,
+                                                        GVariant                *arguments,
+                                                        const char              *world_name,
+                                                        GCancellable            *cancellable,
+                                                        GAsyncReadyCallback      callback,
+                                                        gpointer                 user_data);
+
+WEBKIT_API void
 webkit_web_view_run_javascript_from_gresource        (WebKitWebView             *web_view,
                                                       const gchar               *resource,
                                                       GCancellable              *cancellable,

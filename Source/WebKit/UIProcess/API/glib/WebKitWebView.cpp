@@ -3994,6 +3994,119 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
     });
 }
 
+/*
+ * webkit_web_view_run_async_javascript_function_in_world:
+ * @web_view: a #WebKitWebView
+ * @body: the JavaScript function body
+ * @arguments: a #GVariant with format `{&sv}` storing the function arguments. Function argument values must be one of the following types, or contain only the following GVariant types: number, string, array, and dictionary.
+ * @world_name (nullable): the name of a #WebKitScriptWorld, if no name is provided, the default world is used.
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously run @body in the script world with name @world_name of the current page context in
+ * @web_view. If WebKitSettings:enable-javascript is FALSE, this method will do nothing. This API
+ * differs from webkit_web_view_run_javascript_in_world() in that the JavaScript function can return a
+ * Promise and its result will be properly passed to the callback.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_view_run_javascript_in_world_finish() to get the result of the operation.
+ *
+ * For instance here is a dummy example that shows how to pass arguments to a JS function that
+ * returns a Promise that resolves with the passed argument:
+ *
+ * ```c
+ * static void
+ * web_view_javascript_finished (GObject      *object,
+ *                               GAsyncResult *result,
+ *                               gpointer      user_data)
+ * {
+ *     WebKitJavascriptResult *js_result;
+ *     JSCValue               *value;
+ *     GError                 *error = NULL;
+ *
+ *     js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+ *     if (!js_result) {
+ *         g_warning ("Error running javascript: %s", error->message);
+ *         g_error_free (error);
+ *         return;
+ *     }
+ *
+ *     value = webkit_javascript_result_get_js_value (js_result);
+ *     if (jsc_value_is_number (value)) {
+ *         gint32        int_value = jsc_value_to_string (value);
+ *         JSCException *exception = jsc_context_get_exception (jsc_value_get_context (value));
+ *         if (exception)
+ *             g_warning ("Error running javascript: %s", jsc_exception_get_message (exception));
+ *         else
+ *             g_print ("Script result: %d\n", int_value);
+ *         g_free (str_value);
+ *     } else {
+ *         g_warning ("Error running javascript: unexpected return value");
+ *     }
+ *     webkit_javascript_result_unref (js_result);
+ * }
+ *
+ * static void
+ * web_view_evaluate_promise (WebKitWebView *web_view)
+ * {
+ *     GVariantDict dict;
+ *     g_variant_dict_init (&dict, NULL);
+ *     g_variant_dict_insert (&dict, "count", "u", 42);
+ *     GVariant *args = g_variant_dict_end (&dict);
+ *     const gchar *body = "return new Promise((resolve) => { resolve(count); });";
+ *     webkit_web_view_run_async_javascript_function_in_world (web_view, body, arguments, NULL, NULL, web_view_javascript_finished, NULL);
+ * }
+ * ```
+ *
+ * Since: 2.38
+ */
+void webkit_web_view_run_async_javascript_function_in_world(WebKitWebView* webView, const gchar* body, GVariant* arguments, const char* worldName, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(body);
+    g_return_if_fail(worldName);
+
+    auto task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    auto world = API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName ? worldName : ""));
+    bool hasInvalidArgument = false;
+    auto argumentsMap = WebCore::ArgumentWireBytesMap { };
+
+    if (arguments) {
+        GVariantIter iter;
+        g_variant_iter_init(&iter, arguments);
+        const char* key;
+        GVariant* value;
+        while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
+            if (!key)
+                continue;
+            auto serializedValue = API::SerializedScriptValue::createFromGVariant(value);
+            if (!serializedValue) {
+                hasInvalidArgument = true;
+                break;
+            }
+            argumentsMap.set(String::fromUTF8(key), serializedValue->internalRepresentation().wireBytes());
+        }
+    }
+
+    if (hasInvalidArgument) {
+        ExceptionDetails exceptionDetails;
+        exceptionDetails.message = "Function argument values must be one of the following types, or contain only the following GVariant types: number, string, array, and dictionary"_s;
+        webkitWebViewRunJavaScriptCallback(nullptr, exceptionDetails, task.get());
+        return;
+    }
+
+    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(body), URL { }, RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes }, std::nullopt, world.get(), [task = WTFMove(task)](auto&& result) {
+        RefPtr<API::SerializedScriptValue> serializedScriptValue;
+        ExceptionDetails exceptionDetails;
+        if (result.has_value())
+            serializedScriptValue = WTFMove(result.value());
+        else
+            exceptionDetails = WTFMove(result.error());
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue.get(), exceptionDetails, task.get());
+    });
+}
+
 /**
  * webkit_web_view_run_javascript_in_world_finish:
  * @web_view: a #WebKitWebView

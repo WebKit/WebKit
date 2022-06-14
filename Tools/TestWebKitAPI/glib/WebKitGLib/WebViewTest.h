@@ -76,6 +76,7 @@ public:
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**, WebKitWebView* = nullptr);
     WebKitJavascriptResult* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
     WebKitJavascriptResult* runJavaScriptInWorldAndWaitUntilFinished(const char* javascript, const char* world, GError**);
+    WebKitJavascriptResult* runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(const char* body, GVariant* arguments, const char* world, GError**);
     WebKitJavascriptResult* runJavaScriptWithoutForcedUserGesturesAndWaitUntilFinished(const char* javascript, GError**);
 
     // Javascript result helpers.
