@@ -60,8 +60,8 @@ RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RealtimeMediaSourceIdentifi
 {
 }
 
-RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&& proxy, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager)
-    : RealtimeMediaSource(toSourceType(proxy.device().type()), WTFMove(name), String { proxy.device().persistentId() }, WTFMove(hashSalt), proxy.pageIdentifier())
+RemoteRealtimeMediaSource::RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&& proxy, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, PageIdentifier pageIdentifier)
+    : RealtimeMediaSource(toSourceType(proxy.device().type()), WTFMove(name), String { proxy.device().persistentId() }, WTFMove(hashSalt), pageIdentifier)
     , m_proxy(WTFMove(proxy))
     , m_manager(manager)
 {

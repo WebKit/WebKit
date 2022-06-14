@@ -302,17 +302,17 @@ static bool canCaptureFromMultipleCameras()
 CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* mediaConstraints, PageIdentifier pageIdentifier)
 {
     auto& perPageSources = m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value;
-    auto* cameraSource = perPageSources.cameraSource.get();
-    if (cameraSource) {
+    for (auto& cameraSource : perPageSources.cameraSources) {
         // FIXME: Optimize multiple concurrent cameras.
-        if (cameraSource->persistentID() == device.persistentId() && !cameraSource->isEnded()) {
+        if (cameraSource.persistentID() == device.persistentId() && !cameraSource.isEnded()) {
             // We can reuse the source, let's do it.
-            auto source = cameraSource->clone();
+            auto source = cameraSource.clone();
             if (mediaConstraints) {
                 auto error = source->applyConstraints(*mediaConstraints);
                 if (error)
                     return WTFMove(error->message);
             }
+            perPageSources.cameraSources.add(source.get());
             return source;
         }
     }
@@ -321,15 +321,17 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const Capt
     if (!sourceOrError)
         return sourceOrError;
 
-    if (!canCaptureFromMultipleCameras() && cameraSource) {
-        RELEASE_LOG_ERROR(WebRTC, "Ending camera source as new source is using a different device.");
-        // FIXME: We should probably fail the capture in a way that shows a specific console log message.
-        cameraSource->endImmediatly();
+    if (!canCaptureFromMultipleCameras()) {
+        perPageSources.cameraSources.forEach([](auto& source) {
+            RELEASE_LOG_ERROR(WebRTC, "Ending camera source as new source is using a different device.");
+            // FIXME: We should probably fail the capture in a way that shows a specific console log message.
+            source.endImmediatly();
+        });
     }
 
     auto source = sourceOrError.source();
     source->monitorOrientation(m_orientationNotifier);
-    perPageSources.cameraSource = WeakPtr { source.get() };
+    perPageSources.cameraSources.add(source.get());
     return source;
 }
 
@@ -443,12 +445,17 @@ void UserMediaCaptureManagerProxy::applyConstraints(RealtimeMediaSourceIdentifie
         m_connectionProxy->connection().send(Messages::UserMediaCaptureManager::ApplyConstraintsFailed(id, result->badConstraint, result->message), 0);
 }
 
-void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID, RealtimeMediaSourceIdentifier newSourceID)
+void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID, RealtimeMediaSourceIdentifier newSourceID, WebCore::PageIdentifier pageIdentifier)
 {
     MESSAGE_CHECK(m_proxies.contains(clonedID));
     MESSAGE_CHECK(!m_proxies.contains(newSourceID));
-    if (auto* proxy = m_proxies.get(clonedID))
-        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, proxy->source().clone(), m_connectionProxy->remoteVideoFrameObjectHeap()));
+    if (auto* proxy = m_proxies.get(clonedID)) {
+        auto sourceClone = proxy->source().clone();
+        if (sourceClone->deviceType() == WebCore::CaptureDevice::DeviceType::Camera)
+            m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value.cameraSources.add(sourceClone.get());
+
+        m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(sourceClone), m_connectionProxy->remoteVideoFrameObjectHeap()));
+    }
 }
 
 void UserMediaCaptureManagerProxy::endProducingData(RealtimeMediaSourceIdentifier sourceID)

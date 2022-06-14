@@ -52,7 +52,6 @@ public:
 
     IPC::Connection& connection() { return m_connection.get(); }
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
-    WebCore::PageIdentifier pageIdentifier() const { return m_pageIdentifier; }
     WebCore::CaptureDevice::DeviceType deviceType() const { return m_device.type(); }
     const WebCore::CaptureDevice& device() const { return m_device; }
     bool shouldCaptureInGPUProcess() const { return m_shouldCaptureInGPUProcess; }
@@ -61,7 +60,7 @@ public:
     void createRemoteMediaSource(const String&, WebCore::PageIdentifier, CreateCallback&&, bool shouldUseRemoteFrame = false);
 
     RemoteRealtimeMediaSourceProxy clone();
-    void createRemoteCloneSource(WebCore::RealtimeMediaSourceIdentifier);
+    void createRemoteCloneSource(WebCore::RealtimeMediaSourceIdentifier, WebCore::PageIdentifier);
 
     void applyConstraintsSucceeded();
     void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage);
@@ -91,7 +90,6 @@ private:
     Ref<IPC::Connection> m_connection;
     WebCore::CaptureDevice m_device;
     bool m_shouldCaptureInGPUProcess { false };
-    WebCore::PageIdentifier m_pageIdentifier;
 
     WebCore::MediaConstraints m_constraints;
     Deque<WebCore::RealtimeMediaSource::ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;

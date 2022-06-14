@@ -45,11 +45,13 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::create(const CaptureDevice& 
 RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
     : RemoteRealtimeMediaSource(identifier, device, constraints, AtomString { device.label() }, WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier)
 {
+    ASSERT(this->pageIdentifier());
 }
 
-RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&& proxy, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager)
-    : RemoteRealtimeMediaSource(WTFMove(proxy), WTFMove(name), WTFMove(hashSalt), manager)
+RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RemoteRealtimeMediaSourceProxy&& proxy, AtomString&& name, String&& hashSalt, UserMediaCaptureManager& manager, PageIdentifier pageIdentifier)
+    : RemoteRealtimeMediaSource(WTFMove(proxy), WTFMove(name), WTFMove(hashSalt), manager, pageIdentifier)
 {
+    ASSERT(this->pageIdentifier());
 }
 
 RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource()
@@ -73,14 +75,14 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
     if (isEnded() || proxy().isEnded())
         return *this;
 
-    auto source = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), AtomString { name() }, deviceIDHashSalt(), manager()));
+    auto source = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), AtomString { name() }, deviceIDHashSalt(), manager(), pageIdentifier()));
 
     source->setSettings(RealtimeMediaSourceSettings { settings() });
     source->setCapabilities(RealtimeMediaSourceCapabilities { capabilities() });
 
     manager().addSource(source.copyRef());
     manager().remoteCaptureSampleManager().addSource(source.copyRef());
-    proxy().createRemoteCloneSource(source->identifier());
+    proxy().createRemoteCloneSource(source->identifier(), pageIdentifier());
 
     return source;
 }
