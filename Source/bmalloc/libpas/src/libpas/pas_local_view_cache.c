@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,7 +122,7 @@ bool pas_local_view_cache_stop(pas_local_view_cache* cache,
     result = stop_impl(cache, page_lock_mode);
 
     if (result) {
-        PAS_ASSERT(pas_local_view_cache_get_state(cache) == pas_local_view_cache_not_full_state);
+        PAS_ASSERT(pas_local_view_cache_get_state(cache) == pas_local_view_cache_not_full_state, pas_local_view_cache_get_state(cache));
         PAS_ASSERT(cache->top_index == cache->bottom_index);
 
         pas_local_view_cache_set_state(cache, pas_local_view_cache_stopped_state);
