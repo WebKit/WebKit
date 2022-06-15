@@ -1038,18 +1038,12 @@ test/built-ins/Temporal/Duration/prototype/total/timezone-wrong-type.js:
 test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted-string.js:
   default: 'TypeError: Right hand side of instanceof is not an object'
   strict mode: 'TypeError: Right hand side of instanceof is not an object'
-test/built-ins/Temporal/Instant/prototype/round/rounding-direction.js:
-  default: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-65261246399000000000», «-65261246400000000000») to be true'
-  strict mode: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-65261246399000000000», «-65261246400000000000») to be true'
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
 test/built-ins/Temporal/Instant/prototype/toJSON/timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Instant/prototype/toString/rounding-direction.js:
-  default: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-000099-12-15T12:00:01Z», «-000099-12-15T12:00:00Z») to be true'
-  strict mode: 'Test262Error: Rounding down is towards the Big Bang, not the epoch or 1 BCE (roundingMode trunc) Expected SameValue(«-000099-12-15T12:00:01Z», «-000099-12-15T12:00:00Z») to be true'
 test/built-ins/Temporal/Instant/prototype/toString/timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
