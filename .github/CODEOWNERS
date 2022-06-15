@@ -44,3 +44,26 @@
 /Source/WebCore/platform/audio/gstreamer @calvaris @philn
 /Source/WebCore/platform/graphics/gstreamer @ntrrgc @calvaris @philn
 /Source/WebCore/platform/mediastream/gstreamer @calvaris @philn
+
+/Source/JavaScriptCore/debugger @dcrousso
+/Source/JavaScriptCore/inspector @dcrousso
+/Source/WebCore/inspector @dcrousso
+/Source/WebInspectorUI @dcrousso
+/Source/WebKit/UIProcess/Inspector @dcrousso
+/Source/WebKit/WebProcess/Inspector @dcrousso
+/Tools/Scripts/webkitpy/inspector @dcrousso
+/LayoutTests/http/tests/inspector @dcrousso
+/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso
+/LayoutTests/inspector @dcrousso
+
+/Source/WebCore/Modules/apple-pay @dcrousso
+/Source/WebCore/Modules/paymentrequest @dcrousso
+/LayoutTests/http/tests/paymentrequest @dcrousso
+/LayoutTests/http/tests/ssl/applepay @dcrousso
+
+/Source/WebCore/Modules/apple-pay-ams-ui @dcrousso
+/LayoutTests/http/tests/ssl/applepay-ams-ui @dcrousso
+
+/Source/WebCore/Modules/mediacontrols @dcrousso
+/Source/WebCore/Modules/modern-media-controls @dcrousso
+/LayoutTests/media/modern-media-controls @dcrousso
