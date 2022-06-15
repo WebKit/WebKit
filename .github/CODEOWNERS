@@ -54,16 +54,16 @@
 
 # ================================================================================
 
-/Source/JavaScriptCore/debugger @dcrousso
-/Source/JavaScriptCore/inspector @dcrousso
-/Source/WebCore/inspector @dcrousso
-/Source/WebInspectorUI @dcrousso
-/Source/WebKit/UIProcess/Inspector @dcrousso
-/Source/WebKit/WebProcess/Inspector @dcrousso
-/Tools/Scripts/webkitpy/inspector @dcrousso
-/LayoutTests/http/tests/inspector @dcrousso
-/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso
-/LayoutTests/inspector @dcrousso
+/Source/JavaScriptCore/debugger @dcrousso @patrickangle
+/Source/JavaScriptCore/inspector @dcrousso @patrickangle
+/Source/WebCore/inspector @dcrousso @patrickangle
+/Source/WebInspectorUI @dcrousso @patrickangle
+/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
+/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
+/Tools/Scripts/webkitpy/inspector @dcrousso @patrickangle
+/LayoutTests/http/tests/inspector @dcrousso @patrickangle
+/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
+/LayoutTests/inspector @dcrousso @patrickangle
 
 /Source/WebCore/Modules/apple-pay @dcrousso
 /Source/WebCore/Modules/paymentrequest @dcrousso
