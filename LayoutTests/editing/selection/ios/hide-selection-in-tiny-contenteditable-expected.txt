@@ -7,11 +7,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 After focus, the caret rect is empty
 After zooming in, the caret rect is empty
 After making editor large, the caret rect is empty
-After making editor opaque, the caret rect is (left=21, top=100, width=2, height=19)
+After making editor opaque, the caret rect is not empty
 After making editor tiny again, the caret rect is empty
 After making editor transparent again, the caret rect is empty
 After making editor large again, the caret rect is empty
-After making editor opaque again, the caret rect is (left=50, top=100, width=2, height=19)
+After making editor opaque again, the caret rect is not empty
 PASS successfullyParsed is true
 
 TEST COMPLETE

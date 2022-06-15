@@ -2083,9 +2083,6 @@ webkit.org/b/222563 [ Release ] http/tests/loading/basic-auth-load-URL-with-cons
 
 webkit.org/b/229585 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Pass Failure ]
 
-#rdar://82183980 ([ iOS 15 ]editing/selection/ios/hide-selection-in-tiny-contenteditable.html is a flaky failure)
-editing/selection/ios/hide-selection-in-tiny-contenteditable.html [ Pass Failure ]
-
 # On iOS15+, CFNetwork does full NSURLSession partitioning based on first-party domains and ITP session partitioning is thus disabled.
 http/tests/resourceLoadStatistics/do-not-switch-session-on-navigation-to-prevalent-without-interaction.py [ Skip ]
 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Skip ]

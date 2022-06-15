@@ -33,17 +33,11 @@ button {
 <script>
 jsTestIsAsync = true;
 
-function caretRectToString(rect) {
-    if (!rect.width && !rect.height)
-        return "empty";
-    return `(left=${rect.left}, top=${rect.top}, width=${rect.width}, height=${rect.height})`;
-}
-
 async function checkCaretRect(description)
 {
     await UIHelper.ensurePresentationUpdate();
     const rect = await UIHelper.getUICaretViewRect();
-    debug(`${description}, the caret rect is ${caretRectToString(rect)}`);
+    debug(`${description}, the caret rect is ${!rect.width && !rect.height ? "" : "not "}empty`);
 }
 
 (async () => {
@@ -54,10 +48,10 @@ async function checkCaretRect(description)
     await UIHelper.activateAndWaitForInputSessionAt(160, 50);
     await checkCaretRect("After focus");
 
-    await UIHelper.zoomToScale(3);
+    await UIHelper.immediateZoomToScale(3);
     await UIHelper.typeCharacter("a");
     await checkCaretRect("After zooming in");
-    await UIHelper.zoomToScale(1);
+    await UIHelper.immediateZoomToScale(1);
 
     editor.style.width = "100px";
     editor.style.height = "100px";
