@@ -1080,12 +1080,6 @@ test/built-ins/Temporal/PlainTime/prototype/equals/argument-zoneddatetime-timezo
 test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-ceil.js:
-  default: 'Test262Error: hours hours result Expected SameValue(«4», «5») to be true'
-  strict mode: 'Test262Error: hours hours result Expected SameValue(«4», «5») to be true'
-test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-floor.js:
-  default: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
-  strict mode: 'Test262Error: hours hours result Expected SameValue(«5», «4») to be true'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"

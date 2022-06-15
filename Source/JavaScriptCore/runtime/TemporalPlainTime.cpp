@@ -647,6 +647,12 @@ ISO8601::Duration TemporalPlainTime::since(JSGlobalObject* globalObject, Tempora
     auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // https://tc39.es/proposal-temporal/#sec-temporal-negatetemporalroundingmode
+    if (roundingMode == RoundingMode::Ceil)
+        roundingMode = RoundingMode::Floor;
+    else if (roundingMode == RoundingMode::Floor)
+        roundingMode = RoundingMode::Ceil;
+
     auto result = differenceTime(other->plainTime(), plainTime());
     result = -result;
     result.setYears(0);
