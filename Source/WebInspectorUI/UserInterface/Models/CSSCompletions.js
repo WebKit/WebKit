@@ -131,6 +131,19 @@ WI.CSSCompletions = class CSSCompletions
         return suffix;
     }
 
+    static getCompletionText(completion)
+    {
+        console.assert(typeof completion === "string" || completion instanceof WI.QueryResult, completion);
+
+        if (typeof completion === "string")
+            return completion;
+
+        if (completion instanceof WI.QueryResult)
+            return completion.value;
+
+        return "";
+    }
+
     // Public
 
     get values()
