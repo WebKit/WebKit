@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../resources/js-test.js"></script>
 <script src="../../../../resources/ui-helper.js"></script>
 </head>
 <body>
@@ -16,77 +16,51 @@
 
 jsTestIsAsync = true;
 
-function hasSeconds(value) {
-    time = value.slice(value.lastIndexOf('T') + 1);
-    return time.length > 5;
-}
-
-function hasMilliseconds(value) {
-    time = value.slice(value.lastIndexOf('T') + 1);
-    return time.length > 8;
-}
-
 async function activateElementAndChooseDateUsingPicker(input) {
     await UIHelper.activateElementAndWaitForInputSession(input);
     await UIHelper.isShowingDateTimePicker();
     await UIHelper.chooseDateTimePickerValue();
 }
 
-function expectNoSecondsOrMilliseconds(value) {
-    valueHasSeconds = hasSeconds(value);
-    shouldBeFalse("valueHasSeconds");
-    valueHasMillseconds = hasMilliseconds(value);
-    shouldBeFalse("valueHasMillseconds");
-}
-
-function expectSeconds(value) {
-    valueHasSeconds = hasSeconds(value);
-    shouldBeTrue("valueHasSeconds");
-    valueHasMillseconds = hasMilliseconds(value);
-    shouldBeFalse("valueHasMillseconds");
-}
-
-function expectMilliseconds(value) {
-    valueHasSeconds = hasSeconds(value);
-    shouldBeTrue("valueHasSeconds");
-    valueHasMillseconds = hasMilliseconds(value);
-    shouldBeTrue("valueHasMillseconds");
-}
-
 addEventListener("load", async () => {
     description("Tests that choosing a value using the date/time picker does not unexpectedly add or remove second and millisecond fields.");
 
     debug("Testing empty input with no step value.");
+    emptyInputOriginalWidth = emptyInput.offsetWidth;
     await activateElementAndChooseDateUsingPicker(emptyInput);
-    expectNoSecondsOrMilliseconds(emptyInput.value);
+    shouldBeTrue("emptyInput.offsetWidth === emptyInputOriginalWidth");
     await UIHelper.deactivateFormControl(emptyInput);
     await UIHelper.ensurePresentationUpdate();
 
     debug("");
     debug("Testing empty input with step attribute precise to seconds.");
+    emptyInputWithSecondStepOriginalWidth = emptyInputWithSecondStep.offsetWidth;
     await activateElementAndChooseDateUsingPicker(emptyInputWithSecondStep);
-    expectSeconds(emptyInputWithSecondStep.value);
+    shouldBeTrue("emptyInputWithSecondStep.offsetWidth === emptyInputWithSecondStepOriginalWidth");
     await UIHelper.deactivateFormControl(emptyInputWithSecondStep);
     await UIHelper.ensurePresentationUpdate();
 
     debug("");
     debug("Testing empty input with step attribute precise to milliseconds.");
+    emptyInputWithMillisecondStepOriginalWidth = emptyInputWithMillisecondStep.offsetWidth;
     await activateElementAndChooseDateUsingPicker(emptyInputWithMillisecondStep);
-    expectMilliseconds(emptyInputWithMillisecondStep.value);
+    shouldBeTrue("emptyInputWithMillisecondStep.offsetWidth === emptyInputWithMillisecondStepOriginalWidth");
     await UIHelper.deactivateFormControl(emptyInputWithMillisecondStep);
     await UIHelper.ensurePresentationUpdate();
 
     debug("");
     debug("Testing input with a value that contains seconds.");
+    inputWithSecondsValueOriginalWidth = inputWithSecondsValue.offsetWidth;
     await activateElementAndChooseDateUsingPicker(inputWithSecondsValue);
-    expectSeconds(inputWithSecondsValue.value);
+    shouldBeTrue("inputWithSecondsValue.offsetWidth === inputWithSecondsValueOriginalWidth");
     await UIHelper.deactivateFormControl(inputWithSecondsValue);
     await UIHelper.ensurePresentationUpdate();
 
     debug("");
     debug("Testing input with a value that contains milliseconds.");
+    inputWithMillisecondsValueOriginalWidth = inputWithMillisecondsValue.offsetWidth;
     await activateElementAndChooseDateUsingPicker(inputWithMillisecondsValue);
-    expectMilliseconds(inputWithMillisecondsValue.value);
+    shouldBeTrue("inputWithMillisecondsValue.offsetWidth === inputWithMillisecondsValueOriginalWidth");
     await UIHelper.deactivateFormControl(inputWithMillisecondsValue);
     await UIHelper.ensurePresentationUpdate();
 
@@ -94,7 +68,5 @@ addEventListener("load", async () => {
     finishJSTest();
 });
 </script>
-
-<script src="../../../../resources/js-test-post.js"></script>
 </body>
 </html>
