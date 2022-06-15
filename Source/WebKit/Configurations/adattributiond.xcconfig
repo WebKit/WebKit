@@ -41,3 +41,12 @@ WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR_YES = "$(WK_OVERRIDE_FRAMEWORKS_DIR)";
 FRAMEWORK_SEARCH_PATHS = $(inherited) $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR)
 
 INSTALL_PATH = $(INSTALL_PATH_PREFIX)$(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Daemons;
+
+SKIP_INSTALL = NO;
+SKIP_INSTALL[sdk=macos*] = YES;
+
+LAUNCHD_PLIST_FILE_NAME = com.apple.webkit.adattributiond.plist
+
+LAUNCHD_PLIST_INPUT_FILE[sdk=iphoneos*] = Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist
+
+LAUNCHD_PLIST_INSTALL_PATH = /System/Library/LaunchDaemons

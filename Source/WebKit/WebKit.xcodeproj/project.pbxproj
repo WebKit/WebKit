@@ -15470,6 +15470,7 @@
 				5C1579D227165B2F00ED5280 /* Sources */,
 				5C1579D427165B2F00ED5280 /* Frameworks */,
 				5C1579D527165B2F00ED5280 /* Process webpushd Entitlements */,
+				6508960F28482C6A00A91844 /* Copy launchd plist and create symlink */,
 			);
 			buildRules = (
 			);
@@ -15490,6 +15491,7 @@
 				5CAF7A9D26F93A750003F19E /* Sources */,
 				5CAF7A9F26F93A750003F19E /* Frameworks */,
 				5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */,
+				6508961028482D0900A91844 /* Copy launchd plist and create symlink */,
 			);
 			buildRules = (
 			);
@@ -15553,7 +15555,6 @@
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
 				0FB94836239F31B700926A8F /* Copy Testing Headers */,
-				DFD03A29270D5F57001A996E /* Copy Daemon Plists */,
 				6577FFB92769C1460011AEC8 /* Create Symlink to Alt Root Path */,
 				6517571927C9B43A00D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
@@ -15997,7 +15998,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    exit\nfi\n\n# If we move the Mac Daemons path to WebKit.framework/Versions/A/Daemons,\n# in addition to a Mac-specific plists, the Mac paths below have to be updated as well.\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nelse\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nfi\n\nmkdir -p \"${DAEMONS_PATH}\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/webpushd\" \"${DAEMONS_PATH}/webpushd\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/adattributiond\" \"${DAEMONS_PATH}/adattributiond\"\n";
+			shellScript = "#  &&&& This script probably needs to change or be removed.\n\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    exit\nfi\n\n# If we move the Mac Daemons path to WebKit.framework/Versions/A/Daemons,\n# in addition to a Mac-specific plists, the Mac paths below have to be updated as well.\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nelse\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nfi\n\nmkdir -p \"${DAEMONS_PATH}\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/webpushd\" \"${DAEMONS_PATH}/webpushd\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/adattributiond\" \"${DAEMONS_PATH}/adattributiond\"\n";
 		};
 		5325BDD221DFF47C00A0DEE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -16119,6 +16120,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
+		};
+		6508960F28482C6A00A91844 /* Copy launchd plist and create symlink */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/copy-launchd-plist-and-create-symlink.sh",
+				"$(SRCROOT)/$(LAUNCHD_PLIST_INPUT_FILE)",
+			);
+			name = "Copy launchd plist and create symlink";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DSTROOT)$(LAUNCHD_PLIST_INSTALL_PATH)/$(LAUNCHD_PLIST_FILE_NAME)",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/copy-launchd-plist-and-create-symlink.sh\n";
+		};
+		6508961028482D0900A91844 /* Copy launchd plist and create symlink */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/copy-launchd-plist-and-create-symlink.sh",
+				"$(SRCROOT)/$(LAUNCHD_PLIST_INPUT_FILE)",
+			);
+			name = "Copy launchd plist and create symlink";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DSTROOT)$(LAUNCHD_PLIST_INSTALL_PATH)/$(LAUNCHD_PLIST_FILE_NAME)",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/copy-launchd-plist-and-create-symlink.sh\n";
 		};
 		6517571527C9AB4C00D9FE40 /* Copy Frameworks to Secondary Path */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -16525,27 +16568,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration ${CONFIGURATION} installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyInstallHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" SDK_VARIANT=\"${SDK_VARIANT}\" ARCHS=\"${ARCHS}\" INSTALLHDRS_SCRIPT_PHASE=NO WK_OVERRIDE_FRAMEWORKS_DIR=/ -UseNewBuildSystem=YES\n\n";
-		};
-		DFD03A29270D5F57001A996E /* Copy Daemon Plists */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist",
-				"$(SRCROOT)/webpushd/com.apple.webkit.webpushd.ios.plist",
-				"$(SRCROOT)/webpushd/com.apple.webkit.webpushd.mac.plist",
-			);
-			name = "Copy Daemon Plists";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == iphoneos ]]; then\n    ADATTRIBUTIOND_PLIST_SOURCE=\"${SRCROOT}/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist\"\n    ADATTRIBUTIOND_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.adattributiond.plist\"\n    echo \"copying adattributiond plist\"\n    mkdir -p \"$(dirname \"${ADATTRIBUTIOND_PLIST_DESTINATION}\")\"\n    echo plutil -convert binary1 -o \"${ADATTRIBUTIOND_PLIST_DESTINATION}\" \"${ADATTRIBUTIOND_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${ADATTRIBUTIOND_PLIST_DESTINATION}\" \"${ADATTRIBUTIOND_PLIST_SOURCE}\"\nelse\n    echo \"not copying adattributiond plist\"\nfi\n\nif [[ \"${WK_SKIP_INSTALL_WEBPUSHD}\" != \"YES\" && \n        ( \"${WK_PLATFORM_NAME}\" == iphoneos || \"${WK_PLATFORM_NAME}\" == macosx ) ]]; then\n    if [[ \"${WK_PLATFORM_NAME}\" == iphoneos ]]; then\n        WEBPUSHD_PLIST_SOURCE=\"${SRCROOT}/webpushd/com.apple.webkit.webpushd.ios.plist\"\n        WEBPUSHD_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.webpushd.plist\"\n    else\n        WEBPUSHD_PLIST_SOURCE=\"${SRCROOT}/webpushd/com.apple.webkit.webpushd.mac.plist\"\n        WEBPUSHD_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchAgents/com.apple.webkit.webpushd.plist\"\n    fi\n\n    echo \"copying webpushd plist\"\n    mkdir -p \"$(dirname \"${WEBPUSHD_PLIST_DESTINATION}\")\"\n    echo plutil -convert binary1 -o \"${WEBPUSHD_PLIST_DESTINATION}\" \"${WEBPUSHD_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${WEBPUSHD_PLIST_DESTINATION}\" \"${WEBPUSHD_PLIST_SOURCE}\"\nelse\n    echo \"not copying webpushd plist\"\nfi\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
