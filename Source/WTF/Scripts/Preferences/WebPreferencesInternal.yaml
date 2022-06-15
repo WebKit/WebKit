@@ -976,6 +976,16 @@ WebAPIStatisticsEnabled:
     WebKit:
       default: false
 
+WebMExperimentEnabled:
+  type: bool
+  humanReadableName: "WebM Experiment"
+  humanReadableDescription: "Enable WebM Experiment"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBM_EXPERIMENT)
+  defaultValue:
+    WebCore:
+      default: false
+
 WebRTCAudioLatencyAdaptationEnabled:
   type: bool
   humanReadableName: "WebRTC Audio Latency Adaptation"
