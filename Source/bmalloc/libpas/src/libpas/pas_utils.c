@@ -171,11 +171,6 @@ PAS_NEVER_INLINE void pas_report_assertion_failed(
     pas_log("[%d] pas panic: ", getpid());
     pas_log("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
 }
-
-void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression)
-{
-    pas_panic("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
-}
 #endif /* PAS_ENABLE_TESTING */
 
 void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression)

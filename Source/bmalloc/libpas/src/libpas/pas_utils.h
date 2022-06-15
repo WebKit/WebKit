@@ -218,8 +218,10 @@ PAS_NEVER_INLINE PAS_NO_RETURN void pas_crash_with_info_impl6(uint64_t reason, u
 #else /* PAS_OS(DARWIN) */
 
 #if PAS_ENABLE_TESTING
-PAS_API PAS_NO_RETURN void pas_assertion_failed(
-    const char* filename, int line, const char* function, const char* expression);
+PAS_API PAS_NO_RETURN void pas_assertion_failed(const char* filename, int line, const char* function, const char* expression)
+{
+    pas_panic("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
+}
 #else /* PAS_ENABLE_TESTING -> so !PAS_ENABLE_TESTING */
 static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(
     const char* filename, int line, const char* function, const char* expression)
@@ -276,42 +278,42 @@ static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer1(
     const char* filename, int line, const char* function, const char* expression, uint64_t misc1)
 {
     PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression);
-    pas_crash_with_info_impl1(line, misc1);
+    pas_crash_with_info_impl1((uint64_t)line, misc1);
 }
 
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer2(
     const char* filename, int line, const char* function, const char* expression, uint64_t misc1, uint64_t misc2)
 {
     PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression);
-    pas_crash_with_info_impl2(line, misc1, misc2);
+    pas_crash_with_info_impl2((uint64_t)line, misc1, misc2);
 }
 
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer3(
     const char* filename, int line, const char* function, const char* expression, uint64_t misc1, uint64_t misc2, uint64_t misc3)
 {
     PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression);
-    pas_crash_with_info_impl3(line, misc1, misc2, misc3);
+    pas_crash_with_info_impl3((uint64_t)line, misc1, misc2, misc3);
 }
 
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer4(
     const char* filename, int line, const char* function, const char* expression, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4)
 {
     PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression);
-    pas_crash_with_info_impl4(line, misc1, misc2, misc3, misc4);
+    pas_crash_with_info_impl4((uint64_t)line, misc1, misc2, misc3, misc4);
 }
 
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer5(
     const char* filename, int line, const char* function, const char* expression, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5)
 {
     PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression);
-    pas_crash_with_info_impl5(line, misc1, misc2, misc3, misc4, misc5);
+    pas_crash_with_info_impl5((uint64_t)line, misc1, misc2, misc3, misc4, misc5);
 }
 
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer6(
     const char* filename, int line, const char* function, const char* expression, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4, uint64_t misc5, uint64_t misc6)
 {
     PAS_REPORT_ASSERTION_FAILED(filename, line, function, expression);
-    pas_crash_with_info_impl6(line, misc1, misc2, misc3, misc4, misc5, misc6);
+    pas_crash_with_info_impl6((uint64_t)line, misc1, misc2, misc3, misc4, misc5, misc6);
 }
 
 /* The count argument will always be computed with PAS_VA_NUM_ARGS in the client.
