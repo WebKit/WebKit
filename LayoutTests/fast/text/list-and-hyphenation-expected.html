@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<style type="text/css">
+ol li {display:block;}
+ol > li {counter-increment: item; position: relative;}
+ol > li:before {
+        content:counters(item, ".") ".";
+        position: absolute; margin-right: 100%; right: 10px; font-weight: normal;
+}
+</style>
+<body><ol><li>Hyphenation</li><ol><li>shouldn't affect bullet position</li></ol></ol></body>
+
