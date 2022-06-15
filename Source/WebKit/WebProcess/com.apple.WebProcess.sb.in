@@ -1987,8 +1987,10 @@
         SYS_kevent ;; <rdar://89072361>
         SYS_mlock
         SYS_munlock
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
         SYS_necp_client_action
         SYS_necp_open
+#endif
         SYS_openat_nocancel
         SYS_proc_rlimit_control
         SYS_psynch_rw_rdlock
