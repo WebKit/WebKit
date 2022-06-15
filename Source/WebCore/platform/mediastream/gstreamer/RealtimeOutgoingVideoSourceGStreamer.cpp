@@ -35,8 +35,12 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(Ref<M
     registerWebKitGStreamerElements();
 
     m_videoConvert = gst_element_factory_make("videoconvert", nullptr);
+
+    m_videoFlip = gst_element_factory_make("videoflip", nullptr);
+    gst_util_set_object_arg(G_OBJECT(m_videoFlip.get()), "method", "automatic");
+
     m_encoder = gst_element_factory_make("webrtcvideoencoder", nullptr);
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_videoConvert.get(), m_encoder.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_videoFlip.get(), m_videoConvert.get(), m_encoder.get(), nullptr);
 
     auto* padTemplate = gst_element_get_pad_template(m_encoder.get(), "src");
     auto caps = adoptGRef(gst_pad_template_get_caps(padTemplate));
@@ -102,7 +106,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
     g_object_set(m_capsFilter.get(), "caps", filteredCaps.get(), nullptr);
 
     gst_bin_add(GST_BIN_CAST(m_bin.get()), m_payloader.get());
-    gst_element_link_many(m_outgoingSource.get(), m_valve.get(), m_videoConvert.get(), m_preEncoderQueue.get(),
+    gst_element_link_many(m_outgoingSource.get(), m_valve.get(), m_videoFlip.get(), m_videoConvert.get(), m_preEncoderQueue.get(),
         m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
     return true;
 }
