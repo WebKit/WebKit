@@ -26,7 +26,9 @@
 #import "config.h"
 #import "AuxiliaryProcess.h"
 
+#import "Logging.h"
 #import "OSStateSPI.h"
+#import "SharedBufferReference.h"
 #import "WKCrashReporter.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FloatingPointEnvironment.h>
