@@ -31,6 +31,7 @@
 /metadata @JonWBedard
 
 # ================================================================================
+
 /Tools @JonWBedard
 
 /Tools/CISupport @aj062 @JonWBedard @ryanhaddad
@@ -44,6 +45,14 @@
 /Source/WebCore/platform/audio/gstreamer @calvaris @philn
 /Source/WebCore/platform/graphics/gstreamer @ntrrgc @calvaris @philn
 /Source/WebCore/platform/mediastream/gstreamer @calvaris @philn
+
+# ================================================================================
+
+/Source/JavaScriptCore @WebKit/jsc-reviewers
+/JSTests @WebKit/jsc-reviewers
+/LayoutTests/js @WebKit/jsc-reviewers
+
+# ================================================================================
 
 /Source/JavaScriptCore/debugger @dcrousso
 /Source/JavaScriptCore/inspector @dcrousso
