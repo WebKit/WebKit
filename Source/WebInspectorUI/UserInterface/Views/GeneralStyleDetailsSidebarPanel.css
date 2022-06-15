@@ -84,7 +84,7 @@
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .filter-bar {
-    width: fill-available;
+    width: -webkit-fill-available;
     background-color: transparent;
 }
 

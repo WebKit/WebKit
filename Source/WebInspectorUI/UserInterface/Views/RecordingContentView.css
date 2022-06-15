@@ -73,8 +73,8 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    width: fill-available;
-    height: fill-available;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
 }
 
 .content-view.recording :matches(img, canvas) {
