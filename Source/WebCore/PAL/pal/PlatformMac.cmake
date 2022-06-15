@@ -9,8 +9,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     cf/OTSVGTable.h
     cf/VideoToolboxSoftLink.h
 
-    cg/CoreGraphicsSoftLink.h
-
     cocoa/AppSSOSoftLink.h
     cocoa/AVFoundationSoftLink.h
     cocoa/CoreMLSoftLink.h
@@ -160,8 +158,6 @@ list(APPEND PAL_SOURCES
     cf/CoreTextSoftLink.cpp
     cf/OTSVGTable.cpp
     cf/VideoToolboxSoftLink.cpp
-
-    cg/CoreGraphicsSoftLink.cpp
 
     cocoa/AppSSOSoftLink.mm
     cocoa/AVFoundationSoftLink.mm
