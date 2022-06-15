@@ -46,10 +46,10 @@
 namespace WebCore {
 namespace DisplayList {
 
-Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsMode drawGlyphsMode)
+Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, DeconstructDrawGlyphs deconstructDrawGlyphs)
     : GraphicsContext(state)
     , m_initialScale(initialCTM.xScale())
-    , m_drawGlyphsMode(drawGlyphsMode)
+    , m_deconstructDrawGlyphs(deconstructDrawGlyphs)
 {
     ASSERT(!state.changes());
     m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
@@ -161,51 +161,23 @@ void Recorder::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect
     recordDrawFilteredImageBuffer(sourceImage, sourceImageRect, filter);
 }
 
-bool Recorder::shouldDeconstructDrawGlyphs() const
-{
-    switch (m_drawGlyphsMode) {
-    case DrawGlyphsMode::Normal:
-        return false;
-    case DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands:
-    case DrawGlyphsMode::DeconstructUsingDrawDecomposedGlyphsCommands:
-        return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void Recorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    if (shouldDeconstructDrawGlyphs()) {
+    if (m_deconstructDrawGlyphs == DeconstructDrawGlyphs::Yes) {
         if (!m_drawGlyphsRecorder)
             m_drawGlyphsRecorder = makeUnique<DrawGlyphsRecorder>(*this, m_initialScale);
+
         m_drawGlyphsRecorder->drawGlyphs(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
         return;
     }
 
-    drawGlyphsAndCacheResources(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+    drawGlyphsAndCacheFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
 }
 
-void Recorder::drawDecomposedGlyphs(const Font& font, const DecomposedGlyphs& decomposedGlyphs)
+void Recorder::drawGlyphsAndCacheFont(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
 {
     appendStateChangeItemIfNecessary();
     recordResourceUse(const_cast<Font&>(font));
-    recordResourceUse(const_cast<DecomposedGlyphs&>(decomposedGlyphs));
-    recordDrawDecomposedGlyphs(font, decomposedGlyphs);
-}
-
-void Recorder::drawGlyphsAndCacheResources(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
-{
-    appendStateChangeItemIfNecessary();
-    recordResourceUse(const_cast<Font&>(font));
-
-    if (m_drawGlyphsMode == DrawGlyphsMode::DeconstructUsingDrawDecomposedGlyphsCommands) {
-        auto decomposedGlyphs = DecomposedGlyphs::create(font, glyphs, advances, numGlyphs, localAnchor, smoothingMode);
-        recordResourceUse(decomposedGlyphs.get());
-        recordDrawDecomposedGlyphs(font, decomposedGlyphs.get());
-        return;
-    }
-
     recordDrawGlyphs(font, glyphs, advances, numGlyphs, localAnchor, smoothingMode);
 }
 

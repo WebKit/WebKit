@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DecomposedGlyphs.h"
 #include "DisplayListItemBuffer.h"
 #include "DisplayListItemType.h"
 #include "DisplayListResourceHeap.h"
@@ -117,11 +116,6 @@ private:
     void cacheFont(Font& font)
     {
         m_resourceHeap.add(font.renderingResourceIdentifier(), Ref { font });
-    }
-
-    void cacheDecomposedGlyphs(WebCore::DecomposedGlyphs& decomposedGlyphs)
-    {
-        m_resourceHeap.add(decomposedGlyphs.renderingResourceIdentifier(), Ref { decomposedGlyphs });
     }
 
     static bool shouldDumpForFlags(OptionSet<AsTextFlag>, ItemHandle);

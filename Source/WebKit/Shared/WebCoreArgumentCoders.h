@@ -128,7 +128,6 @@ class CubicBezierTimingFunction;
 class Cursor;
 class DatabaseDetails;
 class DragData;
-class DecomposedGlyphs;
 class File;
 class FilterOperation;
 class FilterOperations;
@@ -404,11 +403,6 @@ template<> struct ArgumentCoder<WebCore::Font> {
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);
     static void encodePlatformData(Encoder&, const WebCore::Font&);
     static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::DecomposedGlyphs> {
-    static void encode(Encoder&, const WebCore::DecomposedGlyphs&);
-    static std::optional<Ref<WebCore::DecomposedGlyphs>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {

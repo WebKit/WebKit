@@ -3205,16 +3205,6 @@ ExceptionOr<void> Internals::setElementTracksDisplayListReplay(Element& element,
     return { };
 }
 
-static OptionSet<DisplayList::AsTextFlag> toDisplayListFlags(unsigned short flags)
-{
-    OptionSet<DisplayList::AsTextFlag> displayListFlags;
-    if (flags & Internals::DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
-        displayListFlags.add(DisplayList::AsTextFlag::IncludePlatformOperations);
-    if (flags & Internals::DISPLAY_LIST_INCLUDE_RESOURCE_IDENTIFIERS)
-        displayListFlags.add(DisplayList::AsTextFlag::IncludeResourceIdentifiers);
-    return displayListFlags;
-}
-
 ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned short flags)
 {
     Document* document = contextDocument();
@@ -3226,6 +3216,10 @@ ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned 
     if (!element.renderer())
         return Exception { InvalidAccessError };
 
+    OptionSet<DisplayList::AsTextFlag> displayListFlags;
+    if (flags & DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
+        displayListFlags.add(DisplayList::AsTextFlag::IncludePlatformOperations);
+
     if (!element.renderer()->hasLayer())
         return Exception { InvalidAccessError };
 
@@ -3233,7 +3227,7 @@ ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned 
     if (!layer->isComposited())
         return Exception { InvalidAccessError };
 
-    return layer->backing()->displayListAsText(toDisplayListFlags(flags));
+    return layer->backing()->displayListAsText(displayListFlags);
 }
 
 ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, unsigned short flags)
@@ -3247,6 +3241,10 @@ ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, uns
     if (!element.renderer())
         return Exception { InvalidAccessError };
 
+    OptionSet<DisplayList::AsTextFlag> displayListFlags;
+    if (flags & DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
+        displayListFlags.add(DisplayList::AsTextFlag::IncludePlatformOperations);
+
     if (!element.renderer()->hasLayer())
         return Exception { InvalidAccessError };
 
@@ -3254,7 +3252,7 @@ ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, uns
     if (!layer->isComposited())
         return Exception { InvalidAccessError };
 
-    return layer->backing()->replayDisplayListAsText(toDisplayListFlags(flags));
+    return layer->backing()->replayDisplayListAsText(displayListFlags);
 }
 
 void Internals::setForceUseGlyphDisplayListForTesting(bool enabled)
@@ -3276,7 +3274,11 @@ ExceptionOr<String> Internals::cachedGlyphDisplayListsForTextNode(Node& node, un
     if (!node.renderer())
         return Exception { InvalidAccessError };
 
-    return TextPainter::cachedGlyphDisplayListsForTextNodeAsText(downcast<Text>(node), toDisplayListFlags(flags));
+    OptionSet<DisplayList::AsTextFlag> displayListFlags;
+    if (flags & DISPLAY_LIST_INCLUDE_PLATFORM_OPERATIONS)
+        displayListFlags.add(DisplayList::AsTextFlag::IncludePlatformOperations);
+
+    return TextPainter::cachedGlyphDisplayListsForTextNodeAsText(downcast<Text>(node), displayListFlags);
 }
 
 ExceptionOr<void> Internals::garbageCollectDocumentResources() const

@@ -37,7 +37,6 @@
 #include "MediaPlayerIdentifier.h"
 #include "Pattern.h"
 #include "PixelBuffer.h"
-#include "PositionedGlyphs.h"
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
 #include "SystemImage.h"
@@ -584,15 +583,15 @@ public:
     static constexpr bool isDrawingItem = true;
 
     RenderingResourceIdentifier fontIdentifier() { return m_fontIdentifier; }
-    const FloatPoint& localAnchor() const { return m_positionedGlyphs.localAnchor; }
-    FloatPoint anchorPoint() const { return m_positionedGlyphs.localAnchor; }
-    const Vector<GlyphBufferGlyph>& glyphs() const { return m_positionedGlyphs.glyphs; }
+    const FloatPoint& localAnchor() const { return m_localAnchor; }
+    FloatPoint anchorPoint() const { return m_localAnchor; }
+    const Vector<GlyphBufferGlyph, 16>& glyphs() const { return m_glyphs; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<DrawGlyphs> decode(Decoder&);
 
     WEBCORE_EXPORT DrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode);
-    WEBCORE_EXPORT DrawGlyphs(RenderingResourceIdentifier, PositionedGlyphs&&, const FloatRect&);
+    WEBCORE_EXPORT DrawGlyphs(RenderingResourceIdentifier, Vector<GlyphBufferGlyph, 128>&&, Vector<GlyphBufferAdvance, 128>&&, const FloatRect&, const FloatPoint& localAnchor, FontSmoothingMode);
 
     WEBCORE_EXPORT void apply(GraphicsContext&, const Font&) const;
 
@@ -600,17 +599,25 @@ public:
     std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_bounds; }
 
 private:
+    void computeBounds(const Font&);
+
     RenderingResourceIdentifier m_fontIdentifier;
-    PositionedGlyphs m_positionedGlyphs;
+    Vector<GlyphBufferGlyph, 16> m_glyphs;
+    Vector<GlyphBufferAdvance, 16> m_advances;
     FloatRect m_bounds;
+    FloatPoint m_localAnchor;
+    FontSmoothingMode m_smoothingMode;
 };
 
 template<class Encoder>
 void DrawGlyphs::encode(Encoder& encoder) const
 {
     encoder << m_fontIdentifier;
-    encoder << m_positionedGlyphs;
+    encoder << m_glyphs;
+    encoder << m_advances;
     encoder << m_bounds;
+    encoder << m_localAnchor;
+    encoder << m_smoothingMode;
 }
 
 template<class Decoder>
@@ -621,9 +628,17 @@ std::optional<DrawGlyphs> DrawGlyphs::decode(Decoder& decoder)
     if (!fontIdentifier)
         return std::nullopt;
 
-    std::optional<PositionedGlyphs> positionedGlyphs;
-    decoder >> positionedGlyphs;
-    if (!positionedGlyphs)
+    std::optional<Vector<GlyphBufferGlyph, 128>> glyphs;
+    decoder >> glyphs;
+    if (!glyphs)
+        return std::nullopt;
+
+    std::optional<Vector<GlyphBufferAdvance, 128>> advances;
+    decoder >> advances;
+    if (!advances)
+        return std::nullopt;
+
+    if (glyphs->size() != advances->size())
         return std::nullopt;
 
     std::optional<FloatRect> bounds;
@@ -631,35 +646,18 @@ std::optional<DrawGlyphs> DrawGlyphs::decode(Decoder& decoder)
     if (!bounds)
         return std::nullopt;
 
-    return { { *fontIdentifier, WTFMove(*positionedGlyphs), *bounds } };
+    std::optional<FloatPoint> localAnchor;
+    decoder >> localAnchor;
+    if (!localAnchor)
+        return std::nullopt;
+
+    std::optional<FontSmoothingMode> smoothingMode;
+    decoder >> smoothingMode;
+    if (!smoothingMode)
+        return std::nullopt;
+
+    return {{ *fontIdentifier, WTFMove(*glyphs), WTFMove(*advances), *bounds, *localAnchor, *smoothingMode }};
 }
-
-class DrawDecomposedGlyphs {
-public:
-    static constexpr ItemType itemType = ItemType::DrawDecomposedGlyphs;
-    static constexpr bool isInlineItem = true;
-    static constexpr bool isDrawingItem = true;
-
-    DrawDecomposedGlyphs(RenderingResourceIdentifier fontIdentifier, RenderingResourceIdentifier decomposedGlyphsIdentifier, const FloatRect& bounds)
-        : m_fontIdentifier(fontIdentifier)
-        , m_decomposedGlyphsIdentifier(decomposedGlyphsIdentifier)
-        , m_bounds(bounds)
-    {
-    }
-
-    RenderingResourceIdentifier fontIdentifier() const { return m_fontIdentifier; }
-    RenderingResourceIdentifier decomposedGlyphsIdentifier() const { return m_decomposedGlyphsIdentifier; }
-
-    WEBCORE_EXPORT void apply(GraphicsContext&, const Font&, const DecomposedGlyphs&) const;
-
-    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
-    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_bounds; }
-
-private:
-    RenderingResourceIdentifier m_fontIdentifier;
-    RenderingResourceIdentifier m_decomposedGlyphsIdentifier;
-    FloatRect m_bounds;
-};
 
 class DrawImageBuffer {
 public:
@@ -1994,7 +1992,6 @@ using DisplayListItem = std::variant
     , DrawFocusRingPath
     , DrawFocusRingRects
     , DrawGlyphs
-    , DrawDecomposedGlyphs
     , DrawImageBuffer
     , DrawLine
     , DrawLinesForText
@@ -2075,7 +2072,6 @@ WEBCORE_EXPORT void dumpItem(TextStream&, const ClipOutToPath&, OptionSet<AsText
 WEBCORE_EXPORT void dumpItem(TextStream&, const ClipPath&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawFilteredImageBuffer&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawGlyphs&, OptionSet<AsTextFlag>);
-WEBCORE_EXPORT void dumpItem(TextStream&, const DrawDecomposedGlyphs&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawImageBuffer&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawNativeImage&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const DrawSystemImage&, OptionSet<AsTextFlag>);
@@ -2130,9 +2126,6 @@ inline TextStream& operator<<(TextStream& ts, const ItemHandle& itemHandle)
     dumpItemHandle(ts, itemHandle, { AsTextFlag::IncludePlatformOperations, AsTextFlag::IncludeResourceIdentifiers });
     return ts;
 }
-
-TextStream& operator<<(TextStream&, ItemType);
-
 #endif
 
 } // namespace DisplayList
@@ -2165,7 +2158,6 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::ClipOutToPath,
     WebCore::DisplayList::ItemType::ClipPath,
     WebCore::DisplayList::ItemType::DrawGlyphs,
-    WebCore::DisplayList::ItemType::DrawDecomposedGlyphs,
     WebCore::DisplayList::ItemType::DrawImageBuffer,
     WebCore::DisplayList::ItemType::DrawNativeImage,
     WebCore::DisplayList::ItemType::DrawSystemImage,

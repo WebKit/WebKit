@@ -34,7 +34,6 @@ messages -> RemoteRenderingBackend NotRefCounted Stream {
     GetFilteredImageForImageBuffer(WebCore::RenderingResourceIdentifier imageBuffer, IPC::FilterReference filter) -> (WebKit::ShareableBitmap::Handle handle) Synchronous NotStreamEncodableReply
     CacheNativeImage(WebKit::ShareableBitmap::Handle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     CacheFont(IPC::FontReference font) NotStreamEncodable
-    CacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs> decomposedGlyphs) NotStreamEncodable
     DeleteAllFonts()
     ReleaseRemoteResource(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
 

@@ -117,68 +117,45 @@ inline static std::optional<RenderingResourceIdentifier> applyDrawGlyphs(Graphic
     return resourceIdentifier;
 }
 
-inline static std::optional<RenderingResourceIdentifier> applyDrawDecomposedGlyphs(GraphicsContext& context, const ResourceHeap& resourceHeap, DrawDecomposedGlyphs& drawDecomposedGlyphsItem)
-{
-    auto fontIdentifier = drawDecomposedGlyphsItem.fontIdentifier();
-    auto* font = resourceHeap.getFont(fontIdentifier);
-    if (!font)
-        return fontIdentifier;
-
-    auto drawGlyphsIdentifier = drawDecomposedGlyphsItem.decomposedGlyphsIdentifier();
-    auto* decomposedGlyphs = resourceHeap.getDecomposedGlyphs(drawGlyphsIdentifier);
-    if (!decomposedGlyphs)
-        return drawGlyphsIdentifier;
-
-    drawDecomposedGlyphsItem.apply(context, *font, *decomposedGlyphs);
-    return std::nullopt;
-}
-
-auto Replayer::applyItem(ItemHandle item) -> ApplyItemResult
+std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> Replayer::applyItem(ItemHandle item)
 {
     switch (item.type()) {
     case ItemType::ClipToImageBuffer:
         if (auto missingCachedResourceIdentifier = applyImageBufferItem<ClipToImageBuffer>(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { };
+        return { std::nullopt, std::nullopt };
 
-    case ItemType::DrawGlyphs: {
+    case ItemType::DrawGlyphs:
         if (auto missingCachedResourceIdentifier = applyDrawGlyphs(m_context, m_resourceHeap, item.get<DrawGlyphs>()))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { };
-    }
-
-    case ItemType::DrawDecomposedGlyphs: {
-        if (auto missingCachedResourceIdentifier = applyDrawDecomposedGlyphs(m_context, m_resourceHeap, item.get<DrawDecomposedGlyphs>()))
-            return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { };
-    }
+        return { std::nullopt, std::nullopt };
 
     case ItemType::DrawImageBuffer:
         if (auto missingCachedResourceIdentifier = applyImageBufferItem<DrawImageBuffer>(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { };
+        return { std::nullopt, std::nullopt };
 
     case ItemType::DrawNativeImage:
         if (auto missingCachedResourceIdentifier = applyNativeImageItem<DrawNativeImage>(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { };
+        return { std::nullopt, std::nullopt };
 
     case ItemType::DrawPattern:
         if (auto missingCachedResourceIdentifier = applySourceImageItem<DrawPattern>(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { };
+        return { std::nullopt, std::nullopt };
 
     case ItemType::SetState:
         if (auto missingCachedResourceIdentifier = applySetStateItem(m_context, m_resourceHeap, item))
             return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
-        return { };
+        return { std::nullopt, std::nullopt };
 
     default:
         item.apply(m_context);
-        return { };
+        return { std::nullopt, std::nullopt };
     }
 
-    return { };
+    return { std::nullopt, std::nullopt };
 }
 
 ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList)
@@ -210,10 +187,9 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
 
         LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
 
-        auto applyResult = applyItem(item);
-        if (applyResult.stopReason) {
-            result.reasonForStopping = *applyResult.stopReason;
-            result.missingCachedResourceIdentifier = WTFMove(applyResult.resourceIdentifier);
+        if (auto [reasonForStopping, missingCachedResourceIdentifier] = applyItem(item); reasonForStopping) {
+            result.reasonForStopping = *reasonForStopping;
+            result.missingCachedResourceIdentifier = WTFMove(missingCachedResourceIdentifier);
             break;
         }
 
