@@ -1,0 +1,27 @@
+<style>
+.container {
+  width: 100px;;
+  height: 100px;
+  background-color: green;
+  contain: paint;
+}
+
+.out-of-flow-child {
+  position: absolute;
+  top: -100px;
+  background-color: red;
+  width: 50px;
+  height: 50px;
+}
+.overflow {
+  width: 300px;
+  height: 10px;
+}
+</style>
+<!-- PASS if no red box. -->
+<div id=scrollThis class=container>
+  <div class=out-of-flow-child></div><div class=overflow></div>
+</div>
+<script>
+scrollThis.scrollIntoView();
+</script>
