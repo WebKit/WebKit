@@ -215,8 +215,9 @@ WI.contentLoaded = function()
     document.addEventListener("dragover", WI._handleDragOver);
     document.addEventListener("focus", WI._focusChanged, true);
 
-    window.addEventListener("focus", WI._windowFocused);
-    window.addEventListener("blur", WI._windowBlurred);
+    window.addEventListener("focus", WI._updateWindowInactiveState);
+    window.addEventListener("blur", WI._updateWindowInactiveState);
+    window.addEventListener("visibilitychange", WI._updateWindowInactiveState);
     window.addEventListener("resize", WI._windowResized);
     window.addEventListener("keydown", WI._windowKeyDown);
     window.addEventListener("keyup", WI._windowKeyUp);
@@ -1821,22 +1822,18 @@ WI._saveCookieForOpenTabs = function()
     }
 };
 
-WI._windowFocused = function(event)
+WI._updateWindowInactiveState = function(event)
 {
-    if (event.target.document.nodeType !== Node.DOCUMENT_NODE)
-        return;
-
     // FIXME: We should use the :window-inactive pseudo class once https://webkit.org/b/38927 is fixed.
-    document.body.classList.remove(WI.dockConfiguration === WI.DockConfiguration.Undocked ? "window-inactive" : "window-docked-inactive");
-};
 
-WI._windowBlurred = function(event)
-{
-    if (event.target.document.nodeType !== Node.DOCUMENT_NODE)
-        return;
+    if (document.activeElement?.tagName === "IFRAME") {
+        // An active iframe means an extension tab is active and we can't tell when the window blurs due to cross-origin restrictions.
+        // In this case we need to keep checking to know if the window loses focus since there is no event we can use.
+        setTimeout(WI._updateWindowInactiveState, 250);
+    }
 
-    // FIXME: We should use the :window-inactive pseudo class once https://webkit.org/b/38927 is fixed.
-    document.body.classList.add(WI.dockConfiguration === WI.DockConfiguration.Undocked ? "window-inactive" : "window-docked-inactive");
+    let inactive = !document.hasFocus();
+    document.body.classList.toggle(WI.dockConfiguration === WI.DockConfiguration.Undocked ? "window-inactive" : "window-docked-inactive", inactive);
 };
 
 WI._windowResized = function(event)
