@@ -256,7 +256,7 @@ class CommitContextTest(WaitForDockerTestCase):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             self.init_database(redis=redis, cassandra=cassandra)
             self.add_all_commits_to_database()
-            self.assertEqual(['branch-a', 'branch-b', 'main'], self.database.branches(repository_id='safari'))
+            self.assertEqual(['branch-a', 'branch-b', 'eng/squash-branch', 'main'], self.database.branches(repository_id='safari'))
             self.assertEqual(
                 ['branch-a', 'branch-b', 'main'],
                 self.database.branches(repository_id='webkit'),
