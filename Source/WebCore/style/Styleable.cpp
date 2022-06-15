@@ -625,4 +625,19 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
         updateCSSTransitionsForStyleableAndProperty(*this, property, currentStyle, newStyle, generationTime);
 }
 
+void Styleable::queryContainerDidChange() const
+{
+    auto* animations = this->animations();
+    if (!animations)
+        return;
+    for (auto animation : *animations) {
+        auto* cssAnimation = dynamicDowncast<CSSAnimation>(animation.get());
+        if (!cssAnimation)
+            continue;
+        auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(cssAnimation->effect());
+        if (keyframeEffect && keyframeEffect->blendingKeyframes().usesContainerUnits())
+            cssAnimation->keyframesRuleDidChange();
+    }
+}
+
 } // namespace WebCore

@@ -105,6 +105,8 @@ public:
     auto begin() const { return m_keyframes.begin(); }
     auto end() const { return m_keyframes.end(); }
 
+    bool usesContainerUnits() const;
+
 private:
     AtomString m_animationName;
     Vector<KeyframeValue> m_keyframes; // Kept sorted by key.

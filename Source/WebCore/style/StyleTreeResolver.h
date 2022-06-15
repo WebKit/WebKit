@@ -69,7 +69,7 @@ private:
     enum class DescendantsToResolve : uint8_t { None, ChildrenWithExplicitInherit, Children, All };
     std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&, ResolutionType);
 
-    static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change, const ResolutionContext&);
+    ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change, const ResolutionContext&);
     std::optional<ElementUpdate> resolvePseudoElement(Element&, PseudoId, const ElementUpdate&);
     std::optional<ElementUpdate> resolveAncestorPseudoElement(Element&, PseudoId, const ElementUpdate&);
     std::unique_ptr<RenderStyle> resolveAncestorFirstLinePseudoElement(Element&, const ElementUpdate&);
@@ -95,6 +95,7 @@ private:
         DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
         bool didPushScope { false };
         bool resolvedFirstLineAndLetterChild { false };
+        bool needsUpdateQueryContainerDependentStyle { false };
 
         Parent(Document&);
         Parent(Element&, const RenderStyle&, Change, DescendantsToResolve);

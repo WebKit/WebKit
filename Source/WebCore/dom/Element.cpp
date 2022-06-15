@@ -2265,10 +2265,21 @@ void Element::invalidateStyleForSubtreeInternal()
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
 }
 
-void Element::invalidateForQueryContainerChange()
+void Element::invalidateForQueryContainerSizeChange()
 {
     // FIXME: Ideally we would just recompute things that are actually affected by containers queries within the subtree.
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
+    setNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
+}
+
+bool Element::needsUpdateQueryContainerDependentStyle() const
+{
+    return hasNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
+}
+
+void Element::clearNeedsUpdateQueryContainerDependentStyle()
+{
+    clearNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
 }
 
 void Element::invalidateEventListenerRegions()

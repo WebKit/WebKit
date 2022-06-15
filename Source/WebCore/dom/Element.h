@@ -639,7 +639,10 @@ public:
 
     void invalidateStyleInternal();
     void invalidateStyleForSubtreeInternal();
-    void invalidateForQueryContainerChange();
+    void invalidateForQueryContainerSizeChange();
+
+    bool needsUpdateQueryContainerDependentStyle() const;
+    void clearNeedsUpdateQueryContainerDependentStyle();
 
     void invalidateEventListenerRegions();
 

@@ -582,9 +582,10 @@ protected:
         IsComputedStyleInvalidFlag = 1 << 25,
         HasShadowRootContainingSlots = 1 << 26,
         IsInTopLayer = 1 << 27,
-        NeedsSVGRendererUpdate = 1 << 28
+        NeedsSVGRendererUpdate = 1 << 28,
+        NeedsUpdateQueryContainerDependentStyle = 1 << 29,
 
-        // Bits 29-31 are free.
+        // Bits 30-31 are free.
     };
 
     enum class TabIndexState : uint8_t {

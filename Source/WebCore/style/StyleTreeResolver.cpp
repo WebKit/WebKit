@@ -577,7 +577,9 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     auto& document = element.document();
     auto* oldStyle = element.renderOrDisplayContentsStyle(styleable.pseudoId);
 
-    OptionSet<AnimationImpact> animationImpact;
+    // FIXME: Something like this is also needed for viewport units.
+    if (oldStyle && parent().needsUpdateQueryContainerDependentStyle)
+        styleable.queryContainerDidChange();
 
     // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
     // on the document timeline.
@@ -591,6 +593,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
             styleable.updateCSSAnimations(oldStyle, *newStyle, resolutionContext);
     }
+
+    OptionSet<AnimationImpact> animationImpact;
 
     // Now we can update all Web animations, which will include CSS Animations as well
     // as animations created via the JS API.
@@ -639,6 +643,9 @@ void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change
         pushEnclosingScope();
         parent.didPushScope = true;
     }
+
+    parent.needsUpdateQueryContainerDependentStyle = m_parentStack.last().needsUpdateQueryContainerDependentStyle || element.needsUpdateQueryContainerDependentStyle();
+    element.clearNeedsUpdateQueryContainerDependentStyle();
 
     m_parentStack.append(WTFMove(parent));
 }
