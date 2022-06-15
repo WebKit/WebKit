@@ -1696,6 +1696,9 @@ webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
 
+# This test uses an HEVC video
+media/media-hevc-video-as-img.html [ Skip ]
+
 # WIRELESS_PLAYBACK_TARGET not enabled.
 media/airplay-target-availability.html
 webkit.org/b/205112 media/remoteplayback-cancel-invalid.html [ Skip ]
