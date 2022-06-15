@@ -941,7 +941,7 @@ float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCasca
 {
     unsigned suffixStart = 0;
     if (word.length() <= minimumSuffixLength)
-        return 0;
+        return entireWordWidth;
 
     Vector<int, 8> hyphenLocations;
     ASSERT(word.length() >= minimumSuffixLength);
@@ -950,7 +950,7 @@ float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCasca
         hyphenLocations.append(hyphenLocation);
 
     if (hyphenLocations.isEmpty())
-        return 0;
+        return entireWordWidth;
 
     hyphenLocations.reverse();
 
