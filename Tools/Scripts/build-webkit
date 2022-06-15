@@ -384,6 +384,11 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
         exit exitStatus($result);
     }
 
+    if ($clean) {
+        # No need to have build-imagediff do cleaning, the build directory has already been deleted.
+        exit exitStatus($result);
+    }
+
     # Build ImageDiff for host
     my @command = File::Spec->catfile(getcwd(), "/Tools/Scripts/build-imagediff");
     chdirWebKit();
@@ -391,9 +396,6 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
         die "build-imagediff script not found";
     }
 
-    if ($clean) {
-        push @command, " --clean";
-    }
     push @command, argumentsForConfiguration();
     push @command, @ARGV;
     @command = extractNonMacOSHostConfiguration(\@command);
