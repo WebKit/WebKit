@@ -911,7 +911,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     process.send(Messages::WebProcess::BacklightLevelDidChange(displayBrightness()), 0);
 #endif
 
-#if PLATFORM(COCOA)
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
     process.sendAudioComponentRegistrations();
 #endif
 

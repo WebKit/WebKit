@@ -40,7 +40,6 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
@@ -65,8 +64,6 @@
 #if PLATFORM(MAC)
 #include "TCCSoftLink.h"
 #endif
-
-#import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebKit {
 
@@ -270,30 +267,24 @@ void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHand
 }
 #endif
 
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
 void WebProcessProxy::sendAudioComponentRegistrations()
 {
-    using namespace PAL;
-
-    if (!PAL::isAudioToolboxCoreFrameworkAvailable() || !PAL::canLoad_AudioToolboxCore_AudioComponentFetchServerRegistrations())
-        return;
-
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [weakThis = WeakPtr { *this }] () mutable {
-        CFDataRef registrations { nullptr };
 
-        WebCore::registerOpusDecoderIfNeeded();
-        WebCore::registerVorbisDecoderIfNeeded();
-        if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
+        auto registrations = fetchAudioComponentServerRegistrations();
+        if (!registrations)
             return;
-
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = adoptCF(registrations)] () {
+        
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
             if (!weakThis)
                 return;
 
-            auto registrationData = WebCore::SharedBuffer::create(registrations.get());
-            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrationData))), 0);
+            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrations))), 0);
         });
     });
 }
+#endif
 
 bool WebProcessProxy::messageSourceIsValidWebContentProcess()
 {

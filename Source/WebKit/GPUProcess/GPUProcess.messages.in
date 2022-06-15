@@ -91,6 +91,10 @@ messages -> GPUProcess LegacyReceiver {
     OpenDirectoryCacheInvalidated(WebKit::SandboxExtension::Handle handle)
 #endif
 
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
+    ConsumeAudioComponentRegistrations(IPC::SharedBufferReference registrationData)
+#endif
+
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
     EnablePowerLogging(WebKit::SandboxExtension::Handle handle)
 #endif

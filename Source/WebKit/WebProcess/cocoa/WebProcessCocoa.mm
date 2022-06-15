@@ -161,7 +161,6 @@
 #endif
 
 #import <WebCore/MediaAccessibilitySoftLink.h>
-#import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/VideoToolboxSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
@@ -1254,22 +1253,6 @@ void WebProcess::systemDidWake()
         PlatformMediaSessionManager::sharedManager().processSystemDidWake();
 }
 #endif
-
-void WebProcess::consumeAudioComponentRegistrations(const IPC::SharedBufferReference& data)
-{
-    using namespace PAL;
-
-    if (!PAL::isAudioToolboxCoreFrameworkAvailable() || !PAL::canLoad_AudioToolboxCore_AudioComponentApplyServerRegistrations())
-        return;
-
-    if (data.isNull())
-        return;
-    auto registrations = data.unsafeBuffer()->createCFData();
-
-    auto err = AudioComponentApplyServerRegistrations(registrations.get());
-    if (noErr != err)
-        WEBPROCESS_RELEASE_LOG_ERROR(Process, "Could not apply AudioComponent registrations, err(%ld)", static_cast<long>(err));
-}
 
 #if PLATFORM(MAC)
 void WebProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle)

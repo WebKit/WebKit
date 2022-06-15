@@ -44,6 +44,10 @@
 
 OBJC_CLASS NSDictionary;
 
+namespace IPC {
+class SharedBufferReference;
+}
+
 namespace WebKit {
 
 class SandboxInitializationParameters;
@@ -152,6 +156,10 @@ protected:
 
     void populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&& mobileGestaltExtensionHandle);
 
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
+    void consumeAudioComponentRegistrations(const IPC::SharedBufferReference&);
+#endif
+    
 private:
     virtual bool shouldOverrideQuarantine() { return true; }
 

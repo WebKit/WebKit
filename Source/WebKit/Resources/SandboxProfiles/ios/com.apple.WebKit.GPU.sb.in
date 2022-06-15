@@ -694,6 +694,9 @@
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
 
+(deny mach-lookup (with no-log) (with telemetry)
+    (global-name "com.apple.audio.AudioComponentRegistrar"))
+
 (deny mach-lookup (with telemetry)
     (xpc-service-name "com.apple.iconservices")
     (global-name

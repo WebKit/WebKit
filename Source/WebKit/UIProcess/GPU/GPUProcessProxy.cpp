@@ -169,6 +169,13 @@ GPUProcessProxy::GPUProcessProxy()
 
     // Initialize the GPU process.
     send(Messages::GPUProcess::InitializeGPUProcess(parameters), 0);
+
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
+    auto registrations = fetchAudioComponentServerRegistrations();
+    if (registrations)
+        send(Messages::GPUProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrations))), 0);
+#endif
+
     updateProcessAssertion();
 }
 

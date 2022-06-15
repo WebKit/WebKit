@@ -78,10 +78,6 @@ namespace API {
 class Object;
 }
 
-namespace IPC {
-class SharedBufferReference;
-}
-
 namespace PAL {
 class SessionID;
 }
@@ -533,10 +529,6 @@ private:
     void systemDidWake();
 #endif
 
-#if PLATFORM(COCOA)
-    void consumeAudioComponentRegistrations(const IPC::SharedBufferReference&);
-#endif
-    
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
 
     // IPC::Connection::Client
