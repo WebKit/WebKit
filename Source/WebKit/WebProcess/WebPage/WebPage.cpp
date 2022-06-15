@@ -5228,6 +5228,7 @@ void WebPage::mainFrameDidLayout()
             viewportConfigurationChanged();
     }
     findController().redraw();
+    foundTextRangeController().redraw();
 #endif
 }
 
