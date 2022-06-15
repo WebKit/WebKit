@@ -2328,7 +2328,13 @@ class YarrGenerator final : public YarrJITInfo {
                 // Upon entry at the head of the set of alternatives, check if input is available
                 // to run the first alternative. (This progresses the input position).
                 op.m_jumps.append(jumpIfNoAvailableInput(alternative->m_minimumSize));
-                m_checkedOffset += alternative->m_minimumSize;
+                Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                checkedOffsetResult += alternative->m_minimumSize;
+                if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                    m_failureReason = JITFailureReason::OffsetTooLarge;
+                    return;
+                }
+                m_checkedOffset = checkedOffsetResult;
 
                 // We will reenter after the check, and assume the input position to have been
                 // set as appropriate to this alternative.
@@ -2475,8 +2481,15 @@ class YarrGenerator final : public YarrJITInfo {
                     m_jit.sub32(MacroAssembler::Imm32(priorAlternative->m_minimumSize), m_regs.index);
                 }
 
-                if (op.m_op == YarrOpCode::BodyAlternativeNext)
-                    m_checkedOffset += alternative->m_minimumSize;
+                if (op.m_op == YarrOpCode::BodyAlternativeNext) {
+                    Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                    checkedOffsetResult += alternative->m_minimumSize;
+                    if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                        m_failureReason = JITFailureReason::OffsetTooLarge;
+                        return;
+                    }
+                    m_checkedOffset = checkedOffsetResult;
+                }
                 m_checkedOffset -= priorAlternative->m_minimumSize;
                 break;
             }
@@ -2510,7 +2523,13 @@ class YarrGenerator final : public YarrJITInfo {
                 if (op.m_checkAdjust)
                     op.m_jumps.append(jumpIfNoAvailableInput(op.m_checkAdjust));
 
-                m_checkedOffset += op.m_checkAdjust;
+                Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                checkedOffsetResult += op.m_checkAdjust;
+                if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                    m_failureReason = JITFailureReason::OffsetTooLarge;
+                    return;
+                }
+                m_checkedOffset = checkedOffsetResult;
                 break;
             }
             case YarrOpCode::SimpleNestedAlternativeNext:
@@ -2559,7 +2578,14 @@ class YarrGenerator final : public YarrJITInfo {
 
                 YarrOp& lastOp = m_ops[op.m_previousOp];
                 m_checkedOffset -= lastOp.m_checkAdjust;
-                m_checkedOffset += op.m_checkAdjust;
+
+                Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                checkedOffsetResult += op.m_checkAdjust;
+                if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                    m_failureReason = JITFailureReason::OffsetTooLarge;
+                    return;
+                }
+                m_checkedOffset = checkedOffsetResult;
                 break;
             }
             case YarrOpCode::SimpleNestedAlternativeEnd:
@@ -2866,7 +2892,13 @@ class YarrGenerator final : public YarrJITInfo {
                 }
 
                 YarrOp& lastOp = m_ops[op.m_previousOp];
-                m_checkedOffset += lastOp.m_checkAdjust;
+                Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                checkedOffsetResult += lastOp.m_checkAdjust;
+                if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                    m_failureReason = JITFailureReason::OffsetTooLarge;
+                    return;
+                }
+                m_checkedOffset = checkedOffsetResult;
                 break;
             }
 
@@ -2929,7 +2961,13 @@ class YarrGenerator final : public YarrJITInfo {
                 m_checkedOffset -= alternative->m_minimumSize;
                 if (op.m_op == YarrOpCode::BodyAlternativeNext) {
                     PatternAlternative* priorAlternative = m_ops[op.m_previousOp].m_alternative;
-                    m_checkedOffset += priorAlternative->m_minimumSize;
+                    Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                    checkedOffsetResult += priorAlternative->m_minimumSize;
+                    if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                        m_failureReason = JITFailureReason::OffsetTooLarge;
+                        return;
+                    }
+                    m_checkedOffset = checkedOffsetResult;
                 }
 
                 // Is this the last alternative? If not, then if we backtrack to this point we just
@@ -3132,7 +3170,13 @@ class YarrGenerator final : public YarrJITInfo {
                 ASSERT(m_backtrackingState.isEmpty());
 
                 PatternAlternative* priorAlternative = m_ops[op.m_previousOp].m_alternative;
-                m_checkedOffset += priorAlternative->m_minimumSize;
+                Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                checkedOffsetResult += priorAlternative->m_minimumSize;
+                if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                    m_failureReason = JITFailureReason::OffsetTooLarge;
+                    return;
+                }
+                m_checkedOffset = checkedOffsetResult;
                 break;
             }
 
@@ -3234,7 +3278,13 @@ class YarrGenerator final : public YarrJITInfo {
                 m_checkedOffset -= op.m_checkAdjust;
                 if (!isBegin) {
                     YarrOp& lastOp = m_ops[op.m_previousOp];
-                    m_checkedOffset += lastOp.m_checkAdjust;
+                    Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                    checkedOffsetResult += lastOp.m_checkAdjust;
+                    if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                        m_failureReason = JITFailureReason::OffsetTooLarge;
+                        return;
+                    }
+                    m_checkedOffset = checkedOffsetResult;
                 }
                 break;
             }
@@ -3263,7 +3313,13 @@ class YarrGenerator final : public YarrJITInfo {
                 }
 
                 YarrOp& lastOp = m_ops[op.m_previousOp];
-                m_checkedOffset += lastOp.m_checkAdjust;
+                Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                checkedOffsetResult += lastOp.m_checkAdjust;
+                if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                    m_failureReason = JITFailureReason::OffsetTooLarge;
+                    return;
+                }
+                m_checkedOffset = checkedOffsetResult;
                 break;
             }
 
@@ -3513,7 +3569,13 @@ class YarrGenerator final : public YarrJITInfo {
                 // added the failure caused by a successful match to this.
                 m_backtrackingState.append(endOp.m_jumps);
 
-                m_checkedOffset += op.m_checkAdjust;
+                Checked<unsigned, RecordOverflow> checkedOffsetResult(m_checkedOffset);
+                checkedOffsetResult += op.m_checkAdjust;
+                if (UNLIKELY(checkedOffsetResult.hasOverflowed())) {
+                    m_failureReason = JITFailureReason::OffsetTooLarge;
+                    return;
+                }
+                m_checkedOffset = checkedOffsetResult;
                 break;
             }
             case YarrOpCode::ParentheticalAssertionEnd: {
@@ -4698,6 +4760,9 @@ static void dumpCompileFailure(JITFailureReason failure)
         break;
     case JITFailureReason::ExecutableMemoryAllocationFailure:
         dataLog("Can't JIT because of failure of allocation of executable memory\n");
+        break;
+    case JITFailureReason::OffsetTooLarge:
+        dataLog("Can't JIT because pattern exceeds string length limits\n");
         break;
     }
 }
