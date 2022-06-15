@@ -2369,9 +2369,8 @@ bool AccessibilityObject::insertText(const String& text)
         return false;
 
     auto& element = downcast<Element>(*renderer()->node());
-
-    // Only try to insert text if the field is in editing mode.
-    if (!element.shouldUseInputMethod())
+    // Only try to insert text if the field is in editing mode (excluding password fields, which we do still want to try to insert into).
+    if (!isPasswordField() && !element.shouldUseInputMethod())
         return false;
 
     // Use Editor::insertText to mimic typing into the field.

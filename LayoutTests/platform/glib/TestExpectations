@@ -336,6 +336,9 @@ media/video-with-alpha.html [ Pass ]
 
 accessibility/svg-font-face.html [ Skip ]
 
+# Need to implement AccessibilityUIElement::insertText.
+accessibility/insert-text-into-password-field.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::hasDocumentRoleAncestor(), AccessibilityUIElement::hasWebApplicationAncestor(),
 # AccessibilityUIElement::isInDescriptionListDetail(), AccessibilityUIElement::isInDescriptionListTerm(), and
 # AccessibilityUIElement::isInCell().
