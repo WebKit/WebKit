@@ -50,7 +50,7 @@ SKIP_INSTALL = $(WK_SKIP_INSTALL_WEBPUSHD)
 
 LAUNCHD_PLIST_FILE_NAME = com.apple.webkit.webpushd.plist
 
-LAUNCHD_PLIST_INPUT_FILE[sdk=iphoneos*] = webpushd/com.apple.webkit.webpushd.ios.plist
+LAUNCHD_PLIST_INPUT_FILE = webpushd/com.apple.webkit.webpushd.ios.plist
 LAUNCHD_PLIST_INPUT_FILE[sdk=macos*] = webpushd/com.apple.webkit.webpushd.mac.plist
 
 LAUNCHD_PLIST_INSTALL_PATH = $(LAUNCHD_PLIST_INSTALL_PATH_$(USE_SYSTEM_CONTENT_PATH))
