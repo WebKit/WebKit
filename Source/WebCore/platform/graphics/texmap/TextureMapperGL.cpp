@@ -514,10 +514,10 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
     if (clipStack().isRoundedRectClipEnabled())
         prepareRoundedRectClip(program.get(), clipStack().roundedRectComponents(), clipStack().roundedRectInverseTransformComponents(), clipStack().roundedRectCount());
 
-    drawTexturedQuadWithProgram(program.get(), texture, flags, textureSize, targetRect, modelViewMatrix, opacity);
+    drawTexturedQuadWithProgram(program.get(), texture, flags, targetRect, modelViewMatrix, opacity);
 }
 
-static void prepareTransformationMatrixWithFlags(TransformationMatrix& patternTransform, TextureMapperGL::Flags flags, const IntSize& size)
+static void prepareTransformationMatrixWithFlags(TransformationMatrix& patternTransform, TextureMapperGL::Flags flags)
 {
     if (flags & TextureMapperGL::ShouldRotateTexture90) {
         patternTransform.rotate(-90);
@@ -594,7 +594,7 @@ void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures
 
     glUseProgram(program->programID());
     glUniformMatrix4fv(program->yuvToRgbLocation(), 1, GL_FALSE, static_cast<const GLfloat *>(&yuvToRgbMatrix[0]));
-    drawTexturedQuadWithProgram(program.get(), texturesAndSamplers, flags, textureSize, targetRect, modelViewMatrix, opacity);
+    drawTexturedQuadWithProgram(program.get(), texturesAndSamplers, flags, targetRect, modelViewMatrix, opacity);
 }
 
 void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textures, bool uvReversed, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges)
@@ -648,7 +648,7 @@ void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& text
 
     glUseProgram(program->programID());
     glUniformMatrix4fv(program->yuvToRgbLocation(), 1, GL_FALSE, static_cast<const GLfloat *>(&yuvToRgbMatrix[0]));
-    drawTexturedQuadWithProgram(program.get(), texturesAndSamplers, flags, textureSize, targetRect, modelViewMatrix, opacity);
+    drawTexturedQuadWithProgram(program.get(), texturesAndSamplers, flags, targetRect, modelViewMatrix, opacity);
 }
 
 void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges)
@@ -700,7 +700,7 @@ void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfl
 
     glUseProgram(program->programID());
     glUniformMatrix4fv(program->yuvToRgbLocation(), 1, GL_FALSE, static_cast<const GLfloat *>(&yuvToRgbMatrix[0]));
-    drawTexturedQuadWithProgram(program.get(), texturesAndSamplers, flags, textureSize, targetRect, modelViewMatrix, opacity);
+    drawTexturedQuadWithProgram(program.get(), texturesAndSamplers, flags, targetRect, modelViewMatrix, opacity);
 }
 
 void TextureMapperGL::drawSolidColor(const FloatRect& rect, const TransformationMatrix& matrix, const Color& color, bool isBlendingAllowed)
@@ -808,7 +808,7 @@ void TextureMapperGL::draw(const FloatRect& rect, const TransformationMatrix& mo
     glEnable(GL_BLEND);
 }
 
-void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& program, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, Flags flags, const IntSize& size, const FloatRect& rect, const TransformationMatrix& modelViewMatrix, float opacity)
+void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& program, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, Flags flags, const FloatRect& rect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     glUseProgram(program.programID());
 
@@ -831,7 +831,7 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& pr
     }
 
     TransformationMatrix patternTransform = this->patternTransform();
-    prepareTransformationMatrixWithFlags(patternTransform, flags, size);
+    prepareTransformationMatrixWithFlags(patternTransform, flags);
 
     program.setMatrix(program.textureSpaceMatrixLocation(), patternTransform);
     program.setMatrix(program.textureColorSpaceMatrixLocation(), colorSpaceMatrixForFlags(flags));
@@ -851,9 +851,9 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& pr
     }
 }
 
-void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& program, uint32_t texture, Flags flags, const IntSize& size, const FloatRect& rect, const TransformationMatrix& modelViewMatrix, float opacity)
+void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& program, uint32_t texture, Flags flags, const FloatRect& rect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
-    drawTexturedQuadWithProgram(program, { { texture, program.samplerLocation() } }, flags, size, rect, modelViewMatrix, opacity);
+    drawTexturedQuadWithProgram(program, { { texture, program.samplerLocation() } }, flags, rect, modelViewMatrix, opacity);
 }
 
 void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTexture* contentTexture, const FilterOperation& filter, int pass)
@@ -864,7 +864,7 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTex
 
     prepareFilterProgram(program.get(), filter, pass, sampler.contentSize(), contentTexture ? static_cast<const BitmapTextureGL*>(contentTexture)->id() : 0);
     FloatRect targetRect(IntPoint::zero(), sampler.contentSize());
-    drawTexturedQuadWithProgram(program.get(), static_cast<const BitmapTextureGL&>(sampler).id(), 0, IntSize(1, 1), targetRect, TransformationMatrix(), 1);
+    drawTexturedQuadWithProgram(program.get(), static_cast<const BitmapTextureGL&>(sampler).id(), 0, targetRect, TransformationMatrix(), 1);
 }
 
 static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored)
@@ -1046,11 +1046,11 @@ std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()
     return makeUnique<TextureMapperGL>();
 }
 
-void TextureMapperGL::drawTextureExternalOES(GLuint texture, Flags flags, const IntSize& size, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
+void TextureMapperGL::drawTextureExternalOES(GLuint texture, Flags flags, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::Option::TextureExternalOES);
     drawTexturedQuadWithProgram(program.get(), { { texture, program->externalOESTextureLocation() } },
-        flags | TextureMapperGL::ShouldUseExternalOESTextureRect, size, targetRect, modelViewMatrix, opacity);
+        flags | TextureMapperGL::ShouldUseExternalOESTextureRect, targetRect, modelViewMatrix, opacity);
 }
 
 };

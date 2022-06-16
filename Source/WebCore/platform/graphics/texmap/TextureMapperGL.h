@@ -89,11 +89,11 @@ public:
     void drawFiltered(const BitmapTexture& sourceTexture, const BitmapTexture* contentTexture, const FilterOperation&, int pass);
 
     void setEnableEdgeDistanceAntialiasing(bool enabled) { m_enableEdgeDistanceAntialiasing = enabled; }
-    void drawTextureExternalOES(GLuint texture, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void drawTextureExternalOES(GLuint texture, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
 
 private:
-    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
-    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, Flags, const IntSize&, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, uint32_t texture, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
+    void drawTexturedQuadWithProgram(TextureMapperShaderProgram&, const Vector<std::pair<GLuint, GLuint> >& texturesAndSamplers, Flags, const FloatRect&, const TransformationMatrix& modelViewMatrix, float opacity);
     void draw(const FloatRect&, const TransformationMatrix& modelViewMatrix, TextureMapperShaderProgram&, GLenum drawingMode, Flags);
 
     void drawUnitRect(TextureMapperShaderProgram&, GLenum drawingMode);
