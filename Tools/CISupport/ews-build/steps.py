@@ -4970,7 +4970,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             "git log {} ^{} | grep -q '\\({}\\)' || echo 'No reviewer information in commit message'".format(
                 head_ref, base_ref,
                 '\\|'.join(self.REVIEWED_STRINGS),
-            ), "git log {} ^{} | grep '\\({}\\)'".format(
+            ), "git log {} ^{} | grep '\\({}\\)' || true".format(
                 head_ref, base_ref,
                 '\\|'.join(self.REVIEWED_STRINGS[:-1]),
             ),
