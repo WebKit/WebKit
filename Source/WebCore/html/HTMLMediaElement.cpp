@@ -869,7 +869,7 @@ void HTMLMediaElement::pauseAfterDetachedTask()
     if (m_inActiveDocument)
         return;
 
-    if (m_videoFullscreenMode != VideoFullscreenModePictureInPicture && m_networkState > NETWORK_EMPTY)
+    if (m_videoFullscreenMode != VideoFullscreenModePictureInPicture && m_networkState > NETWORK_EMPTY && !m_wasInterruptedForInvisibleAutoplay)
         pause();
     if (m_videoFullscreenMode == VideoFullscreenModeStandard)
         exitFullscreen();
