@@ -538,7 +538,7 @@ index afbc985eb92dfbd5af964bd8ac207ac1db6ac97e..9805aa705a259a97e92418387f123851
    public:
      static angle::Result MakeBuffer(ContextMtl *context,
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5a25e218d 100644
+index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..414a3d9dbb7ab125172ee99aa9df636383c3d4f5 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -35,12 +35,14 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
@@ -567,7 +567,41 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
      // Make sure GPU & CPU contents are synchronized.
-@@ -504,12 +506,12 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -271,11 +273,10 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
+     {
+         return angle::Result::Stop;
+     }
+-    refOut->reset(new Texture(context, desc, mips, renderTargetOnly, allowFormatView, memoryLess));
+-    if (!refOut || !refOut->get())
+-    {
+-        ANGLE_MTL_CHECK(context, false, GL_OUT_OF_MEMORY);
+-    }
++    ASSERT(refOut);
++    Texture *newTexture = new Texture(context, desc, mips, renderTargetOnly, allowFormatView, memoryLess);
++    ANGLE_MTL_CHECK(context, newTexture->valid(), GL_OUT_OF_MEMORY);
++    refOut->reset(newTexture);
+     if (!mtlFormat.hasDepthAndStencilBits())
+     {
+         refOut->get()->setColorWritableMask(GetEmulatedColorWriteMask(mtlFormat));
+@@ -299,13 +300,10 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
+                                    bool renderTargetOnly,
+                                    TextureRef *refOut)
+ {
+-
+-    refOut->reset(new Texture(context, desc, surfaceRef, slice, renderTargetOnly));
+-
+-    if (!(*refOut) || !(*refOut)->get())
+-    {
+-        ANGLE_MTL_CHECK(context, false, GL_OUT_OF_MEMORY);
+-    }
++    ASSERT(refOut);
++    Texture *newTexture = new Texture(context, desc, surfaceRef, slice, renderTargetOnly);
++    ANGLE_MTL_CHECK(context, newTexture->valid(), GL_OUT_OF_MEMORY);
++    refOut->reset(newTexture);
+     if (!mtlFormat.hasDepthAndStencilBits())
+     {
+         refOut->get()->setColorWritableMask(GetEmulatedColorWriteMask(mtlFormat));
+@@ -504,12 +502,12 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
  
  void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -582,7 +616,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  }
  
  bool Texture::isCPUAccessible() const
-@@ -988,7 +990,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -988,7 +986,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
  
  void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -591,7 +625,7 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  }
  
  const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -1009,7 +1011,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -1009,7 +1007,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
      {
          CommandQueue &cmdQueue = context->cmdQueue();
  
@@ -600,6 +634,98 @@ index 6bcb9cd8d3e2087dd269b4c5fb8b8214c33e2f0e..9a553aba15d004adcbb81005487a48f5
  
          if (this->isBeingUsedByGPU(context))
          {
+diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
+index 7ef96c443d7b780ad045dfeac423ef0a86889750..625416a3ba8f1f819ecbe63e81371a5b13949b32 100644
+--- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
++++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
+@@ -943,6 +943,62 @@ void ToObjC(const RenderPassStencilAttachmentDesc &desc,
+     return re.first->second;
+ }
+ 
++static bool ValidateRenderPipelineState(const MTLRenderPipelineDescriptor *descriptor,
++                                        ContextMtl *context,
++                                        const mtl::ContextDevice &device)
++{
++    // Ensure there is at least one valid render target.
++    bool hasValidRenderTarget = false;
++
++    const NSUInteger maxColorRenderTargets = GetMaxNumberOfRenderTargetsForDevice(device);
++    for (NSUInteger i = 0; i < maxColorRenderTargets; ++i)
++    {
++        auto colorAttachment = descriptor.colorAttachments[i];
++        if (colorAttachment && colorAttachment.pixelFormat != MTLPixelFormatInvalid)
++        {
++            hasValidRenderTarget = true;
++            break;
++        }
++    }
++
++    if (!hasValidRenderTarget && descriptor.depthAttachmentPixelFormat != MTLPixelFormatInvalid)
++    {
++        hasValidRenderTarget = true;
++    }
++
++    if (!hasValidRenderTarget && descriptor.stencilAttachmentPixelFormat != MTLPixelFormatInvalid)
++    {
++        hasValidRenderTarget = true;
++    }
++
++    if (!hasValidRenderTarget)
++    {
++        UNREACHABLE();
++        ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline requires at least one render target.",
++                               GL_INVALID_OPERATION);
++        return false;
++    }
++
++    // Ensure the device can support the storage requirement for render targets.
++    if (DeviceHasMaximumRenderTargetSize(device))
++    {
++        // TODO: Is the use of NSUInteger in 32 bit systems ok without any overflow checking?
++        NSUInteger maxSize = GetMaxRenderTargetSizeForDeviceInBytes(device);
++        NSUInteger renderTargetSize =
++            ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(descriptor, context, device);
++        if (renderTargetSize > maxSize)
++        {
++            std::stringstream errorStream;
++            errorStream << "This set of render targets requires " << renderTargetSize
++                        << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
++            ANGLE_MTL_HANDLE_ERROR(context, errorStream.str().c_str(), GL_INVALID_OPERATION);
++            return false;
++        }
++    }
++
++    return true;
++}
++
+ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelineState(
+     ContextMtl *context,
+     const RenderPipelineDesc &originalDesc,
+@@ -1005,23 +1061,10 @@ void ToObjC(const RenderPassStencilAttachmentDesc &desc,
+         // Convert to Objective-C desc:
+         AutoObjCObj<MTLRenderPipelineDescriptor> objCDesc = ToObjC(vertShader, fragShader, desc);
+ 
+-        // Validate Render Pipeline State:
+-        if (DeviceHasMaximumRenderTargetSize(metalDevice))
+-        {
+-            // TODO: Is the use of NSUInteger in 32 bit systems ok without any overflow checking?
+-            NSUInteger maxSize = GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
+-            NSUInteger renderTargetSize =
+-                ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(objCDesc, context, metalDevice);
+-            if (renderTargetSize > maxSize)
++        if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
+         {
+-                std::stringstream errorStream;
+-                errorStream << "This set of render targets requires " << renderTargetSize
+-                            << " bytes of pixel storage. This device supports " << maxSize
+-                            << " bytes.";
+-                ANGLE_MTL_HANDLE_ERROR(context, errorStream.str().c_str(), GL_INVALID_OPERATION);
+             return nil;
+         }
+-        }
+ 
+         // Special attribute slot for default attribute
+         if (insertDefaultAttribLayout)
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.h b/src/libANGLE/renderer/metal/mtl_utils.h
 index d218c13ed14be57f514cbf3c9dbeedefcdd49621..b236d92655d0307bb0b61ce51bf6406e9e934e96 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.h

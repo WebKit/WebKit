@@ -943,6 +943,62 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::insertRenderPipelin
     return re.first->second;
 }
 
+static bool ValidateRenderPipelineState(const MTLRenderPipelineDescriptor *descriptor,
+                                        ContextMtl *context,
+                                        const mtl::ContextDevice &device)
+{
+    // Ensure there is at least one valid render target.
+    bool hasValidRenderTarget = false;
+
+    const NSUInteger maxColorRenderTargets = GetMaxNumberOfRenderTargetsForDevice(device);
+    for (NSUInteger i = 0; i < maxColorRenderTargets; ++i)
+    {
+        auto colorAttachment = descriptor.colorAttachments[i];
+        if (colorAttachment && colorAttachment.pixelFormat != MTLPixelFormatInvalid)
+        {
+            hasValidRenderTarget = true;
+            break;
+        }
+    }
+
+    if (!hasValidRenderTarget && descriptor.depthAttachmentPixelFormat != MTLPixelFormatInvalid)
+    {
+        hasValidRenderTarget = true;
+    }
+
+    if (!hasValidRenderTarget && descriptor.stencilAttachmentPixelFormat != MTLPixelFormatInvalid)
+    {
+        hasValidRenderTarget = true;
+    }
+
+    if (!hasValidRenderTarget)
+    {
+        UNREACHABLE();
+        ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline requires at least one render target.",
+                               GL_INVALID_OPERATION);
+        return false;
+    }
+
+    // Ensure the device can support the storage requirement for render targets.
+    if (DeviceHasMaximumRenderTargetSize(device))
+    {
+        // TODO: Is the use of NSUInteger in 32 bit systems ok without any overflow checking?
+        NSUInteger maxSize = GetMaxRenderTargetSizeForDeviceInBytes(device);
+        NSUInteger renderTargetSize =
+            ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(descriptor, context, device);
+        if (renderTargetSize > maxSize)
+        {
+            std::stringstream errorStream;
+            errorStream << "This set of render targets requires " << renderTargetSize
+                        << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
+            ANGLE_MTL_HANDLE_ERROR(context, errorStream.str().c_str(), GL_INVALID_OPERATION);
+            return false;
+        }
+    }
+
+    return true;
+}
+
 AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelineState(
     ContextMtl *context,
     const RenderPipelineDesc &originalDesc,
@@ -1005,22 +1061,9 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         // Convert to Objective-C desc:
         AutoObjCObj<MTLRenderPipelineDescriptor> objCDesc = ToObjC(vertShader, fragShader, desc);
 
-        // Validate Render Pipeline State:
-        if (DeviceHasMaximumRenderTargetSize(metalDevice))
+        if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
         {
-            // TODO: Is the use of NSUInteger in 32 bit systems ok without any overflow checking?
-            NSUInteger maxSize = GetMaxRenderTargetSizeForDeviceInBytes(metalDevice);
-            NSUInteger renderTargetSize =
-                ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(objCDesc, context, metalDevice);
-            if (renderTargetSize > maxSize)
-            {
-                std::stringstream errorStream;
-                errorStream << "This set of render targets requires " << renderTargetSize
-                            << " bytes of pixel storage. This device supports " << maxSize
-                            << " bytes.";
-                ANGLE_MTL_HANDLE_ERROR(context, errorStream.str().c_str(), GL_INVALID_OPERATION);
-                return nil;
-            }
+            return nil;
         }
 
         // Special attribute slot for default attribute
