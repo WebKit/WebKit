@@ -307,6 +307,12 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
 {
     AXTRACE("AXIsolatedTree::collectNodeChangesForSubtree"_s);
     ASSERT(isMainThread());
+
+    if (!axObject.objectID().isValid()) {
+        // Bail out here, we can't build an isolated tree branch rooted at an object with no ID.
+        return;
+    }
+
     SetForScope collectingNodeChanges(m_isCollectingNodeChanges, true);
     m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnMainThread);
 
@@ -545,13 +551,14 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 
     // What is left in oldChildrenIDs are the IDs that are no longer children of axAncestor.
     // Thus, remove them from m_nodeMap and queue them to be removed from the tree.
-    for (AXID& axID : oldChildrenIDs) {
+    for (const AXID& axID : oldChildrenIDs) {
         // However, we don't want to remove subtrees from the nodemap that are part of the to-be-queued node changes (i.e those in `idsBeingChanged`).
         // This is important when a node moves to a different part of the tree rather than being deleted -- for example:
         //   1. Object 123 is slated to be a child of this object (i.e. in newChildren), and we collect node changes for it.
         //   2. Object 123 is currently a member of a subtree of some other object in oldChildrenIDs.
         //   3. Thus, we don't want to delete Object 123 from the nodemap, instead allowing it to be moved.
-        removeSubtreeFromNodeMap(axID, axAncestor);
+        if (axID.isValid())
+            removeSubtreeFromNodeMap(axID, axAncestor);
     }
     queueRemovalsAndUnresolvedChanges(oldChildrenIDs);
 
