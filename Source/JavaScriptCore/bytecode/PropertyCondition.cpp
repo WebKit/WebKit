@@ -69,6 +69,21 @@ void PropertyCondition::dump(PrintStream& out) const
     dumpInContext(out, nullptr);
 }
 
+ALWAYS_INLINE static bool nonStructurePropertyMayBecomeReadOnlyWithoutTransition(Structure* structure, UniquedStringImpl* uid)
+{
+    switch (structure->typeInfo().type()) {
+    case ArrayType:
+    case DerivedArrayType:
+        return uid == structure->vm().propertyNames->length.impl();
+
+    case RegExpObjectType:
+        return uid == structure->vm().propertyNames->lastIndex.impl();
+
+    default:
+        return false;
+    }
+}
+
 bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     Concurrency concurrency, Structure* structure, JSObject* base) const
 {
@@ -173,6 +188,10 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
                 }
                 return false;
             }
+        } else if (nonStructurePropertyMayBecomeReadOnlyWithoutTransition(structure, uid())) {
+            if (PropertyConditionInternal::verbose)
+                dataLog("Invalid because its put() override may treat ", uid(), " property as read-only.\n");
+            return false;
         }
 
         if (structure->hasPolyProto()) {
