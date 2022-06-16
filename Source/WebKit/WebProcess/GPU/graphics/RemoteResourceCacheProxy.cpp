@@ -71,7 +71,7 @@ inline static RefPtr<ShareableBitmap> createShareableBitmapFromNativeImage(Nativ
 {
     auto imageSize = image.size();
 
-    auto bitmap = ShareableBitmap::create(image.size(), { image.colorSpace() });
+    auto bitmap = ShareableBitmap::create(image.size(), { });
     if (!bitmap)
         return nullptr;
 
@@ -89,20 +89,20 @@ void RemoteResourceCacheProxy::recordImageBufferUse(WebCore::ImageBuffer& imageB
     ASSERT_UNUSED(iterator, iterator != m_imageBuffers.end());
 }
 
-void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
+bool RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 {
     auto iterator = m_nativeImages.find(image.renderingResourceIdentifier());
     if (iterator != m_nativeImages.end())
-        return;
+        return true;
 
     auto bitmap = createShareableBitmapFromNativeImage(image);
     if (!bitmap)
-        return;
+        return false;
 
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);
     if (handle.isNull())
-        return;
+        return false;
 
     handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
     m_nativeImages.add(image.renderingResourceIdentifier(), image);
@@ -113,6 +113,7 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 
     // Tell the GPU process to cache this resource.
     m_remoteRenderingBackendProxy.cacheNativeImage(handle, image.renderingResourceIdentifier());
+    return true;
 }
 
 void RemoteResourceCacheProxy::recordFontUse(Font& font)

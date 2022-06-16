@@ -394,8 +394,7 @@ bool RemoteDisplayListRecorderProxy::recordResourceUse(NativeImage& image)
         return false;
     }
 
-    m_renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image);
-    return true;
+    return m_renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image);
 }
 
 bool RemoteDisplayListRecorderProxy::recordResourceUse(ImageBuffer& imageBuffer)

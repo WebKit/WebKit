@@ -304,24 +304,6 @@ protected:
         return true;
     }
 
-    void recordNativeImageUse(WebCore::NativeImage& image)
-    {
-        if (m_remoteRenderingBackendProxy)
-            m_remoteRenderingBackendProxy->remoteResourceCacheProxy().recordNativeImageUse(image);
-    }
-
-    void recordFontUse(WebCore::Font& font)
-    {
-        if (m_remoteRenderingBackendProxy)
-            m_remoteRenderingBackendProxy->remoteResourceCacheProxy().recordFontUse(font);
-    }
-
-    void recordImageBufferUse(WebCore::ImageBuffer& imageBuffer)
-    {
-        if (m_remoteRenderingBackendProxy)
-            m_remoteRenderingBackendProxy->remoteResourceCacheProxy().recordImageBufferUse(imageBuffer);
-    }
-
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final
     {
         return WTF::makeUnique<ThreadSafeRemoteImageBufferFlusher<BackendType>>(*this);

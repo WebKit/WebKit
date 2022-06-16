@@ -196,7 +196,10 @@ void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRe
 void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     appendStateChangeItemIfNecessary();
-    recordResourceUse(image);
+    if (!recordResourceUse(image)) {
+        LOG_WITH_STREAM(DisplayLists, stream << "\nRecorder::drawNativeImage(): Failed to record use of NativeImage " << image.size());
+        return;
+    }
     recordDrawNativeImage(image.renderingResourceIdentifier(), imageSize, destRect, srcRect, options);
 }
 
@@ -208,7 +211,10 @@ void Recorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destin
             auto nativeImage = image->nativeImage();
             if (!nativeImage)
                 return;
-            recordResourceUse(*nativeImage);
+            if (!recordResourceUse(*nativeImage)) {
+                LOG_WITH_STREAM(DisplayLists, stream << "\nRecorder::drawSystemImage(): Failed to record use of NativeImage " << nativeImage->size());
+                return;
+            }
         }
     }
 #endif
@@ -218,7 +224,10 @@ void Recorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destin
 void Recorder::drawPattern(NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     appendStateChangeItemIfNecessary();
-    recordResourceUse(image);
+    if (!recordResourceUse(image)) {
+        LOG_WITH_STREAM(DisplayLists, stream << "\nRecorder::drawPattern(): Failed to record use of NativeImage " << image.size());
+        return;
+    }
     recordDrawPattern(image.renderingResourceIdentifier(), destRect, tileRect, patternTransform, phase, spacing, options);
 }
 
