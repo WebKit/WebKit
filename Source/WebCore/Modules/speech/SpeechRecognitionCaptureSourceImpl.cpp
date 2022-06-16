@@ -57,10 +57,6 @@ SpeechRecognitionCaptureSourceImpl::SpeechRecognitionCaptureSourceImpl(SpeechRec
     , m_stateUpdateCallback(WTFMove(stateUpdateCallback))
     , m_source(WTFMove(source))
 {
-    m_source->addAudioSampleObserver(*this);
-    m_source->addObserver(*this);
-    m_source->start();
-
 #if !RELEASE_LOG_DISABLED
     if (!nullLogger().get()) {
         nullLogger() = Logger::create(this);
@@ -69,6 +65,10 @@ SpeechRecognitionCaptureSourceImpl::SpeechRecognitionCaptureSourceImpl(SpeechRec
 
     m_source->setLogger(*nullLogger(), nextLogIdentifier());
 #endif
+
+    m_source->addAudioSampleObserver(*this);
+    m_source->addObserver(*this);
+    m_source->start();
 
     initializeWeakPtrFactory();
 }
