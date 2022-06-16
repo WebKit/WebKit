@@ -295,6 +295,7 @@ public:
         AXLoadComplete,
         AXNewDocumentLoadComplete,
         AXPageScrolled,
+        AXPlaceholderChanged,
         AXPositionInSetChanged,
         AXSelectedChildrenChanged,
         AXSelectedStateChanged,

@@ -421,6 +421,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXLoadComplete:
         stream << "AXLoadComplete";
         break;
+    case AXObjectCache::AXNotification::AXPlaceholderChanged:
+        stream << "AXPlaceholderChanged";
+        break;
     case AXObjectCache::AXNotification::AXMaximumValueChanged:
         stream << "AXMaximumValueChanged";
         break;

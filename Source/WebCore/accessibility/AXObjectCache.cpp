@@ -1925,6 +1925,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     else if (attrName == langAttr)
         updateIsolatedTree(get(element), AXObjectCache::AXLanguageChanged);
+    else if (attrName == placeholderAttr)
+        postNotification(element, AXPlaceholderChanged);
     else if (attrName == idAttr) {
         relationsNeedUpdate(true);
         updateIsolatedTree(get(element), AXObjectCache::AXIdAttributeChanged);
@@ -1958,6 +1960,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXLevelChanged);
     else if (attrName == aria_liveAttr)
         postNotification(element, AXLiveRegionStatusChanged);
+    else if (attrName == aria_placeholderAttr)
+        postNotification(element, AXPlaceholderChanged);
     else if (attrName == aria_valuemaxAttr)
         postNotification(element, AXMaximumValueChanged);
     else if (attrName == aria_valueminAttr)
@@ -3575,6 +3579,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXLevelChanged:
         case AXLiveRegionStatusChanged:
         case AXLiveRegionRelevantChanged:
+        case AXPlaceholderChanged:
         case AXMenuListValueChanged:
         case AXMultiSelectableStateChanged:
         case AXPressedStateChanged:
