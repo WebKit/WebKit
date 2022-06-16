@@ -55,12 +55,6 @@ SharedWorkerThread& SharedWorkerGlobalScope::thread()
     return static_cast<SharedWorkerThread&>(WorkerGlobalScope::thread());
 }
 
-void SharedWorkerGlobalScope::close()
-{
-    SCOPE_RELEASE_LOG("close:");
-    thread().stop(nullptr);
-}
-
 // https://html.spec.whatwg.org/multipage/workers.html#dom-sharedworker step 11.5
 void SharedWorkerGlobalScope::postConnectEvent(TransferredMessagePort&& transferredPort, const String& sourceOrigin)
 {

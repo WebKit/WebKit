@@ -239,6 +239,8 @@ void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallba
 
 void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
 {
+    ASSERT(isMainThread());
+
     // Mutex protection is necessary to ensure that m_workerGlobalScope isn't changed by
     // WorkerThread::workerThread() while we're accessing it. Note also that stop() can
     // be called before m_workerGlobalScope is fully created.
