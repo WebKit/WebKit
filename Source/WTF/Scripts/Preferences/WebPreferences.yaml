@@ -231,6 +231,18 @@ AlternateFormControlDesignEnabled:
       default: false
     WebCore:
       default: false
+      
+AlternateFullScreenControlDesignEnabled:
+  type: bool
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      default: false
+    WebCore:
+      default: false
 
 AnimatedImageAsyncDecodingEnabled:
   type: bool
