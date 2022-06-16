@@ -262,19 +262,7 @@ void LocalAuthenticator::makeCredential()
             ASSERT(rawId);
             return excludeCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength()));
         })) {
-            // Obtain consent per Step 3.1
-            auto callback = [weakThis = WeakPtr { *this }] (LocalAuthenticatorPolicy policy) {
-                RELEASE_ASSERT(RunLoop::isMain());
-                if (!weakThis)
-                    return;
-
-                if (policy == LocalAuthenticatorPolicy::Allow)
-                    weakThis->receiveException({ InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
-                else
-                    weakThis->receiveException({ NotAllowedError, "This request has been cancelled by the user."_s });
-            };
-            // Similar to below, consent has already been given.
-            observer()->decidePolicyForLocalAuthenticator(WTFMove(callback));
+            receiveException({ InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
             return;
         }
     }
