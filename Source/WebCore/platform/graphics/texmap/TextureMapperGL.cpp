@@ -469,14 +469,11 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
 
 void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges)
 {
-    bool useRect = flags & ShouldUseARBTextureRect;
     bool useAntialiasing = m_enableEdgeDistanceAntialiasing
         && exposedEdges == AllEdges
         && !modelViewMatrix.mapQuad(targetRect).isRectilinear();
 
     TextureMapperShaderProgram::Options options;
-    if (useRect)
-        options.add(TextureMapperShaderProgram::Rect);
     if (opacity < 1)
         options.add(TextureMapperShaderProgram::Opacity);
     if (useAntialiasing) {
@@ -534,24 +531,19 @@ static void prepareTransformationMatrixWithFlags(TransformationMatrix& patternTr
         patternTransform.rotate(-270);
         patternTransform.translate(0, -1);
     }
-    if (flags & TextureMapperGL::ShouldFlipTexture)
+    if (flags & TextureMapperGL::ShouldFlipTexture) {
         patternTransform.flipY();
-    if (flags & TextureMapperGL::ShouldUseARBTextureRect)
-        patternTransform.scaleNonUniform(size.width(), size.height());
-    if (flags & TextureMapperGL::ShouldFlipTexture)
         patternTransform.translate(0, -1);
+    }
 }
 
 void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, std::optional<GLuint> alphaPlane, unsigned exposedEdges)
 {
-    bool useRect = flags & ShouldUseARBTextureRect;
     bool useAntialiasing = m_enableEdgeDistanceAntialiasing
         && exposedEdges == AllEdges
         && !modelViewMatrix.mapQuad(targetRect).isRectilinear();
 
     TextureMapperShaderProgram::Options options = alphaPlane ? TextureMapperShaderProgram::TextureYUVA : TextureMapperShaderProgram::TextureYUV;
-    if (useRect)
-        options.add(TextureMapperShaderProgram::Rect);
     if (opacity < 1)
         options.add(TextureMapperShaderProgram::Opacity);
     if (useAntialiasing) {
@@ -607,15 +599,12 @@ void TextureMapperGL::drawTexturePlanarYUV(const std::array<GLuint, 3>& textures
 
 void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& textures, bool uvReversed, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges)
 {
-    bool useRect = flags & ShouldUseARBTextureRect;
     bool useAntialiasing = m_enableEdgeDistanceAntialiasing
         && exposedEdges == AllEdges
         && !modelViewMatrix.mapQuad(targetRect).isRectilinear();
 
     TextureMapperShaderProgram::Options options = uvReversed ?
         TextureMapperShaderProgram::TextureNV21 : TextureMapperShaderProgram::TextureNV12;
-    if (useRect)
-        options.add(TextureMapperShaderProgram::Rect);
     if (opacity < 1)
         options.add(TextureMapperShaderProgram::Opacity);
     if (useAntialiasing) {
@@ -664,14 +653,11 @@ void TextureMapperGL::drawTextureSemiPlanarYUV(const std::array<GLuint, 2>& text
 
 void TextureMapperGL::drawTexturePackedYUV(GLuint texture, const std::array<GLfloat, 16>& yuvToRgbMatrix, Flags flags, const IntSize& textureSize, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity, unsigned exposedEdges)
 {
-    bool useRect = flags & ShouldUseARBTextureRect;
     bool useAntialiasing = m_enableEdgeDistanceAntialiasing
         && exposedEdges == AllEdges
         && !modelViewMatrix.mapQuad(targetRect).isRectilinear();
 
     TextureMapperShaderProgram::Options options = TextureMapperShaderProgram::TexturePackedYUV;
-    if (useRect)
-        options.add(TextureMapperShaderProgram::Rect);
     if (opacity < 1)
         options.add(TextureMapperShaderProgram::Opacity);
     if (useAntialiasing) {
@@ -827,11 +813,9 @@ void TextureMapperGL::drawTexturedQuadWithProgram(TextureMapperShaderProgram& pr
     glUseProgram(program.programID());
 
     bool repeatWrap = wrapMode() == RepeatWrap && m_contextAttributes.supportsNPOTTextures;
-    GLenum target;
+    GLenum target = GLenum(GL_TEXTURE_2D);
     if (flags & ShouldUseExternalOESTextureRect)
         target = GLenum(GL_TEXTURE_EXTERNAL_OES);
-    else
-        target = flags & ShouldUseARBTextureRect ? GLenum(GL_TEXTURE_RECTANGLE_ARB) : GLenum(GL_TEXTURE_2D);
 
     for (unsigned i = 0; i < texturesAndSamplers.size(); ++i) {
         auto& textureAndSampler = texturesAndSamplers[i];

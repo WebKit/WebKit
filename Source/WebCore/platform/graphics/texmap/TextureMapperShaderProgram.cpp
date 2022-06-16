@@ -140,15 +140,6 @@ static const char* vertexTemplateCommon =
         }
     );
 
-#define RECT_TEXTURE_DIRECTIVE \
-    GLSL_DIRECTIVE(ifdef ENABLE_Rect) \
-        GLSL_DIRECTIVE(define SamplerType sampler2DRect) \
-        GLSL_DIRECTIVE(define SamplerFunction texture2DRect) \
-    GLSL_DIRECTIVE(else) \
-        GLSL_DIRECTIVE(define SamplerType sampler2D) \
-        GLSL_DIRECTIVE(define SamplerFunction texture2D) \
-    GLSL_DIRECTIVE(endif)
-
 #define ANTIALIASING_TEX_COORD_DIRECTIVE \
     GLSL_DIRECTIVE(if defined(ENABLE_Antialiasing) && defined(ENABLE_Texture)) \
         GLSL_DIRECTIVE(define transformTexCoord fragmentTransformTexCoord) \
@@ -185,7 +176,6 @@ static const char* vertexTemplateCommon =
 // directives scope: the first one applies to the matrices variables and the next one to the
 // rest of them. The precision is only used in GLES.
 static const char* fragmentTemplateHeaderCommon =
-    RECT_TEXTURE_DIRECTIVE
     ANTIALIASING_TEX_COORD_DIRECTIVE
     BLUR_CONSTANTS
     ROUNDED_RECT_CONSTANTS
@@ -229,11 +219,11 @@ static const char* fragmentTemplateGE320Vars =
 
 static const char* fragmentTemplateCommon =
     STRINGIFY(
-        uniform SamplerType s_sampler;
-        uniform SamplerType s_samplerY;
-        uniform SamplerType s_samplerU;
-        uniform SamplerType s_samplerV;
-        uniform SamplerType s_samplerA;
+        uniform sampler2D s_sampler;
+        uniform sampler2D s_samplerY;
+        uniform sampler2D s_samplerU;
+        uniform sampler2D s_samplerV;
+        uniform sampler2D s_samplerA;
         uniform sampler2D s_contentTexture;
         uniform SamplerExternalOESType s_externalOESTexture;
         uniform float u_opacity;
@@ -263,7 +253,7 @@ static const char* fragmentTemplateCommon =
 
         void applyManualRepeat(inout vec2 pos) { pos = fract(pos); }
 
-        void applyTextureRGB(inout vec4 color, vec2 texCoord) { color = u_textureColorSpaceMatrix * SamplerFunction(s_sampler, texCoord); }
+        void applyTextureRGB(inout vec4 color, vec2 texCoord) { color = u_textureColorSpaceMatrix * texture2D(s_sampler, texCoord); }
 
         void applyPremultiply(inout vec4 color) { color = vec4(color.rgb * color.a, color.a); }
 
@@ -274,38 +264,38 @@ static const char* fragmentTemplateCommon =
         }
         void applyTextureYUV(inout vec4 color, vec2 texCoord)
         {
-            float y = SamplerFunction(s_samplerY, texCoord).r;
-            float u = SamplerFunction(s_samplerU, texCoord).r;
-            float v = SamplerFunction(s_samplerV, texCoord).r;
+            float y = texture2D(s_samplerY, texCoord).r;
+            float u = texture2D(s_samplerU, texCoord).r;
+            float v = texture2D(s_samplerV, texCoord).r;
             vec4 data = vec4(yuvToRgb(y, u, v), 1.0);
             color = u_textureColorSpaceMatrix * data;
         }
         void applyTextureYUVA(inout vec4 color, vec2 texCoord)
         {
-            float y = SamplerFunction(s_samplerY, texCoord).r;
-            float u = SamplerFunction(s_samplerU, texCoord).r;
-            float v = SamplerFunction(s_samplerV, texCoord).r;
-            float a = SamplerFunction(s_samplerA, texCoord).r;
+            float y = texture2D(s_samplerY, texCoord).r;
+            float u = texture2D(s_samplerU, texCoord).r;
+            float v = texture2D(s_samplerV, texCoord).r;
+            float a = texture2D(s_samplerA, texCoord).r;
             vec4 data = vec4(yuvToRgb(y, u, v), a);
             color = u_textureColorSpaceMatrix * data;
         }
         void applyTextureNV12(inout vec4 color, vec2 texCoord)
         {
-            float y = SamplerFunction(s_samplerY, texCoord).r;
-            vec2 uv = SamplerFunction(s_samplerU, texCoord).rg;
+            float y = texture2D(s_samplerY, texCoord).r;
+            vec2 uv = texture2D(s_samplerU, texCoord).rg;
             vec4 data = vec4(yuvToRgb(y, uv.x, uv.y), 1.0);
             color = u_textureColorSpaceMatrix * data;
         }
         void applyTextureNV21(inout vec4 color, vec2 texCoord)
         {
-            float y = SamplerFunction(s_samplerY, texCoord).r;
-            vec2 uv = SamplerFunction(s_samplerU, texCoord).gr;
+            float y = texture2D(s_samplerY, texCoord).r;
+            vec2 uv = texture2D(s_samplerU, texCoord).gr;
             vec4 data = vec4(yuvToRgb(y, uv.x, uv.y), 1.0);
             color = u_textureColorSpaceMatrix * data;
         }
         void applyTexturePackedYUV(inout vec4 color, vec2 texCoord)
         {
-            vec4 data = SamplerFunction(s_sampler, texCoord);
+            vec4 data = texture2D(s_sampler, texCoord);
             color = u_textureColorSpaceMatrix * vec4(yuvToRgb(data.b, data.g, data.r), data.a);
         }
         void applyOpacity(inout vec4 color) { color *= u_opacity; }
@@ -373,13 +363,13 @@ static const char* fragmentTemplateCommon =
         vec4 sampleColorAtRadius(float radius, vec2 texCoord)
         {
             vec2 coord = texCoord + radius * u_blurRadius;
-            return SamplerFunction(s_sampler, coord);
+            return texture2D(s_sampler, coord);
         }
 
         float sampleAlphaAtRadius(float radius, vec2 texCoord)
         {
             vec2 coord = texCoord - u_shadowOffset + radius * u_blurRadius;
-            return SamplerFunction(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
+            return texture2D(s_sampler, coord).a * float(coord.x > 0. && coord.y > 0. && coord.x < 1. && coord.y < 1.);
         }
 
         void applyBlurFilter(inout vec4 color, vec2 texCoord)
@@ -533,7 +523,6 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
     SET_APPLIER_FROM_OPTIONS(TextureNV12);
     SET_APPLIER_FROM_OPTIONS(TextureNV21);
     SET_APPLIER_FROM_OPTIONS(TexturePackedYUV);
-    SET_APPLIER_FROM_OPTIONS(Rect);
     SET_APPLIER_FROM_OPTIONS(SolidColor);
     SET_APPLIER_FROM_OPTIONS(Opacity);
     SET_APPLIER_FROM_OPTIONS(Antialiasing);
