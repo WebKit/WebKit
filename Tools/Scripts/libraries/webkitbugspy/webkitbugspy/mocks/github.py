@@ -285,6 +285,13 @@ class GitHub(Base, mocks.Requests):
         if match and method == 'GET':
             return self._user(url, match.group('username'))
 
+        match = re.match(r'{}/user$'.format(self.hosts[1]), stripped_url)
+        if match and method == 'GET':
+            user = self.users.get(auth.username) if auth else None
+            if not user:
+                return mocks.Response.create404(url=url)
+            return self._user(url, user.username)
+
         match = re.match(r'{}/issues/(?P<id>\d+)$'.format(self.api_remote), stripped_url)
         if match and method in ('GET', 'PATCH'):
             return self._issue(url, int(match.group('id')), data=json if method == 'PATCH' else None)
