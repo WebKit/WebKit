@@ -402,7 +402,8 @@ void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* gl
 
 void DrawGlyphsRecorder::drawNativeText(CTFontRef font, CGFloat fontSize, CTLineRef line, CGRect lineRect)
 {
-    GraphicsContextStateSaver saver(m_owner);
+    GraphicsContextStateSaver ownerSaver(m_owner);
+    GraphicsContextStateSaver internalContextSaver(m_internalContext.get());
 
     m_owner.translate(lineRect.origin.x, lineRect.origin.y + lineRect.size.height);
     m_owner.scale(FloatSize(1, -1));
