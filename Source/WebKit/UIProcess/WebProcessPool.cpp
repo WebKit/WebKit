@@ -682,15 +682,17 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 #if PLATFORM(MAC)
 static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
-    auto screenProperties = WebCore::collectScreenProperties();
-    for (auto& processPool : WebProcessPool::allProcessPools()) {
-        processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
-        processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
-        if (auto gpuProcess = processPool->gpuProcess()) {
-            gpuProcess->displayConfigurationChanged(display, flags);
-            gpuProcess->setScreenProperties(screenProperties);
+    RunLoop::main().dispatch([display, flags]() {
+        auto screenProperties = WebCore::collectScreenProperties();
+        for (auto& processPool : WebProcessPool::allProcessPools()) {
+            processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+            processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
+            if (auto gpuProcess = processPool->gpuProcess()) {
+                gpuProcess->displayConfigurationChanged(display, flags);
+                gpuProcess->setScreenProperties(screenProperties);
+            }
         }
-    }
+    });
 }
 
 static void registerDisplayConfigurationCallback()
