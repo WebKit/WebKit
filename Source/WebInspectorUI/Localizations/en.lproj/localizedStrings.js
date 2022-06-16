@@ -799,7 +799,6 @@ localizedStrings["ICO"] = "ICO";
 localizedStrings["IP"] = "IP";
 localizedStrings["IP Address"] = "IP Address";
 localizedStrings["ITML Context"] = "ITML Context";
-localizedStrings["ITP Debug Mode"] = "ITP Debug Mode";
 localizedStrings["Identifier"] = "Identifier";
 localizedStrings["Identity"] = "Identity";
 /* Section title for font identity information. */
@@ -841,6 +840,7 @@ localizedStrings["Inset @ Box Shadow Editor"] = "Inset";
 localizedStrings["Inspector Bootstrap Script"] = "Inspector Bootstrap Script";
 localizedStrings["Inspector Style Sheet"] = "Inspector Style Sheet";
 localizedStrings["Instances"] = "Instances";
+localizedStrings["Intelligent Tracking Prevention Debug Mode"] = "Intelligent Tracking Prevention Debug Mode";
 localizedStrings["Invalid"] = "Invalid";
 localizedStrings["Inverted"] = "Inverted";
 localizedStrings["Invisible characters"] = "Invisible characters";
