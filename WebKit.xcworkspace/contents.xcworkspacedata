@@ -32,10 +32,13 @@
       location = "group:Source/WebKit/WebKit.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Tools/DumpRenderTree/DumpRenderTree.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Source/ThirdParty/gtest/xcode/gtest.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Tools/DumpRenderTree/DumpRenderTree.xcodeproj">
+      location = "group:Tools/lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Tools/MiniBrowser/MiniBrowser.xcodeproj">
