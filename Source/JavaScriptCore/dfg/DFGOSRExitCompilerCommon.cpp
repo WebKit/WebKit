@@ -214,7 +214,7 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
         case InlineCallFrame::GetterCall:
         case InlineCallFrame::SetterCall: {
             StructureStubInfo* stubInfo = baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
-            RELEASE_ASSERT(stubInfo);
+            RELEASE_ASSERT(stubInfo, callInstruction.opcodeID());
             jumpTarget = stubInfo->doneLocation.retagged<JSEntryPtrTag>();
             break;
         }

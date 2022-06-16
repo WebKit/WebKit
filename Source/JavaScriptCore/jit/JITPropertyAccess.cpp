@@ -62,41 +62,44 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
 
+    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
+    JITGetByValGenerator gen(
+        nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
+        baseJSR, propertyJSR, resultJSR, stubInfoGPR);
+    if (isOperandConstantInt(property))
+        stubInfo->propertyIsInt32 = true;
+    gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
+
     if (bytecode.metadata(m_profiledCodeBlock).m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers()) {
+        stubInfo->tookSlowPath = true;
+
         auto notCell = branchIfNotCell(baseJSR);
         emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
         notCell.link(this);
         loadGlobalObject(scratchGPR);
-        callOperationWithProfile(bytecode, operationGetByVal, dst, scratchGPR, baseJSR, propertyJSR);
+        callOperationWithResult(operationGetByVal, resultJSR, scratchGPR, baseJSR, propertyJSR);
+
+        gen.generateEmptyPath(*this);
     } else {
         emitJumpSlowCaseIfNotJSCell(baseJSR, base);
         emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
 
-        auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-        JITGetByValGenerator gen(
-            nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
-            baseJSR, propertyJSR, resultJSR, stubInfoGPR);
-        if (isOperandConstantInt(property))
-            stubInfo->propertyIsInt32 = true;
-        gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
-
         gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
-        resetSP(); // We might OSR exit here, so we need to conservatively reset SP
-
-        addSlowCase();
-        m_getByVals.append(gen);
-
-        setFastPathResumePoint();
-        emitValueProfilingSite(bytecode, resultJSR);
-        emitPutVirtualRegister(dst, resultJSR);
     }
+
+    addSlowCase();
+    m_getByVals.append(gen);
+
+    resetSP(); // We might OSR exit here, so we need to conservatively reset SP
+    setFastPathResumePoint();
+    emitValueProfilingSite(bytecode, resultJSR);
+    emitPutVirtualRegister(dst, resultJSR);
 }
 
 template<typename OpcodeType>
 void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEntry>::iterator& iter)
 {
-    if (!hasAnySlowCases(iter))
-        return;
+    ASSERT(hasAnySlowCases(iter));
 
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -109,11 +112,13 @@ void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEn
     Label coldPathBegin = label();
     linkAllSlowCases(iter);
 
-    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-    loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
-    materializePointerIntoMetadata(bytecode, OpcodeType::Metadata::offsetOfArrayProfile(), profileGPR);
+    if (!gen.m_unlinkedStubInfo->tookSlowPath) {
+        move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+        loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
+        materializePointerIntoMetadata(bytecode, OpcodeType::Metadata::offsetOfArrayProfile(), profileGPR);
 
-    emitNakedNearCall(vm().getCTIStub(slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
+        emitNakedNearCall(vm().getCTIStub(slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator).retaggedCode<NoPtrTag>());
+    }
 
     gen.reportSlowPathCall(coldPathBegin, Call());
 }

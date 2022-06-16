@@ -53,8 +53,8 @@ class JITCompiler;
 
 struct UnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     CodeOrigin codeOrigin;
-    CallSiteIndex callSiteIndex;
     RegisterSet usedRegisters;
+    CallSiteIndex callSiteIndex;
     GPRReg m_baseGPR { InvalidGPRReg };
     GPRReg m_valueGPR { InvalidGPRReg };
     GPRReg m_extraGPR { InvalidGPRReg };
