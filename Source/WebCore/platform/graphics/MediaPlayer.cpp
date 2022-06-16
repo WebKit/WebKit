@@ -1089,6 +1089,14 @@ RefPtr<VideoFrame> MediaPlayer::videoFrameForCurrentTime()
     return m_private->videoFrameForCurrentTime();
 }
 
+
+#if PLATFORM(COCOA) && !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+void MediaPlayer::willBeAskedToPaintGL()
+{
+    m_private->willBeAskedToPaintGL();
+}
+#endif
+
 RefPtr<NativeImage> MediaPlayer::nativeImageForCurrentTime()
 {
     return m_private->nativeImageForCurrentTime();
