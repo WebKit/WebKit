@@ -57,15 +57,15 @@ template<typename T, typename = void> struct ArgumentCoder {
     }
 
     template<typename Decoder>
-    static std::optional<T> decode(Decoder& decoder)
+    static auto decode(Decoder& decoder)
     {
         if constexpr(HasModernDecoderV<T>)
             return T::decode(decoder);
         else {
             T t;
             if (T::decode(decoder, t))
-                return t;
-            return std::nullopt;
+                return std::optional<T> { WTFMove(t) };
+            return std::optional<T> { };
         }
     }
 
