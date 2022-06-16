@@ -43,7 +43,6 @@ namespace WebCore {
     macro(textureColorSpaceMatrix) \
     macro(opacity) \
     macro(color) \
-    macro(expandedQuadEdgesInScreenSpace) \
     macro(yuvToRgb) \
     macro(filterAmount) \
     macro(gaussianKernel) \
