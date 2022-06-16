@@ -200,7 +200,7 @@ static Vector<AuthenticatorTransport> transports()
 {
     Vector<WebCore::AuthenticatorTransport> transports = { WebCore::AuthenticatorTransport::Internal };
     if (shouldUpdateQuery())
-        transports.append(WebCore::AuthenticatorTransport::Cable);
+        transports.append(WebCore::AuthenticatorTransport::Hybrid);
     return transports;
 }
 

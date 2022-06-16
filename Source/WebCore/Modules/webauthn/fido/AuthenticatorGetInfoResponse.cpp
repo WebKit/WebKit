@@ -100,6 +100,8 @@ static String toString(WebCore::AuthenticatorTransport transport)
         break;
     case WebCore::AuthenticatorTransport::Cable:
         return WebCore::authenticatorTransportCable;
+    case WebCore::AuthenticatorTransport::Hybrid:
+        return WebCore::authenticatorTransportHybrid;
     default:
         break;
     }

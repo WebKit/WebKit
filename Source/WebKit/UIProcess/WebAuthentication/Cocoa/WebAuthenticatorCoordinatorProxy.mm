@@ -157,6 +157,9 @@ static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(Public
             case AuthenticatorTransport::Cable:
                 transportString = @"cable";
                 break;
+            case AuthenticatorTransport::Hybrid:
+                transportString = @"hybrid";
+                break;
             }
 
             if (transportString)

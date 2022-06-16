@@ -95,6 +95,7 @@ constexpr auto authenticatorTransportNfc = "nfc"_s;
 constexpr auto authenticatorTransportBle = "ble"_s;
 constexpr auto authenticatorTransportInternal = "internal"_s;
 constexpr auto authenticatorTransportCable = "cable"_s;
+constexpr auto authenticatorTransportHybrid = "hybrid"_s;
 
 } // namespace WebCore
 
