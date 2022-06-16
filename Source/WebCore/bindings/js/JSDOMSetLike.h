@@ -33,6 +33,9 @@
 
 namespace WebCore {
 
+// FIXME: Optimize / rework maplike<> and setlike<> declarations.
+// A few ideas in https://bugs.webkit.org/show_bug.cgi?id=241639.
+
 WEBCORE_EXPORT std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingSet(JSC::JSGlobalObject&, JSC::JSObject& setLike);
 WEBCORE_EXPORT JSC::JSValue forwardForEachCallToBackingSet(JSDOMGlobalObject&, JSC::CallFrame&, JSC::JSObject& setLike);
 WEBCORE_EXPORT JSC::JSValue forwardAttributeGetterToBackingSet(JSC::JSGlobalObject&, JSC::JSObject&, const JSC::Identifier&);
@@ -92,28 +95,28 @@ template<typename WrapperClass>
 JSC::JSValue forwardSizeToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& setLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardAttributeGetterToBackingSet(lexicalGlobalObject, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->size);
+    return forwardAttributeGetterToBackingSet(lexicalGlobalObject, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().sizePrivateName());
 }
 
 template<typename WrapperClass>
 JSC::JSValue forwardEntriesToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().entriesPublicName());
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().entriesPrivateName());
 }
 
 template<typename WrapperClass>
 JSC::JSValue forwardKeysToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().keysPublicName());
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().keysPrivateName());
 }
 
 template<typename WrapperClass>
 JSC::JSValue forwardValuesToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().valuesPublicName());
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().valuesPrivateName());
 }
 
 template<typename WrapperClass, typename Callback>
@@ -129,14 +132,14 @@ JSC::JSValue forwardClearToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC
     setLike.wrapped().clearFromSetLike();
 
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->clear);
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().clearPrivateName());
 }
 
 template<typename WrapperClass, typename ItemType>
 JSC::JSValue forwardHasToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& setLike, ItemType&&)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().hasPublicName());
+    return forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().hasPrivateName());
 }
 
 template<typename WrapperClass, typename ItemType>
@@ -145,7 +148,7 @@ JSC::JSValue forwardAddToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::
     setLike.wrapped().addToSetLike(std::forward<ItemType>(item));
 
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->add);
+    forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().addPrivateName());
     return &setLike;
 }
 
@@ -156,7 +159,7 @@ JSC::JSValue forwardDeleteToSetLike(JSC::JSGlobalObject& lexicalGlobalObject, JS
     UNUSED_PARAM(isDeleted);
 
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto result = forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->deleteKeyword);
+    auto result = forwardFunctionCallToBackingSet(lexicalGlobalObject, callFrame, getAndInitializeBackingSet(lexicalGlobalObject, setLike), vm.propertyNames->builtinNames().deletePrivateName());
     ASSERT_UNUSED(result, result.asBoolean() == isDeleted);
     return result;
 }
