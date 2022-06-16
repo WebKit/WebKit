@@ -356,7 +356,8 @@ RefPtr<Node> TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoin
         return nullptr;
 
     HitTestResult result(absolutePoint.value());
-    documentScope().hitTest(HitTestRequest(), result);
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Programmatic };
+    documentScope().hitTest(hitType, result);
     if (localPoint)
         *localPoint = result.localPoint();
     return result.innerNode();

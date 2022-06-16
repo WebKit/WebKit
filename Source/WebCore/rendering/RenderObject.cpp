@@ -466,6 +466,9 @@ bool RenderObject::scrollRectToVisible(const LayoutRect& absoluteRect, bool insi
     if (options.revealMode == SelectionRevealMode::DoNotReveal)
         return false;
 
+    if (is<Element>(node()) && downcast<Element>(*node()).isSkippedContent())
+        return false;
+
     RenderLayer* enclosingLayer = this->enclosingLayer();
     if (!enclosingLayer)
         return false;

@@ -457,6 +457,16 @@ void TextIterator::advance()
             return;
     }
 
+    auto isSkippedContentOrText = [&]() {
+        if (is<Element>(m_node))
+            return downcast<Element>(m_node)->isSkippedContent();
+        
+        if (m_node->isTextNode())
+            return m_node->parentElement() ? m_node->parentElement()->isSkippedContent(): false;
+
+        return false;
+    };
+
     while (m_node && m_node != m_pastEndNode) {
         // if the range ends at offset 0 of an element, represent the
         // position, but not the content, of that element e.g. if the
@@ -473,7 +483,9 @@ void TextIterator::advance()
             if (!renderer) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*m_node);
-            } else {
+            } else if (is<Element>(m_node) && downcast<Element>(m_node)->shouldSkipContent()) {
+                m_handledChildren = true;
+            } else if (!isSkippedContentOrText()) {
                 // handle current node according to its type
                 if (renderer->isText() && m_node->isTextNode())
                     m_handledNode = handleTextNode();

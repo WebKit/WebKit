@@ -64,7 +64,7 @@ public:
 private:
     ResizeObservation(Element&, ResizeObserverBoxOptions);
 
-    BoxSizes computeObservedSizes() const;
+    std::optional<BoxSizes> computeObservedSizes() const;
     LayoutPoint computeTargetLocation() const;
 
     WeakPtr<Element> m_target;

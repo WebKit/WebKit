@@ -180,6 +180,8 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
         return true;
     if (element.renderOrDisplayContentsStyle())
         return true;
+    if (newStyle.contentVisibility() != ContentVisibility::Visible)
+        return true;
     if (element.rendererIsNeeded(newStyle))
         return true;
     return false;

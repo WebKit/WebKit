@@ -42,6 +42,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     void* typedOMData[2];
 #endif
     void* resizeObserverData;
+    void* contentVisibilityData;
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
 };
 

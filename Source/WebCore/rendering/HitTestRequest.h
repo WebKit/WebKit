@@ -50,6 +50,7 @@ public:
         // When using list-based testing, continue hit testing even after a hit has been found.
         IncludeAllElementsUnderPoint = 1 << 16,
         PenEvent = 1 << 17,
+        Programmatic = 1 << 18,
     };
 
     HitTestRequest(OptionSet<Type> type = { Type::ReadOnly, Type::Active, Type::DisallowUserAgentShadowContent })
@@ -77,6 +78,7 @@ public:
     bool isChildFrameHitTest() const { return m_type.contains(Type::ChildFrameHitTest); }
     bool resultIsElementList() const { return m_type.contains(Type::CollectMultipleElements); }
     bool includesAllElementsUnderPoint() const { return m_type.contains(Type::IncludeAllElementsUnderPoint); }
+    bool isProgrammatic() const { return m_type.contains(Type::Programmatic); }
 
     // Convenience functions
     bool touchMove() const { return move() && touchEvent(); }

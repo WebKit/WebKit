@@ -51,24 +51,26 @@ void ResizeObservation::updateObservationSize(const BoxSizes& boxSizes)
     m_lastObservationSizes = boxSizes;
 }
 
-auto ResizeObservation::computeObservedSizes() const -> BoxSizes
+std::optional<ResizeObservation::BoxSizes> ResizeObservation::computeObservedSizes() const
 {
     if (m_target->isSVGElement()) {
         if (auto svgRect = downcast<SVGElement>(*m_target).getBoundingBox()) {
             auto size = LayoutSize(svgRect->width(), svgRect->height());
-            return { size, size, size };
+            return BoxSizes { size, size, size };
         }
     }
     auto* box = m_target->renderBox();
     if (box) {
-        return {
+        if (m_target->isSkippedContent())
+            return std::nullopt;
+        return BoxSizes {
             adjustLayoutSizeForAbsoluteZoom(box->contentSize(), *box),
             adjustLayoutSizeForAbsoluteZoom(box->contentLogicalSize(), *box),
             adjustLayoutSizeForAbsoluteZoom(box->borderBoxLogicalSize(), *box)
         };
     }
 
-    return { };
+    return BoxSizes { };
 }
 
 LayoutPoint ResizeObservation::computeTargetLocation() const
@@ -104,15 +106,17 @@ FloatSize ResizeObservation::snappedContentBoxSize() const
 std::optional<ResizeObservation::BoxSizes> ResizeObservation::elementSizeChanged() const
 {
     auto currentSizes = computeObservedSizes();
+    if (!currentSizes)
+        return currentSizes;
 
     switch (m_observedBox) {
     case ResizeObserverBoxOptions::BorderBox:
-        if (m_lastObservationSizes.borderBoxLogicalSize != currentSizes.borderBoxLogicalSize)
-            return currentSizes;
+        if (m_lastObservationSizes.borderBoxLogicalSize != currentSizes->borderBoxLogicalSize)
+            return *currentSizes;
         break;
     case ResizeObserverBoxOptions::ContentBox:
-        if (m_lastObservationSizes.contentBoxLogicalSize != currentSizes.contentBoxLogicalSize)
-            return currentSizes;
+        if (m_lastObservationSizes.contentBoxLogicalSize != currentSizes->contentBoxLogicalSize)
+            return *currentSizes;
         break;
     }
 

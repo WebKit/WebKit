@@ -331,6 +331,8 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         renderingParent().didCreateOrDestroyChildRenderer = true;
     }
 
+    element.updateContentVisibility(elementUpdateStyle.contentVisibility());
+
     bool hasDisplayContents = elementUpdate.style->display() == DisplayType::Contents;
     if (hasDisplayContents)
         element.storeDisplayContentsStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));

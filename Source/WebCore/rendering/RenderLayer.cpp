@@ -1613,6 +1613,9 @@ void RenderLayer::updateDescendantDependentFlags()
 
 bool RenderLayer::computeHasVisibleContent() const
 {
+    if (renderer().element() && renderer().element()->isSkippedContent())
+        return false;
+
     if (renderer().style().visibility() == Visibility::Visible)
         return true;
 
@@ -3638,7 +3641,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     if (layerIterator.begin() == layerIterator.end())
         return;
 
-    if (!hasSelfPaintingLayerDescendant())
+    if (!hasSelfPaintingLayerDescendant() || renderer().shouldSkipContent())
         return;
 
 #if ASSERT_ENABLED
@@ -4118,6 +4121,9 @@ Vector<RenderLayer*> RenderLayer::topLayerRenderLayers(RenderView& renderView)
     Vector<RenderLayer*> layers;
     auto topLayerElements = renderView.document().topLayerElements();
     for (auto& element : topLayerElements) {
+        if (element->isSkippedContent())
+            continue;
+
         auto* renderer = element->renderer();
         if (!renderer)
             continue;
@@ -4533,6 +4539,9 @@ RenderLayer* RenderLayer::hitTestList(LayerList layerIterator, RenderLayer* root
         return nullptr;
 
     if (!hasSelfPaintingLayerDescendant())
+        return nullptr;
+
+    if (!request.isProgrammatic() && renderer().shouldSkipContent())
         return nullptr;
 
     RenderLayer* resultLayer = nullptr;

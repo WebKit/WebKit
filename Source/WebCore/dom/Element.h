@@ -95,6 +95,12 @@ struct ShadowRootInit;
 
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element>>>;
 
+struct ContentVisibilityData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    bool isSkippedContent { false };
+    ContentVisibility contentVisibility;
+};
+
 namespace Style {
 class Resolver;
 enum class Change : uint8_t;
@@ -681,6 +687,12 @@ public:
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
     ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
 
+    ContentVisibilityData& ensureContentVisibilityData();
+    ContentVisibilityData* contentVisibilityData() const;
+    void updateContentVisibility(ContentVisibility newContentVisibility);
+    bool isSkippedContent() const;
+    bool shouldSkipContent() const;
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 
@@ -705,6 +717,9 @@ protected:
 #endif
 
     void updateLabel(TreeScope&, const AtomString& oldForAttributeValue, const AtomString& newForAttributeValue);
+
+    void updateContentVisibilityData(bool shouldSkip, ContentVisibility);
+    void updateDescendantTopLayerElements(ContentVisibility);
 
 private:
     Frame* documentFrameWithNonNullView() const;

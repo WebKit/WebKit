@@ -2463,4 +2463,9 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
     return { };
 }
 
+bool RenderElement::shouldSkipContent() const
+{
+    return element() && element()->shouldSkipContent();
+}
+
 }

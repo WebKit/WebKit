@@ -99,6 +99,9 @@ public:
     const AtomString& nonce() const { return m_nonce; }
     void setNonce(const AtomString& value) { m_nonce = value; }
 
+    ContentVisibilityData* contentVisibilityData() const { return m_contentVisibilityData.get(); }
+    void setContentVisibilityData(std::unique_ptr<ContentVisibilityData>&& data) { m_contentVisibilityData = WTFMove(data); }
+
 #if ENABLE(CSS_TYPED_OM)
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
     void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTFMove(map); }
@@ -149,6 +152,8 @@ public:
             result.add(UseType::PartNames);
         if (m_nonce)
             result.add(UseType::Nonce);
+        if (m_ContentVisibilityData)
+            result.add(UseType::ContentVisibility);
         if (!m_explicitlySetAttrElementsMap.isEmpty())
             result.add(UseType::ExplicitlySetAttrElementsMap);
         return result;
@@ -168,6 +173,8 @@ private:
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
 
     std::unique_ptr<ResizeObserverData> m_resizeObserverData;
+
+    std::unique_ptr<ContentVisibilityData> m_contentVisibilityData;
 
     Vector<std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 

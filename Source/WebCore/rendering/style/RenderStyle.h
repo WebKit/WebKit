@@ -538,10 +538,13 @@ public:
     bool hasAspectRatio() const { return aspectRatioType() == AspectRatioType::Ratio || aspectRatioType() == AspectRatioType::AutoAndRatio; }
     OptionSet<Containment> contain() const { return m_rareNonInheritedData->contain; }
     OptionSet<Containment> effectiveContainment() const { return m_rareNonInheritedData->effectiveContainment(); }
-    bool containsLayout() const { return effectiveContainment().contains(Containment::Layout); }
-    bool containsSize() const { return effectiveContainment().contains(Containment::Size); }
-    bool containsStyle() const { return effectiveContainment().contains(Containment::Style); }
-    bool containsPaint() const { return effectiveContainment().contains(Containment::Paint); }
+    bool containsLayout() const { return effectiveContainment().contains(Containment::Layout) || contentVisibility() != ContentVisibility::Visible; }
+    bool containsSize() const { return effectiveContainment().contains(Containment::Size) || contentVisibility() == ContentVisibility::Hidden; }
+    bool containsInlineSize() const { return effectiveContainment().contains(Containment::InlineSize) || contentVisibility() == ContentVisibility::Hidden; }
+    bool containsSizeOrInlineSize() const { return effectiveContainment().containsAny({ Containment::Size, Containment::InlineSize }) || contentVisibility() == ContentVisibility::Hidden; }
+    bool containsStyle() const { return effectiveContainment().contains(Containment::Style) || contentVisibility() != ContentVisibility::Visible; }
+    bool containsPaint() const { return effectiveContainment().contains(Containment::Paint) || contentVisibility() != ContentVisibility::Visible; }
+    bool containsLayoutOrPaint() const { return effectiveContainment().containsAny({ Containment::Layout, Containment::Paint }) || contentVisibility() != ContentVisibility::Visible; }
     ContainerType containerType() const { return static_cast<ContainerType>(m_rareNonInheritedData->containerType); }
     const Vector<AtomString>& containerNames() const { return m_rareNonInheritedData->containerNames; }
 

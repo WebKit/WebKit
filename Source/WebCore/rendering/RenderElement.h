@@ -171,6 +171,9 @@ public:
         if (style().visibility() != Visibility::Visible)
             return false;
 
+        if (element() && element()->isSkippedContent())
+            return false;
+
         if ((!hitTestRequest || !hitTestRequest->ignoreCSSPointerEventsProperty()) && style().effectivePointerEvents() == PointerEvents::None)
             return false;
 
@@ -291,6 +294,8 @@ public:
 
     bool isDeprecatedFlexItem() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isDeprecatedFlexibleBox(); }
     bool isFlexItemIncludingDeprecated() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isFlexibleBoxIncludingDeprecated(); }
+
+    bool shouldSkipContent() const;
 
 protected:
     enum BaseTypeFlag {
