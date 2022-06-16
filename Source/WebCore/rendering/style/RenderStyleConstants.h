@@ -1216,6 +1216,12 @@ enum class ContainIntrinsicSizeType : uint8_t {
     AutoAndLength
 };
 
+enum class ContentVisibility : uint8_t {
+    Visible,
+    Auto,
+    Hidden,
+};
+
 CSSBoxType transformBoxToCSSBoxType(TransformBox);
 
 extern const float defaultMiterLimit;
