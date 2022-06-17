@@ -102,6 +102,9 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
     if (!document.view()->layoutContext().isInRenderTreeLayout() && !document.inRenderTreeUpdate() && !document.inStyleRecalc())
         document.updateLayoutIgnorePendingStylesheets();
 
+    tree->m_maxTreeDepth = document.settings().maximumHTMLParserDOMTreeDepth();
+    ASSERT(tree->m_maxTreeDepth);
+
     // Generate the nodes of the tree and set its root and focused objects.
     // For this, we need the root and focused objects of the AXObject tree.
     auto* axRoot = axObjectCache->getOrCreate(axObjectCache->document().view());
@@ -313,14 +316,24 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AXCoreObject& axObject)
         return;
     }
 
-    SetForScope collectingNodeChanges(m_isCollectingNodeChanges, true);
-    m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnMainThread);
+    SetForScope collectingAtTreeLevel(m_collectingNodeChangesAtTreeLevel, m_collectingNodeChangesAtTreeLevel + 1);
+    if (m_collectingNodeChangesAtTreeLevel >= m_maxTreeDepth)
+        return;
 
+    m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnMainThread);
     auto axChildrenCopy = axObject.children();
-    auto axChildrenIDs = axChildrenCopy.map([&](auto& axChild) {
+    Vector<AXID> axChildrenIDs;
+    axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
+    for (const auto& axChild : axChildrenCopy) {
+        if (!axChild || axChild.get() == &axObject) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        axChildrenIDs.uncheckedAppend(axChild->objectID());
         collectNodeChangesForSubtree(*axChild);
-        return axChild->objectID();
-    });
+    }
+    axChildrenIDs.shrinkToFit();
 
     // Update the m_nodeMap.
     auto* axParent = axObject.parentObjectUnignored();
@@ -336,7 +349,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
     // If we update a node as the result of some side effect while collecting node changes (e.g. a role change from
     // AccessibilityRenderObject::updateRoleAfterChildrenCreation), queue the append up to be resolved with the rest
     // of the collected changes. This prevents us from creating two node changes for the same object.
-    if (m_isCollectingNodeChanges) {
+    if (isCollectingNodeChanges()) {
         m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnAXThread);
         return;
     }

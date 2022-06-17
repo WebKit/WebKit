@@ -387,12 +387,14 @@ private:
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
     std::optional<NodeChange> nodeChangeForObject(AXCoreObject&, AttachWrapper = AttachWrapper::OnMainThread);
     void collectNodeChangesForSubtree(AXCoreObject&);
+    bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovals(const Vector<AXID>&);
     void queueRemovalsLocked(const Vector<AXID>&) WTF_REQUIRES_LOCK(m_changeLogLock);
     void queueRemovalsAndUnresolvedChanges(const Vector<AXID>&);
 
     AXIsolatedTreeID m_treeID;
+    unsigned m_maxTreeDepth { 0 };
     AXObjectCache* m_axObjectCache { nullptr };
     bool m_usedOnAXThread { true };
 
@@ -411,8 +413,8 @@ private:
     // The key is the ID of the object that will be resolved into an m_pendingAppends NodeChange.
     // The value is whether the wrapper should be attached on the main thread or the AX thread.
     HashMap<AXID, AttachWrapper> m_unresolvedPendingAppends;
-    // Only accessed on the main thread.
-    bool m_isCollectingNodeChanges { false };
+    // 1-based tree level, 0 = not collecting. Only accessed on the main thread.
+    unsigned m_collectingNodeChangesAtTreeLevel { 0 };
 
     // Only accessed on AX thread requesting data.
     HashMap<AXID, Ref<AXIsolatedObject>> m_readerThreadNodeMap;
