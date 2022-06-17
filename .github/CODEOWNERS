@@ -48,6 +48,10 @@
 
 # ================================================================================
 
+/Source/bmalloc @Constellation
+
+# ================================================================================
+
 /Source/JavaScriptCore @WebKit/jsc-reviewers
 /JSTests @WebKit/jsc-reviewers
 /LayoutTests/js @WebKit/jsc-reviewers
