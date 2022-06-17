@@ -347,9 +347,9 @@ private:
     mutable RefPtr<FontCascadeFonts> m_fonts;
     float m_letterSpacing { 0 };
     float m_wordSpacing { 0 };
-    mutable bool m_useBackslashAsYenSymbol { false };
-    mutable bool m_enableKerning { false }; // Computed from m_fontDescription.
-    mutable bool m_requiresShaping { false }; // Computed from m_fontDescription.
+    bool m_useBackslashAsYenSymbol { false };
+    bool m_enableKerning { false }; // Computed from m_fontDescription.
+    bool m_requiresShaping { false }; // Computed from m_fontDescription.
 };
 
 inline const Font& FontCascade::primaryFont() const

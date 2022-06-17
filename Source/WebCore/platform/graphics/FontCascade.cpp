@@ -147,9 +147,6 @@ bool FontCascade::isCurrent(const FontSelector& fontSelector) const
 void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 {
     m_fonts = WTFMove(fonts);
-    m_useBackslashAsYenSymbol = useBackslashAsYenSignForFamily(firstFamily());
-    m_enableKerning = computeEnableKerning();
-    m_requiresShaping = computeRequiresShaping();
 }
 
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
