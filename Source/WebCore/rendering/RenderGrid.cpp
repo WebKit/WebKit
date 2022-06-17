@@ -369,7 +369,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
         m_trackSizingAlgorithm.reset();
 
-        computeOverflow(clientLogicalRightAndBottomAfterRepositioning().height());
+        computeOverflow(layoutOverflowLogicalBottom(*this));
     }
 
     updateLayerTransform();

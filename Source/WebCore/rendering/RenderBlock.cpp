@@ -681,23 +681,6 @@ void RenderBlock::addOverflowFromChildren()
     }
 }
 
-LayoutSize RenderBlock::clientLogicalRightAndBottomAfterRepositioning() const
-{
-    LayoutUnit maxChildLogicalRight;
-    LayoutUnit maxChildLogicalBottom;
-    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isOutOfFlowPositioned())
-            continue;
-        LayoutUnit childLogicalRight = logicalLeftForChild(*child) + logicalWidthForChild(*child) + marginEndForChild(*child);
-        LayoutUnit childLogicalBottom = logicalTopForChild(*child) + logicalHeightForChild(*child) + marginAfterForChild(*child);
-        maxChildLogicalRight = std::max(maxChildLogicalRight, childLogicalRight);
-        maxChildLogicalBottom = std::max(maxChildLogicalBottom, childLogicalBottom);
-
-    }
-    return LayoutSize(maxChildLogicalRight + paddingRight(), std::max(clientLogicalBottom(), maxChildLogicalBottom + paddingAfter()));
-}
-
-
 // Overflow is always relative to the border-box of the element in question.
 // Therefore, if the element has a vertical scrollbar placed on the left, an overflow rect at x=2px would conceptually intersect the scrollbar.
 void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool)
@@ -708,23 +691,55 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool)
     addOverflowFromPositionedObjects();
 
     if (hasNonVisibleOverflow()) {
-        // Set the axis we don't care about to be 1, since we want this overflow to always be considered reachable.
-        LayoutUnit rectWidth = 1_lu;
-        // For grid, width of the overflow rect should be the width of the grid area of the items rather than the container block.
-        // As per https://github.com/w3c/csswg-drafts/issues/3653, child's margins along with padding should contribute to the
-        // scrollable overflow area.
-        if (this->isRenderGrid())
-            rectWidth = clientLogicalRightAndBottomAfterRepositioning().width();
+        auto includePaddingEnd = [&] {
+            // As per https://github.com/w3c/csswg-drafts/issues/3653 padding should contribute to the scrollable overflow area.
+            if (!paddingEnd())
+                return;
+            // FIXME: Expand it to non-grid cases when applicable.
+            if (!is<RenderGrid>(*this))
+                return;
 
-        // When we have overflow clip, propagate the original spillout since it will include collapsed bottom margins
-        // and bottom padding.
-        LayoutRect clientRect(flippedClientBoxRect());
-        LayoutRect rectToApply;
-        if (isHorizontalWritingMode())
-            rectToApply = LayoutRect(clientRect.x(), clientRect.y(), rectWidth, std::max(0_lu, oldClientAfterEdge - clientRect.y()));
-        else
-            rectToApply = LayoutRect(clientRect.x(), clientRect.y(), std::max(0_lu, oldClientAfterEdge - clientRect.x()), rectWidth);
-        addLayoutOverflow(rectToApply);
+            auto layoutOverflowRect = this->layoutOverflowRect();
+            auto layoutOverflowLogicalWidthIncludingPaddingEnd = [&] {
+                if (hasHorizontalLayoutOverflow())
+                    return (isHorizontalWritingMode() ? layoutOverflowRect.width() : layoutOverflowRect.height()) + paddingEnd();
+
+                // FIXME: This is not sufficient for BFC layout (missing non-formatting-context root descendants).
+                auto contentLogicalRight = LayoutUnit { };
+                for (auto& child : childrenOfType<RenderBox>(*this)) {
+                    if (child.isOutOfFlowPositioned())
+                        continue;
+                    auto childLogicalRight = logicalLeftForChild(child) + logicalWidthForChild(child) + std::max(0_lu, marginEndForChild(child));
+                    contentLogicalRight = std::max(contentLogicalRight, childLogicalRight);
+                }
+                auto logicalRightWithPaddingEnd = contentLogicalRight + paddingEnd();
+                // Use padding box as the reference box.
+                return logicalRightWithPaddingEnd - (isHorizontalWritingMode() ? borderLeft() : borderTop());
+            };
+
+            if (isHorizontalWritingMode())
+                layoutOverflowRect.setWidth(layoutOverflowLogicalWidthIncludingPaddingEnd());
+            else
+                layoutOverflowRect.setHeight(layoutOverflowLogicalWidthIncludingPaddingEnd());
+            addLayoutOverflow(layoutOverflowRect);
+        };
+        includePaddingEnd();
+
+        auto includePaddingAfter = [&] {
+            // When we have overflow clip, propagate the original spillout since it will include collapsed bottom margins and bottom padding.
+            auto clientRect = flippedClientBoxRect();
+            auto rectToApply = clientRect;
+            // Set the axis we don't care about to be 1, since we want this overflow to always be considered reachable.
+            if (isHorizontalWritingMode()) {
+                rectToApply.setWidth(1);
+                rectToApply.setHeight(std::max(0_lu, oldClientAfterEdge - clientRect.y()));
+            } else {
+                rectToApply.setWidth(std::max(0_lu, oldClientAfterEdge - clientRect.x()));
+                rectToApply.setHeight(1);
+            }
+            addLayoutOverflow(rectToApply);
+        };
+        includePaddingAfter();
         if (hasRenderOverflow())
             m_overflow->setLayoutClientAfterEdge(oldClientAfterEdge);
     }
@@ -3510,5 +3525,18 @@ String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, Strin
     return makeStringByReplacingAll(string, discCharacterToReplace, textSecurityDiscPUACodePoint);
 #endif
 }
-    
+
+LayoutUnit RenderBlock::layoutOverflowLogicalBottom(const RenderBlock& renderer)
+{
+    ASSERT(is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer));
+    auto maxChildLogicalBottom = LayoutUnit { };
+    for (auto& child : childrenOfType<RenderBox>(renderer)) {
+        if (child.isOutOfFlowPositioned())
+            continue;
+        auto childLogicalBottom = renderer.logicalTopForChild(child) + renderer.logicalHeightForChild(child) + renderer.marginAfterForChild(child);
+        maxChildLogicalBottom = std::max(maxChildLogicalBottom, childLogicalBottom);
+    }
+    return std::max(renderer.clientLogicalBottom(), maxChildLogicalBottom + renderer.paddingAfter());
+}
+
 } // namespace WebCore

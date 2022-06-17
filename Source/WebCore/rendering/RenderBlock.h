@@ -231,7 +231,6 @@ public:
     LayoutUnit adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit height) const override;
     void paintExcludedChildrenInBorder(PaintInfo&, const LayoutPoint&);
     
-    LayoutSize clientLogicalRightAndBottomAfterRepositioning() const;
     // Accessors for logical width/height and margins in the containing block's block-flow direction.
     enum ApplyLayoutDeltaMode { ApplyLayoutDelta, DoNotApplyLayoutDelta };
     LayoutUnit logicalWidthForChild(const RenderBox& child) const { return isHorizontalWritingMode() ? child.width() : child.height(); }
@@ -377,6 +376,8 @@ protected:
     virtual void simplifiedNormalFlowLayout();
 
     bool childBoxIsUnsplittableForFragmentation(const RenderBox& child) const;
+
+    static LayoutUnit layoutOverflowLogicalBottom(const RenderBlock&);
 
 public:
     virtual void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
