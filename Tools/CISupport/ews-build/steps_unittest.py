@@ -6278,7 +6278,7 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_success(self):
-        GitHub.credentials = lambda: ('webkit-commit-queue', 'password')
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         self.setupStep(PushPullRequestBranch())
         self.setProperty('github.number', '1234')
         self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')
@@ -6297,7 +6297,7 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
             return self.runStep()
 
     def test_failure(self):
-        GitHub.credentials = lambda: ('webkit-commit-queue', 'password')
+        GitHub.credentials = lambda user=None: ('webkit-commit-queue', 'password')
         self.setupStep(PushPullRequestBranch())
         self.setProperty('github.number', '1234')
         self.setProperty('github.head.repo.full_name', 'Contributor/WebKit')

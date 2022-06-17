@@ -116,8 +116,8 @@ class Events(service.BuildbotService):
 
         agent.request(b'POST', self.EVENT_SERVER_ENDPOINT, Headers({'Content-Type': ['application/json']}), body)
 
-    def sendDataToGitHub(self, repository, sha, data):
-        username, access_token = GitHub.credentials()
+    def sendDataToGitHub(self, repository, sha, data, user=None):
+        username, access_token = GitHub.credentials(user=user)
 
         data['description'] = data.get('description', '')
         if len(data['description']) > self.MAX_GITHUB_DESCRIPTION:
@@ -196,7 +196,7 @@ class Events(service.BuildbotService):
             description=build.get('state_string'),
             context=build['description'] + custom_suffix,
         )
-        self.sendDataToGitHub(repository, sha, data_to_send)
+        self.sendDataToGitHub(repository, sha, data_to_send, user=GitHub.user_for_queue(self.extractProperty(build, 'buildername')))
 
     @defer.inlineCallbacks
     def buildFinished(self, key, build):
@@ -259,7 +259,7 @@ class Events(service.BuildbotService):
             description=state_string,
             context=builder.get('description', '?') + custom_suffix,
         )
-        self.sendDataToGitHub(repository, sha, data_to_send)
+        self.sendDataToGitHub(repository, sha, data_to_send, user=GitHub.user_for_queue(self.extractProperty(build, 'buildername')))
 
     @defer.inlineCallbacks
     def stepStarted(self, key, step):

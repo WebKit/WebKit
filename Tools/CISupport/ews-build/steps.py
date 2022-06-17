@@ -76,9 +76,17 @@ class BufferLogHeaderObserver(logobserver.BufferLogObserver):
 
 
 class GitHub(object):
+    _cache = {}
+
     @classmethod
     def repository_urls(cls):
         return [GITHUB_URL + project for project in GITHUB_PROJECTS]
+
+    @classmethod
+    def user_for_queue(cls, queue):
+        if queue.lower() in ['commit-queue', 'merge-queue', 'unsafe-merge-queue']:
+            return 'merge-queue'
+        return None
 
     @classmethod
     def pr_url(cls, pr_number, repository_url=None):
@@ -120,13 +128,20 @@ class GitHub(object):
         return '{}/statuses/{}'.format(api_url, sha)
 
     @classmethod
-    def credentials(cls):
+    def credentials(cls, user=None):
+        prefix = f"GITHUB_COM_{user.upper().replace('-', '_')}_" if user else 'GITHUB_COM_'
+
+        if prefix in cls._cache:
+            return cls._cache[prefix]
+
         try:
             passwords = json.load(open('passwords.json'))
-            return passwords.get('GITHUB_COM_USERNAME', None), passwords.get('GITHUB_COM_ACCESS_TOKEN', None)
+            cls._cache[prefix] = passwords.get(f'{prefix}USERNAME', None), passwords.get(f'{prefix}ACCESS_TOKEN', None)
         except Exception as e:
             print('Error reading GitHub credentials')
-            return None, None
+            cls._cache[prefix] = None, None
+
+        return cls._cache[prefix]
 
     @classmethod
     def email_for_owners(cls, owners):
@@ -147,7 +162,7 @@ class GitHubMixin(object):
     def fetch_data_from_url_with_authentication_github(self, url):
         response = None
         try:
-            username, access_token = GitHub.credentials()
+            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
             response = requests.get(
                 url, timeout=60, auth=auth,
@@ -257,7 +272,7 @@ class GitHubMixin(object):
 
         pr_label_url = '{}/issues/{}/labels'.format(api_url, pr_number)
         try:
-            username, access_token = GitHub.credentials()
+            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
             response = requests.request(
                 'POST', pr_label_url, timeout=60, auth=auth,
@@ -292,7 +307,7 @@ class GitHubMixin(object):
             return True
 
         try:
-            username, access_token = GitHub.credentials()
+            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
             response = requests.request(
                 'PUT', pr_label_url, timeout=60, auth=auth,
@@ -316,7 +331,7 @@ class GitHubMixin(object):
 
         comment_url = f'{api_url}/issues/{pr_number}/comments'
         try:
-            username, access_token = GitHub.credentials()
+            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
             response = requests.request(
                 'POST', comment_url, timeout=60, auth=auth,
@@ -347,7 +362,7 @@ class GitHubMixin(object):
 
         update_url = f'{api_url}/pulls/{pr_number}'
         try:
-            username, access_token = GitHub.credentials()
+            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
             response = requests.request(
                 'POST', update_url, timeout=60, auth=auth,
@@ -369,7 +384,7 @@ class GitHubMixin(object):
 
         update_url = f'{api_url}/pulls/{pr_number}'
         try:
-            username, access_token = GitHub.credentials()
+            username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
             response = requests.request(
                 'POST', update_url, timeout=60, auth=auth,
@@ -943,7 +958,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 
-        username, access_token = GitHub.credentials()
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         self.env = dict(
             GIT_COMMITTER_NAME='EWS',
             GIT_COMMITTER_EMAIL=FROM_EMAIL,
@@ -5084,7 +5099,7 @@ class PushPullRequestBranch(shell.ShellCommand):
         head_ref = self.getProperty('github.head.ref')
         self.command = ['git', 'push', '-f', remote, f'HEAD:{head_ref}']
 
-        username, access_token = GitHub.credentials()
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
         self.workerEnvironment['GIT_USER'] = username
         self.workerEnvironment['GIT_PASSWORD'] = access_token
 
