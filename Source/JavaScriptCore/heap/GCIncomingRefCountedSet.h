@@ -44,6 +44,7 @@ public:
     void sweep(VM&);
     
     size_t size() const { return m_bytes; };
+    void reduceSize(size_t);
     
 private:
     Vector<T*> m_vector;
