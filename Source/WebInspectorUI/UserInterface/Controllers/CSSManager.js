@@ -277,6 +277,8 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString(":focus-within");
         case WI.CSSManager.ForceablePseudoClass.Hover:
             return WI.unlocalizedString(":hover");
+        case WI.CSSManager.ForceablePseudoClass.Target:
+            return WI.unlocalizedString(":target");
         case WI.CSSManager.ForceablePseudoClass.Visited:
             return WI.unlocalizedString(":visited");
         }
@@ -378,6 +380,7 @@ WI.CSSManager = class CSSManager extends WI.Object
 
         case WI.CSSManager.ForceablePseudoClass.FocusVisible:
         case WI.CSSManager.ForceablePseudoClass.FocusWithin:
+        case WI.CSSManager.ForceablePseudoClass.Target:
             // COMPATIBILITY (iOS 15.4): CSS.ForceablePseudoClass did not exist yet.
             return !!InspectorBackend.Enum.CSS.ForceablePseudoClass;
         }
@@ -849,6 +852,7 @@ WI.CSSManager.ForceablePseudoClass = {
     FocusVisible: "focus-visible",
     FocusWithin: "focus-within",
     Hover: "hover",
+    Target: "target",
     Visited: "visited",
 };
 

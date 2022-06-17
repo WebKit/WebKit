@@ -962,7 +962,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return selector.matchNth(count);
         }
         case CSSSelector::PseudoClassTarget:
-            if (&element == element.document().cssTarget())
+            if (&element == element.document().cssTarget() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassTarget))
                 return true;
             break;
         case CSSSelector::PseudoClassAutofill:

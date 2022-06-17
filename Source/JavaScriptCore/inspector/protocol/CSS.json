@@ -63,6 +63,7 @@
                 "focus-visible",
                 "focus-within",
                 "hover",
+                "target",
                 "visited"
             ],
             "description": "Pseudo-style identifier (see <code>enum PseudoId</code> in <code>RenderStyleConstants.h</code>)."

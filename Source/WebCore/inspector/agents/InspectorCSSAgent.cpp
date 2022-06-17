@@ -910,6 +910,10 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClassFocusWithin);
             break;
 
+        case Protocol::CSS::ForceablePseudoClass::Target:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassTarget);
+            break;
+
         case Protocol::CSS::ForceablePseudoClass::Visited:
             forcedPseudoClassesToSet.add(CSSSelector::PseudoClassVisited);
             break;
