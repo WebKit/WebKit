@@ -282,6 +282,7 @@ IGNORE_WARNINGS_END
 
 @interface UIWKTextInteractionAssistant : UITextInteractionAssistant
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
+- (void)selectionChanged;
 @end
 
 @interface UIAction ()

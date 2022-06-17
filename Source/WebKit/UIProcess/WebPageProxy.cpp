@@ -7696,10 +7696,12 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     }
 }
 
-void WebPageProxy::editorStateChanged(const EditorState& editorState)
+void WebPageProxy::editorStateChanged(const EditorState& editorState, CompletionHandler<void()>&& completionHandler)
 {
     if (updateEditorState(editorState))
         dispatchDidUpdateEditorState();
+
+    completionHandler();
 }
 
 bool WebPageProxy::updateEditorState(const EditorState& newEditorState)

@@ -11430,6 +11430,12 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 #endif
 }
 
+- (void)_simulateSelectionStart
+{
+    _usingGestureForSelection = YES;
+    _lastSelectionDrawingInfo.type = WebKit::WKSelectionDrawingInfo::SelectionType::Range;
+}
+
 #if ENABLE(DATALIST_ELEMENT)
 - (void)_selectDataListOption:(NSInteger)optionIndex
 {

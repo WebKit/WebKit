@@ -827,6 +827,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
 - (void)_doAfterReceivingEditDragSnapshotForTesting:(dispatch_block_t)action;
 - (void)_dismissContactPickerWithContacts:(NSArray *)contacts;
+- (void)_simulateSelectionStart;
 
 #if ENABLE(DATALIST_ELEMENT)
 - (void)_selectDataListOption:(NSInteger)optionIndex;

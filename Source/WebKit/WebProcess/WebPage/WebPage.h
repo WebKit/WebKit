@@ -1566,7 +1566,8 @@ private:
     void getPlatformEditorState(WebCore::Frame&, EditorState&) const;
     bool requiresPostLayoutDataForEditorState(const WebCore::Frame&) const;
     void platformWillPerformEditingCommand();
-    void sendEditorStateUpdate();
+    void sendEditorStateUpdate(CompletionHandler<void()>&&);
+
     void getPlatformEditorStateCommon(const WebCore::Frame&, EditorState&) const;
 
 #if HAVE(TOUCH_BAR)
