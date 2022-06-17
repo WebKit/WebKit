@@ -4922,7 +4922,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
     )
     RE_CHANGELOG = br'^(\+\+\+)\s+(.*ChangeLog.*)'
     BY_RE = re.compile(r'.+\s+by\s+(.+)$')
-    SPLIT_RE = re.compile(r'(,\s*)|( and )|\.')
+    SPLIT_RE = re.compile(r'(,\s*)|( and )')
 
     def __init__(self, **kwargs):
         super(ValidateCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
@@ -4939,7 +4939,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
                 continue
             for person in cls.SPLIT_RE.split(match.group(1)):
                 if person and not cls.SPLIT_RE.match(person):
-                    reviewers.add(person)
+                    reviewers.add(person.rstrip('.'))
         return reviewers, stripped_text
 
     def is_reviewer(self, name):
