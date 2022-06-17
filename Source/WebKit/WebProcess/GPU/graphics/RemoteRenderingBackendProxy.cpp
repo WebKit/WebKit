@@ -261,6 +261,11 @@ void RemoteRenderingBackendProxy::cacheFont(Ref<Font>&& font)
     sendToStream(Messages::RemoteRenderingBackend::CacheFont(WTFMove(font)));
 }
 
+void RemoteRenderingBackendProxy::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
+{
+    sendToStream(Messages::RemoteRenderingBackend::CacheDecomposedGlyphs(WTFMove(decomposedGlyphs)));
+}
+
 void RemoteRenderingBackendProxy::deleteAllFonts()
 {
     sendToStream(Messages::RemoteRenderingBackend::DeleteAllFonts());

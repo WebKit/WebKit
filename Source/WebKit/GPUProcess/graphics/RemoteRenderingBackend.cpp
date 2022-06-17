@@ -369,8 +369,21 @@ void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
 void RemoteRenderingBackend::cacheFontWithQualifiedIdentifier(Ref<Font>&& font, QualifiedRenderingResourceIdentifier fontResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
-
     m_remoteResourceCache.cacheFont(WTFMove(font), fontResourceIdentifier);
+}
+
+void RemoteRenderingBackend::cacheDecomposedGlyphs(Ref<DecomposedGlyphs>&& decomposedGlyphs)
+{
+    // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
+    // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
+    auto renderingResourceIdentifier = decomposedGlyphs->renderingResourceIdentifier();
+    cacheDecomposedGlyphsWithQualifiedIdentifier(WTFMove(decomposedGlyphs), { renderingResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
+}
+
+void RemoteRenderingBackend::cacheDecomposedGlyphsWithQualifiedIdentifier(Ref<DecomposedGlyphs>&& decomposedGlyphs, QualifiedRenderingResourceIdentifier decomposedGlyphsIdentifier)
+{
+    ASSERT(!RunLoop::isMain());
+    m_remoteResourceCache.cacheDecomposedGlyphs(WTFMove(decomposedGlyphs), decomposedGlyphsIdentifier);
 }
 
 void RemoteRenderingBackend::deleteAllFonts()

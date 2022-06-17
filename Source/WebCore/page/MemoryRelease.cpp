@@ -74,7 +74,7 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     FontCache::forCurrentThread().purgeInactiveFontData();
     FontCache::forCurrentThread().clearWidthCaches();
 
-    TextPainter::clearGlyphDisplayLists();
+    GlyphDisplayListCache::singleton().clear();
 
     for (auto* document : Document::allDocuments()) {
         document->clearSelectorQueryCache();

@@ -35,7 +35,7 @@ class RecorderImpl : public Recorder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
-    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DeconstructDrawGlyphs = DeconstructDrawGlyphs::No);
+    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DrawGlyphsMode = DrawGlyphsMode::Normal);
     WEBCORE_EXPORT virtual ~RecorderImpl();
 
     bool isEmpty() const { return m_displayList.isEmpty(); }
@@ -67,6 +67,7 @@ private:
     void recordClipPath(const Path&, WindRule) final;
     void recordDrawFilteredImageBuffer(ImageBuffer*, const FloatRect& sourceImageRect, Filter&) final;
     void recordDrawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode) final;
+    void recordDrawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) final;
     void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
     void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&) final;
     void recordDrawSystemImage(SystemImage&, const FloatRect&) final;
@@ -118,6 +119,7 @@ private:
     bool recordResourceUse(ImageBuffer&) final;
     bool recordResourceUse(const SourceImage&) final;
     bool recordResourceUse(Font&) final;
+    bool recordResourceUse(DecomposedGlyphs&) final;
 
     template<typename T, class... Args>
     void append(Args&&... args)

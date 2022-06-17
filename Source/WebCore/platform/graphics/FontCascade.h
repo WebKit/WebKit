@@ -213,6 +213,8 @@ public:
 
     std::unique_ptr<DisplayList::InMemoryDisplayList> displayListForTextRun(GraphicsContext&, const TextRun&, unsigned from = 0, std::optional<unsigned> to = { }, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
 
+    unsigned generation() const { return m_generation; }
+
 #if PLATFORM(WIN) && USE(CG)
     static void setFontSmoothingLevel(int);
     static uint32_t setFontSmoothingStyle(CGContextRef, bool fontAllowsSmoothing);
@@ -347,6 +349,7 @@ private:
     mutable RefPtr<FontCascadeFonts> m_fonts;
     float m_letterSpacing { 0 };
     float m_wordSpacing { 0 };
+    mutable unsigned m_generation { 0 };
     bool m_useBackslashAsYenSymbol { false };
     bool m_enableKerning { false }; // Computed from m_fontDescription.
     bool m_requiresShaping { false }; // Computed from m_fontDescription.

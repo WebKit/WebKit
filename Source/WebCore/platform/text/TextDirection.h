@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020, 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 
 enum class TextDirection : bool { LTR, RTL };
@@ -32,6 +34,15 @@ enum class TextDirection : bool { LTR, RTL };
 inline bool isLeftToRightDirection(TextDirection direction)
 {
     return direction == TextDirection::LTR;
+}
+
+inline TextStream& operator<<(TextStream& ts, TextDirection textDirection)
+{
+    switch (textDirection) {
+    case TextDirection::LTR: ts << "ltr"; break;
+    case TextDirection::RTL: ts << "rtl"; break;
+    }
+    return ts;
 }
 
 }

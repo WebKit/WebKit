@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -70,6 +70,8 @@ static bool useBackslashAsYenSignForFamily(const AtomString& family)
 
 FontCascade::CodePath FontCascade::s_codePath = CodePath::Auto;
 
+static std::atomic<unsigned> lastFontCascadeGeneration { 0 };
+
 // ============================================================================================
 // FontCascade Implementation (Cross-Platform Portion)
 // ============================================================================================
@@ -82,6 +84,7 @@ FontCascade::FontCascade(FontCascadeDescription&& fd, float letterSpacing, float
     : m_fontDescription(WTFMove(fd))
     , m_letterSpacing(letterSpacing)
     , m_wordSpacing(wordSpacing)
+    , m_generation(++lastFontCascadeGeneration)
     , m_useBackslashAsYenSymbol(useBackslashAsYenSignForFamily(m_fontDescription.firstFamily()))
     , m_enableKerning(computeEnableKerning())
     , m_requiresShaping(computeRequiresShaping())
@@ -93,6 +96,7 @@ FontCascade::FontCascade(const FontCascade& other)
     , m_fonts(other.m_fonts)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
+    , m_generation(other.m_generation)
     , m_useBackslashAsYenSymbol(other.m_useBackslashAsYenSymbol)
     , m_enableKerning(computeEnableKerning())
     , m_requiresShaping(computeRequiresShaping())
@@ -105,6 +109,7 @@ FontCascade& FontCascade::operator=(const FontCascade& other)
     m_fonts = other.m_fonts;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
+    m_generation = other.m_generation;
     m_useBackslashAsYenSymbol = other.m_useBackslashAsYenSymbol;
     m_enableKerning = other.m_enableKerning;
     m_requiresShaping = other.m_requiresShaping;
@@ -147,6 +152,7 @@ bool FontCascade::isCurrent(const FontSelector& fontSelector) const
 void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 {
     m_fonts = WTFMove(fonts);
+    m_generation = ++lastFontCascadeGeneration;
 }
 
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
@@ -197,7 +203,7 @@ std::unique_ptr<DisplayList::InMemoryDisplayList> FontCascade::displayListForTex
 {
     ASSERT(!context.paintingDisabled());
     unsigned destination = to.value_or(run.length());
-    
+
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
     CodePath codePathToUse = codePath(run);
     if (codePathToUse != CodePath::Complex && (enableKerning() || requiresShaping()) && (from || destination != run.length()))
@@ -208,17 +214,18 @@ std::unique_ptr<DisplayList::InMemoryDisplayList> FontCascade::displayListForTex
 
     if (glyphBuffer.isEmpty())
         return nullptr;
-    
+
     std::unique_ptr<DisplayList::InMemoryDisplayList> displayList = makeUnique<DisplayList::InMemoryDisplayList>();
-    DisplayList::RecorderImpl recordingContext(*displayList, context.state().cloneForRecording(), { }, { });
-    
+    DisplayList::RecorderImpl recordingContext(*displayList, context.state().cloneForRecording(), { }, context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale), DisplayList::Recorder::DrawGlyphsMode::DeconstructUsingDrawDecomposedGlyphsCommands);
+
     FloatPoint startPoint = toFloatPoint(WebCore::size(glyphBuffer.initialAdvance()));
     drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);
-    
+
     displayList->shrinkToFit();
+
     return displayList;
 }
-    
+
 float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned to, HashSet<const Font*>* fallbackFonts, float* outWidthBeforeRange, float* outWidthAfterRange) const
 {
     ASSERT(from <= to);
