@@ -1682,7 +1682,10 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // The user agent must synchronously unset [the text track cue active] flag
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
     if (m_readyState != HAVE_NOTHING && m_player) {
-        currentCues = m_cueData->cueTree.allOverlaps({ movieTime, movieTime });
+        for (auto& cue : m_cueData->cueTree.allOverlaps({ movieTime, movieTime })) {
+            if (cue.low() <= movieTime && cue.high() > movieTime)
+                currentCues.append(cue);
+        }
         if (currentCues.size() > 1)
             std::sort(currentCues.begin(), currentCues.end(), &compareCueInterval);
     }
