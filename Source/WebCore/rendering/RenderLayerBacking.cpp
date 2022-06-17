@@ -1825,8 +1825,11 @@ void RenderLayerBacking::updateEventRegion()
         EventRegion eventRegion;
         auto eventRegionContext = eventRegion.makeContext();
         if (visibleToHitTesting)
-            eventRegionContext.unite(enclosingIntRect(FloatRect({ }, graphicsLayer->size())), renderer().style());
+            eventRegionContext.unite(enclosingIntRect(FloatRect({ }, graphicsLayer->size())), renderer(), renderer().style());
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        eventRegionContext.copyInteractionRegionsToEventRegion();
+#endif
         graphicsLayer->setEventRegion(WTFMove(eventRegion));
     };
 
@@ -1845,26 +1848,22 @@ void RenderLayerBacking::updateEventRegion()
             if (&graphicsLayer == m_scrolledContentsLayer) {
                 // Initialize scrolled contents layer with layer-sized event region as it can all used for scrolling.
                 // This avoids generating unnecessarily complex event regions. We still need to to do the paint to capture touch-action regions.
-                eventRegionContext.unite(layerBounds, renderer().style());
+                eventRegionContext.unite(layerBounds, renderer(), renderer().style());
             }
         }
 
         if (m_owningLayer.isRenderViewLayer() && (&graphicsLayer == m_graphicsLayer || &graphicsLayer == m_foregroundLayer)) {
             // Event handlers on the root cover the entire layer.
-            eventRegionContext.unite(layerBounds, renderer().style());
+            eventRegionContext.unite(layerBounds, renderer(), renderer().style());
         }
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        // FIXME: We should collect editable regions per-layer instead of keeping them all on the root.
-        if (renderer().page().shouldBuildInteractionRegions() && m_owningLayer.isRenderViewLayer() && (&graphicsLayer == m_graphicsLayer))
-            eventRegion.computeInteractionRegions(renderer().page(), layerBounds);
-#endif
 
         auto dirtyRect = enclosingIntRect(FloatRect(FloatPoint(graphicsLayer.offsetFromRenderer()), graphicsLayer.size()));
         paintIntoLayer(&graphicsLayer, nullContext, dirtyRect, { }, &eventRegionContext);
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        eventRegionContext.copyInteractionRegionsToEventRegion();
+#endif
         eventRegion.translate(toIntSize(layerOffset));
-
         graphicsLayer.setEventRegion(WTFMove(eventRegion));
     };
 

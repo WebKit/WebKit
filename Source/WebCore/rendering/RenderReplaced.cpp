@@ -215,7 +215,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (visibleToHitTesting()) {
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            paintInfo.eventRegionContext->unite(borderRegion, style());
+            paintInfo.eventRegionContext->unite(borderRegion, *this, style());
         }
         return;
     }

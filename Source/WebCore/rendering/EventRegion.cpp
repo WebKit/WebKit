@@ -26,8 +26,12 @@
 #include "config.h"
 #include "EventRegion.h"
 
+#include "ElementAncestorIterator.h"
+#include "HTMLFormControlElement.h"
 #include "Logging.h"
+#include "RenderBox.h"
 #include "RenderStyle.h"
+#include "SimpleRange.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -73,10 +77,13 @@ void EventRegionContext::popClip()
     m_clipStack.removeLast();
 }
 
-void EventRegionContext::unite(const Region& region, const RenderStyle& style, bool overrideUserModifyIsEditable)
+void EventRegionContext::unite(const Region& region, RenderObject& renderer, const RenderStyle& style, bool overrideUserModifyIsEditable)
 {
     if (m_transformStack.isEmpty() && m_clipStack.isEmpty()) {
         m_eventRegion.unite(region, style, overrideUserModifyIsEditable);
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        uniteInteractionRegions(region, renderer);
+#endif
         return;
     }
 
@@ -86,6 +93,11 @@ void EventRegionContext::unite(const Region& region, const RenderStyle& style, b
         transformedAndClippedRegion.intersect(m_clipStack.last());
 
     m_eventRegion.unite(transformedAndClippedRegion, style, overrideUserModifyIsEditable);
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    uniteInteractionRegions(transformedAndClippedRegion, renderer);
+#else
+    UNUSED_PARAM(renderer);
+#endif
 }
 
 bool EventRegionContext::contains(const IntRect& rect) const
@@ -95,6 +107,26 @@ bool EventRegionContext::contains(const IntRect& rect) const
 
     return m_eventRegion.contains(m_transformStack.last().mapRect(rect));
 }
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+
+void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObject& renderer)
+{
+    if (renderer.page().shouldBuildInteractionRegions()) {
+        if (auto interactionRegion = interactionRegionForRenderedRegion(renderer, region)) {
+            auto addResult = m_interactionRegionsByElement.add(interactionRegion->elementIdentifier, *interactionRegion);
+            if (!addResult.isNewEntry)
+                addResult.iterator->value.regionInLayerCoordinates.unite(interactionRegion->regionInLayerCoordinates);
+        }
+    }
+}
+
+void EventRegionContext::copyInteractionRegionsToEventRegion()
+{
+    m_eventRegion.uniteInteractionRegions(copyToVector(m_interactionRegionsByElement.values()));
+}
+
+#endif
 
 EventRegion::EventRegion() = default;
 
@@ -321,12 +353,6 @@ bool EventRegion::containsEditableElementsInRect(const IntRect& rect) const
 void EventRegion::uniteInteractionRegions(const Vector<InteractionRegion>& interactionRegions)
 {
     m_interactionRegions.appendVector(interactionRegions);
-}
-
-void EventRegion::computeInteractionRegions(Page& page, IntRect rect)
-{
-    // FIXME: Collect regions from `EventRegion::unite` instead of hit-testing, so that they are per-layer.
-    uniteInteractionRegions(WebCore::interactionRegions(page, rect));
 }
 
 #endif

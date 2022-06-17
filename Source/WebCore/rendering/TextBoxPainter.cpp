@@ -101,7 +101,7 @@ void TextBoxPainter<TextBoxPath>::paint()
 
     if (m_paintInfo.phase == PaintPhase::EventRegion) {
         if (m_renderer.parent()->visibleToHitTesting())
-            m_paintInfo.eventRegionContext->unite(enclosingIntRect(m_paintRect), m_style);
+            m_paintInfo.eventRegionContext->unite(enclosingIntRect(m_paintRect), const_cast<RenderText&>(m_renderer), m_style);
         return;
     }
 
