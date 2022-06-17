@@ -564,10 +564,13 @@ void PaymentRequest::paymentMethodChanged(const String& methodName, PaymentMetho
 {
     whenDetailsSettled([this, protectedThis = Ref { *this }, methodName, methodDetailsFunction = WTFMove(methodDetailsFunction)]() mutable {
         auto& eventName = eventNames().paymentmethodchangeEvent;
-        if (hasEventListeners(eventName))
+        if (hasEventListeners(eventName)) {
             dispatchAndCheckUpdateEvent(PaymentMethodChangeEvent::create(eventName, methodName, WTFMove(methodDetailsFunction)));
-        else
-            activePaymentHandler()->detailsUpdated(UpdateReason::PaymentMethodChanged, { }, { }, { }, { });
+            return;
+        }
+
+        Ref activePaymentHandler = *this->activePaymentHandler();
+        activePaymentHandler->detailsUpdated(UpdateReason::PaymentMethodChanged, { }, { }, { }, { });
     });
 }
 
@@ -645,6 +648,8 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         return;
     }
 
+    Ref activePaymentHandler = *this->activePaymentHandler();
+
     auto& context = *m_detailsPromise->scriptExecutionContext();
     auto throwScope = DECLARE_THROW_SCOPE(context.vm());
     auto detailsUpdate = convertDictionary<PaymentDetailsUpdate>(*context.globalObject(), m_detailsPromise->result());
@@ -682,7 +687,7 @@ void PaymentRequest::settleDetailsPromise(UpdateReason reason)
         m_serializedModifierData = WTFMove(std::get<1>(shippingOptionAndModifierData));
     }
 
-    auto result = activePaymentHandler()->detailsUpdated(reason, WTFMove(detailsUpdate.error), WTFMove(detailsUpdate.shippingAddressErrors), WTFMove(detailsUpdate.payerErrors), detailsUpdate.paymentMethodErrors.get());
+    auto result = activePaymentHandler->detailsUpdated(reason, WTFMove(detailsUpdate.error), WTFMove(detailsUpdate.shippingAddressErrors), WTFMove(detailsUpdate.payerErrors), detailsUpdate.paymentMethodErrors.get());
     if (result.hasException()) {
         abortWithException(result.releaseException());
         return;
@@ -779,7 +784,9 @@ ExceptionOr<void> PaymentRequest::complete(std::optional<PaymentComplete>&& resu
     if (!m_activePaymentHandler)
         return Exception { AbortError };
 
+    Ref activePaymentHandler = *this->activePaymentHandler();
     activePaymentHandler()->complete(WTFMove(result));
+    
     m_activePaymentHandler = std::nullopt;
     return { };
 }
@@ -791,7 +798,9 @@ ExceptionOr<void> PaymentRequest::retry(PaymentValidationErrors&& errors)
         return Exception { AbortError };
 
     m_state = State::Interactive;
-    return activePaymentHandler()->retry(WTFMove(errors));
+
+    Ref activePaymentHandler = *this->activePaymentHandler();
+    return activePaymentHandler->retry(WTFMove(errors));
 }
 
 void PaymentRequest::cancel()
