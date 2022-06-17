@@ -60,7 +60,7 @@ class Setup(Command):
                 sys.stderr.write('You are not a member of {}\n'.format(team))
                 sys.stderr.write('Created "{}" fork will not be accessible to other contributors\n'.format(remote))
 
-        forked_name = '{}{}'.format(repository.name, '-{}'.format(remote) if remote else '')
+        forked_name = '{}{}'.format(repository.name, '-{}'.format(remote) if remote and not repository.name.endswith(remote) else '')
         log.info('Verifying user owned fork...')
         response = requests.get('{}/repos/{}/{}'.format(
             repository.api_url,
