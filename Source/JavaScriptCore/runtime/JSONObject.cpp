@@ -66,13 +66,13 @@ void JSONObject::finishCreation(VM& vm)
 // PropertyNameForFunctionCall objects must be on the stack, since the JSValue that they create is not marked.
 class PropertyNameForFunctionCall {
 public:
-    PropertyNameForFunctionCall(const Identifier&);
+    PropertyNameForFunctionCall(PropertyName);
     PropertyNameForFunctionCall(unsigned);
 
     JSValue value(JSGlobalObject*) const;
 
 private:
-    const Identifier* m_identifier;
+    PropertyName m_propertyName;
     unsigned m_number;
     mutable JSValue m_value;
 };
@@ -106,7 +106,7 @@ private:
         unsigned m_index { 0 };
         unsigned m_size { 0 };
         RefPtr<PropertyNameArrayData> m_propertyNames;
-        Vector<std::tuple<Identifier, unsigned>, 8> m_propertiesAndOffsets;
+        Vector<std::tuple<PropertyName, unsigned>, 8> m_propertiesAndOffsets;
     };
 
     friend class Holder;
@@ -132,16 +132,13 @@ private:
     MarkedArgumentBufferWithSize<16> m_objectStack;
     Vector<Holder, 16, UnsafeVectorOverflow> m_holderStack;
     String m_repeatedGap;
-    String m_indent;
+    StringView m_indent;
 };
 
 // ------------------------------ helper functions --------------------------------
 
-static inline JSValue unwrapBoxedPrimitive(JSGlobalObject* globalObject, JSValue value)
+static inline JSValue unwrapBoxedPrimitive(JSGlobalObject* globalObject, JSObject* object)
 {
-    if (!value.isObject())
-        return value;
-    JSObject* object = asObject(value);
     if (object->inherits<NumberObject>())
         return jsNumber(object->toNumber(globalObject));
     if (object->inherits<StringObject>())
@@ -151,7 +148,13 @@ static inline JSValue unwrapBoxedPrimitive(JSGlobalObject* globalObject, JSValue
 
     // Do not unwrap SymbolObject to Symbol. It is not performed in the spec.
     // http://www.ecma-international.org/ecma-262/6.0/#sec-serializejsonproperty
-    return value;
+
+    return object;
+}
+
+static inline JSValue unwrapBoxedPrimitive(JSGlobalObject* globalObject, JSValue value)
+{
+    return value.isObject() ? unwrapBoxedPrimitive(globalObject, asObject(value)) : value;
 }
 
 static inline String gap(JSGlobalObject* globalObject, JSValue space)
@@ -189,13 +192,13 @@ static inline String gap(JSGlobalObject* globalObject, JSValue space)
 
 // ------------------------------ PropertyNameForFunctionCall --------------------------------
 
-inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(const Identifier& identifier)
-    : m_identifier(&identifier)
+inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(PropertyName propertyName)
+    : m_propertyName(propertyName)
 {
 }
 
 inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(unsigned number)
-    : m_identifier(nullptr)
+    : m_propertyName(nullptr)
     , m_number(number)
 {
 }
@@ -204,8 +207,8 @@ JSValue PropertyNameForFunctionCall::value(JSGlobalObject* globalObject) const
 {
     if (!m_value) {
         VM& vm = globalObject->vm();
-        if (m_identifier)
-            m_value = jsString(vm, m_identifier->string());
+        if (!m_propertyName.isNull())
+            m_value = jsString(vm, String { m_propertyName.uid() });
         else {
             if (m_number <= 9)
                 return vm.smallStrings.singleCharacterString(m_number + '0');
@@ -263,7 +266,7 @@ JSValue Stringifier::stringify(JSValue value)
     VM& vm = m_globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    PropertyNameForFunctionCall emptyPropertyName(vm.propertyNames->emptyIdentifier);
+    PropertyNameForFunctionCall emptyPropertyName(vm.propertyNames->emptyIdentifier.impl());
 
     // If the replacer is not callable, root object wrapper is non-user-observable.
     // We can skip creating this wrapper object.
@@ -353,26 +356,27 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         return StringifyFailedDueToUndefinedOrSymbolValue;
 
     if (value.isNull()) {
-        builder.append("null");
+        builder.append("null"_s);
         return StringifySucceeded;
     }
 
-    value = unwrapBoxedPrimitive(m_globalObject, value);
-
-    RETURN_IF_EXCEPTION(scope, StringifyFailed);
+    if (value.isObject()) {
+        value = unwrapBoxedPrimitive(m_globalObject, asObject(value));
+        RETURN_IF_EXCEPTION(scope, StringifyFailed);
+    }
 
     if (value.isBoolean()) {
         if (value.isTrue())
-            builder.append("true");
+            builder.append("true"_s);
         else
-            builder.append("false");
+            builder.append("false"_s);
         return StringifySucceeded;
     }
 
     if (value.isString()) {
         String string = asString(value)->value(m_globalObject);
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
-        builder.appendQuotedJSONString(WTFMove(string));
+        builder.appendQuotedJSONString(string);
         return StringifySucceeded;
     }
 
@@ -382,7 +386,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
         else {
             double number = value.asNumber();
             if (!std::isfinite(number))
-                builder.append("null");
+                builder.append("null"_s);
             else
                 builder.append(number);
         }
@@ -400,7 +404,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     JSObject* object = asObject(value);
     if (object->isCallable()) {
         if (holder.isArray()) {
-            builder.append("null");
+            builder.append("null"_s);
             return StringifySucceeded;
         }
         return StringifyFailedDueToUndefinedOrSymbolValue;
@@ -456,21 +460,19 @@ inline void Stringifier::indent()
     if (newSize > m_repeatedGap.length())
         m_repeatedGap = makeString(m_repeatedGap, m_gap);
     ASSERT(newSize <= m_repeatedGap.length());
-    m_indent = m_repeatedGap.substringSharingImpl(0, newSize);
+    m_indent = StringView { m_repeatedGap }.left(newSize);
 }
 
 inline void Stringifier::unindent()
 {
     ASSERT(m_indent.length() >= m_gap.length());
-    m_indent = m_repeatedGap.substringSharingImpl(0, m_indent.length() - m_gap.length());
+    m_indent = StringView { m_repeatedGap }.left(m_indent.length() - m_gap.length());
 }
 
 inline void Stringifier::startNewLine(StringBuilder& builder) const
 {
-    if (m_gap.isEmpty())
-        return;
-    builder.append('\n');
-    builder.append(m_indent);
+    if (willIndent())
+        builder.append('\n', m_indent);
 }
 
 inline Stringifier::Holder::Holder(JSGlobalObject* globalObject, JSObject* object, Structure* structure)
@@ -518,7 +520,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                     PropertyName propertyName(entry.key());
                     if (propertyName.isSymbol())
                         return true;
-                    m_propertiesAndOffsets.constructAndAppend(Identifier::fromUid(vm, entry.key()), entry.offset());
+                    m_propertiesAndOffsets.constructAndAppend(propertyName, entry.offset());
                     return true;
                 });
                 m_hasFastObjectProperties = true;
@@ -569,7 +571,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         stringifyResult = stringifier.appendStringifiedValue(builder, value, *this, index);
         ASSERT(stringifyResult != StringifyFailedDueToUndefinedOrSymbolValue);
     } else {
-        Identifier propertyName;
+        PropertyName propertyName { nullptr };
         JSValue value;
         if (m_hasFastObjectProperties) {
             propertyName = std::get<0>(m_propertiesAndOffsets[index]);
@@ -593,8 +595,8 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             builder.append(',');
         stringifier.startNewLine(builder);
 
-        // Append the property name.
-        builder.appendQuotedJSONString(propertyName.string());
+        // Append the property name, colon, and space.
+        builder.appendQuotedJSONString(*propertyName.uid());
         builder.append(':');
         if (stringifier.willIndent())
             builder.append(' ');
@@ -610,12 +612,12 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
 
     switch (stringifyResult) {
         case StringifyFailed:
-            builder.append("null");
+            builder.append("null"_s);
             break;
         case StringifySucceeded:
             break;
         case StringifyFailedDueToUndefinedOrSymbolValue:
-            // This only occurs when get an undefined value or a symbol value for
+            // This only occurs when we get an undefined value or a symbol value for
             // an object property. In this case we don't want the separator and
             // property name that we already appended, so roll back.
             builder.shrink(rollBackPoint);
