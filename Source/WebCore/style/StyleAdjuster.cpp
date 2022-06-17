@@ -315,13 +315,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
                 style.setFloating(Float::None);
             }
 
-            // User agents are expected to have a rule in their user agent stylesheet that matches th elements that have a parent
-            // node whose computed value for the 'text-align' property is its initial value, whose declaration block consists of
-            // just a single declaration that sets the 'text-align' property to the value 'center'.
-            // https://html.spec.whatwg.org/multipage/rendering.html#rendering
-            if (m_element->hasTagName(thTag) && !style.hasExplicitlySetTextAlign() && m_parentStyle.textAlign() == RenderStyle::initialTextAlign())
-                style.setTextAlign(TextAlignMode::Center);
-
             if (m_element->hasTagName(legendTag))
                 style.setEffectiveDisplay(DisplayType::Block);
         }

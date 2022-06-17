@@ -136,10 +136,6 @@ public:
     static void applyInheritVerticalAlign(BuilderState&);
     static void applyValueVerticalAlign(BuilderState&, CSSValue&);
 
-    // Custom handling of initial + value only.
-    static void applyInitialTextAlign(BuilderState&);
-    static void applyValueTextAlign(BuilderState&, CSSValue&);
-
     // Custom handling of value setting only.
     static void applyValueBaselineShift(BuilderState&, CSSValue&);
     static void applyValueDirection(BuilderState&, CSSValue&);
@@ -190,18 +186,6 @@ inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSVa
 {
     builderState.style().setDirection(downcast<CSSPrimitiveValue>(value));
     builderState.style().setHasExplicitlySetDirection(true);
-}
-
-inline void BuilderCustom::applyInitialTextAlign(BuilderState& builderState)
-{
-    builderState.style().setTextAlign(RenderStyle::initialTextAlign());
-    builderState.style().setHasExplicitlySetTextAlign(true);
-}
-
-inline void BuilderCustom::applyValueTextAlign(BuilderState& builderState, CSSValue& value)
-{
-    builderState.style().setTextAlign(BuilderConverter::convertTextAlign(builderState, value));
-    builderState.style().setHasExplicitlySetTextAlign(true);
 }
 
 inline void BuilderCustom::resetEffectiveZoom(BuilderState& builderState)

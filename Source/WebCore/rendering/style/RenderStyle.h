@@ -1570,9 +1570,6 @@ public:
     bool hasExplicitlySetWritingMode() const { return m_nonInheritedFlags.hasExplicitlySetWritingMode; }
     void setHasExplicitlySetWritingMode(bool v) { m_nonInheritedFlags.hasExplicitlySetWritingMode = v; }
 
-    bool hasExplicitlySetTextAlign() const { return m_nonInheritedFlags.hasExplicitlySetTextAlign; }
-    void setHasExplicitlySetTextAlign(bool v) { m_nonInheritedFlags.hasExplicitlySetTextAlign = v; }
-
     // A unique style is one that has matches something that makes it impossible to share.
     bool unique() const { return m_nonInheritedFlags.isUnique; }
     void setUnique() { m_nonInheritedFlags.isUnique = true; }
@@ -1990,7 +1987,6 @@ private:
         unsigned hasExplicitlySetBorderTopRightRadius : 1;
         unsigned hasExplicitlySetDirection : 1;
         unsigned hasExplicitlySetWritingMode : 1;
-        unsigned hasExplicitlySetTextAlign : 1;
 #if ENABLE(DARK_MODE_CSS)
         unsigned hasExplicitlySetColorScheme : 1;
 #endif
@@ -2132,7 +2128,6 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && hasExplicitlySetBorderTopRightRadius == other.hasExplicitlySetBorderTopRightRadius
         && hasExplicitlySetDirection == other.hasExplicitlySetDirection
         && hasExplicitlySetWritingMode == other.hasExplicitlySetWritingMode
-        && hasExplicitlySetTextAlign == other.hasExplicitlySetTextAlign
 #if ENABLE(DARK_MODE_CSS)
         && hasExplicitlySetColorScheme == other.hasExplicitlySetColorScheme
 #endif
