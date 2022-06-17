@@ -3344,14 +3344,15 @@
    {
       "emails" : [
          "jean-yves.avenard@apple.com",
-         "jya@apple.com"
+         "jya@apple.com",
+         "jyavenard@gmail.com"
       ],
       "github" : "jyavenard",
       "name" : "Jean-Yves Avenard",
       "nicks" : [
          "jya"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
