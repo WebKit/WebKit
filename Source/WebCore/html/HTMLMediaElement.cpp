@@ -3924,7 +3924,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     if (m_volume == volume)
         return { };
 
-#if !PLATFORM(IOS_FAMILY)
+#if HAVE(MEDIA_VOLUME_PER_ELEMENT)
     if (volume && processingUserGestureForMedia())
         removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
 
@@ -5610,14 +5610,7 @@ void HTMLMediaElement::updateVolume()
 {
     if (!m_player)
         return;
-#if PLATFORM(IOS_FAMILY)
-    // Only the user can change audio volume so update the cached volume and post the changed event.
-    float volume = m_player->volume();
-    if (m_volume != volume) {
-        m_volume = volume;
-        scheduleEvent(eventNames().volumechangeEvent);
-    }
-#else
+#if HAVE(MEDIA_VOLUME_PER_ELEMENT)
     // Avoid recursion when the player reports volume changes.
     if (!processingMediaPlayerCallback()) {
         m_player->setMuted(effectiveMuted());
@@ -5625,7 +5618,14 @@ void HTMLMediaElement::updateVolume()
     }
 
     document().updateIsPlayingMedia();
-#endif // PLATFORM(IOS_FAMILY)
+#else
+    // Only the user can change audio volume so update the cached volume and post the changed event.
+    float volume = m_player->volume();
+    if (m_volume != volume) {
+        m_volume = volume;
+        scheduleEvent(eventNames().volumechangeEvent);
+    }
+#endif
 }
 
 void HTMLMediaElement::scheduleUpdatePlayState()
@@ -5817,7 +5817,7 @@ void HTMLMediaElement::cancelPendingTasks()
     m_resumeTaskCancellationGroup.cancel();
     m_seekTaskCancellationGroup.cancel();
     m_playbackControlsManagerBehaviorRestrictionsTaskCancellationGroup.cancel();
-#if PLATFORM(IOS_FAMILY)
+#if !HAVE(MEDIA_VOLUME_PER_ELEMENT)
     m_volumeRevertTaskCancellationGroup.cancel();
 #endif
 }
@@ -6071,8 +6071,8 @@ bool HTMLMediaElement::virtualHasPendingActivity() const
 
 void HTMLMediaElement::mediaVolumeDidChange()
 {
-    // FIXME: We should try to reconcile this so there's no difference for PLATFORM(IOS_FAMILY).
-#if !PLATFORM(IOS_FAMILY)
+    // FIXME: We should try to reconcile this so there's no difference for !HAVE(MEDIA_VOLUME_PER_ELEMENT).
+#if HAVE(MEDIA_VOLUME_PER_ELEMENT)
     INFO_LOG(LOGIDENTIFIER);
     updateVolume();
 #endif
