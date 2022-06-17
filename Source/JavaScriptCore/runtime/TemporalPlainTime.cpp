@@ -221,6 +221,8 @@ static ISO8601::Duration roundTime(ISO8601::PlainTime plainTime, double incremen
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+
+    return ISO8601::Duration();
 }
 
 ISO8601::PlainTime TemporalPlainTime::round(JSGlobalObject* globalObject, JSValue optionsValue) const

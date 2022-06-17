@@ -191,6 +191,10 @@ static constexpr double computeMinimumValue(IntegerRange range)
     case IntegerRange::OneAndGreater:
         return 1.0;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
+
+    return 0.0;
 }
 // MARK: Integer (Raw)
 
