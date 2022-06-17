@@ -224,8 +224,18 @@ TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
                 auto request = co_await connection.awaitableReceiveHTTPRequest();
                 auto path = HTTPServer::parsePath(request);
                 auto response = [&] {
-                    if (path == "/com"_s)
+                    if (path == "/com"_s) {
+#if CPU(ARM64E) && defined(NDEBUG)
+                        // FIXME: This is exactly equivalent code, but the code below crashes on release builds on arm64e.
+                        // See rdar://95391568
+                        HashMap<String, String> headerFields;
+                        headerFields.reserveInitialCapacity(1);
+                        headerFields.add("Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s);
+                        return HTTPResponse(WTFMove(headerFields), "<script>alert('hi')</script>"_s);
+#else
                         return HTTPResponse({ { "Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s } }, "<script>alert('hi')</script>"_s);
+#endif
+                    }
                     if (path == "/org"_s)
                         return HTTPResponse("<script>fetch('https://example.com/cookie-check', {credentials: 'include'})</script>"_s);
                     if (path == "/cookie-check"_s) {
