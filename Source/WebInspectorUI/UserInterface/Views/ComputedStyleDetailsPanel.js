@@ -66,6 +66,21 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         return this._boxModelDiagramRow?.minimumWidth ?? 0;
     }
 
+    get supportsToggleCSSClassList()
+    {
+        return true;
+    }
+
+    get supportsToggleCSSForcedPseudoClass()
+    {
+        return true;
+    }
+
+    get initialToggleCSSForcedPseudoClassState()
+    {
+        return false;
+    }
+
     get variablesGroupingMode()
     {
         console.assert(this._variablesGroupingModeScopeBar.selectedItems[0], "No selected variables grouping mode", this._variablesGroupingModeScopeBar.selectedItems);

@@ -137,7 +137,7 @@ private:
     typedef HashMap<Inspector::Protocol::CSS::StyleSheetId, RefPtr<InspectorStyleSheet>> IdToInspectorStyleSheet;
     typedef HashMap<CSSStyleSheet*, RefPtr<InspectorStyleSheet>> CSSStyleSheetToInspectorStyleSheet;
     typedef HashMap<RefPtr<Document>, Vector<RefPtr<InspectorStyleSheet>>> DocumentToViaInspectorStyleSheet; // "via inspector" stylesheets
-    typedef HashMap<Inspector::Protocol::DOM::NodeId, unsigned> NodeIdToForcedPseudoState;
+    typedef HashSet<CSSSelector::PseudoClassType, IntHash<CSSSelector::PseudoClassType>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClassType>> PseudoClassHashSet;
 
     InspectorStyleSheetForInlineStyle& asInspectorStyleSheet(StyledElement&);
     Element* elementForId(Inspector::Protocol::ErrorString&, Inspector::Protocol::DOM::NodeId);
@@ -171,7 +171,7 @@ private:
     HashMap<Node*, Ref<InspectorStyleSheetForInlineStyle>> m_nodeToInspectorStyleSheet; // bogus "stylesheets" with elements' inline styles
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
     HashMap<Document*, HashSet<CSSStyleSheet*>> m_documentToKnownCSSStyleSheets;
-    NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
+    HashMap<Inspector::Protocol::DOM::NodeId, PseudoClassHashSet> m_nodeIdToForcedPseudoState;
     HashSet<Document*> m_documentsWithForcedPseudoStates;
 
     int m_lastStyleSheetId { 1 };

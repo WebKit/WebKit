@@ -55,6 +55,19 @@
             "description": "Pseudo-style identifier (see <code>enum PseudoId</code> in <code>RenderStyleConstants.h</code>)."
         },
         {
+            "id": "ForceablePseudoClass",
+            "type": "string",
+            "enum": [
+                "active",
+                "focus",
+                "focus-visible",
+                "focus-within",
+                "hover",
+                "visited"
+            ],
+            "description": "Pseudo-style identifier (see <code>enum PseudoId</code> in <code>RenderStyleConstants.h</code>)."
+        },
+        {
             "id": "PseudoIdMatches",
             "type": "object",
             "description": "CSS rule collection for a single pseudo style.",
@@ -424,7 +437,7 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The element id for which to force the pseudo state." },
-                { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "description": "Element pseudo classes to force when computing the element's style." }
+                { "name": "forcedPseudoClasses", "type": "array", "items": { "$ref": "ForceablePseudoClass" }, "description": "Element pseudo classes to force when computing the element's style." }
             ]
         },
         {

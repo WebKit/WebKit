@@ -526,17 +526,19 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
                     createNewRule(selector, text);
                 };
 
-                if (WI.CSSManager.ForceablePseudoClasses.every((className) => !this._style.selectorText.includes(":" + className))) {
+                if (WI.cssManager.canForcePseudoClass() && Object.values(WI.CSSManager.ForceablePseudoClass).every((className) => !this._style.selectorText.includes(":" + className))) {
                     contextMenu.appendSeparator();
 
-                     for (let pseudoClass of WI.CSSManager.ForceablePseudoClasses) {
-                        if (pseudoClass === "visited" && this._style.node.nodeName() !== "A")
+                    for (let pseudoClass of Object.values(WI.CSSManager.ForceablePseudoClass)) {
+                        if (!WI.cssManager.canForcePseudoClass(pseudoClass))
+                            continue;
+
+                        if (pseudoClass === WI.CSSManager.ForceablePseudoClass.Visited && this._style.node.nodeName() !== "A")
                             continue;
 
                         let pseudoClassSelector = ":" + pseudoClass;
                         contextMenu.appendItem(WI.UIString("Add %s Rule").format(pseudoClassSelector), () => {
-                            if (WI.cssManager.canForcePseudoClasses())
-                                this._style.node.setPseudoClassEnabled(pseudoClass, true);
+                            this._style.node.setPseudoClassEnabled(pseudoClass, true);
 
                             addPseudoRule(pseudoClassSelector);
                         });

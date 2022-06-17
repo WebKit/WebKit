@@ -81,39 +81,6 @@ namespace WebCore {
 
 using namespace Inspector;
 
-enum ForcePseudoClassFlags {
-    PseudoClassNone = 0,
-    PseudoClassHover = 1 << 0,
-    PseudoClassFocus = 1 << 1,
-    PseudoClassActive = 1 << 2,
-    PseudoClassVisited = 1 << 3
-};
-
-static unsigned computePseudoClassMask(const JSON::Array& pseudoClassArray)
-{
-    static NeverDestroyed<String> active(MAKE_STATIC_STRING_IMPL("active"));
-    static NeverDestroyed<String> hover(MAKE_STATIC_STRING_IMPL("hover"));
-    static NeverDestroyed<String> focus(MAKE_STATIC_STRING_IMPL("focus"));
-    static NeverDestroyed<String> visited(MAKE_STATIC_STRING_IMPL("visited"));
-    if (!pseudoClassArray.length())
-        return PseudoClassNone;
-
-    unsigned result = PseudoClassNone;
-    for (auto& pseudoClassValue : pseudoClassArray) {
-        auto pseudoClass = pseudoClassValue->asString();
-        if (pseudoClass == active)
-            result |= PseudoClassActive;
-        else if (pseudoClass == hover)
-            result |= PseudoClassHover;
-        else if (pseudoClass == focus)
-            result |= PseudoClassFocus;
-        else if (pseudoClass == visited)
-            result |= PseudoClassVisited;
-    }
-
-    return result;
-}
-
 class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
     WTF_MAKE_NONCOPYABLE(StyleSheetAction);
 public:
@@ -428,19 +395,7 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     if (!nodeId)
         return false;
 
-    unsigned forcedPseudoState = m_nodeIdToForcedPseudoState.get(nodeId);
-    switch (pseudoClassType) {
-    case CSSSelector::PseudoClassActive:
-        return forcedPseudoState & PseudoClassActive;
-    case CSSSelector::PseudoClassFocus:
-        return forcedPseudoState & PseudoClassFocus;
-    case CSSSelector::PseudoClassHover:
-        return forcedPseudoState & PseudoClassHover;
-    case CSSSelector::PseudoClassVisited:
-        return forcedPseudoState & PseudoClassVisited;
-    default:
-        return false;
-    }
+    return m_nodeIdToForcedPseudoState.get(nodeId).contains(pseudoClassType);
 }
 
 std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudoId(PseudoId pseudoId)
@@ -924,13 +879,45 @@ Protocol::ErrorStringOr<void> InspectorCSSAgent::forcePseudoState(Protocol::DOM:
     if (!element)
         return makeUnexpected(errorString);
 
-    // Return early if the forced pseudo state was already set correctly.
-    unsigned forcedPseudoState = computePseudoClassMask(forcedPseudoClasses);
-    if (forcedPseudoState) {
-        auto iterator = m_nodeIdToForcedPseudoState.add(nodeId, 0).iterator;
-        if (forcedPseudoState == iterator->value)
-            return { };
-        iterator->value = forcedPseudoState;
+    PseudoClassHashSet forcedPseudoClassesToSet;
+    for (const auto& pseudoClassValue : forcedPseudoClasses.get()) {
+        auto pseudoClassString = pseudoClassValue->asString();
+        if (!pseudoClassString)
+            return makeUnexpected("Unexpected non-string value in given forcedPseudoClasses"_s);
+
+        auto pseudoClass = Protocol::Helpers::parseEnumValueFromString<Protocol::CSS::ForceablePseudoClass>(pseudoClassString);
+        if (!pseudoClass)
+            return makeUnexpected(makeString("Unknown forcedPseudoClass: ", pseudoClassString));
+
+        switch (*pseudoClass) {
+        case Protocol::CSS::ForceablePseudoClass::Active:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassActive);
+            break;
+
+        case Protocol::CSS::ForceablePseudoClass::Hover:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassHover);
+            break;
+
+        case Protocol::CSS::ForceablePseudoClass::Focus:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassFocus);
+            break;
+
+        case Protocol::CSS::ForceablePseudoClass::FocusVisible:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassFocusVisible);
+            break;
+
+        case Protocol::CSS::ForceablePseudoClass::FocusWithin:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassFocusWithin);
+            break;
+
+        case Protocol::CSS::ForceablePseudoClass::Visited:
+            forcedPseudoClassesToSet.add(CSSSelector::PseudoClassVisited);
+            break;
+        }
+    }
+
+    if (!forcedPseudoClassesToSet.isEmpty()) {
+        m_nodeIdToForcedPseudoState.set(nodeId, WTFMove(forcedPseudoClassesToSet));
         m_documentsWithForcedPseudoStates.add(&element->document());
     } else {
         if (!m_nodeIdToForcedPseudoState.remove(nodeId))
