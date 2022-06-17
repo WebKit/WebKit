@@ -54,6 +54,19 @@ AllowViewportShrinkToFitContent:
     WebCore:
       default: true
 
+AlternateWebMPlayerEnabled:
+  type: bool
+  humanReadableName: "Alternate WebM Player"
+  humanReadableDescription: "Enable Alternate WebM Player"
+  condition: ENABLE(ALTERNATE_WEBM_PLAYER)
+  defaultValue:
+    WebKitLegacy:
+     default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 AlwaysZoomOnDoubleTap:
   type: bool
   humanReadableName: "DTTZ always"
@@ -974,16 +987,6 @@ WebAPIStatisticsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
-
-WebMExperimentEnabled:
-  type: bool
-  humanReadableName: "WebM Experiment"
-  humanReadableDescription: "Enable WebM Experiment"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEBM_EXPERIMENT)
-  defaultValue:
-    WebCore:
       default: false
 
 WebRTCAudioLatencyAdaptationEnabled:
