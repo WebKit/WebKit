@@ -125,7 +125,7 @@ bool canUseWebAssemblyFastMemory();
     \
     v(Bool, useIterationIntrinsics, true, Normal, nullptr) \
     \
-    v(Bool, useOSLog, false, Normal, "Log dataLog()s to os_log instead of stderr") \
+    v(OSLogType, useOSLog, OSLogType::None, Normal, "Log dataLog()s to os_log instead of stderr") \
     /* dumpDisassembly implies dumpDFGDisassembly. */ \
     v(Bool, needDisassemblySupport, false, Normal, nullptr) \
     v(Bool, dumpDisassembly, false, Normal, "dumps disassembly of all JIT compiled code upon compilation") \
@@ -650,6 +650,16 @@ private:
     unsigned m_highLimit;
 };
 
+enum class OSLogType : uint8_t {
+    None,
+    // These corresponds to OS_LOG_TYPE_xxx.
+    Default,
+    Info,
+    Debug,
+    Error,
+    Fault
+};
+
 struct OptionsStorage {
     using Bool = bool;
     using Unsigned = unsigned;
@@ -659,6 +669,7 @@ struct OptionsStorage {
     using OptionRange = JSC::OptionRange;
     using OptionString = const char*;
     using GCLogLevel = GCLogging::Level;
+    using OSLogType = JSC::OSLogType;
 
     bool allowUnfinalizedAccess;
     bool isFinalized;

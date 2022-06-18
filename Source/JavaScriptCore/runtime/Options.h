@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #include "JSCConfig.h"
 #include "JSExportMacros.h"
 #include <stdint.h>
-#include <stdio.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
@@ -73,6 +72,7 @@ public:
         OptionRange,
         OptionString,
         GCLogLevel,
+        OSLogType,
     };
 
     class AllowUnfinalizedAccessScope {
@@ -113,7 +113,7 @@ public:
     // (no spaces allowed) and set the specified option if appropriate.
     JS_EXPORT_PRIVATE static bool setOption(const char* arg);
 
-    JS_EXPORT_PRIVATE static void dumpAllOptions(FILE*, DumpLevel, const char* title = nullptr);
+    JS_EXPORT_PRIVATE static void dumpAllOptions(DumpLevel, const char* title = nullptr);
     JS_EXPORT_PRIVATE static void dumpAllOptionsInALine(StringBuilder&);
 
     JS_EXPORT_PRIVATE static void ensureOptionsAreCoherent();
@@ -158,7 +158,9 @@ private:
 
     static bool setOptionWithoutAlias(const char* arg);
     static bool setAliasedOption(const char* arg);
+#if !PLATFORM(COCOA)
     static bool overrideAliasedOptionWithHeuristic(const char* name);
+#endif
 
     inline static void* addressOfOption(Options::ID);
     inline static void* addressOfOptionDefault(Options::ID);

@@ -58,6 +58,8 @@
 
 namespace JSC {
 
+bool useOSLogOptionHasChanged = false;
+
 template<typename T>
 std::optional<T> parse(const char* string);
 
@@ -146,6 +148,83 @@ std::optional<OptionsStorage::GCLogLevel> parse(const char* string)
     return std::nullopt;
 }
 
+template<>
+std::optional<OptionsStorage::OSLogType> parse(const char* string)
+{
+    std::optional<OptionsStorage::OSLogType> result;
+
+    if (equalLettersIgnoringASCIICase(string, "false"_s) || !strcmp(string, "0"))
+        result = OSLogType::None;
+    else if (equalLettersIgnoringASCIICase(string, "true"_s) || !strcmp(string, "1"))
+        result = OSLogType::Error;
+    else if (equalLettersIgnoringASCIICase(string, "default"_s))
+        result = OSLogType::Default;
+    else if (equalLettersIgnoringASCIICase(string, "info"_s))
+        result = OSLogType::Info;
+    else if (equalLettersIgnoringASCIICase(string, "debug"_s))
+        result = OSLogType::Debug;
+    else if (equalLettersIgnoringASCIICase(string, "error"_s))
+        result = OSLogType::Error;
+    else if (equalLettersIgnoringASCIICase(string, "fault"_s))
+        result = OSLogType::Fault;
+
+    if (result && result.value() != Options::useOSLog())
+        useOSLogOptionHasChanged = true;
+    return result;
+}
+
+#if OS(DARWIN)
+static os_log_type_t asDarwinOSLogType(OSLogType type)
+{
+    switch (type) {
+    case OSLogType::None:
+        RELEASE_ASSERT_NOT_REACHED();
+    case OSLogType::Default:
+        return OS_LOG_TYPE_DEFAULT;
+    case OSLogType::Info:
+        return OS_LOG_TYPE_INFO;
+    case OSLogType::Debug:
+        return OS_LOG_TYPE_DEBUG;
+    case OSLogType::Error:
+        return OS_LOG_TYPE_ERROR;
+    case OSLogType::Fault:
+        return OS_LOG_TYPE_FAULT;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return OS_LOG_TYPE_DEFAULT;
+}
+
+static void initializeDatafileToUseOSLog()
+{
+    static bool alreadyInitialized = false;
+    RELEASE_ASSERT(!alreadyInitialized);
+    WTF::setDataFile(OSLogPrintStream::open("com.apple.JavaScriptCore", "DataLog", asDarwinOSLogType(Options::useOSLog())));
+    alreadyInitialized = true;
+    // Make sure no one jumped here for nefarious reasons...
+    RELEASE_ASSERT(Options::useOSLog() != OSLogType::None);
+}
+#endif // OS(DARWIN)
+
+static const char* asString(OSLogType type)
+{
+    switch (type) {
+    case OSLogType::None:
+        return "none";
+    case OSLogType::Default:
+        return "default";
+    case OSLogType::Info:
+        return "info";
+    case OSLogType::Debug:
+        return "debug";
+    case OSLogType::Error:
+        return "error";
+    case OSLogType::Fault:
+        return "fault";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 bool Options::isAvailable(Options::ID id, Options::Availability availability)
 {
     if (availability == Availability::Restricted)
@@ -171,6 +250,8 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
         return !!LLINT_TRACING;
     return false;
 }
+
+#if !PLATFORM(COCOA)
 
 template<typename T>
 bool overrideOptionWithHeuristic(T& variable, Options::ID id, const char* name, Options::Availability availability)
@@ -207,6 +288,8 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
     return false;
 }
+
+#endif // !PLATFORM(COCOA)
 
 static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int minimum = 1)
 {
@@ -575,6 +658,13 @@ void Options::recomputeDependentOptions()
         FOR_EACH_JSC_EXPERIMENTAL_OPTION(DISABLE_TIERS);
     }
 
+#if OS(DARWIN)
+    if (useOSLogOptionHasChanged) {
+        initializeDatafileToUseOSLog();
+        useOSLogOptionHasChanged = false;
+    }
+#endif
+
     if (Options::verboseVerifyGC())
         Options::verifyGC() = true;
 }
@@ -651,12 +741,13 @@ void Options::initialize()
             overrideOptionWithHeuristic(name_(), name_##ID, "JSC_" #name_, Availability::availability_);
             FOR_EACH_JSC_OPTION(OVERRIDE_OPTION_WITH_HEURISTICS)
 #undef OVERRIDE_OPTION_WITH_HEURISTICS
-#endif // PLATFORM(COCOA)
 
 #define OVERRIDE_ALIASED_OPTION_WITH_HEURISTICS(aliasedName_, unaliasedName_, equivalence_) \
             overrideAliasedOptionWithHeuristic("JSC_" #aliasedName_);
             FOR_EACH_JSC_ALIASED_OPTION(OVERRIDE_ALIASED_OPTION_WITH_HEURISTICS)
 #undef OVERRIDE_ALIASED_OPTION_WITH_HEURISTICS
+
+#endif // PLATFORM(COCOA)
 
 #if 0
                 ; // Deconfuse editors that do auto indentation
@@ -675,14 +766,6 @@ void Options::initialize()
 #if HAVE(MACH_EXCEPTIONS)
             if (Options::useMachForExceptions())
                 handleSignalsWithMach();
-#endif
-
-#if OS(DARWIN)
-            if (Options::useOSLog()) {
-                WTF::setDataFile(OSLogPrintStream::open("com.apple.JavaScriptCore", "DataLog", OS_LOG_TYPE_INFO));
-                // Make sure no one jumped here for nefarious reasons...
-                RELEASE_ASSERT(useOSLog());
-            }
 #endif
 
 #if ASAN_ENABLED && OS(LINUX) && ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
@@ -853,7 +936,7 @@ bool Options::setOptionWithoutAlias(const char* arg)
         if (Availability::availability_ != Availability::Normal    \
             && !isAvailable(name_##ID, Availability::availability_)) \
             return false;                                          \
-        std::optional<OptionsStorage::type_> value;                     \
+        std::optional<OptionsStorage::type_> value;                \
         value = parse<OptionsStorage::type_>(valueStr);            \
         if (value) {                                               \
             name_() = value.value();                               \
@@ -946,11 +1029,11 @@ void Options::dumpAllOptionsInALine(StringBuilder& builder)
     dumpAllOptions(builder, DumpLevel::All, nullptr, " ", nullptr, nullptr, DontDumpDefaults);
 }
 
-void Options::dumpAllOptions(FILE* stream, DumpLevel level, const char* title)
+void Options::dumpAllOptions(DumpLevel level, const char* title)
 {
     StringBuilder builder;
     dumpAllOptions(builder, level, title, nullptr, "   ", "\n", DumpDefaults);
-    fprintf(stream, "%s", builder.toString().utf8().data());
+    dataLog(builder.toString().utf8().data());
 }
 
 struct OptionReader {
@@ -986,6 +1069,7 @@ struct OptionReader {
             OptionRange m_optionRange;
             const char* m_optionString;
             GCLogging::Level m_gcLogLevel;
+            OSLogType m_osLogType;
         };
 
         friend struct OptionReader;
@@ -1087,6 +1171,9 @@ void OptionReader::Option::initValue(void* addressOfValue)
     case Options::Type::GCLogLevel:
         memcpy(&m_gcLogLevel, addressOfValue, sizeof(OptionsStorage::GCLogLevel));
         break;
+    case Options::Type::OSLogType:
+        memcpy(&m_osLogType, addressOfValue, sizeof(OptionsStorage::OSLogType));
+        break;
     }
 }
 
@@ -1117,6 +1204,9 @@ void OptionReader::Option::dump(StringBuilder& builder) const
     case Options::Type::GCLogLevel:
         builder.append(GCLogging::levelAsString(m_gcLogLevel));
         break;
+    case Options::Type::OSLogType:
+        builder.append(asString(m_osLogType));
+        break;
     }
 }
 
@@ -1141,6 +1231,8 @@ bool OptionReader::Option::operator==(const Option& other) const
             || (m_optionString && other.m_optionString && !strcmp(m_optionString, other.m_optionString));
     case Options::Type::GCLogLevel:
         return m_gcLogLevel == other.m_gcLogLevel;
+    case Options::Type::OSLogType:
+        return m_osLogType == other.m_osLogType;
     }
     return false;
 }
