@@ -53,7 +53,7 @@ public:
     virtual std::optional<String> synchronize() { return std::nullopt; }
     
     // Control the animation life cycle.
-    bool isAnimating() const { return m_animators.computeSize(); }
+    bool isAnimating() const { return !m_animators.computesEmpty(); }
     virtual void startAnimation(SVGAttributeAnimator& animator) { m_animators.add(animator); }
     virtual void stopAnimation(SVGAttributeAnimator& animator) { m_animators.remove(animator); }
     
