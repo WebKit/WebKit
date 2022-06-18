@@ -303,7 +303,8 @@ class GitRepository(Repository):
 
     def _fetch_remote(self):
         if self._report_svn_revision:
-            self._run_git_command(['pull'])
+            self._run_git_command(['fetch', 'origin', self._git_branch])
+            self._run_git_command(['reset', '--hard', 'FETCH_HEAD'])
             subprocess.check_call(['rm', '-rf', os.path.join(self._git_checkout, '.git/svn')])
             self._run_git_command(['svn', 'fetch'])
         else:
