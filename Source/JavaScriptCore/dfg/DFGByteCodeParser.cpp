@@ -634,6 +634,13 @@ private:
                     if (livenessAtBytecode[local])
                         addPhantomLocalDirect(inlineCallFrame, remapOperand(inlineCallFrame, virtualRegisterForLocal(local)));
                 }
+                if (bytecodeIndex.checkpoint()) {
+                    ASSERT(codeBlock->numTmps());
+                    auto liveTmps = tmpLivenessForCheckpoint(*codeBlock, bytecodeIndex);
+                    liveTmps.forEachSetBit([&](size_t tmp) {
+                        addPhantomLocalDirect(inlineCallFrame, remapOperand(inlineCallFrame, Operand::tmp(tmp)));
+                    });
+                }
                 isCallerOrigin = true;
             });
     }

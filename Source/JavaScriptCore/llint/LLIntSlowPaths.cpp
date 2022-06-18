@@ -2353,7 +2353,6 @@ static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
     auto scope = DECLARE_THROW_SCOPE(vm);
     unsigned checkpointIndex = sideState.bytecodeIndex.checkpoint();
 
-    auto& valueRegister = callFrame->uncheckedR(bytecode.m_value);
     auto iteratorResultObject = sideState.tmps[OpIteratorNext::nextResult];
     auto next = callFrame->uncheckedR(bytecode.m_next).jsValue();    
     RELEASE_ASSERT_WITH_MESSAGE(next, "We should not OSR exit to a checkpoint for fast cases.");
@@ -2370,6 +2369,7 @@ static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
     }
 
     scope.release();
+    auto& valueRegister = callFrame->uncheckedR(bytecode.m_value);
     if (doneRegister.jsValue().toBoolean(globalObject))
         valueRegister = jsUndefined();
     else
@@ -2433,11 +2433,25 @@ extern "C" SlowPathReturnType llint_slow_path_checkpoint_osr_exit_from_inlined_c
     }
     case op_iterator_next: {
         callFrame->uncheckedR(destinationFor(pc->as<OpIteratorNext>(), bytecodeIndex.checkpoint()).virtualRegister()) = JSValue::decode(result);
-        if (bytecodeIndex.checkpoint() == OpIteratorNext::getValue)
+        switch (bytecodeIndex.checkpoint()) {
+        case OpIteratorNext::computeNext: // First one is not handled by checkpoint.
+            RELEASE_ASSERT_NOT_REACHED();
             break;
-        ASSERT(bytecodeIndex.checkpoint() == OpIteratorNext::getDone);
-        sideState->bytecodeIndex = bytecodeIndex.withCheckpoint(OpIteratorNext::getValue);
-        handleIteratorNextCheckpoint(vm, callFrame, globalObject, pc->as<OpIteratorNext>(), *sideState.get());
+        case OpIteratorNext::getDone: {
+            const auto& bytecode = pc->as<OpIteratorNext>();
+            auto& doneRegister = callFrame->uncheckedR(bytecode.m_done);
+            auto& valueRegister = callFrame->uncheckedR(bytecode.m_value);
+            if (doneRegister.jsValue().toBoolean(globalObject))
+                valueRegister = jsUndefined();
+            else {
+                auto iteratorResultObject = sideState->tmps[OpIteratorNext::nextResult];
+                valueRegister = iteratorResultObject.get(globalObject, vm.propertyNames->value);
+            }
+            break;
+        }
+        case OpIteratorNext::getValue:
+            break;
+        }
         break;
     }
 
