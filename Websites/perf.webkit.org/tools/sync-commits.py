@@ -18,7 +18,10 @@ from util import text_content
 
 # There are some buggy commit messages:
 # Canonical link: https://commits.webkit.org/https://commits.webkit.org/232477@main
-REVISION_IDENTIFIER_RE = re.compile(r'Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+@[\w\.\-]+)\n')
+REVISION_IDENTIFIER_IN_MSG_RE = re.compile(r'Canonical link: (https\://commits\.webkit\.org/)+(?P<revision_identifier>\d+\.?\d*@[\w\.\-]+)\n')
+REVISION_IN_MSG_RE = re.compile(r'git-svn-id: https://svn\.webkit\.org/repository/webkit/[\w\W]+@(?P<revision>\d+) [\w\d\-]+\n')
+HASH_RE = re.compile(r'^[a-f0-9A-F]+$')
+REVISION_RE = re.compile(r'^[Rr]?(?P<revision>\d+)$')
 
 def main(argv):
     parser = argparse.ArgumentParser()
@@ -49,7 +52,8 @@ def load_repository(repository):
         return GitRepository(
             name=repository['name'], git_url=repository['url'], git_checkout=repository['gitCheckout'],
             git_branch=repository.get('branch'), report_revision_identifier_in_commit_msg=repository.get('reportRevisionIdentifier'),
-            report_svn_revison=repository.get('reportSVNRevision'))
+            report_svn_revison=repository.get('reportSVNRevision'),
+            max_revision=repository.get('maxRevision'))
     return SVNRepository(name=repository['name'], svn_url=repository['url'], should_trust_certificate=repository.get('trustCertificate', False),
         use_server_auth=repository.get('useServerAuth', False), account_name_script_path=repository.get('accountNameFinderScript'))
 
@@ -91,6 +95,7 @@ class Repository(object):
                 break
 
             if result.get('status') == 'FailedToFindPreviousCommit':
+                print result
                 previous_commit = self.fetch_commit(server_config, result['commit']['previousCommit'])
                 if not previous_commit:
                     raise Exception('Could not find the previous commit %s of %s' % (result['commit']['previousCommit'], result['commit']['revision']))
@@ -198,7 +203,7 @@ class SVNRepository(Repository):
 
 class GitRepository(Repository):
 
-    def __init__(self, name, git_checkout, git_url, git_branch=None, report_revision_identifier_in_commit_msg=False, report_svn_revison=False):
+    def __init__(self, name, git_checkout, git_url, git_branch=None, report_revision_identifier_in_commit_msg=False, report_svn_revison=False, max_revision=None):
         assert(os.path.isdir(git_checkout))
         super(GitRepository, self).__init__(name)
         self._git_checkout = git_checkout
@@ -207,6 +212,7 @@ class GitRepository(Repository):
         self._tokenized_hashes = []
         self._report_revision_identifier_in_commit_msg = report_revision_identifier_in_commit_msg
         self._report_svn_revision = report_svn_revison
+        self._max_revision = max_revision
 
     def fetch_next_commit(self, server_config, last_fetched):
         if not last_fetched:
@@ -214,10 +220,10 @@ class GitRepository(Repository):
             tokens = self._tokenized_hashes[0]
         else:
             if self._report_svn_revision:
-                last_fetched_git_hash = self._git_hash_from_svn_revision(last_fetched)
+                last_fetched_git_hash = self._git_hash_from_svn_revision_hash_mixed(last_fetched)
                 if not last_fetched_git_hash:
                     self._fetch_remote()
-                    last_fetched_git_hash = self._git_hash_from_svn_revision(last_fetched)
+                    last_fetched_git_hash = self._git_hash_from_svn_revision_hash_mixed(last_fetched)
                     if not last_fetched_git_hash:
                         raise ValueError('Cannot find the git hash for the last fetched svn revision')
                 last_fetched = last_fetched_git_hash
@@ -237,10 +243,17 @@ class GitRepository(Repository):
         return None
 
     def _svn_revision_from_git_hash(self, git_hash):
+        message = self._run_git_command(['log', git_hash, '-1', '--pretty=%B'])
+        revision_match = REVISION_IN_MSG_RE.search(message)
+        if revision_match:
+            return revision_match.group('revision')
         return self._run_git_command(['svn', 'find-rev', git_hash]).strip()
 
-    def _git_hash_from_svn_revision(self, revision):
-        return self._run_git_command(['svn', 'find-rev', 'r{}'.format(revision)]).strip()
+    def _git_hash_from_svn_revision_hash_mixed(self, something):
+        if REVISION_RE.match(str(something)):
+            return self._run_git_command(['svn', 'find-rev', 'r{}'.format(something)]).strip()
+        elif HASH_RE.match(str(something)):
+            return something
 
     def _revision_from_tokens(self, tokens):
         current_hash = tokens[0]
@@ -253,7 +266,7 @@ class GitRepository(Repository):
 
         revision_identifier = None
         if self._report_revision_identifier_in_commit_msg:
-            revision_identifier_match = REVISION_IDENTIFIER_RE.search(message)
+            revision_identifier_match = REVISION_IDENTIFIER_IN_MSG_RE.search(message)
             if not revision_identifier_match:
                 raise ValueError('Expected commit message to include revision identifier, but cannot find it, will need a history rewrite to fix it')
             revision_identifier = revision_identifier_match.group('revision_identifier')
@@ -261,13 +274,16 @@ class GitRepository(Repository):
         current_revision = current_hash
         previous_revision = previous_hash
         if self._report_svn_revision:
-            current_revision = self._svn_revision_from_git_hash(current_hash)
+            current_revision = int(self._svn_revision_from_git_hash(current_hash))
             if not current_revision:
                 raise ValueError('Cannot find SVN revison for {}'.format(current_hash))
             if previous_hash:
-                previous_revision = self._svn_revision_from_git_hash(previous_hash)
+                if current_revision <= self._max_revision + 1:
+                    previous_revision = self._svn_revision_from_git_hash(previous_hash)
                 if not previous_revision:
                     raise ValueError('Cannot find SVN revison for {}'.format(previous_hash))
+            if current_revision > self._max_revision:
+                current_revision = current_hash
 
         return {
             'repository': self._name,
