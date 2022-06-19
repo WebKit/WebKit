@@ -54,7 +54,7 @@ bool Random::reloadAndCheckShouldAuditSlow(VM& vm)
     if (!Options::randomIntegrityAuditRate()) {
         m_triggerBits = 0; // Never trigger, and don't bother reloading.
         if (IntegrityInternal::verbose)
-            dataLogLn("disabled Integrity audits: trigger bits ", RawPointer(reinterpret_cast<void*>(m_triggerBits)));
+            dataLogLn("disabled Integrity audits: trigger bits ", RawHex(m_triggerBits));
         return false;
     }
 
@@ -67,7 +67,7 @@ bool Random::reloadAndCheckShouldAuditSlow(VM& vm)
         m_triggerBits = m_triggerBits | (static_cast<uint64_t>(trigger) << i);
     }
     if (IntegrityInternal::verbose)
-        dataLogLn("reloaded Integrity trigger bits ", RawPointer(reinterpret_cast<void*>(m_triggerBits)));
+        dataLogLn("reloaded Integrity trigger bits ", RawHex(m_triggerBits));
     ASSERT(m_triggerBits >= (1ull << 63));
     return vm.random().getUint32() <= threshold;
 }
