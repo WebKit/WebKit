@@ -13,11 +13,13 @@ layer at (121,11) size 238x18
     RenderSVGInlineText {#text} at (0,0) size 238x18
       chunk 1 (middle anchor) text run 1 at (121.24,25.00) startOffset 0 endOffset 33 width 237.52: "<animateTransform> shape elements"
 layer at (-40,-30) size 80x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (77,89) size 424x225
+  RenderSVGContainer {g} at (69,89) size 432x225
+layer at (-30,-30) size 60x94 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (59,89) size 62x95
+layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGPath {path} at (59,89) size 62x62 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M 0 0 C 20 0 30 -10 30 -30 C 10 -30 0 -20 0 0 C 0 -20 -10 -30 -30 -30 C -30 -10 -20 0 0 0 C -20 0 -30 10 -30 30 C -10 30 0 20 0 0 C 0 20 10 30 30 30 C 30 10 20 0 0 0 Z"]
 layer at (-23,46) size 46x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGContainer {g} at (60,90) size 46x18
-layer at (-23,46) size 46x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGText {text} at (0,0) size 46x18 contains 1 chunk(s)
+  RenderSVGText {text} at (7,76) size 46x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 46x18
       chunk 1 (middle anchor) text run 1 at (-22.80,60.00) startOffset 0 endOffset 6 width 45.59: "<path>"
 layer at (-30,-20) size 60x84 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
