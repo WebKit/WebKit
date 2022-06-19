@@ -697,7 +697,17 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
             m_graphicsLayer->setChildrenTransform({ });
     };
 
-    if (!renderer().style().hasPerspective()) {
+    auto sublayerTransform = m_owningLayer.perspectiveTransform();
+
+    auto additionalAffineSublayerTransform = m_owningLayer.additionalAffineSublayerTransform();
+    if (additionalAffineSublayerTransform) {
+        if (sublayerTransform.isIdentity())
+            sublayerTransform = *additionalAffineSublayerTransform;
+        else
+            sublayerTransform = sublayerTransform * *additionalAffineSublayerTransform;
+    }
+
+    if (sublayerTransform.isIdentity()) {
         removeChildrenTransformFromLayers();
         return;
     }
@@ -713,24 +723,29 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
         return std::make_tuple(m_graphicsLayer.get(), renderer().transformReferenceBoxRect());
     };
 
-    auto [layerForPerspective, layerForPerspectiveRect] = layerForChildrenTransform();
-    if (layerForPerspective != m_graphicsLayer) {
+    auto [targetLayer, targetLayerRect] = layerForChildrenTransform();
+    if (targetLayer != m_graphicsLayer) {
         // If we have scrolling layers, we need the children transform on m_scrollContainerLayer to
         // affect children of m_scrolledContentsLayer, so set setPreserves3D(true).
-        if (layerForPerspective == m_scrollContainerLayer)
+        if (targetLayer == m_scrollContainerLayer)
             m_scrolledContentsLayer->setPreserves3D(true);
 
-        auto perspectiveAnchorPoint = FloatPoint3D {
-            layerForPerspectiveRect.width() ? (transformOrigin.x() - layerForPerspectiveRect.x()) / layerForPerspectiveRect.width() : 0.5f,
-            layerForPerspectiveRect.height() ? (transformOrigin.y() - layerForPerspectiveRect.y()) / layerForPerspectiveRect.height() : 0.5f,
+        auto anchorPoint = FloatPoint3D {
+            targetLayerRect.width() ? (transformOrigin.x() - targetLayerRect.x()) / targetLayerRect.width() : 0.5f,
+            targetLayerRect.height() ? (transformOrigin.y() - targetLayerRect.y()) / targetLayerRect.height() : 0.5f,
             transformOrigin.z()
         };
 
-        layerForPerspective->setAnchorPoint(perspectiveAnchorPoint);
+        targetLayer->setAnchorPoint(anchorPoint);
+    } else if (additionalAffineSublayerTransform) {
+        ASSERT(!additionalAffineSublayerTransform->isIdentity());
+
+        // Enforce applying the CSS to SVG coordinate transformation to all sublayers - re-use existing preserve-3d logic.
+        targetLayer->setPreserves3D(true);
     }
 
-    layerForPerspective->setChildrenTransform(m_owningLayer.perspectiveTransform());
-    removeChildrenTransformFromLayers(layerForPerspective);
+    targetLayer->setChildrenTransform(sublayerTransform);
+    removeChildrenTransformFromLayers(targetLayer);
 }
 
 void RenderLayerBacking::updateFilters(const RenderStyle& style)
@@ -2712,6 +2727,17 @@ bool RenderLayerBacking::paintsContent(RenderLayer::PaintedContentRequest& reque
 
     if (request.isSatisfied())
         return paintsContent;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // FIXME: [LBSE] Eventually refine the logic to end up with a narrower set of conditions.
+    if (is<RenderSVGModelObject>(m_owningLayer.renderer())) {
+        paintsContent = true;
+        request.setHasPaintedContent();
+    }
+
+    if (request.isSatisfied())
+        return paintsContent;
+#endif
 
     if (request.hasPaintedContent == RequestState::Unknown)
         request.hasPaintedContent = RequestState::False;

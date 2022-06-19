@@ -65,6 +65,7 @@
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGResourceContainer.h"
+#include "RenderSVGRoot.h"
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
 #include "RenderTheme.h"
@@ -1441,12 +1442,20 @@ void RenderObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, T
 
 bool RenderObject::shouldUseTransformFromContainer(const RenderObject* containerObject) const
 {
+    if (hasTransform())
+        return true;
+
+    if (containerObject) {
+        if (containerObject->hasCSSToSVGCoordinateSystemTransform())
+            return true;
+
 #if ENABLE(3D_TRANSFORMS)
-    return hasTransform() || (containerObject && containerObject->style().hasPerspective());
-#else
-    UNUSED_PARAM(containerObject);
-    return hasTransform();
+        if (containerObject->style().hasPerspective())
+            return true;
 #endif
+    }
+
+    return false;
 }
 
 void RenderObject::getTransformFromContainer(const RenderObject* containerObject, const LayoutSize& offsetInContainer, TransformationMatrix& transform) const
@@ -1456,22 +1465,32 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
     RenderLayer* layer;
     if (hasLayer() && (layer = downcast<RenderLayerModelObject>(*this).layer()) && layer->transform())
         transform.multiply(layer->currentTransform());
-    
+
+    if (!containerObject || !containerObject->hasLayer())
+        return;
+
+    auto containerLayer = downcast<RenderLayerModelObject>(*containerObject).layer();
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    auto additionalAffineSublayerTransform = containerLayer->additionalAffineSublayerTransform();
+    if (additionalAffineSublayerTransform) {
+        ASSERT(!additionalAffineSublayerTransform->isIdentity());
+        transform = *additionalAffineSublayerTransform * transform;
+    }
+#endif
+
 #if ENABLE(3D_TRANSFORMS)
-    if (containerObject && containerObject->hasLayer() && containerObject->style().hasPerspective()) {
+    if (containerObject->style().hasPerspective()) {
         // Perpsective on the container affects us, so we have to factor it in here.
-        ASSERT(containerObject->hasLayer());
-        FloatPoint perspectiveOrigin = downcast<RenderLayerModelObject>(*containerObject).layer()->perspectiveOrigin();
+        auto perspectiveOrigin = containerLayer->perspectiveOrigin();
 
         TransformationMatrix perspectiveMatrix;
         perspectiveMatrix.applyPerspective(containerObject->style().usedPerspective(*this));
-        
+
         transform.translateRight3d(-perspectiveOrigin.x(), -perspectiveOrigin.y(), 0);
         transform = perspectiveMatrix * transform;
         transform.translateRight3d(perspectiveOrigin.x(), perspectiveOrigin.y(), 0);
     }
-#else
-    UNUSED_PARAM(containerObject);
 #endif
 }
 
@@ -1925,6 +1944,16 @@ bool RenderObject::canHaveGeneratedChildren() const
 Node* RenderObject::generatingPseudoHostElement() const
 {
     return downcast<PseudoElement>(*node()).hostElement();
+}
+
+bool RenderObject::hasCSSToSVGCoordinateSystemTransform() const
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGRoot>(this))
+        return !downcast<RenderSVGRoot>(this)->computeCSSToSVGCoordinateSystemTransform().isIdentity();
+#endif
+
+    return false;
 }
 
 void RenderObject::setNeedsBoundariesUpdate()

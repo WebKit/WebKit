@@ -83,6 +83,9 @@ enum class CompositingReason {
     Root                                   = 1 << 25,
     IsolatesCompositedBlendingDescendants  = 1 << 26,
     Model                                  = 1 << 27,
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    SVGRootSublayerTransform               = 1 << 28,
+#endif
 };
 
 enum class ScrollCoordinationRole {
@@ -496,6 +499,7 @@ private:
     bool requiresCompositingForFilters(RenderLayerModelObject&) const;
     bool requiresCompositingForWillChange(RenderLayerModelObject&) const;
     bool requiresCompositingForModel(RenderLayerModelObject&) const;
+    bool requiresCompositingForSVGRootSublayerTransform(RenderLayerModelObject&) const;
 
     // Layout-dependent
     bool requiresCompositingForPlugin(RenderLayerModelObject&, RequiresCompositingData&) const;

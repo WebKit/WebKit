@@ -355,6 +355,13 @@ public:
     bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
     bool isSVGLayerAwareRenderer() const { return isSVGRoot() || isRenderSVGModelObject() || isSVGText() || isSVGInline() || isSVGForeignObject(); }
 
+    // The 'CSS to SVG' coordinate system transform moves from the CSS coordinate system
+    // (== the outermost <svg> element viewed as rectangular 'black box' from CSS PoV, whose
+    // dimensions are defined by e.g. 'width' / 'height' CSS properties to the SVG user-coordinate
+    // system, relative to the given SVG 'viewBox' attribute. Zooming/panning of the SVG document
+    // is also handled via the 'CSS to SVG' coordinate system transformation.
+    bool hasCSSToSVGCoordinateSystemTransform() const;
+
     // FIXME: Those belong into a SVG specific base-class for all renderers (see above)
     // Unfortunately we don't have such a class yet, because it's not possible for all renderers
     // to inherit from RenderSVGObject -> RenderObject (some need RenderBlock inheritance for instance)
@@ -474,7 +481,7 @@ public:
 
     bool hasTransformRelatedProperty() const { return m_bitfields.hasTransformRelatedProperty(); } // Transform, perspective or transform-style: preserve-3d.
     bool hasTransform() const { return hasTransformRelatedProperty() && (style().hasTransform() || style().translate() || style().scale() || style().rotate() || hasSVGTransform()); }
-    bool hasTransformOrPespective() const { return hasTransformRelatedProperty() && (hasTransform() || style().hasPerspective()); }
+    bool hasTransformOrPerspective() const { return hasTransformRelatedProperty() && (hasTransform() || style().hasPerspective()); }
 
     inline bool preservesNewline() const;
 

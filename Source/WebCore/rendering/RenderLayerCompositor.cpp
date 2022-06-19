@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
+ * Copyright (c) 2022 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +57,7 @@
 #include "RenderImage.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderSVGRoot.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
@@ -2617,6 +2619,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
         || requiresCompositingForBackfaceVisibility(renderer)
         || requiresCompositingForVideo(renderer)
         || requiresCompositingForModel(renderer)
+        || requiresCompositingForSVGRootSublayerTransform(renderer)
         || requiresCompositingForFrame(renderer, queryData)
         || requiresCompositingForPlugin(renderer, queryData)
         || requiresCompositingForOverflowScrolling(*renderer.layer(), queryData);
@@ -2678,6 +2681,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || requiresCompositingForBackfaceVisibility(renderer)
         || requiresCompositingForVideo(renderer)
         || requiresCompositingForModel(renderer)
+        || requiresCompositingForSVGRootSublayerTransform(renderer)
         || requiresCompositingForFrame(renderer, queryData)
         || requiresCompositingForPlugin(renderer, queryData)
         || requiresCompositingForOverflowScrolling(layer, queryData)
@@ -2733,6 +2737,10 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         reasons.add(CompositingReason::Plugin);
     else if (requiresCompositingForFrame(renderer, queryData))
         reasons.add(CompositingReason::IFrame);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    else if (requiresCompositingForSVGRootSublayerTransform(renderer))
+        reasons.add(CompositingReason::SVGRootSublayerTransform);
+#endif
 
     if ((canRender3DTransforms() && renderer.style().backfaceVisibility() == BackfaceVisibility::Hidden))
         reasons.add(CompositingReason::BackfaceVisibilityHidden);
@@ -2839,6 +2847,9 @@ static const char* compositingReasonToString(CompositingReason reason)
     case CompositingReason::WillChange: return "will-change";
     case CompositingReason::Root: return "root";
     case CompositingReason::Model: return "model";
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    case CompositingReason::SVGRootSublayerTransform: return "SVG root sublayer transform";
+#endif
     }
     return "";
 }
@@ -3169,6 +3180,16 @@ bool RenderLayerCompositor::requiresCompositingForFilters(RenderLayerModelObject
         return false;
 
     return renderer.hasFilter();
+}
+
+bool RenderLayerCompositor::requiresCompositingForSVGRootSublayerTransform(RenderLayerModelObject& renderer) const
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    return renderer.hasCSSToSVGCoordinateSystemTransform();
+#else
+    UNUSED_PARAM(renderer);
+    return false;
+#endif
 }
 
 bool RenderLayerCompositor::requiresCompositingForWillChange(RenderLayerModelObject& renderer) const

@@ -43,8 +43,7 @@ public:
     SVGSVGElement& svgSVGElement() const;
     FloatSize currentViewportSize() const;
 
-    const AffineTransform& viewBoxTransform() const { return m_viewBoxTransform; }
-    const AffineTransform& supplementalLocalToParentTransform() const { return m_supplementalLocalToParentTransform; }
+    AffineTransform computeCSSToSVGCoordinateSystemTransform() const;
 
     bool isEmbeddedThroughSVGImage() const;
     bool isEmbeddedThroughFrameContainingSVGDocument() const;
@@ -127,7 +126,7 @@ private:
     FloatRect m_objectBoundingBoxWithoutTransformations;
     FloatRect m_strokeBoundingBox;
     AffineTransform m_viewBoxTransform;
-    AffineTransform m_supplementalLocalToParentTransform;
+    AffineTransform m_cssToSVGCoordinateSystemTransform;
     HashSet<RenderSVGResourceContainer*> m_resourcesNeedingToInvalidateClients;
 };
 

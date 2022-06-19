@@ -322,6 +322,11 @@ Protocol::ErrorStringOr<Ref<Protocol::LayerTree::CompositingReasons>> InspectorL
     if (reasons.contains(CompositingReason::WillChange))
         compositingReasons->setWillChange(true);
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (reasons.contains(CompositingReason::SVGRootSublayerTransform))
+        compositingReasons->setSvgRootSublayerTransform(true);
+#endif
+
     if (reasons.contains(CompositingReason::Root))
         compositingReasons->setRoot(true);
 

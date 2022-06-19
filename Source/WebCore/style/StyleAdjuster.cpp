@@ -664,7 +664,6 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
         ASSERT(!style.hasClip());
         ASSERT(!style.clipPath());
         ASSERT(!style.hasFilter());
-        ASSERT(!svgElement.isOutermostSVGSVGElement());
 
         auto isInnerSVGElement = [] (const SVGElement& svgElement) -> bool {
             return svgElement.hasTagName(SVGNames::svgTag) && svgElement.parentNode() && is<SVGElement>(svgElement.parentNode());

@@ -1371,6 +1371,42 @@ void RenderLayer::updateTransform()
     }
 }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+void RenderLayer::updateAdditionalAffineSublayerTransform()
+{
+    if (!is<RenderSVGRoot>(renderer()))
+        return;
+
+    auto newCSSToSVGCoordinateSystemTransform = downcast<RenderSVGRoot>(renderer()).computeCSSToSVGCoordinateSystemTransform();
+
+    bool hasTransform = !newCSSToSVGCoordinateSystemTransform.isIdentity();
+    bool hadTransform = !!m_additionalAffineSublayerTransform;
+    if (hasTransform != hadTransform) {
+        if (hasTransform)
+            m_additionalAffineSublayerTransform = makeUnique<TransformationMatrix>();
+        else
+            m_additionalAffineSublayerTransform = nullptr;
+    }
+
+    if (!hasTransform)
+        return;
+
+    auto transformOrigin = transformOriginPixelSnappedIfNeeded();
+    const auto& style = renderer().style();
+
+    TransformationMatrix affineSublayerTransform;
+    style.unapplyTransformOrigin(affineSublayerTransform, transformOrigin);
+    affineSublayerTransform.multiplyAffineTransform(newCSSToSVGCoordinateSystemTransform);
+    style.applyTransformOrigin(affineSublayerTransform, transformOrigin);
+
+    // Only trigger post-layout compositing layer updates if the transform actually changed.
+    if (*m_additionalAffineSublayerTransform != affineSublayerTransform) {
+        *m_additionalAffineSublayerTransform = affineSublayerTransform;
+        setNeedsPostLayoutCompositingUpdateOnAncestors();
+    }
+}
+#endif
+
 TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     if (!m_transform)
@@ -5583,6 +5619,10 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 
     updateDescendantDependentFlags();
     updateTransform();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    updateAdditionalAffineSublayerTransform();
+#endif
+
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode();
 #endif

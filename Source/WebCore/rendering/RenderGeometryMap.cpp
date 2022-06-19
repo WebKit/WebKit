@@ -150,7 +150,7 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
         if (current->isFixedPositioned() || style.isFlippedBlocksWritingMode())
             return false;
 
-        if (current->hasTransformOrPespective())
+        if (current->hasTransformOrPerspective() || current->hasCSSToSVGCoordinateSystemTransform())
             return false;
         
         if (current->isRenderFragmentedFlow())

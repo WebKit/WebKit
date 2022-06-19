@@ -171,17 +171,25 @@ void RenderSVGRoot::layout()
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
 
     auto previousLogicalSize = size();
+    auto* previousCSSToSVGCoordinateSystemTransform = hasLayer() ? layer()->additionalAffineSublayerTransform() : nullptr;
     updateLogicalWidth();
     updateLogicalHeight();
-    m_isLayoutSizeChanged = needsLayout || (svgSVGElement().hasRelativeLengths() && previousLogicalSize != size());
 
-    auto oldTransform = m_supplementalLocalToParentTransform;
-    computeTransformationMatrices();
+    bool logicalSizeChanged = previousLogicalSize != size();
+    m_isLayoutSizeChanged = needsLayout || (svgSVGElement().hasRelativeLengths() && logicalSizeChanged);
+    updateFromStyle();
 
-    if (oldTransform != m_supplementalLocalToParentTransform)
-        m_didTransformToRootUpdate = true;
-    else if (previousLogicalSize != size())
-        m_didTransformToRootUpdate = true;
+    auto additionalAffineSublayerTransformChanged = [&]() -> bool {
+        auto* currentCSSToSVGCoordinateSystemTransform = hasLayer() ? layer()->additionalAffineSublayerTransform() : nullptr;
+        bool hasTransform = !!currentCSSToSVGCoordinateSystemTransform;
+        bool hadTransform = !!previousCSSToSVGCoordinateSystemTransform;
+        if (hasTransform != hadTransform)
+            return true;
+
+        return hasTransform && *previousCSSToSVGCoordinateSystemTransform != *currentCSSToSVGCoordinateSystemTransform;
+    };
+
+    m_didTransformToRootUpdate = additionalAffineSublayerTransformChanged() || logicalSizeChanged;
 
     // FIXME: [LBSE] Upstream SVGLengthContext changes
     // svgSVGElement().updateLengthContext();
@@ -221,8 +229,7 @@ void RenderSVGRoot::layout()
 
     clearOverflow();
     if (!shouldApplyViewportClip()) {
-        auto visualOverflowRect = enclosingLayoutRect(m_viewBoxTransform.mapRect(visualOverflowRectEquivalent()));
-        addVisualOverflow(visualOverflowRect);
+        addVisualOverflow(visualOverflowRectEquivalent());
         addVisualEffectOverflow();
     }
     invalidateBackgroundObscurationStatus();
@@ -390,6 +397,12 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
 void RenderSVGRoot::updateLayerInformation()
 {
+    if (!hasLayer())
+        return;
+
+    updateLayerTransform();
+    layer()->updateAdditionalAffineSublayerTransform();
+
     /* FIXME: [LBSE] Upstream SVGRenderSupport changes
     if (SVGRenderSupport::isRenderingDisabledDueToEmptySVGViewBox(*this))
         layer()->dirtyAncestorChainVisibleDescendantStatus();
@@ -400,8 +413,8 @@ void RenderSVGRoot::updateFromStyle()
 {
     RenderReplaced::updateFromStyle();
 
+    setHasTransformRelatedProperty(style().hasTransformRelatedProperty() || !computeCSSToSVGCoordinateSystemTransform().isIdentity());
     setHasSVGTransform();
-    setHasTransformRelatedProperty();
 
     if (shouldApplyViewportClip())
         setHasNonVisibleOverflow();
@@ -412,29 +425,30 @@ LayoutRect RenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repa
     if (isInsideEntirelyHiddenLayer())
         return { };
 
-    auto repaintRect = LayoutRect(valueOrDefault(m_viewBoxTransform.inverse()).mapRect(borderBoxRect()));
-    return computeRect(repaintRect, repaintContainer, context);
+    return computeRect(borderBoxRect(), repaintContainer, context);
 }
 
-void RenderSVGRoot::computeTransformationMatrices()
+AffineTransform RenderSVGRoot::computeCSSToSVGCoordinateSystemTransform() const
 {
-    // Compute SVG viewBox transformation against unscaled viewport.
+    // FIXME: Handle border and padding...
+    AffineTransform transform;
+
+    // Handle pan
+    if (auto translation = svgSVGElement().currentTranslateValue() + FloatPoint(contentBoxLocation()); !translation.isZero())
+        transform.translate(translation);
+
+    // Handle zoom
     auto viewportSize = currentViewportSize();
-    auto zoom = style().effectiveZoom();
-    if (zoom != 1)
-        viewportSize.scale(1.0 / zoom);
-    m_viewBoxTransform = svgSVGElement().viewBoxToViewTransform(viewportSize.width(), viewportSize.height());
+    if (auto scale = style().effectiveZoom(); scale != 1) {
+        transform.scale(scale);
+        viewportSize.scale(1.0 / scale);
+    }
 
-    // Compute total transformation matrix, taking border / padding (for child renderers that don't follow the CSS box model object!) + panning into account.
-    auto panning = svgSVGElement().currentTranslateValue();
-    auto contentLocation = contentBoxLocation();
+    // Handle 'viewBox' attribute
+    if (auto viewBoxTransform = svgSVGElement().viewBoxToViewTransform(viewportSize.width(), viewportSize.height()); !viewBoxTransform.isIdentity())
+        transform.multiply(viewBoxTransform);
 
-    m_supplementalLocalToParentTransform.makeIdentity();
-    m_supplementalLocalToParentTransform.translate(panning.x() + contentLocation.x(), panning.y() + contentLocation.y());
-    m_supplementalLocalToParentTransform.scale(zoom);
-
-    if (!m_viewBoxTransform.isIdentity())
-        m_supplementalLocalToParentTransform.multiply(m_viewBoxTransform);
+    return transform;
 }
 
 bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -612,8 +626,7 @@ LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, RenderFr
 
 void RenderSVGRoot::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    auto localRect = LayoutRect(valueOrDefault(m_supplementalLocalToParentTransform.inverse()).mapRect(borderBoxRect()));
-    rects.append(snappedIntRect(accumulatedOffset, localRect.size()));
+    rects.append(snappedIntRect(accumulatedOffset, borderBoxRect().size()));
 }
 
 void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
@@ -622,7 +635,7 @@ void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) cons
     if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this))
         return;
 
-    auto localRect = FloatRect(valueOrDefault(m_supplementalLocalToParentTransform.inverse()).mapRect(borderBoxRect()));
+    FloatRect localRect = borderBoxRect();
     quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
 }
 

@@ -510,6 +510,9 @@ public:
 
     void setReferenceBoxForPathOperations();
     void updateTransform();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    void updateAdditionalAffineSublayerTransform();
+#endif
     
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode();
@@ -735,6 +738,9 @@ public:
     bool hasTransform() const { return renderer().hasTransform(); }
     // Note that this transform has the transform-origin baked in.
     TransformationMatrix* transform() const { return m_transform.get(); }
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    TransformationMatrix* additionalAffineSublayerTransform() const { return m_additionalAffineSublayerTransform.get(); }
+#endif
     // updateTransformFromStyle computes a transform according to the passed options (e.g. transform-origin baked in or excluded) and the given style.
     void updateTransformFromStyle(TransformationMatrix&, const RenderStyle&, OptionSet<RenderStyle::TransformOperationOption>) const;
     // currentTransform computes a transform which takes accelerated animations into account. The
@@ -1236,6 +1242,9 @@ private:
     Markable<ScrollingScope, IntegralMarkableTraits<ScrollingScope, 0>> m_contentsScrollingScope;
 
     std::unique_ptr<TransformationMatrix> m_transform;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    std::unique_ptr<TransformationMatrix> m_additionalAffineSublayerTransform;
+#endif
     
     // May ultimately be extended to many replicas (with their own paint order).
     RenderPtr<RenderReplica> m_reflection;
