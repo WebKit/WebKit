@@ -20,7 +20,6 @@
 #include "config.h"
 #include "RenderSVGHiddenContainer.h"
 
-#include "LegacyRenderSVGPath.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 

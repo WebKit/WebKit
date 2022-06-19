@@ -23,6 +23,7 @@
 #include "SVGPathElement.h"
 
 #include "LegacyRenderSVGPath.h"
+#include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
@@ -70,10 +71,19 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         invalidateMPathDependencies();
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (auto* renderer = this->renderer()) {
+            if (document().settings().layerBasedSVGEngineEnabled())
+                static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+            else
+                static_cast<LegacyRenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+        }
+#else
         if (auto* renderer = this->renderer())
             static_cast<LegacyRenderSVGPath*>(renderer)->setNeedsShapeUpdate();
-        updateSVGRendererForElementChange();
+#endif
 
+        updateSVGRendererForElementChange();
         return;
     }
 
@@ -127,19 +137,28 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     if (styleUpdateStrategy == AllowStyleUpdate)
         document().updateLayoutIgnorePendingStylesheets();
 
-    LegacyRenderSVGPath* renderer = downcast<LegacyRenderSVGPath>(this->renderer());
-
     // FIXME: Eventually we should support getBBox for detached elements.
     // FIXME: If the path is null it means we're calling getBBox() before laying out this element,
     // which is an error.
-    if (!renderer || !renderer->hasPath())
-        return { };
 
-    return renderer->path().boundingRect();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (auto* renderer = downcast<RenderSVGPath>(this->renderer()); renderer && renderer->hasPath())
+        return renderer->path().boundingRect();
+#endif
+
+    if (auto* renderer = downcast<LegacyRenderSVGPath>(this->renderer()); renderer && renderer->hasPath())
+        return renderer->path().boundingRect();
+
+    return { };
 }
 
 RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGPath>(*this, WTFMove(style));
+#endif
+
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
 }
 

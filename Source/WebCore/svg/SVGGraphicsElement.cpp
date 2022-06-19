@@ -23,6 +23,7 @@
 #include "SVGGraphicsElement.h"
 
 #include "LegacyRenderSVGPath.h"
+#include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"
@@ -175,6 +176,11 @@ FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 
 RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGPath>(*this, WTFMove(style));
+#endif
+
     return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
 }
 
