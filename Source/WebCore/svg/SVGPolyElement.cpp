@@ -23,7 +23,7 @@
 #include "SVGPolyElement.h"
 
 #include "Document.h"
-#include "RenderSVGPath.h"
+#include "LegacyRenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGParserUtilities.h"
@@ -59,7 +59,7 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::pointsAttr);
         InstanceInvalidationGuard guard(*this);
         if (auto* renderer = this->renderer())
-            static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+            static_cast<LegacyRenderSVGPath*>(renderer)->setNeedsShapeUpdate();
         updateSVGRendererForElementChange();
         return;
     }
@@ -70,8 +70,8 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 size_t SVGPolyElement::approximateMemoryCost() const
 {
     size_t pointsCost = m_points->baseVal()->items().size() * sizeof(FloatPoint);
-    // We need to account for the memory which is allocated by the RenderSVGPath::m_path.
-    return sizeof(*this) + (renderer() ? pointsCost * 2 + sizeof(RenderSVGPath) : pointsCost);
+    // We need to account for the memory which is allocated by the LegacyRenderSVGPath::m_path.
+    return sizeof(*this) + (renderer() ? pointsCost * 2 + sizeof(LegacyRenderSVGPath) : pointsCost);
 }
 
 }

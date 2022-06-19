@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGPath.h"
+#include "LegacyRenderSVGPath.h"
 
 #include "Gradient.h"
 #include "SVGPathElement.h"
@@ -35,16 +35,16 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGPath);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGPath);
 
-RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
+LegacyRenderSVGPath::LegacyRenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
     : LegacyRenderSVGShape(element, WTFMove(style))
 {
 }
 
-RenderSVGPath::~RenderSVGPath() = default;
+LegacyRenderSVGPath::~LegacyRenderSVGPath() = default;
 
-void RenderSVGPath::updateShapeFromElement()
+void LegacyRenderSVGPath::updateShapeFromElement()
 {
     LegacyRenderSVGShape::updateShapeFromElement();
     updateZeroLengthSubpaths();
@@ -52,7 +52,7 @@ void RenderSVGPath::updateShapeFromElement()
     m_strokeBoundingBox = calculateUpdatedStrokeBoundingBox();
 }
 
-FloatRect RenderSVGPath::calculateUpdatedStrokeBoundingBox() const
+FloatRect LegacyRenderSVGPath::calculateUpdatedStrokeBoundingBox() const
 {
     FloatRect strokeBoundingBox = m_strokeBoundingBox;
 
@@ -76,7 +76,7 @@ static void useStrokeStyleToFill(GraphicsContext& context)
         context.setFillColor(context.strokeColor());
 }
 
-void RenderSVGPath::strokeShape(GraphicsContext& context) const
+void LegacyRenderSVGPath::strokeShape(GraphicsContext& context) const
 {
     if (!style().hasVisibleStroke())
         return;
@@ -102,7 +102,7 @@ void RenderSVGPath::strokeShape(GraphicsContext& context) const
     }
 }
 
-bool RenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
+bool LegacyRenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
     if (LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace))
         return true;
@@ -123,14 +123,14 @@ bool RenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, PointC
     return false;
 }
 
-bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
+bool LegacyRenderSVGPath::shouldStrokeZeroLengthSubpath() const
 {
     // Spec(11.4): Any zero length subpath shall not be stroked if the "stroke-linecap" property has a value of butt
     // but shall be stroked if the "stroke-linecap" property has a value of round or square
     return style().svgStyle().hasStroke() && style().capStyle() != LineCap::Butt;
 }
 
-Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
+Path* LegacyRenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
 {
     static NeverDestroyed<Path> tempPath;
 
@@ -143,12 +143,12 @@ Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) co
     return &tempPath.get();
 }
 
-FloatRect RenderSVGPath::zeroLengthSubpathRect(const FloatPoint& linecapPosition, float strokeWidth) const
+FloatRect LegacyRenderSVGPath::zeroLengthSubpathRect(const FloatPoint& linecapPosition, float strokeWidth) const
 {
     return FloatRect(linecapPosition.x() - strokeWidth / 2, linecapPosition.y() - strokeWidth / 2, strokeWidth, strokeWidth);
 }
 
-void RenderSVGPath::updateZeroLengthSubpaths()
+void LegacyRenderSVGPath::updateZeroLengthSubpaths()
 {
     m_zeroLengthLinecapLocations.clear();
 
@@ -162,7 +162,7 @@ void RenderSVGPath::updateZeroLengthSubpaths()
     subpathData.pathIsDone();
 }
 
-bool RenderSVGPath::isRenderingDisabled() const
+bool LegacyRenderSVGPath::isRenderingDisabled() const
 {
     // For a polygon, polyline or path, rendering is disabled if there is no path data.
     // No path data is possible in the case of a missing or empty 'd' or 'points' attribute.

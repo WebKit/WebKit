@@ -22,7 +22,7 @@
 #include "config.h"
 #include "SVGGraphicsElement.h"
 
-#include "RenderSVGPath.h"
+#include "LegacyRenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGMatrix.h"
 #include "SVGNames.h"
@@ -175,7 +175,7 @@ FloatRect SVGGraphicsElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 
 RenderPtr<RenderElement> SVGGraphicsElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGPath>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
 }
 
 Path SVGGraphicsElement::toClipPath()

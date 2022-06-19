@@ -22,7 +22,7 @@
 #include "config.h"
 #include "SVGPathElement.h"
 
-#include "RenderSVGPath.h"
+#include "LegacyRenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElementTypeHelpers.h"
@@ -71,7 +71,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         invalidateMPathDependencies();
 
         if (auto* renderer = this->renderer())
-            static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+            static_cast<LegacyRenderSVGPath*>(renderer)->setNeedsShapeUpdate();
         updateSVGRendererForElementChange();
 
         return;
@@ -127,7 +127,7 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     if (styleUpdateStrategy == AllowStyleUpdate)
         document().updateLayoutIgnorePendingStylesheets();
 
-    RenderSVGPath* renderer = downcast<RenderSVGPath>(this->renderer());
+    LegacyRenderSVGPath* renderer = downcast<LegacyRenderSVGPath>(this->renderer());
 
     // FIXME: Eventually we should support getBBox for detached elements.
     // FIXME: If the path is null it means we're calling getBBox() before laying out this element,
@@ -140,7 +140,7 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
 
 RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGPath>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
 }
 
 }

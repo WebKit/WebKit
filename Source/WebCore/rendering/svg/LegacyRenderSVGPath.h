@@ -29,14 +29,14 @@
 
 namespace WebCore {
 
-class RenderSVGPath final : public LegacyRenderSVGShape {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGPath);
+class LegacyRenderSVGPath final : public LegacyRenderSVGShape {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGPath);
 public:
-    RenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
-    virtual ~RenderSVGPath();
+    LegacyRenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGPath();
 
 private:
-    bool isSVGPath() const override { return true; }
+    bool isLegacySVGPath() const override { return true; }
     ASCIILiteral renderName() const override { return "RenderSVGPath"_s; }
 
     void updateShapeFromElement() override;
@@ -57,4 +57,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGPath, isSVGPath())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGPath, isLegacySVGPath())

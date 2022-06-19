@@ -40,7 +40,6 @@
 #include "RenderSVGGradientStopInlines.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
-#include "RenderSVGPath.h"
 #include "RenderSVGResourceClipperInlines.h"
 #include "RenderSVGResourceFilterInlines.h"
 #include "RenderSVGResourceLinearGradientInlines.h"

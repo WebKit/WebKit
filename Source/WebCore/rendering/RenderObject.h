@@ -334,6 +334,7 @@ public:
     virtual bool isSVGViewportContainer() const { return false; }
     virtual bool isSVGGradientStop() const { return false; }
     virtual bool isSVGHiddenContainer() const { return false; }
+    virtual bool isLegacySVGPath() const { return false; }
     virtual bool isSVGPath() const { return false; }
     virtual bool isSVGShape() const { return false; }
     virtual bool isLegacySVGShape() const { return false; }
@@ -350,6 +351,7 @@ public:
     virtual bool isSVGResourceFilterPrimitive() const { return false; }
     bool isSVGRootOrLegacySVGRoot() const { return isSVGRoot() || isLegacySVGRoot(); }
     bool isSVGShapeOrLegacySVGShape() const { return isSVGShape() || isLegacySVGShape(); }
+    bool isSVGPathOrLegacySVGPath() const { return isSVGPath() || isLegacySVGPath(); }
     bool isRenderOrLegacyRenderSVGModelObject() const { return isRenderSVGModelObject() || isLegacyRenderSVGModelObject(); }
     bool isSVGLayerAwareRenderer() const { return isSVGRoot() || isRenderSVGModelObject() || isSVGText() || isSVGInline() || isSVGForeignObject(); }
 
