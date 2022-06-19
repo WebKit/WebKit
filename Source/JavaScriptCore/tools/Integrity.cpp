@@ -34,12 +34,48 @@
 #include "JSGlobalObject.h"
 #include "Options.h"
 #include "VMInspectorInlines.h"
+#include <wtf/DataLog.h>
+#include <wtf/OSLogPrintStream.h>
 
 namespace JSC {
 namespace Integrity {
 
 namespace IntegrityInternal {
 static constexpr bool verbose = false;
+}
+
+PrintStream& logFile()
+{
+#if OS(DARWIN)
+    static PrintStream* s_file;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        // We want to use OS_LOG_TYPE_ERROR because we want to guarantee that the log makes it into
+        // the file system, and is not potentially stuck in some memory buffer. Integrity audit logs
+        // are used for debugging error states. So, this is an appropriate use of OS_LOG_TYPE_ERROR.
+        s_file = OSLogPrintStream::open("com.apple.JavaScriptCore", "Integrity", OS_LOG_TYPE_ERROR).release();
+    });
+    return *s_file;
+#else
+    return WTF::dataFile();
+#endif
+}
+
+void logF(const char* format, ...)
+{
+    va_list argList;
+    va_start(argList, format);
+    logFile().vprintf(format, argList);
+    va_end(argList);
+}
+
+void logLnF(const char* format, ...)
+{
+    va_list argList;
+    va_start(argList, format);
+    logFile().vprintf(format, argList);
+    va_end(argList);
+    logFile().println();
 }
 
 Random::Random(VM& vm)
@@ -140,19 +176,19 @@ bool Analyzer::analyzeVM(VM& vm, Analyzer::Action action)
 
 #define AUDIT_VERIFY(cond, format, ...) do { \
         IA_ASSERT_WITH_ACTION(cond, { \
-            WTFLogAlways("    cell %p", cell); \
+            Integrity::logLnF("    cell %p", cell); \
             if (action == Action::LogAndCrash) \
-                RELEASE_ASSERT((cond), ##__VA_ARGS__); \
+                RELEASE_ASSERT((cond)); \
             else \
                 return false; \
-        }, format, ##__VA_ARGS__); \
+        }); \
     } while (false)
 
 #else // not (COMPILER(MSVC) || !VA_OPT_SUPPORTED)
 
 #define AUDIT_VERIFY(cond, format, ...) do { \
         IA_ASSERT_WITH_ACTION(cond, { \
-            WTFLogAlways("    cell %p", cell); \
+            Integrity::logLnF("    cell %p", cell); \
             if (action == Action::LogAndCrash) \
                 RELEASE_ASSERT((cond) __VA_OPT__(,) __VA_ARGS__); \
             else \
@@ -290,14 +326,14 @@ JSCell* doAudit(VM& vm, JSCell* cell)
 bool verifyCell(JSCell* cell)
 {
     bool valid = Analyzer::analyzeCell(cell, Analyzer::Action::LogOnly);
-    WTFLogAlways("Cell %p is %s", cell, valid ? "VALID" : "INVALID");
+    Integrity::logLnF("Cell %p is %s", cell, valid ? "VALID" : "INVALID");
     return valid;
 }
 
 bool verifyCell(VM& vm, JSCell* cell)
 {
     bool valid = Analyzer::analyzeCell(vm, cell, Analyzer::Action::LogOnly);
-    WTFLogAlways("Cell %p is %s", cell, valid ? "VALID" : "INVALID");
+    Integrity::logLnF("Cell %p is %s", cell, valid ? "VALID" : "INVALID");
     return valid;
 }
 

@@ -48,6 +48,10 @@ typedef struct OpaqueJSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
 typedef const struct OpaqueJSValue* JSValueRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 
+namespace WTF {
+class PrintStream;
+}
+
 namespace JSC {
 
 class JSCell;
@@ -177,34 +181,33 @@ template<typename T> ALWAYS_INLINE T audit(T value) { return value; }
 #if COMPILER(MSVC) || !VA_OPT_SUPPORTED
 
 #define IA_LOG(assertion, format, ...) do { \
-        WTFLogAlways("Integrity ERROR: %s @ %s:%d\n", #assertion, __FILE__, __LINE__); \
-        WTFLogAlways("    " format, ##__VA_ARGS__); \
+        Integrity::logLnF("ERROR: %s @ %s:%d", #assertion, __FILE__, __LINE__); \
     } while (false)
 
 #define IA_ASSERT_WITH_ACTION(assertion, action, ...) do { \
         if (UNLIKELY(!(assertion))) { \
             IA_LOG(assertion, __VA_ARGS__); \
-            WTFReportBacktraceWithPrefix("    "); \
+            WTFReportBacktraceWithPrefixAndPrintStream(Integrity::logFile(), "    "); \
             action; \
         } \
     } while (false)
 
 #define IA_ASSERT(assertion, ...) \
     IA_ASSERT_WITH_ACTION(assertion, { \
-        RELEASE_ASSERT((assertion), ##__VA_ARGS__); \
-    }, ## __VA_ARGS__)
+        RELEASE_ASSERT((assertion)); \
+    })
 
 #else // not (COMPILER(MSVC) || !VA_OPT_SUPPORTED)
 
 #define IA_LOG(assertion, format, ...) do { \
-        WTFLogAlways("Integrity ERROR: %s @ %s:%d\n", #assertion, __FILE__, __LINE__); \
-        WTFLogAlways("    " format __VA_OPT__(,) __VA_ARGS__); \
+        Integrity::logLnF("ERROR: %s @ %s:%d", #assertion, __FILE__, __LINE__); \
+        Integrity::logLnF("    " format __VA_OPT__(,) __VA_ARGS__); \
     } while (false)
 
 #define IA_ASSERT_WITH_ACTION(assertion, action, ...) do { \
         if (UNLIKELY(!(assertion))) { \
             IA_LOG(assertion, __VA_ARGS__); \
-            WTFReportBacktraceWithPrefix("    "); \
+            WTFReportBacktraceWithPrefixAndPrintStream(Integrity::logFile(), "    "); \
             action; \
         } \
     } while (false)
@@ -215,6 +218,10 @@ template<typename T> ALWAYS_INLINE T audit(T value) { return value; }
     } __VA_OPT__(,) __VA_ARGS__)
 
 #endif // COMPILER(MSVC) || !VA_OPT_SUPPORTED
+
+JS_EXPORT_PRIVATE WTF::PrintStream& logFile();
+JS_EXPORT_PRIVATE void logF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+JS_EXPORT_PRIVATE void logLnF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 
 } // namespace Integrity
 
