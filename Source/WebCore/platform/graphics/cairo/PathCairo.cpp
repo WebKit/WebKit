@@ -508,6 +508,9 @@ FloatRect Path::fastBoundingRectSlowCase() const
 
 void Path::transform(const AffineTransform& transform)
 {
+    if (transform.isIdentity())
+        return;
+
     cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_matrix_invert(&matrix);
     cairo_transform(ensureCairoPath(), &matrix);
