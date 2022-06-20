@@ -2170,16 +2170,6 @@ webkit.org/b/225528 http/wpt/fetch/fetch-response-body-stop-in-worker.html [ Pas
 
 webkit.org/b/232252 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCDtlsTransport-state.html [ Pass Failure ]
 
-# webkit.org/b/234278 The following 8 tests are flakey failures on iOS 15
-imported/w3c/web-platform-tests/fetch/api/policies/referrer-no-referrer-service-worker.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-frame.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-iframe.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/fetch/api/request/request-reset-attributes.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-service-worker.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html [ Pass Failure ]
-
 # See webkit.org/b/233498 for context on this pointerevents tests
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 webkit.org/b/237348 pointerevents/mouse [ Skip ]
