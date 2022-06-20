@@ -87,7 +87,7 @@ void WebInspector::setFrontendConnection(IPC::Attachment encodedConnectionIdenti
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.release().release());
 #elif OS(DARWIN)
-    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
+    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.leakSendRight());
 #elif OS(WINDOWS)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.handle());
 #else

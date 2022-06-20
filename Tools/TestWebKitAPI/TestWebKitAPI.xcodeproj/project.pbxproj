@@ -983,6 +983,7 @@
 		CEBCA13A1E3A807A00C73293 /* page-without-csp.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBCA1371E3A803400C73293 /* page-without-csp.html */; };
 		CEBCA13B1E3A807A00C73293 /* page-without-csp-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEBCA1361E3A803400C73293 /* page-without-csp-iframe.html */; };
 		CEDA12412437C9FB00C28A9E /* editable-region-composited-and-non-composited-overlap.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */; };
+		D04CF93F285C77CA005D6337 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D04CF93E285C77C9005D6337 /* MachSendRight.cpp */; };
 		DD0EDF8D2798A6AD005152AD /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
 		DD42949F284BE0B7004D49ED /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DDD2187627A21750002B7025 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
@@ -3002,6 +3003,7 @@
 		CEBCA1371E3A803400C73293 /* page-without-csp.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "page-without-csp.html"; sourceTree = "<group>"; };
 		CED73D35246F204C00DAE327 /* InsertTextAlternatives.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = InsertTextAlternatives.mm; sourceTree = "<group>"; };
 		CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "editable-region-composited-and-non-composited-overlap.html"; path = "ios/editable-region-composited-and-non-composited-overlap.html"; sourceTree = SOURCE_ROOT; };
+		D04CF93E285C77C9005D6337 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
 		D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewGetContents.mm; sourceTree = "<group>"; };
 		DC69AA621CF77C6500C6272F /* ScopedLambda.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedLambda.cpp; sourceTree = "<group>"; };
 		DF1C7CE827F5161D00D8145C /* BundlePageConsoleMessageWithDetails.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundlePageConsoleMessageWithDetails.mm; sourceTree = "<group>"; };
@@ -4112,6 +4114,7 @@
 				37C7CC341EA41EC8007BD956 /* libTestWTFAlwaysMissing-iOS.tbd */,
 				37C7CC2E1EA41702007BD956 /* libTestWTFAlwaysMissing-macOS-v2.tbd */,
 				37C7CC351EA41EC8007BD956 /* libTestWTFAlwaysMissing-macOS.tbd */,
+				D04CF93E285C77C9005D6337 /* MachSendRight.cpp */,
 				7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */,
 				44449DC02718B4B700E821B5 /* OSObjectPtrCocoa.mm */,
 				44449DBF2718B4B600E821B5 /* OSObjectPtrCocoaARC.mm */,
@@ -5524,6 +5527,7 @@
 				7C83DEE81D0A590C00FEBCF3 /* ListHashSet.cpp in Sources */,
 				7C83DF1D1D0A590C00FEBCF3 /* Lock.cpp in Sources */,
 				A57D54F61F3395D000A97AA7 /* Logger.cpp in Sources */,
+				D04CF93F285C77CA005D6337 /* MachSendRight.cpp in Sources */,
 				4909EE3A2D09480C88982D56 /* Markable.cpp in Sources */,
 				7C83DEED1D0A590C00FEBCF3 /* MathExtras.cpp in Sources */,
 				7C83DEF11D0A590C00FEBCF3 /* MediaTime.cpp in Sources */,

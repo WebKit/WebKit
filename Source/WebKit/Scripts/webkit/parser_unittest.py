@@ -191,7 +191,7 @@ _expected_model_base = {
         {
             'name': 'DidCreateWebProcessConnection',
             'parameters': (
-                ('IPC::MachPort', 'connectionIdentifier'),
+                ('MachSendRight', 'connectionIdentifier'),
                 ('OptionSet<WebKit::SelectionFlags>', 'flags'),
             ),
             'conditions': ('PLATFORM(MAC)'),

@@ -50,6 +50,7 @@
 #include <WebCore/ScreenProperties.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/LogInitialization.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/TranslatedProcess.h>
 
 #if PLATFORM(IOS_FAMILY)

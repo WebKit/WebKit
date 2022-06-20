@@ -24,9 +24,14 @@
  */
 
 #include "config.h"
+#include "ArgumentCoders.h"
+#include "Attachment.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include "SharedFileHandle.h"
+#include "WebCoreArgumentCoders.h"
+#include <wtf/MachSendRight.h>
 
-#include "MachPort.h"
 #include <pal/spi/cocoa/FilePortSPI.h>
 
 namespace IPC {
@@ -40,20 +45,19 @@ void SharedFileHandle::encode(Encoder& encoder) const
 {
     mach_port_name_t fileport = MACH_PORT_NULL;
     if (fileport_makeport(m_handle.handle(), &fileport) == -1) {
-        encoder << MachPort();
         return;
     }
 
-    encoder << MachPort(fileport, MACH_MSG_TYPE_MOVE_SEND);
+    encoder << MachSendRight::adopt(fileport);
 }
 
 std::optional<SharedFileHandle> SharedFileHandle::decode(Decoder& decoder)
 {
-    MachPort machPort;
-    if (!decoder.decode(machPort))
+    auto fileport = decoder.decode<MachSendRight>();
+    if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
     
-    int fd = fileport_makefd(machPort.port());
+    int fd = fileport_makefd(fileport->sendRight());
     if (fd == -1)
         return SharedFileHandle { };
 

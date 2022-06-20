@@ -121,7 +121,7 @@ static IPC::Connection::Identifier asConnectionIdentifier(IPC::Attachment&& conn
 #if USE(UNIX_DOMAIN_SOCKETS)
     return IPC::Connection::Identifier { connectionHandle.release().release() };
 #elif OS(DARWIN)
-    return IPC::Connection::Identifier { connectionHandle.port() };
+    return IPC::Connection::Identifier { connectionHandle.leakSendRight() };
 #elif OS(WINDOWS)
     return IPC::Connection::Identifier { connectionHandle.handle() };
 #else

@@ -1786,7 +1786,6 @@
 		BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD3913125BB1A800D2C29F /* WebPageProxyMessages.h */; };
 		BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */; };
 		BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */; };
-		BCC56F791159957D001CCAF9 /* MachPort.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC56F771159957D001CCAF9 /* MachPort.h */; };
 		BCC8B374125FB69000DE46A4 /* WKGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8B373125FB69000DE46A4 /* WKGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC938E01180DE440085E5FE /* WKContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF6ABB12C91EF9008F9C35 /* WebImage.h */; };
@@ -6312,7 +6311,6 @@
 		BCC43AB8127B95DC00317F16 /* PlatformPopupMenuData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformPopupMenuData.cpp; sourceTree = "<group>"; };
 		BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformPopupMenuData.h; sourceTree = "<group>"; };
 		BCC43AC6127B99DE00317F16 /* WebPopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPopupMenuMac.mm; sourceTree = "<group>"; };
-		BCC56F771159957D001CCAF9 /* MachPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachPort.h; sourceTree = "<group>"; };
 		BCC8B373125FB69000DE46A4 /* WKGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGeometry.h; sourceTree = "<group>"; };
 		BCC938E01180DE440085E5FE /* WKContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextPrivate.h; sourceTree = "<group>"; };
 		BCCF6ABA12C91EF9008F9C35 /* WebImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebImage.cpp; sourceTree = "<group>"; };
@@ -12434,7 +12432,6 @@
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
 				1A6D86BF1DF75265007745E8 /* MachMessage.cpp */,
 				1A6D86C01DF75265007745E8 /* MachMessage.h */,
-				BCC56F771159957D001CCAF9 /* MachPort.h */,
 				93468E6C2714AF88009983E3 /* SharedFileHandleCocoa.cpp */,
 			);
 			path = cocoa;
@@ -14214,7 +14211,6 @@
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
-				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
 				462CD80C28204DFA00F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h in Headers */,
 				A15799BE2584433200528236 /* MediaFormatReader.h in Headers */,

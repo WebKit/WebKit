@@ -309,8 +309,8 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
         reply(NetworkProcessConnectionInfo { WTFMove(*identifier), cookieAcceptPolicy });
         UNUSED_VARIABLE(this);
 #elif OS(DARWIN)
-        MESSAGE_CHECK(MACH_PORT_VALID(identifier->port()));
-        reply(NetworkProcessConnectionInfo { IPC::Attachment { identifier->port(), MACH_MSG_TYPE_MOVE_SEND }, cookieAcceptPolicy, connection()->getAuditToken() });
+        MESSAGE_CHECK(MACH_PORT_VALID(identifier->sendRight()));
+        reply(NetworkProcessConnectionInfo { WTFMove(*identifier) , cookieAcceptPolicy, connection()->getAuditToken() });
 #else
         notImplemented();
 #endif
