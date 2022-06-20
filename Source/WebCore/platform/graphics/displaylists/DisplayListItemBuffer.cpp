@@ -101,7 +101,7 @@ void ItemHandle::apply(GraphicsContext& context)
         get<ClipOut>().apply(context);
         return;
     case ItemType::ClipToImageBuffer:
-        get<ClipToImageBuffer>().apply(context);
+        ASSERT_NOT_REACHED();
         return;
     case ItemType::ClipOutToPath:
         get<ClipOutToPath>().apply(context);
@@ -110,7 +110,7 @@ void ItemHandle::apply(GraphicsContext& context)
         get<ClipPath>().apply(context);
         return;
     case ItemType::DrawFilteredImageBuffer:
-        get<DrawFilteredImageBuffer>().apply(context);
+        ASSERT_NOT_REACHED();
         return;
     case ItemType::DrawGlyphs:
         ASSERT_NOT_REACHED();
@@ -119,16 +119,16 @@ void ItemHandle::apply(GraphicsContext& context)
         ASSERT_NOT_REACHED();
         return;
     case ItemType::DrawImageBuffer:
-        get<DrawImageBuffer>().apply(context);
+        ASSERT_NOT_REACHED();
         return;
     case ItemType::DrawNativeImage:
-        get<DrawNativeImage>().apply(context);
+        ASSERT_NOT_REACHED();
         return;
     case ItemType::DrawSystemImage:
         get<DrawSystemImage>().apply(context);
         return;
     case ItemType::DrawPattern:
-        get<DrawPattern>().apply(context);
+        ASSERT_NOT_REACHED();
         return;
     case ItemType::DrawRect:
         get<DrawRect>().apply(context);
@@ -194,7 +194,7 @@ void ItemHandle::apply(GraphicsContext& context)
         return;
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
-        get<PaintFrameForMedia>().apply(context);
+        ASSERT_NOT_REACHED();
         return;
 #endif
     case ItemType::StrokeRect:

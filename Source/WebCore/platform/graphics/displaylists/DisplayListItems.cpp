@@ -140,11 +140,6 @@ void ClipOut::apply(GraphicsContext& context) const
     context.clipOut(m_rect);
 }
 
-NO_RETURN_DUE_TO_ASSERT void ClipToImageBuffer::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
-}
-
 void ClipToImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
 {
     context.clipToImageBuffer(imageBuffer, m_destinationRect);
@@ -165,11 +160,6 @@ DrawFilteredImageBuffer::DrawFilteredImageBuffer(std::optional<RenderingResource
     , m_sourceImageRect(sourceImageRect)
     , m_filter(filter)
 {
-}
-
-NO_RETURN_DUE_TO_ASSERT void DrawFilteredImageBuffer::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
 }
 
 void DrawFilteredImageBuffer::apply(GraphicsContext& context, ImageBuffer* sourceImage, FilterResults& results)
@@ -201,19 +191,9 @@ void DrawDecomposedGlyphs::apply(GraphicsContext& context, const Font& font, con
     return context.drawDecomposedGlyphs(font, decomposedGlyphs);
 }
 
-NO_RETURN_DUE_TO_ASSERT void DrawImageBuffer::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
-}
-
 void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imageBuffer) const
 {
     context.drawImageBuffer(imageBuffer, m_destinationRect, m_srcRect, m_options);
-}
-
-NO_RETURN_DUE_TO_ASSERT void DrawNativeImage::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
 }
 
 void DrawNativeImage::apply(GraphicsContext& context, NativeImage& image) const
@@ -235,11 +215,6 @@ DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const Floa
     , m_spacing(spacing)
     , m_options(options)
 {
-}
-
-NO_RETURN_DUE_TO_ASSERT void DrawPattern::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
 }
 
 void DrawPattern::apply(GraphicsContext& context, SourceImage& sourceImage) const
@@ -435,13 +410,6 @@ PaintFrameForMedia::PaintFrameForMedia(MediaPlayer& player, const FloatRect& des
     , m_destination(destination)
 {
 }
-
-NO_RETURN_DUE_TO_ASSERT void PaintFrameForMedia::apply(GraphicsContext&) const
-{
-    // Should be handled by the delegate.
-    ASSERT_NOT_REACHED();
-}
-
 #endif
 
 std::optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
