@@ -1038,7 +1038,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'transfer-to-s3',
             'trigger'
         ],
-        'GTK-Linux-64-bit-Release-Clang': [
+        'GTK-Linux-64-bit-Release-Clang-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1646,6 +1646,18 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit'
         ],
         'WPE-Linux-64-bit-Release-Ubuntu-2004-Build': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit'
+        ],
+        'WPE-Linux-64-bit-Release-Clang-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
