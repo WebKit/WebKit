@@ -803,6 +803,10 @@ protected:
 
     bool isSetNeedsLayoutForbidden() const;
 
+    enum class ClipRepaintToLayer : uint8_t { No, Yes };
+    enum class ForceRepaint : uint8_t { No, Yes };
+    void issueRepaint(std::optional<LayoutRect> partialRepaintRect = std::nullopt, ClipRepaintToLayer = ClipRepaintToLayer::No, ForceRepaint = ForceRepaint::No) const;
+
 private:
     void addAbsoluteRectForLayer(LayoutRect& result);
     void setLayerNeedsFullRepaint();
