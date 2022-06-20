@@ -192,7 +192,7 @@ static constexpr double computeMinimumValue(IntegerRange range)
         return 1.0;
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
+    RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
 
     return 0.0;
 }
