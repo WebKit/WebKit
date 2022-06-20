@@ -43,16 +43,17 @@ CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, c
     , m_rootStyle(builderContext.rootElementStyle)
     , m_parentStyle(&builderContext.parentStyle)
     , m_renderView(builderContext.document->renderView())
-    , m_element(builderContext.element)
+    , m_elementForContainerUnitResolution(builderContext.element)
     , m_viewportDependencyDetectionStyle(const_cast<RenderStyle*>(m_style))
 {
 }
 
-CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView)
+CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, const Element* elementForContainerUnitResolution)
     : m_style(&style)
     , m_rootStyle(rootStyle)
     , m_parentStyle(parentStyle)
     , m_renderView(renderView)
+    , m_elementForContainerUnitResolution(elementForContainerUnitResolution)
     , m_zoom(1.f)
     , m_viewportDependencyDetectionStyle(const_cast<RenderStyle*>(m_style))
 {
