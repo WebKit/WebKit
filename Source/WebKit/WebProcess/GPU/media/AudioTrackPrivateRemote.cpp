@@ -36,10 +36,10 @@
 
 namespace WebKit {
 
-AudioTrackPrivateRemote::AudioTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, AudioTrackPrivateRemoteConfiguration&& configuration)
+AudioTrackPrivateRemote::AudioTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier identifier, AudioTrackPrivateRemoteConfiguration&& configuration)
     : m_gpuProcessConnection(gpuProcessConnection)
     , m_playerIdentifier(playerIdentifier)
-    , m_idendifier(idendifier)
+    , m_identifier(identifier)
 {
     updateConfiguration(WTFMove(configuration));
 }
@@ -50,7 +50,7 @@ void AudioTrackPrivateRemote::setEnabled(bool enabled)
         return;
 
     if (enabled != this->enabled())
-        m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::AudioTrackSetEnabled(m_idendifier, enabled), m_playerIdentifier);
+        m_gpuProcessConnection->connection().send(Messages::RemoteMediaPlayerProxy::AudioTrackSetEnabled(m_identifier, enabled), m_playerIdentifier);
 
     AudioTrackPrivate::setEnabled(enabled);
 }

@@ -1506,11 +1506,6 @@ WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
 }
 #endif
 
-MediaPlayerIdentifier MediaPlayerPrivateRemote::identifier() const
-{
-    return m_id;
-}
-
 } // namespace WebKit
 
 #endif
