@@ -152,6 +152,22 @@ TextStream& operator<<(TextStream& ts, const DropShadow& dropShadow)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, GradientSpreadMethod spreadMethod)
+{
+    switch (spreadMethod) {
+    case GradientSpreadMethod::Pad:
+        ts << "pad";
+        break;
+    case GradientSpreadMethod::Reflect:
+        ts << "reflect";
+        break;
+    case GradientSpreadMethod::Repeat:
+        ts << "repeat";
+        break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, InterpolationQuality interpolationQuality)
 {
     switch (interpolationQuality) {

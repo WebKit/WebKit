@@ -32,6 +32,10 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 enum class HueInterpolationMethod : uint8_t {
@@ -55,6 +59,15 @@ enum class ColorInterpolationColorSpace : uint8_t {
     XYZD65
 };
     
+template <typename T, typename = void>
+struct HasHueInterpolationMethod : std::false_type { };
+
+template <typename T>
+struct HasHueInterpolationMethod<T, std::void_t<decltype(T::hueInterpolationMethod)>> : std::true_type { };
+
+template <typename T>
+inline constexpr bool hasHueInterpolationMethod = HasHueInterpolationMethod<T>::value;
+
 struct ColorInterpolationMethod {
     struct HSL {
         static constexpr auto interpolationColorSpace = ColorInterpolationColorSpace::HSL;
@@ -252,6 +265,10 @@ inline constexpr bool operator==(const ColorInterpolationMethod& a, const ColorI
 {
     return a.alphaPremultiplication == b.alphaPremultiplication && a.colorSpace == b.colorSpace;
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, ColorInterpolationColorSpace);
+WTF::TextStream& operator<<(WTF::TextStream&, HueInterpolationMethod);
+WTF::TextStream& operator<<(WTF::TextStream&, const ColorInterpolationMethod&);
 
 }
 

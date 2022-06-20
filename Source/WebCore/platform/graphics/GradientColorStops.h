@@ -28,6 +28,7 @@
 #include "GradientColorStop.h"
 #include <algorithm>
 #include <optional>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -138,4 +139,6 @@ template<typename Decoder> std::optional<GradientColorStops> GradientColorStops:
     return {{ WTFMove(*stops) }};
 }
 
-}
+TextStream& operator<<(TextStream&, const GradientColorStops&);
+
+} // namespace WebCore

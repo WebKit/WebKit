@@ -79,7 +79,7 @@ WTF::TextStream& operator<<(TextStream& ts, const SourceBrush& brush)
     ts.dumpProperty("color", brush.color());
 
     if (auto gradient = brush.gradient())
-        ts.dumpProperty("gradient", gradient);
+        ts.dumpProperty("gradient", *gradient);
 
     if (auto pattern = brush.pattern())
         ts.dumpProperty("pattern", pattern);

@@ -30,6 +30,8 @@
 #include "FloatRect.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -118,6 +120,31 @@ unsigned Gradient::hash() const
     if (!m_cachedHash)
         m_cachedHash = computeHash(m_data, m_colorInterpolationMethod, m_spreadMethod, m_stops.sorted());
     return m_cachedHash;
+}
+
+TextStream& operator<<(TextStream& ts, const Gradient& gradient)
+{
+    WTF::switchOn(gradient.m_data,
+        [&] (const Gradient::LinearData& data) {
+            ts.dumpProperty("p0", data.point0);
+            ts.dumpProperty("p1", data.point1);
+        },
+        [&] (const Gradient::RadialData& data) {
+            ts.dumpProperty("p0", data.point0);
+            ts.dumpProperty("p1", data.point1);
+            ts.dumpProperty("start-radius", data.startRadius);
+            ts.dumpProperty("end-radius", data.endRadius);
+            ts.dumpProperty("aspect-ratio", data.aspectRatio);
+        },
+        [&] (const Gradient::ConicData& data) {
+            ts.dumpProperty("p0", data.point0);
+            ts.dumpProperty("angle-radians", data.angleRadians);
+        }
+    );
+    ts.dumpProperty("color-interpolation-method", gradient.m_colorInterpolationMethod);
+    ts.dumpProperty("spread-method", gradient.m_spreadMethod);
+    ts.dumpProperty("stops", gradient.m_stops);
+    return ts;
 }
 
 }
