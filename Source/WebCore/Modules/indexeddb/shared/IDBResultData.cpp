@@ -114,12 +114,12 @@ IDBResultData IDBResultData::openDatabaseSuccess(const IDBResourceIdentifier& re
 }
 
 
-IDBResultData IDBResultData::openDatabaseUpgradeNeeded(const IDBResourceIdentifier& requestIdentifier, IDBServer::UniqueIDBDatabaseTransaction& transaction)
+IDBResultData IDBResultData::openDatabaseUpgradeNeeded(const IDBResourceIdentifier& requestIdentifier, IDBServer::UniqueIDBDatabaseTransaction& transaction, IDBServer::UniqueIDBDatabaseConnection& connection)
 {
     IDBResultData result { requestIdentifier };
     result.m_type = IDBResultType::OpenDatabaseUpgradeNeeded;
-    result.m_databaseConnectionIdentifier = transaction.databaseConnection().identifier();
-    result.m_databaseInfo = makeUnique<IDBDatabaseInfo>(transaction.databaseConnection().database()->info());
+    result.m_databaseConnectionIdentifier = connection.identifier();
+    result.m_databaseInfo = makeUnique<IDBDatabaseInfo>(connection.database()->info());
     result.m_transactionInfo = makeUnique<IDBTransactionInfo>(transaction.info());
     return result;
 }
