@@ -442,7 +442,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
         return identifier ? m_remoteResourceCache.cachedImageBuffer({ *identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }) : nullptr;
     };
 
-    auto bufferIdentifer = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
+    auto bufferIdentifier = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
         if (!buffer)
             return std::nullopt;
         return buffer->renderingResourceIdentifier();
@@ -468,7 +468,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
     if (frontBuffer && !needsFullDisplay && inputData.hasEmptyDirtyRegion) {
         // No swap necessary, but we do need to return the front buffer handle.
         outputData.frontBufferHandle = handleFromBuffer(*frontBuffer);
-        outputData.bufferSet = BufferIdentifierSet { bufferIdentifer(frontBuffer), bufferIdentifer(backBuffer), bufferIdentifer(secondaryBackBuffer) };
+        outputData.bufferSet = BufferIdentifierSet { bufferIdentifier(frontBuffer), bufferIdentifier(backBuffer), bufferIdentifier(secondaryBackBuffer) };
         outputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
         return;
     }
@@ -488,7 +488,7 @@ void RemoteRenderingBackend::prepareLayerBuffersForDisplay(const PrepareBackingS
 
     std::swap(frontBuffer, backBuffer);
 
-    outputData.bufferSet = BufferIdentifierSet { bufferIdentifer(frontBuffer), bufferIdentifer(backBuffer), bufferIdentifer(secondaryBackBuffer) };
+    outputData.bufferSet = BufferIdentifierSet { bufferIdentifier(frontBuffer), bufferIdentifier(backBuffer), bufferIdentifier(secondaryBackBuffer) };
     if (frontBuffer) {
         auto previousState = frontBuffer->setNonVolatile();
         if (previousState == SetNonVolatileResult::Empty)

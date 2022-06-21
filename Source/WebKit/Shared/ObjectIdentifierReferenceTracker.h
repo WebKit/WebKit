@@ -147,7 +147,7 @@ private:
     uint64_t m_pendingReads { 0 };
 };
 
-// Class to generate read and write references to an ObjectIdentifer.
+// Class to generate read and write references to an ObjectIdentifier.
 template<typename T>
 class ObjectIdentifierReferenceTracker {
     WTF_MAKE_NONCOPYABLE(ObjectIdentifierReferenceTracker);

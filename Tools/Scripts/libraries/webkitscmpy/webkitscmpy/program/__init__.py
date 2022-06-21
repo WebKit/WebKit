@@ -59,7 +59,7 @@ def main(
 
     parser = argparse.ArgumentParser(
         description='Custom git tooling from the WebKit team to interact with a ' +
-                    'repository using identifers',
+                    'repository using identifiers',
     )
     arguments.LoggingGroup(
         parser,

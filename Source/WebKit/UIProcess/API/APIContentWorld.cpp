@@ -45,9 +45,9 @@ static HashMap<WebKit::ContentWorldIdentifier, ContentWorld*>& sharedWorldIdenti
     return sharedMap;
 }
 
-ContentWorld* ContentWorld::worldForIdentifier(WebKit::ContentWorldIdentifier identifer)
+ContentWorld* ContentWorld::worldForIdentifier(WebKit::ContentWorldIdentifier identifier)
 {
-    return sharedWorldIdentifierMap().get(identifer);
+    return sharedWorldIdentifierMap().get(identifier);
 }
 
 ContentWorld::ContentWorld(const WTF::String& name)

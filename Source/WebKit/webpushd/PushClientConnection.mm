@@ -134,11 +134,11 @@ void ClientConnection::setDebugModeIsEnabled(bool enabled)
 void ClientConnection::broadcastDebugMessage(StringView message)
 {
     String messageIdentifier;
-    auto signingIdentifer = hostAppCodeSigningIdentifier();
-    if (signingIdentifer.isEmpty())
+    auto signingIdentifier = hostAppCodeSigningIdentifier();
+    if (signingIdentifier.isEmpty())
         messageIdentifier = makeString("[(0x", hex(reinterpret_cast<uint64_t>(m_xpcConnection.get()), WTF::HexConversionMode::Lowercase), ") (", String::number(identifier()), " )] ");
     else
-        messageIdentifier = makeString("[", signingIdentifer, " (", String::number(identifier()), ")] ");
+        messageIdentifier = makeString("[", signingIdentifier, " (", String::number(identifier()), ")] ");
 
     Daemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
 }
