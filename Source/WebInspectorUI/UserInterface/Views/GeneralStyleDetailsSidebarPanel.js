@@ -213,7 +213,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
     _showPanel()
     {
         this.contentView.addSubview(this._panel);
-        this.contentView.element.classList.toggle("has-filter-bar", this._filterBar);
+        this.contentView.element.classList.toggle("has-filter-bar", !!this._filterBar);
         if (this._filterBar)
             this.contentView.element.classList.toggle(WI.GeneralStyleDetailsSidebarPanel.FilterInProgressClassName, this._filterBar.hasActiveFilters());
     }
