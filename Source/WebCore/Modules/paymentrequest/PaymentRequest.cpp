@@ -785,7 +785,7 @@ ExceptionOr<void> PaymentRequest::complete(std::optional<PaymentComplete>&& resu
         return Exception { AbortError };
 
     Ref activePaymentHandler = *this->activePaymentHandler();
-    activePaymentHandler()->complete(WTFMove(result));
+    activePaymentHandler->complete(WTFMove(result));
     
     m_activePaymentHandler = std::nullopt;
     return { };
