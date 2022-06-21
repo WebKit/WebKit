@@ -303,11 +303,8 @@ bool ArrayBuffer::transferTo(VM& vm, ArrayBufferContents& result)
         return true;
     }
 
-    CheckedSize sizeReduced { gcSizeEstimateInBytes() };
     result = WTFMove(m_contents);
     notifyDetaching(vm);
-    sizeReduced -= gcSizeEstimateInBytes();
-    vm.heap.reduceArrayBufferSize(sizeReduced);
     return true;
 }
 

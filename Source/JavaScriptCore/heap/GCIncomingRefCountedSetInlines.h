@@ -72,23 +72,6 @@ void GCIncomingRefCountedSet<T>::sweep(VM& vm)
         m_vector[i--] = m_vector.last();
         m_vector.removeLast();
     }
-
-    constexpr bool verify = false;
-    if constexpr (verify) {
-        CheckedSize size;
-        for (size_t i = m_vector.size(); i--;) {
-            T* object = m_vector[i];
-            size += object->gcSizeEstimateInBytes();
-        }
-        ASSERT(m_bytes == size);
-    }
-}
-
-template<typename T>
-void GCIncomingRefCountedSet<T>::reduceSize(size_t bytes)
-{
-    ASSERT(m_bytes >= bytes);
-    m_bytes -= bytes;
 }
 
 } // namespace JSC

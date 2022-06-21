@@ -659,11 +659,6 @@ void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
     }
 }
 
-void Heap::reduceArrayBufferSize(size_t bytes)
-{
-    m_arrayBuffers.reduceSize(bytes);
-}
-
 template<typename CellType, typename CellSet>
 void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet)
 {
