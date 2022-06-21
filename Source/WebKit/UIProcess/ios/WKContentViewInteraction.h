@@ -464,6 +464,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext;
     BOOL _waitingForKeyboardToStartAnimatingInAfterElementFocus;
     BOOL _shouldZoomToFocusRectAfterShowingKeyboard;
+    BOOL _isHidingKeyboard;
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;

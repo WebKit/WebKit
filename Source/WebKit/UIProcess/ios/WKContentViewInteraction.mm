@@ -4927,6 +4927,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)replaceDictatedText:(NSString*)oldText withText:(NSString *)newText
 {
+    if (_isHidingKeyboard && _isChangingFocus)
+        return;
+
     _autocorrectionContextNeedsUpdate = YES;
     _page->replaceDictatedText(oldText, newText);
 }
@@ -5657,6 +5660,9 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 // Inserts the given string, replacing any selected or marked text.
 - (void)insertText:(NSString *)aStringValue
 {
+    if (_isHidingKeyboard && _isChangingFocus)
+        return;
+
     auto* keyboard = [UIKeyboardImpl sharedInstance];
 
     WebKit::InsertTextOptions options;
@@ -6605,6 +6611,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_hideKeyboard
 {
+    SetForScope isHidingKeyboardScope { _isHidingKeyboard, YES };
+
     self.inputDelegate = nil;
     [self setUpTextSelectionAssistant];
     
