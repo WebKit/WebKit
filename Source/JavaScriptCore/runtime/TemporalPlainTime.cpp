@@ -351,9 +351,9 @@ static ISO8601::PlainTime constrainTime(ISO8601::Duration&& duration)
         constrainToRange(duration.hours(), 0, 23),
         constrainToRange(duration.minutes(), 0, 59),
         constrainToRange(duration.seconds(), 0, 59),
-        constrainToRange(duration.milliseconds(), 0, 1000),
-        constrainToRange(duration.microseconds(), 0, 1000),
-        constrainToRange(duration.nanoseconds(), 0, 1000));
+        constrainToRange(duration.milliseconds(), 0, 999),
+        constrainToRange(duration.microseconds(), 0, 999),
+        constrainToRange(duration.nanoseconds(), 0, 999));
 }
 
 static ISO8601::PlainTime regulateTime(JSGlobalObject* globalObject, ISO8601::Duration&& duration, TemporalOverflow overflow)
