@@ -6,7 +6,6 @@
  * Copyright (C) 2009 Google, Inc.
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
  * Copyright (C) 2011 University of Szeged
- * Copyright (C) 2020, 2021, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,19 +25,18 @@
 
 #pragma once
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-#include "RenderSVGShape.h"
+#include "LegacyRenderSVGShape.h"
 
 namespace WebCore {
 
-class RenderSVGPath final : public RenderSVGShape {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGPath);
+class LegacyRenderSVGPath final : public LegacyRenderSVGShape {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGPath);
 public:
-    RenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
-    virtual ~RenderSVGPath();
+    LegacyRenderSVGPath(SVGGraphicsElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGPath();
 
 private:
-    bool isSVGPath() const override { return true; }
+    bool isLegacySVGPath() const override { return true; }
     ASCIILiteral renderName() const override { return "RenderSVGPath"_s; }
 
     void updateShapeFromElement() override;
@@ -59,6 +57,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGPath, isSVGPath())
-
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGPath, isLegacySVGPath())
