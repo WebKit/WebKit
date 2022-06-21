@@ -11,7 +11,7 @@ layer at (0,0) size 785x848
           RenderText {#text} at (0,0) size 137x16
             text run at (0,0) width 137: "WICD Core 1.0 #20-2"
         RenderBlock (anonymous) at (0,66) size 738x300
-          RenderEmbeddedObject {object} at (0,0) size 296x295 [bgcolor=#FF0000]
+          RenderEmbeddedObject {object} at (0,0) size 296x296 [bgcolor=#FF0000]
             layer at (0,0) size 295x295
               RenderView at (0,0) size 295x295
             layer at (0,0) size 295x295
@@ -75,7 +75,7 @@ layer at (0,0) size 785x848
           RenderText {#text} at (0,48) size 398x16
             text run at (0,48) width 398: "Beyond there is the same, only with PNG images instead of SVG."
         RenderBlock (anonymous) at (0,437) size 738x300
-          RenderImage {object} at (0,0) size 296x295 [bgcolor=#FF0000]
+          RenderImage {object} at (0,0) size 296x296 [bgcolor=#FF0000]
           RenderText {#text} at (295,281) size 5x17
             text run at (295,281) width 5: " "
           RenderImage {object} at (299,147) size 149x148 [bgcolor=#FF0000]

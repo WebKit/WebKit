@@ -553,8 +553,8 @@ LayoutUnit RenderReplaced::computeConstrainedLogicalWidth(ShouldComputePreferred
 static inline LayoutUnit resolveWidthForRatio(LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit logicalHeight, double aspectRatio, BoxSizing boxSizing)
 {
     if (boxSizing == BoxSizing::BorderBox)
-        return LayoutUnit(round((logicalHeight + borderAndPaddingLogicalHeight) * aspectRatio)) - borderAndPaddingLogicalWidth;
-    return LayoutUnit(round(logicalHeight * aspectRatio));
+        return LayoutUnit((logicalHeight + borderAndPaddingLogicalHeight) * aspectRatio) - borderAndPaddingLogicalWidth;
+    return LayoutUnit(logicalHeight * aspectRatio);
 }
 
 static inline bool hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsicWidth, bool hasIntrinsicHeight )
@@ -587,7 +587,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
         // grid item has an intrinsic size. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but not to have an intrinsic
         // width or height. There are also elements with intrinsic sizes but without intrinsic ratio (like an iframe).
         if (intrinsicRatio && (isFlexItem() || isGridItem()) && hasOverridingLogicalHeight() && hasIntrinsicSize(contentRenderer, hasIntrinsicWidth, hasIntrinsicHeight))
-            return computeReplacedLogicalWidthRespectingMinMaxWidth(roundToInt(round(overridingContentLogicalHeight() * intrinsicRatio)), shouldComputePreferred);
+            return computeReplacedLogicalWidthRespectingMinMaxWidth(overridingContentLogicalHeight() * intrinsicRatio, shouldComputePreferred);
 
         // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
         if (computedHeightIsAuto && hasIntrinsicWidth)
@@ -632,8 +632,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
 static inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit logicalWidth, double aspectRatio, BoxSizing boxSizing)
 {
     if (boxSizing == BoxSizing::BorderBox)
-        return LayoutUnit(round((logicalWidth + borderAndPaddingLogicalWidth) / aspectRatio)) - borderAndPaddingLogicalHeight;
-    return LayoutUnit(round(logicalWidth / aspectRatio));
+        return LayoutUnit((logicalWidth + borderAndPaddingLogicalWidth) / aspectRatio) - borderAndPaddingLogicalHeight;
+    return LayoutUnit(logicalWidth / aspectRatio);
 }
 
 LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
@@ -655,7 +655,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
 
     // See computeReplacedLogicalHeight() for a similar check for heights.
     if (intrinsicRatio && (isFlexItem() || isGridItem()) && hasOverridingLogicalWidth() && hasIntrinsicSize(contentRenderer, hasIntrinsicWidth, hasIntrinsicHeight))
-        return computeReplacedLogicalHeightRespectingMinMaxHeight(roundToInt(round(overridingContentLogicalWidth() / intrinsicRatio)));
+        return computeReplacedLogicalHeightRespectingMinMaxHeight(overridingContentLogicalWidth() / intrinsicRatio);
 
     // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic height, then that intrinsic height is the used value of 'height'.
     if (widthIsAuto && hasIntrinsicHeight)

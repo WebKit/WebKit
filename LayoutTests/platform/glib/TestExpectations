@@ -697,6 +697,8 @@ imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.htm
 
 webkit.org/b/241568 imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-003.html [ ImageOnlyFailure ]
 
+# Changes to logical height/width computations (https://bugs.webkit.org/show_bug.cgi?id=241601)
+webkit.org/b/241601 css2.1/t090501-c414-flt-03-b-g.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
