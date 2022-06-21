@@ -60,6 +60,7 @@
 #include "WebsiteDataStore.h"
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/RemoteInspector.h>
+#include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <glib/gi18n-lib.h>
 #include <libintl.h>
@@ -1942,6 +1943,17 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
     pageConfiguration->setRelatedPage(relatedView ? &webkitWebViewGetPage(relatedView) : nullptr);
     pageConfiguration->setUserContentController(userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr);
     pageConfiguration->setControlledByAutomation(webkit_web_view_is_controlled_by_automation(webView));
+
+    WebKitWebExtensionMode webExtensionMode = webkit_web_view_get_web_extension_mode(webView);
+    const char* defaultContentSecurityPolicy = webkit_web_view_get_default_content_security_policy(webView);
+
+    if (webExtensionMode == WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3)
+        pageConfiguration->setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension::ManifestV3);
+    else if (webExtensionMode == WEBKIT_WEB_EXTENSION_MODE_MANIFESTV2)
+        pageConfiguration->setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension::ManifestV2);
+
+    if (defaultContentSecurityPolicy)
+        pageConfiguration->setOverrideContentSecurityPolicy(String::fromUTF8(defaultContentSecurityPolicy));
 
     WebKitWebsiteDataManager* manager = webkitWebViewGetWebsiteDataManager(webView);
     if (!manager)

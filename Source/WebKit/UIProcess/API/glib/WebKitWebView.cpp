@@ -211,6 +211,9 @@ enum {
     PROP_MICROPHONE_CAPTURE_STATE,
     PROP_DISPLAY_CAPTURE_STATE,
 
+    PROP_WEB_EXTENSION_MODE,
+    PROP_DEFAULT_CONTENT_SECURITY_POLICY,
+
     N_PROPERTIES,
 };
 
@@ -316,6 +319,9 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
     GRefPtr<WebKitWebsitePolicies> websitePolicies;
+
+    CString defaultContentSecurityPolicy;
+    WebKitWebExtensionMode webExtensionMode;
 
     double textScaleFactor;
 
@@ -901,6 +907,12 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_DISPLAY_CAPTURE_STATE:
         webkit_web_view_set_display_capture_state(webView, static_cast<WebKitMediaCaptureState>(g_value_get_enum(value)));
         break;
+    case PROP_WEB_EXTENSION_MODE:
+        webView->priv->webExtensionMode = static_cast<WebKitWebExtensionMode>(g_value_get_enum(value));
+        break;
+    case PROP_DEFAULT_CONTENT_SECURITY_POLICY:
+        webView->priv->defaultContentSecurityPolicy = CString(g_value_get_string(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -980,6 +992,12 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_DISPLAY_CAPTURE_STATE:
         g_value_set_enum(value, webkit_web_view_get_display_capture_state(webView));
+        break;
+    case PROP_WEB_EXTENSION_MODE:
+        g_value_set_enum(value, webkit_web_view_get_web_extension_mode(webView));
+        break;
+    case PROP_DEFAULT_CONTENT_SECURITY_POLICY:
+        g_value_set_string(value, webkit_web_view_get_default_content_security_policy(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1449,6 +1467,50 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_MEDIA_CAPTURE_STATE,
         WEBKIT_MEDIA_CAPTURE_STATE_NONE,
         WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WebKitWebView:web-extension-mode:
+     *
+     * This configures @web_view to treat the content as a WebExtension.
+     *
+     * Note that this refers to the web standard [WebExtensions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
+     * and not WebKitWebExtensions.
+     * 
+     * In practice this limits the Content-Security-Policies that are allowed to be set. Some details can be found in
+     * [Chrome's documentation](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-migration/#content-security-policy).
+     *
+     * Since: 2.38
+     */
+    sObjProperties[PROP_WEB_EXTENSION_MODE] = g_param_spec_enum(
+        "web-extension-mode",
+        "WebExtension Mode",
+        _("Enables WebExtension mode"),
+        WEBKIT_TYPE_WEB_EXTENSION_MODE,
+        WEBKIT_WEB_EXTENSION_MODE_NONE,
+        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+    /**
+     * WebKitWebView:default-content-security-policy:
+     *
+     * The default Content-Security-Policy used by the webview as if it were set
+     * by an HTTP header.
+     * 
+     * This applies to all content loaded including through navigation or via the various
+     * webkit_web_view_load_\* APIs. However do note that many WebKit APIs bypass
+     * Content-Security-Policy in general such as #WebKitUserContentManager and
+     * webkit_web_view_run_javascript().
+     *
+     * Policies are additive so if a website sets its own policy it still applies
+     * on top of the policy set here.
+     * 
+     * Since: 2.38
+     */
+    sObjProperties[PROP_DEFAULT_CONTENT_SECURITY_POLICY] = g_param_spec_string(
+        "default-content-security-policy",
+        "Default Content-Security-Policy",
+        _("The default Content-Security-Policy"),
+        nullptr,
+        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
@@ -5177,4 +5239,42 @@ void webkitWebViewForceRepaintForTesting(WebKitWebView* webView, ForceRepaintCal
 void webkitSetCachedProcessSuspensionDelayForTesting(double seconds)
 {
     WebKit::WebsiteDataStore::setCachedProcessSuspensionDelayForTesting(Seconds(seconds));
+}
+
+/**
+ * webkit_web_view_get_web_extension_mode:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the view's #WebKitWebExtensionMode.
+ *
+ * Returns: the #WebKitWebExtensionMode
+ *
+ * Since: 2.38
+ */
+WebKitWebExtensionMode webkit_web_view_get_web_extension_mode(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), WEBKIT_WEB_EXTENSION_MODE_NONE);
+
+    return webView->priv->webExtensionMode;
+}
+
+/**
+ * webkit_web_view_get_default_content_security_policy:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the configured default Content-Security-Policy.
+ *
+ * Returns: (nullable): The default policy or %NULL
+ *
+ * Since: 2.38
+ */
+const gchar*
+webkit_web_view_get_default_content_security_policy(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    if (webView->priv->defaultContentSecurityPolicy.isNull())
+        return nullptr;
+
+    return webView->priv->defaultContentSecurityPolicy.data();
 }
