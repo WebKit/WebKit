@@ -890,6 +890,68 @@ public:
     }
 };
 
+static JSC_DECLARE_HOST_FUNCTION(staticDontDeleteDontEnumMethod);
+
+class StaticDontDeleteDontEnum : public JSNonFinalObject {
+public:
+    using Base = JSNonFinalObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    StaticDontDeleteDontEnum(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+        DollarVMAssertScope assertScope;
+    }
+
+    DECLARE_INFO;
+
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace();
+    }
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        DollarVMAssertScope assertScope;
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    static StaticDontDeleteDontEnum* create(VM& vm, Structure* structure)
+    {
+        DollarVMAssertScope assertScope;
+        StaticDontDeleteDontEnum* result = new (NotNull, allocateCell<StaticDontDeleteDontEnum>(vm)) StaticDontDeleteDontEnum(vm, structure);
+        result->finishCreation(vm);
+        return result;
+    }
+};
+
+JSC_DEFINE_HOST_FUNCTION(staticDontDeleteDontEnumMethod, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return encodedJSUndefined();
+}
+
+static const struct CompactHashIndex staticDontDeleteDontEnumTableIndex[8] = {
+    { 0, -1 },
+    { 1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { -1, -1 },
+    { 2, -1 },
+    { -1, -1 },
+    { -1, -1 },
+};
+
+static const struct HashTableValue staticDontDeleteDontEnumTableValues[3] = {
+   { "dontEnum", static_cast<unsigned>(PropertyAttribute::Function|PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(staticDontDeleteDontEnumMethod), (intptr_t)(0) } },
+   { "dontDelete", static_cast<unsigned>(PropertyAttribute::Function|PropertyAttribute::DontDelete), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(staticDontDeleteDontEnumMethod), (intptr_t)(0) } },
+   { "dontDeleteDontEnum", static_cast<unsigned>(PropertyAttribute::Function|PropertyAttribute::DontDelete|PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(staticDontDeleteDontEnumMethod), (intptr_t)(0) } },
+};
+
+static const struct HashTable staticDontDeleteDontEnumTable =
+    { 3, 7, false, nullptr, staticDontDeleteDontEnumTableValues, staticDontDeleteDontEnumTableIndex };
+
 class ObjectDoingSideEffectPutWithoutCorrectSlotStatus : public JSNonFinalObject {
     using Base = JSNonFinalObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
@@ -1808,6 +1870,7 @@ const ClassInfo JSTestCustomGetterSetter::s_info = { "JSTestCustomGetterSetter",
 
 const ClassInfo StaticCustomAccessor::s_info = { "StaticCustomAccessor", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(StaticCustomAccessor) };
 const ClassInfo StaticCustomValue::s_info = { "StaticCustomValue", &Base::s_info, &staticCustomValueTable, nullptr, CREATE_METHOD_TABLE(StaticCustomValue) };
+const ClassInfo StaticDontDeleteDontEnum::s_info = { "StaticDontDeleteDontEnum", &Base::s_info, &staticDontDeleteDontEnumTable, nullptr, CREATE_METHOD_TABLE(StaticDontDeleteDontEnum) };
 const ClassInfo ObjectDoingSideEffectPutWithoutCorrectSlotStatus::s_info = { "ObjectDoingSideEffectPutWithoutCorrectSlotStatus", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(ObjectDoingSideEffectPutWithoutCorrectSlotStatus) };
 
 ElementHandleOwner* Element::handleOwner()
@@ -2073,6 +2136,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantia
 #endif
 static JSC_DECLARE_HOST_FUNCTION(functionCreateStaticCustomAccessor);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateStaticCustomValue);
+static JSC_DECLARE_HOST_FUNCTION(functionCreateStaticDontDeleteDontEnum);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus);
 static JSC_DECLARE_HOST_FUNCTION(functionCreateEmptyFunctionWithName);
 static JSC_DECLARE_HOST_FUNCTION(functionSetImpureGetterDelegate);
@@ -3082,6 +3146,16 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateStaticCustomValue, (JSGlobalObject* globa
     return JSValue::encode(result);
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionCreateStaticDontDeleteDontEnum, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    JSLockHolder lock(vm);
+    Structure* structure = StaticDontDeleteDontEnum::createStructure(vm, globalObject, jsNull());
+    auto* result = StaticDontDeleteDontEnum::create(vm, structure);
+    return JSValue::encode(result);
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -3929,6 +4003,7 @@ void JSDollarVM::finishCreation(VM& vm)
 #endif
     addFunction(vm, "createStaticCustomAccessor", functionCreateStaticCustomAccessor, 0);
     addFunction(vm, "createStaticCustomValue", functionCreateStaticCustomValue, 0);
+    addFunction(vm, "createStaticDontDeleteDontEnum"_s, functionCreateStaticDontDeleteDontEnum, 0);
     addFunction(vm, "createObjectDoingSideEffectPutWithoutCorrectSlotStatus", functionCreateObjectDoingSideEffectPutWithoutCorrectSlotStatus, 0);
     addFunction(vm, "createEmptyFunctionWithName", functionCreateEmptyFunctionWithName, 1);
     addFunction(vm, "getPrivateProperty", functionGetPrivateProperty, 2);

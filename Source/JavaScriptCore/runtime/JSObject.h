@@ -103,7 +103,6 @@ class JSObject : public JSCell {
     enum PutMode : uint8_t {
         PutModePut,
         PutModeDefineOwnProperty,
-        PutModeDefineOwnPropertyIgnoringExtensibility,
     };
 
 public:
@@ -686,7 +685,6 @@ public:
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirect(VM&, PropertyName, JSValue, unsigned attributes, PutPropertySlot&);
     bool putDirect(VM&, PropertyName, JSValue, PutPropertySlot&);
-    ASCIILiteral putDirectRespectingExtensibility(VM&, PropertyName, JSValue, unsigned attributes, PutPropertySlot&);
     void putDirectWithoutTransition(VM&, PropertyName, JSValue, unsigned attributes = 0);
     bool putDirectNonIndexAccessor(VM&, PropertyName, GetterSetter*, unsigned attributes);
     void putDirectNonIndexAccessorWithoutTransition(VM&, PropertyName, GetterSetter*, unsigned attributes);
@@ -1596,28 +1594,21 @@ inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value
     ASSERT(!value.isGetterSetter() && !(attributes & PropertyAttribute::Accessor));
     ASSERT(!value.isCustomGetterSetter() && !(attributes & PropertyAttribute::CustomAccessorOrValue));
     PutPropertySlot slot(this);
-    return putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, value, attributes, slot).isNull();
+    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot).isNull();
 }
 
 inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
 {
     ASSERT(!value.isGetterSetter());
     ASSERT(!value.isCustomGetterSetter());
-    return putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, value, attributes, slot).isNull();
+    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot).isNull();
 }
 
 inline bool JSObject::putDirect(VM& vm, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     ASSERT(!value.isGetterSetter());
     ASSERT(!value.isCustomGetterSetter());
-    return putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, value, 0, slot).isNull();
-}
-
-inline ASCIILiteral JSObject::putDirectRespectingExtensibility(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
-{
-    ASSERT(!value.isGetterSetter());
-    ASSERT(!value.isCustomGetterSetter());
-    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
+    return putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, 0, slot).isNull();
 }
 
 constexpr inline intptr_t offsetInButterfly(PropertyOffset offset)

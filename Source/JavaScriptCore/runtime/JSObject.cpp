@@ -2006,7 +2006,7 @@ bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
         attributes |= PropertyAttribute::CustomValue;
 
     PutPropertySlot slot(this);
-    bool result = putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, value, attributes, slot).isNull();
+    bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot).isNull();
 
     ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
@@ -2037,7 +2037,7 @@ bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, Gett
 {
     ASSERT(attributes & PropertyAttribute::Accessor);
     PutPropertySlot slot(this);
-    bool result = putDirectInternal<PutModeDefineOwnPropertyIgnoringExtensibility>(vm, propertyName, accessor, attributes, slot).isNull();
+    bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, accessor, attributes, slot).isNull();
 
     Structure* structure = this->structure(vm);
     if (attributes & PropertyAttribute::ReadOnly)
