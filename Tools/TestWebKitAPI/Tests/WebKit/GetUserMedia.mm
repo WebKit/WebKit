@@ -748,6 +748,10 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
     [webView stringByEvaluatingJavaScript:@"createConnection()"];
     TestWebKitAPI::Util::run(&done);
 
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkDecodingVideo('first')"];
+    TestWebKitAPI::Util::run(&done);
+
     auto webViewPID = [webView _webProcessIdentifier];
 
     // The GPU process should get launched.
@@ -776,7 +780,15 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
 
     done = false;
-    [webView stringByEvaluatingJavaScript:@"checkDecodingVideo()"];
+    [webView stringByEvaluatingJavaScript:@"checkVideoStatus()"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkAudioStatus()"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkDecodingVideo('second')"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_EQ(gpuProcessPID, [processPool _gpuProcessIdentifier]);
