@@ -273,7 +273,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if USE(APPLE_INTERNAL_SDK)
     if (parameters.enableDecodingHEIC) {
         ImageDecoderCG::enableDecodingHEIC();
-        enableDecodingHEIC();
+        setVideoDecoderBehaviors({ VideoDecoderBehavior::AvoidIOSurface, VideoDecoderBehavior::AvoidHardware, VideoDecoderBehavior::EnableHEIC });
     }
 #endif
 #endif // HAVE(VIDEO_RESTRICTED_DECODING)
