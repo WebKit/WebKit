@@ -1318,35 +1318,35 @@ GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram& program, const
     return m_context->getFragDataLocation(program.object(), name);
 }
 
-void WebGL2RenderingContext::uniform1ui(WebGLUniformLocation* location, GCGLuint v0)
+void WebGL2RenderingContext::uniform1ui(const WebGLUniformLocation* location, GCGLuint v0)
 {
     if (isContextLostOrPending() || !validateUniformLocation("uniform1ui", location))
         return;
     m_context->uniform1ui(location->location(), v0);
 }
 
-void WebGL2RenderingContext::uniform2ui(WebGLUniformLocation* location, GCGLuint v0, GCGLuint v1)
+void WebGL2RenderingContext::uniform2ui(const WebGLUniformLocation* location, GCGLuint v0, GCGLuint v1)
 {
     if (isContextLostOrPending() || !validateUniformLocation("uniform2ui", location))
         return;
     m_context->uniform2ui(location->location(), v0, v1);
 }
 
-void WebGL2RenderingContext::uniform3ui(WebGLUniformLocation* location, GCGLuint v0, GCGLuint v1, GCGLuint v2)
+void WebGL2RenderingContext::uniform3ui(const WebGLUniformLocation* location, GCGLuint v0, GCGLuint v1, GCGLuint v2)
 {
     if (isContextLostOrPending() || !validateUniformLocation("uniform3ui", location))
         return;
     m_context->uniform3ui(location->location(), v0, v1, v2);
 }
 
-void WebGL2RenderingContext::uniform4ui(WebGLUniformLocation* location, GCGLuint v0, GCGLuint v1, GCGLuint v2, GCGLuint v3)
+void WebGL2RenderingContext::uniform4ui(const WebGLUniformLocation* location, GCGLuint v0, GCGLuint v1, GCGLuint v2, GCGLuint v3)
 {
     if (isContextLostOrPending() || !validateUniformLocation("uniform4ui", location))
         return;
     m_context->uniform4ui(location->location(), v0, v1, v2, v3);
 }
 
-void WebGL2RenderingContext::uniform1uiv(WebGLUniformLocation* location, Uint32List&& value, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform1uiv(const WebGLUniformLocation* location, Uint32List&& value, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1356,7 +1356,7 @@ void WebGL2RenderingContext::uniform1uiv(WebGLUniformLocation* location, Uint32L
     m_context->uniform1uiv(location->location(), data.value());
 }
 
-void WebGL2RenderingContext::uniform2uiv(WebGLUniformLocation* location, Uint32List&& value, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform2uiv(const WebGLUniformLocation* location, Uint32List&& value, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1366,7 +1366,7 @@ void WebGL2RenderingContext::uniform2uiv(WebGLUniformLocation* location, Uint32L
     m_context->uniform2uiv(location->location(), data.value());
 }
 
-void WebGL2RenderingContext::uniform3uiv(WebGLUniformLocation* location, Uint32List&& value, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform3uiv(const WebGLUniformLocation* location, Uint32List&& value, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1376,7 +1376,7 @@ void WebGL2RenderingContext::uniform3uiv(WebGLUniformLocation* location, Uint32L
     m_context->uniform3uiv(location->location(), data.value());
 }
 
-void WebGL2RenderingContext::uniform4uiv(WebGLUniformLocation* location, Uint32List&& value, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform4uiv(const WebGLUniformLocation* location, Uint32List&& value, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1386,7 +1386,7 @@ void WebGL2RenderingContext::uniform4uiv(WebGLUniformLocation* location, Uint32L
     m_context->uniform4uiv(location->location(), data.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix2x3fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix2x3fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1396,7 +1396,7 @@ void WebGL2RenderingContext::uniformMatrix2x3fv(WebGLUniformLocation* location, 
     m_context->uniformMatrix2x3fv(location->location(), transpose, data.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix3x2fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix3x2fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1406,7 +1406,7 @@ void WebGL2RenderingContext::uniformMatrix3x2fv(WebGLUniformLocation* location, 
     m_context->uniformMatrix3x2fv(location->location(), transpose, data.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix2x4fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix2x4fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1416,7 +1416,7 @@ void WebGL2RenderingContext::uniformMatrix2x4fv(WebGLUniformLocation* location, 
     m_context->uniformMatrix2x4fv(location->location(), transpose, data.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix4x2fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix4x2fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1426,7 +1426,7 @@ void WebGL2RenderingContext::uniformMatrix4x2fv(WebGLUniformLocation* location, 
     m_context->uniformMatrix4x2fv(location->location(), transpose, data.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix3x4fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix3x4fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -1436,7 +1436,7 @@ void WebGL2RenderingContext::uniformMatrix3x4fv(WebGLUniformLocation* location, 
     m_context->uniformMatrix3x4fv(location->location(), transpose, data.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix4x3fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix4x3fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& v, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3245,7 +3245,7 @@ std::optional<GCGLSpan<const T>> WebGL2RenderingContext::validateClearBuffer(con
     }
 }
 
-void WebGL2RenderingContext::uniform1fv(WebGLUniformLocation* location, Float32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform1fv(const WebGLUniformLocation* location, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3255,7 +3255,7 @@ void WebGL2RenderingContext::uniform1fv(WebGLUniformLocation* location, Float32L
     m_context->uniform1fv(location->location(), result.value());
 }
 
-void WebGL2RenderingContext::uniform2fv(WebGLUniformLocation* location, Float32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform2fv(const WebGLUniformLocation* location, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3265,7 +3265,7 @@ void WebGL2RenderingContext::uniform2fv(WebGLUniformLocation* location, Float32L
     m_context->uniform2fv(location->location(), result.value());
 }
 
-void WebGL2RenderingContext::uniform3fv(WebGLUniformLocation* location, Float32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform3fv(const WebGLUniformLocation* location, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3275,7 +3275,7 @@ void WebGL2RenderingContext::uniform3fv(WebGLUniformLocation* location, Float32L
     m_context->uniform3fv(location->location(), result.value());
 }
 
-void WebGL2RenderingContext::uniform4fv(WebGLUniformLocation* location, Float32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform4fv(const WebGLUniformLocation* location, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3285,7 +3285,7 @@ void WebGL2RenderingContext::uniform4fv(WebGLUniformLocation* location, Float32L
     m_context->uniform4fv(location->location(), result.value());
 }
 
-void WebGL2RenderingContext::uniform1iv(WebGLUniformLocation* location, Int32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform1iv(const WebGLUniformLocation* location, Int32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3295,7 +3295,7 @@ void WebGL2RenderingContext::uniform1iv(WebGLUniformLocation* location, Int32Lis
     m_context->uniform1iv(location->location(), result.value());
 }
 
-void WebGL2RenderingContext::uniform2iv(WebGLUniformLocation* location, Int32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform2iv(const WebGLUniformLocation* location, Int32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3305,7 +3305,7 @@ void WebGL2RenderingContext::uniform2iv(WebGLUniformLocation* location, Int32Lis
     m_context->uniform2iv(location->location(), result.value());
 }
 
-void WebGL2RenderingContext::uniform3iv(WebGLUniformLocation* location, Int32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform3iv(const WebGLUniformLocation* location, Int32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3315,7 +3315,7 @@ void WebGL2RenderingContext::uniform3iv(WebGLUniformLocation* location, Int32Lis
     m_context->uniform3iv(location->location(), result.value());
 }
 
-void WebGL2RenderingContext::uniform4iv(WebGLUniformLocation* location, Int32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniform4iv(const WebGLUniformLocation* location, Int32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3325,7 +3325,7 @@ void WebGL2RenderingContext::uniform4iv(WebGLUniformLocation* location, Int32Lis
     m_context->uniform4iv(location->location(), result.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix2fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix2fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3335,7 +3335,7 @@ void WebGL2RenderingContext::uniformMatrix2fv(WebGLUniformLocation* location, GC
     m_context->uniformMatrix2fv(location->location(), transpose, result.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix3fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix3fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;
@@ -3345,7 +3345,7 @@ void WebGL2RenderingContext::uniformMatrix3fv(WebGLUniformLocation* location, GC
     m_context->uniformMatrix3fv(location->location(), transpose, result.value());
 }
 
-void WebGL2RenderingContext::uniformMatrix4fv(WebGLUniformLocation* location, GCGLboolean transpose, Float32List data, GCGLuint srcOffset, GCGLuint srcLength)
+void WebGL2RenderingContext::uniformMatrix4fv(const WebGLUniformLocation* location, GCGLboolean transpose, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength)
 {
     if (isContextLostOrPending())
         return;

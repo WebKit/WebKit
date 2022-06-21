@@ -6130,10 +6130,12 @@ void WebGLRenderingContextBase::uniform1i(const WebGLUniformLocation* location, 
     if (isContextLostOrPending() || !validateUniformLocation("uniform1i", location))
         return;
 
+#if !USE(ANGLE)
     if ((location->type() == GraphicsContextGL::SAMPLER_2D || location->type() == GraphicsContextGL::SAMPLER_CUBE) && x >= (int)m_textureUnits.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "uniform1i", "invalid texture unit");
         return;
     }
+#endif // !USE(ANGLE)
 
     m_context->uniform1i(location->location(), x);
 }
@@ -6212,6 +6214,7 @@ void WebGLRenderingContextBase::uniform1iv(const WebGLUniformLocation* location,
 
     auto data = result.value();
 
+#if !USE(ANGLE)
     if (location->type() == GraphicsContextGL::SAMPLER_2D || location->type() == GraphicsContextGL::SAMPLER_CUBE) {
         for (size_t i = 0; i < data.bufSize; ++i) {
             if (data[i] >= static_cast<int>(m_textureUnits.size())) {
@@ -6221,6 +6224,7 @@ void WebGLRenderingContextBase::uniform1iv(const WebGLUniformLocation* location,
             }
         }
     }
+#endif // !USE(ANGLE)
 
     m_context->uniform1iv(location->location(), data);
 }
