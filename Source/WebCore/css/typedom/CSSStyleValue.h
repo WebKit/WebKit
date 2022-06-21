@@ -110,7 +110,11 @@ class CSSStyleValue : public RefCounted<CSSStyleValue>, public ScriptWrappable {
 public:
     String toString() const;
     virtual void serialize(StringBuilder&, OptionSet<SerializationArguments> = { }) const;
+
+IGNORE_GCC_WARNINGS_BEGIN("mismatched-new-delete")
+    // https://webkit.org/b/241516
     virtual ~CSSStyleValue() = default;
+IGNORE_GCC_WARNINGS_END
 
     virtual CSSStyleValueType getType() const { return CSSStyleValueType::CSSStyleValue; }
 
