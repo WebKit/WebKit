@@ -1717,3 +1717,14 @@ webkit.org/b/241191 [ Monterey Debug ] webgl/1.0.3/conformance/attribs/gl-vertex
 webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-object-percentage.html [ Pass Crash ]
 
 webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
+
+# NOTIFICATION_EVENT is Ventura+
+[ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
+[ Ventura+ ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker.html [ Pass ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/getnotifications-stop.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/getnotifications.html [ Pass ]

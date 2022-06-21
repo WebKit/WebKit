@@ -1145,6 +1145,17 @@ imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.ten
 
 webanimations/frame-rate [ Skip ]
 
+# NOTIFICATION_EVENT is Ventura+
+http/tests/workers/service/shownotification-allowed-document.html [ Skip ]
+http/tests/workers/service/shownotification-allowed.html [ Skip ]
+http/tests/workers/service/shownotification-invalid-data.html [ Skip ]
+http/wpt/push-api/pushEvent.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Skip ]
+http/tests/workers/service/getnotifications-stop.html [ Skip ]
+http/tests/workers/service/getnotifications.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
