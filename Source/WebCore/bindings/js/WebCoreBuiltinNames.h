@@ -509,7 +509,6 @@ namespace WebCore {
     macro(setBodyFromInputRequest) \
     macro(setStatus) \
     macro(showModalDialog) \
-    macro(size) \
     macro(start) \
     macro(startConsumingStream) \
     macro(started) \

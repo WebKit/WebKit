@@ -187,13 +187,11 @@ OBJECT_LUT_HEADERS = \
     JSPromiseConstructor.lut.h \
     JSPromisePrototype.lut.h \
     JSWebAssembly.lut.h \
-    MapPrototype.lut.h \
     NumberConstructor.lut.h \
     NumberPrototype.lut.h \
     ObjectConstructor.lut.h \
     ReflectObject.lut.h \
     RegExpConstructor.lut.h \
-    SetPrototype.lut.h \
     ShadowRealmPrototype.lut.h \
     StringConstructor.lut.h \
     StringPrototype.lut.h \

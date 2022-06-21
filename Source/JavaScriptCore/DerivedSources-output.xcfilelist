@@ -54,14 +54,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSWebAssembly.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/KeywordLookup.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/Lexer.lut.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/MapPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/NumberConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/NumberPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ObjectConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ReflectObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/RegExpConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/RegExpJitTables.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/SetPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ShadowRealmObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/ShadowRealmPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/StringConstructor.lut.h

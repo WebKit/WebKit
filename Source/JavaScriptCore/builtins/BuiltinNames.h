@@ -92,6 +92,9 @@ namespace JSC {
     macro(values) \
     macro(get) \
     macro(set) \
+    macro(clear) \
+    macro(delete) \
+    macro(size) \
     macro(shift) \
     macro(Int8Array) \
     macro(Int16Array) \
