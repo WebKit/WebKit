@@ -1948,7 +1948,6 @@
         SYS_sendto
         SYS_sigaltstack
         SYS_sigprocmask
-        SYS_socket
         SYS_stat64
         SYS_sysctlbyname
         SYS_thread_selfid
@@ -1974,7 +1973,6 @@
         SYS___semwait_signal_nocancel
         SYS_change_fdguard_np
         SYS_chmod
-        SYS_connect
         SYS_dup ;; Remove when <rdar://88210738> is fixed
         SYS_fchmod
         SYS_fsync
@@ -2051,6 +2049,10 @@
     (when (defined? 'SYS_map_with_linking_np)
         (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
 )
+
+(deny syscall-unix (syscall-number
+    SYS_connect
+    SYS_socket))
 
 (with-filter (uid 0)
     (allow syscall-unix (syscall-number SYS_gettid))) ;; Needed for base system, see <rdar://problem/48651255>

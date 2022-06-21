@@ -1061,7 +1061,6 @@
     (syscall-number
         SYS_bsdthread_register
         SYS_chdir
-        SYS_connect
         SYS_dup2
         SYS_fsgetpath
         SYS_getpid
@@ -1203,7 +1202,6 @@
         SYS_necp_open
 #endif
         SYS_psynch_rw_wrlock
-        SYS_socket
         SYS_umask
         SYS_work_interval_ctl))
 
@@ -1230,6 +1228,10 @@
     (allow syscall-unix (with report) (with telemetry-backtrace)
         (syscall-unix-rarely-in-use-need-backtrace))
 )
+
+(deny syscall-unix (syscall-number
+    SYS_connect
+    SYS_socket))
 
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
