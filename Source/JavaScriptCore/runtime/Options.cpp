@@ -153,7 +153,7 @@ std::optional<OptionsStorage::OSLogType> parse(const char* string)
 {
     std::optional<OptionsStorage::OSLogType> result;
 
-    if (equalLettersIgnoringASCIICase(string, "false"_s) || !strcmp(string, "0"))
+    if (equalLettersIgnoringASCIICase(string, "none"_s) || equalLettersIgnoringASCIICase(string, "false"_s) || !strcmp(string, "0"))
         result = OSLogType::None;
     else if (equalLettersIgnoringASCIICase(string, "true"_s) || !strcmp(string, "1"))
         result = OSLogType::Error;
