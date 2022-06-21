@@ -4141,6 +4141,9 @@ static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferen
 #if ENABLE(PDFJS)
     settings.setPdfJSViewerEnabled(true);
 #endif
+#if USE(SYSTEM_PREVIEW)
+    settings.setSystemPreviewEnabled(false);
+#endif
 
     settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInCaptivePortalModeKey()));
     settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInCaptivePortalModeKey()));
