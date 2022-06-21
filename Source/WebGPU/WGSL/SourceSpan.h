@@ -56,6 +56,14 @@ struct SourceSpan {
         , m_length(end.m_offset - start.m_offset)
     {
     }
+
+    bool operator==(const SourceSpan& other)
+    {
+        return (m_line == other.m_line
+            && m_lineOffset == other.m_lineOffset
+            && m_offset == other.m_offset
+            && m_length == other.m_length);
+    }
 };
 
 }
