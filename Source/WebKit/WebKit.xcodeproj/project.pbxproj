@@ -5109,6 +5109,8 @@
 		57FE686C2604827800BF45E4 /* _WKAuthenticatorAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorAttachment.h; sourceTree = "<group>"; };
 		57FE688A260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementNetworkLoader.h; sourceTree = "<group>"; };
 		57FE688B260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementNetworkLoader.cpp; sourceTree = "<group>"; };
+		5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcessPreferences.cpp; sourceTree = "<group>"; };
+		5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessPreferences.h; sourceTree = "<group>"; };
 		5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsParameters.h; sourceTree = "<group>"; };
 		5C05FDF227AB4FA5003A2487 /* PrivateRelayed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateRelayed.h; sourceTree = "<group>"; };
 		5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSchemeRegistry.cpp; sourceTree = "<group>"; };
@@ -9044,6 +9046,8 @@
 				2D9FB2022375209D0049F936 /* GPUProcess.messages.in */,
 				2D9FB2142375209D0049F936 /* GPUProcessCreationParameters.cpp */,
 				2D9FB2032375209D0049F936 /* GPUProcessCreationParameters.h */,
+				5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */,
+				5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */,
 				4150A5A023E06C910051264A /* GPUProcessSessionParameters.h */,
 			);
 			path = GPUProcess;

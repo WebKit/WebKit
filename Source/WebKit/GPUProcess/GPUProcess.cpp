@@ -35,6 +35,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
+#include "GPUProcessPreferences.h"
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "LogInitialization.h"
@@ -284,6 +285,54 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #endif
 }
 
+void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences)
+{
+#if ENABLE(MEDIA_SOURCE)
+    if (updatePreference(m_preferences.webMParserEnabled, preferences.webMParserEnabled))
+        WebCore::RuntimeEnabledFeatures::sharedFeatures().setWebMParserEnabled(*m_preferences.webMParserEnabled);
+#endif
+
+#if ENABLE(WEBM_FORMAT_READER)
+    if (updatePreference(m_preferences.webMFormatReaderEnabled, preferences.webMFormatReaderEnabled))
+        PlatformMediaSessionManager::setWebMFormatReaderEnabled(*m_preferences.webMFormatReaderEnabled);
+#endif
+
+#if ENABLE(OPUS)
+    if (updatePreference(m_preferences.opusDecoderEnabled, preferences.opusDecoderEnabled))
+        PlatformMediaSessionManager::setOpusDecoderEnabled(*m_preferences.opusDecoderEnabled);
+#endif
+
+#if ENABLE(VORBIS)
+    if (updatePreference(m_preferences.vorbisDecoderEnabled, preferences.vorbisDecoderEnabled))
+        PlatformMediaSessionManager::setVorbisDecoderEnabled(*m_preferences.vorbisDecoderEnabled);
+#endif
+    
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    if (updatePreference(m_preferences.mediaSourceInlinePaintingEnabled, preferences.mediaSourceInlinePaintingEnabled))
+        WebCore::RuntimeEnabledFeatures::sharedFeatures().setMediaSourceInlinePaintingEnabled(*m_preferences.mediaSourceInlinePaintingEnabled);
+#endif
+
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    if (updatePreference(m_preferences.sampleBufferContentKeySessionSupportEnabled, preferences.sampleBufferContentKeySessionSupportEnabled))
+        MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(*m_preferences.sampleBufferContentKeySessionSupportEnabled);
+#endif
+}
+
+bool GPUProcess::updatePreference(std::optional<bool>& oldPreference, std::optional<bool>& newPreference)
+{
+    if (newPreference.has_value() && oldPreference != newPreference) {
+        oldPreference = WTFMove(newPreference);
+        return true;
+    }
+    
+    if (!oldPreference.has_value()) {
+        oldPreference = false;
+        return true;
+    }
+    
+    return false;
+}
+
 void GPUProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcess::prepareToSuspend(), isSuspensionImminent: %d", this, isSuspensionImminent);
@@ -488,66 +537,6 @@ void GPUProcess::enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnabl
         WebCore::registerWebKitVP9Decoder();
 #endif
     }
-}
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-void GPUProcess::setWebMParserEnabled(bool enabled)
-{
-    if (m_webMParserEnabled == enabled)
-        return;
-    m_webMParserEnabled = enabled;
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().setWebMParserEnabled(m_webMParserEnabled);
-}
-#endif
-
-#if ENABLE(WEBM_FORMAT_READER)
-void GPUProcess::setWebMFormatReaderEnabled(bool enabled)
-{
-    if (m_webMFormatReaderEnabled == enabled)
-        return;
-    m_webMFormatReaderEnabled = enabled;
-    PlatformMediaSessionManager::setWebMFormatReaderEnabled(m_webMFormatReaderEnabled);
-}
-#endif
-
-#if ENABLE(OPUS)
-void GPUProcess::setOpusDecoderEnabled(bool enabled)
-{
-    if (m_opusEnabled == enabled)
-        return;
-    m_opusEnabled = enabled;
-    PlatformMediaSessionManager::setOpusDecoderEnabled(m_opusEnabled);
-}
-#endif
-
-#if ENABLE(VORBIS)
-void GPUProcess::setVorbisDecoderEnabled(bool enabled)
-{
-    if (m_vorbisEnabled == enabled)
-        return;
-    m_vorbisEnabled = enabled;
-    PlatformMediaSessionManager::setVorbisDecoderEnabled(m_vorbisEnabled);
-}
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-void GPUProcess::setMediaSourceInlinePaintingEnabled(bool enabled)
-{
-    if (m_mediaSourceInlinePaintingEnabled == enabled)
-        return;
-    m_mediaSourceInlinePaintingEnabled = enabled;
-    WebCore::RuntimeEnabledFeatures::sharedFeatures().setMediaSourceInlinePaintingEnabled(m_mediaSourceInlinePaintingEnabled);
-}
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-void GPUProcess::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
-{
-    if (m_sampleBufferContentKeySessionSupportEnabled == enabled)
-        return;
-    m_sampleBufferContentKeySessionSupportEnabled = enabled;
-    MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(enabled);
 }
 #endif
 

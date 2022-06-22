@@ -26,6 +26,8 @@ messages -> GPUProcess LegacyReceiver {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
 
     CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, IPC::Attachment connectionIdentifier, struct WebKit::GPUProcessConnectionParameters parameters) -> ()
+    
+    UpdateGPUProcessPreferences(struct WebKit::GPUProcessPreferences preferences)
 
     PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume()
@@ -55,30 +57,6 @@ messages -> GPUProcess LegacyReceiver {
 #if HAVE(SC_CONTENT_SHARING_SESSION)
     ShowWindowPicker() -> (std::optional<WebCore::CaptureDevice> device)
     ShowScreenPicker() -> (std::optional<WebCore::CaptureDevice> device)
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-    SetWebMParserEnabled(bool enabled);
-#endif
-
-#if ENABLE(WEBM_FORMAT_READER)
-    SetWebMFormatReaderEnabled(bool enabled);
-#endif
-
-#if ENABLE(OPUS)
-    SetOpusDecoderEnabled(bool enabled);
-#endif
-
-#if ENABLE(VORBIS)
-    SetVorbisDecoderEnabled(bool enabled);
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    SetMediaSourceInlinePaintingEnabled(bool enabled);
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    SetSampleBufferContentKeySessionSupportEnabled(bool enabled);
 #endif
 
     RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmap::Handle handle)

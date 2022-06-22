@@ -168,30 +168,6 @@ private:
     bool m_hasSentDisplayCaptureSandboxExtension { false };
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-    bool m_hasEnabledWebMParser { false };
-#endif
-
-#if ENABLE(WEBM_FORMAT_READER)
-    bool m_hasEnabledWebMFormatReader { false };
-#endif
-
-#if ENABLE(OPUS)
-    bool m_hasEnabledOpus { false };
-#endif
-
-#if ENABLE(VORBIS)
-    bool m_hasEnabledVorbis { false };
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    bool m_hasEnabledMediaSourceInlinePainting { false };
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool m_hasEnabledSampleBufferContentKeySessionSupport { false };
-#endif
-
 #if HAVE(SCREEN_CAPTURE_KIT)
     bool m_hasEnabledScreenCaptureKit { false };
 #endif

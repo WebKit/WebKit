@@ -32,6 +32,7 @@
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessMessages.h"
+#include "GPUProcessPreferences.h"
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "Logging.h"
@@ -625,61 +626,50 @@ void GPUProcessProxy::updatePreferences(WebProcessProxy& webProcess)
     if (!canSendMessage())
         return;
 
-    // FIXME: We should consider consolidating these into a single struct and propagating it to the GPU process as a single IPC message,
-    // instead of sending one message for each preference.
-    // FIXME: It's not ideal that these features are controlled by preferences-level feature flags (i.e. per-web view), but there is only
+    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=241821): It's not ideal that these features are controlled by preferences-level feature flags (i.e. per-web view), but there is only
     // one GPU process and the runtime-enabled features backing these preferences are process-wide. We should refactor each of these features
     // so that they aren't process-global, and then reimplement this feature flag propagation to the GPU Process in a way that respects the
     // settings of the page that is hosting each media element.
     // For the time being, each of the below features are enabled in the GPU Process if it is enabled by at least one web page's preferences.
     // In practice, all web pages' preferences should agree on these feature flag values.
+    GPUProcessPreferences gpuPreferences;
     for (auto page : webProcess.pages()) {
         auto& preferences = page->preferences();
         if (!preferences.useGPUProcessForMediaEnabled())
             continue;
 
 #if ENABLE(OPUS)
-        if (!m_hasEnabledOpus && preferences.opusDecoderEnabled()) {
-            m_hasEnabledOpus = true;
-            send(Messages::GPUProcess::SetOpusDecoderEnabled(m_hasEnabledOpus), 0);
-        }
+        if (preferences.opusDecoderEnabled())
+            gpuPreferences.opusDecoderEnabled = true;
 #endif
 
 #if ENABLE(VORBIS)
-        if (!m_hasEnabledVorbis && preferences.vorbisDecoderEnabled()) {
-            m_hasEnabledVorbis = true;
-            send(Messages::GPUProcess::SetVorbisDecoderEnabled(m_hasEnabledVorbis), 0);
-        }
+        if (preferences.vorbisDecoderEnabled())
+            gpuPreferences.vorbisDecoderEnabled = true;
 #endif
 
 #if ENABLE(WEBM_FORMAT_READER)
-        if (!m_hasEnabledWebMFormatReader && preferences.webMFormatReaderEnabled()) {
-            m_hasEnabledWebMFormatReader = true;
-            send(Messages::GPUProcess::SetWebMFormatReaderEnabled(m_hasEnabledWebMFormatReader), 0);
-        }
+        if (preferences.webMFormatReaderEnabled())
+            gpuPreferences.webMFormatReaderEnabled = true;
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-        if (!m_hasEnabledWebMParser && preferences.webMParserEnabled()) {
-            m_hasEnabledWebMParser = true;
-            send(Messages::GPUProcess::SetWebMParserEnabled(m_hasEnabledWebMParser), 0);
-        }
+        if (preferences.webMParserEnabled())
+            gpuPreferences.webMParserEnabled = true;
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-        if (!m_hasEnabledMediaSourceInlinePainting && preferences.mediaSourceInlinePaintingEnabled()) {
-            m_hasEnabledMediaSourceInlinePainting = true;
-            send(Messages::GPUProcess::SetMediaSourceInlinePaintingEnabled(m_hasEnabledMediaSourceInlinePainting), 0);
-        }
+        if (preferences.mediaSourceInlinePaintingEnabled())
+            gpuPreferences.mediaSourceInlinePaintingEnabled = true;
 #endif
 
 #if HAVE(AVCONTENTKEYSPECIFIER)
-        if (!m_hasEnabledSampleBufferContentKeySessionSupport && preferences.sampleBufferContentKeySessionSupportEnabled()) {
-            m_hasEnabledSampleBufferContentKeySessionSupport = true;
-            send(Messages::GPUProcess::SetSampleBufferContentKeySessionSupportEnabled(m_hasEnabledSampleBufferContentKeySessionSupport), 0);
-        }
+        if (preferences.sampleBufferContentKeySessionSupportEnabled())
+            gpuPreferences.sampleBufferContentKeySessionSupportEnabled = true;
 #endif
     }
+    
+    send(Messages::GPUProcess::UpdateGPUProcessPreferences(gpuPreferences), 0);
 }
 
 void GPUProcessProxy::updateScreenPropertiesIfNeeded()
