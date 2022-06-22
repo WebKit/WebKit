@@ -24,6 +24,8 @@
  */
 
 #include "Parser.h"
+#include "ParserPrivate.h"
+
 #include "config.h"
 
 #include "AST/Attribute.h"
@@ -106,58 +108,6 @@ namespace WGSL {
             FAIL(builder.toString()); \
         } \
     } while (false)
-
-template<typename Lexer>
-class Parser {
-public:
-    Parser(Lexer& lexer)
-        : m_lexer(lexer)
-        , m_current(lexer.lex())
-    {
-    }
-
-    Expected<AST::ShaderModule, Error> parseShader();
-
-private:
-    // UniqueRef whenever it can return multiple types.
-    Expected<UniqueRef<AST::GlobalDecl>, Error> parseGlobalDecl();
-    Expected<AST::Attributes, Error> parseAttributes();
-    Expected<UniqueRef<AST::Attribute>, Error> parseAttribute();
-    Expected<AST::StructDecl, Error> parseStructDecl(AST::Attributes&&);
-    Expected<AST::StructMember, Error> parseStructMember();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDecl();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(StringView&&, SourcePosition start);
-    Expected<AST::GlobalVariableDecl, Error> parseGlobalVariableDecl(AST::Attributes&&);
-    Expected<AST::VariableQualifier, Error> parseVariableQualifier();
-    Expected<AST::StorageClass, Error> parseStorageClass();
-    Expected<AST::AccessMode, Error> parseAccessMode();
-    Expected<AST::FunctionDecl, Error> parseFunctionDecl(AST::Attributes&&);
-    Expected<AST::Parameter, Error> parseParameter();
-    Expected<UniqueRef<AST::Statement>, Error> parseStatement();
-    Expected<AST::CompoundStatement, Error> parseCompoundStatement();
-    Expected<AST::ReturnStatement, Error> parseReturnStatement();
-    Expected<UniqueRef<AST::Expression>, Error> parseShortCircuitOrExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseRelationalExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseShiftExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseAdditiveExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseMultiplicativeExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseUnaryExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseSingularExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parsePostfixExpression(UniqueRef<AST::Expression>&& base, SourcePosition startPosition);
-    Expected<UniqueRef<AST::Expression>, Error> parsePrimaryExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseLHSExpression();
-    Expected<UniqueRef<AST::Expression>, Error> parseCoreLHSExpression();
-    Expected<Vector<UniqueRef<AST::Expression>>, Error> parseArgumentExpressionList();
-
-    Expected<Token, TokenType> consumeType(TokenType);
-    void consume();
-
-    Token& current() { return m_current; }
-
-    Lexer& m_lexer;
-    Token m_current;
-};
 
 template<typename Lexer>
 Expected<AST::ShaderModule, Error> parse(const String& wgsl)
