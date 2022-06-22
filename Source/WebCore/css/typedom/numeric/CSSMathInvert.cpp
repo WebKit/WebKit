@@ -69,7 +69,7 @@ static CSSNumericType negatedType(const CSSNumberish& numberish)
 
 CSSMathInvert::CSSMathInvert(CSSNumberish&& numberish)
     : CSSMathValue(negatedType(numberish))
-    , m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
+    , m_value(rectifyNumberish(WTFMove(numberish)))
 {
 }
 
@@ -103,6 +103,16 @@ auto CSSMathInvert::toSumValue() const -> std::optional<SumValue>
     value.units = WTFMove(negatedExponents);
 
     return values;
+}
+
+bool CSSMathInvert::equals(const CSSNumericValue& other) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#equal-numeric-value
+    auto* otherInvert = dynamicDowncast<CSSMathInvert>(other);
+    if (!otherInvert)
+        return false;
+    return m_value->equals(otherInvert->value());
+
 }
 
 } // namespace WebCore

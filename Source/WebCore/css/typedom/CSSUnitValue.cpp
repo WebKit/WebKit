@@ -174,6 +174,15 @@ auto CSSUnitValue::toSumValue() const -> std::optional<SumValue>
     return { { { convertedValue, { { canonicalUnit, 1 } } } } };
 }
 
+bool CSSUnitValue::equals(const CSSNumericValue& other) const
+{
+    // https://drafts.css-houdini.org/css-typed-om/#equal-numeric-value
+    auto* otherUnitValue = dynamicDowncast<CSSUnitValue>(other);
+    if (!otherUnitValue)
+        return false;
+    return m_value == otherUnitValue->m_value && m_unit == otherUnitValue->m_unit;
+}
+
 } // namespace WebCore
 
 #endif

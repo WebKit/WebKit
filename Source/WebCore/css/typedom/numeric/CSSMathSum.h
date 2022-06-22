@@ -47,6 +47,7 @@ private:
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSMathSum; }
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
     std::optional<SumValue> toSumValue() const final;
+    bool equals(const CSSNumericValue& other) const final { return equalsImpl<CSSMathSum>(other); }
 
     CSSMathSum(Vector<Ref<CSSNumericValue>>, CSSNumericType);
     Ref<CSSNumericArray> m_values;
