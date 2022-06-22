@@ -223,6 +223,11 @@ IGNORE_WARNINGS_END
 
 #if PLATFORM(IOS_FAMILY)
 
+- (UITextEffectsWindow *)textEffectsWindow
+{
+    return [UITextEffectsWindow sharedTextEffectsWindowForWindowScene:self.window.windowScene];
+}
+
 - (void)_willHideMenu
 {
     self.dismissingMenu = YES;
@@ -628,5 +633,42 @@ static bool isQuickboardViewController(UIViewController *viewController)
 {
     [super _didLoadNonAppInitiatedRequest:completionHandler];
 }
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+
+- (UIEditMenuInteraction *)currentEditMenuInteraction
+{
+    for (id<UIInteraction> interaction in self.contentView.interactions) {
+        if (auto *editMenuInteraction = dynamic_objc_cast<UIEditMenuInteraction>(interaction))
+            return editMenuInteraction;
+    }
+    return nil;
+}
+
+- (void)didPresentEditMenuInteraction:(UIEditMenuInteraction *)interaction
+{
+    if (interaction == self.currentEditMenuInteraction)
+        [self _didShowMenu];
+}
+
+- (void)didDismissEditMenuInteraction:(UIEditMenuInteraction *)interaction
+{
+    if (interaction == self.currentEditMenuInteraction)
+        [self _didHideMenu];
+}
+
+- (void)immediatelyDismissEditMenuInteractionIfNeeded
+{
+    if (!self.isShowingMenu)
+        return;
+
+    self.showingMenu = NO;
+
+    [UIView performWithoutAnimation:^{
+        [self.currentEditMenuInteraction dismissMenu];
+    }];
+}
+
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
 @end

@@ -1066,7 +1066,6 @@ JSObjectRef UIScriptControllerIOS::rectForMenuAction(JSStringRef jsAction) const
 WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) const
 {
     UIView *viewForAction = nil;
-    UIWindow *window = webView().window;
 
     if (UIView *calloutBar = UICalloutBar.activeCalloutBar; calloutBar.window) {
         for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
@@ -1082,15 +1081,16 @@ WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) 
         }
     }
 
-    if (!viewForAction) {
+    auto searchForLabel = [&](UIWindow *window) -> UILabel * {
         for (UILabel *label in findAllViewsInHierarchyOfType(window, UILabel.class)) {
-            if (![label.text isEqualToString:(__bridge NSString *)action])
-                continue;
-
-            viewForAction = label;
-            break;
+            if ([label.text isEqualToString:(__bridge NSString *)action])
+                return label;
         }
-    }
+        return nil;
+    };
+
+    if (!viewForAction)
+        viewForAction = searchForLabel(webView().window) ?: searchForLabel(webView().textEffectsWindow);
 
     if (!viewForAction)
         return { };
