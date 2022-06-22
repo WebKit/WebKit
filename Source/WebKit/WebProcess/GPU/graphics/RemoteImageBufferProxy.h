@@ -66,7 +66,7 @@ public:
     ~RemoteImageBufferProxy()
     {
         if (!m_remoteRenderingBackendProxy || m_remoteRenderingBackendProxy->isGPUProcessConnectionClosed()) {
-            setNeedsFlush(false);
+            m_needsFlush = false;
             return;
         }
 
@@ -116,9 +116,23 @@ protected:
         m_receivedFlushIdentifierChangedCondition.notifyAll();
     }
 
-    void setNeedsFlush(bool needsFlush) final
+    void backingStoreWillChange() final
     {
-        m_needsFlush = needsFlush;
+        if (m_needsFlush)
+            return;
+        m_needsFlush = true;
+
+        // Prepare for the backing store change the first time this notification comes after flush has
+        // completed.
+
+        // If we already need a flush, this cannot be the first notification for change,
+        // handled by the m_needsFlush case above.
+
+        // If we already have a pending flush, this cannot be the first notification for change.
+        if (hasPendingFlush())
+            return;
+
+        prepareForBackingStoreChange();
     }
 
     void waitForDidFlushWithTimeout()
@@ -230,8 +244,9 @@ protected:
 
     void clearBackend() final
     {
-        setNeedsFlush(false);
+        m_needsFlush = false;
         didFlush(m_sentFlushIdentifier);
+        prepareForBackingStoreChange();
         BaseConcreteImageBuffer::clearBackend();
     }
 
@@ -254,8 +269,8 @@ protected:
         ASSERT(resolutionScale() == 1);
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
         mutableThis.flushDrawingContextAsync();
+        backingStoreWillChange();
         m_remoteRenderingBackendProxy->putPixelBufferForImageBuffer(m_renderingResourceIdentifier, pixelBuffer, srcRect, destPoint, destFormat);
-        setNeedsFlush(true);
     }
 
     void convertToLuminanceMask() final
@@ -296,11 +311,11 @@ protected:
 
         if (!m_needsFlush)
             return hasPendingFlush();
-        
+
         m_sentFlushIdentifier = WebCore::GraphicsContextFlushIdentifier::generate();
         LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " flushDrawingContextAsync - flush " << m_sentFlushIdentifier);
         m_remoteDisplayList.flushContext(m_sentFlushIdentifier);
-        setNeedsFlush(false);
+        m_needsFlush = false;
         return true;
     }
 
@@ -325,6 +340,17 @@ protected:
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> createFlusher() final
     {
         return WTF::makeUnique<ThreadSafeRemoteImageBufferFlusher<BackendType>>(*this);
+    }
+
+    void prepareForBackingStoreChange()
+    {
+        ASSERT(!hasPendingFlush());
+        // If the backing store is mapped in the process and the changes happen in the other
+        // process, we need to prepare for the backing store change before we let the change happen.
+        if (!canMapBackingStore())
+            return;
+        if (auto* backend = ensureBackendCreated())
+            backend->ensureNativeImagesHaveCopiedBackingStore();
     }
 
     WebCore::GraphicsContextFlushIdentifier m_sentFlushIdentifier;
