@@ -267,6 +267,8 @@ void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentif
 
 void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
 {
+    if (!m_gpuProcessConnection)
+        return;
     sendToStream(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
     m_remoteResourceCacheProxy.finalizeRenderingUpdate();
     m_renderingUpdateID.increment();
