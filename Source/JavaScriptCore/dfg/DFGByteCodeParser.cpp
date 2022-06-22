@@ -5556,7 +5556,8 @@ void ByteCodeParser::parseBlock(unsigned limit)
             bool alreadyEmitted = false;
             if (function) {
                 if (FunctionRareData* rareData = function->rareData()) {
-                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+                    if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
                         Structure* structure = rareData->objectAllocationStructure();
                         JSObject* prototype = rareData->objectAllocationPrototype();
                         if (structure
@@ -5637,7 +5638,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
                 if (function) {
                     if (FunctionRareData* rareData = function->rareData()) {
-                        if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                        if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
                             Structure* structure = rareData->internalFunctionAllocationStructure();
                             if (structure
                                 && structure->classInfoForCells() == (bytecode.m_isInternalPromise ? JSInternalPromise::info() : JSPromise::info())
@@ -9019,7 +9020,7 @@ void ByteCodeParser::handleCreateInternalFieldObject(const ClassInfo* classInfo,
 
     if (function) {
         if (FunctionRareData* rareData = function->rareData()) {
-            if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+            if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
                 Structure* structure = rareData->internalFunctionAllocationStructure();
                 if (structure
                     && structure->classInfoForCells() == classInfo
