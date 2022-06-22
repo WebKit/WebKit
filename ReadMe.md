@@ -1,5 +1,7 @@
 # WebKit
 
+Should we remove the limit on canvas memory use?
+
 WebKit is a cross-platform web browser engine. On iOS and macOS, it powers Safari, Mail, iBooks, and many other applications.
 
 ## Feature Status
