@@ -348,9 +348,7 @@ public:
     void updateNode(AXCoreObject&);
     void updateChildren(AXCoreObject&);
     void updateNodeProperty(AXCoreObject&, AXPropertyName);
-    void updateRelatedProperties(AXCoreObject&);
-    void updateTableProperties(AXCoreObject&);
-    void updateTreeItemProperties(AXCoreObject&);
+    void updateNodeAndDependentProperties(AXCoreObject&);
 
     double loadingProgress() { return m_loadingProgress; }
     void updateLoadingProgress(double);

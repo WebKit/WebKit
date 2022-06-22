@@ -15,20 +15,18 @@
 <script>
     description("This tests that if a label element's children change, the string value updates");
 
-    var label, initialStringValue;
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        label = accessibilityController.accessibleElementById("label");
-        initialStringValue = label.stringValue;
+        var label = accessibilityController.accessibleElementById("label");
+        shouldBe("label.role", "'AXRole: AXStaticText'");
+        shouldBe("label.stringValue", "'AXValue: first choice'");
+
         let first = document.getElementById("first")
         let span = document.createElement("span");
         let textNode = document.createTextNode("foo");
         span.appendChild(textNode);
         first.appendChild(textNode);
-
-        shouldBe("label.role", "'AXRole: AXStaticText'");
-        shouldBe("initialStringValue", "'AXValue: first choice'");
 
         setTimeout(async function() {
             await expectAsyncExpression("label.stringValue", "'AXValue: first foo choice'");
@@ -38,6 +36,3 @@
 </script>
 </body>
 </html>
-
-
-

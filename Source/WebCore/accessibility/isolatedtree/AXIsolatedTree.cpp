@@ -448,56 +448,11 @@ void AXIsolatedTree::updateNodeProperty(AXCoreObject& axObject, AXPropertyName p
     m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
 }
 
-void AXIsolatedTree::updateTableProperties(AXCoreObject& axObject)
-{
-    ASSERT(isMainThread());
-    ASSERT(axObject.isTable());
-
-    AXPropertyMap propertyMap {
-        { AXPropertyName::IsTable, true },
-        { AXPropertyName::IsExposable, axObject.isExposable() },
-        { AXPropertyName::IsDataTable, axObject.isDataTable() },
-        { AXPropertyName::TableLevel, axObject.tableLevel() },
-        { AXPropertyName::SupportsSelectedRows, axObject.supportsSelectedRows() },
-        { AXPropertyName::Columns, axIDs(axObject.columns()) },
-        { AXPropertyName::Rows, axIDs(axObject.rows()) },
-        { AXPropertyName::ColumnCount, axObject.columnCount() },
-        { AXPropertyName::RowCount, axObject.rowCount() },
-        { AXPropertyName::Cells, axIDs(axObject.cells()) },
-        { AXPropertyName::ColumnHeaders, axIDs(axObject.columnHeaders()) },
-        { AXPropertyName::RowHeaders, axIDs(axObject.rowHeaders()) },
-        { AXPropertyName::VisibleRows, axIDs(axObject.visibleRows()) },
-        { AXPropertyName::HeaderContainer, axObject.headerContainer() ? axObject.headerContainer()->objectID() : AXID() },
-        { AXPropertyName::AXColumnCount, axObject.axColumnCount() },
-        { AXPropertyName::AXRowCount, axObject.axRowCount() },
-    };
-
-    Locker locker { m_changeLogLock };
-    m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
-}
-
-void AXIsolatedTree::updateTreeItemProperties(AXCoreObject& axObject)
-{
-    ASSERT(isMainThread());
-    ASSERT(axObject.isTreeItem());
-
-    AXPropertyMap propertyMap {
-        { AXPropertyName::ARIATreeItemContent, axIDs(axObject.ariaTreeItemContent()) },
-        { AXPropertyName::DisclosedRows, axIDs(axObject.disclosedRows()) },
-    };
-
-    Locker locker { m_changeLogLock };
-    m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
-}
-
-void AXIsolatedTree::updateRelatedProperties(AXCoreObject& axObject)
+void AXIsolatedTree::updateNodeAndDependentProperties(AXCoreObject& axObject)
 {
     ASSERT(isMainThread());
 
-    if (axObject.isTable())
-        updateTableProperties(axObject);
-    else if (axObject.isTreeItem())
-        updateTreeItemProperties(axObject);
+    updateNode(axObject);
 
     if (auto* treeAncestor = Accessibility::findAncestor(axObject, true, [] (const auto& object) { return object.isTree(); }))
         updateNodeProperty(*treeAncestor, AXPropertyName::ARIATreeRows);
@@ -575,8 +530,8 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
     }
     queueRemovalsAndUnresolvedChanges(oldChildrenIDs);
 
-    // Also queue updates for properties that derive from children().
-    updateRelatedProperties(*axAncestor);
+    // Also queue updates to the target node itself and any properties that depend on children().
+    updateNodeAndDependentProperties(*axAncestor);
 }
 
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
