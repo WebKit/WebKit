@@ -209,15 +209,15 @@ void AXIsolatedTree::generateSubtree(AXCoreObject& axObject)
     queueRemovalsAndUnresolvedChanges({ });
 }
 
-std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(AXCoreObject& axObject, AttachWrapper attachWrapper)
+std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(Ref<AXCoreObject> axObject, AttachWrapper attachWrapper)
 {
     ASSERT(isMainThread());
 
     // We should never create an isolated object from an ignored object.
-    if (axObject.accessibilityIsIgnored())
+    if (axObject->accessibilityIsIgnored())
         return std::nullopt;
 
-    if (!axObject.objectID().isValid()) {
+    if (!axObject->objectID().isValid()) {
         // Either the axObject has an invalid ID or something else went terribly wrong. Don't bother doing anything else.
         ASSERT_NOT_REACHED();
         return std::nullopt;
@@ -226,15 +226,15 @@ std::optional<AXIsolatedTree::NodeChange> AXIsolatedTree::nodeChangeForObject(AX
     auto object = AXIsolatedObject::create(axObject, this);
     NodeChange nodeChange { object, nullptr };
 
-    ASSERT(axObject.wrapper());
+    ASSERT(axObject->wrapper());
     if (attachWrapper == AttachWrapper::OnMainThread)
-        object->attachPlatformWrapper(axObject.wrapper());
+        object->attachPlatformWrapper(axObject->wrapper());
     else {
         // Set the wrapper in the NodeChange so that it is set on the AX thread.
-        nodeChange.wrapper = axObject.wrapper();
+        nodeChange.wrapper = axObject->wrapper();
     }
 
-    m_nodeMap.set(axObject.objectID(), ParentChildrenIDs { nodeChange.isolatedObject->parent(), axObject.childrenIDs() });
+    m_nodeMap.set(axObject->objectID(), ParentChildrenIDs { nodeChange.isolatedObject->parent(), axObject->childrenIDs() });
 
     if (!nodeChange.isolatedObject->parent().isValid()) {
         Locker locker { m_changeLogLock };
