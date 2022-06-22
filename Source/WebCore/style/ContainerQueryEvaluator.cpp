@@ -73,10 +73,9 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
         auto* renderer = dynamicDowncast<RenderBox>(element.renderer());
         if (!renderer)
             return { };
-        auto& view = renderer->view();
         return {
             renderer,
-            CSSToLengthConversionData { renderer->style(), &view.style(), nullptr, &view }
+            CSSToLengthConversionData { renderer->style(), element.document().documentElement()->renderStyle(), nullptr, &renderer->view() }
         };
     };
 
