@@ -498,8 +498,12 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
         for (auto& result : allResults) {
             DDQueryRange queryRange = PAL::softLink_DataDetectorsCore_DDResultGetQueryRangeForURLification(result.get());
             CFIndex iteratorTargetAdvanceCount = (CFIndex)PAL::softLink_DataDetectorsCore_DDScanQueryGetFragmentMetaData(scanQuery.get(), queryRange.start.queryIndex);
-            for (; iteratorCount < iteratorTargetAdvanceCount; ++iteratorCount)
+            for (; iteratorCount < iteratorTargetAdvanceCount && !iterator.atEnd(); ++iteratorCount)
                 iterator.advance();
+            if (iterator.atEnd()) {
+                ASSERT_NOT_REACHED();
+                return nil;
+            }
 
             Vector<SimpleRange> fragmentRanges;
             CFIndex fragmentIndex = queryRange.start.queryIndex;
@@ -517,8 +521,12 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
             while (fragmentIndex < queryRange.end.queryIndex) {
                 ++fragmentIndex;
                 iteratorTargetAdvanceCount = (CFIndex)PAL::softLink_DataDetectorsCore_DDScanQueryGetFragmentMetaData(scanQuery.get(), fragmentIndex);
-                for (; iteratorCount < iteratorTargetAdvanceCount; ++iteratorCount)
+                for (; iteratorCount < iteratorTargetAdvanceCount && !iterator.atEnd(); ++iteratorCount)
                     iterator.advance();
+                if (iterator.atEnd()) {
+                    ASSERT_NOT_REACHED();
+                    return nil;
+                }
 
                 auto fragmentRange = iterator.range();
                 if (fragmentIndex == queryRange.end.queryIndex)
