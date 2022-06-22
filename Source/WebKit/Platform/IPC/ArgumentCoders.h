@@ -836,7 +836,8 @@ struct VariantCoder<0, Types...> {
     template<typename Decoder>
     static std::optional<std::variant<Types...>> decode(Decoder& decoder, unsigned i)
     {
-        ASSERT_UNUSED(i, !i);
+        if (i)
+            return std::nullopt;
         std::optional<typename std::variant_alternative<0, std::variant<Types...>>::type> optional;
         decoder >> optional;
         if (!optional)
