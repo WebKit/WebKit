@@ -88,7 +88,6 @@ public:
     
     void insert(KeyframeValue&&);
     
-    void addProperty(CSSPropertyID prop) { m_properties.add(prop); }
     bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
     const HashSet<CSSPropertyID>& properties() const { return m_properties; }
     bool containsAnimatableProperty() const;
