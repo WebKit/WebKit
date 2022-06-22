@@ -936,7 +936,6 @@ void JIT::link()
 
     auto finalizeICs = [&] (auto& generators) {
         for (auto& gen : generators) {
-            gen.m_unlinkedStubInfo->start = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_start);
             gen.m_unlinkedStubInfo->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
             gen.m_unlinkedStubInfo->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
         }

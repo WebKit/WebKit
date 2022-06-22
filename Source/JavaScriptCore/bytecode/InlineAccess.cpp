@@ -152,9 +152,9 @@ void InlineAccess::dumpCacheSizesAndCrash()
 template <typename Function>
 ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, StructureStubInfo& stubInfo, const Function& function)
 {
-    if (jit.m_assembler.buffer().codeSize() <= stubInfo.inlineSize()) {
+    if (jit.m_assembler.buffer().codeSize() <= stubInfo.inlineCodeSize()) {
         bool needsBranchCompaction = true;
-        LinkBuffer linkBuffer(jit, stubInfo.start, stubInfo.inlineSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
+        LinkBuffer linkBuffer(jit, stubInfo.startLocation, stubInfo.inlineCodeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
         ASSERT(linkBuffer.isValid());
         function(linkBuffer);
         FINALIZE_CODE(linkBuffer, NoPtrTag, "InlineAccessType: '%s'", name);
@@ -169,7 +169,7 @@ ALWAYS_INLINE static bool linkCodeInline(const char* name, CCallHelpers& jit, St
     constexpr bool failIfCantInline = false;
     if (failIfCantInline) {
         dataLog("Failure for: ", name, "\n");
-        dataLog("real size: ", jit.m_assembler.buffer().codeSize(), " inline size:", stubInfo.inlineSize(), "\n");
+        dataLog("real size: ", jit.m_assembler.buffer().codeSize(), " inline size:", stubInfo.inlineCodeSize(), "\n");
         CRASH();
     }
 
@@ -310,6 +310,7 @@ bool InlineAccess::isCacheableArrayLength(CodeBlock* codeBlock, StructureStubInf
 
 bool InlineAccess::generateArrayLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo, JSArray* array)
 {
+    ASSERT_UNUSED(codeBlock, !codeBlock->useDataIC());
     ASSERT_UNUSED(codeBlock, isCacheableArrayLength(codeBlock, stubInfo, array));
 
     if (!stubInfo.hasConstantIdentifier)
@@ -348,6 +349,7 @@ bool InlineAccess::isCacheableStringLength(CodeBlock* codeBlock, StructureStubIn
 
 bool InlineAccess::generateStringLength(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
+    ASSERT_UNUSED(codeBlock, !codeBlock->useDataIC());
     ASSERT_UNUSED(codeBlock, isCacheableStringLength(codeBlock, stubInfo));
 
     if (!stubInfo.hasConstantIdentifier)
@@ -416,7 +418,7 @@ void InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess(CodeBlock* codeB
         return;
     }
 
-    CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+    CCallHelpers::emitJITCodeOver(stubInfo.startLocation.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
         // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
         auto jump = jit.jump();
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -434,7 +436,7 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
             // If m_codePtr is pointing to stubInfo.slowPathStartLocation, this means that InlineAccess code is not a stub one.
             // We rewrite this with the stub-based dispatching code once, and continue using it until we reset the code.
             if (stubInfo.m_codePtr.executableAddress() == stubInfo.slowPathStartLocation.executableAddress()) {
-                CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+                CCallHelpers::emitJITCodeOver(stubInfo.startLocation.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
                     jit.move(CCallHelpers::TrustedImmPtr(&stubInfo), stubInfo.m_stubInfoGPR);
                     jit.farJump(CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
                     auto jump = jit.jump();
@@ -451,7 +453,7 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
         return;
     }
 
-    CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+    CCallHelpers::emitJITCodeOver(stubInfo.startLocation.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
         // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
         auto jump = jit.jump();
         jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -468,7 +470,7 @@ void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubIn
         return;
     }
 
-    CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
+    CCallHelpers::emitJITCodeOver(stubInfo.startLocation.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
         // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
         auto jump = jit.jump();
         auto slowPathStartLocation = stubInfo.slowPathStartLocation;

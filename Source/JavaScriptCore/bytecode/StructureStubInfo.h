@@ -157,9 +157,11 @@ public:
 
     bool containsPC(void* pc) const;
 
-    uint32_t inlineSize() const
+    uint32_t inlineCodeSize() const
     {
-        int32_t inlineSize = MacroAssembler::differenceBetweenCodePtr(start, doneLocation);
+        if (!startLocation)
+            return 0;
+        int32_t inlineSize = MacroAssembler::differenceBetweenCodePtr(startLocation, doneLocation);
         ASSERT(inlineSize >= 0);
         return inlineSize;
     }
@@ -378,7 +380,9 @@ private:
     // That's not so bad - we'll get rid of the redundant ones once we regenerate.
     HashSet<BufferedStructure, BufferedStructure::Hash, BufferedStructure::KeyTraits> m_bufferedStructures WTF_GUARDED_BY_LOCK(m_bufferedStructuresLock);
 public:
-    CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
+    // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
+    // If useDataIC is true, then it is nullptr.
+    CodeLocationLabel<JITStubRoutinePtrTag> startLocation;
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 
@@ -485,9 +489,12 @@ struct UnlinkedStructureStubInfo {
     PutKind putKind;
     PrivateFieldPutKind privateFieldPutKind { PrivateFieldPutKind::none() };
     ECMAMode ecmaMode { ECMAMode::sloppy() };
-    bool propertyIsInt32 { false };
     BytecodeIndex bytecodeIndex;
-    CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
+    bool propertyIsInt32 { false };
+    bool propertyIsString { false };
+    bool propertyIsSymbol { false };
+    bool prototypeIsKnownObject { false };
+    bool tookSlowPath { false };
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 };

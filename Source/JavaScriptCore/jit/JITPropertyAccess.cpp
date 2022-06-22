@@ -61,45 +61,47 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
 
+    auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
+    JITGetByValGenerator gen(
+        nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
+        baseJSR, propertyJSR, resultJSR, stubInfoGPR);
+    stubInfo->accessType = AccessType::GetByVal;
+    stubInfo->bytecodeIndex = m_bytecodeIndex;
+    if (isOperandConstantInt(property))
+        stubInfo->propertyIsInt32 = true;
+    gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
+    gen.m_unlinkedStubInfo = stubInfo;
+
     if (bytecode.metadata(m_profiledCodeBlock).m_seenIdentifiers.count() > Options::getByValICMaxNumberOfIdentifiers()) {
+        stubInfo->tookSlowPath = true;
+
         auto notCell = branchIfNotCell(baseJSR);
         emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
         notCell.link(this);
         loadGlobalObject(scratchGPR);
-        callOperationWithProfile(bytecode, operationGetByVal, dst, scratchGPR, baseJSR, propertyJSR);
+        callOperationWithResult(operationGetByVal, resultJSR, scratchGPR, baseJSR, propertyJSR);
+
+        gen.generateEmptyPath(*this);
     } else {
         emitJumpSlowCaseIfNotJSCell(baseJSR, base);
         emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratchGPR);
 
-        JITGetByValGenerator gen(
-            nullptr, nullptr, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
-            baseJSR, propertyJSR, resultJSR, stubInfoGPR);
-
-        auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
-        stubInfo->accessType = AccessType::GetByVal;
-        stubInfo->bytecodeIndex = m_bytecodeIndex;
-        if (isOperandConstantInt(property))
-            stubInfo->propertyIsInt32 = true;
-        gen.m_unlinkedStubInfoConstantIndex = stubInfoIndex;
-        gen.m_unlinkedStubInfo = stubInfo;
-
         gen.generateBaselineDataICFastPath(*this, stubInfoIndex, stubInfoGPR);
-        resetSP(); // We might OSR exit here, so we need to conservatively reset SP
-
-        addSlowCase();
-        m_getByVals.append(gen);
-
-        setFastPathResumePoint();
-        emitValueProfilingSite(bytecode, resultJSR);
-        emitPutVirtualRegister(dst, resultJSR);
     }
+
+    addSlowCase();
+    m_getByVals.append(gen);
+
+    resetSP(); // We might OSR exit here, so we need to conservatively reset SP
+    setFastPathResumePoint();
+    emitValueProfilingSite(bytecode, resultJSR);
+    emitPutVirtualRegister(dst, resultJSR);
 }
 
 template<typename OpcodeType>
 void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEntry>::iterator& iter)
 {
-    if (!hasAnySlowCases(iter))
-        return;
+    ASSERT(hasAnySlowCases(iter));
 
     linkAllSlowCases(iter);
 
@@ -107,45 +109,47 @@ void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEn
 
     Label coldPathBegin = label();
 
+    if (!gen.m_unlinkedStubInfo->tookSlowPath) {
 #if !ENABLE(EXTRA_CTI_THUNKS)
-    using SlowOperation = decltype(operationGetByValOptimize);
-    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
-    constexpr GPRReg stubInfoGPR = preferredArgumentGPR<SlowOperation, 1>();
-    constexpr GPRReg profileGPR = preferredArgumentGPR<SlowOperation, 2>();
-    constexpr JSValueRegs arg3JSR = preferredArgumentJSR<SlowOperation, 3>();
-    constexpr JSValueRegs arg4JSR = preferredArgumentJSR<SlowOperation, 4>();
+        using SlowOperation = decltype(operationGetByValOptimize);
+        constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
+        constexpr GPRReg stubInfoGPR = preferredArgumentGPR<SlowOperation, 1>();
+        constexpr GPRReg profileGPR = preferredArgumentGPR<SlowOperation, 2>();
+        constexpr JSValueRegs arg3JSR = preferredArgumentJSR<SlowOperation, 3>();
+        constexpr JSValueRegs arg4JSR = preferredArgumentJSR<SlowOperation, 4>();
 
-    static_assert(!BaselineGetByValRegisters::baseJSR.overlaps(arg4JSR));
-    moveValueRegs(BaselineGetByValRegisters::propertyJSR, arg4JSR);
-    moveValueRegs(BaselineGetByValRegisters::baseJSR, arg3JSR);
-    loadGlobalObject(globalObjectGPR);
-    loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
-    materializePointerIntoMetadata(bytecode, OpcodeType::Metadata::offsetOfArrayProfile(), profileGPR);
-    callOperation<SlowOperation>(
-        Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
-        globalObjectGPR, stubInfoGPR, profileGPR, arg3JSR, arg4JSR);
+        static_assert(!BaselineGetByValRegisters::baseJSR.overlaps(arg4JSR));
+        moveValueRegs(BaselineGetByValRegisters::propertyJSR, arg4JSR);
+        moveValueRegs(BaselineGetByValRegisters::baseJSR, arg3JSR);
+        loadGlobalObject(globalObjectGPR);
+        loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
+        materializePointerIntoMetadata(bytecode, OpcodeType::Metadata::offsetOfArrayProfile(), profileGPR);
+        callOperation<SlowOperation>(
+            Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
+            globalObjectGPR, stubInfoGPR, profileGPR, arg3JSR, arg4JSR);
 #else
-    VM& vm = this->vm();
-    uint32_t bytecodeOffset = m_bytecodeIndex.offset();
-    ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
+        VM& vm = this->vm();
+        uint32_t bytecodeOffset = m_bytecodeIndex.offset();
+        ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
 
-    constexpr GPRReg bytecodeOffsetGPR = argumentGPR4;
-    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+        constexpr GPRReg bytecodeOffsetGPR = argumentGPR4;
+        move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
 
-    constexpr GPRReg stubInfoGPR = argumentGPR3; // arg1 arg1 already used.
-    constexpr GPRReg profileGPR = argumentGPR2;
-    constexpr GPRReg baseGPR = regT0;
-    constexpr GPRReg propertyGPR = regT1;
-    static_assert(baseGPR == argumentGPR0 || !isARM64());
-    static_assert(propertyGPR == argumentGPR1);
-    static_assert(BaselineGetByValRegisters::baseJSR.payloadGPR() == regT0);
-    static_assert(BaselineGetByValRegisters::propertyJSR.payloadGPR() == regT1);
+        constexpr GPRReg stubInfoGPR = argumentGPR3; // arg1 arg1 already used.
+        constexpr GPRReg profileGPR = argumentGPR2;
+        constexpr GPRReg baseGPR = regT0;
+        constexpr GPRReg propertyGPR = regT1;
+        static_assert(baseGPR == argumentGPR0 || !isARM64());
+        static_assert(propertyGPR == argumentGPR1);
+        static_assert(BaselineGetByValRegisters::baseJSR.payloadGPR() == regT0);
+        static_assert(BaselineGetByValRegisters::propertyJSR.payloadGPR() == regT1);
 
-    loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
-    materializePointerIntoMetadata(bytecode, OpcodeType::Metadata::offsetOfArrayProfile(), profileGPR);
-    emitNakedNearCall(vm.getCTIStub(slow_op_get_by_val_prepareCallGenerator).retaggedCode<NoPtrTag>());
-    emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
+        loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
+        materializePointerIntoMetadata(bytecode, OpcodeType::Metadata::offsetOfArrayProfile(), profileGPR);
+        emitNakedNearCall(vm.getCTIStub(slow_op_get_by_val_prepareCallGenerator).retaggedCode<NoPtrTag>());
+        emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
 #endif // ENABLE(EXTRA_CTI_THUNKS)
+    }
 
     gen.reportSlowPathCall(coldPathBegin, Call());
 }

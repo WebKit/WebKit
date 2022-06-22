@@ -491,6 +491,8 @@ public:
     
     void generateFastPath(MacroAssembler&);
 
+    void generateEmptyPath(CCallHelpers&);
+
     JSValueRegs m_base;
     JSValueRegs m_result;
 

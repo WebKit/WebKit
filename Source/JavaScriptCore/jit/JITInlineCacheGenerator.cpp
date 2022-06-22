@@ -59,7 +59,7 @@ void JITInlineCacheGenerator::finalize(
     LinkBuffer& fastPath, LinkBuffer& slowPath, CodeLocationLabel<JITStubRoutinePtrTag> start)
 {
     ASSERT(m_stubInfo);
-    m_stubInfo->start = start;
+    m_stubInfo->startLocation = start;
     m_stubInfo->doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
 
     if (!JITCode::useDataIC(m_jitType))
@@ -499,6 +499,12 @@ void JITGetByValGenerator::generateFastPath(MacroAssembler& jit)
         jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
     } else
         m_slowPathJump = jit.patchableJump();
+    m_done = jit.label();
+}
+
+void JITGetByValGenerator::generateEmptyPath(CCallHelpers& jit)
+{
+    m_start = jit.label();
     m_done = jit.label();
 }
 
