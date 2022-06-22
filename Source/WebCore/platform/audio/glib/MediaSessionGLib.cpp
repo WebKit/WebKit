@@ -222,7 +222,7 @@ MediaSessionGLib::MediaSessionGLib(MediaSessionManagerGLib& manager, GRefPtr<GDB
     }
 
     const auto& applicationID = getApplicationID();
-    m_instanceId = applicationID.isEmpty() ? makeString("org.mpris.MediaPlayer2.webkit.instance", getpid(), "-", identifier.toUInt64()) : makeString("org.mpris.MediaPlayer2.", applicationID.ascii().data(), ".", identifier.toUInt64());
+    m_instanceId = applicationID.isEmpty() ? makeString("org.mpris.MediaPlayer2.webkit.instance", getpid(), "-", identifier.toUInt64()) : makeString("org.mpris.MediaPlayer2.", applicationID.ascii().data(), ".instance-", identifier.toUInt64());
 
     m_ownerId = g_bus_own_name_on_connection(m_connection.get(), m_instanceId.ascii().data(), G_BUS_NAME_OWNER_FLAGS_NONE, nullptr, nullptr, this, nullptr);
 }
