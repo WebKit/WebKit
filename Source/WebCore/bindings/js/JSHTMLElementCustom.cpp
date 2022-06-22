@@ -78,6 +78,9 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
         return throwVMTypeError(lexicalGlobalObject, scope, "new.target does not define a custom element"_s);
 
     if (!elementInterface->isUpgradingElement()) {
+        Ref<Document> protectedDocument(document);
+        Ref<JSCustomElementInterface> protectedElementInterface(*elementInterface);
+
         Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *newTargetGlobalObject);
         auto* newElementStructure = InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure);
         RETURN_IF_EXCEPTION(scope, { });

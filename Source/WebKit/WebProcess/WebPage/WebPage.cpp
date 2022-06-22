@@ -5861,7 +5861,6 @@ void WebPage::runModal()
     Ref<WebPage> protector(*this);
 #endif
     RunLoop::run();
-    ASSERT(!m_isRunningModal);
 }
 
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
