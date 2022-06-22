@@ -661,6 +661,10 @@
         (extension "com.apple.webkit.extension.mach")
         (global-name "com.apple.powerlog.plxpclogger.xpc")))
 
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.powerlog.plxpclogger.xpc")))
+
 (with-filter (uid 0)
     (allow mach-lookup
         (global-name "com.apple.system.logger")))
