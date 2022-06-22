@@ -59,6 +59,7 @@ const actions = [
   }
 ];
 
+<<<<<<< HEAD
 function waitForRender() {
   return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 }
@@ -67,6 +68,25 @@ function initialize(el) {
   el.setRangeText("foobar", 0, el.value.length, "start");
   // Make sure to flush async dispatches
   return waitForRender();
+=======
+<<<<<<< HEAD
+ function initialize(el, t) {
+  el.setRangeText("foobar", 0, el.value.length, "start");
+  // Make sure to flush async dispatches
+  return new Promise(resolve => {
+    t.step_timeout(resolve, 200);
+  });
+=======
+function waitForRender() {
+  return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+function initialize(el) {
+  el.setRangeText("foobar", 0, el.value.length, "start");
+  // Make sure to flush async dispatches
+  return waitForRender();
+>>>>>>> 7d2f81b86d82 (Schedule/fire an event when selection changes for select() and setRangeText().)
+>>>>>>> 3007d43a11a1 (Schedule/fire an event when selection changes for select() and setRangeText().)
 }
 
 els.forEach((el) => {
@@ -76,7 +96,15 @@ els.forEach((el) => {
     // promise_test instead of async_test is important because these need to happen in sequence (to test that events
     // fire if and only if the selection changes).
     promise_test(async t => {
+<<<<<<< HEAD
       await initialize(el);
+=======
+<<<<<<< HEAD
+      await initialize(el, t);
+=======
+      await initialize(el);
+>>>>>>> 7d2f81b86d82 (Schedule/fire an event when selection changes for select() and setRangeText().)
+>>>>>>> 3007d43a11a1 (Schedule/fire an event when selection changes for select() and setRangeText().)
 
       const watcher = new EventWatcher(t, el, "select");
 
@@ -91,17 +119,40 @@ els.forEach((el) => {
       return promise;
     }, `${elLabel}: ${action.label}`);
 
+<<<<<<< HEAD
     promise_test(async t => {
+=======
+<<<<<<< HEAD
+    promise_test(t => {
+=======
+    promise_test(async t => {
+>>>>>>> 7d2f81b86d82 (Schedule/fire an event when selection changes for select() and setRangeText().)
+>>>>>>> 3007d43a11a1 (Schedule/fire an event when selection changes for select() and setRangeText().)
       el.onselect = t.unreached_func("the select event must not fire the second time");
 
       action.action(el);
 
+<<<<<<< HEAD
       await waitForRender();
       el.onselect = null;
+=======
+<<<<<<< HEAD
+      return new Promise(resolve => {
+        t.step_timeout(() => {
+          el.onselect = null;
+          resolve();
+        }, 200);
+      });
+=======
+      await waitForRender();
+      el.onselect = null;
+>>>>>>> 7d2f81b86d82 (Schedule/fire an event when selection changes for select() and setRangeText().)
+>>>>>>> 3007d43a11a1 (Schedule/fire an event when selection changes for select() and setRangeText().)
     }, `${elLabel}: ${action.label} a second time (must not fire select)`);
 
     promise_test(async t => {
       const element = el.cloneNode(true);
+<<<<<<< HEAD
       let fired = false;
       element.addEventListener('select', () => fired = true, { once: true });
 
@@ -110,6 +161,28 @@ els.forEach((el) => {
       await waitForRender();
       assert_true(fired, "event didn't fire");
 
+=======
+<<<<<<< HEAD
+
+      element.onselect = e => {
+        element.onselect = null;
+      };
+
+      action.action(element);
+
+      // step_wait properly timeouts before the whole test collapses
+      await t.step_wait(() => !element.onselect, "event didn't fire", 200, 10);
+=======
+      let fired = false;
+      element.addEventListener('select', () => fired = true, { once: true });
+
+      action.action(element);
+
+      await waitForRender();
+      assert_true(fired, "event didn't fire");
+
+>>>>>>> 7d2f81b86d82 (Schedule/fire an event when selection changes for select() and setRangeText().)
+>>>>>>> 3007d43a11a1 (Schedule/fire an event when selection changes for select() and setRangeText().)
     }, `${elLabel}: ${action.label} disconnected node`);
 
     // Intentionally still using promise_test, as assert_unreachable does not
@@ -117,6 +190,36 @@ els.forEach((el) => {
     promise_test(async t => {
       const element = el.cloneNode(true);
       let fired = false;
+<<<<<<< HEAD
+      element.addEventListener('select', () => fired = true, { once: true });
+=======
+<<<<<<< HEAD
+>>>>>>> 3007d43a11a1 (Schedule/fire an event when selection changes for select() and setRangeText().)
+
+      action.action(element);
+
+      assert_false(fired, "the select event must not fire synchronously");
+      await waitForRender();
+      assert_true(fired, "event didn't fire");
+    }, `${elLabel}: ${action.label} event queue`);
+
+    promise_test(async t => {
+      const element = el.cloneNode(true);
+      let selectCount = 0;
+      element.addEventListener('select', () => ++selectCount);
+      assert_equals(element.selectionEnd, 0);
+
+      action.action(element);
+      action.action(element);
+
+<<<<<<< HEAD
+      await waitForRender();
+      assert_equals(selectCount, 1, "the select event must not fire twice");
+=======
+      return new Promise(resolve => {
+        t.step_timeout(resolve, 200);
+      });
+=======
       element.addEventListener('select', () => fired = true, { once: true });
 
       action.action(element);
@@ -137,7 +240,20 @@ els.forEach((el) => {
 
       await waitForRender();
       assert_equals(selectCount, 1, "the select event must not fire twice");
+>>>>>>> 7d2f81b86d82 (Schedule/fire an event when selection changes for select() and setRangeText().)
+>>>>>>> 3007d43a11a1 (Schedule/fire an event when selection changes for select() and setRangeText().)
     }, `${elLabel}: ${action.label} twice in disconnected node (must fire select only once)`);
   });
 });
 </script>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+=======
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7d2f81b86d82 (Schedule/fire an event when selection changes for select() and setRangeText().)
+>>>>>>> 3007d43a11a1 (Schedule/fire an event when selection changes for select() and setRangeText().)
+>>>>>>> 0719d5cb3813 (Schedule/fire an event when selection changes for select() and setRangeText().)
