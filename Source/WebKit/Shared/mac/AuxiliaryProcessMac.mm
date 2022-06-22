@@ -30,7 +30,6 @@
 
 #import "ApplicationServicesSPI.h"
 #import "CodeSigning.h"
-#import "QuarantineSPI.h"
 #import "SandboxInitializationParameters.h"
 #import "SandboxUtilities.h"
 #import "WKFoundation.h"
@@ -44,6 +43,7 @@
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NotifySPI.h>
+#import <pal/spi/mac/QuarantineSPI.h>
 #import <pwd.h>
 #import <stdlib.h>
 #import <sys/sysctl.h>

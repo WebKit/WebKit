@@ -40,6 +40,7 @@ enum qtn_error_code {
 enum qtn_flags {
     QTN_FLAG_DOWNLOAD = 0x0001,
     QTN_FLAG_SANDBOX = 0x0002,
+    QTN_FLAG_HARD = 0x0004,
     QTN_FLAG_USER_APPROVED = 0x0040,
 };
 
@@ -76,5 +77,12 @@ int qtn_file_apply_to_path(qtn_file_t qf, const char *path);
 int qtn_file_init_with_path(qtn_file_t qf, const char *path);
 
 WTF_EXTERN_C_END
+
+struct QuarantineFileDeleter {
+    void operator()(qtn_file_t file)
+    {
+        qtn_file_free(file);
+    }
+};
 
 #endif // PLATFORM(MAC)

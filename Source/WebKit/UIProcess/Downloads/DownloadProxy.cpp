@@ -45,6 +45,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+#include <pal/spi/mac/QuarantineSPI.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -180,8 +184,36 @@ void DownloadProxy::didCreateDestination(const String& path)
     m_client->didCreateDestination(*this, path);
 }
 
+#if PLATFORM(MAC)
+void DownloadProxy::updateQuarantinePropertiesIfPossible()
+{
+    auto fileURL = URL::fileURLWithFileSystemPath(m_destinationFilename);
+    auto path = fileURL.fileSystemPath().utf8();
+
+    auto file = std::unique_ptr<_qtn_file, QuarantineFileDeleter>(qtn_file_alloc());
+    if (!file)
+        return;
+
+    auto error = qtn_file_init_with_path(file.get(), path.data());
+    if (error)
+        return;
+
+    uint32_t flags = qtn_file_get_flags(file.get());
+    ASSERT_WITH_MESSAGE(flags & QTN_FLAG_HARD, "Downloaded files written by the sandboxed network process should have QTN_FLAG_HARD");
+    flags &= ~QTN_FLAG_HARD;
+    error = qtn_file_set_flags(file.get(), flags);
+    if (error)
+        return;
+
+    qtn_file_apply_to_path(file.get(), path.data());
+}
+#endif
+
 void DownloadProxy::didFinish()
 {
+#if PLATFORM(MAC)
+    updateQuarantinePropertiesIfPossible();
+#endif
     m_client->didFinish(*this);
 
     // This can cause the DownloadProxy object to be deleted.

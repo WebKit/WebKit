@@ -104,7 +104,9 @@ public:
     void setProgress(NSProgress *progress) { m_progress = progress; }
     NSProgress *progress() const { return m_progress.get(); }
 #endif
-
+#if PLATFORM(MAC)
+    void updateQuarantinePropertiesIfPossible();
+#endif
     API::FrameInfo& frameInfo() { return m_frameInfo.get(); }
 
     API::DownloadClient& client() { return m_client.get(); }
