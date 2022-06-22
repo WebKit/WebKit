@@ -32,10 +32,10 @@
 
 namespace JSC {
 
-LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock* owner, const ObjectPropertyCondition& key, unsigned bytecodeOffset)
+LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock* owner, const ObjectPropertyCondition& key, BytecodeIndex bytecodeIndex)
     : Watchpoint(Watchpoint::Type::LLIntPrototypeLoadAdaptiveStructure)
     , m_owner(owner)
-    , m_bytecodeOffset(bytecodeOffset)
+    , m_bytecodeIndex(bytecodeIndex)
     , m_key(key)
 {
     RELEASE_ASSERT(key.watchingRequiresStructureTransitionWatchpoint());
@@ -45,14 +45,13 @@ LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructu
 LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint()
     : Watchpoint(Watchpoint::Type::LLIntPrototypeLoadAdaptiveStructure)
     , m_owner(nullptr)
-    , m_bytecodeOffset(0)
 {
 }
 
-void LLIntPrototypeLoadAdaptiveStructureWatchpoint::initialize(CodeBlock* codeBlock, const ObjectPropertyCondition& key, unsigned bytecodeOffset)
+void LLIntPrototypeLoadAdaptiveStructureWatchpoint::initialize(CodeBlock* codeBlock, const ObjectPropertyCondition& key, BytecodeIndex bytecodeOffset)
 {
     m_owner = codeBlock;
-    m_bytecodeOffset = bytecodeOffset;
+    m_bytecodeIndex = bytecodeOffset;
     m_key = key;
 }
 
@@ -73,7 +72,7 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
         return;
     }
 
-    auto& instruction = m_owner->instructions().at(m_bytecodeOffset.get());
+    auto& instruction = m_owner->instructions().at(m_bytecodeIndex.get().offset());
     switch (instruction->opcodeID()) {
     case op_get_by_id:
         clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(m_owner.get()).m_modeMetadata);
@@ -85,8 +84,16 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const F
 
     case op_iterator_next: {
         auto& metadata = instruction->as<OpIteratorNext>().metadata(m_owner.get());
-        clearLLIntGetByIdCache(metadata.m_doneModeMetadata);
-        clearLLIntGetByIdCache(metadata.m_valueModeMetadata);
+        switch (m_bytecodeIndex.get().checkpoint()) {
+        case OpIteratorNext::getDone:
+            clearLLIntGetByIdCache(metadata.m_doneModeMetadata);
+            break;
+        case OpIteratorNext::getValue:
+            clearLLIntGetByIdCache(metadata.m_valueModeMetadata);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
         break;
     }
 

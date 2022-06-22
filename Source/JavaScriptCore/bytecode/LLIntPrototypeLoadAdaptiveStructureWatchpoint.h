@@ -35,10 +35,10 @@ namespace JSC {
 
 class LLIntPrototypeLoadAdaptiveStructureWatchpoint final : public Watchpoint {
 public:
-    LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock*, const ObjectPropertyCondition&, unsigned bytecodeOffset);
+    LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock*, const ObjectPropertyCondition&, BytecodeIndex);
     LLIntPrototypeLoadAdaptiveStructureWatchpoint();
 
-    void initialize(CodeBlock*, const ObjectPropertyCondition&, unsigned bytecodeOffset);
+    void initialize(CodeBlock*, const ObjectPropertyCondition&, BytecodeIndex);
 
     void install(VM&);
 
@@ -51,7 +51,7 @@ public:
 private:
     // Own destructor may not be called. Keep members trivially destructible.
     JSC_WATCHPOINT_FIELD(PackedCellPtr<CodeBlock>, m_owner);
-    JSC_WATCHPOINT_FIELD(Packed<unsigned>, m_bytecodeOffset);
+    JSC_WATCHPOINT_FIELD(Packed<BytecodeIndex>, m_bytecodeIndex);
     JSC_WATCHPOINT_FIELD(ObjectPropertyCondition, m_key);
 };
 

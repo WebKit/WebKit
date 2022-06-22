@@ -747,7 +747,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_with_this)
     LLINT_RETURN_PROFILED(result);
 }
 
-static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, CodeBlock* codeBlock, const Instruction* pc, GetByIdModeMetadata& metadata, JSCell* baseCell, PropertySlot& slot, const Identifier& ident)
+static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex, GetByIdModeMetadata& metadata, JSCell* baseCell, PropertySlot& slot, const Identifier& ident)
 {
     Structure* structure = baseCell->structure(vm);
 
@@ -774,7 +774,6 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
     if (!conditions.isValid())
         return;
 
-    unsigned bytecodeOffset = codeBlock->bytecodeOffset(pc);
     PropertyOffset offset = invalidOffset;
     CodeBlock::StructureWatchpointMap& watchpointMap = codeBlock->llintGetByIdWatchpointMap();
     FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint> watchpoints(conditions.size());
@@ -785,12 +784,12 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
             return;
         if (condition.condition().kind() == PropertyCondition::Presence)
             offset = condition.condition().offset();
-        watchpoint.initialize(codeBlock, condition, bytecodeOffset);
+        watchpoint.initialize(codeBlock, condition, bytecodeIndex);
         watchpoint.install(vm);
     }
 
     ASSERT((offset == invalidOffset) == slot.isUnset());
-    auto result = watchpointMap.add(std::make_tuple(structure->id(), bytecodeOffset), WTFMove(watchpoints));
+    auto result = watchpointMap.add(std::make_tuple(structure->id(), bytecodeIndex), WTFMove(watchpoints));
     ASSERT_UNUSED(result, result.isNewEntry);
 
     {
@@ -805,7 +804,7 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
     vm.writeBarrier(codeBlock);
 }
 
-static JSValue performLLIntGetByID(const Instruction* pc, CodeBlock* codeBlock, JSGlobalObject* globalObject, JSValue baseValue, const Identifier& ident, GetByIdModeMetadata& metadata)
+static JSValue performLLIntGetByID(BytecodeIndex bytecodeIndex, CodeBlock* codeBlock, JSGlobalObject* globalObject, JSValue baseValue, const Identifier& ident, GetByIdModeMetadata& metadata)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -863,7 +862,7 @@ static JSValue performLLIntGetByID(const Instruction* pc, CodeBlock* codeBlock, 
             ASSERT(slot.slotBase() != baseValue);
 
             if (!(--metadata.hitCountForLLIntCaching))
-                setupGetByIdPrototypeCache(globalObject, vm, codeBlock, pc, metadata, baseCell, slot, ident);
+                setupGetByIdPrototypeCache(globalObject, vm, codeBlock, bytecodeIndex, metadata, baseCell, slot, ident);
         }
     } else if (!LLINT_ALWAYS_ACCESS_SLOW && isJSArray(baseValue) && ident == vm.propertyNames->length) {
         {
@@ -885,7 +884,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id)
     const Identifier& ident = codeBlock->identifier(bytecode.m_property);
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
 
-    JSValue result = performLLIntGetByID(pc, codeBlock, globalObject, baseValue, ident, metadata.m_modeMetadata);
+    JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc), codeBlock, globalObject, baseValue, ident, metadata.m_modeMetadata);
     LLINT_RETURN_PROFILED(result);
 }
 
@@ -901,7 +900,7 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_open_get_next)
     if (!iterator.isObject())
         LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_s));
 
-    JSValue result = performLLIntGetByID(pc, codeBlock, globalObject, iterator, vm.propertyNames->next, metadata.m_modeMetadata);
+    JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorOpen::getNext), codeBlock, globalObject, iterator, vm.propertyNames->next, metadata.m_modeMetadata);
     LLINT_CHECK_EXCEPTION();
     nextRegister = result;
     bytecode.metadata(codeBlock).m_nextProfile.m_buckets[0] = JSValue::encode(result);
@@ -921,7 +920,7 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_done)
     if (!iteratorReturn.isObject())
         LLINT_THROW(createTypeError(globalObject, "Iterator result interface is not an object."_s));
 
-    JSValue result = performLLIntGetByID(pc, codeBlock, globalObject, iteratorReturn, vm.propertyNames->done, metadata.m_doneModeMetadata);
+    JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorNext::getDone), codeBlock, globalObject, iteratorReturn, vm.propertyNames->done, metadata.m_doneModeMetadata);
     LLINT_CHECK_EXCEPTION();
     doneRegister = result;
     bytecode.metadata(codeBlock).m_doneProfile.m_buckets[0] = JSValue::encode(result);
@@ -938,7 +937,7 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_value)
     Register& valueRegister = callFrame->uncheckedR(bytecode.m_value);
     JSValue iteratorReturn = valueRegister.jsValue();
 
-    JSValue result = performLLIntGetByID(pc, codeBlock, globalObject, iteratorReturn, vm.propertyNames->value, metadata.m_valueModeMetadata);
+    JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorNext::getValue), codeBlock, globalObject, iteratorReturn, vm.propertyNames->value, metadata.m_valueModeMetadata);
     LLINT_CHECK_EXCEPTION();
     valueRegister = result;
     bytecode.metadata(codeBlock).m_valueProfile.m_buckets[0] = JSValue::encode(result);

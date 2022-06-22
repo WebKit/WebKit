@@ -1541,7 +1541,8 @@ void CodeBlock::finalizeLLIntInlineCaches()
     // then cleared the cache without GCing in between.
     m_llintGetByIdWatchpointMap.removeIf([&] (const StructureWatchpointMap::KeyValuePairType& pair) -> bool {
         auto clear = [&] () {
-            auto& instruction = instructions().at(std::get<1>(pair.key));
+            BytecodeIndex bytecodeIndex = std::get<1>(pair.key);
+            auto& instruction = instructions().at(bytecodeIndex.offset());
             OpcodeID opcode = instruction->opcodeID();
             switch (opcode) {
             case op_get_by_id: {
