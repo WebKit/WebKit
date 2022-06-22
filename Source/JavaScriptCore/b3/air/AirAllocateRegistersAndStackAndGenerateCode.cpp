@@ -590,6 +590,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             context.indexInBlock = instIndex;
 
             Inst& inst = block->at(instIndex);
+            Inst instCopy = inst;
 
             m_namedUsedRegs = RegisterSet();
             m_namedDefdRegs = RegisterSet();
@@ -753,26 +754,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 if (!success) {
                     RELEASE_ASSERT(!isReplayingSameInst); // We should only need to do the below at most once per inst.
 
-                    // We need to capture the register state before we start spilling things
-                    // since we may have multiple arguments that are the same register.
-                    IndexMap<Reg, Tmp> allocationSnapshot = currentAllocation;
-
-                    // We rewind this Inst to be in its previous state, however, if any arg admits stack,
-                    // we move to providing that arg in stack form. This will allow us to fully allocate
-                    // this inst when we rewind.
-                    inst.forEachTmpFast([&] (Tmp& tmp) {
-                        if (!tmp.isReg())
-                            return;
-                        if (isDisallowedRegister(tmp.reg()))
-                            return;
-                        Tmp originalTmp = allocationSnapshot[tmp.reg()];
-                        if (originalTmp.isReg()) {
-                            ASSERT(tmp.reg() == originalTmp.reg());
-                            // This means this Inst referred to this reg directly. We leave these as is.
-                            return;
-                        }
-                        tmp = originalTmp;
-                    });
+                    inst = instCopy;
                     inst.forEachArg([&] (Arg& arg, Arg::Role, Bank, Width) {
                         if (arg.isTmp() && !arg.tmp().isReg() && inst.admitsStack(arg)) {
                             Tmp tmp = arg.tmp();

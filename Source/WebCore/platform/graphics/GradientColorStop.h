@@ -27,6 +27,7 @@
 
 #include "Color.h"
 #include <optional>
+#include <wtf/Forward.h>
 #include <wtf/Hasher.h>
 
 namespace WebCore {
@@ -65,4 +66,6 @@ inline void add(Hasher& hasher, const GradientColorStop& stop)
     add(hasher, stop.offset, stop.color);
 }
 
-}
+TextStream& operator<<(TextStream&, const GradientColorStop&);
+
+} // namespace WebCore

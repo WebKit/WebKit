@@ -43,13 +43,9 @@ public:
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceFilterPrimitive"_s; }
 
-    inline void primitiveAttributeChanged(const QualifiedName& attribute)
-    {
-        RenderObject* filter = parent();
-        if (!filter || !filter->isSVGResourceFilter())
-            return;
-        static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, attribute);
-    }
+    void markFilterEffectForRepaint(FilterEffect*);
+    void markFilterEffectForRebuild();
+
 private:
     bool isSVGResourceFilterPrimitive() const override { return true; }
     void element() const = delete;

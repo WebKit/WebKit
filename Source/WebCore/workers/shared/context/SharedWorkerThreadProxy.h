@@ -66,6 +66,7 @@ private:
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
     void postMessageToWorkerObject(MessageWithMessagePorts&&) final { }
     void workerGlobalScopeDestroyed() final { }
+    void workerGlobalScopeClosed() final;
     void confirmMessageFromWorkerObject(bool) final { }
     void reportPendingActivity(bool) final { }
 

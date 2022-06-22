@@ -22,6 +22,7 @@
 
 messages -> WebResourceLoader LegacyReceiver {
     WillSendRequest(WebCore::ResourceRequest request, IPC::FormDataReference requestBody, WebCore::ResourceResponse redirectResponse)
+    SetWorkerStart(MonotonicTime value)
     DidSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
     DidReceiveResponse(WebCore::ResourceResponse response, enum:bool WebKit::PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<WebCore::NetworkLoadMetrics> optionalNetworkLoadMetrics)
     DidReceiveData(IPC::SharedBufferReference data, int64_t encodedDataLength)

@@ -211,6 +211,9 @@ enum {
     PROP_MICROPHONE_CAPTURE_STATE,
     PROP_DISPLAY_CAPTURE_STATE,
 
+    PROP_WEB_EXTENSION_MODE,
+    PROP_DEFAULT_CONTENT_SECURITY_POLICY,
+
     N_PROPERTIES,
 };
 
@@ -316,6 +319,9 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
     GRefPtr<WebKitWebsitePolicies> websitePolicies;
+
+    CString defaultContentSecurityPolicy;
+    WebKitWebExtensionMode webExtensionMode;
 
     double textScaleFactor;
 
@@ -901,6 +907,12 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_DISPLAY_CAPTURE_STATE:
         webkit_web_view_set_display_capture_state(webView, static_cast<WebKitMediaCaptureState>(g_value_get_enum(value)));
         break;
+    case PROP_WEB_EXTENSION_MODE:
+        webView->priv->webExtensionMode = static_cast<WebKitWebExtensionMode>(g_value_get_enum(value));
+        break;
+    case PROP_DEFAULT_CONTENT_SECURITY_POLICY:
+        webView->priv->defaultContentSecurityPolicy = CString(g_value_get_string(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -980,6 +992,12 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_DISPLAY_CAPTURE_STATE:
         g_value_set_enum(value, webkit_web_view_get_display_capture_state(webView));
+        break;
+    case PROP_WEB_EXTENSION_MODE:
+        g_value_set_enum(value, webkit_web_view_get_web_extension_mode(webView));
+        break;
+    case PROP_DEFAULT_CONTENT_SECURITY_POLICY:
+        g_value_set_string(value, webkit_web_view_get_default_content_security_policy(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1449,6 +1467,50 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_MEDIA_CAPTURE_STATE,
         WEBKIT_MEDIA_CAPTURE_STATE_NONE,
         WEBKIT_PARAM_READWRITE);
+
+    /**
+     * WebKitWebView:web-extension-mode:
+     *
+     * This configures @web_view to treat the content as a WebExtension.
+     *
+     * Note that this refers to the web standard [WebExtensions](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
+     * and not WebKitWebExtensions.
+     * 
+     * In practice this limits the Content-Security-Policies that are allowed to be set. Some details can be found in
+     * [Chrome's documentation](https://developer.chrome.com/docs/extensions/mv3/intro/mv3-migration/#content-security-policy).
+     *
+     * Since: 2.38
+     */
+    sObjProperties[PROP_WEB_EXTENSION_MODE] = g_param_spec_enum(
+        "web-extension-mode",
+        "WebExtension Mode",
+        _("Enables WebExtension mode"),
+        WEBKIT_TYPE_WEB_EXTENSION_MODE,
+        WEBKIT_WEB_EXTENSION_MODE_NONE,
+        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+    /**
+     * WebKitWebView:default-content-security-policy:
+     *
+     * The default Content-Security-Policy used by the webview as if it were set
+     * by an HTTP header.
+     * 
+     * This applies to all content loaded including through navigation or via the various
+     * webkit_web_view_load_\* APIs. However do note that many WebKit APIs bypass
+     * Content-Security-Policy in general such as #WebKitUserContentManager and
+     * webkit_web_view_run_javascript().
+     *
+     * Policies are additive so if a website sets its own policy it still applies
+     * on top of the policy set here.
+     * 
+     * Since: 2.38
+     */
+    sObjProperties[PROP_DEFAULT_CONTENT_SECURITY_POLICY] = g_param_spec_string(
+        "default-content-security-policy",
+        "Default Content-Security-Policy",
+        _("The default Content-Security-Policy"),
+        nullptr,
+        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
@@ -3994,6 +4056,119 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
     });
 }
 
+/*
+ * webkit_web_view_run_async_javascript_function_in_world:
+ * @web_view: a #WebKitWebView
+ * @body: the JavaScript function body
+ * @arguments: a #GVariant with format `{&sv}` storing the function arguments. Function argument values must be one of the following types, or contain only the following GVariant types: number, string, array, and dictionary.
+ * @world_name (nullable): the name of a #WebKitScriptWorld, if no name is provided, the default world is used.
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the script finished
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously run @body in the script world with name @world_name of the current page context in
+ * @web_view. If WebKitSettings:enable-javascript is FALSE, this method will do nothing. This API
+ * differs from webkit_web_view_run_javascript_in_world() in that the JavaScript function can return a
+ * Promise and its result will be properly passed to the callback.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_web_view_run_javascript_in_world_finish() to get the result of the operation.
+ *
+ * For instance here is a dummy example that shows how to pass arguments to a JS function that
+ * returns a Promise that resolves with the passed argument:
+ *
+ * ```c
+ * static void
+ * web_view_javascript_finished (GObject      *object,
+ *                               GAsyncResult *result,
+ *                               gpointer      user_data)
+ * {
+ *     WebKitJavascriptResult *js_result;
+ *     JSCValue               *value;
+ *     GError                 *error = NULL;
+ *
+ *     js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+ *     if (!js_result) {
+ *         g_warning ("Error running javascript: %s", error->message);
+ *         g_error_free (error);
+ *         return;
+ *     }
+ *
+ *     value = webkit_javascript_result_get_js_value (js_result);
+ *     if (jsc_value_is_number (value)) {
+ *         gint32        int_value = jsc_value_to_string (value);
+ *         JSCException *exception = jsc_context_get_exception (jsc_value_get_context (value));
+ *         if (exception)
+ *             g_warning ("Error running javascript: %s", jsc_exception_get_message (exception));
+ *         else
+ *             g_print ("Script result: %d\n", int_value);
+ *         g_free (str_value);
+ *     } else {
+ *         g_warning ("Error running javascript: unexpected return value");
+ *     }
+ *     webkit_javascript_result_unref (js_result);
+ * }
+ *
+ * static void
+ * web_view_evaluate_promise (WebKitWebView *web_view)
+ * {
+ *     GVariantDict dict;
+ *     g_variant_dict_init (&dict, NULL);
+ *     g_variant_dict_insert (&dict, "count", "u", 42);
+ *     GVariant *args = g_variant_dict_end (&dict);
+ *     const gchar *body = "return new Promise((resolve) => { resolve(count); });";
+ *     webkit_web_view_run_async_javascript_function_in_world (web_view, body, arguments, NULL, NULL, web_view_javascript_finished, NULL);
+ * }
+ * ```
+ *
+ * Since: 2.38
+ */
+void webkit_web_view_run_async_javascript_function_in_world(WebKitWebView* webView, const gchar* body, GVariant* arguments, const char* worldName, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(body);
+    g_return_if_fail(worldName);
+
+    auto task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
+    auto world = API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName ? worldName : ""));
+    bool hasInvalidArgument = false;
+    auto argumentsMap = WebCore::ArgumentWireBytesMap { };
+
+    if (arguments) {
+        GVariantIter iter;
+        g_variant_iter_init(&iter, arguments);
+        const char* key;
+        GVariant* value;
+        while (g_variant_iter_loop(&iter, "{&sv}", &key, &value)) {
+            if (!key)
+                continue;
+            auto serializedValue = API::SerializedScriptValue::createFromGVariant(value);
+            if (!serializedValue) {
+                hasInvalidArgument = true;
+                break;
+            }
+            argumentsMap.set(String::fromUTF8(key), serializedValue->internalRepresentation().wireBytes());
+        }
+    }
+
+    if (hasInvalidArgument) {
+        ExceptionDetails exceptionDetails;
+        exceptionDetails.message = "Function argument values must be one of the following types, or contain only the following GVariant types: number, string, array, and dictionary"_s;
+        webkitWebViewRunJavaScriptCallback(nullptr, exceptionDetails, task.get());
+        return;
+    }
+
+    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(body), URL { }, RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes }, std::nullopt, world.get(), [task = WTFMove(task)](auto&& result) {
+        RefPtr<API::SerializedScriptValue> serializedScriptValue;
+        ExceptionDetails exceptionDetails;
+        if (result.has_value())
+            serializedScriptValue = WTFMove(result.value());
+        else
+            exceptionDetails = WTFMove(result.error());
+        webkitWebViewRunJavaScriptCallback(serializedScriptValue.get(), exceptionDetails, task.get());
+    });
+}
+
 /**
  * webkit_web_view_run_javascript_in_world_finish:
  * @web_view: a #WebKitWebView
@@ -5050,4 +5225,56 @@ void webkit_web_view_set_display_capture_state(WebKitWebView* webView, WebKitMed
         return;
 
     webkitWebViewConfigureMediaCapture(webView, WebCore::MediaProducerMediaCaptureKind::Display, state);
+}
+
+void webkitWebViewForceRepaintForTesting(WebKitWebView* webView, ForceRepaintCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    getPage(webView).forceRepaint([callback, userData]() {
+        callback(userData);
+    });
+}
+
+void webkitSetCachedProcessSuspensionDelayForTesting(double seconds)
+{
+    WebKit::WebsiteDataStore::setCachedProcessSuspensionDelayForTesting(Seconds(seconds));
+}
+
+/**
+ * webkit_web_view_get_web_extension_mode:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the view's #WebKitWebExtensionMode.
+ *
+ * Returns: the #WebKitWebExtensionMode
+ *
+ * Since: 2.38
+ */
+WebKitWebExtensionMode webkit_web_view_get_web_extension_mode(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), WEBKIT_WEB_EXTENSION_MODE_NONE);
+
+    return webView->priv->webExtensionMode;
+}
+
+/**
+ * webkit_web_view_get_default_content_security_policy:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the configured default Content-Security-Policy.
+ *
+ * Returns: (nullable): The default policy or %NULL
+ *
+ * Since: 2.38
+ */
+const gchar*
+webkit_web_view_get_default_content_security_policy(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    if (webView->priv->defaultContentSecurityPolicy.isNull())
+        return nullptr;
+
+    return webView->priv->defaultContentSecurityPolicy.data();
 }

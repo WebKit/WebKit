@@ -688,37 +688,38 @@ void InspectorScopedShaderProgramHighlight::showHighlight()
     if (!m_program || LIKELY(!InspectorInstrumentation::isWebGLProgramHighlighted(m_context, *m_program)))
         return;
 
-    if (hasBufferBinding(GraphicsContextGL::FRAMEBUFFER_BINDING)) {
-        if (!hasBufferBinding(GraphicsContextGL::RENDERBUFFER_BINDING))
-            return;
-        if (hasFramebufferParameterAttachment(GraphicsContextGL::DEPTH_ATTACHMENT))
-            return;
-        if (hasFramebufferParameterAttachment(GraphicsContextGL::STENCIL_ATTACHMENT))
-            return;
-#if ENABLE(WEBGL2)
-        if (hasFramebufferParameterAttachment(GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT))
-            return;
-#endif
-    }
+    if (m_context.m_framebufferBinding)
+        return;
 
-    saveBlendValue(GraphicsContextGL::BLEND_COLOR, m_savedBlend.color);
-    saveBlendValue(GraphicsContextGL::BLEND_EQUATION_RGB, m_savedBlend.equationRGB);
-    saveBlendValue(GraphicsContextGL::BLEND_EQUATION_ALPHA, m_savedBlend.equationAlpha);
-    saveBlendValue(GraphicsContextGL::BLEND_SRC_RGB, m_savedBlend.srcRGB);
-    saveBlendValue(GraphicsContextGL::BLEND_SRC_ALPHA, m_savedBlend.srcAlpha);
-    saveBlendValue(GraphicsContextGL::BLEND_DST_RGB, m_savedBlend.dstRGB);
-    saveBlendValue(GraphicsContextGL::BLEND_DST_ALPHA, m_savedBlend.dstAlpha);
-    saveBlendValue(GraphicsContextGL::BLEND, m_savedBlend.enabled);
+    auto& gl = *m_context.graphicsContextGL();
+
+    // When OES_draw_buffers_indexed extension is enabled,
+    // these state queries return the state for draw buffer 0.
+    // Constant blend color is always the same for all draw buffers.
+    gl.getFloatv(GraphicsContextGL::BLEND_COLOR, m_savedBlend.color);
+    m_savedBlend.equationRGB = gl.getInteger(GraphicsContextGL::BLEND_EQUATION_RGB);
+    m_savedBlend.equationAlpha = gl.getInteger(GraphicsContextGL::BLEND_EQUATION_ALPHA);
+    m_savedBlend.srcRGB = gl.getInteger(GraphicsContextGL::BLEND_SRC_RGB);
+    m_savedBlend.dstRGB = gl.getInteger(GraphicsContextGL::BLEND_DST_RGB);
+    m_savedBlend.srcAlpha = gl.getInteger(GraphicsContextGL::BLEND_SRC_ALPHA);
+    m_savedBlend.dstAlpha = gl.getInteger(GraphicsContextGL::BLEND_DST_ALPHA);
+    m_savedBlend.enabled = gl.isEnabled(GraphicsContextGL::BLEND);
 
     static const GCGLfloat red = 111.0 / 255.0;
     static const GCGLfloat green = 168.0 / 255.0;
     static const GCGLfloat blue = 220.0 / 255.0;
     static const GCGLfloat alpha = 2.0 / 3.0;
+    gl.blendColor(red, green, blue, alpha);
 
-    m_context.enable(GraphicsContextGL::BLEND);
-    m_context.blendColor(red, green, blue, alpha);
-    m_context.blendEquation(GraphicsContextGL::FUNC_ADD);
-    m_context.blendFunc(GraphicsContextGL::CONSTANT_COLOR, GraphicsContextGL::ONE_MINUS_SRC_ALPHA);
+    if (m_context.m_oesDrawBuffersIndexed) {
+        gl.enableiOES(GraphicsContextGL::BLEND, 0);
+        gl.blendEquationiOES(0, GraphicsContextGL::FUNC_ADD);
+        gl.blendFunciOES(0, GraphicsContextGL::CONSTANT_COLOR, GraphicsContextGL::ONE_MINUS_SRC_ALPHA);
+    } else {
+        gl.enable(GraphicsContextGL::BLEND);
+        gl.blendEquation(GraphicsContextGL::FUNC_ADD);
+        gl.blendFunc(GraphicsContextGL::CONSTANT_COLOR, GraphicsContextGL::ONE_MINUS_SRC_ALPHA);
+    }
 
     m_didApply = true;
 }
@@ -728,45 +729,23 @@ void InspectorScopedShaderProgramHighlight::hideHighlight()
     if (!m_didApply)
         return;
 
-    if (!m_savedBlend.enabled)
-        m_context.disable(GraphicsContextGL::BLEND);
+    auto& gl = *m_context.graphicsContextGL();
 
-    const RefPtr<Float32Array>& color = m_savedBlend.color;
-    m_context.blendColor(color->item(0), color->item(1), color->item(2), color->item(3));
-    m_context.blendEquationSeparate(m_savedBlend.equationRGB, m_savedBlend.equationAlpha);
-    m_context.blendFuncSeparate(m_savedBlend.srcRGB, m_savedBlend.dstRGB, m_savedBlend.srcAlpha, m_savedBlend.dstAlpha);
+    gl.blendColor(m_savedBlend.color[0], m_savedBlend.color[1], m_savedBlend.color[2], m_savedBlend.color[3]);
 
-    m_savedBlend.color = nullptr;
+    if (m_context.m_oesDrawBuffersIndexed) {
+        gl.blendEquationSeparateiOES(0, m_savedBlend.equationRGB, m_savedBlend.equationAlpha);
+        gl.blendFuncSeparateiOES(0, m_savedBlend.srcRGB, m_savedBlend.dstRGB, m_savedBlend.srcAlpha, m_savedBlend.dstAlpha);
+        if (!m_savedBlend.enabled)
+            gl.disableiOES(GraphicsContextGL::BLEND, 0);
+    } else {
+        gl.blendEquationSeparate(m_savedBlend.equationRGB, m_savedBlend.equationAlpha);
+        gl.blendFuncSeparate(m_savedBlend.srcRGB, m_savedBlend.dstRGB, m_savedBlend.srcAlpha, m_savedBlend.dstAlpha);
+        if (!m_savedBlend.enabled)
+            gl.disable(GraphicsContextGL::BLEND);
+    }
 
     m_didApply = false;
-}
-
-template <typename T>
-void InspectorScopedShaderProgramHighlight::saveBlendValue(GCGLenum attachment, T& destination)
-{
-    WebGLAny param = m_context.getParameter(attachment);
-    if (std::holds_alternative<T>(param))
-        destination = std::get<T>(param);
-}
-
-bool InspectorScopedShaderProgramHighlight::hasBufferBinding(GCGLenum pname)
-{
-    WebGLAny binding = m_context.getParameter(pname);
-    if (pname == GraphicsContextGL::FRAMEBUFFER_BINDING)
-        return std::holds_alternative<RefPtr<WebGLFramebuffer>>(binding) && std::get<RefPtr<WebGLFramebuffer>>(binding);
-    if (pname == GraphicsContextGL::RENDERBUFFER_BINDING)
-        return std::holds_alternative<RefPtr<WebGLRenderbuffer>>(binding) && std::get<RefPtr<WebGLRenderbuffer>>(binding);
-    return false;
-}
-
-bool InspectorScopedShaderProgramHighlight::hasFramebufferParameterAttachment(GCGLenum attachment)
-{
-    WebGLAny attachmentParameter = m_context.getFramebufferAttachmentParameter(GraphicsContextGL::FRAMEBUFFER, attachment, GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
-    if (!std::holds_alternative<unsigned>(attachmentParameter))
-        return false;
-    if (std::get<unsigned>(attachmentParameter) != static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER))
-        return false;
-    return true;
 }
 
 static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
@@ -1294,8 +1273,12 @@ void WebGLRenderingContextBase::markContextChanged()
     }
 }
 
-void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver()
+void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver(WebGLRenderingContextBase::CallerType caller)
 {
+    // Draw and clear ops with rasterizer discard enabled do not change the canvas.
+    if (caller == CallerTypeDrawOrClear && m_rasterizerDiscardEnabled)
+        return;
+
     // If we're not touching the default framebuffer, nothing visible has changed.
     if (m_framebufferBinding)
         return;
@@ -1311,7 +1294,7 @@ void WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver()
     canvas->notifyObserversCanvasChanged(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
 }
 
-bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::ClearCaller caller, GCGLbitfield mask)
+bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::CallerType caller, GCGLbitfield mask)
 {
     if (isContextLostOrPending())
         return false;
@@ -1324,7 +1307,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cle
 
     GCGLbitfield buffersNeedingClearing = m_context->getBuffersToAutoClear();
 
-    if (!buffersNeedingClearing || (mask && m_framebufferBinding) || (m_rasterizerDiscardEnabled && caller == ClearCallerDrawOrClear))
+    if (!buffersNeedingClearing || (mask && m_framebufferBinding) || (m_rasterizerDiscardEnabled && caller == CallerTypeDrawOrClear))
         return false;
 
     // Use the underlying GraphicsContext3D's attributes to take into
@@ -1429,7 +1412,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
         return;
     }
 
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
 
     if (!m_markedCanvasDirty && !m_layerCleared)
         return;
@@ -1451,7 +1434,7 @@ RefPtr<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffe
 {
     if (isContextLostOrPending())
         return nullptr;
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     return m_context->paintRenderingResultsToPixelBuffer();
 }
 
@@ -1917,7 +1900,7 @@ void WebGLRenderingContextBase::clear(GCGLbitfield mask)
         return;
     }
 #endif
-    if (!clearIfComposited(ClearCallerDrawOrClear, mask))
+    if (!clearIfComposited(CallerTypeDrawOrClear, mask))
         m_context->clear(mask);
     markContextChangedAndNotifyCanvasObserver();
 }
@@ -2094,7 +2077,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
 #if USE(ANGLE)
     if (!validateTexture2DBinding("copyTexSubImage2D", target))
         return;
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 #else
     if (!validateTexFuncLevel("copyTexSubImage2D", target, level))
@@ -2125,7 +2108,7 @@ void WebGLRenderingContextBase::copyTexSubImage2D(GCGLenum target, GCGLint level
         synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "copyTexSubImage2D", reason);
         return;
     }
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
 
     GCGLint clippedX, clippedY;
     GCGLsizei clippedWidth, clippedHeight;
@@ -2801,7 +2784,7 @@ void WebGLRenderingContextBase::drawArrays(GCGLenum mode, GCGLint first, GCGLsiz
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
 #if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
@@ -2850,7 +2833,7 @@ void WebGLRenderingContextBase::drawElements(GCGLenum mode, GCGLsizei count, GCG
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
 #if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
@@ -4644,7 +4627,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     }
 #endif // USE(ANGLE)
 
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     void* data = pixels.baseAddress();
 
 #if USE(ANGLE)
@@ -5125,11 +5108,16 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
             && type == GraphicsContextGL::UNSIGNED_BYTE
             && !level) {
-            if (video->player() && m_context->copyTextureFromMedia(*video->player(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+            if (auto player = video->player()) {
+#if PLATFORM(COCOA) && !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+                player->willBeAskedToPaintGL();
+#endif
+                if (m_context->copyTextureFromMedia(*player, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
 #if !USE(ANGLE)
-                texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);
+                    texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);
 #endif // !USE(ANGLE)
-                return { };
+                    return { };
+                }
             }
         }
 
@@ -5902,7 +5890,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
     if (!tex)
         return;
 #if USE(ANGLE)
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
     m_context->copyTexImage2D(target, level, internalFormat, x, y, width, height, border);
 #else
     if (!isTexInternalFormatColorBufferCombinationValid(internalFormat, getBoundReadFramebufferColorFormat())) {
@@ -5918,7 +5906,7 @@ void WebGLRenderingContextBase::copyTexImage2D(GCGLenum target, GCGLint level, G
         synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "copyTexImage2D", reason);
         return;
     }
-    clearIfComposited(ClearCallerOther);
+    clearIfComposited(CallerTypeOther);
 
     GCGLint clippedX, clippedY;
     GCGLsizei clippedWidth, clippedHeight;
@@ -6142,10 +6130,12 @@ void WebGLRenderingContextBase::uniform1i(const WebGLUniformLocation* location, 
     if (isContextLostOrPending() || !validateUniformLocation("uniform1i", location))
         return;
 
+#if !USE(ANGLE)
     if ((location->type() == GraphicsContextGL::SAMPLER_2D || location->type() == GraphicsContextGL::SAMPLER_CUBE) && x >= (int)m_textureUnits.size()) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "uniform1i", "invalid texture unit");
         return;
     }
+#endif // !USE(ANGLE)
 
     m_context->uniform1i(location->location(), x);
 }
@@ -6224,6 +6214,7 @@ void WebGLRenderingContextBase::uniform1iv(const WebGLUniformLocation* location,
 
     auto data = result.value();
 
+#if !USE(ANGLE)
     if (location->type() == GraphicsContextGL::SAMPLER_2D || location->type() == GraphicsContextGL::SAMPLER_CUBE) {
         for (size_t i = 0; i < data.bufSize; ++i) {
             if (data[i] >= static_cast<int>(m_textureUnits.size())) {
@@ -6233,6 +6224,7 @@ void WebGLRenderingContextBase::uniform1iv(const WebGLUniformLocation* location,
             }
         }
     }
+#endif // !USE(ANGLE)
 
     m_context->uniform1iv(location->location(), data);
 }
@@ -7994,7 +7986,7 @@ void WebGLRenderingContextBase::drawArraysInstanced(GCGLenum mode, GCGLint first
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
 #if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;
@@ -8042,7 +8034,7 @@ void WebGLRenderingContextBase::drawElementsInstanced(GCGLenum mode, GCGLsizei c
     if (m_currentProgram && InspectorInstrumentation::isWebGLProgramDisabled(*this, *m_currentProgram))
         return;
 
-    clearIfComposited(ClearCallerDrawOrClear);
+    clearIfComposited(CallerTypeDrawOrClear);
 
 #if !USE(ANGLE)
     bool vertexAttrib0Simulated = false;

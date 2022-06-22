@@ -85,15 +85,19 @@ void WebViewTest::loadURI(const char* uri)
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
-void WebViewTest::loadHtml(const char* html, const char* baseURI)
+void WebViewTest::loadHtml(const char* html, const char* baseURI, WebKitWebView* webView)
 {
     if (!baseURI)
         m_activeURI = "about:blank";
     else
         m_activeURI = baseURI;
-    webkit_web_view_load_html(m_webView, html, baseURI);
-    g_assert_true(webkit_web_view_is_loading(m_webView));
-    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
+
+    if (!webView)
+        webView = m_webView;
+
+    webkit_web_view_load_html(webView, html, baseURI);
+    g_assert_true(webkit_web_view_is_loading(webView));
+    g_assert_cmpstr(webkit_web_view_get_uri(webView), ==, m_activeURI.data());
 }
 
 void WebViewTest::loadPlainText(const char* plainText)
@@ -195,9 +199,11 @@ static void loadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebVi
     g_main_loop_quit(test->m_mainLoop);
 }
 
-void WebViewTest::waitUntilLoadFinished()
+void WebViewTest::waitUntilLoadFinished(WebKitWebView* webView)
 {
-    g_signal_connect(m_webView, "load-changed", G_CALLBACK(loadChanged), this);
+    if (!webView)
+        webView = m_webView;
+    g_signal_connect(webView, "load-changed", G_CALLBACK(loadChanged), this);
     g_main_loop_run(m_mainLoop);
 }
 
@@ -357,6 +363,18 @@ WebKitJavascriptResult* WebViewTest::runJavaScriptInWorldAndWaitUntilFinished(co
     m_javascriptResult = 0;
     m_javascriptError = error;
     webkit_web_view_run_javascript_in_world(m_webView, javascript, world, nullptr, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptInWorldReadyCallback), this);
+    g_main_loop_run(m_mainLoop);
+
+    return m_javascriptResult;
+}
+
+WebKitJavascriptResult* WebViewTest::runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(const char* body, GVariant* arguments, const char* world, GError** error)
+{
+    if (m_javascriptResult)
+        webkit_javascript_result_unref(m_javascriptResult);
+    m_javascriptResult = 0;
+    m_javascriptError = error;
+    webkit_web_view_run_async_javascript_function_in_world(m_webView, body, arguments, world, nullptr, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptInWorldReadyCallback), this);
     g_main_loop_run(m_mainLoop);
 
     return m_javascriptResult;

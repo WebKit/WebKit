@@ -217,4 +217,14 @@ bool KeyframeList::containsAnimatableProperty() const
     return false;
 }
 
+bool KeyframeList::usesContainerUnits() const
+{
+    for (auto& keyframe : m_keyframes) {
+        if (keyframe.style()->usesContainerUnits())
+            return true;
+    }
+    return false;
+}
+
+
 } // namespace WebCore

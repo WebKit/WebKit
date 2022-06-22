@@ -487,13 +487,13 @@ static FunctionPtr<OperationPtrTag> slowOperationFromUnlinkedStructureStubInfo(c
 void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUnlinkedStructureStubInfo& unlinkedStubInfo)
 {
     accessType = unlinkedStubInfo.accessType;
-    start = unlinkedStubInfo.start;
     doneLocation = unlinkedStubInfo.doneLocation;
     slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
     callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedStubInfo.bytecodeIndex.offset()));
     codeOrigin = CodeOrigin(unlinkedStubInfo.bytecodeIndex);
     m_codePtr = slowPathStartLocation;
     propertyIsInt32 = unlinkedStubInfo.propertyIsInt32;
+    tookSlowPath = unlinkedStubInfo.tookSlowPath;
     useDataIC = true;
 
     usedRegisters = RegisterSet::stubUnavailableRegisters();
@@ -654,7 +654,6 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUn
 void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::UnlinkedStructureStubInfo& unlinkedStubInfo)
 {
     accessType = unlinkedStubInfo.accessType;
-    start = unlinkedStubInfo.start;
     doneLocation = unlinkedStubInfo.doneLocation;
     slowPathStartLocation = unlinkedStubInfo.slowPathStartLocation;
     callSiteIndex = unlinkedStubInfo.callSiteIndex;
@@ -666,6 +665,7 @@ void StructureStubInfo::initializeFromDFGUnlinkedStructureStubInfo(const DFG::Un
     propertyIsString = unlinkedStubInfo.propertyIsString;
     prototypeIsKnownObject = unlinkedStubInfo.prototypeIsKnownObject;
     hasConstantIdentifier = unlinkedStubInfo.hasConstantIdentifier;
+    tookSlowPath = unlinkedStubInfo.tookSlowPath;
     useDataIC = true;
 
     usedRegisters = unlinkedStubInfo.usedRegisters;

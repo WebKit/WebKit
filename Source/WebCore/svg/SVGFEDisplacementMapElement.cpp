@@ -83,15 +83,15 @@ void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, cons
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
-bool SVGFEDisplacementMapElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+bool SVGFEDisplacementMapElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
 {
-    FEDisplacementMap* displacementMap = static_cast<FEDisplacementMap*>(effect);
+    auto& feDisplacementMap = downcast<FEDisplacementMap>(effect);
     if (attrName == SVGNames::xChannelSelectorAttr)
-        return displacementMap->setXChannelSelector(xChannelSelector());
+        return feDisplacementMap.setXChannelSelector(xChannelSelector());
     if (attrName == SVGNames::yChannelSelectorAttr)
-        return displacementMap->setYChannelSelector(yChannelSelector());
+        return feDisplacementMap.setYChannelSelector(yChannelSelector());
     if (attrName == SVGNames::scaleAttr)
-        return displacementMap->setScale(scale());
+        return feDisplacementMap.setScale(scale());
 
     ASSERT_NOT_REACHED();
     return false;
@@ -99,21 +99,22 @@ bool SVGFEDisplacementMapElement::setFilterEffectAttribute(FilterEffect* effect,
 
 void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr)
-            updateSVGRendererForElementChange();
-        else {
-            ASSERT(attrName == SVGNames::xChannelSelectorAttr || attrName == SVGNames::yChannelSelectorAttr || attrName == SVGNames::scaleAttr);
-            primitiveAttributeChanged(attrName);
-        }
+        updateSVGRendererForElementChange();
+        return;
+    }
+
+    if (attrName == SVGNames::xChannelSelectorAttr || attrName == SVGNames::yChannelSelectorAttr || attrName == SVGNames::scaleAttr) {
+        InstanceInvalidationGuard guard(*this);
+        primitiveAttributeChanged(attrName);
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEDisplacementMapElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEDisplacementMapElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     return FEDisplacementMap::create(xChannelSelector(), yChannelSelector(), scale());
 }

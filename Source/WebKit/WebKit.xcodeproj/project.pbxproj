@@ -1569,7 +1569,6 @@
 		9B5499B22362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5499B02362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B5BEC262400F4A90070C6EF /* WebMediaStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5BEC242400F4A90070C6EF /* WebMediaStrategy.h */; };
 		9B5BEC2A240101580070C6EF /* RemoteAudioDestinationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */; };
-		9BD8AB4A25820E53005386F8 /* FontReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD8AB4925820E52005386F8 /* FontReference.h */; };
 		9EC532A32447FBAD00215216 /* GeolocationIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */; };
 		9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1046EA12079263100F0C5D8 /* WKPDFView.h in Headers */ = {isa = PBXBuildFile; fileRef = A1046E9F2079263100F0C5D8 /* WKPDFView.h */; };
@@ -1786,7 +1785,6 @@
 		BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD3913125BB1A800D2C29F /* WebPageProxyMessages.h */; };
 		BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */; };
 		BCC43ABB127B95DC00317F16 /* PlatformPopupMenuData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */; };
-		BCC56F791159957D001CCAF9 /* MachPort.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC56F771159957D001CCAF9 /* MachPort.h */; };
 		BCC8B374125FB69000DE46A4 /* WKGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8B373125FB69000DE46A4 /* WKGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC938E01180DE440085E5FE /* WKContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCF6ABB12C91EF9008F9C35 /* WebImage.h */; };
@@ -2245,6 +2243,7 @@
 		E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
+		E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */; };
 		E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */; };
 		E36FF00427F36FBD004BE21A /* preferences.sb in Resources */ = {isa = PBXBuildFile; fileRef = E36FF00227F36FBD004BE21A /* preferences.sb */; };
 		E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3816B3B27E24639005EAFC0 /* WebMockContentFilterManager.cpp */; };
@@ -5110,6 +5109,8 @@
 		57FE686C2604827800BF45E4 /* _WKAuthenticatorAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAuthenticatorAttachment.h; sourceTree = "<group>"; };
 		57FE688A260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementNetworkLoader.h; sourceTree = "<group>"; };
 		57FE688B260ABB3D00BF45E4 /* PrivateClickMeasurementNetworkLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementNetworkLoader.cpp; sourceTree = "<group>"; };
+		5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcessPreferences.cpp; sourceTree = "<group>"; };
+		5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessPreferences.h; sourceTree = "<group>"; };
 		5C00993B2417FB7E00D53C25 /* ResourceLoadStatisticsParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsParameters.h; sourceTree = "<group>"; };
 		5C05FDF227AB4FA5003A2487 /* PrivateRelayed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateRelayed.h; sourceTree = "<group>"; };
 		5C0A10C1235241A30053E2CA /* NetworkSchemeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSchemeRegistry.cpp; sourceTree = "<group>"; };
@@ -5890,7 +5891,6 @@
 		9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationProxy.h; sourceTree = "<group>"; };
 		9B5BEC29240101580070C6EF /* RemoteAudioDestinationProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioDestinationProxy.cpp; sourceTree = "<group>"; };
 		9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackID.h; sourceTree = "<group>"; };
-		9BD8AB4925820E52005386F8 /* FontReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontReference.h; sourceTree = "<group>"; };
 		9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSIPCBinding.cpp; sourceTree = "<group>"; };
 		9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeolocationIdentifier.h; sourceTree = "<group>"; };
 		9F54F88E16488E87007DF81A /* AuxiliaryProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessMac.mm; sourceTree = "<group>"; };
@@ -6311,7 +6311,6 @@
 		BCC43AB8127B95DC00317F16 /* PlatformPopupMenuData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformPopupMenuData.cpp; sourceTree = "<group>"; };
 		BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformPopupMenuData.h; sourceTree = "<group>"; };
 		BCC43AC6127B99DE00317F16 /* WebPopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPopupMenuMac.mm; sourceTree = "<group>"; };
-		BCC56F771159957D001CCAF9 /* MachPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachPort.h; sourceTree = "<group>"; };
 		BCC8B373125FB69000DE46A4 /* WKGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGeometry.h; sourceTree = "<group>"; };
 		BCC938E01180DE440085E5FE /* WKContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextPrivate.h; sourceTree = "<group>"; };
 		BCCF6ABA12C91EF9008F9C35 /* WebImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebImage.cpp; sourceTree = "<group>"; };
@@ -7019,6 +7018,7 @@
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebKit.WebContent.sb; path = DerivedSources/WebKit/com.apple.WebKit.WebContent.sb; sourceTree = BUILT_PRODUCTS_DIR; };
 		E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb.in; sourceTree = "<group>"; };
+		E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessProxyCocoa.mm; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34B110F27C46D09006D2F2E /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8145,6 +8145,7 @@
 				99C81D561C20DFBE005C4C82 /* AutomationClient.mm */,
 				990D28B71C6539A000986977 /* AutomationSessionClient.h */,
 				990D28B81C6539A000986977 /* AutomationSessionClient.mm */,
+				E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */,
 				49DC1DE027E5129000C1CB36 /* CSPExtensionUtilities.h */,
 				49DC1DDF27E5128F00C1CB36 /* CSPExtensionUtilities.mm */,
 				83891B6A1A68C30B0030F386 /* DiagnosticLoggingClient.h */,
@@ -8271,7 +8272,6 @@
 				BC032D9F10F437D10058C15A /* Encoder.cpp */,
 				BC032DA010F437D10058C15A /* Encoder.h */,
 				7246963A275B7E6700A9156A /* FilterReference.h */,
-				9BD8AB4925820E52005386F8 /* FontReference.h */,
 				4151E5C31FBB90A900E47E2D /* FormDataReference.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				A31F60A225CC7DB800AF14F4 /* IPCSemaphore.h */,
@@ -9046,6 +9046,8 @@
 				2D9FB2022375209D0049F936 /* GPUProcess.messages.in */,
 				2D9FB2142375209D0049F936 /* GPUProcessCreationParameters.cpp */,
 				2D9FB2032375209D0049F936 /* GPUProcessCreationParameters.h */,
+				5ABF2BEC2862353F000DCE74 /* GPUProcessPreferences.cpp */,
+				5ABF2BED2862353F000DCE74 /* GPUProcessPreferences.h */,
 				4150A5A023E06C910051264A /* GPUProcessSessionParameters.h */,
 			);
 			path = GPUProcess;
@@ -12431,7 +12433,6 @@
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
 				1A6D86BF1DF75265007745E8 /* MachMessage.cpp */,
 				1A6D86C01DF75265007745E8 /* MachMessage.h */,
-				BCC56F771159957D001CCAF9 /* MachPort.h */,
 				93468E6C2714AF88009983E3 /* SharedFileHandleCocoa.cpp */,
 			);
 			path = cocoa;
@@ -14119,7 +14120,6 @@
 				DD4DB789280F9471001700D4 /* FindNodes.js in Headers */,
 				C59C4A5918B81174007BDCB6 /* FocusedElementInformation.h in Headers */,
 				BCE81D8D1319F7EF00241910 /* FontInfo.h in Headers */,
-				9BD8AB4A25820E53005386F8 /* FontReference.h in Headers */,
 				DD4DB78A280F9471001700D4 /* FormElementClear.js in Headers */,
 				DD4DB78B280F9471001700D4 /* FormSubmit.js in Headers */,
 				1A14F8E21D74C834006CBEC6 /* FrameInfoData.h in Headers */,
@@ -14211,7 +14211,6 @@
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,
-				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
 				462CD80C28204DFA00F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h in Headers */,
 				A15799BE2584433200528236 /* MediaFormatReader.h in Headers */,
@@ -15467,6 +15466,7 @@
 				5C1579D227165B2F00ED5280 /* Sources */,
 				5C1579D427165B2F00ED5280 /* Frameworks */,
 				5C1579D527165B2F00ED5280 /* Process webpushd Entitlements */,
+				6508960F28482C6A00A91844 /* Copy launchd plist and create symlink */,
 			);
 			buildRules = (
 			);
@@ -15487,6 +15487,7 @@
 				5CAF7A9D26F93A750003F19E /* Sources */,
 				5CAF7A9F26F93A750003F19E /* Frameworks */,
 				5C1578E6270E129400ED5280 /* Process adattributiond Entitlements */,
+				6508961028482D0900A91844 /* Copy launchd plist and create symlink */,
 			);
 			buildRules = (
 			);
@@ -15550,7 +15551,6 @@
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 				512B81CA273CAFBE00D87D49 /* Create symlinks to Daemons for engineering builds */,
 				0FB94836239F31B700926A8F /* Copy Testing Headers */,
-				DFD03A29270D5F57001A996E /* Copy Daemon Plists */,
 				6577FFB92769C1460011AEC8 /* Create Symlink to Alt Root Path */,
 				6517571927C9B43A00D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
@@ -15994,7 +15994,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    exit\nfi\n\n# If we move the Mac Daemons path to WebKit.framework/Versions/A/Daemons,\n# in addition to a Mac-specific plists, the Mac paths below have to be updated as well.\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nelse\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nfi\n\nmkdir -p \"${DAEMONS_PATH}\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/webpushd\" \"${DAEMONS_PATH}/webpushd\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/adattributiond\" \"${DAEMONS_PATH}/adattributiond\"\n";
+			shellScript = "#  &&&& This script probably needs to change or be removed.\n\nif [[ \"${DEPLOYMENT_LOCATION}\" == \"YES\" ]]; then\n    exit\nfi\n\n# If we move the Mac Daemons path to WebKit.framework/Versions/A/Daemons,\n# in addition to a Mac-specific plists, the Mac paths below have to be updated as well.\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nelse\n    DAEMONS_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Daemons\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS=\"../..\"\nfi\n\nmkdir -p \"${DAEMONS_PATH}\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/webpushd\" \"${DAEMONS_PATH}/webpushd\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_DAEMONS}/adattributiond\" \"${DAEMONS_PATH}/adattributiond\"\n";
 		};
 		5325BDD221DFF47C00A0DEE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -16116,6 +16116,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
+		};
+		6508960F28482C6A00A91844 /* Copy launchd plist and create symlink */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/copy-launchd-plist-and-create-symlink.sh",
+				"$(SRCROOT)/$(LAUNCHD_PLIST_INPUT_FILE)",
+			);
+			name = "Copy launchd plist and create symlink";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DSTROOT)$(LAUNCHD_PLIST_INSTALL_PATH)/$(LAUNCHD_PLIST_FILE_NAME)",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/copy-launchd-plist-and-create-symlink.sh\n";
+		};
+		6508961028482D0900A91844 /* Copy launchd plist and create symlink */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/copy-launchd-plist-and-create-symlink.sh",
+				"$(SRCROOT)/$(LAUNCHD_PLIST_INPUT_FILE)",
+			);
+			name = "Copy launchd plist and create symlink";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DSTROOT)$(LAUNCHD_PLIST_INSTALL_PATH)/$(LAUNCHD_PLIST_FILE_NAME)",
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/copy-launchd-plist-and-create-symlink.sh\n";
 		};
 		6517571527C9AB4C00D9FE40 /* Copy Frameworks to Secondary Path */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -16523,27 +16565,6 @@
 			shellPath = /bin/sh;
 			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration ${CONFIGURATION} installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyInstallHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" SDK_VARIANT=\"${SDK_VARIANT}\" ARCHS=\"${ARCHS}\" INSTALLHDRS_SCRIPT_PHASE=NO WK_OVERRIDE_FRAMEWORKS_DIR=/ -UseNewBuildSystem=YES\n\n";
 		};
-		DFD03A29270D5F57001A996E /* Copy Daemon Plists */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist",
-				"$(SRCROOT)/webpushd/com.apple.webkit.webpushd.ios.plist",
-				"$(SRCROOT)/webpushd/com.apple.webkit.webpushd.mac.plist",
-			);
-			name = "Copy Daemon Plists";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"${WK_PLATFORM_NAME}\" == iphoneos ]]; then\n    ADATTRIBUTIOND_PLIST_SOURCE=\"${SRCROOT}/Shared/EntryPointUtilities/Cocoa/Daemon/com.apple.webkit.adattributiond.plist\"\n    ADATTRIBUTIOND_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.adattributiond.plist\"\n    echo \"copying adattributiond plist\"\n    mkdir -p \"$(dirname \"${ADATTRIBUTIOND_PLIST_DESTINATION}\")\"\n    echo plutil -convert binary1 -o \"${ADATTRIBUTIOND_PLIST_DESTINATION}\" \"${ADATTRIBUTIOND_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${ADATTRIBUTIOND_PLIST_DESTINATION}\" \"${ADATTRIBUTIOND_PLIST_SOURCE}\"\nelse\n    echo \"not copying adattributiond plist\"\nfi\n\nif [[ \"${WK_SKIP_INSTALL_WEBPUSHD}\" != \"YES\" && \n        ( \"${WK_PLATFORM_NAME}\" == iphoneos || \"${WK_PLATFORM_NAME}\" == macosx ) ]]; then\n    if [[ \"${WK_PLATFORM_NAME}\" == iphoneos ]]; then\n        WEBPUSHD_PLIST_SOURCE=\"${SRCROOT}/webpushd/com.apple.webkit.webpushd.ios.plist\"\n        WEBPUSHD_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchDaemons/com.apple.webkit.webpushd.plist\"\n    else\n        WEBPUSHD_PLIST_SOURCE=\"${SRCROOT}/webpushd/com.apple.webkit.webpushd.mac.plist\"\n        WEBPUSHD_PLIST_DESTINATION=\"${DSTROOT}/System/Library/LaunchAgents/com.apple.webkit.webpushd.plist\"\n    fi\n\n    echo \"copying webpushd plist\"\n    mkdir -p \"$(dirname \"${WEBPUSHD_PLIST_DESTINATION}\")\"\n    echo plutil -convert binary1 -o \"${WEBPUSHD_PLIST_DESTINATION}\" \"${WEBPUSHD_PLIST_SOURCE}\"\n    plutil -convert binary1 -o \"${WEBPUSHD_PLIST_DESTINATION}\" \"${WEBPUSHD_PLIST_SOURCE}\"\nelse\n    echo \"not copying webpushd plist\"\nfi\n";
-		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -16689,6 +16710,7 @@
 				99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */,
 				9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */,
 				51FAEC3B1B0657680009C4E7 /* AuxiliaryProcessMessageReceiver.cpp in Sources */,
+				E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */,
 				517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */,
 				BCE579A72634836700F5C5E9 /* CGDisplayListImageBufferBackend.cpp in Sources */,
 				49DC1DE127E5129100C1CB36 /* CSPExtensionUtilities.mm in Sources */,

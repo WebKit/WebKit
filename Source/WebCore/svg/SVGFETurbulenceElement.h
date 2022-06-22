@@ -118,8 +118,8 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
-    RefPtr<FilterEffect> filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
+    bool setFilterEffectAttribute(FilterEffect&, const QualifiedName& attrName) override;
+    RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedNumber> m_baseFrequencyX { SVGAnimatedNumber::create(this) };

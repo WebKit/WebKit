@@ -31,6 +31,7 @@
 #if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
 #include <mach/mach_init.h>
 #include <mach/mach_traps.h>
+#include <wtf/MachSendRight.h>
 #endif
 
 #if OS(WINDOWS)
@@ -48,7 +49,11 @@ namespace IPC {
 class Decoder;
 class Encoder;
 
+#if OS(DARWIN)
+class Attachment : public MachSendRight {
+#else
 class Attachment {
+#endif
 public:
     Attachment();
 
@@ -76,7 +81,8 @@ public:
     using CustomWriter = std::variant<CustomWriterFunc, SocketDescriptor>;
     Attachment(CustomWriter&&);
 #elif OS(DARWIN)
-    Attachment(mach_port_name_t, mach_msg_type_name_t disposition);
+    Attachment(MachSendRight&&);
+    Attachment(const MachSendRight&);
 #elif OS(WINDOWS)
     Attachment(HANDLE handle)
         : m_handle(handle)
@@ -93,12 +99,6 @@ public:
     UnixFileDescriptor release() { return std::exchange(m_fd, UnixFileDescriptor { }); }
 
     const CustomWriter& customWriter() const { return m_customWriter; }
-#elif OS(DARWIN)
-    void release();
-
-    // MachPortType
-    mach_port_name_t port() const { return m_port; }
-    mach_msg_type_name_t disposition() const { return m_disposition; }
 #elif OS(WINDOWS)
     HANDLE handle() const { return m_handle; }
 #endif
@@ -113,9 +113,6 @@ private:
     UnixFileDescriptor m_fd;
     size_t m_size;
     CustomWriter m_customWriter;
-#elif OS(DARWIN)
-    mach_port_name_t m_port { 0 };
-    mach_msg_type_name_t m_disposition { 0 };
 #elif OS(WINDOWS)
     HANDLE m_handle { INVALID_HANDLE_VALUE };
 #endif

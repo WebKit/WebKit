@@ -105,6 +105,8 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
                 weakThis->preloadResponseIsReady();
         });
     }
+
+    loader.setWorkerStart(MonotonicTime::now());
 }
 
 ServiceWorkerFetchTask::~ServiceWorkerFetchTask()

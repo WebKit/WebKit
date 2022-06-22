@@ -44,6 +44,7 @@
 #include <WebCore/SecurityPolicyViolationEvent.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/Timer.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -156,6 +157,8 @@ public:
     void setResultingClientIdentifier(String&& identifier) { m_resultingClientIdentifier = WTFMove(identifier); }
     const String& resultingClientIdentifier() const { return m_resultingClientIdentifier; }
     void setServiceWorkerRegistration(WebCore::SWServerRegistration& serviceWorkerRegistration) { m_serviceWorkerRegistration = serviceWorkerRegistration; }
+    void setWorkerStart(MonotonicTime);
+    MonotonicTime workerStart() const { return m_workerStart; }
 #endif
 
     std::optional<WebCore::ResourceError> doCrossOriginOpenerHandlingOfResponse(const WebCore::ResourceResponse&);
@@ -291,6 +294,7 @@ private:
     std::unique_ptr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;
     String m_resultingClientIdentifier;
     WeakPtr<WebCore::SWServerRegistration> m_serviceWorkerRegistration;
+    MonotonicTime m_workerStart;
 #endif
     NetworkResourceLoadIdentifier m_resourceLoadID;
     WebCore::ResourceResponse m_redirectResponse;

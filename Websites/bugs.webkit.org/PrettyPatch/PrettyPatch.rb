@@ -155,7 +155,7 @@ private
     end
 
     def self.linkifyFilename(filename)
-        "<a href='#{OPENSOURCE_GITHUB_URL}{filename}'>#{filename}</a>"
+        "<a href='#{OPENSOURCE_GITHUB_URL}#{filename}'>#{filename}</a>"
     end
 
 

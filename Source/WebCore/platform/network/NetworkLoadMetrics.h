@@ -88,7 +88,8 @@ public:
     MonotonicTime requestStart;
     MonotonicTime responseStart;
     MonotonicTime responseEnd;
-    
+    MonotonicTime workerStart;
+
     // ALPN Protocol ID: https://w3c.github.io/resource-timing/#bib-RFC7301
     String protocol;
 
@@ -159,6 +160,7 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << requestStart;
     encoder << responseStart;
     encoder << responseEnd;
+    encoder << workerStart;
 
     encoder << protocol;
 
@@ -201,6 +203,7 @@ std::optional<NetworkLoadMetrics> NetworkLoadMetrics::decode(Decoder& decoder)
         && decoder.decode(metrics.requestStart)
         && decoder.decode(metrics.responseStart)
         && decoder.decode(metrics.responseEnd)
+        && decoder.decode(metrics.workerStart)
         && decoder.decode(metrics.protocol)
         && decoder.decode(metrics.redirectCount)))
         return std::nullopt;

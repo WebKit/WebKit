@@ -88,19 +88,22 @@ void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const Ato
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
-bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
 {
-    FETurbulence* turbulence = static_cast<FETurbulence*>(effect);
+    auto& feTurbulence = downcast<FETurbulence>(effect);
     if (attrName == SVGNames::typeAttr)
-        return turbulence->setType(type());
+        return feTurbulence.setType(type());
     if (attrName == SVGNames::stitchTilesAttr)
-        return turbulence->setStitchTiles(stitchTiles());
-    if (attrName == SVGNames::baseFrequencyAttr)
-        return (turbulence->setBaseFrequencyX(baseFrequencyX()) || turbulence->setBaseFrequencyY(baseFrequencyY()));
+        return feTurbulence.setStitchTiles(stitchTiles());
+    if (attrName == SVGNames::baseFrequencyAttr) {
+        bool baseFrequencyXChanged = feTurbulence.setBaseFrequencyX(baseFrequencyX());
+        bool baseFrequencyYChanged = feTurbulence.setBaseFrequencyY(baseFrequencyY());
+        return baseFrequencyXChanged || baseFrequencyYChanged;
+    }
     if (attrName == SVGNames::seedAttr)
-        return turbulence->setSeed(seed());
+        return feTurbulence.setSeed(seed());
     if (attrName == SVGNames::numOctavesAttr)
-        return turbulence->setNumOctaves(numOctaves());
+        return feTurbulence.setNumOctaves(numOctaves());
 
     ASSERT_NOT_REACHED();
     return false;
@@ -117,7 +120,7 @@ void SVGFETurbulenceElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFETurbulenceElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFETurbulenceElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     if (baseFrequencyX() < 0 || baseFrequencyY() < 0)
         return nullptr;

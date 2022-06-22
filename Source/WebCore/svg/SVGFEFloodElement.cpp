@@ -43,23 +43,23 @@ Ref<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGFEFloodElement(tagName, document));
 }
 
-bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
 {
     RenderObject* renderer = this->renderer();
     ASSERT(renderer);
     const RenderStyle& style = renderer->style();
-    FEFlood* flood = static_cast<FEFlood*>(effect);
 
+    auto& feFlood = downcast<FEFlood>(effect);
     if (attrName == SVGNames::flood_colorAttr)
-        return flood->setFloodColor(style.svgStyle().floodColor());
+        return feFlood.setFloodColor(style.svgStyle().floodColor());
     if (attrName == SVGNames::flood_opacityAttr)
-        return flood->setFloodOpacity(style.svgStyle().floodOpacity());
+        return feFlood.setFloodOpacity(style.svgStyle().floodOpacity());
 
     ASSERT_NOT_REACHED();
     return false;
 }
 
-RefPtr<FilterEffect> SVGFEFloodElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEFloodElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     RenderObject* renderer = this->renderer();
     if (!renderer)

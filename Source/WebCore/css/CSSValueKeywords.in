@@ -345,6 +345,7 @@ justify
 -webkit-center
 match-parent
 -webkit-match-parent
+-internal-th-center
 //start
 //end
 //

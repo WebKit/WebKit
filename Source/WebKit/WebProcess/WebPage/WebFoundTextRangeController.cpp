@@ -42,6 +42,7 @@
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/TextIterator.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -129,14 +130,7 @@ void WebFoundTextRangeController::decorateTextRangeWithStyle(const WebFoundTextR
         simpleRange->start.document().markers().addMarker(*simpleRange, WebCore::DocumentMarker::TextMatch);
     else if (style == FindDecorationStyle::Highlighted) {
         m_highlightedRange = range;
-
-        constexpr int indicatorMargin = 1;
-
-        OptionSet options { WebCore::TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, WebCore::TextIndicatorOption::DoNotClipToVisibleRect };
-        if (WebCore::ImageOverlay::isInsideOverlay(*simpleRange))
-            options.add({ WebCore::TextIndicatorOption::PaintAllContent, WebCore::TextIndicatorOption::PaintBackgrounds });
-
-        m_textIndicator = WebCore::TextIndicator::createWithRange(*simpleRange, options, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize(indicatorMargin, indicatorMargin));
+        setTextIndicatorWithRange(*simpleRange);
     }
 
     if (m_findPageOverlay)
@@ -203,6 +197,25 @@ void WebFoundTextRangeController::requestRectForFoundTextRange(const WebFoundTex
 
     auto* frameView = simpleRange->startContainer().document().frame()->view();
     completionHandler(frameView->contentsToRootView(unionRect(WebCore::RenderObject::absoluteTextRects(*simpleRange))));
+}
+
+void WebFoundTextRangeController::redraw()
+{
+    if (!m_findPageOverlay)
+        return;
+
+    auto setNeedsDisplay = makeScopeExit([findPageOverlay = RefPtr { m_findPageOverlay }] {
+        findPageOverlay->setNeedsDisplay();
+    });
+
+    if (!m_highlightedRange.length)
+        return;
+
+    auto simpleRange = simpleRangeFromFoundTextRange(m_highlightedRange);
+    if (!simpleRange)
+        return;
+
+    setTextIndicatorWithRange(*simpleRange);
 }
 
 void WebFoundTextRangeController::willMoveToPage(WebCore::PageOverlay&, WebCore::Page* page)
@@ -282,6 +295,17 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
 
         graphicsContext.drawImage(*indicatorImage, textBoundingRectInRootViewCoordinates);
     }
+}
+
+void WebFoundTextRangeController::setTextIndicatorWithRange(const WebCore::SimpleRange& range)
+{
+    constexpr int indicatorMargin = 1;
+
+    OptionSet options { WebCore::TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, WebCore::TextIndicatorOption::DoNotClipToVisibleRect };
+    if (WebCore::ImageOverlay::isInsideOverlay(range))
+        options.add({ WebCore::TextIndicatorOption::PaintAllContent, WebCore::TextIndicatorOption::PaintBackgrounds });
+
+    m_textIndicator = WebCore::TextIndicator::createWithRange(range, options, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize(indicatorMargin, indicatorMargin));
 }
 
 Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRect(WebCore::IntRect clipRect)

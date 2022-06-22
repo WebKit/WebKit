@@ -39,11 +39,6 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
     // Public
 
-    get supportsToggleCSSClass()
-    {
-        return false;
-    }
-
     refresh(significantChange)
     {
         super.refresh(significantChange);

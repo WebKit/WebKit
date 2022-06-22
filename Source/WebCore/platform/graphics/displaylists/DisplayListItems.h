@@ -449,8 +449,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
 
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-
 private:
     RenderingResourceIdentifier m_imageBufferIdentifier;
     FloatRect m_destinationRect;
@@ -565,7 +563,6 @@ public:
     std::optional<RenderingResourceIdentifier> sourceImageIdentifier() const { return m_sourceImageIdentifier; }
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
 
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer* sourceImage, FilterResults&);
 
     std::optional<FloatRect> globalBounds() const { return std::nullopt; }
@@ -684,8 +681,6 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
 
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-
     std::optional<FloatRect> globalBounds() const { return std::nullopt; }
     std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
 
@@ -717,7 +712,6 @@ public:
     // FIXME: We might want to validate ImagePaintingOptions.
     bool isValid() const { return m_imageIdentifier.isValid(); }
 
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     WEBCORE_EXPORT void apply(GraphicsContext&, NativeImage&) const;
 
     std::optional<FloatRect> globalBounds() const { return std::nullopt; }
@@ -803,7 +797,6 @@ public:
     // FIXME: We might want to validate ImagePaintingOptions.
     bool isValid() const { return m_imageIdentifier.isValid(); }
 
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     WEBCORE_EXPORT void apply(GraphicsContext&, SourceImage&) const;
 
     std::optional<FloatRect> globalBounds() const { return std::nullopt; }
@@ -1712,8 +1705,6 @@ public:
     MediaPlayerIdentifier identifier() const { return m_identifier; }
 
     bool isValid() const { return m_identifier.isValid(); }
-
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
     std::optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
     std::optional<FloatRect> globalBounds() const { return { m_destination }; }

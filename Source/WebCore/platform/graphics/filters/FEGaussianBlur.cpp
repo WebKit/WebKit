@@ -45,19 +45,28 @@ FEGaussianBlur::FEGaussianBlur(float x, float y, EdgeModeType edgeMode)
 {
 }
 
-void FEGaussianBlur::setStdDeviationX(float x)
+bool FEGaussianBlur::setStdDeviationX(float stdX)
 {
-    m_stdX = x;
+    if (m_stdX == stdX)
+        return false;
+    m_stdX = stdX;
+    return true;
 }
 
-void FEGaussianBlur::setStdDeviationY(float y)
+bool FEGaussianBlur::setStdDeviationY(float stdY)
 {
-    m_stdY = y;
+    if (m_stdY == stdY)
+        return false;
+    m_stdY = stdY;
+    return true;
 }
 
-void FEGaussianBlur::setEdgeMode(EdgeModeType edgeMode)
+bool FEGaussianBlur::setEdgeMode(EdgeModeType edgeMode)
 {
+    if (m_edgeMode == edgeMode)
+        return false;
     m_edgeMode = edgeMode;
+    return true;
 }
 
 static inline float gaussianKernelFactor()

@@ -12,7 +12,6 @@
 		CD1DAF971D709E3600017CF0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF961D709E3600017CF0 /* main.m */; };
 		CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAFA31D709E3600017CF0 /* LaunchScreen.storyboard */; };
 		CD1DAFB01D709E3600017CF0 /* MobileMiniBrowserUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */; };
-		CD1DAFC21D70E12D00017CF0 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
 		CD498B421D76348000681FA7 /* MobileMiniBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD498B3B1D76348000681FA7 /* MobileMiniBrowser.framework */; };
 		CD498B431D76348000681FA7 /* MobileMiniBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD498B3B1D76348000681FA7 /* MobileMiniBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CD498B4A1D763D4800681FA7 /* MobileMiniBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = CD498B481D7634C700681FA7 /* MobileMiniBrowser.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -27,6 +26,7 @@
 		CDA985191D76483400EBC399 /* test.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = CDA985151D76477900EBC399 /* test.mp4 */; };
 		CDA9851A1D76483400EBC399 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = CDA985131D76474100EBC399 /* index.html */; };
 		CDA9851B1D76483400EBC399 /* looping.html in Resources */ = {isa = PBXBuildFile; fileRef = CDA985171D7647CD00EBC399 /* looping.html */; };
+		DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1DAFC11D70E12D00017CF0 /* WebKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,7 +97,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD498B421D76348000681FA7 /* MobileMiniBrowser.framework in Frameworks */,
-				CD1DAFC21D70E12D00017CF0 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +111,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD403C5828500FE300D899FC /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

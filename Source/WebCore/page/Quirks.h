@@ -158,7 +158,11 @@ public:
 #endif
 
     bool shouldDisableWebSharePolicy() const;
-
+    
+#if PLATFORM(IOS)
+    WEBCORE_EXPORT bool allowLayeredFullscreenVideos() const;
+#endif
+    
 private:
     bool needsQuirks() const;
 
@@ -205,6 +209,9 @@ private:
     mutable std::optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
     mutable std::optional<bool> m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
     mutable std::optional<bool> m_shouldDisableWebSharePolicy;
+#if PLATFORM(IOS)
+    mutable std::optional<bool> m_allowLayeredFullscreenVideos;
+#endif
 };
 
 } // namespace WebCore

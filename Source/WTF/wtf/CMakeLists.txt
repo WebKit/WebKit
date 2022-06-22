@@ -218,6 +218,7 @@ set(WTF_PUBLIC_HEADERS
     RandomNumberSeed.h
     Range.h
     RangeSet.h
+    RawHex.h
     RawPointer.h
     RawPtrTraits.h
     RawValueTraits.h

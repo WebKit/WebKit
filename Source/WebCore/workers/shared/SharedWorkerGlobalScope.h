@@ -44,7 +44,6 @@ public:
     SharedWorkerThread& thread();
 
     void postConnectEvent(TransferredMessagePort&&, const String& sourceOrigin);
-    void close();
 
 private:
     SharedWorkerGlobalScope(const String& name, const WorkerParameters&, Ref<SecurityOrigin>&&, SharedWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);

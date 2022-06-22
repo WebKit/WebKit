@@ -58,7 +58,7 @@ Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnectio
 #if USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::Identifier connectionHandle { connectionIdentifier.release().release() };
 #elif OS(DARWIN)
-    IPC::Connection::Identifier connectionHandle { connectionIdentifier.port() };
+    IPC::Connection::Identifier connectionHandle { connectionIdentifier.leakSendRight() };
 #elif OS(WINDOWS)
     IPC::Connection::Identifier connectionHandle { connectionIdentifier.handle() };
 #else

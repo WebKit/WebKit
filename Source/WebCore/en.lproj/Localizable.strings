@@ -130,8 +130,8 @@
 /* Label for the add money with Apple Pay button. */
 "Add money with Apple Pay" = "Add money with Apple Pay";
 
-/* Title for Add to Photos action button */
-"Add to Photos" = "Add to Photos";
+/* Title for Save to Photos action button */
+"Save to Photos" = "Save to Photos";
 
 /* Add to Quick Note context menu item. */
 "Add to Quick Note" = "Add to Quick Note";

@@ -25,10 +25,10 @@
 
 // @internal
 
-function forEachWrapper(mapLikeOrSetLike, callback)
+function forEachWrapper(backingMapOrSet, callback)
 {
     "use strict";
-    mapLikeOrSetLike.forEach((value, key, backingMapOrSet) => {
+    backingMapOrSet.@forEach((value, key) => {
         callback(value, key, this);
     });
 }

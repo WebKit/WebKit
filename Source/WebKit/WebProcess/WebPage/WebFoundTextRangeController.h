@@ -66,12 +66,16 @@ public:
 
     void requestRectForFoundTextRange(const WebFoundTextRange&, CompletionHandler<void(WebCore::FloatRect)>&&);
 
+    void redraw();
+
 private:
     // PageOverlay::Client.
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     void didMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
+
+    void setTextIndicatorWithRange(const WebCore::SimpleRange&);
 
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
 

@@ -224,12 +224,14 @@ AVCaptureDeviceManager::~AVCaptureDeviceManager()
     [m_objcObserver disconnect];
     for (AVCaptureDevice *device in m_avCaptureDevices.get())
         [device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
+    [PAL::getAVCaptureDeviceClass() removeObserver:m_objcObserver.get() forKeyPath:@"systemPreferredCamera"];
 }
 
 void AVCaptureDeviceManager::registerForDeviceNotifications()
 {
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasConnectedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnectedDidChange:) name:AVCaptureDeviceWasDisconnectedNotification object:nil];
+    [PAL::getAVCaptureDeviceClass() addObserver:m_objcObserver.get() forKeyPath:@"systemPreferredCamera" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:nil];
 }
 
 } // namespace WebCore
@@ -272,8 +274,13 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
     if (!m_callback)
         return;
 
-    if ([keyPath isEqualToString:@"suspended"])
-        m_callback->refreshCaptureDevices();
+    if (![keyPath isEqualToString:@"suspended"] && ![keyPath isEqualToString:@"systemPreferredCamera"])
+        return;
+
+    RunLoop::main().dispatch([self, protectedSelf = retainPtr(self)] {
+        if (m_callback)
+            m_callback->refreshCaptureDevices();
+    });
 }
 
 @end

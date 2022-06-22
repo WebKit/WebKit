@@ -117,6 +117,8 @@ void ProcessStateMonitor::suspendTimerFired()
 
 void ProcessStateMonitor::checkRemainingRunTime()
 {
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+    // runTime is meaningful only on device.
     double remainingRunTime = [[[RBSProcessHandle currentProcess] activeLimitations] runTime];
     if (remainingRunTime == RBSProcessTimeLimitationNone)
         return processDidBecomeRunning();
@@ -125,6 +127,7 @@ void ProcessStateMonitor::checkRemainingRunTime()
         return processWillBeSuspendedImmediately();
 
     processWillBeSuspended(Seconds(remainingRunTime - maxPrepareForSuspensionDelayInSecond));
+#endif
 }
 
 } // namespace WebKit

@@ -61,7 +61,7 @@ class Squash(Command):
         parser.add_argument(
             '--base-commit',
             dest='base_commit',
-            help='git hash, svn revision or identifer for the base commit that you want to squash to (merged commit will not include this commit)',
+            help='git hash, svn revision or identifier for the base commit that you want to squash to (merged commit will not include this commit)',
             default=None,
         )
 

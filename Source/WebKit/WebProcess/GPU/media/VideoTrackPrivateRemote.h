@@ -42,9 +42,9 @@ class VideoTrackPrivateRemote
     : public WebCore::VideoTrackPrivate {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateRemote)
 public:
-    static Ref<VideoTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, VideoTrackPrivateRemoteConfiguration&& configuration)
+    static Ref<VideoTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier identifier, VideoTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new VideoTrackPrivateRemote(gpuProcessConnection, playerIdentifier, idendifier, WTFMove(configuration)));
+        return adoptRef(*new VideoTrackPrivateRemote(gpuProcessConnection, playerIdentifier, identifier, WTFMove(configuration)));
     }
 
     void updateConfiguration(VideoTrackPrivateRemoteConfiguration&&);
@@ -70,7 +70,7 @@ private:
     AtomString m_language;
     int m_trackIndex { -1 };
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
-    TrackPrivateRemoteIdentifier m_idendifier;
+    TrackPrivateRemoteIdentifier m_identifier;
 };
 
 } // namespace WebKit

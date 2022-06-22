@@ -23,9 +23,11 @@ function test()
                 if (expectedCompletionCount >= 0)
                     InspectorTest.expectEqual(completionResults.completions.length, expectedCompletionCount, `Expected exactly ${expectedCompletionCount} completion results.`);
 
+                let completionStrings = completionResults.completions.map((completion) => WI.CSSCompletions.getCompletionText(completion));
+
                 // Because expected completions could be added at any time, just make sure the list contains our expected completions, instead of enforcing an exact match between expectations and reality.
                 let expectedCompletionsPresent = expectedCompletions.every((expectedCompletion) => {
-                    if (!completionResults.completions.includes(expectedCompletion)) {
+                    if (!completionStrings.includes(expectedCompletion)) {
                         InspectorTest.fail(`Expected completion "${expectedCompletion}" in completions.`);
                         return false;
                     }
@@ -92,9 +94,11 @@ function test()
                 if (expectedCompletionCount >= 0)
                     InspectorTest.expectEqual(completionResults.completions.length, expectedCompletionCount, `Expected exactly ${expectedCompletionCount} completion results.`);
 
+                let completionStrings = completionResults.completions.map((completion) => WI.CSSCompletions.getCompletionText(completion));
+
                 // Because expected completions could be added at any time, just make sure the list contains our expected completions, instead of enforcing an exact match between expectations and reality.
                 let expectedCompletionsPresent = expectedCompletions.every((expectedCompletion) => {
-                    if (!completionResults.completions.includes(expectedCompletion)) {
+                    if (!completionStrings.includes(expectedCompletion)) {
                         InspectorTest.fail(`Expected completion "${expectedCompletion}" in completions.`);
                         return false;
                     }

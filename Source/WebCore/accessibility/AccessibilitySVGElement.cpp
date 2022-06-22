@@ -284,7 +284,7 @@ AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()
 
     Element* svgElement = element();
 
-    if (m_renderer->isSVGShapeOrLegacySVGShape() || m_renderer->isSVGPath() || m_renderer->isSVGImage() || is<SVGUseElement>(svgElement))
+    if (m_renderer->isSVGShapeOrLegacySVGShape() || m_renderer->isSVGPathOrLegacySVGPath() || m_renderer->isSVGImage() || is<SVGUseElement>(svgElement))
         return AccessibilityRole::Image;
     if (m_renderer->isSVGForeignObject() || is<SVGGElement>(svgElement))
         return AccessibilityRole::Group;

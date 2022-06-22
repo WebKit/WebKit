@@ -210,13 +210,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 return;
 
             callOnMainThread([parent = _parent, layer = WTFMove(layer), error = WTFMove(error)] {
-                if (parent)
-                    parent->layerDidReceiveError(layer.get(), error.get());
+                if (auto strongParent = RefPtr { parent.get() })
+                    strongParent->layerDidReceiveError(layer.get(), error.get());
             });
         } else if ([keyPath isEqualToString:@"outputObscuredDueToInsufficientExternalProtection"]) {
             callOnMainThread([parent = _parent, obscured = [[change valueForKey:NSKeyValueChangeNewKey] boolValue]] {
-                if (parent)
-                    parent->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+                if (auto strongParent = RefPtr { parent.get() })
+                    strongParent->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
             });
         } else
             ASSERT_NOT_REACHED();
@@ -233,8 +233,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         ASSERT([keyPath isEqualToString:@"error"]);
 
         callOnMainThread([parent = _parent, renderer = WTFMove(renderer), error = WTFMove(error)] {
-            if (parent)
-                parent->rendererDidReceiveError(renderer.get(), error.get());
+            if (auto strongParent = RefPtr { parent.get() })
+                strongParent->rendererDidReceiveError(renderer.get(), error.get());
         });
     } else
         ASSERT_NOT_REACHED();
@@ -247,8 +247,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     callOnMainThread([parent = _parent, layer = WTFMove(layer), error = retainPtr([[note userInfo] valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey])] {
-        if (parent)
-            parent->layerDidReceiveError(layer.get(), error.get());
+        if (auto strongParent = RefPtr { parent.get() })
+            strongParent->layerDidReceiveError(layer.get(), error.get());
     });
 }
 
@@ -259,8 +259,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     callOnMainThread([parent = _parent, renderer = WTFMove(renderer), flushTime = [[[note userInfo] valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue]] {
-        if (parent)
-            parent->rendererWasAutomaticallyFlushed(renderer.get(), flushTime);
+        if (auto strongParent = RefPtr { parent.get() })
+            strongParent->rendererWasAutomaticallyFlushed(renderer.get(), flushTime);
     });
 }
 @end

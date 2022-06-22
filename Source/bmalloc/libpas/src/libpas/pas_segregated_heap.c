@@ -844,7 +844,7 @@ pas_segregated_heap_ensure_allocator_index(
 
     pas_heap_lock_assert_held();
     
-    PAS_ASSERT(directory->object_size >= min_object_size_for_heap(heap, config));
+    PAS_ASSERT(directory->object_size >= min_object_size_for_heap(heap, config), directory->object_size, min_object_size_for_heap(heap, config));
 
     rematerialize_size_lookup_if_necessary(heap, config, cached_index);
 
@@ -853,8 +853,8 @@ pas_segregated_heap_ensure_allocator_index(
 
     parent_heap = pas_heap_for_segregated_heap(heap);
     
-    PAS_ASSERT(size <= directory->object_size);
-    PAS_ASSERT(!pas_heap_config_is_utility(config));
+    PAS_ASSERT(size <= directory->object_size, size, directory->object_size);
+    PAS_ASSERT(!pas_heap_config_is_utility(config), pas_heap_config_is_utility(config));
     
     if (verbose)
         pas_log("%p: In pas_segregated_heap_ensure_allocator_index, size = %zu\n", (void*)pthread_self(), size);
@@ -863,9 +863,9 @@ pas_segregated_heap_ensure_allocator_index(
         pas_log("index = %zu\n", index);
 
     allocator_index = directory->allocator_index;
-    PAS_ASSERT(allocator_index);
-    PAS_ASSERT((pas_allocator_index)allocator_index == allocator_index);
-    PAS_ASSERT(allocator_index < (unsigned)(pas_allocator_index)UINT_MAX);
+    PAS_ASSERT(allocator_index, allocator_index);
+    PAS_ASSERT((pas_allocator_index)allocator_index == allocator_index, allocator_index);
+    PAS_ASSERT(allocator_index < (unsigned)(pas_allocator_index)UINT_MAX, allocator_index);
     
     if (verbose)
         pas_log("allocator_index = %u\n", allocator_index);
@@ -879,7 +879,7 @@ pas_segregated_heap_ensure_allocator_index(
                    "Caching as cached index!\n");
         }
         PAS_ASSERT(!parent_heap->heap_ref->allocator_index ||
-                   parent_heap->heap_ref->allocator_index == allocator_index);
+            parent_heap->heap_ref->allocator_index == allocator_index, parent_heap->heap_ref->allocator_index, allocator_index);
         parent_heap->heap_ref->allocator_index = allocator_index;
         did_cache_allocator_index = true;
     }
@@ -891,11 +891,11 @@ pas_segregated_heap_ensure_allocator_index(
             pas_allocator_index* allocator_index_ptr;
             pas_allocator_index old_allocator_index;
             ensure_size_lookup(heap, config);
-            PAS_ASSERT(index < heap->small_index_upper_bound);
+            PAS_ASSERT(index < heap->small_index_upper_bound, index, heap->small_index_upper_bound);
             allocator_index_ptr = heap->index_to_small_allocator_index + index;
             old_allocator_index = *allocator_index_ptr;
             PAS_ASSERT(!old_allocator_index ||
-                       old_allocator_index == allocator_index);
+                old_allocator_index == allocator_index, old_allocator_index, allocator_index);
             *allocator_index_ptr = (pas_allocator_index)allocator_index;
         }
     } else {
@@ -906,10 +906,10 @@ pas_segregated_heap_ensure_allocator_index(
                 heap, index,
                 pas_segregated_heap_medium_size_directory_search_within_size_class_progression,
                 pas_lock_is_held);
-        PAS_ASSERT(medium_directory);
+        PAS_ASSERT(medium_directory, medium_directory);
         PAS_ASSERT(
             pas_compact_atomic_segregated_size_directory_ptr_load(&medium_directory->directory)
-            == directory);
+            == directory, pas_compact_atomic_segregated_size_directory_ptr_load(&medium_directory->directory), directory);
         
         medium_directory->allocator_index = (pas_allocator_index)allocator_index;
     }

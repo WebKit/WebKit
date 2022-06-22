@@ -32,13 +32,13 @@ public:
     WEBCORE_EXPORT static Ref<FEGaussianBlur> create(float x, float y, EdgeModeType);
 
     float stdDeviationX() const { return m_stdX; }
-    void setStdDeviationX(float);
+    bool setStdDeviationX(float);
 
     float stdDeviationY() const { return m_stdY; }
-    void setStdDeviationY(float);
+    bool setStdDeviationY(float);
 
     EdgeModeType edgeMode() const { return m_edgeMode; }
-    void setEdgeMode(EdgeModeType);
+    bool setEdgeMode(EdgeModeType);
 
     static IntSize calculateKernelSize(const Filter&, FloatSize stdDeviation);
     static IntSize calculateUnscaledKernelSize(FloatSize stdDeviation);

@@ -29,6 +29,10 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=
 
+// Workaround for "WebKit is not available..." error (rdar://91668054)
+DISABLE_SDK_METADATA_PARSING[sdk=appletv*] = YES;
+DISABLE_SDK_METADATA_PARSING[sdk=watch*] = YES;
+
 WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));
 WK_PRIVATE_FRAMEWORKS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);
 WK_PRIVATE_FRAMEWORKS_DIR_[sdk=iphone*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);

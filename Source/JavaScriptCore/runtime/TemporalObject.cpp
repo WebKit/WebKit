@@ -472,12 +472,8 @@ double roundNumberToIncrement(double x, double increment, RoundingMode mode)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-static Int128 abs(Int128 x)
-{
-    return x < 0 ? -x : x;
-}
-
-// Same as above, but with Int128
+// RoundNumberToIncrementAsIfPositive ( x, increment, roundingMode )
+// https://tc39.es/proposal-temporal/#sec-temporal-roundnumbertoincrementasifpositive
 Int128 roundNumberToIncrement(Int128 x, Int128 increment, RoundingMode mode)
 {
     ASSERT(increment);
@@ -497,15 +493,16 @@ Int128 roundNumberToIncrement(Int128 x, Int128 increment, RoundingMode mode)
             quotient++;
         break;
     case RoundingMode::Floor:
+    case RoundingMode::Trunc:
         if (sign)
             quotient--;
         break;
-    case RoundingMode::Trunc:
-        break;
     case RoundingMode::HalfExpand:
-        // "half up away from zero"
-        if (abs(remainder * 2) >= increment)
-            quotient += sign ? -1 : 1;
+        // "half up toward infinity"
+        if (!sign && remainder * 2 >= increment)
+            quotient++;
+        else if (sign && -remainder * 2 > increment)
+            quotient--;
         break;
     // They are not supported in Temporal right now.
     case RoundingMode::Expand:

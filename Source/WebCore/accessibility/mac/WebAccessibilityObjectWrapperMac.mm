@@ -2947,50 +2947,52 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)accessibilityPerformShowMenuAction
 {
-    if (self.axBackingObject->roleValue() == AccessibilityRole::ComboBox)
-        self.axBackingObject->setIsExpanded(true);
-    else {
-        // This needs to be performed in an iteration of the run loop that did not start from an AX call.
-        // If it's the same run loop iteration, the menu open notification won't be sent
-        [self performSelector:@selector(accessibilityShowContextMenu) withObject:nil afterDelay:0.0];
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject) {
+        [self logMissingBackingObject];
+        return;
     }
-}
 
-- (void)accessibilityShowContextMenu
-{
+    if (backingObject->roleValue() == AccessibilityRole::ComboBox) {
+        backingObject->setIsExpanded(true);
+        return;
+    }
+
     Accessibility::performFunctionOnMainThread([protectedSelf = retainPtr(self)] {
-        [protectedSelf _accessibilityShowContextMenu];
+        // This needs to be performed in an iteration of the run loop that did not start from an AX call.
+        // If it's the same run loop iteration, the menu open notification won't be sent.
+        [protectedSelf performSelector:@selector(_accessibilityShowContextMenu) withObject:nil afterDelay:0.0];
     });
 }
 
 - (void)_accessibilityShowContextMenu
 {
     ASSERT(isMainThread());
-    
-    if (!self.axBackingObject)
+
+    auto* backingObject = self.axBackingObject;
+    if (!backingObject) {
+        [self logMissingBackingObject];
         return;
-    
-    Page* page = self.axBackingObject->page();
+    }
+
+    Page* page = backingObject->page();
     if (!page)
         return;
-    
-    IntRect rect = snappedIntRect(self.axBackingObject->elementRect());
-    FrameView* frameView = self.axBackingObject->documentFrameView();
-    
+
+    IntRect rect = snappedIntRect(backingObject->elementRect());
     // On WK2, we need to account for the scroll position with regards to root view.
     // On WK1, we need to convert rect to window space to match mouse clicking.
+    auto* frameView = backingObject->documentFrameView();
     if (frameView) {
-        // Find the appropriate scroll view to use to convert the contents to the window.
-        for (auto* parent = self.axBackingObject->parentObject(); parent; parent = parent->parentObject()) {
-            if (parent->isScrollView()) {
-                if (auto* scrollView = parent->scrollView()) {
-                    if (!frameView->platformWidget())
-                        rect = scrollView->contentsToRootView(rect);
-                    else
-                        rect = scrollView->contentsToWindow(rect);
-                }
-                break;
-            }
+        // Find the appropriate scroll view to convert the coordinates to window space.
+        auto* axScrollView = Accessibility::findAncestor(*backingObject, false, [] (const auto& ancestor) {
+            return ancestor.isScrollView() && ancestor.scrollView();
+        });
+        if (axScrollView) {
+            if (!frameView->platformWidget())
+                rect = axScrollView->scrollView()->contentsToRootView(rect);
+            else
+                rect = axScrollView->scrollView()->contentsToWindow(rect);
         }
     }
 

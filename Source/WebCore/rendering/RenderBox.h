@@ -625,9 +625,9 @@ override;
         if (!m_overflow)
             return false;
 
-        LayoutRect layoutOverflowRect = m_overflow->layoutOverflowRect();
-        flipForWritingMode(layoutOverflowRect);
-        return layoutOverflowRect.x() < x() || layoutOverflowRect.maxX() > x() + logicalWidth();
+        auto layoutOverflowRect = m_overflow->layoutOverflowRect();
+        auto paddingBoxRect = flippedClientBoxRect();
+        return layoutOverflowRect.x() < paddingBoxRect.x() || layoutOverflowRect.maxX() > paddingBoxRect.maxX();
     }
 
     bool hasVerticalLayoutOverflow() const
@@ -635,9 +635,9 @@ override;
         if (!m_overflow)
             return false;
 
-        LayoutRect layoutOverflowRect = m_overflow->layoutOverflowRect();
-        flipForWritingMode(layoutOverflowRect);
-        return layoutOverflowRect.y() < y() || layoutOverflowRect.maxY() > y() + logicalHeight();
+        auto layoutOverflowRect = m_overflow->layoutOverflowRect();
+        auto paddingBoxRect = flippedClientBoxRect();
+        return layoutOverflowRect.y() < paddingBoxRect.y() || layoutOverflowRect.maxY() > paddingBoxRect.maxY();
     }
 
     virtual RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const

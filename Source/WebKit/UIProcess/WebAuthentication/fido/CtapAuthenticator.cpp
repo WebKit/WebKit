@@ -119,6 +119,11 @@ void CtapAuthenticator::continueMakeCredentialAfterResponseReceived(Vector<uint8
     if (!response) {
         auto error = getResponseCode(data);
 
+        if (error == CtapDeviceResponseCode::kCtap2ErrActionTimeout) {
+            makeCredential();
+            return;
+        }
+
         if (error == CtapDeviceResponseCode::kCtap2ErrCredentialExcluded) {
             receiveRespond(ExceptionData { InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the authenticator."_s });
             return;
@@ -172,6 +177,11 @@ void CtapAuthenticator::continueGetAssertionAfterResponseReceived(Vector<uint8_t
     auto response = readCTAPGetAssertionResponse(data, AuthenticatorAttachment::CrossPlatform);
     if (!response) {
         auto error = getResponseCode(data);
+
+        if (error == CtapDeviceResponseCode::kCtap2ErrActionTimeout) {
+            getAssertion();
+            return;
+        }
 
         if (!isPinError(error) && tryDowngrade())
             return;

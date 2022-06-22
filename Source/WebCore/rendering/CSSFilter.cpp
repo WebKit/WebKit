@@ -36,7 +36,6 @@
 #include "ReferencedSVGResources.h"
 #include "RenderElement.h"
 #include "SVGFilter.h"
-#include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
 #include "SourceGraphic.h"
 
@@ -253,7 +252,7 @@ static IntOutsets calculateReferenceFilterOutsets(const ReferenceFilterOperation
     if (!filterElement)
         return { };
 
-    return SVGFilterBuilder::calculateFilterOutsets(*filterElement, targetBoundingBox);
+    return SVGFilter::calculateOutsets(*filterElement, targetBoundingBox);
 }
 
 static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const ReferenceFilterOperation& filterOperation, RenderElement& renderer, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)
@@ -264,8 +263,7 @@ static RefPtr<SVGFilter> createReferenceFilter(CSSFilter& filter, const Referenc
 
     auto filterRegion = SVGLengthContext::resolveRectangle<SVGFilterElement>(filterElement, filterElement->filterUnits(), targetBoundingBox);
 
-    SVGFilterBuilder builder;
-    return SVGFilter::create(*filterElement, builder, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
+    return SVGFilter::create(*filterElement, filter.renderingMode(), filter.filterScale(), filter.clipOperation(), filterRegion, targetBoundingBox, destinationContext);
 }
 
 bool CSSFilter::buildFilterFunctions(RenderElement& renderer, const FilterOperations& operations, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext)

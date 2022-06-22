@@ -95,6 +95,7 @@ protected:
 
     void createLayer();
     void willBeDestroyed() override;
+    void willBeRemovedFromTree(IsInternalMove) override;
 
 private:
     std::unique_ptr<RenderLayer> m_layer;

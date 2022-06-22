@@ -372,6 +372,11 @@ RetainPtr<NSWindow> WebInspectorUIProxy::createFrontendWindow(NSRect savedWindow
     [window setMinFullScreenContentSize:NSMakeSize(minimumFullScreenWidth, minimumWindowHeight)];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
 
+    // FIXME: <rdar://94829409> Replace Stage Manager auxiliary window workaround.
+    [window setToolbar:[NSToolbar new]];
+    [[window toolbar] setVisible:NO];
+    [window setToolbarStyle:NSWindowToolbarStylePreference];
+
     [window setTitlebarAppearsTransparent:YES];
 
     // Center the window if the saved frame was empty.

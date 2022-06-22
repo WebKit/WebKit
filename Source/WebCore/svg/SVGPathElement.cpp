@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGPathElement.h"
 
+#include "LegacyRenderSVGPath.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
@@ -70,10 +71,19 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         invalidateMPathDependencies();
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        if (auto* renderer = this->renderer()) {
+            if (document().settings().layerBasedSVGEngineEnabled())
+                static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+            else
+                static_cast<LegacyRenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+        }
+#else
         if (auto* renderer = this->renderer())
-            static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
-        updateSVGRendererForElementChange();
+            static_cast<LegacyRenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+#endif
 
+        updateSVGRendererForElementChange();
         return;
     }
 
@@ -127,20 +137,33 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     if (styleUpdateStrategy == AllowStyleUpdate)
         document().updateLayoutIgnorePendingStylesheets();
 
-    RenderSVGPath* renderer = downcast<RenderSVGPath>(this->renderer());
-
     // FIXME: Eventually we should support getBBox for detached elements.
     // FIXME: If the path is null it means we're calling getBBox() before laying out this element,
     // which is an error.
-    if (!renderer || !renderer->hasPath())
-        return { };
 
-    return renderer->path().boundingRect();
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (is<RenderSVGPath>(renderer())) {
+        if (auto& pathRenderer = *downcast<RenderSVGPath>(renderer()); pathRenderer.hasPath())
+            return pathRenderer.path().boundingRect();
+    }
+#endif
+
+    if (is<LegacyRenderSVGPath>(renderer())) {
+        if (auto& pathRenderer = *downcast<LegacyRenderSVGPath>(renderer()); pathRenderer.hasPath())
+            return pathRenderer.path().boundingRect();
+    }
+
+    return { };
 }
 
 RenderPtr<RenderElement> SVGPathElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGPath>(*this, WTFMove(style));
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGPath>(*this, WTFMove(style));
+#endif
+
+    return createRenderer<LegacyRenderSVGPath>(*this, WTFMove(style));
 }
 
 }

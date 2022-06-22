@@ -219,6 +219,10 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXLiveRegionStatusChanged:
         break;
+    case AXOrientationChanged:
+        break;
+    case AXPlaceholderChanged:
+        break;
     }
 }
 

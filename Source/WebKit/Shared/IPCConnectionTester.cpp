@@ -38,7 +38,7 @@ static IPC::Connection::Identifier asIdentifier(IPC::Attachment&& connectionIden
 #if USE(UNIX_DOMAIN_SOCKETS)
     return { connectionIdentifier.release().release() };
 #elif OS(DARWIN)
-    return { connectionIdentifier.port() };
+    return { connectionIdentifier.leakSendRight() };
 #elif OS(WINDOWS)
     return { connectionIdentifier.handle() };
 #else

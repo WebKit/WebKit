@@ -1733,7 +1733,7 @@ public:
 #if PLATFORM(COCOA)
     void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles);
 #endif
-    void editorStateChanged(const EditorState&);
+    void editorStateChanged(const EditorState&, CompletionHandler<void()>&&);
     bool updateEditorState(const EditorState& newEditorState);
     void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();

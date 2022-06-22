@@ -48,6 +48,16 @@ Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName
     return adoptRef(*new SVGFEColorMatrixElement(tagName, document));
 }
 
+bool SVGFEColorMatrixElement::isInvalidValuesLength() const
+{
+    auto filterType = type();
+    auto size = values().size();
+
+    return (filterType == FECOLORMATRIX_TYPE_MATRIX    && size != 20)
+        || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
+        || (filterType == FECOLORMATRIX_TYPE_SATURATE  && size != 1);
+}
+
 void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::typeAttr) {
@@ -70,13 +80,14 @@ void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const At
     SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
 }
 
-bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)
 {
-    FEColorMatrix* colorMatrix = static_cast<FEColorMatrix*>(effect);
+    auto& feColorMatrix = downcast<FEColorMatrix>(effect);
+
     if (attrName == SVGNames::typeAttr)
-        return colorMatrix->setType(type());
+        return feColorMatrix.setType(type());
     if (attrName == SVGNames::valuesAttr)
-        return colorMatrix->setValues(values());
+        return feColorMatrix.setValues(values());
 
     ASSERT_NOT_REACHED();
     return false;
@@ -84,21 +95,25 @@ bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect* effect, con
 
 void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (PropertyRegistry::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::inAttr) {
         InstanceInvalidationGuard guard(*this);
-        if (attrName == SVGNames::inAttr)
-            updateSVGRendererForElementChange();
-        else {
-            ASSERT(attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr);
+        updateSVGRendererForElementChange();
+        return;
+    }
+
+    if (attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr) {
+        InstanceInvalidationGuard guard(*this);
+        if (isInvalidValuesLength())
+            markFilterEffectForRebuild();
+        else
             primitiveAttributeChanged(attrName);
-        }
         return;
     }
 
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEColorMatrixElement::filterEffect(const FilterEffectVector&, const GraphicsContext&) const
+RefPtr<FilterEffect> SVGFEColorMatrixElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
     Vector<float> filterValues;
     ColorMatrixType filterType = type();
@@ -123,11 +138,7 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::filterEffect(const FilterEffectVec
             break;
         }
     } else {
-        unsigned size = values().size();
-
-        if ((filterType == FECOLORMATRIX_TYPE_MATRIX && size != 20)
-            || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
-            || (filterType == FECOLORMATRIX_TYPE_SATURATE && size != 1))
+        if (isInvalidValuesLength())
             return nullptr;
 
         filterValues = values();

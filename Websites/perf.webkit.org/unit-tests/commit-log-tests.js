@@ -28,6 +28,18 @@ function webkitCommitWithRevisionIdentifier()
     });
 }
 
+function webkitGitCommitWithRevisionIdentifier()
+{
+    return new CommitLog(1, {
+        id: 1,
+        repository: MockModels.webkitGit,
+        revision: '200805',
+        revisionIdentifier: '184276@main',
+        time: +(new Date('2016-05-13T00:55:57.841344Z')),
+    });
+
+}
+
 function oldWebKitCommit()
 {
     return new CommitLog(2, {
@@ -43,6 +55,17 @@ function oldWebKitCommitWithRevisionIdentifier()
     return new CommitLog(2, {
         id: 2,
         repository: MockModels.webkit,
+        revision: '200574',
+        revisionIdentifier: '175605@main',
+        time: +(new Date('2016-05-09T14:59:23.553767Z')),
+    });
+}
+
+function oldWebKitGitCommitWithRevisionIdentifier()
+{
+    return new CommitLog(2, {
+        id: 2,
+        repository: MockModels.webkitGit,
         revision: '200574',
         revisionIdentifier: '175605@main',
         time: +(new Date('2016-05-09T14:59:23.553767Z')),
@@ -305,6 +328,14 @@ describe('CommitLog', function () {
                 label: 'r200574 - 184276@main (r200805)',
                 url: '',
                 repository: MockModels.webkit
+            });
+        });
+
+        it('should prefer using identifiers create blame URL', () => {
+            assert.deepStrictEqual(webkitGitCommitWithRevisionIdentifier().diff((oldWebKitGitCommitWithRevisionIdentifier())), {
+                label: '175605-184276@main (r200574-r200805)',
+                url: 'https://commits.webkit.org/compare/175605@main...184276@main',
+                repository: MockModels.webkitGit
             });
         });
 

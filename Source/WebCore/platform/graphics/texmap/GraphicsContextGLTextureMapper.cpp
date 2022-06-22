@@ -120,8 +120,9 @@ bool GraphicsContextGLTextureMapper::copyTextureFromMedia(MediaPlayer& player, P
 RefPtr<VideoFrame> GraphicsContextGLTextureMapper::paintCompositedResultsToVideoFrame()
 {
 #if USE(GSTREAMER)
+    // FIXME: Hardcoding 30fps here is not great. Ideally we should get this from the compositor refresh rate, somehow.
     if (auto pixelBuffer = readCompositedResults())
-        return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull());
+        return VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::WebGL, VideoFrameGStreamer::Rotation::UpsideDown, MediaTime::invalidTime(), { }, 30, true, { });
 #endif
     return nullptr;
 }

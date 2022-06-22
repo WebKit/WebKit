@@ -8,6 +8,8 @@ self.addEventListener('fetch', (event) => {
     setTimeout(()=>{
         event.respondWith(caches.open("cache_name").then((cache) => {
             return cache.match(event.request).then((response) => {
+                if (!response)
+                    return fetch(event.request);
                 return response;
             });
         }));

@@ -166,20 +166,17 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
         if (!m_gpuProcessConnection)
             return;
 
-        std::optional<MachSendRight> sendRight;
-        std::optional<DestinationColorSpace> colorSpace;
-        if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex::Reply(sendRight, colorSpace), 0))
+        std::optional<WebKit::ShareableBitmap::Handle> imageHandle;
+        if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex::Reply(imageHandle), 0))
             return;
 
-        if (!sendRight || !colorSpace)
+        if (!imageHandle)
             return;
 
-        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(*sendRight), WTFMove(*colorSpace));
-        if (!surface)
-            return;
+        imageHandle->takeOwnershipOfMemory(MemoryLedger::Graphics);
 
-        if (auto image = IOSurface::sinkIntoImage(WTFMove(surface)))
-            m_frameImages.add(index, image);
+        if (auto bitmap = ShareableBitmap::create(*imageHandle))
+            m_frameImages.add(index, bitmap->makeCGImage());
     };
 
     callOnMainRunLoopAndWait(WTFMove(createFrameImage));

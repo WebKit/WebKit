@@ -558,6 +558,8 @@ public:
     
     void generateFastPath(CCallHelpers&);
 
+    void generateEmptyPath(CCallHelpers&);
+
     template<typename StubInfo>
     static void setUpStubInfo(StubInfo& stubInfo,
         AccessType accessType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters,

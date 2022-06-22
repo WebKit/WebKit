@@ -156,7 +156,7 @@ void PlatformMediaSessionManager::beginInterruption(PlatformMediaSession::Interr
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_interrupted = true;
+    m_currentInterruption = type;
     forEachSession([type] (auto& session) {
         session.beginInterruption(type);
     });
@@ -167,7 +167,7 @@ void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInter
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_interrupted = false;
+    m_currentInterruption = { };
     forEachSession([flags] (auto& session) {
         session.endInterruption(flags);
     });
@@ -177,8 +177,8 @@ void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
 {
     ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     m_sessions.append(session);
-    if (m_interrupted)
-        session.setState(PlatformMediaSession::Interrupted);
+    if (m_currentInterruption)
+        session.beginInterruption(*m_currentInterruption);
 
 #if !RELEASE_LOG_DISABLED
     m_logger->addLogger(session.logger());
@@ -243,7 +243,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
         return false;
     }
 
-    if (m_interrupted)
+    if (m_currentInterruption)
         endInterruption(PlatformMediaSession::NoFlags);
 
     if (restrictions & ConcurrentPlaybackNotPermitted) {
@@ -455,7 +455,7 @@ bool PlatformMediaSessionManager::computeSupportsSeeking() const
 
 void PlatformMediaSessionManager::processSystemWillSleep()
 {
-    if (m_interrupted)
+    if (m_currentInterruption)
         return;
 
     forEachSession([] (auto& session) {
@@ -465,7 +465,7 @@ void PlatformMediaSessionManager::processSystemWillSleep()
 
 void PlatformMediaSessionManager::processSystemDidWake()
 {
-    if (m_interrupted)
+    if (m_currentInterruption)
         return;
 
     forEachSession([] (auto& session) {

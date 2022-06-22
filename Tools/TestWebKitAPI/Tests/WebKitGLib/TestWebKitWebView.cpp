@@ -319,6 +319,125 @@ static void testWebViewZoomLevel(WebViewTest* test, gconstpointer)
     g_assert_cmpfloat(webkit_web_view_get_zoom_level(test->m_webView), ==, 2.5);
 }
 
+static void testWebViewRunAsyncFunctions(WebViewTest* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+
+    WebKitJavascriptResult* javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return new Promise((resolve) => { resolve(42); });", nullptr, "", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+    g_assert_no_error(error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 42);
+
+    GVariantDict dict;
+    g_variant_dict_init(&dict, nullptr);
+    g_variant_dict_insert(&dict, "count", "u", 42);
+    auto* args = g_variant_dict_end(&dict);
+    javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return new Promise((resolve) => { resolve(count); });", args, "", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+    g_assert_no_error(error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 42);
+
+    g_variant_dict_init(&dict, nullptr);
+    g_variant_dict_insert(&dict, "motto", "s", "Never gonna give you up");
+    args = g_variant_dict_end(&dict);
+    javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return new Promise((resolve) => { resolve(motto); });", args, "", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+    g_assert_no_error(error.get());
+    GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "Never gonna give you up");
+
+    javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return new Promise(function(resolve, reject) { setTimeout(function(){ reject('Rejected!') }, 0); })", nullptr, "", &error.outPtr());
+    g_assert_null(javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_true(g_strstr_len(error->message, strlen(error->message), "Rejected!") != nullptr);
+
+    g_variant_dict_init(&dict, nullptr);
+    g_variant_dict_insert(&dict, "countt", "u", 42);
+    args = g_variant_dict_end(&dict);
+    javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return new Promise((resolve) => { resolve(count); });", args, "", &error.outPtr());
+    g_assert_null(javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+    g_variant_dict_init(&dict, nullptr);
+    g_variant_dict_insert(&dict, "count", "u", 42);
+    args = g_variant_dict_end(&dict);
+    javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return count", args, "", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+    g_assert_no_error(error.get());
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 42);
+
+    {
+        // Set a value in main world.
+        WebKitJavascriptResult* javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a = 25;", "", &error.outPtr());
+        g_assert_nonnull(javascriptResult);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+        g_assert_no_error(error.get());
+        g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 25);
+
+        // Read back value from main world.
+        javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return a", nullptr, "", &error.outPtr());
+        g_assert_nonnull(javascriptResult);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+        g_assert_no_error(error.get());
+        g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 25);
+
+        // Values of the main world are not available in the isolated one.
+        javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return a", nullptr, "WebExtensionTestScriptWorld", &error.outPtr());
+        g_assert_null(javascriptResult);
+        g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+        // Running a script in a world that doesn't exist should fail.
+        javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return a", nullptr, "InvalidScriptWorld", &error.outPtr());
+        g_assert_null(javascriptResult);
+        g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    }
+
+    {
+        // Disable JS support and expect an error when attempting to evaluate JS code.
+        WebKitSettings* defaultSettings = webkit_web_view_get_settings(test->m_webView);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultSettings));
+        g_assert_nonnull(defaultSettings);
+        g_assert_true(webkit_settings_get_enable_javascript(defaultSettings));
+
+        GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new());
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings.get()));
+        g_object_set(G_OBJECT(newSettings.get()), "enable-javascript", FALSE, NULL);
+        webkit_web_view_set_settings(test->m_webView, newSettings.get());
+
+        WebKitJavascriptResult* javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return new Promise((resolve) => { resolve(42); });", nullptr, "", &error.outPtr());
+        g_assert_null(javascriptResult);
+        g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+        g_object_set(G_OBJECT(newSettings.get()), "enable-javascript", TRUE, NULL);
+        webkit_web_view_set_settings(test->m_webView, newSettings.get());
+    }
+
+    {
+        // Disable JS markup support and expect no error when attempting to evaluate JS code.
+        WebKitSettings* defaultSettings = webkit_web_view_get_settings(test->m_webView);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultSettings));
+        g_assert_nonnull(defaultSettings);
+        g_assert_true(webkit_settings_get_enable_javascript_markup(defaultSettings));
+
+        GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new());
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings.get()));
+        g_object_set(G_OBJECT(newSettings.get()), "enable-javascript-markup", FALSE, NULL);
+        webkit_web_view_set_settings(test->m_webView, newSettings.get());
+
+        WebKitJavascriptResult* javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return new Promise((resolve) => { resolve(42); });", nullptr, "", &error.outPtr());
+        g_assert_nonnull(javascriptResult);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+        g_assert_no_error(error.get());
+
+        g_object_set(G_OBJECT(newSettings.get()), "enable-javascript-markup", TRUE, NULL);
+        webkit_web_view_set_settings(test->m_webView, newSettings.get());
+    }
+}
+
 static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
 {
     static const char* html = "<html><body><a id='WebKitLink' href='http://www.webkitgtk.org/' title='WebKitGTK Title'>WebKitGTK Website</a></body></html>";
@@ -420,6 +539,47 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a", "InvalidScriptWorld", &error.outPtr());
     g_assert_null(javascriptResult);
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+    {
+        // Disable JS support and expect an error when attempting to evaluate JS code.
+        WebKitSettings* defaultSettings = webkit_web_view_get_settings(test->m_webView);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultSettings));
+        g_assert_nonnull(defaultSettings);
+        g_assert_true(webkit_settings_get_enable_javascript(defaultSettings));
+
+        GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new());
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings.get()));
+        g_object_set(G_OBJECT(newSettings.get()), "enable-javascript", FALSE, NULL);
+        webkit_web_view_set_settings(test->m_webView, newSettings.get());
+
+        WebKitJavascriptResult* javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("console.log(\"Hi\");", "", &error.outPtr());
+        g_assert_null(javascriptResult);
+        g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+
+        g_object_set(G_OBJECT(newSettings.get()), "enable-javascript", TRUE, NULL);
+        webkit_web_view_set_settings(test->m_webView, newSettings.get());
+    }
+
+    {
+        // Disable JS markup support and expect no error when attempting to evaluate JS code.
+        WebKitSettings* defaultSettings = webkit_web_view_get_settings(test->m_webView);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(defaultSettings));
+        g_assert_nonnull(defaultSettings);
+        g_assert_true(webkit_settings_get_enable_javascript_markup(defaultSettings));
+
+        GRefPtr<WebKitSettings> newSettings = adoptGRef(webkit_settings_new());
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newSettings.get()));
+        g_object_set(G_OBJECT(newSettings.get()), "enable-javascript-markup", FALSE, NULL);
+        webkit_web_view_set_settings(test->m_webView, newSettings.get());
+
+        WebKitJavascriptResult* javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("console.log(\"Hi\");", "", &error.outPtr());
+        g_assert_nonnull(javascriptResult);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
+        g_assert_no_error(error.get());
+
+        g_object_set(G_OBJECT(newSettings.get()), "enable-javascript-markup", TRUE, NULL);
+        webkit_web_view_set_settings(test->m_webView, newSettings.get());
+    }
 }
 
 class FullScreenClientTest: public WebViewTest {
@@ -1697,6 +1857,71 @@ static void testWebViewCORSAllowlist(WebViewTest* test, gconstpointer)
     g_assert_cmpint(waitForFooChanged(), ==, 200);
 }
 
+static void testWebViewDefaultContentSecurityPolicy(WebViewTest* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult;
+
+    // Sanity check that eval works normally.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("eval('\"allowed\"')", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    GUniquePtr<char> evalValue(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(evalValue.get(), ==, "allowed");
+    webkit_javascript_result_unref(javascriptResult);
+
+    // Create a new web view with a policy that blocks eval().
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "default-content-security-policy", "script-src 'self'", nullptr));
+
+    // Ensure JavaScript still functions.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("'allowed'", &error.outPtr(), webView.get());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    GUniquePtr<char> value(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(value.get(), ==, "allowed");
+    webkit_javascript_result_unref(javascriptResult);
+
+    // Then ensure eval is blocked.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("eval('\"allowed\"')", &error.outPtr(), webView.get());
+    g_assert_null(javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+}
+
+static void testWebViewWebExtensionMode(WebViewTest* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult;
+    static const char* html =
+        "<html>"
+        "  <head>"
+        "    <title>unset</title>"
+        "    <meta http-equiv=\"Content-Security-Policy\" content=\"script-src 'unsafe-inline';\">"
+        "    <script>document.title = 'set';</script>"
+        "  </head>"
+        "</html>";
+
+    // Sanity check that this HTML works as expected.
+    test->loadHtml(html, nullptr);
+    test->waitUntilLoadFinished();
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.title == 'set';", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    g_assert_true(WebViewTest::javascriptResultToBoolean(javascriptResult));
+    webkit_javascript_result_unref(javascriptResult);
+
+    // Create a new web view with an extension mode that blocks the unsafe-inline keyword.
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-extension-mode", WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3,
+        nullptr));
+    test->loadHtml(html, nullptr, webView.get());
+    test->waitUntilLoadFinished(webView.get());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.title == 'unset';", &error.outPtr(), webView.get());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    g_assert_true(WebViewTest::javascriptResultToBoolean(javascriptResult));
+}
+
 #if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 #else
@@ -1731,6 +1956,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
     WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
+    WebViewTest::add("WebKitWebView", "run-async-js-functions", testWebViewRunAsyncFunctions);
 #if ENABLE(FULLSCREEN_API)
     FullScreenClientTest::add("WebKitWebView", "fullscreen", testWebViewFullScreen);
 #endif
@@ -1769,6 +1995,8 @@ void beforeAll()
     WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-web-process", testWebViewTerminateWebProcess);
     WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-unresponsive-web-process", testWebViewTerminateUnresponsiveWebProcess);
     WebViewTest::add("WebKitWebView", "cors-allowlist", testWebViewCORSAllowlist);
+    WebViewTest::add("WebKitWebView", "default-content-security-policy", testWebViewDefaultContentSecurityPolicy);
+    WebViewTest::add("WebKitWebView", "web-extension-mode", testWebViewWebExtensionMode);
 }
 
 void afterAll()

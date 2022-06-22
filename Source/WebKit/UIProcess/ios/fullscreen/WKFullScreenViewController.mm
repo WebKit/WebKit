@@ -115,7 +115,7 @@ private:
     BOOL _valid;
     RetainPtr<UILongPressGestureRecognizer> _touchGestureRecognizer;
     RetainPtr<UIView> _animatingView;
-    RetainPtr<WKFullscreenStackView> _stackView;
+    RetainPtr<UIStackView> _stackView;
     RetainPtr<_WKExtrinsicButton> _cancelButton;
     RetainPtr<_WKExtrinsicButton> _pipButton;
     RetainPtr<UIButton> _locationButton;
@@ -314,6 +314,25 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)loadView
 {
+    CGSize buttonSize;
+    UIImage *doneImage;
+    UIImage *startPiPImage;
+    UIImage *stopPiPImage;
+    auto fullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
+    
+    if (fullScreenControlDesignEnabled) {
+        buttonSize = CGSizeMake(38.0, 38.0);
+        doneImage = [UIImage systemImageNamed:@"arrow.down.right.and.arrow.up.left"];
+        startPiPImage = [UIImage systemImageNamed:@"pip.enter"];
+        stopPiPImage = [UIImage systemImageNamed:@"pip.exit"];
+    } else {
+        buttonSize = CGSizeMake(60.0, 47.0);
+        NSBundle *bundle = [NSBundle bundleForClass:self.class];
+        doneImage = [UIImage imageNamed:@"Done" inBundle:bundle compatibleWithTraitCollection:nil];
+        startPiPImage = [UIImage imageNamed:@"StartPictureInPictureButton" inBundle:bundle compatibleWithTraitCollection:nil];
+        stopPiPImage = [UIImage imageNamed:@"StopPictureInPictureButton" inBundle:bundle compatibleWithTraitCollection:nil];
+    }
+    
     [self setView:adoptNS([[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]).get()];
     self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view.backgroundColor = [UIColor blackColor];
@@ -327,9 +346,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_cancelButton setAdjustsImageWhenHighlighted:NO];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    [_cancelButton setExtrinsicContentSize:CGSizeMake(60.0, 47.0)];
-    NSBundle *bundle = [NSBundle bundleForClass:self.class];
-    UIImage *doneImage = [UIImage imageNamed:@"Done" inBundle:bundle compatibleWithTraitCollection:nil];
+    [_cancelButton setExtrinsicContentSize:buttonSize];
+    
     [_cancelButton setImage:[doneImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [_cancelButton setTintColor:[UIColor whiteColor]];
     [_cancelButton sizeToFit];
@@ -340,31 +358,55 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_pipButton setAdjustsImageWhenHighlighted:NO];
     ALLOW_DEPRECATED_DECLARATIONS_END
-    [_pipButton setExtrinsicContentSize:CGSizeMake(60.0, 47.0)];
-    UIImage *startPiPImage = [UIImage imageNamed:@"StartPictureInPictureButton" inBundle:bundle compatibleWithTraitCollection:nil];
-    UIImage *stopPiPImage = [UIImage imageNamed:@"StopPictureInPictureButton" inBundle:bundle compatibleWithTraitCollection:nil];
+    [_pipButton setExtrinsicContentSize:buttonSize];
+    
     [_pipButton setImage:[startPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [_pipButton setImage:[stopPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateSelected];
     [_pipButton setTintColor:[UIColor whiteColor]];
     [_pipButton sizeToFit];
     [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
 
-    _stackView = adoptNS([[WKFullscreenStackView alloc] init]);
+    if (fullScreenControlDesignEnabled) {
+        
+        UIButtonConfiguration *cancelButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
+        // FIXME: this color specification should not be necessary.
+        cancelButtonConfiguration.baseBackgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
+        [_cancelButton setConfiguration:cancelButtonConfiguration];
+        
+        UIButtonConfiguration *pipButtonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
+        // FIXME: this color specification should not be necessary.
+        pipButtonConfiguration.baseBackgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
+        [_pipButton setConfiguration:pipButtonConfiguration];
+        
+        _stackView = adoptNS([[UIStackView alloc] init]);
+        [_stackView addArrangedSubview:_cancelButton.get()];
+        [_stackView addArrangedSubview:_pipButton.get()];
+        [_stackView setSpacing:24.0];
+    } else {
+        RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
+        [stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+        [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+        _stackView = WTFMove(stackView);
+    }
+    
     [_stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [_stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
-    [_stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
-    [_animatingView addSubview:_stackView.get()];
+    [_animatingView addSubview:_stackView.get()];    
 
     UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;
     UILayoutGuide *margins = self.view.layoutMarginsGuide;
 
     _topGuide = adoptNS([[UILayoutGuide alloc] init]);
     [self.view addLayoutGuide:_topGuide.get()];
-    NSLayoutAnchor *topAnchor = [_topGuide topAnchor];
+    NSLayoutYAxisAnchor *topAnchor = [_topGuide topAnchor];
+    NSLayoutConstraint *stackViewToTopGuideConstraint;
+    if (fullScreenControlDesignEnabled)
+        stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:2];
+    else
+        stackViewToTopGuideConstraint = [topAnchor constraintEqualToAnchor:topAnchor];
     _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
     [NSLayoutConstraint activateConstraints:@[
         _topConstraint.get(),
-        [[_stackView topAnchor] constraintEqualToAnchor:topAnchor],
+        stackViewToTopGuideConstraint,
         [[_stackView leadingAnchor] constraintEqualToAnchor:margins.leadingAnchor],
     ]];
 

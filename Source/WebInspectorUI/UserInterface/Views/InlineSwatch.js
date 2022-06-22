@@ -382,11 +382,13 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             codeMirror.setValue(value);
 
             const range = null;
+            let preventChangingColorFormats = this._preventChangingColorFormats;
+
             function optionsForType(type) {
                 return {
                     allowedTokens: /\btag\b/,
                     callback(marker, valueObject, valueString) {
-                        let swatch = new WI.InlineSwatch(type, valueObject, {readOnly: true, preventChangingColorFormats: this._preventChangingColorFormats});
+                        let swatch = new WI.InlineSwatch(type, valueObject, {readOnly: true, preventChangingColorFormats});
                         codeMirror.setUniqueBookmark({line: 0, ch: 0}, swatch.element);
                     }
                 };

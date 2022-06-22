@@ -40,7 +40,7 @@
 	<string>Adaptive</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/System/Library/Frameworks/WebKit.framework/Daemons/adattributiond</string>
+		<string>${INSTALL_PATH}/${PRODUCT_NAME}</string>
 		<string>--machServiceName</string>
 		<string>com.apple.webkit.adattributiond.service</string>
 		<string>--storageLocation</string>

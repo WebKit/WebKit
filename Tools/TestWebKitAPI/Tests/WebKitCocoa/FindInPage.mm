@@ -331,6 +331,10 @@ TEST(WebKit, FindTextInImageOverlay)
 
 #if HAVE(UIFINDINTERACTION)
 
+// FIXME: (rdar://95125552) Remove conformance to _UITextSearching.
+@interface WKWebView () <UITextSearching>
+@end
+
 @interface TestScrollViewDelegate : NSObject<UIScrollViewDelegate>  {
     @public bool _finishedScrolling;
 }
@@ -355,15 +359,7 @@ TEST(WebKit, FindTextInImageOverlay)
 
 @end
 
-@interface TestTextSearchOptions : NSObject
-@property (nonatomic) _UITextSearchMatchMethod wordMatchMethod;
-@property (nonatomic) NSStringCompareOptions stringCompareOptions;
-@end
-
-@implementation TestTextSearchOptions
-@end
-
-@interface TestSearchAggregator : NSObject <_UITextSearchAggregator>
+@interface TestSearchAggregator : NSObject <UITextSearchAggregator>
 
 @property (readonly) NSUInteger count;
 @property (nonatomic, readonly) NSOrderedSet<UITextRange *> *allFoundRanges;
@@ -388,8 +384,11 @@ TEST(WebKit, FindTextInImageOverlay)
     return self;
 }
 
-- (void)foundRange:(UITextRange *)range forSearchString:(NSString *)string inDocument:(_UITextSearchDocumentIdentifier)document
+- (void)foundRange:(UITextRange *)range forSearchString:(NSString *)string inDocument:(UITextSearchDocumentIdentifier)document
 {
+    if (!string.length)
+        return;
+
     [_foundRanges addObject:range];
 }
 
@@ -404,7 +403,7 @@ TEST(WebKit, FindTextInImageOverlay)
     return _foundRanges.get();
 }
 
-- (void)invalidateFoundRange:(UITextRange *)range inDocument:(_UITextSearchDocumentIdentifier)document
+- (void)invalidateFoundRange:(UITextRange *)range inDocument:(UITextSearchDocumentIdentifier)document
 {
     [_foundRanges removeObject:range];
 }
@@ -438,15 +437,14 @@ static size_t overlayCount(WKWebView *webView)
     return count;
 }
 
-static void testPerformTextSearchWithQueryStringInWebView(WKWebView *webView, NSString *query, TestTextSearchOptions *searchOptions, NSUInteger expectedMatches)
+static void testPerformTextSearchWithQueryStringInWebView(WKWebView *webView, NSString *query, UITextSearchOptions *searchOptions, NSUInteger expectedMatches)
 {
     __block bool finishedSearching = false;
     RetainPtr aggregator = adoptNS([[TestSearchAggregator alloc] initWithCompletionHandler:^{
         finishedSearching = true;
     }]);
 
-    // FIXME: (rdar://86140914) Use _UITextSearchOptions directly when the symbol is exported.
-    [webView performTextSearchWithQueryString:query usingOptions:(_UITextSearchOptions *)searchOptions resultAggregator:aggregator.get()];
+    [webView performTextSearchWithQueryString:query usingOptions:searchOptions resultAggregator:aggregator.get()];
 
     TestWebKitAPI::Util::run(&finishedSearching);
 
@@ -460,9 +458,8 @@ static RetainPtr<NSOrderedSet<UITextRange *>> textRangesForQueryString(WKWebView
         finishedSearching = true;
     }]);
 
-    // FIXME: (rdar://86140914) Use _UITextSearchOptions directly when the symbol is exported.
-    auto options = adoptNS([[TestTextSearchOptions alloc] init]);
-    [webView performTextSearchWithQueryString:query usingOptions:(_UITextSearchOptions *)options.get() resultAggregator:aggregator.get()];
+    auto options = adoptNS([[UITextSearchOptions alloc] init]);
+    [webView performTextSearchWithQueryString:query usingOptions:options.get() resultAggregator:aggregator.get()];
 
     TestWebKitAPI::Util::run(&finishedSearching);
 
@@ -477,7 +474,7 @@ TEST(WebKit, FindInPage)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    RetainPtr searchOptions = adoptNS([[TestTextSearchOptions alloc] init]);
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 360UL);
 }
 
@@ -489,7 +486,7 @@ TEST(WebKit, FindInPageCaseInsensitive)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    RetainPtr searchOptions = adoptNS([[TestTextSearchOptions alloc] init]);
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"birthday", searchOptions.get(), 0UL);
 
     [searchOptions setStringCompareOptions:NSCaseInsensitiveSearch];
@@ -504,12 +501,12 @@ TEST(WebKit, FindInPageStartsWith)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    RetainPtr searchOptions = adoptNS([[TestTextSearchOptions alloc] init]);
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
 
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 360UL);
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"day", searchOptions.get(), 360UL);
 
-    [searchOptions setWordMatchMethod:_UITextSearchMatchMethodStartsWith];
+    [searchOptions setWordMatchMethod:UITextSearchMatchMethodStartsWith];
 
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 360UL);
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"day", searchOptions.get(), 0UL);
@@ -523,14 +520,39 @@ TEST(WebKit, FindInPageFullWord)
     [webView loadRequest:request];
     [webView _test_waitForDidFinishNavigation];
 
-    RetainPtr searchOptions = adoptNS([[TestTextSearchOptions alloc] init]);
+    RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
 
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 360UL);
 
-    [searchOptions setWordMatchMethod:_UITextSearchMatchMethodFullWord];
+    [searchOptions setWordMatchMethod:UITextSearchMatchMethodFullWord];
 
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 360UL);
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birth", searchOptions.get(), 0UL);
+}
+
+TEST(WebKit, FindInPageDoNotCrashWhenUsingMutableString)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool finishedSearching = false;
+    RetainPtr aggregator = adoptNS([[TestSearchAggregator alloc] initWithCompletionHandler:^{
+        finishedSearching = true;
+    }]);
+
+    {
+        RetainPtr searchString = adoptNS([[NSMutableString alloc] initWithString:@"Birthday"]);
+        RetainPtr searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
+
+        [webView performTextSearchWithQueryString:searchString.get() usingOptions:searchOptions.get() resultAggregator:aggregator.get()];
+    }
+
+    TestWebKitAPI::Util::run(&finishedSearching);
+
+    EXPECT_EQ([aggregator count], 360UL);
 }
 
 TEST(WebKit, FindAndReplace)

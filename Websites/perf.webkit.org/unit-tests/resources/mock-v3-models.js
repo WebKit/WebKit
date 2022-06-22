@@ -25,7 +25,7 @@ var MockModels = {
             MockModels.sharedRepository = Repository.ensureSingleton(16, {name: 'Shared'});
             MockModels.ownerRepository = Repository.ensureSingleton(111, {name: 'Owner Repository'});
             MockModels.ownedRepository = Repository.ensureSingleton(112, {name: 'Owned Repository', owner: 111});
-            MockModels.webkitGit = Repository.ensureSingleton(17, {name: 'WebKit-Git'});
+            MockModels.webkitGit = Repository.ensureSingleton(17, {name: 'WebKit-Git', blameUrl: 'https://commits.webkit.org/compare/$1...$2'});
             MockModels.builder = new Builder(176, {name: 'WebKit Perf Builder', buildUrl: 'http://build.webkit.org/builders/$builderName/$buildTag'});
 
             MockModels.someTest = Test.ensureSingleton(1, {name: 'Some test'});

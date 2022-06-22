@@ -27,13 +27,13 @@
 #include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGFilter.h"
-#include "SVGFilterBuilder.h"
 #include "SVGUnitTypes.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class GraphicsContext;
 class SVGFilterElement;
 
 struct FilterData {
@@ -45,17 +45,14 @@ public:
     FilterData() = default;
 
     RefPtr<SVGFilter> filter;
-    std::unique_ptr<SVGFilterBuilder> builder;
-    RefPtr<ImageBuffer> sourceGraphicBuffer;
-    GraphicsContext* savedContext { nullptr };
-    FloatRect boundaries;
-    FloatRect drawingRegion;
-    FloatSize scale;
-    FilterDataState state { PaintingSource };
     FilterResults results;
-};
 
-class GraphicsContext;
+    RefPtr<ImageBuffer> sourceImage;
+    FloatRect sourceImageRect;
+
+    GraphicsContext* savedContext { nullptr };
+    FilterDataState state { PaintingSource };
+};
 
 class RenderSVGResourceFilter final : public RenderSVGResourceContainer {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceFilter);
@@ -73,12 +70,11 @@ public:
 
     FloatRect resourceBoundingBox(const RenderObject&) override;
 
-    std::unique_ptr<SVGFilterBuilder> buildPrimitives(SVGFilter&) const;
-
     inline SVGUnitTypes::SVGUnitType filterUnits() const;
     inline SVGUnitTypes::SVGUnitType primitiveUnits() const;
 
-    void primitiveAttributeChanged(RenderObject*, const QualifiedName&);
+    void markFilterForRepaint(FilterEffect&);
+    void markFilterForRebuild();
 
     RenderSVGResourceType resourceType() const override { return FilterResourceType; }
 

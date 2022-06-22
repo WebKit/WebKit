@@ -829,7 +829,7 @@ bool Scope::updateQueryContainerState(QueryContainerUpdateContext& context)
     }
 
     for (auto* toInvalidate : containersToInvalidate)
-        toInvalidate->invalidateForQueryContainerChange();
+        toInvalidate->invalidateForQueryContainerSizeChange();
 
     return !containersToInvalidate.isEmpty();
 }

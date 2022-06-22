@@ -47,6 +47,10 @@ typedef struct CGContext* CGContextRef;
 typedef struct _cairo_pattern cairo_pattern_t;
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class AffineTransform;
@@ -54,6 +58,7 @@ class FloatRect;
 class GraphicsContext;
 
 class Gradient : public RefCounted<Gradient> {
+    friend WTF::TextStream& operator<<(WTF::TextStream&, const Gradient&);
 public:
     struct LinearData {
         FloatPoint point0;

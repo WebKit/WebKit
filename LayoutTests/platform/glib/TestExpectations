@@ -336,6 +336,9 @@ media/video-with-alpha.html [ Pass ]
 
 accessibility/svg-font-face.html [ Skip ]
 
+# Need to implement AccessibilityUIElement::insertText.
+accessibility/insert-text-into-password-field.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::hasDocumentRoleAncestor(), AccessibilityUIElement::hasWebApplicationAncestor(),
 # AccessibilityUIElement::isInDescriptionListDetail(), AccessibilityUIElement::isInDescriptionListTerm(), and
 # AccessibilityUIElement::isInCell().
@@ -692,7 +695,10 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html 
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-translate3d-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ Pass ]
 
+webkit.org/b/241568 imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-003.html [ ImageOnlyFailure ]
 
+# Changes to logical height/width computations (https://bugs.webkit.org/show_bug.cgi?id=241601)
+webkit.org/b/241601 css2.1/t090501-c414-flt-03-b-g.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
@@ -926,11 +932,8 @@ webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
 webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Timeout ]
 webkit.org/b/235885 webrtc/candidate-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/canvas-to-peer-connection.html [ Failure ]
-webkit.org/b/235885 webrtc/canvas-to-peer-connection-2d.html [ Failure ]
-webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8-2d.html [ Failure ]
-webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
-webkit.org/b/235885 webrtc/captureCanvas-webrtc.html [ Timeout ]
-webkit.org/b/235885 webrtc/closing-peerconnection.html [ Timeout ]
+webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8-2d.html [ Timeout ]
+webkit.org/b/235885 webrtc/canvas-to-peer-connection-vp8.html [ Timeout ]
 webkit.org/b/235885 webrtc/direction-change.html [ Failure ]
 webkit.org/b/235885 webrtc/disable-encryption.html [ Failure ]
 webkit.org/b/235885 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
@@ -1695,6 +1698,9 @@ webkit.org/b/217815 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 # This test uses an MPEG-4 video
 media/video-seek-to-current-time.html [ Skip ]
 
+# This test uses an HEVC video
+media/media-hevc-video-as-img.html [ Skip ]
+
 # WIRELESS_PLAYBACK_TARGET not enabled.
 media/airplay-target-availability.html
 webkit.org/b/205112 media/remoteplayback-cancel-invalid.html [ Skip ]
@@ -2344,7 +2350,6 @@ webkit.org/b/187064 webkit.org/b/235885 webrtc/video-replace-muted-track.html [ 
 webkit.org/b/187064 webkit.org/b/235885 webrtc/video-disabled-black.html [ Crash Timeout ]
 webkit.org/b/187064 webkit.org/b/235885 webrtc/video-remote-mute.html [ Crash Failure ]
 webkit.org/b/187064 webrtc/video-rotation.html [ Failure ]
-webkit.org/b/187064 webkit.org/b/235885 webrtc/video-rotation-no-cvo.html [ Failure Crash ]
 webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
 webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Failure Pass ]
 

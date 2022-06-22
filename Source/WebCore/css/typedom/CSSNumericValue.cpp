@@ -225,12 +225,13 @@ Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)
     });
 }
 
-bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& value)
+bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& values)
 {
-    UNUSED_PARAM(value);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-equals
-    // FIXME: add impl.
-    return false;
+    auto numericValues = WTF::map(WTFMove(values), rectifyNumberish);
+    return WTF::allOf(numericValues, [&] (const Ref<CSSNumericValue>& value) {
+        return this->equals(value.get());
+    });
 }
 
 ExceptionOr<Ref<CSSUnitValue>> CSSNumericValue::to(String&& unit)

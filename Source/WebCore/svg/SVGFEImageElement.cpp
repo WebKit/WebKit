@@ -137,6 +137,7 @@ void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGURIReference::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         buildPendingResource();
+        markFilterEffectForRebuild();
         return;
     }
 
@@ -210,7 +211,7 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     return { imageBuffer, imageRect };
 }
 
-RefPtr<FilterEffect> SVGFEImageElement::filterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const
+RefPtr<FilterEffect> SVGFEImageElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const
 {
     if (m_cachedImage) {
         auto image = m_cachedImage->imageForRenderer(renderer());

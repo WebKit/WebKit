@@ -40,9 +40,11 @@
 #import <MapKit/MapKit.h>
 #import <QuickLookThumbnailing/QLThumbnailGenerator.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebKitPrivate.h>
+#import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 
@@ -1880,6 +1882,28 @@ TEST(WKAttachmentTests, CreateAttachmentsFromExistingImage)
     EXPECT_WK_STREQ("image/png", [info contentType]);
     EXPECT_WK_STREQ("icon.png", [info name]);
     EXPECT_TRUE([[info data] isEqualToData:testImageData()]);
+}
+
+TEST(WKAttachmentTests, UserDragNonePreventsDragOnAttachmentElement)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:@"attachment { -webkit-user-drag: none; }" forMainFrameOnly:YES]);
+    [[configuration userContentController] _addUserStyleSheet:styleSheet.get()];
+    [configuration _setAttachmentElementEnabled:YES];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto *webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+
+    auto file = adoptNS([[NSFileWrapper alloc] initWithURL:testPDFFileURL() options:0 error:nil]);
+    [webView synchronouslyInsertAttachmentWithFileWrapper:file.get() contentType:nil];
+    [simulator runFrom:NSMakePoint(15, 15) to:NSMakePoint(50, 50)];
+
+#if PLATFORM(MAC)
+    EXPECT_NULL([simulator draggingInfo]);
+#else
+    EXPECT_EQ(0U, [simulator sourceItemProviders].count);
+#endif
 }
 
 #pragma mark - Platform-specific tests

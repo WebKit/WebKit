@@ -115,12 +115,7 @@ TEST(GPUProcess, RelaunchOnCrash)
     EXPECT_TRUE([webView _isPlayingAudio]);
 }
 
-// FIXME: Re-enable after webkit.org/b/240692 is resolved
-#if (PLATFORM(IOS))
-TEST(GPUProcess, DISABLED_WebProcessTerminationAfterTooManyGPUProcessCrashes)
-#else
 TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
-#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
@@ -160,8 +155,8 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
     timeout = 0;
     while ((![processPool _gpuProcessIdentifier] || [processPool _gpuProcessIdentifier] == gpuProcessPID) && timeout++ < 100)
         TestWebKitAPI::Util::sleep(0.1);
-    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
-    EXPECT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
+    ASSERT_NE([processPool _gpuProcessIdentifier], 0);
+    ASSERT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
     gpuProcessPID = [processPool _gpuProcessIdentifier];
 
     // Make sure the WebView's WebProcess did not crash or get terminated.
@@ -174,8 +169,8 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
     timeout = 0;
     while ((![processPool _gpuProcessIdentifier] || [processPool _gpuProcessIdentifier] == gpuProcessPID) && timeout++ < 100)
         TestWebKitAPI::Util::sleep(0.1);
-    EXPECT_NE([processPool _gpuProcessIdentifier], 0);
-    EXPECT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
+    ASSERT_NE([processPool _gpuProcessIdentifier], 0);
+    ASSERT_NE([processPool _gpuProcessIdentifier], gpuProcessPID);
     gpuProcessPID = [processPool _gpuProcessIdentifier];
 
     // Make sure the WebView's WebProcess did not crash or get terminated.

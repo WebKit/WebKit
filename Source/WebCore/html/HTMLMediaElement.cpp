@@ -869,7 +869,7 @@ void HTMLMediaElement::pauseAfterDetachedTask()
     if (m_inActiveDocument)
         return;
 
-    if (m_videoFullscreenMode != VideoFullscreenModePictureInPicture && m_networkState > NETWORK_EMPTY)
+    if (m_videoFullscreenMode != VideoFullscreenModePictureInPicture && m_networkState > NETWORK_EMPTY && !m_wasInterruptedForInvisibleAutoplay)
         pause();
     if (m_videoFullscreenMode == VideoFullscreenModeStandard)
         exitFullscreen();
@@ -1183,7 +1183,6 @@ void HTMLMediaElement::prepareForLoad()
     m_haveFiredLoadedData = false;
     m_completelyLoaded = false;
     m_havePreparedToPlay = false;
-    setCurrentSrc(URL());
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_failedToPlayToWirelessTarget = false;
@@ -1682,7 +1681,10 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     // The user agent must synchronously unset [the text track cue active] flag
     // whenever ... the media element's readyState is changed back to HAVE_NOTHING.
     if (m_readyState != HAVE_NOTHING && m_player) {
-        currentCues = m_cueData->cueTree.allOverlaps({ movieTime, movieTime });
+        for (auto& cue : m_cueData->cueTree.allOverlaps({ movieTime, movieTime })) {
+            if (cue.low() <= movieTime && cue.high() > movieTime)
+                currentCues.append(cue);
+        }
         if (currentCues.size() > 1)
             std::sort(currentCues.begin(), currentCues.end(), &compareCueInterval);
     }
@@ -3924,7 +3926,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     if (m_volume == volume)
         return { };
 
-#if !PLATFORM(IOS_FAMILY)
+#if HAVE(MEDIA_VOLUME_PER_ELEMENT)
     if (volume && processingUserGestureForMedia())
         removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::AllRestrictions & ~MediaElementSession::RequireUserGestureToControlControlsManager);
 
@@ -5610,14 +5612,7 @@ void HTMLMediaElement::updateVolume()
 {
     if (!m_player)
         return;
-#if PLATFORM(IOS_FAMILY)
-    // Only the user can change audio volume so update the cached volume and post the changed event.
-    float volume = m_player->volume();
-    if (m_volume != volume) {
-        m_volume = volume;
-        scheduleEvent(eventNames().volumechangeEvent);
-    }
-#else
+#if HAVE(MEDIA_VOLUME_PER_ELEMENT)
     // Avoid recursion when the player reports volume changes.
     if (!processingMediaPlayerCallback()) {
         m_player->setMuted(effectiveMuted());
@@ -5625,7 +5620,14 @@ void HTMLMediaElement::updateVolume()
     }
 
     document().updateIsPlayingMedia();
-#endif // PLATFORM(IOS_FAMILY)
+#else
+    // Only the user can change audio volume so update the cached volume and post the changed event.
+    float volume = m_player->volume();
+    if (m_volume != volume) {
+        m_volume = volume;
+        scheduleEvent(eventNames().volumechangeEvent);
+    }
+#endif
 }
 
 void HTMLMediaElement::scheduleUpdatePlayState()
@@ -5817,7 +5819,7 @@ void HTMLMediaElement::cancelPendingTasks()
     m_resumeTaskCancellationGroup.cancel();
     m_seekTaskCancellationGroup.cancel();
     m_playbackControlsManagerBehaviorRestrictionsTaskCancellationGroup.cancel();
-#if PLATFORM(IOS_FAMILY)
+#if !HAVE(MEDIA_VOLUME_PER_ELEMENT)
     m_volumeRevertTaskCancellationGroup.cancel();
 #endif
 }
@@ -6071,8 +6073,8 @@ bool HTMLMediaElement::virtualHasPendingActivity() const
 
 void HTMLMediaElement::mediaVolumeDidChange()
 {
-    // FIXME: We should try to reconcile this so there's no difference for PLATFORM(IOS_FAMILY).
-#if !PLATFORM(IOS_FAMILY)
+    // FIXME: We should try to reconcile this so there's no difference for !HAVE(MEDIA_VOLUME_PER_ELEMENT).
+#if HAVE(MEDIA_VOLUME_PER_ELEMENT)
     INFO_LOG(LOGIDENTIFIER);
     updateVolume();
 #endif
@@ -6384,20 +6386,21 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     }
 #endif
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, mode] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, mode, logIdentifier = LOGIDENTIFIER] {
         if (isContextStopped())
             return;
 
         if (document().hidden()) {
-            ALWAYS_LOG(LOGIDENTIFIER, " returning because document is hidden");
+            ALWAYS_LOG(logIdentifier, " returning because document is hidden");
             m_changingVideoFullscreenMode = false;
             return;
         }
 
         if (is<HTMLVideoElement>(*this)) {
             HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
-            if (document().page()->chrome().client().supportsVideoFullscreen(mode)) {
-                ALWAYS_LOG(LOGIDENTIFIER, "Entering fullscreen mode ", mode, ", m_videoFullscreenStandby = ", m_videoFullscreenStandby);
+            auto& client = document().page()->chrome().client();
+            if (client.supportsVideoFullscreen(mode) && client.canEnterVideoFullscreen()) {
+                ALWAYS_LOG(logIdentifier, "Entering fullscreen mode ", mode, ", m_videoFullscreenStandby = ", m_videoFullscreenStandby);
 
                 m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
                 if (mode == VideoFullscreenModeStandard)
@@ -6407,7 +6410,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
                 setFullscreenMode(mode);
                 configureMediaControls();
 
-                document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);
+                client.enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);
                 if (m_videoFullscreenStandby)
                     return;
 
@@ -8384,7 +8387,7 @@ void HTMLMediaElement::updateShouldAutoplay()
     if (!autoplay())
         return;
 
-    if (!mediaSession().hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted))
+    if (!mediaSession().hasBehaviorRestriction(MediaElementSession::InvisibleAutoplayNotPermitted) && !m_wasInterruptedForInvisibleAutoplay)
         return;
 
     bool canAutoplay = mediaSession().autoplayPermitted();

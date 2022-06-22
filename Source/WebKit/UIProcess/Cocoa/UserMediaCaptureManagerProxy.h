@@ -90,7 +90,7 @@ private:
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
     void capabilities(WebCore::RealtimeMediaSourceIdentifier, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&&);
     void applyConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::MediaConstraints&);
-    void clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID);
+    void clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID, WebCore::PageIdentifier);
     void endProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void setShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier, bool shouldApplyRotation);
 
@@ -105,7 +105,7 @@ private:
 
     struct PageSources {
         WeakPtr<WebCore::RealtimeMediaSource> microphoneSource;
-        WeakPtr<WebCore::RealtimeMediaSource> cameraSource;
+        WeakHashSet<WebCore::RealtimeMediaSource> cameraSources;
     };
     HashMap<WebCore::PageIdentifier, PageSources> m_pageSources;
 };

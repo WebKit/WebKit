@@ -1327,6 +1327,7 @@
          "clopez@igalia.com"
       ],
       "expertise" : "The WebKitGTK and WPE ports, Tools, Build/test infrastructure",
+      "github" : "clopez",
       "name" : "Carlos Alberto Lopez Perez",
       "nicks" : [
          "clopez"
@@ -3343,14 +3344,15 @@
    {
       "emails" : [
          "jean-yves.avenard@apple.com",
-         "jya@apple.com"
+         "jya@apple.com",
+         "jyavenard@gmail.com"
       ],
       "github" : "jyavenard",
       "name" : "Jean-Yves Avenard",
       "nicks" : [
          "jya"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    {
       "emails" : [
@@ -6572,6 +6574,7 @@
          "thatcher@tesla.com"
       ],
       "expertise" : "WebKit (Mac), Developer Tools (Web Inspector)",
+      "github" : "xeenon",
       "name" : "Timothy Hatcher",
       "nicks" : [
          "xenon"

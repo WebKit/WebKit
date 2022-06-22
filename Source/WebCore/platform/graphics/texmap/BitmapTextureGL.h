@@ -60,7 +60,7 @@ public:
     void updateContents(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine) override;
     bool isBackedByOpenGL() const override { return true; }
 
-    RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&) override;
+    RefPtr<BitmapTexture> applyFilters(TextureMapper&, const FilterOperations&, bool defersLastFilter) override;
     struct FilterInfo {
         RefPtr<FilterOperation> filter;
         unsigned pass;

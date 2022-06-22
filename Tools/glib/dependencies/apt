@@ -2,12 +2,23 @@
 
 # If the package $1 is available, prints it. Otherwise prints $2.
 # Useful for handling when a package is renamed on new versions of Debian/Ubuntu.
-function aptIfElse {
+aptIfElse() {
     if apt-cache show $1 &>/dev/null; then
         echo $1
     else
         echo $2
     fi
+}
+
+aptIfExists() {
+    local ret=$(apt show "$1" 2>/dev/null)
+    if [[ $? -ne 0 ]]; then
+        return
+    fi
+    if [[ "$ret" =~ "(virtual)" ]]; then
+        return
+    fi
+    echo "$1"
 }
 
 PACKAGES=(
@@ -58,9 +69,9 @@ PACKAGES=(
     libcgi-pm-perl
     psmisc
     pulseaudio-utils
-    python-gi
     ruby-highline
     ruby-json
+    $(aptIfExists python-gi)
 
     # These are dependencies necessary for building with the Flatpak SDK.
     flatpak

@@ -156,8 +156,10 @@ void WebResourceLoader::didReceiveResponse(ResourceResponse&& response, PrivateR
 
     Ref<WebResourceLoader> protectedThis(*this);
 
-    if (metrics)
+    if (metrics) {
+        metrics->workerStart = m_workerStart;
         response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(WTFMove(*metrics)));
+    }
 
     if (privateRelayed == PrivateRelayed::Yes && mainFrameMainResource() == MainFrameMainResource::Yes)
         WebProcess::singleton().setHadMainFrameMainResourcePrivateRelayed();
@@ -241,18 +243,20 @@ void WebResourceLoader::didReceiveData(IPC::SharedBufferReference&& data, int64_
     m_coreLoader->didReceiveData(data.isNull() ? SharedBuffer::create() : data.unsafeBuffer().releaseNonNull(), encodedDataLength, DataPayloadBytes);
 }
 
-void WebResourceLoader::didFinishResourceLoad(const NetworkLoadMetrics& networkLoadMetrics)
+void WebResourceLoader::didFinishResourceLoad(NetworkLoadMetrics&& networkLoadMetrics)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didFinishResourceLoad for '%s'", m_coreLoader->url().string().latin1().data());
     WEBRESOURCELOADER_RELEASE_LOG("didFinishResourceLoad: (length=%zd)", m_numBytesReceived);
 
     if (UNLIKELY(m_interceptController.isIntercepting(m_coreLoader->identifier()))) {
-        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, networkLoadMetrics]() mutable {
+        m_interceptController.defer(m_coreLoader->identifier(), [this, protectedThis = Ref { *this }, networkLoadMetrics = WTFMove(networkLoadMetrics)]() mutable {
             if (m_coreLoader)
-                didFinishResourceLoad(networkLoadMetrics);
+                didFinishResourceLoad(WTFMove(networkLoadMetrics));
         });
         return;
     }
+
+    networkLoadMetrics.workerStart = m_workerStart;
 
     ASSERT_WITH_MESSAGE(!m_isProcessingNetworkResponse, "Load should not be able to finish before we've validated the response");
     m_coreLoader->didFinishLoading(networkLoadMetrics);

@@ -40,6 +40,7 @@
 #import <wtf/text/TextStream.h>
 
 #import "CoreVideoSoftLink.h"
+#import <pal/cg/CoreGraphicsSoftLink.h>
 
 namespace WebCore {
 
@@ -348,7 +349,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     UNUSED_PARAM(hostWindow);
 #endif
-
+#if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
+    if (m_resourceOwner && CGContextSetOwnerIdentity)
+        CGContextSetOwnerIdentity(m_cgContext.get(), m_resourceOwner.taskIdToken());
+#endif
     return m_cgContext.get();
 }
 
@@ -504,7 +508,13 @@ void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&
 
 void IOSurface::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
 {
+    ASSERT(resourceOwner);
+    m_resourceOwner = resourceOwner;
     setOwnershipIdentity(m_surface.get(), resourceOwner);
+#if HAVE(CG_CONTEXT_SET_OWNER_IDENTITY)
+    if (m_cgContext && CGContextSetOwnerIdentity)
+        CGContextSetOwnerIdentity(m_cgContext.get(), m_resourceOwner.taskIdToken());
+#endif
 }
 
 void IOSurface::setOwnershipIdentity(IOSurfaceRef surface, const ProcessIdentity& resourceOwner)

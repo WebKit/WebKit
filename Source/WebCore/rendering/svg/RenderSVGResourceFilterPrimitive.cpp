@@ -2,6 +2,7 @@
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
  * Copyright (C) 2011 Renata Hodovan (reni@webkit.org)
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +31,7 @@
 
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
+#include "SVGFEDropShadowElement.h"
 #include "SVGFEFloodElement.h"
 #include "SVGFESpecularLightingElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -54,23 +56,45 @@ void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, cons
 {
     RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
-    auto* filter = parent();
-    if (!filter)
-        return;
-
     if (diff == StyleDifference::Equal || !oldStyle)
         return;
 
     const SVGRenderStyle& newStyle = style().svgStyle();
-    if (is<SVGFEFloodElement>(filterPrimitiveElement())) {
+    if (is<SVGFEFloodElement>(filterPrimitiveElement()) || is<SVGFEDropShadowElement>(filterPrimitiveElement())) {
         if (newStyle.floodColor() != oldStyle->svgStyle().floodColor())
-            downcast<RenderSVGResourceFilter>(*filter).primitiveAttributeChanged(this, SVGNames::flood_colorAttr);
+            filterPrimitiveElement().primitiveAttributeChanged(SVGNames::flood_colorAttr);
         if (newStyle.floodOpacity() != oldStyle->svgStyle().floodOpacity())
-            downcast<RenderSVGResourceFilter>(*filter).primitiveAttributeChanged(this, SVGNames::flood_opacityAttr);
+            filterPrimitiveElement().primitiveAttributeChanged(SVGNames::flood_opacityAttr);
     } else if (is<SVGFEDiffuseLightingElement>(filterPrimitiveElement()) || is<SVGFESpecularLightingElement>(filterPrimitiveElement())) {
         if (newStyle.lightingColor() != oldStyle->svgStyle().lightingColor())
-            downcast<RenderSVGResourceFilter>(*filter).primitiveAttributeChanged(this, SVGNames::lighting_colorAttr);
+            filterPrimitiveElement().primitiveAttributeChanged(SVGNames::lighting_colorAttr);
     }
+}
+
+void RenderSVGResourceFilterPrimitive::markFilterEffectForRepaint(FilterEffect* effect)
+{
+    auto parent = this->parent();
+    if (!is<RenderSVGResourceFilter>(parent))
+        return;
+
+    auto& filterRenderer = downcast<RenderSVGResourceFilter>(*parent);
+
+    if (effect)
+        filterRenderer.markFilterForRepaint(*effect);
+
+    filterRenderer.markAllClientLayersForInvalidation();
+}
+
+void RenderSVGResourceFilterPrimitive::markFilterEffectForRebuild()
+{
+    auto parent = this->parent();
+    if (!is<RenderSVGResourceFilter>(parent))
+        return;
+
+    auto& filterRenderer = downcast<RenderSVGResourceFilter>(*parent);
+
+    filterRenderer.markFilterForRebuild();
+    filterRenderer.markAllClientLayersForInvalidation();
 }
 
 } // namespace WebCore

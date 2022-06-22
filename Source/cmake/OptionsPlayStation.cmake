@@ -44,13 +44,13 @@ set(USE_WPE_BACKEND_PLAYSTATION OFF)
 set(PlayStationModule_TARGETS ICU::uc)
 
 if (ENABLE_WEBCORE)
-    set(WebKitRequirements_COMPONENTS
+    set(WebKitRequirements_COMPONENTS WebKitResources)
+    set(WebKitRequirements_OPTIONAL_COMPONENTS
         JPEG
         LibPSL
         LibXml2
-        ProcessLauncher
         SQLite3
-        WebKitResources
+        WebP
         ZLIB
     )
 
@@ -64,10 +64,16 @@ if (ENABLE_WEBCORE)
 
         list(APPEND PlayStationModule_TARGETS WPE::PlayStation)
     else ()
-        list(APPEND WebKitRequirements_COMPONENTS libwpe)
+        list(APPEND WebKitRequirements_COMPONENTS
+            ProcessLauncher
+            libwpe
+        )
     endif ()
 
-    find_package(WebKitRequirements REQUIRED COMPONENTS ${WebKitRequirements_COMPONENTS})
+    find_package(WebKitRequirements
+        REQUIRED COMPONENTS ${WebKitRequirements_COMPONENTS}
+        OPTIONAL_COMPONENTS ${WebKitRequirements_OPTIONAL_COMPONENTS}
+    )
 
     # The OpenGL ES implementation is in the same library as the EGL implementation
     set(OpenGLES2_NAMES ${EGL_NAMES})
@@ -82,7 +88,6 @@ if (ENABLE_WEBCORE)
     find_package(OpenSSL REQUIRED)
     find_package(PNG REQUIRED)
     find_package(Threads REQUIRED)
-    find_package(WebP REQUIRED COMPONENTS demux)
 
     list(APPEND PlayStationModule_TARGETS
         CURL::libcurl
@@ -94,6 +99,36 @@ if (ENABLE_WEBCORE)
         PNG::PNG
         WebKitRequirements::WebKitResources
     )
+
+    if (NOT TARGET JPEG::JPEG)
+        find_package(JPEG 1.5.2 REQUIRED)
+        list(APPEND PlayStationModule_TARGETS JPEG::JPEG)
+    endif ()
+
+    if (NOT TARGET LibPSL::LibPSL)
+        find_package(LibPSL 0.20.2 REQUIRED)
+        list(APPEND PlayStationModule_TARGETS LibPSL::LibPSL)
+    endif ()
+
+    if (NOT TARGET LibXml2::LibXml2)
+        find_package(LibXml2 2.9.7 REQUIRED)
+        list(APPEND PlayStationModule_TARGETS LibXml2::LibXml2)
+    endif ()
+
+    if (NOT TARGET SQLite::SQLite3)
+        find_package(SQLite3 3.23.1 REQUIRED)
+        list(APPEND PlayStationModule_TARGETS SQLite::SQLite3)
+    endif ()
+
+    if (NOT TARGET WebP::libwebp)
+        find_package(WebP REQUIRED COMPONENTS demux)
+        list(APPEND PlayStationModule_TARGETS WebP::libwebp)
+    endif ()
+
+    if (NOT TARGET ZLIB::ZLIB)
+        find_package(ZLIB 1.2.11 REQUIRED)
+        list(APPEND PlayStationModule_TARGETS ZLIB::ZLIB)
+    endif ()
 endif ()
 
 WEBKIT_OPTION_BEGIN()

@@ -192,11 +192,21 @@ bool SharedVideoFrameInfo::writePixelBuffer(CVPixelBufferRef pixelBuffer, uint8_
     data += sizeof(SharedVideoFrameInfo);
 
     auto* planeA = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+    if (!planeA) {
+        RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameInfo::writePixelBuffer plane A is null");
+        return false;
+    }
+
     size_t planeASize = m_height * m_bytesPerRow;
     std::memcpy(data, planeA, planeASize);
 
     if (CVPixelBufferGetPlaneCount(pixelBuffer) == 2) {
         auto* planeB = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
+        if (!planeB) {
+            RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameInfo::writePixelBuffer plane B is null");
+            return false;
+        }
+
         size_t planeBSize = m_heightPlaneB * m_bytesPerRowPlaneB;
         std::memcpy(data + planeASize, planeB, planeBSize);
     }

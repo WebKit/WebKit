@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -182,6 +182,17 @@ void printInternal(PrintStream& out, float value)
 void printInternal(PrintStream& out, double value)
 {
     out.printf("%lf", value);
+}
+
+void printInternal(PrintStream& out, RawHex value)
+{
+#if !CPU(ADDRESS64)
+    if (value.is64Bit()) {
+        out.printf("0x%" PRIx64, value.u64());
+        return;
+    }
+#endif
+    out.printf("%p", value.ptr());
 }
 
 void printInternal(PrintStream& out, RawPointer value)

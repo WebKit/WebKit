@@ -51,8 +51,6 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     switch (value->getType()) {
     case CSSStyleValueType::CSSStyleImageValue:
         return createWrapper<CSSStyleImageValue>(globalObject, WTFMove(value));
-    case CSSStyleValueType::CSSNumericValue:
-        return createWrapper<CSSNumericValue>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSMathInvert:
         return createWrapper<CSSMathInvert>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSMathMin:

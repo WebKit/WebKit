@@ -101,6 +101,8 @@ public:
     float minValueForRange() const override;
     float stepValueForRange() const override;
 
+    AccessibilityOrientation orientation() const override;
+
     AXCoreObject* selectedRadioButton() override;
     AXCoreObject* selectedTabItem() override;
     AccessibilityButtonState checkboxOrRadioValue() const override;

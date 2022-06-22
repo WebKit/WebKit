@@ -2275,7 +2275,10 @@ void RenderLayerCompositor::updateScrollLayerClipping()
     if (layerForClipping == m_clipLayer) {
         EventRegion eventRegion;
         auto eventRegionContext = eventRegion.makeContext();
-        eventRegionContext.unite(IntRect({ }, layerSize), RenderStyle::defaultStyle());
+        eventRegionContext.unite(IntRect({ }, layerSize), m_renderView, RenderStyle::defaultStyle());
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        eventRegionContext.copyInteractionRegionsToEventRegion();
+#endif
         m_clipLayer->setEventRegion(WTFMove(eventRegion));
     }
 #endif
@@ -2598,6 +2601,11 @@ bool RenderLayerCompositor::needsToBeComposited(const RenderLayer& layer, Requir
 bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, RequiresCompositingData& queryData) const
 {
     auto& renderer = rendererForCompositingTests(layer);
+
+    if (!renderer.layer()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 
     // The root layer always has a compositing layer, but it may not have backing.
     return requiresCompositingForTransform(renderer)

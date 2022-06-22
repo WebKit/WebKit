@@ -48,7 +48,7 @@ class Revert(Command):
         # Only allow revert one commit one time, because git automatically generate mesaage will only contain one commit information
         parser.add_argument(
             'commit',
-            help='git hash, svn revision or identifer you want to revert'
+            help='git hash, svn revision or identifier you want to revert'
         )
 
         parser.add_argument(

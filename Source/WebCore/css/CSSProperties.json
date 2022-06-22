@@ -4587,8 +4587,7 @@
                 }
             ],
             "codegen-properties": {
-                "converter": "TextAlign",
-                "custom": "Initial|Value"
+                "converter": "TextAlign"
             },
             "specification": {
                 "category": "css-22",
@@ -4609,7 +4608,6 @@
             ],
             "codegen-properties": {
                 "converter": "TextAlignLast",
-                "custom": "Initial|Value",
                 "settings-flag": "cssTextAlignLastEnabled"
             },
             "specification": {

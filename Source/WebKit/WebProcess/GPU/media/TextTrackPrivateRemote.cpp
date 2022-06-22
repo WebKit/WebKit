@@ -37,11 +37,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-TextTrackPrivateRemote::TextTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier idendifier, TextTrackPrivateRemoteConfiguration&& configuration)
+TextTrackPrivateRemote::TextTrackPrivateRemote(GPUProcessConnection& gpuProcessConnection, MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier identifier, TextTrackPrivateRemoteConfiguration&& configuration)
     : WebCore::InbandTextTrackPrivate(configuration.cueFormat)
     , m_gpuProcessConnection(gpuProcessConnection)
     , m_playerIdentifier(playerIdentifier)
-    , m_identifier(idendifier)
+    , m_identifier(identifier)
 {
     updateConfiguration(WTFMove(configuration));
 }

@@ -4694,7 +4694,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (_removeBackgroundData->element != _page->editorState().postLayoutData().selectedEditableImage)
         return nil;
 
-    return [self menuWithInlineAction:WebCore::contextMenuItemTitleRemoveBackground() identifier:@"WKActionRemoveBackground" handler:[](WKContentView *view) {
+    return [self menuWithInlineAction:WebCore::contextMenuItemTitleRemoveBackground() image:[UIImage _systemImageNamed:@"circle.rectangle.filled.pattern.diagonalline"] identifier:@"WKActionRemoveBackground" handler:[](WKContentView *view) {
         auto data = std::exchange(view->_removeBackgroundData, { });
         if (!data)
             return;
@@ -4927,6 +4927,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)replaceDictatedText:(NSString*)oldText withText:(NSString *)newText
 {
+    if (_isHidingKeyboard && _isChangingFocus)
+        return;
+
     _autocorrectionContextNeedsUpdate = YES;
     _page->replaceDictatedText(oldText, newText);
 }
@@ -5657,6 +5660,9 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 // Inserts the given string, replacing any selected or marked text.
 - (void)insertText:(NSString *)aStringValue
 {
+    if (_isHidingKeyboard && _isChangingFocus)
+        return;
+
     auto* keyboard = [UIKeyboardImpl sharedInstance];
 
     WebKit::InsertTextOptions options;
@@ -6605,6 +6611,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (void)_hideKeyboard
 {
+    SetForScope isHidingKeyboardScope { _isHidingKeyboard, YES };
+
     self.inputDelegate = nil;
     [self setUpTextSelectionAssistant];
     
@@ -9875,9 +9883,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 #endif
 }
 
-- (UIMenu *)menuWithInlineAction:(NSString *)title identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
+- (UIMenu *)menuWithInlineAction:(NSString *)title image:(UIImage *)image identifier:(NSString *)identifier handler:(Function<void(WKContentView *)>&&)handler
 {
-    auto action = [UIAction actionWithTitle:title image:nil identifier:identifier handler:makeBlockPtr([handler = WTFMove(handler), weakSelf = WeakObjCPtr<WKContentView>(self)](UIAction *) mutable {
+    auto action = [UIAction actionWithTitle:title image:image identifier:identifier handler:makeBlockPtr([handler = WTFMove(handler), weakSelf = WeakObjCPtr<WKContentView>(self)](UIAction *) mutable {
         if (auto strongSelf = weakSelf.get())
             handler(strongSelf.get());
     }).get()];
@@ -9893,7 +9901,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     bool isVisible = _page->appHighlightsVisibility();
     auto title = isVisible ? WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote() : WebCore::contextMenuItemTagAddHighlightToNewQuickNote();
-    return [self menuWithInlineAction:title identifier:@"WKActionCreateQuickNote" handler:[isVisible](WKContentView *view) mutable {
+    return [self menuWithInlineAction:title image:nil identifier:@"WKActionCreateQuickNote" handler:[isVisible](WKContentView *view) mutable {
         view->_page->createAppHighlightInSelectedRange(isVisible ? WebCore::CreateNewGroupForHighlight::No : WebCore::CreateNewGroupForHighlight::Yes, WebCore::HighlightRequestOriginatedInApp::No);
     }];
 }
@@ -10434,10 +10442,10 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
     // The limit matches the limit set on existing WKWebView find API.
     constexpr auto maxMatches = 1000;
-    _page->findTextRangesForStringMatches(string, findOptions, maxMatches, [string, aggregator = retainPtr(aggregator)](const Vector<WebKit::WebFoundTextRange> ranges) {
+    _page->findTextRangesForStringMatches(string, findOptions, maxMatches, [string = retainPtr(string), aggregator = retainPtr(aggregator)](const Vector<WebKit::WebFoundTextRange> ranges) {
         for (auto& range : ranges) {
             WKFoundTextRange *textRange = [WKFoundTextRange foundTextRangeWithWebFoundTextRange:range];
-            [aggregator foundRange:textRange forSearchString:string inDocument:nil];
+            [aggregator foundRange:textRange forSearchString:string.get() inDocument:nil];
         }
 
         [aggregator finishedSearching];
@@ -11428,6 +11436,12 @@ constexpr auto analysisTypesForFullscreenVideo = VKAnalysisTypeAll & ~VKAnalysis
 #if HAVE(CONTACTSUI)
     [_contactPicker dismissWithContacts:contacts];
 #endif
+}
+
+- (void)_simulateSelectionStart
+{
+    _usingGestureForSelection = YES;
+    _lastSelectionDrawingInfo.type = WebKit::WKSelectionDrawingInfo::SelectionType::Range;
 }
 
 #if ENABLE(DATALIST_ELEMENT)

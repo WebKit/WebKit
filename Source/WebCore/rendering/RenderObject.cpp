@@ -977,45 +977,37 @@ static inline bool fullRepaintIsScheduled(const RenderObject& renderer)
     return false;
 }
 
+void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, ClipRepaintToLayer clipRepaintToLayer, ForceRepaint forceRepaint) const
+{
+    auto repaintContainer = containerForRepaint();
+    if (!repaintContainer.renderer)
+        repaintContainer = { fullRepaintIsScheduled(*this), &view() };
+
+    if (repaintContainer.fullRepaintIsScheduled && forceRepaint == ForceRepaint::No)
+        return;
+
+    auto repaintRect = partialRepaintRect ? computeRectForRepaint(*partialRepaintRect, repaintContainer.renderer) : clippedOverflowRectForRepaint(repaintContainer.renderer);
+    repaintUsingContainer(repaintContainer.renderer, repaintRect, clipRepaintToLayer == ClipRepaintToLayer::Yes);
+}
+
 void RenderObject::repaint() const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
-    if (!isRooted())
+    if (!isRooted() || view().printing())
         return;
-
-    const RenderView& view = this->view();
-    if (view.printing())
-        return;
-
-    auto repaintContainer = containerForRepaint();
-    if (!repaintContainer.renderer)
-        repaintContainer = { fullRepaintIsScheduled(*this), &view };
-
-    if (!repaintContainer.fullRepaintIsScheduled)
-        repaintUsingContainer(repaintContainer.renderer, clippedOverflowRectForRepaint(repaintContainer.renderer));
+    issueRepaint();
 }
 
-void RenderObject::repaintRectangle(const LayoutRect& r, bool shouldClipToLayer) const
+void RenderObject::repaintRectangle(const LayoutRect& repaintRect, bool shouldClipToLayer) const
 {
     // Don't repaint if we're unrooted (note that view() still returns the view when unrooted)
-    if (!isRooted())
+    if (!isRooted() || view().printing())
         return;
-
-    const RenderView& view = this->view();
-    if (view.printing())
-        return;
-
-    LayoutRect dirtyRect(r);
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
-    dirtyRect.move(view.frameView().layoutContext().layoutDelta());
-
-    auto repaintContainer = containerForRepaint();
-    if (!repaintContainer.renderer)
-        repaintContainer = { fullRepaintIsScheduled(*this), &view };
-
-    if (!repaintContainer.fullRepaintIsScheduled)
-        repaintUsingContainer(repaintContainer.renderer, computeRectForRepaint(dirtyRect, repaintContainer.renderer), shouldClipToLayer);
+    auto dirtyRect = repaintRect;
+    dirtyRect.move(view().frameView().layoutContext().layoutDelta());
+    issueRepaint(dirtyRect, shouldClipToLayer ? ClipRepaintToLayer::Yes : ClipRepaintToLayer::No);
 }
 
 void RenderObject::repaintSlowRepaintObject() const

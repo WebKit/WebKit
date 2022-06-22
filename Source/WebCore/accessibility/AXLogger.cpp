@@ -421,6 +421,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXLoadComplete:
         stream << "AXLoadComplete";
         break;
+    case AXObjectCache::AXNotification::AXPlaceholderChanged:
+        stream << "AXPlaceholderChanged";
+        break;
     case AXObjectCache::AXNotification::AXMaximumValueChanged:
         stream << "AXMaximumValueChanged";
         break;
@@ -432,6 +435,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
         break;
     case AXObjectCache::AXNotification::AXNewDocumentLoadComplete:
         stream << "AXNewDocumentLoadComplete";
+        break;
+    case AXObjectCache::AXNotification::AXOrientationChanged:
+        stream << "AXOrientationChanged";
         break;
     case AXObjectCache::AXNotification::AXPageScrolled:
         stream << "AXPageScrolled";

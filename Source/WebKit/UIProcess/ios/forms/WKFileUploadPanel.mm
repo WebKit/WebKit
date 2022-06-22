@@ -436,8 +436,8 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
     for (NSURL *fileURL in fileURLs)
         filenames.uncheckedAppend(String::fromUTF8(fileURL.fileSystemRepresentation));
 
-    NSData *jpeg = UIImageJPEGRepresentation(iconImage, 1.0);
-    RefPtr<API::Data> iconImageDataRef = adoptRef(toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([jpeg bytes]), [jpeg length])));
+    NSData *png = UIImagePNGRepresentation(iconImage);
+    RefPtr<API::Data> iconImageDataRef = adoptRef(toImpl(WKDataCreate(reinterpret_cast<const unsigned char*>([png bytes]), [png length])));
 
     _listener->chooseFiles(filenames, displayString, iconImageDataRef.get());
     [self _dispatchDidDismiss];

@@ -17,6 +17,21 @@ window._test_hasPaintRectsObserver = setInterval(() => {
 
 function test()
 {
+    // Because adding test results to the page also causes painting (of the new result elements) we need to defer adding
+    // results to the page until we are between test cases.
+    let deferredTestResults = [];
+
+    const inspectorTestOriginalAddResult = InspectorTest.addResult.bind(InspectorTest);
+    InspectorTest.addResult = function(result) {
+        deferredTestResults.push(result);
+    }
+
+    function writeDeferredTestOutputToPage() {
+        for (let result of deferredTestResults)
+            inspectorTestOriginalAddResult(result);
+        deferredTestResults = [];
+    }
+
     async function expectHasPaintRectsDidChangeTo(expected) {
         await InspectorTest.awaitEvent("TestHasPaintRectsDidChange");
         await expectHasPaintRects(expected);
@@ -27,11 +42,27 @@ function test()
         InspectorTest.expectEqual(hasPaintRects, expected, `Should ${expected ? "" : "not "}have paint rects displayed.`);
     }
 
+    async function setup() {
+        await PageAgent.setShowPaintRects(false);
+
+        // Existing paint rects still need to fade out, so it isn't safe to assume we will immediately have zero paint
+        // rects visible.
+        if (!(await InspectorTest.evaluateInPage(`window._test_hasPaintRects`)))
+            return;
+        await InspectorTest.awaitEvent("TestHasPaintRectsDidChange");
+    }
+
+    async function teardown() {
+        writeDeferredTestOutputToPage();
+    }
+
     let suite = InspectorTest.createAsyncSuite("Page.setShowPaintRects");
 
     suite.addTestCase({
         name: "Page.setShowPaintRects.Enabled",
         description: "Test that paint rects are correctly created and removed while enabled.",
+        setup,
+        teardown,
         async test() {
             await PageAgent.setShowPaintRects(true);
             await expectHasPaintRects(false);
@@ -47,6 +78,8 @@ function test()
     suite.addTestCase({
         name: "Page.setShowPaintRects.Disabled",
         description: "Test that paint rects are not created while disabled.",
+        setup,
+        teardown,
         async test() {
             await PageAgent.setShowPaintRects(false);
             await expectHasPaintRects(false);

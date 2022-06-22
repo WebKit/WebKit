@@ -42,7 +42,7 @@ class RemoteRealtimeMediaSource : public WebCore::RealtimeMediaSource
 {
 public:
     RemoteRealtimeMediaSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, AtomString&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
-    RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&&, AtomString&& name, String&& hashSalt, UserMediaCaptureManager&);
+    RemoteRealtimeMediaSource(RemoteRealtimeMediaSourceProxy&&, AtomString&& name, String&& hashSalt, UserMediaCaptureManager&, WebCore::PageIdentifier);
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
     IPC::Connection& connection() { return m_proxy.connection(); }

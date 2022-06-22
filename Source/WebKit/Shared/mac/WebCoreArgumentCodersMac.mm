@@ -277,12 +277,12 @@ bool ArgumentCoder<WebCore::Credential>::decodePlatformData(Decoder& decoder, We
 
 void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, const MachSendRight& sendRight)
 {
-    encoder << Attachment(sendRight.copySendRight().leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
+    encoder << Attachment { sendRight };
 }
 
 void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, MachSendRight&& sendRight)
 {
-    encoder << Attachment(sendRight.leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);
+    encoder << Attachment { WTFMove(sendRight) };
 }
 
 bool ArgumentCoder<MachSendRight>::decode(Decoder& decoder, MachSendRight& sendRight)
@@ -291,10 +291,7 @@ bool ArgumentCoder<MachSendRight>::decode(Decoder& decoder, MachSendRight& sendR
     if (!decoder.decode(attachment))
         return false;
 
-    if (attachment.disposition() != MACH_MSG_TYPE_MOVE_SEND)
-        return false;
-
-    sendRight = MachSendRight::adopt(attachment.port());
+    sendRight = WTFMove(attachment);
     return true;
 }
 

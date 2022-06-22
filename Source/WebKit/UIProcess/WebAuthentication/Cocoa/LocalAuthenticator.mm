@@ -200,7 +200,7 @@ static Vector<AuthenticatorTransport> transports()
 {
     Vector<WebCore::AuthenticatorTransport> transports = { WebCore::AuthenticatorTransport::Internal };
     if (shouldUpdateQuery())
-        transports.append(WebCore::AuthenticatorTransport::Cable);
+        transports.append(WebCore::AuthenticatorTransport::Hybrid);
     return transports;
 }
 
@@ -262,19 +262,7 @@ void LocalAuthenticator::makeCredential()
             ASSERT(rawId);
             return excludeCredentialIds.contains(base64EncodeToString(rawId->data(), rawId->byteLength()));
         })) {
-            // Obtain consent per Step 3.1
-            auto callback = [weakThis = WeakPtr { *this }] (LocalAuthenticatorPolicy policy) {
-                RELEASE_ASSERT(RunLoop::isMain());
-                if (!weakThis)
-                    return;
-
-                if (policy == LocalAuthenticatorPolicy::Allow)
-                    weakThis->receiveException({ InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
-                else
-                    weakThis->receiveException({ NotAllowedError, "This request has been cancelled by the user."_s });
-            };
-            // Similar to below, consent has already been given.
-            observer()->decidePolicyForLocalAuthenticator(WTFMove(callback));
+            receiveException({ InvalidStateError, "At least one credential matches an entry of the excludeCredentials list in the platform attached authenticator."_s }, WebAuthenticationStatus::LAExcludeCredentialsMatched);
             return;
         }
     }
@@ -682,15 +670,14 @@ void LocalAuthenticator::deleteDuplicateCredential() const
         if (memcmp(userHandle->data(), creationOptions.user.id.data(), userHandle->byteLength()))
             return false;
 
-        auto query = adoptNS([[NSMutableDictionary alloc] init]);
-        [query setDictionary:@{
+        NSDictionary *query = @{
             (id)kSecClass: (id)kSecClassKey,
             (id)kSecAttrApplicationLabel: toNSData(credential->rawId()).get(),
+            (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
             (id)kSecUseDataProtectionKeychain: @YES
-        }];
-        updateQueryIfNecessary(query.get());
+        };
 
-        OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query.get());
+        OSStatus status = SecItemDelete((__bridge CFDictionaryRef)query);
         if (status && status != errSecItemNotFound)
             LOG_ERROR(makeString("Couldn't delete older credential: "_s, status).utf8().data());
         return true;

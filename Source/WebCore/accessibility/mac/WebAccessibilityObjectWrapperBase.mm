@@ -262,6 +262,9 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
 NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& children)
 {
     return createNSArray(children, [] (const auto& child) -> id {
+        if (!child)
+            return nil;
+
         auto wrapper = child->wrapper();
 
         // We want to return the attachment view instead of the object representing the attachment,

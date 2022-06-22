@@ -561,7 +561,7 @@ TEST(WebKit, WebAudioAndGetUserMedia)
 
 #if ENABLE(GPU_PROCESS)
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=239315
-TEST(WebKit2, DISABLED_CrashGPUProcessWhileCapturing)
+TEST(WebKit2, CrashGPUProcessWhileCapturing)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
@@ -709,7 +709,7 @@ TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
 }
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=239309
-TEST(WebKit2, DISABLED_CrashGPUProcessWhileCapturingAndCalling)
+TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
@@ -748,6 +748,10 @@ TEST(WebKit2, DISABLED_CrashGPUProcessWhileCapturingAndCalling)
     [webView stringByEvaluatingJavaScript:@"createConnection()"];
     TestWebKitAPI::Util::run(&done);
 
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkDecodingVideo('first')"];
+    TestWebKitAPI::Util::run(&done);
+
     auto webViewPID = [webView _webProcessIdentifier];
 
     // The GPU process should get launched.
@@ -776,7 +780,15 @@ TEST(WebKit2, DISABLED_CrashGPUProcessWhileCapturingAndCalling)
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
 
     done = false;
-    [webView stringByEvaluatingJavaScript:@"checkDecodingVideo()"];
+    [webView stringByEvaluatingJavaScript:@"checkVideoStatus()"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkAudioStatus()"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"checkDecodingVideo('second')"];
     TestWebKitAPI::Util::run(&done);
 
     EXPECT_EQ(gpuProcessPID, [processPool _gpuProcessIdentifier]);

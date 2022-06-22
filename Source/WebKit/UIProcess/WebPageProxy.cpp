@@ -320,6 +320,10 @@
 #import <WebCore/ScreenCaptureKitSharingSessionManager.h>
 #endif
 
+#if USE(QUICK_LOOK)
+#include <WebCore/PreviewConverter.h>
+#endif
+
 #define MESSAGE_CHECK(process, assertion) MESSAGE_CHECK_BASE(assertion, process->connection())
 #define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
 #define MESSAGE_CHECK_COMPLETION(process, assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process->connection(), completion)
@@ -4577,10 +4581,13 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
 
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 
-    sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [this, protectedThis = Ref { *this }, callback = WTFMove(callback)] () mutable {
-        callAfterNextPresentationUpdate([callback = WTFMove(callback)] (auto) mutable {
+    sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] () mutable {
+        if (weakThis) {
+            weakThis->callAfterNextPresentationUpdate([callback = WTFMove(callback)] (auto) mutable {
+                callback();
+            });
+        } else
             callback();
-        });
     });
 }
 
@@ -5830,9 +5837,10 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
 #endif
         ), webPageID);
         });
-        if (process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Enabled && MIMETypeRegistry::isPDFOrPostScriptMIMEType(navigationResponse->response().mimeType()))
+#if USE(QUICK_LOOK)
+        if (process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Enabled && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(navigationResponse->response().mimeType()) || PreviewConverter::supportsMIMEType(navigationResponse->response().mimeType())))
             policyAction = PolicyAction::Download;
-        
+#endif
         receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender));
     }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No);
 
@@ -7693,10 +7701,12 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     }
 }
 
-void WebPageProxy::editorStateChanged(const EditorState& editorState)
+void WebPageProxy::editorStateChanged(const EditorState& editorState, CompletionHandler<void()>&& completionHandler)
 {
     if (updateEditorState(editorState))
         dispatchDidUpdateEditorState();
+
+    completionHandler();
 }
 
 bool WebPageProxy::updateEditorState(const EditorState& newEditorState)

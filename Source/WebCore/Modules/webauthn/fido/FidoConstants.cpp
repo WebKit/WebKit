@@ -82,6 +82,7 @@ bool isCtapDeviceResponseCode(CtapDeviceResponseCode code)
     case CtapDeviceResponseCode::kCtap2ErrPinPolicyViolation:
     case CtapDeviceResponseCode::kCtap2ErrPinTokenExpired:
     case CtapDeviceResponseCode::kCtap2ErrRequestTooLarge:
+    case CtapDeviceResponseCode::kCtap2ErrActionTimeout:
     case CtapDeviceResponseCode::kCtap2ErrOther:
     case CtapDeviceResponseCode::kCtap2ErrSpecLast:
     case CtapDeviceResponseCode::kCtap2ErrExtensionFirst:

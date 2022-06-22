@@ -368,12 +368,15 @@ CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
 size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);
 size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
-CGError CGSSetDenyWindowServerConnections(bool);
 typedef int32_t CGSDisplayID;
 CGSDisplayID CGSMainDisplayID(void);
 
 IOHIDEventRef CGEventCopyIOHIDEvent(CGEventRef);
 #endif // PLATFORM(MAC)
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+CGError CGSSetDenyWindowServerConnections(bool);
+#endif
 
 #if ENABLE(PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
 

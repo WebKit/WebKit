@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SVGElement.h"
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParser.h"
 #include "Document.h"
 #include "ElementChildIterator.h"
@@ -531,7 +533,16 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createSVGLayerAwareEl
     // List of all SVG elements whose renderers support the layer aware layout / painting / hit-testing mode ('LBSE-mode').
     using namespace SVGNames;
     MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
-    for (auto& tag : { circleTag.get(), ellipseTag.get(), gTag.get(), rectTag.get(), textTag.get() })
+
+    const Vector<SVGQualifiedName> allowedTags = {
+        circleTag.get(),
+        ellipseTag.get(),
+        gTag.get(),
+        pathTag.get(),
+        rectTag.get(),
+        textTag.get()
+    };
+    for (auto& tag : allowedTags)
         set.add(tag.localName());
     return set;
 }
@@ -710,6 +721,20 @@ const RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
     }
 
     return m_svgRareData->overrideComputedStyle(*this, parentStyle);
+}
+
+ColorInterpolation SVGElement::colorInterpolation() const
+{
+    if (auto renderer = this->renderer())
+        return renderer->style().svgStyle().colorInterpolationFilters();
+
+    // Try to determine the property value from the computed style.
+    if (auto value = ComputedStyleExtractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyColorInterpolationFilters, DoNotUpdateLayout)) {
+        if (is<CSSPrimitiveValue>(value))
+            return downcast<CSSPrimitiveValue>(*value);
+    }
+
+    return ColorInterpolation::Auto;
 }
 
 QualifiedName SVGElement::animatableAttributeForName(const AtomString& localName)

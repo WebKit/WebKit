@@ -70,6 +70,8 @@ static bool useBackslashAsYenSignForFamily(const AtomString& family)
 
 FontCascade::CodePath FontCascade::s_codePath = CodePath::Auto;
 
+static std::atomic<unsigned> lastFontCascadeGeneration { 0 };
+
 // ============================================================================================
 // FontCascade Implementation (Cross-Platform Portion)
 // ============================================================================================
@@ -82,6 +84,7 @@ FontCascade::FontCascade(FontCascadeDescription&& fd, float letterSpacing, float
     : m_fontDescription(WTFMove(fd))
     , m_letterSpacing(letterSpacing)
     , m_wordSpacing(wordSpacing)
+    , m_generation(++lastFontCascadeGeneration)
     , m_useBackslashAsYenSymbol(useBackslashAsYenSignForFamily(m_fontDescription.firstFamily()))
     , m_enableKerning(computeEnableKerning())
     , m_requiresShaping(computeRequiresShaping())
@@ -93,6 +96,7 @@ FontCascade::FontCascade(const FontCascade& other)
     , m_fonts(other.m_fonts)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
+    , m_generation(other.m_generation)
     , m_useBackslashAsYenSymbol(other.m_useBackslashAsYenSymbol)
     , m_enableKerning(computeEnableKerning())
     , m_requiresShaping(computeRequiresShaping())
@@ -105,6 +109,7 @@ FontCascade& FontCascade::operator=(const FontCascade& other)
     m_fonts = other.m_fonts;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
+    m_generation = other.m_generation;
     m_useBackslashAsYenSymbol = other.m_useBackslashAsYenSymbol;
     m_enableKerning = other.m_enableKerning;
     m_requiresShaping = other.m_requiresShaping;
@@ -147,9 +152,7 @@ bool FontCascade::isCurrent(const FontSelector& fontSelector) const
 void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 {
     m_fonts = WTFMove(fonts);
-    m_useBackslashAsYenSymbol = useBackslashAsYenSignForFamily(firstFamily());
-    m_enableKerning = computeEnableKerning();
-    m_requiresShaping = computeRequiresShaping();
+    m_generation = ++lastFontCascadeGeneration;
 }
 
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const

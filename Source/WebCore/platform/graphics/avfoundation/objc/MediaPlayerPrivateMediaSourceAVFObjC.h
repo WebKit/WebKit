@@ -222,6 +222,9 @@ private:
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
+#if PLATFORM(COCOA) && !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+    void willBeAskedToPaintGL() final;
+#endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
@@ -284,6 +287,8 @@ private:
     void checkNewVideoFrameMetadata(CMTime);
     MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
 
+    bool shouldEnsureLayer() const;
+
     friend class MediaSourcePrivateAVFObjC;
 
     struct PendingSeek {
@@ -341,7 +346,9 @@ private:
     bool m_seeking;
     SeekState m_seekCompleted { SeekCompleted };
     mutable bool m_loadingProgressed;
+#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
     bool m_hasBeenAskedToPaintGL { false };
+#endif
     bool m_hasAvailableVideoFrame { false };
     bool m_allRenderersHaveAvailableSamples { false };
     bool m_visible { false };

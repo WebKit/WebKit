@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
+Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, CanvasContentType canvasContentType, Rotation videoRotation, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
 {
     ensureGStreamerInitialized();
 
@@ -46,7 +46,18 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuf
 
     auto width = size.width();
     auto height = size.height();
-    gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_BGRA, width, height);
+    GstVideoFormat format;
+
+    switch (canvasContentType) {
+    case CanvasContentType::WebGL:
+        format = GST_VIDEO_FORMAT_RGBA;
+        break;
+    case CanvasContentType::Canvas2D:
+        format = GST_VIDEO_FORMAT_BGRA;
+        break;
+    }
+    const char* formatName = gst_video_format_to_string(format);
+    gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height);
 
     if (metadata)
         webkitGstBufferSetVideoFrameTimeMetadata(buffer.get(), *metadata);
@@ -54,7 +65,7 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuf
     int frameRateNumerator, frameRateDenominator;
     gst_util_double_to_fraction(frameRate, &frameRateNumerator, &frameRateDenominator);
 
-    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "BGRA", "width", G_TYPE_INT, width,
+    auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width,
         "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
 
@@ -67,7 +78,7 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuf
 
         width = destinationSize.width();
         height = destinationSize.height();
-        auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "BGRA", "width", G_TYPE_INT, width,
+        auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName, "width", G_TYPE_INT, width,
             "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
         GstVideoInfo outputInfo;
         gst_video_info_from_caps(&outputInfo, outputCaps.get());

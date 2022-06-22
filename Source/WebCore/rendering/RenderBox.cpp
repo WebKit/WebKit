@@ -5233,7 +5233,12 @@ LayoutRect RenderBox::logicalLayoutOverflowRectForPropagation(const RenderStyle*
 LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parentStyle) const
 {
     // Only propagate interior layout overflow if we don't completely clip it.
-    LayoutRect rect = borderBoxRect();
+    auto rect = borderBoxRect();
+    if (isGridItem()) {
+        // As per https://github.com/w3c/csswg-drafts/issues/3653, child's margins should contribute to the scrollable overflow area.
+        // FIXME: Expand it to non-grid cases when applicable.
+        rect.setWidth(rect.width() + std::max(0_lu, marginEnd()));
+    }
     if (!shouldApplyLayoutContainment()) {
         if (style().overflowX() == Overflow::Clip && style().overflowY() == Overflow::Visible) {
             LayoutRect clippedOverflowRect = layoutOverflowRect();

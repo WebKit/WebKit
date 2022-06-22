@@ -1145,6 +1145,17 @@ imported/w3c/web-platform-tests/css/css-ui/accent-color-checkbox-checked-001.ten
 
 webanimations/frame-rate [ Skip ]
 
+# NOTIFICATION_EVENT is Ventura+
+http/tests/workers/service/shownotification-allowed-document.html [ Skip ]
+http/tests/workers/service/shownotification-allowed.html [ Skip ]
+http/tests/workers/service/shownotification-invalid-data.html [ Skip ]
+http/wpt/push-api/pushEvent.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Skip ]
+http/tests/workers/service/getnotifications-stop.html [ Skip ]
+http/tests/workers/service/getnotifications.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -2213,6 +2224,21 @@ webkit.org/b/229370 imported/w3c/web-platform-tests/css/css-masking/mask-image/m
 
 webkit.org/b/233543 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split.html [ ImageOnlyFailure ]
 webkit.org/b/233543 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-ib-split-2.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-1.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-clip-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-1c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-composite-2c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-1c.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-3i.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-6.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-data-url-image.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-d.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-mode-to-mask-type.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-opacity-1d.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-2.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-origin-3.html [ ImageOnlyFailure ]
 
 # A support file for a test
 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
@@ -3782,6 +3808,7 @@ webgl/2.0.y/conformance/extensions/webgl-compressed-texture-s3tc-srgb.html [ Pas
 webgl/2.0.y/conformance2/extensions/ext-texture-norm16.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/oes-draw-buffers-indexed.html [ Pass ]
 webgl/2.0.y/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass ]
+webgl/2.0.y/conformance2/rendering/rasterizer-discard-and-implicit-clear.html [ Pass ]
 
 # WebGL 1.0.3 and 2.0.0 tests where behavior is obsolete and WebKit contains implementation
 # and tests for the new behavior. Should be removed once 1.0.3 and 2.0.0 are retired.
@@ -4777,9 +4804,7 @@ webkit.org/b/238555 imported/w3c/web-platform-tests/css/css-contain/contain-flex
 # Container queries
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container.html [ Skip ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-gradient-invalidation.html [ ImageOnlyFailure ]
-webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/container-units-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/241778 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container.html [ Skip ]
 
 # Flaky css-contain test
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html [ Failure Pass ]

@@ -37,7 +37,6 @@ void InlineCacheWrapper<GeneratorType>::finalize(LinkBuffer& fastPath, LinkBuffe
 {
     m_generator.reportSlowPathCall(m_slowPath->label(), m_slowPath->call());
     if (m_generator.m_unlinkedStubInfo) {
-        m_generator.m_unlinkedStubInfo->start = fastPath.locationOf<JITStubRoutinePtrTag>(m_generator.m_start);
         m_generator.m_unlinkedStubInfo->doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_generator.m_done);
         m_generator.m_unlinkedStubInfo->slowPathStartLocation = fastPath.locationOf<JITStubRoutinePtrTag>(m_generator.m_slowPathBegin);
     } else

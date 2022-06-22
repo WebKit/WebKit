@@ -835,11 +835,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
             break;
         }
 
-        auto styleProperties = keyframe.style->immutableCopyIfNeeded();
-        for (unsigned i = 0; i < styleProperties->propertyCount(); ++i)
-            keyframeList.addProperty(styleProperties->propertyAt(i).id());
-
-        auto keyframeRule = StyleRuleKeyframe::create(WTFMove(styleProperties));
+        auto keyframeRule = StyleRuleKeyframe::create(keyframe.style->immutableCopyIfNeeded());
         keyframeValue.setStyle(styleResolver.styleForKeyframe(*m_target, elementStyle, resolutionContext, keyframeRule.get(), keyframeValue));
         keyframeList.insert(WTFMove(keyframeValue));
     }
@@ -1043,7 +1039,6 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle* ol
         Style::loadPendingResources(*toStyle, *document(), m_target.get());
 
     KeyframeList keyframeList(m_keyframesName);
-    keyframeList.addProperty(property);
 
     KeyframeValue fromKeyframeValue(0, RenderStyle::clonePtr(*oldStyle));
     fromKeyframeValue.addProperty(property);

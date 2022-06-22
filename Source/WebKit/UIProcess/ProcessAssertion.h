@@ -124,6 +124,9 @@ public:
     void uiAssertionWillExpireImminently();
 
     void setUIAssertionExpirationHandler(Function<void()>&& handler) { m_uiAssertionExpirationHandler = WTFMove(handler); }
+#if PLATFORM(IOS_FAMILY)
+    static void setProcessStateMonitorEnabled(bool);
+#endif
 
 private:
     ProcessAndUIAssertion(ProcessID, const String& reason, ProcessAssertionType);

@@ -30,22 +30,22 @@ public:
     WEBCORE_EXPORT static Ref<FEDropShadow> create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity);
 
     float stdDeviationX() const { return m_stdX; }
-    void setStdDeviationX(float stdX) { m_stdX = stdX; }
+    bool setStdDeviationX(float);
 
     float stdDeviationY() const { return m_stdY; }
-    void setStdDeviationY(float stdY) { m_stdY = stdY; }
+    bool setStdDeviationY(float);
 
     float dx() const { return m_dx; }
-    void setDx(float dx) { m_dx = dx; }
+    bool setDx(float);
 
     float dy() const { return m_dy; }
-    void setDy(float dy) { m_dy = dy; }
+    bool setDy(float);
 
     const Color& shadowColor() const { return m_shadowColor; } 
-    void setShadowColor(const Color& shadowColor) { m_shadowColor = shadowColor; }
+    bool setShadowColor(const Color&);
 
     float shadowOpacity() const { return m_shadowOpacity; }
-    void setShadowOpacity(float shadowOpacity) { m_shadowOpacity = shadowOpacity; }
+    bool setShadowOpacity(float);
 
     static IntOutsets calculateOutsets(const FloatSize& offset, const FloatSize& stdDeviation);
 

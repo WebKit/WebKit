@@ -156,6 +156,8 @@ webkit.org/b/238208 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-a
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
 
+imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-repeat-2.html [ ImageOnlyFailure ]
+
 # Download
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Failure ]
 webkit.org/b/219530 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
@@ -906,6 +908,10 @@ webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022
 
 # Requires support for xHE-HAAC audio codec
 webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
+
+# Changes to logical height/width computations (https://bugs.webkit.org/show_bug.cgi?id=241601)
+webkit.org/b/241601 svg/wicd/rightsizing-grid.xhtml [ Failure ]
+webkit.org/b/241601 svg/wicd/test-rightsizing-b.xhtml [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.

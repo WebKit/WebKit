@@ -47,7 +47,7 @@ const NumberOfWasmArguments = NumberOfWasmArgumentJSRs + NumberOfWasmArgumentFPR
 # All callee saves must match the definition in WasmCallee.cpp
 
 # These must match the definition in WasmMemoryInformation.cpp
-if X86_64 or ARM64 or ARM64E
+if X86_64 or ARM64 or ARM64E or RISCV64
     const wasmInstance = csr0
     const memoryBase = csr3
     const boundsCheckingSize = csr4

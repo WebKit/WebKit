@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+// FIXME: Optimize / rework maplike<> and setlike<> declarations.
+// A few ideas in https://bugs.webkit.org/show_bug.cgi?id=241639.
+
 WEBCORE_EXPORT std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlobalObject&, JSC::JSObject& mapLike);
 WEBCORE_EXPORT JSC::JSValue forwardAttributeGetterToBackingMap(JSC::JSGlobalObject&, JSC::JSObject&, const JSC::Identifier&);
 WEBCORE_EXPORT JSC::JSValue forwardFunctionCallToBackingMap(JSC::JSGlobalObject&, JSC::CallFrame&, JSC::JSObject&, const JSC::Identifier&);
@@ -89,32 +92,32 @@ template<typename WrapperClass> JSC::JSObject& getAndInitializeBackingMap(JSC::J
 template<typename WrapperClass> JSC::JSValue forwardSizeToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, WrapperClass& mapLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardAttributeGetterToBackingMap(lexicalGlobalObject, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->size);
+    return forwardAttributeGetterToBackingMap(lexicalGlobalObject, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().sizePrivateName());
 }
 
 template<typename WrapperClass> JSC::JSValue forwardEntriesToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().entriesPublicName());
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().entriesPrivateName());
 }
 
 template<typename WrapperClass> JSC::JSValue forwardKeysToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().keysPublicName());
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().keysPrivateName());
 }
 
 template<typename WrapperClass> JSC::JSValue forwardValuesToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().valuesPublicName());
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().valuesPrivateName());
 }
 
 template<typename WrapperClass> JSC::JSValue forwardClearToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike)
 {
     mapLike.wrapped().clear();
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->clear);
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().clearPrivateName());
 }
 
 template<typename WrapperClass, typename Callback> JSC::JSValue forwardForEachToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, Callback&&)
@@ -126,20 +129,20 @@ template<typename WrapperClass, typename Callback> JSC::JSValue forwardForEachTo
 template<typename WrapperClass, typename ItemType> JSC::JSValue forwardGetToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&&)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().getPublicName());
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().getPrivateName());
 }
 
 template<typename WrapperClass, typename ItemType> JSC::JSValue forwardHasToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, ItemType&&)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().hasPublicName());
+    return forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().hasPrivateName());
 }
 
 template<typename WrapperClass, typename KeyType, typename ValueType> JSC::JSValue forwardSetToMapLike(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, WrapperClass& mapLike, KeyType&& key, ValueType&& value)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     mapLike.wrapped().setFromMapLike(std::forward<KeyType>(key), std::forward<ValueType>(value));
-    forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->set);
+    forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, getAndInitializeBackingMap(lexicalGlobalObject, mapLike), vm.propertyNames->builtinNames().setPrivateName());
     return &mapLike;
 }
 
@@ -151,7 +154,7 @@ template<typename WrapperClass, typename ItemType> JSC::JSValue forwardDeleteToM
     auto isDeleted = mapLike.wrapped().remove(std::forward<ItemType>(item));
     UNUSED_PARAM(isDeleted);
 
-    auto result = forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, backingMap, vm.propertyNames->deleteKeyword);
+    auto result = forwardFunctionCallToBackingMap(lexicalGlobalObject, callFrame, backingMap, vm.propertyNames->builtinNames().deletePrivateName());
 
     ASSERT_UNUSED(result, result.asBoolean() == isDeleted);
     return result;

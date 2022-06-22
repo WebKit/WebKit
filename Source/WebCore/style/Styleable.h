@@ -161,6 +161,8 @@ struct Styleable {
         element.keyframesRuleDidChange(pseudoId);
     }
 
+    void queryContainerDidChange() const;
+
     bool animationListContainsNewlyValidAnimation(const AnimationList&) const;
 
     void elementWasRemoved() const;

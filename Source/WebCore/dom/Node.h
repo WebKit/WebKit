@@ -235,6 +235,9 @@ public:
     bool hasShadowRootContainingSlots() const { return hasNodeFlag(NodeFlag::HasShadowRootContainingSlots); }
     void setHasShadowRootContainingSlots(bool flag) { setNodeFlag(NodeFlag::HasShadowRootContainingSlots, flag); }
 
+    bool needsSVGRendererUpdate() const { return hasNodeFlag(NodeFlag::NeedsSVGRendererUpdate); }
+    void setNeedsSVGRendererUpdate(bool flag) { setNodeFlag(NodeFlag::NeedsSVGRendererUpdate, flag); }
+
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
     ShadowRoot* containingShadowRoot() const;
@@ -579,8 +582,10 @@ protected:
         IsComputedStyleInvalidFlag = 1 << 25,
         HasShadowRootContainingSlots = 1 << 26,
         IsInTopLayer = 1 << 27,
+        NeedsSVGRendererUpdate = 1 << 28,
+        NeedsUpdateQueryContainerDependentStyle = 1 << 29,
 
-        // Bits 28-31 are free.
+        // Bits 30-31 are free.
     };
 
     enum class TabIndexState : uint8_t {

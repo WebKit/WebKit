@@ -221,6 +221,23 @@ typedef enum {
     WEBKIT_MEDIA_CAPTURE_STATE_MUTED,
 } WebKitMediaCaptureState;
 
+/**
+ * WebKitWebExtensionMode:
+ * @WEBKIT_WEB_EXTENSION_MODE_NONE: Not for an extension.
+ * @WEBKIT_WEB_EXTENSION_MODE_MANIFESTV2: For a ManifestV2 extension.
+ * @WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3: For a ManifestV3 extension.
+ *
+ * Enum values used for setting if a #WebKitWebView is intended for
+ * WebExtensions.
+ *
+ * Since: 2.38
+ */
+typedef enum {
+    WEBKIT_WEB_EXTENSION_MODE_NONE,
+    WEBKIT_WEB_EXTENSION_MODE_MANIFESTV2,
+    WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3,
+} WebKitWebExtensionMode;
+
 struct _WebKitWebView {
     WebKitWebViewBase parent;
 
@@ -491,6 +508,15 @@ webkit_web_view_run_javascript_in_world_finish       (WebKitWebView             
                                                       GError                   **error);
 
 WEBKIT_API void
+webkit_web_view_run_async_javascript_function_in_world (WebKitWebView           *web_view,
+                                                        const gchar             *body,
+                                                        GVariant                *arguments,
+                                                        const char              *world_name,
+                                                        GCancellable            *cancellable,
+                                                        GAsyncReadyCallback      callback,
+                                                        gpointer                 user_data);
+
+WEBKIT_API void
 webkit_web_view_run_javascript_from_gresource        (WebKitWebView             *web_view,
                                                       const gchar               *resource,
                                                       GCancellable              *cancellable,
@@ -638,6 +664,12 @@ webkit_web_view_get_display_capture_state            (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_set_display_capture_state            (WebKitWebView             *web_view,
                                                       WebKitMediaCaptureState    state);
+
+WEBKIT_API WebKitWebExtensionMode
+webkit_web_view_get_web_extension_mode               (WebKitWebView             *web_view);
+
+WEBKIT_API const gchar*
+webkit_web_view_get_default_content_security_policy  (WebKitWebView             *web_view);
 
 G_END_DECLS
 

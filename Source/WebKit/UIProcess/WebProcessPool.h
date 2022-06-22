@@ -515,6 +515,9 @@ public:
     Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::CaptivePortalMode, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
 
     bool hasAudibleMediaActivity() const { return !!m_audibleMediaActivity; }
+#if PLATFORM(IOS_FAMILY)
+    bool processesShouldSuspend() const { return m_processesShouldSuspend; }
+#endif
 
 private:
     void platformInitialize();
@@ -686,6 +689,10 @@ private:
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
 #endif
 
+#if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
+    RetainPtr<NSObject> m_powerLogObserver;
+#endif
+
 #if PLATFORM(COCOA)
     std::unique_ptr<WebCore::PowerSourceNotifier> m_powerSourceNotifier;
     RetainPtr<NSObject> m_activationObserver;
@@ -802,6 +809,10 @@ private:
 #endif
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    bool m_processesShouldSuspend { false };
 #endif
 };
 

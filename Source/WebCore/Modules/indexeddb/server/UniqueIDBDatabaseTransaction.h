@@ -49,6 +49,7 @@ struct IDBKeyRangeData;
 namespace IDBServer {
 
 class IDBServer;
+class UniqueIDBDatabase;
 class UniqueIDBDatabaseConnection;
 
 class UniqueIDBDatabaseTransaction : public CanMakeWeakPtr<UniqueIDBDatabaseTransaction>, public RefCounted<UniqueIDBDatabaseTransaction> {
@@ -57,7 +58,8 @@ public:
 
     ~UniqueIDBDatabaseTransaction();
 
-    UniqueIDBDatabaseConnection& databaseConnection();
+    UniqueIDBDatabaseConnection* databaseConnection() const;
+    UniqueIDBDatabase* database() const;
     const IDBTransactionInfo& info() const { return m_transactionInfo; }
     WEBCORE_EXPORT bool isVersionChange() const;
     bool isReadOnly() const;

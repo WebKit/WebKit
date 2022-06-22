@@ -38,18 +38,18 @@
 
 namespace WebCore {
 
-AXIsolatedObject::AXIsolatedObject(AXCoreObject& axObject, AXIsolatedTree* tree)
+AXIsolatedObject::AXIsolatedObject(Ref<AXCoreObject> axObject, AXIsolatedTree* tree)
     : m_cachedTree(tree)
-    , m_id(axObject.objectID())
+    , m_id(axObject->objectID())
 {
     ASSERT(isMainThread());
     ASSERT(is<AccessibilityObject>(axObject));
 
-    auto* axParent = axObject.parentObjectUnignored();
+    auto* axParent = axObject->parentObjectUnignored();
     m_parentID = axParent ? axParent->objectID() : AXID();
 
     if (m_id.isValid()) {
-        auto isRoot = !axParent && axObject.isScrollView() ? IsRoot::Yes : IsRoot::No;
+        auto isRoot = !axParent && axObject->isScrollView() ? IsRoot::Yes : IsRoot::No;
         initializeProperties(axObject, isRoot);
     } else {
         // Should never happen under normal circumstances.
@@ -57,7 +57,7 @@ AXIsolatedObject::AXIsolatedObject(AXCoreObject& axObject, AXIsolatedTree* tree)
     }
 }
 
-Ref<AXIsolatedObject> AXIsolatedObject::create(AXCoreObject& object, AXIsolatedTree* tree)
+Ref<AXIsolatedObject> AXIsolatedObject::create(Ref<AXCoreObject> object, AXIsolatedTree* tree)
 {
     return adoptRef(*new AXIsolatedObject(object, tree));
 }
@@ -72,12 +72,10 @@ void AXIsolatedObject::init()
     ASSERT_NOT_REACHED();
 }
 
-void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isRoot)
+void AXIsolatedObject::initializeProperties(Ref<AXCoreObject> coreObject, IsRoot isRoot)
 {
     ASSERT(is<AccessibilityObject>(coreObject));
-    auto& object = downcast<AccessibilityObject>(coreObject);
-    // We should never create an isolated object from an ignored object.
-    ASSERT(!object.accessibilityIsIgnored());
+    auto& object = downcast<AccessibilityObject>(coreObject.get());
 
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
@@ -402,7 +400,7 @@ void AXIsolatedObject::initializeProperties(AXCoreObject& coreObject, IsRoot isR
     if (object.isWidget())
         setProperty(AXPropertyName::IsWidget, true);
 
-    initializePlatformProperties(object, isRoot);
+    initializePlatformProperties(coreObject, isRoot);
 }
 
 AXCoreObject* AXIsolatedObject::associatedAXObject() const
@@ -413,7 +411,7 @@ AXCoreObject* AXIsolatedObject::associatedAXObject() const
         return nullptr;
 
     auto* axObjectCache = this->axObjectCache();
-    return axObjectCache ? axObjectCache->objectFromAXID(m_id) : nullptr;
+    return axObjectCache ? axObjectCache->objectForID(m_id) : nullptr;
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)

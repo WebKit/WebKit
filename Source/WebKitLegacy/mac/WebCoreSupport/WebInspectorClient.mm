@@ -562,6 +562,11 @@ void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&
     [window setMinFullScreenContentSize:NSMakeSize(minimumFullScreenWidth, minimumWindowHeight)];
     [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
 
+    // FIXME: <rdar://94829409> Replace Stage Manager auxiliary window workaround.
+    [window setToolbar:[NSToolbar new]];
+    [[window toolbar] setVisible:NO];
+    [window setToolbarStyle:NSWindowToolbarStylePreference];
+    
     [window setTitlebarAppearsTransparent:YES];
 
     [self setWindow:window.get()];

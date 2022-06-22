@@ -77,10 +77,10 @@ GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         m_gpuProcessConnection->addClient(*this);
 
         static constexpr auto connectionBufferSize = 1 << 21;
-        auto [streamConnection, dedicatedConnectionClientIdentifer] = IPC::StreamClientConnection::createWithDedicatedConnection(*this, connectionBufferSize);
+        auto [streamConnection, dedicatedConnectionClientIdentifier] = IPC::StreamClientConnection::createWithDedicatedConnection(*this, connectionBufferSize);
         m_streamConnection = WTFMove(streamConnection);
         m_streamConnection->open();
-        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, dedicatedConnectionClientIdentifer, m_streamConnection->streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, dedicatedConnectionClientIdentifier, m_streamConnection->streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     return *m_gpuProcessConnection;
 }

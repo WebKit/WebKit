@@ -54,6 +54,21 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         return this.nodeStyles && !this.nodeStyles.node.isInUserAgentShadowTree() && InspectorBackend.hasCommand("CSS.addRule");
     }
 
+    get supportsToggleCSSClassList()
+    {
+        return true;
+    }
+
+    get supportsToggleCSSForcedPseudoClass()
+    {
+        return true;
+    }
+
+    get initialToggleCSSForcedPseudoClassState()
+    {
+        return true;
+    }
+
     refresh(significantChange)
     {
         // We only need to do a rebuild on significant changes. Other changes are handled
@@ -168,14 +183,9 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         index += delta;
 
         while (this._sections[index] !== currentSection) {
-            if (index < 0) {
-                if (this._delegate && this._delegate.styleDetailsPanelFocusLastPseudoClassCheckbox) {
-                    this._delegate.styleDetailsPanelFocusLastPseudoClassCheckbox(this);
-                    break;
-                }
-
+            if (index < 0)
                 index = this._sections.length - 1;
-            } else if (index >= this._sections.length) {
+            else if (index >= this._sections.length) {
                 if (this._delegate && this._delegate.styleDetailsPanelFocusFilterBar) {
                     this._delegate.styleDetailsPanelFocusFilterBar(this);
                     break;

@@ -8,6 +8,7 @@
  * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
  * Copyright (C) 2011 University of Szeged
+ * Copyright (C) 2020, 2021, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +29,7 @@
 #include "config.h"
 #include "RenderSVGPath.h"
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "Gradient.h"
 #include "SVGPathElement.h"
 #include "SVGSubpathData.h"
@@ -38,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGPath);
 
 RenderSVGPath::RenderSVGPath(SVGGraphicsElement& element, RenderStyle&& style)
-    : LegacyRenderSVGShape(element, WTFMove(style))
+    : RenderSVGShape(element, WTFMove(style))
 {
 }
 
@@ -46,7 +48,7 @@ RenderSVGPath::~RenderSVGPath() = default;
 
 void RenderSVGPath::updateShapeFromElement()
 {
-    LegacyRenderSVGShape::updateShapeFromElement();
+    RenderSVGShape::updateShapeFromElement();
     updateZeroLengthSubpaths();
 
     m_strokeBoundingBox = calculateUpdatedStrokeBoundingBox();
@@ -81,7 +83,7 @@ void RenderSVGPath::strokeShape(GraphicsContext& context) const
     if (!style().hasVisibleStroke())
         return;
 
-    LegacyRenderSVGShape::strokeShape(context);
+    RenderSVGShape::strokeShape(context);
 
     if (m_zeroLengthLinecapLocations.isEmpty())
         return;
@@ -104,7 +106,7 @@ void RenderSVGPath::strokeShape(GraphicsContext& context) const
 
 bool RenderSVGPath::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
 {
-    if (LegacyRenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace))
+    if (RenderSVGShape::shapeDependentStrokeContains(point, pointCoordinateSpace))
         return true;
 
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
@@ -170,3 +172,5 @@ bool RenderSVGPath::isRenderingDisabled() const
 }
 
 }
+
+#endif // ENABLE(LAYER_BASED_SVG_ENGINE)

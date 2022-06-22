@@ -56,10 +56,16 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
         return false;
     }
 
-    get supportsToggleCSSClass()
+    get supportsToggleCSSClassList()
     {
         // Overriden by subclasses if needed.
-        return true;
+        return false;
+    }
+
+    get supportsToggleCSSForcedPseudoClass()
+    {
+        // Overriden by subclasses if needed.
+        return false;
     }
 
     attached()
@@ -114,13 +120,6 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
 
     // Private
 
-    get _initialScrollOffset()
-    {
-        if (!WI.cssManager.canForcePseudoClasses())
-            return 0;
-        return this.nodeStyles.node.enabledPseudoClasses.length ? 0 : WI.GeneralStyleDetailsSidebarPanel.NoForcedPseudoClassesScrollOffset;
-    }
-
     _refreshNodeStyles()
     {
         if (!this._nodeStyles)
@@ -132,7 +131,7 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
     {
         significantChange = this._forceSignificantChange || significantChange || false;
 
-        var previousScrollTop = this._initialScrollOffset;
+        let previousScrollTop = 0;
 
         // Only remember the scroll position if the previous node is the same as this one.
         if (this.element.parentNode && this._previousRefreshNodeIdentifier === this._nodeStyles.node.id)

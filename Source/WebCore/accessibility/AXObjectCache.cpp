@@ -958,7 +958,7 @@ Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& ax
 
     return axIDs.map([this] (const auto& axID) -> RefPtr<AXCoreObject> {
         ASSERT(axID.isValid());
-        return objectFromAXID(axID);
+        return objectForID(axID);
     });
 }
 
@@ -1925,6 +1925,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     else if (attrName == langAttr)
         updateIsolatedTree(get(element), AXObjectCache::AXLanguageChanged);
+    else if (attrName == placeholderAttr)
+        postNotification(element, AXPlaceholderChanged);
     else if (attrName == idAttr) {
         relationsNeedUpdate(true);
         updateIsolatedTree(get(element), AXObjectCache::AXIdAttributeChanged);
@@ -1958,6 +1960,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         postNotification(element, AXLevelChanged);
     else if (attrName == aria_liveAttr)
         postNotification(element, AXLiveRegionStatusChanged);
+    else if (attrName == aria_placeholderAttr)
+        postNotification(element, AXPlaceholderChanged);
     else if (attrName == aria_valuemaxAttr)
         postNotification(element, AXMaximumValueChanged);
     else if (attrName == aria_valueminAttr)
@@ -1971,6 +1975,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     }
     else if (attrName == aria_multiselectableAttr)
         postNotification(element, AXMultiSelectableStateChanged);
+    else if (attrName == aria_orientationAttr)
+        postNotification(element, AXOrientationChanged);
     else if (attrName == aria_posinsetAttr)
         postNotification(element, AXPositionInSetChanged);
     else if (attrName == aria_relevantAttr)
@@ -3535,6 +3541,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             tree->updateNodeProperty(*notification.first, AXPropertyName::MinValueForRange);
             tree->updateNodeProperty(*notification.first, AXPropertyName::ValueForRange);
             break;
+        case AXOrientationChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::Orientation);
+            break;
         case AXPositionInSetChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::PosInSet);
             tree->updateNodeProperty(*notification.first, AXPropertyName::SupportsPosInSet);
@@ -3570,6 +3579,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXLevelChanged:
         case AXLiveRegionStatusChanged:
         case AXLiveRegionRelevantChanged:
+        case AXPlaceholderChanged:
         case AXMenuListValueChanged:
         case AXMultiSelectableStateChanged:
         case AXPressedStateChanged:
@@ -3578,11 +3588,11 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
         case AXValueChanged:
             updateNode(notification.first);
             break;
+        case AXLanguageChanged:
         case AXRowCountChanged:
             updateNode(notification.first);
             FALLTHROUGH;
         case AXChildrenChanged:
-        case AXLanguageChanged:
         case AXRowCollapsed:
         case AXRowExpanded: {
             auto updatedFields = updatedObjects.get(notification.first->objectID());
@@ -3843,6 +3853,7 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
         }
         targetsIterator->value.append(target->objectID());
     }
+    m_relationTargets.add(target->objectID());
 
     if (addingSymmetricRelation == AddingSymmetricRelation::No) {
         if (auto symmetric = symmetricRelation(relationType); symmetric != AXRelationType::None)
@@ -3859,6 +3870,7 @@ void AXObjectCache::updateRelationsIfNeeded()
     relationsNeedUpdate(false);
     AXLOG("Updating relations.");
     m_relations.clear();
+    m_relationTargets.clear();
 
     struct RelationOrigin {
         Element* originElement { nullptr };
@@ -3917,6 +3929,12 @@ HashMap<AXID, AXRelations> AXObjectCache::relations()
 {
     updateRelationsIfNeeded();
     return m_relations;
+}
+
+const HashSet<AXID>& AXObjectCache::relationTargetIDs()
+{
+    updateRelationsIfNeeded();
+    return m_relationTargets;
 }
 
 std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject& object, AXRelationType relationType)

@@ -148,22 +148,15 @@ private:
     void showHighlight();
     void hideHighlight();
 
-    template <typename T>
-    void saveBlendValue(GCGLenum attachment, T& destination);
-
-    bool hasBufferBinding(GCGLenum pname);
-
-    bool hasFramebufferParameterAttachment(GCGLenum attachment);
-
     struct {
-        RefPtr<Float32Array> color;
-        unsigned equationRGB { 0 };
-        unsigned equationAlpha { 0 };
-        unsigned srcRGB { 0 };
-        unsigned srcAlpha { 0 };
-        unsigned dstRGB { 0 };
-        unsigned dstAlpha { 0 };
-        bool enabled { false };
+        GCGLfloat color[4];
+        GCGLenum equationRGB;
+        GCGLenum equationAlpha;
+        GCGLenum srcRGB;
+        GCGLenum dstRGB;
+        GCGLenum srcAlpha;
+        GCGLenum dstAlpha;
+        GCGLboolean enabled;
     } m_savedBlend;
 
     WebGLRenderingContextBase& m_context;
@@ -501,6 +494,7 @@ protected:
     friend class WebGLVertexArrayObjectOES;
 
     // Implementation helpers.
+    friend class InspectorScopedShaderProgramHighlight;
     friend class ScopedUnpackParametersResetRestore;
 
     virtual void initializeNewContext();
@@ -519,8 +513,16 @@ protected:
 
     void setGraphicsContextGL(Ref<GraphicsContextGL>&&);
     void destroyGraphicsContextGL();
+
+    enum CallerType {
+        // Caller is a user-level draw or clear call.
+        CallerTypeDrawOrClear,
+        // Caller is anything else, including blits, readbacks or copies.
+        CallerTypeOther,
+    };
+
     void markContextChanged();
-    void markContextChangedAndNotifyCanvasObserver();
+    void markContextChangedAndNotifyCanvasObserver(CallerType = CallerTypeDrawOrClear);
 
     void addActivityStateChangeObserverIfNecessary();
     void removeActivityStateChangeObserver();
@@ -797,17 +799,10 @@ protected:
     RefPtr<Float32Array> getWebGLFloatArrayParameter(GCGLenum);
     RefPtr<Int32Array> getWebGLIntArrayParameter(GCGLenum);
 
-    enum ClearCaller {
-        // Caller of ClearIfComposited is a user-level draw or clear call.
-        ClearCallerDrawOrClear,
-        // Caller of ClearIfComposited is anything else, including
-        // readbacks or copies.
-        ClearCallerOther,
-    };
     // Clear the backbuffer if it was composited since the last operation.
     // clearMask is set to the bitfield of any clear that would happen anyway at this time
     // and the function returns true if that clear is now unnecessary.
-    bool clearIfComposited(ClearCaller, GCGLbitfield clearMask = 0);
+    bool clearIfComposited(CallerType, GCGLbitfield clearMask = 0);
 
     // Helper to restore state that clearing the framebuffer may destroy.
     void restoreStateAfterClear();

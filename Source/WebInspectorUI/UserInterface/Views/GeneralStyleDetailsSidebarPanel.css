@@ -28,40 +28,17 @@
     position: relative;
 }
 
-.sidebar > .panel.details.css-style > .content > .pseudo-classes {
-    padding: 6px 10px;
-    border-bottom: 1px solid var(--border-color);
-
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-around;
-}
-
-.sidebar > .panel.details.css-style > .content > .pseudo-classes > .group {
-    display: inline-flex;
-    flex-flow: row wrap;
-    justify-content: space-around;
-    flex: 1;
-}
-
-.sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label {
-    color: hsl(0, 0%, 37%);
-
-    margin: 0 5px;
-    min-width: 55px;
-
-    display: inline-block;
-    white-space: nowrap;
-}
-
-.sidebar > .panel.details.css-style > .content ~ :matches(.options-container, .class-list-container) {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
+.sidebar > .panel.details.css-style > .content ~ :is(.options-container, .class-list-container, .forced-pseudo-class-container) {
     /* Make sure options and class containers are above details section headers, but below popovers. */
     z-index: calc(var(--z-index-header) + 1);
     width: 100%;
     border-top: 1px solid var(--border-color);
+}
+
+.sidebar > .panel.details.css-style > .content ~ :is(.options-container, .class-list-container) {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container {
@@ -69,7 +46,7 @@
     padding-top: 2px;
 }
 
-.sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) ~ :matches(.options-container, .class-list-container) {
+.sidebar > .panel.details.css-style > .content:not(.supports-new-rule, .has-filter-bar) ~ :is(.options-container, .class-list-container, .forced-pseudo-class-container) {
     display: none;
 }
 
@@ -84,11 +61,11 @@
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .filter-bar {
-    width: fill-available;
+    width: -webkit-fill-available;
     background-color: transparent;
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle {
     position: relative;
     margin: 0 0 1px;
     margin-inline-end: 5px;
@@ -101,11 +78,11 @@
     appearance: none;
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:focus {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:focus {
     outline-offset: var(--focus-ring-outline-offset);
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle::before {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle::before {
     position: absolute;
     content: "";
     left: 0;
@@ -117,39 +94,43 @@
     z-index: -1;
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:matches(.selected, :hover) {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:is(.selected, :hover) {
     color: var(--selected-foreground-color);
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:matches(.selected, :hover)::before {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:is(.selected, :hover)::before {
     background-color: var(--glyph-color-active);
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:not(.selected):hover::before {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle:not(.selected):hover::before {
     opacity: 0.5;
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected:active::before {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle.selected:active::before {
     filter: brightness(0.8);
 }
 
 .sidebar > .panel.details.css-style > .content:not(.supports-new-rule) ~ .options-container > .new-rule,
-.sidebar > .panel.details.css-style > .content:not(.supports-toggle-css-class) ~ .options-container > .toggle-class-toggle,
+.sidebar > .panel.details.css-style > .content:not(.supports-toggle-class-list) ~ .options-container > .toggle.class-list,
+.sidebar > .panel.details.css-style > .content:not(.supports-toggle-forced-pseudo-class) ~ .options-container > .toggle.forced-pseudo-class,
 .sidebar > .panel.details.css-style > .content:not(.has-filter-bar) ~ .options-container > .filter-bar,
-.sidebar > .panel.details.css-style > .content:not(.supports-new-rule):not(.supports-toggle-class):not(.has-filter-bar) ~ .options-container {
+.sidebar > .panel.details.css-style > .content:not(.supports-new-rule):not(.supports-toggle-class-list):not(.supports-toggle-forced-pseudo-class):not(.has-filter-bar) ~ .options-container {
+    display: none;
+}
+
+.sidebar > .panel.details.css-style > .content ~ :is(.class-list-container, .forced-pseudo-class-container) {
+    padding: 3px 2px;
+    background-color: var(--panel-background-color);
+}
+
+.sidebar > .panel.details.css-style > .content ~ :is(.class-list-container, .forced-pseudo-class-container)[hidden] {
     display: none;
 }
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container {
     flex-wrap: wrap;
     max-height: 75px;
-    padding: 3px 2px;
-    background-color: var(--panel-background-color);
     overflow-y: auto;
-}
-
-.sidebar > .panel.details.css-style > .content ~ .class-list-container[hidden] {
-    display: none;
 }
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container > .new-class {
@@ -165,6 +146,15 @@
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container > *:matches(.new-class, .class-toggle) {
     margin: 1px 3px;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .forced-pseudo-class-container {
+    display: block;
+    column-count: 2;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .forced-pseudo-class-container > label {
+    display: block;
 }
 
 .sidebar > .panel.details.css-style > .content.filter-in-progress .filter-matching {
@@ -202,39 +192,12 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label {
-        color: var(--text-color-secondary);
-    }
-
     .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
         filter: var(--filter-invert);
     }
 }
 
-.panel.exclusive-presentation.details.css-style > .content > .pseudo-classes {
-    height: var(--navigation-bar-height);
-    flex-flow: row nowrap;
-    justify-content: center;
-}
-
-.panel.exclusive-presentation.details.css-style > .content > .pseudo-classes > .group {
-    flex-flow: row nowrap;
-    justify-content: center;
-    flex: 0;
-}
-
-.panel.exclusive-presentation.details.css-style > .content > .rules {
-    position: absolute; 
-    top: var(--navigation-bar-height);
-    left:0;
-    right:0;
-    bottom:0;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .content > .pseudo-classes,
-.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .options-container > .toggle-class-toggle,
-.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .class-list-container {
+.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > .options-container > .toggle,
+.multi-sidebar.showing-multiple > .sidebar > .panel.details:not(.style-rules) > :is(.class-list-container, .forced-pseudo-class-container) {
     display: none;
 }

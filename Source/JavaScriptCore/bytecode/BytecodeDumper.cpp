@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -413,7 +413,7 @@ CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
         if (isFuncref(type) || isExternref(type)) {
             if (JSValue::decode(constant) == jsNull())
                 return "null";
-            return toCString(RawPointer(bitwise_cast<void*>(static_cast<uintptr_t>(constant))));
+            return toCString(RawHex(constant));
         }
 
         RELEASE_ASSERT_NOT_REACHED();

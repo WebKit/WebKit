@@ -27,6 +27,7 @@
 #include "SVGNames.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyOwnerRegistry.h"
+#include "SVGRenderStyleDefs.h"
 #include "StyledElement.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -149,6 +150,8 @@ public:
     void animatorWillBeDeleted(const QualifiedName&);
 
     const RenderStyle* computedStyle(PseudoId = PseudoId::None) final;
+    
+    ColorInterpolation colorInterpolation() const;
 
     // These are needed for the RenderTree, animation and DOM.
     AtomString className() const { return AtomString { m_className->currentValue() }; }

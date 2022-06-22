@@ -33,7 +33,7 @@ namespace JSC {
 
 void HeapFinalizerCallback::dump(PrintStream& out) const
 {
-    out.print(RawPointer(bitwise_cast<void*>(m_finalizer)), ":", RawPointer(m_userData));
+    out.print(RawPointer(m_finalizer), ":", RawPointer(m_userData));
 }
 
 void HeapFinalizerCallback::run(VM& vm) const

@@ -64,8 +64,6 @@ public:
     static ExceptionOr<Ref<CSSNumericValue>> parse(String&&);
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
 
-    CSSStyleValueType getType() const override { return CSSStyleValueType::CSSNumericValue; }
-
     // https://drafts.css-houdini.org/css-typed-om/#sum-value-value
     using UnitMap = HashMap<CSSUnitType, int, WTF::IntHash<CSSUnitType>, WTF::StrongEnumHashTraits<CSSUnitType>>;
     struct Addend {
@@ -74,6 +72,7 @@ public:
     };
     using SumValue = Vector<Addend>;
     virtual std::optional<SumValue> toSumValue() const = 0;
+    virtual bool equals(const CSSNumericValue&) const = 0;
 
 protected:
     ExceptionOr<Ref<CSSNumericValue>> addInternal(Vector<Ref<CSSNumericValue>>&&);

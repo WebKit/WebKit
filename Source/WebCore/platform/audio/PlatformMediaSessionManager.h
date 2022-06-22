@@ -157,7 +157,7 @@ public:
 
     WEBCORE_EXPORT void processDidReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&);
 
-    bool isInterrupted() const { return m_interrupted; }
+    bool isInterrupted() const { return !!m_currentInterruption; }
     bool hasNoSession() const;
 
     virtual void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) { };
@@ -209,7 +209,7 @@ private:
     SessionRestrictions m_restrictions[static_cast<unsigned>(PlatformMediaSession::MediaType::WebAudio) + 1];
     mutable Vector<WeakPtr<PlatformMediaSession>> m_sessions;
 
-    bool m_interrupted { false };
+    std::optional<PlatformMediaSession::InterruptionType> m_currentInterruption;
     mutable bool m_isApplicationInBackground { false };
     bool m_willIgnoreSystemInterruptions { false };
     bool m_processIsSuspended { false };

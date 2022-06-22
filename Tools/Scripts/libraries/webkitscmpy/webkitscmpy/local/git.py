@@ -421,10 +421,10 @@ class Git(Scm):
     @property
     @decorators.Memoize()
     def common_directory(self):
-        result = run([self.executable(), 'rev-parse', '--git-common-dir'], cwd=self.path, capture_output=True, encoding='utf-8')
+        result = run([self.executable(), 'rev-parse', '--git-common-dir'], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if result.returncode:
             return os.path.join(self.root_path, '.git')
-        return os.path.join(self.root_path, result.stdout.rstrip())
+        return os.path.abspath(os.path.join(self.root_path, result.stdout.rstrip()))
 
     @property
     @decorators.Memoize()

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(NOTIFICATIONS)
+#if ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT)
 
 #import "DeprecatedGlobalValues.h"
 #import "HTTPServer.h"
@@ -729,4 +729,4 @@ TEST(PushAPI, fireNotificationClickEvent)
 
 #endif // WK_HAVE_C_SPI
 
-#endif // ENABLE(NOTIFICATIONS)
+#endif // ENABLE(NOTIFICATIONS) && ENABLE(NOTIFICATION_EVENT)

@@ -45,6 +45,54 @@ FEDropShadow::FEDropShadow(float stdX, float stdY, float dx, float dy, const Col
 {
 }
 
+bool FEDropShadow::setStdDeviationX(float stdX)
+{
+    if (m_stdX == stdX)
+        return false;
+    m_stdX = stdX;
+    return true;
+}
+
+bool FEDropShadow::setStdDeviationY(float stdY)
+{
+    if (m_stdY == stdY)
+        return false;
+    m_stdY = stdY;
+    return true;
+}
+
+bool FEDropShadow::setDx(float dx)
+{
+    if (m_dx == dx)
+        return false;
+    m_dx = dx;
+    return true;
+}
+
+bool FEDropShadow::setDy(float dy)
+{
+    if (m_dy == dy)
+        return false;
+    m_dy = dy;
+    return true;
+}
+
+bool FEDropShadow::setShadowColor(const Color& shadowColor)
+{
+    if (m_shadowColor == shadowColor)
+        return false;
+    m_shadowColor = shadowColor;
+    return true;
+}
+
+bool FEDropShadow::setShadowOpacity(float shadowOpacity)
+{
+    if (m_shadowOpacity == shadowOpacity)
+        return false;
+    m_shadowOpacity = shadowOpacity;
+    return true;
+}
+
 FloatRect FEDropShadow::calculateImageRect(const Filter& filter, const FilterImageVector& inputs, const FloatRect& primitiveSubregion) const
 {
     auto imageRect = inputs[0]->imageRect();

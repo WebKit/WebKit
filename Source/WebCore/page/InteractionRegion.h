@@ -40,7 +40,9 @@ class TextStream;
 
 namespace WebCore {
 
+class Element;
 class Page;
+class RenderObject;
 
 struct InteractionRegion {
     ElementIdentifier elementIdentifier;
@@ -62,7 +64,7 @@ inline bool operator==(const InteractionRegion& a, const InteractionRegion& b)
         && a.borderRadius == b.borderRadius;
 }
 
-WEBCORE_EXPORT Vector<InteractionRegion> interactionRegions(Page&, FloatRect rectInContentCoordinates);
+WEBCORE_EXPORT std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject&, const Region&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const InteractionRegion&);
 

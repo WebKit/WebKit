@@ -1,0 +1,38 @@
+<style>
+#container {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+
+  background-color: green;
+}
+
+#child {
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+}
+</style>
+<div id=container><div id=child></div></div>
+<pre id=result></pre>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+function overflowChanged(event) {
+  result.innerText = !event.verticalOverflow ? "PASS" : "FAIL";
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+container.addEventListener('overflowchanged', overflowChanged, false);
+
+document.body.offsetHeight;
+// This should not trigger vertical overflow change.
+child.style.width = "120px";
+</script>

@@ -64,6 +64,10 @@ public:
     static RefPtr<SerializedScriptValue> createFromNSObject(id);
 #endif
 
+#if USE(GLIB)
+    static RefPtr<SerializedScriptValue> createFromGVariant(GVariant*);
+#endif
+
     IPC::DataReference dataReference() const { return m_serializedScriptValue->wireBytes(); }
 
     WebCore::SerializedScriptValue& internalRepresentation() { return m_serializedScriptValue.get(); }

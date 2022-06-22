@@ -40,6 +40,7 @@ from xml.dom import minidom
 class GitHub(Scm):
     URL_RE = re.compile(r'\Ahttps?://github.(?P<domain>\S+)/(?P<owner>\S+)/(?P<repository>\S+)\Z')
     EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
+    ACCEPT_HEADER = Tracker.ACCEPT_HEADER
 
     class PRGenerator(Scm.PRGenerator):
         SUPPORTS_DRAFTS = True
@@ -113,7 +114,7 @@ class GitHub(Scm):
             )
             response = self.repository.session.post(
                 url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
-                headers=dict(Accept='application/vnd.github.v3+json'),
+                headers=dict(Accept=self.repository.ACCEPT_HEADER),
                 json=dict(
                     title=title,
                     body=PullRequest.create_body(body, commits),
@@ -167,7 +168,7 @@ class GitHub(Scm):
             )
             response = self.repository.session.post(
                 url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
-                headers=dict(Accept='application/vnd.github.v3+json'),
+                headers=dict(Accept=self.repository.ACCEPT_HEADER),
                 json=updates,
             )
             if response.status_code == 422:
@@ -317,7 +318,7 @@ class GitHub(Scm):
 
     def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True):
         headers = {key: value for key, value in headers.items()} if headers else dict()
-        headers['Accept'] = headers.get('Accept', 'application/vnd.github.v3+json')
+        headers['Accept'] = headers.get('Accept', self.ACCEPT_HEADER)
 
         username, access_token = self.credentials(required=bool(authenticated))
         auth = HTTPBasicAuth(username, access_token) if username and access_token else None

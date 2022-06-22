@@ -293,6 +293,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::BlendMode)
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::CompositeOperator);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, CompositeMode);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const DropShadow&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, GradientSpreadMethod);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, InterpolationQuality);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineCap);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, LineJoin);

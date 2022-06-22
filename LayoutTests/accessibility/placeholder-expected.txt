@@ -1,12 +1,16 @@
-This test makes sure that the placeholder is returned as the correct attribute
+This test ensures that the placeholder is returned as the correct attribute.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: fieldElement.stringAttributeValue('AXPlaceholderValue') === 'search'
+PASS: passwordElement.stringAttributeValue('AXPlaceholderValue') === 'Password'
+PASS: searchElement.stringAttributeValue('AXPlaceholderValue') === 'MM-DD-YYYY'
+PASS: textInput.stringAttributeValue('AXPlaceholderValue') === 'Fill in the blank'
 
+Updating aria-placeholder attribute of the #search element to 'YYYY-MM-DD'.
+PASS: searchElement.stringAttributeValue('AXPlaceholderValue') === 'YYYY-MM-DD'
 
-PASS fieldElement.stringAttributeValue('AXPlaceholderValue') is 'search'
-PASS passwordElement.stringAttributeValue('AXPlaceholderValue') is 'Password'
-PASS searchElement.stringAttributeValue('AXPlaceholderValue') is 'MM-DD-YYYY'
-PASS textInput.stringAttributeValue('AXPlaceholderValue') is 'Fill in the blank'
+Updating placeholder attribute of the #search element to 'Foo'.
+PASS: searchElement.stringAttributeValue('AXPlaceholderValue') === 'Foo'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
