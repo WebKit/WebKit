@@ -2315,7 +2315,7 @@ bool Element::isEventHandlerAttribute(const Attribute& attribute) const
     return attribute.name().namespaceURI().isNull() && attribute.name().localName().startsWith("on"_s);
 }
 
-bool Element::attributeContainsJavascriptURL(const Attribute& attribute) const
+bool Element::attributeContainsJavaScriptURL(const Attribute& attribute) const
 {
     return isURLAttribute(attribute) && WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
 }
@@ -2324,7 +2324,7 @@ void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const
 {
     attributeVector.removeAllMatching([this](auto& attribute) -> bool {
         return this->isEventHandlerAttribute(attribute)
-            || this->attributeContainsJavascriptURL(attribute)
+            || this->attributeContainsJavaScriptURL(attribute)
             || this->isHTMLContentAttribute(attribute);
     });
 }
