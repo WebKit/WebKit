@@ -3017,7 +3017,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         if (JSValue base = forNode(node->child1()).m_value) {
             if (auto* function = jsDynamicCast<JSFunction*>(m_vm, base)) {
                 if (FunctionRareData* rareData = function->rareData()) {
-                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
                         if (Structure* structure = rareData->objectAllocationStructure()) {
                             m_graph.freeze(rareData);
                             m_graph.watchpoints().addLazily(rareData->allocationProfileWatchpointSet());
@@ -3046,7 +3047,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
                 if (FunctionRareData* rareData = function->rareData()) {
-                    if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                    if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
                         Structure* structure = rareData->internalFunctionAllocationStructure();
                         if (structure
                             && structure->classInfo() == (node->isInternalPromise() ? JSInternalPromise::info() : JSPromise::info())
@@ -3074,7 +3075,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (JSValue base = forNode(node->child1()).m_value) {
                 if (auto* function = jsDynamicCast<JSFunction*>(m_graph.m_vm, base)) {
                     if (FunctionRareData* rareData = function->rareData()) {
-                        if (rareData->allocationProfileWatchpointSet().isStillValid()) {
+                        if (rareData->allocationProfileWatchpointSet().isStillValid() && m_graph.isWatchingStructureCacheClearedWatchpoint(globalObject)) {
                             Structure* structure = rareData->internalFunctionAllocationStructure();
                             if (structure
                                 && structure->classInfo() == classInfo
