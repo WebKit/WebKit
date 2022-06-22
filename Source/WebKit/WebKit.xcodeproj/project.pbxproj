@@ -2668,7 +2668,7 @@
 		1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = PrivateHeaders/Scripts/webkit;
+			dstPath = "$(WK_FRAMEWORK_VERSION_PREFIX)PrivateHeaders/Scripts/webkit";
 			dstSubfolderSpec = 1;
 			files = (
 				1A07D2F81919B3A900ECDA16 /* __init__.py in Copy Message Generation Scripts */,
