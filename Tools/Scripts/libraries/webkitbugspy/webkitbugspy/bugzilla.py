@@ -56,8 +56,8 @@ class Tracker(GenericTracker):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
 
-    def __init__(self, url, users=None, res=None, login_attempts=3):
-        super(Tracker, self).__init__(users=users)
+    def __init__(self, url, users=None, res=None, login_attempts=3, redact=None):
+        super(Tracker, self).__init__(users=users, redact=redact)
 
         self._logins_left = login_attempts + 1 if login_attempts else 1
         match = self.ROOT_RE.match(url)

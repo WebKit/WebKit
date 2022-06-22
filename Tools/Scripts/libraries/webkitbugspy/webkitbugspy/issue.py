@@ -181,6 +181,16 @@ class Issue(object):
             self.tracker.populate(self, 'version')
         return self._version
 
+    @property
+    def redacted(self):
+        match_string = 'title:{};project:{};component:{};version:{}'.format(
+            self.title or '', self.project or '', self.component or '', self.version or '',
+        )
+        for key, value in self.tracker._redact.items():
+            if key.search(match_string):
+                return value
+        return False
+
     def set_component(self, project=None, component=None, version=None):
         return self.tracker.set(self, project=project, component=component, version=version)
 

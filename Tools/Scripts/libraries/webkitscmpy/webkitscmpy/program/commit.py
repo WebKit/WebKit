@@ -96,7 +96,10 @@ class Commit(Command):
             additional_args += ['--amend']
 
         env = os.environ
-        env['COMMIT_MESSAGE_TITLE'] = issue.title if issue else ''
+        if issue and issue.redacted:
+            env['COMMIT_MESSAGE_TITLE'] = '*' * 20
+        else:
+            env['COMMIT_MESSAGE_TITLE'] = issue.title if issue else ''
         env['COMMIT_MESSAGE_BUG'] = '\n'.join(cls.bug_urls(issue))
         return run(
             [repository.executable(), 'commit', '--date=now'] + additional_args + args.args,
