@@ -1,0 +1,12 @@
+Tests for the CSS.getMatchedStylesForNode command styles inside user-agent shadow roots.
+
+
+
+== Running test suite: CSS.getMatchedStylesForNode.UserAgentShadowRoot
+-- Running test case: CSS.getMatchedStylesForNode.UserAgentShadowRoot.StyleFollowingNormallyInvalidSelector
+PASS: Should have matched rule for selector '.media-controls .time-label, .media-controls .status-label'
+PASS: Should have matched rule for selector '.time-label'
+PASS: Should have matched rule for selector '.media-controls-container, .media-controls-container *'
+PASS: Should have matched rule for selector ':host(audio), :host(video.media-document.audio), *'
+PASS: Should have matched rule for selector '*'
+
