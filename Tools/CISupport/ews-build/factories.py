@@ -34,7 +34,7 @@ from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, ApplyPa
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
                    ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
-                   InstallBuiltProduct, VerifyGitHubIntegrity, ValidateSquashed)
+                   InstallBuiltProduct, ValidateSquashed)
 
 
 class Factory(factory.BuildFactory):
@@ -297,7 +297,6 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(GitSvnFetch())  # FIXME: Remove when migrating to pure git
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
-        self.addStep(VerifyGitHubIntegrity())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(CommitPatch())
 
@@ -332,7 +331,6 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(GitSvnFetch())  # FIXME: Remove when migrating to pure git
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
-        self.addStep(VerifyGitHubIntegrity())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateSquashed())
