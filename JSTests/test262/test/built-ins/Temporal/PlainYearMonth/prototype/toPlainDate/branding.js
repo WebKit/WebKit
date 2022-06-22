@@ -11,12 +11,14 @@ const toPlainDate = Temporal.PlainYearMonth.prototype.toPlainDate;
 
 assert.sameValue(typeof toPlainDate, "function");
 
-assert.throws(TypeError, () => toPlainDate.call(undefined), "undefined");
-assert.throws(TypeError, () => toPlainDate.call(null), "null");
-assert.throws(TypeError, () => toPlainDate.call(true), "true");
-assert.throws(TypeError, () => toPlainDate.call(""), "empty string");
-assert.throws(TypeError, () => toPlainDate.call(Symbol()), "symbol");
-assert.throws(TypeError, () => toPlainDate.call(1), "1");
-assert.throws(TypeError, () => toPlainDate.call({}), "plain object");
-assert.throws(TypeError, () => toPlainDate.call(Temporal.PlainYearMonth), "Temporal.PlainYearMonth");
-assert.throws(TypeError, () => toPlainDate.call(Temporal.PlainYearMonth.prototype), "Temporal.PlainYearMonth.prototype");
+const args = [{ day: 7 }];
+
+assert.throws(TypeError, () => toPlainDate.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => toPlainDate.apply(null, args), "null");
+assert.throws(TypeError, () => toPlainDate.apply(true, args), "true");
+assert.throws(TypeError, () => toPlainDate.apply("", args), "empty string");
+assert.throws(TypeError, () => toPlainDate.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => toPlainDate.apply(1, args), "1");
+assert.throws(TypeError, () => toPlainDate.apply({}, args), "plain object");
+assert.throws(TypeError, () => toPlainDate.apply(Temporal.PlainYearMonth, args), "Temporal.PlainYearMonth");
+assert.throws(TypeError, () => toPlainDate.apply(Temporal.PlainYearMonth.prototype, args), "Temporal.PlainYearMonth.prototype");

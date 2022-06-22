@@ -11,12 +11,14 @@ const toZonedDateTime = Temporal.PlainDate.prototype.toZonedDateTime;
 
 assert.sameValue(typeof toZonedDateTime, "function");
 
-assert.throws(TypeError, () => toZonedDateTime.call(undefined), "undefined");
-assert.throws(TypeError, () => toZonedDateTime.call(null), "null");
-assert.throws(TypeError, () => toZonedDateTime.call(true), "true");
-assert.throws(TypeError, () => toZonedDateTime.call(""), "empty string");
-assert.throws(TypeError, () => toZonedDateTime.call(Symbol()), "symbol");
-assert.throws(TypeError, () => toZonedDateTime.call(1), "1");
-assert.throws(TypeError, () => toZonedDateTime.call({}), "plain object");
-assert.throws(TypeError, () => toZonedDateTime.call(Temporal.PlainDate), "Temporal.PlainDate");
-assert.throws(TypeError, () => toZonedDateTime.call(Temporal.PlainDate.prototype), "Temporal.PlainDate.prototype");
+const args = [new Temporal.TimeZone("UTC")];
+
+assert.throws(TypeError, () => toZonedDateTime.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => toZonedDateTime.apply(null, args), "null");
+assert.throws(TypeError, () => toZonedDateTime.apply(true, args), "true");
+assert.throws(TypeError, () => toZonedDateTime.apply("", args), "empty string");
+assert.throws(TypeError, () => toZonedDateTime.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => toZonedDateTime.apply(1, args), "1");
+assert.throws(TypeError, () => toZonedDateTime.apply({}, args), "plain object");
+assert.throws(TypeError, () => toZonedDateTime.apply(Temporal.PlainDate, args), "Temporal.PlainDate");
+assert.throws(TypeError, () => toZonedDateTime.apply(Temporal.PlainDate.prototype, args), "Temporal.PlainDate.prototype");

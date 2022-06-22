@@ -21,7 +21,7 @@ __obj.ca = 3;
 __accum="";
 
 for (var __key in __obj){
-	
+
     erasator_T_1000(__obj,"b");
   
     __accum+=(__key+__obj[__key]);

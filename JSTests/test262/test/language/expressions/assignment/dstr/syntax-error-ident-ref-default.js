@@ -2,7 +2,7 @@
 // - src/identifier-names/default.case
 // - src/identifier-names/default/obj-assignment-identifier.template
 /*---
-description: default is a valid identifier name (IdentiferReference in ObjectAssignmentPattern cannot be a ReservedWord)
+description: default is a valid identifier name (IdentifierReference in ObjectAssignmentPattern cannot be a ReservedWord)
 esid: prod-AssignmentPattern
 features: [destructuring-assignment]
 flags: [generated]

@@ -11,7 +11,7 @@ features: [Temporal]
 const instance = new Temporal.PlainDateTime(2000, 5, 2);
 
 const resultHours = instance.add("-PT24.567890123H");
-TemporalHelpers.assertPlainDateTime(resultHours, 2000, 4, "M04", 30, 23, 25, 55, 595, 557, 201, "negative fractional hours");
+TemporalHelpers.assertPlainDateTime(resultHours, 2000, 4, "M04", 30, 23, 25, 55, 595, 557, 200, "negative fractional hours");
 
 const resultMinutes = instance.add("-PT1440.567890123M");
-TemporalHelpers.assertPlainDateTime(resultMinutes, 2000, 4, "M04", 30, 23, 59, 25, 926, 592, 621, "negative fractional minutes");
+TemporalHelpers.assertPlainDateTime(resultMinutes, 2000, 4, "M04", 30, 23, 59, 25, 926, 592, 620, "negative fractional minutes");

@@ -9,7 +9,5 @@ features: [Temporal]
 ---*/
 
 const jan31 = Temporal.PlainDate.from("2020-01-31");
-TemporalHelpers.assertPlainDate(jan31.add({ months: 1 }),
-  2020, 2, "M02", 29, "implicit");
 TemporalHelpers.assertPlainDate(jan31.add({ months: 1 }, { overflow: "constrain" }),
-  2020, 2, "M02", 29, "explicit");
+  2020, 2, "M02", 29);

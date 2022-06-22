@@ -12,15 +12,20 @@ const date = new Temporal.PlainDate(2000, 5, 2);
 
 const string = date.toPlainDateTime("11:30:23");
 TemporalHelpers.assertPlainDateTime(string, 2000, 5, "M05", 2, 11, 30, 23, 0, 0, 0, "string");
+assert.sameValue(string.calendar, date.calendar, "string calendar");
 
 const optionBag = date.toPlainDateTime({ hour: 11, minute: 30, second: 23 });
 TemporalHelpers.assertPlainDateTime(optionBag, 2000, 5, "M05", 2, 11, 30, 23, 0, 0, 0, "option bag");
+assert.sameValue(optionBag.calendar, date.calendar, "option bag calendar");
 
 const plainTime = date.toPlainDateTime(Temporal.PlainTime.from("11:30:23"));
 TemporalHelpers.assertPlainDateTime(plainTime, 2000, 5, "M05", 2, 11, 30, 23, 0, 0, 0, "PlainTime");
+assert.sameValue(plainTime.calendar, date.calendar, "PlainTime calendar");
 
 const plainDateTime = date.toPlainDateTime(Temporal.PlainDateTime.from("1999-07-14T11:30:23"));
-TemporalHelpers.assertPlainDateTime(plainDateTime, 2000, 5, "M05", 2, 11, 30, 23, 0, 0, 0, "PlainTime");
+TemporalHelpers.assertPlainDateTime(plainDateTime, 2000, 5, "M05", 2, 11, 30, 23, 0, 0, 0, "PlainDateTime");
+assert.sameValue(plainDateTime.calendar, date.calendar, "PlainDateTime calendar");
 
 const zonedDateTime = date.toPlainDateTime(Temporal.ZonedDateTime.from("1999-07-14T11:30:23Z[UTC]"));
-TemporalHelpers.assertPlainDateTime(zonedDateTime, 2000, 5, "M05", 2, 11, 30, 23, 0, 0, 0, "PlainTime");
+TemporalHelpers.assertPlainDateTime(zonedDateTime, 2000, 5, "M05", 2, 11, 30, 23, 0, 0, 0, "ZonedDateTime");
+assert.sameValue(zonedDateTime.calendar, date.calendar, "ZonedDateTime calendar");

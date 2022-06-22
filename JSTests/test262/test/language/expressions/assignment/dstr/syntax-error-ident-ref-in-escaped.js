@@ -2,7 +2,7 @@
 // - src/identifier-names/in-escaped.case
 // - src/identifier-names/default/obj-assignment-identifier.template
 /*---
-description: in is a valid identifier name, using escape (IdentiferReference in ObjectAssignmentPattern cannot be a ReservedWord)
+description: in is a valid identifier name, using escape (IdentifierReference in ObjectAssignmentPattern cannot be a ReservedWord)
 esid: prod-AssignmentPattern
 features: [destructuring-assignment]
 flags: [generated]

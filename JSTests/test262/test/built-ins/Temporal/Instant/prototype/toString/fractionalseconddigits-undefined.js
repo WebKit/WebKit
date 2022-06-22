@@ -16,14 +16,11 @@ info: |
 features: [Temporal]
 ---*/
 
-const zeroSeconds = new Temporal.Instant(0n);
-const wholeSeconds = new Temporal.Instant(30_000_000_000n);
-const subSeconds = new Temporal.Instant(30_123_400_000n);
-
 const tests = [
-  [zeroSeconds, "1970-01-01T00:00:00Z"],
-  [wholeSeconds, "1970-01-01T00:00:30Z"],
-  [subSeconds, "1970-01-01T00:00:30.1234Z"],
+  [new Temporal.Instant(192_258_181_000_000_000n), "1976-02-04T05:03:01Z"],
+  [new Temporal.Instant(0n), "1970-01-01T00:00:00Z"],
+  [new Temporal.Instant(30_000_000_000n), "1970-01-01T00:00:30Z"],
+  [new Temporal.Instant(30_123_400_000n), "1970-01-01T00:00:30.1234Z"],
 ];
 
 for (const [instant, expected] of tests) {

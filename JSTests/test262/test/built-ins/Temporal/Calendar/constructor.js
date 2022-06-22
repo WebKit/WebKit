@@ -9,4 +9,4 @@ info: |
 features: [Temporal]
 ---*/
 
-assert.throws(TypeError, () => Temporal.Calendar());
+assert.throws(TypeError, () => Temporal.Calendar("iso8601"));

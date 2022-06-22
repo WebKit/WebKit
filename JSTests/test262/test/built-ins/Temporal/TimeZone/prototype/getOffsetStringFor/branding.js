@@ -11,12 +11,14 @@ const getOffsetStringFor = Temporal.TimeZone.prototype.getOffsetStringFor;
 
 assert.sameValue(typeof getOffsetStringFor, "function");
 
-assert.throws(TypeError, () => getOffsetStringFor.call(undefined), "undefined");
-assert.throws(TypeError, () => getOffsetStringFor.call(null), "null");
-assert.throws(TypeError, () => getOffsetStringFor.call(true), "true");
-assert.throws(TypeError, () => getOffsetStringFor.call(""), "empty string");
-assert.throws(TypeError, () => getOffsetStringFor.call(Symbol()), "symbol");
-assert.throws(TypeError, () => getOffsetStringFor.call(1), "1");
-assert.throws(TypeError, () => getOffsetStringFor.call({}), "plain object");
-assert.throws(TypeError, () => getOffsetStringFor.call(Temporal.TimeZone), "Temporal.TimeZone");
-assert.throws(TypeError, () => getOffsetStringFor.call(Temporal.TimeZone.prototype), "Temporal.TimeZone.prototype");
+const args = [new Temporal.Instant(0n)];
+
+assert.throws(TypeError, () => getOffsetStringFor.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => getOffsetStringFor.apply(null, args), "null");
+assert.throws(TypeError, () => getOffsetStringFor.apply(true, args), "true");
+assert.throws(TypeError, () => getOffsetStringFor.apply("", args), "empty string");
+assert.throws(TypeError, () => getOffsetStringFor.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => getOffsetStringFor.apply(1, args), "1");
+assert.throws(TypeError, () => getOffsetStringFor.apply({}, args), "plain object");
+assert.throws(TypeError, () => getOffsetStringFor.apply(Temporal.TimeZone, args), "Temporal.TimeZone");
+assert.throws(TypeError, () => getOffsetStringFor.apply(Temporal.TimeZone.prototype, args), "Temporal.TimeZone.prototype");

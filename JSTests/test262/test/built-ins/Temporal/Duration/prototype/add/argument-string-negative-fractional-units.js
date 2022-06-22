@@ -11,7 +11,7 @@ features: [Temporal]
 const instance = new Temporal.Duration();
 
 const resultHours = instance.add("-PT24.567890123H");
-TemporalHelpers.assertDuration(resultHours, 0, 0, 0, 0, -24, -34, -4, -404, -442, -799, "negative fractional hours");
+TemporalHelpers.assertDuration(resultHours, 0, 0, 0, 0, -24, -34, -4, -404, -442, -800, "negative fractional hours");
 
 const resultMinutes = instance.add("-PT1440.567890123M");
-TemporalHelpers.assertDuration(resultMinutes, 0, 0, 0, 0, 0, -1440, -34, -73, -407, -379, "negative fractional minutes");
+TemporalHelpers.assertDuration(resultMinutes, 0, 0, 0, 0, 0, -1440, -34, -73, -407, -380, "negative fractional minutes");

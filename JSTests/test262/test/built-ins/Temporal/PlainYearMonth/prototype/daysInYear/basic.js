@@ -7,5 +7,5 @@ description: daysInYear works
 features: [Temporal]
 ---*/
 
-const ym = new Temporal.PlainYearMonth(1976, 11);
-assert.sameValue(ym.daysInYear, 366);
+assert.sameValue((new Temporal.PlainYearMonth(1976, 11)).daysInYear, 366, "leap year");
+assert.sameValue((new Temporal.PlainYearMonth(1977, 11)).daysInYear, 365, "non-leap year");
