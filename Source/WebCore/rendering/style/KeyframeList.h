@@ -29,6 +29,7 @@
 #include <wtf/Vector.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -52,6 +53,10 @@ public:
     bool containsProperty(CSSPropertyID prop) const { return m_properties.contains(prop); }
     const HashSet<CSSPropertyID>& properties() const { return m_properties; }
 
+    void addCustomProperty(const AtomString& customProperty) { m_customProperties.add(customProperty); }
+    bool containsCustomProperty(const AtomString& customProperty) const { return m_customProperties.contains(customProperty); }
+    const HashSet<AtomString>& customProperties() const { return m_customProperties; }
+
     double key() const { return m_key; }
     void setKey(double key) { m_key = key; }
 
@@ -67,6 +72,7 @@ public:
 private:
     double m_key;
     HashSet<CSSPropertyID> m_properties; // The properties specified in this keyframe.
+    HashSet<AtomString> m_customProperties; // The custom properties being animated.
     std::unique_ptr<RenderStyle> m_style;
     RefPtr<TimingFunction> m_timingFunction;
     std::optional<CompositeOperation> m_compositeOperation;
@@ -92,6 +98,10 @@ public:
     const HashSet<CSSPropertyID>& properties() const { return m_properties; }
     bool containsAnimatableProperty() const;
 
+    void addCustomProperty(const AtomString& customProperty) { m_customProperties.add(customProperty); }
+    bool containsCustomProperty(const AtomString& customProperty) const { return m_customProperties.contains(customProperty); }
+    const HashSet<AtomString>& customProperties() const { return m_customProperties; }
+
     void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
     size_t size() const { return m_keyframes.size(); }
@@ -110,6 +120,7 @@ private:
     AtomString m_animationName;
     Vector<KeyframeValue> m_keyframes; // Kept sorted by key.
     HashSet<CSSPropertyID> m_properties; // The properties being animated.
+    HashSet<AtomString> m_customProperties; // The custom properties being animated.
 };
 
 } // namespace WebCore

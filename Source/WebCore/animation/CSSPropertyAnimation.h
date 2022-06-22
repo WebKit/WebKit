@@ -48,6 +48,7 @@ public:
     static int getNumProperties();
 
     static void blendProperties(const CSSPropertyBlendingClient*, CSSPropertyID, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation);
+    static void blendCustomProperty(const AtomString&, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress);
 };
 
 } // namespace WebCore

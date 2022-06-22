@@ -1399,7 +1399,14 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
     KeyframeValue propertySpecificKeyframeWithZeroOffset(0, RenderStyle::clonePtr(targetStyle));
     KeyframeValue propertySpecificKeyframeWithOneOffset(1, RenderStyle::clonePtr(targetStyle));
 
-    for (auto cssPropertyId : properties) {
+    auto keyframeContainsProperty = [](const KeyframeValue& keyframe, std::variant<CSSPropertyID, AtomString> property) {
+        return WTF::switchOn(property,
+            [&] (CSSPropertyID propertyId) { return keyframe.containsProperty(propertyId); },
+            [&] (AtomString customProperty) { return keyframe.containsCustomProperty(customProperty); }
+        );
+    };
+
+    auto blendProperty = [&](std::variant<CSSPropertyID, AtomString> property) {
         // 1. If iteration progress is unresolved abort this procedure.
         // 2. Let target property be the longhand property for which the effect value is to be calculated.
         // 3. If animation type of the target property is not animatable abort this procedure since the effect cannot be applied.
@@ -1413,7 +1420,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         Vector<const KeyframeValue*> propertySpecificKeyframes;
         for (auto& keyframe : m_blendingKeyframes) {
             auto offset = keyframe.key();
-            if (!keyframe.containsProperty(cssPropertyId))
+            if (!keyframeContainsProperty(keyframe, property))
                 continue;
             if (!offset)
                 numberOfKeyframesWithZeroOffset++;
@@ -1424,7 +1431,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
 
         // 7. If property-specific keyframes is empty, return underlying value.
         if (propertySpecificKeyframes.isEmpty())
-            continue;
+            return;
 
         auto hasImplicitZeroKeyframe = !numberOfKeyframesWithZeroOffset;
         auto hasImplicitOneKeyframe = !numberOfKeyframesWithOneOffset;
@@ -1500,29 +1507,35 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         //         3. Replace the property value of target property on keyframe with the result of combining underlying value
         //            (Va) and value to combine (Vb) using the procedure for the composite operation to use corresponding to the
         //            target property’s animation type.
-        if (CSSPropertyAnimation::isPropertyAdditiveOrCumulative(cssPropertyId)) {
-            // Only do this for the 0 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
-            // for composition" which really means we don't want to do anything but rather just use the underlying style which
-            // is already set on startKeyframe.
-            if (!startKeyframe.key() && !hasImplicitZeroKeyframe) {
-                auto startKeyframeCompositeOperation = startKeyframe.compositeOperation().value_or(m_compositeOperation);
-                if (startKeyframeCompositeOperation != CompositeOperation::Replace)
-                    CSSPropertyAnimation::blendProperties(this, cssPropertyId, startKeyframeStyle, targetStyle, *startKeyframe.style(), 1, startKeyframeCompositeOperation);
-            }
+        if (std::holds_alternative<CSSPropertyID>(property)) {
+            auto cssPropertyId = std::get<CSSPropertyID>(property);
+            if (CSSPropertyAnimation::isPropertyAdditiveOrCumulative(cssPropertyId)) {
+                // Only do this for the 0 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
+                // for composition" which really means we don't want to do anything but rather just use the underlying style which
+                // is already set on startKeyframe.
+                if (!startKeyframe.key() && !hasImplicitZeroKeyframe) {
+                    auto startKeyframeCompositeOperation = startKeyframe.compositeOperation().value_or(m_compositeOperation);
+                    if (startKeyframeCompositeOperation != CompositeOperation::Replace)
+                        CSSPropertyAnimation::blendProperties(this, cssPropertyId, startKeyframeStyle, targetStyle, *startKeyframe.style(), 1, startKeyframeCompositeOperation);
+                }
 
-            // Only do this for the 1 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
-            // for composition" which really means we don't want to do anything but rather just use the underlying style which
-            // is already set on endKeyframe.
-            if (endKeyframe.key() == 1 && !hasImplicitOneKeyframe) {
-                auto endKeyframeCompositeOperation = endKeyframe.compositeOperation().value_or(m_compositeOperation);
-                if (endKeyframeCompositeOperation != CompositeOperation::Replace)
-                    CSSPropertyAnimation::blendProperties(this, cssPropertyId, endKeyframeStyle, targetStyle, *endKeyframe.style(), 1, endKeyframeCompositeOperation);
+                // Only do this for the 1 keyframe if it was provided explicitly, since otherwise we want to use the "neutral value
+                // for composition" which really means we don't want to do anything but rather just use the underlying style which
+                // is already set on endKeyframe.
+                if (endKeyframe.key() == 1 && !hasImplicitOneKeyframe) {
+                    auto endKeyframeCompositeOperation = endKeyframe.compositeOperation().value_or(m_compositeOperation);
+                    if (endKeyframeCompositeOperation != CompositeOperation::Replace)
+                        CSSPropertyAnimation::blendProperties(this, cssPropertyId, endKeyframeStyle, targetStyle, *endKeyframe.style(), 1, endKeyframeCompositeOperation);
+                }
             }
         }
 
         // 13. If there is only one keyframe in interval endpoints return the property value of target property on that keyframe.
         if (intervalEndpoints.size() == 1) {
-            CSSPropertyAnimation::blendProperties(this, cssPropertyId, targetStyle, startKeyframeStyle, startKeyframeStyle, 0, CompositeOperation::Replace);
+            WTF::switchOn(property,
+                [&] (CSSPropertyID propertyId) { CSSPropertyAnimation::blendProperties(this, propertyId, targetStyle, startKeyframeStyle, startKeyframeStyle, 0, CompositeOperation::Replace); },
+                [&] (AtomString customProperty) { CSSPropertyAnimation::blendCustomProperty(customProperty, targetStyle, startKeyframeStyle, startKeyframeStyle, 0); }
+            );
             return;
         }
 
@@ -1547,8 +1560,19 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         // 18. Return the result of applying the interpolation procedure defined by the animation type of the target property, to the values of the target
         //     property specified on the two keyframes in interval endpoints taking the first such value as Vstart and the second as Vend and using transformed
         //     distance as the interpolation parameter p.
-        CSSPropertyAnimation::blendProperties(this, cssPropertyId, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance, CompositeOperation::Replace);
+        WTF::switchOn(property,
+            [&] (CSSPropertyID propertyId) { CSSPropertyAnimation::blendProperties(this, propertyId, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance, CompositeOperation::Replace); },
+            [&] (AtomString customProperty) { CSSPropertyAnimation::blendCustomProperty(customProperty, targetStyle, startKeyframeStyle, endKeyframeStyle, transformedDistance); }
+        );
+    };
+
+    for (auto cssPropertyId : properties) {
+        if (cssPropertyId != CSSPropertyCustom)
+            blendProperty(cssPropertyId);
     }
+
+    for (auto customProperty : m_blendingKeyframes.customProperties())
+        blendProperty(customProperty);
 }
 
 TimingFunction* KeyframeEffect::timingFunctionForBlendingKeyframe(const KeyframeValue& keyframe) const
