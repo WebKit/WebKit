@@ -100,6 +100,14 @@ static Vector<String> parseModifierArray(JSContextRef context, JSValueRef arrayV
     return modifiers;
 }
 
+static Class internalClassNamed(NSString *className)
+{
+    auto result = NSClassFromString(className);
+    if (!result)
+        NSLog(@"Warning: an internal class named '%@' does not exist.", className);
+    return result;
+}
+
 Ref<UIScriptController> UIScriptController::create(UIScriptContext& context)
 {
     return adoptRef(*new UIScriptControllerIOS(context));
@@ -1101,17 +1109,18 @@ WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) 
 
 JSObjectRef UIScriptControllerIOS::menuRect() const
 {
-    UIView *calloutBar = UICalloutBar.activeCalloutBar;
-    if (!calloutBar.window)
-        return nullptr;
-
-    return toObject([calloutBar convertRect:calloutBar.bounds toView:platformContentView()]);
+    UIView *containerView = nil;
+    if (auto *calloutBar = UICalloutBar.activeCalloutBar; calloutBar.window)
+        containerView = calloutBar;
+    else
+        containerView = findAllViewsInHierarchyOfType(webView().textEffectsWindow, internalClassNamed(@"_UIEditMenuListView")).firstObject;
+    return containerView ? toObject([containerView convertRect:containerView.bounds toView:platformContentView()]) : nullptr;
 }
 
 JSObjectRef UIScriptControllerIOS::contextMenuRect() const
 {
     auto *window = webView().window;
-    auto *contextMenuView = [findAllViewsInHierarchyOfType(window, NSClassFromString(@"_UIContextMenuView")) firstObject];
+    auto *contextMenuView = findAllViewsInHierarchyOfType(window, internalClassNamed(@"_UIContextMenuView")).firstObject;
     if (!contextMenuView)
         return nullptr;
 

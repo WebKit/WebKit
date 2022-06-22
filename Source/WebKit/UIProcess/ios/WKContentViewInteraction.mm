@@ -4624,53 +4624,64 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     });
 }
 
-- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completionHandler
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+
+- (void)requestPreferredArrowDirectionForEditMenuWithCompletionHandler:(void(^)(UIEditMenuArrowDirection))completion
 {
-    if (!completionHandler) {
-        [NSException raise:NSInvalidArgumentException format:@"Expected a nonnull completion handler in %s.", __PRETTY_FUNCTION__];
-        return;
-    }
+    [self _requestEvasionRectsAboveSelectionIfNeeded:[completion = makeBlockPtr(completion)](const Vector<WebCore::FloatRect>& rects) {
+        completion(rects.isEmpty() ? UIEditMenuArrowDirectionAutomatic : UIEditMenuArrowDirectionUp);
+    }];
+}
 
+#endif
+
+- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completion
+{
+    [self _requestEvasionRectsAboveSelectionIfNeeded:[completion = makeBlockPtr(completion)](const Vector<WebCore::FloatRect>& rects) {
+        completion(createNSArray(rects).get());
+    }];
+}
+
+- (void)_requestEvasionRectsAboveSelectionIfNeeded:(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&)completion
+{
     if ([self _shouldSuppressSelectionCommands]) {
-        completionHandler(@[ ]);
+        completion({ });
         return;
     }
 
-    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = makeBlockPtr(completionHandler)] {
+    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = WTFMove(completion)]() mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
-            completion(@[ ]);
+            completion({ });
             return;
         }
 
         if ([strongSelf webView]._editable) {
-            completion(@[ ]);
+            completion({ });
             return;
         }
 
         auto focusedElementType = strongSelf->_focusedElementInformation.elementType;
         if (focusedElementType != WebKit::InputType::ContentEditable && focusedElementType != WebKit::InputType::TextArea) {
-            completion(@[ ]);
+            completion({ });
             return;
         }
 
         // Give the page some time to present custom editing UI before attempting to detect and evade it.
         auto delayBeforeShowingCalloutBar = std::max(0_s, 0.25_s - (ApproximateTime::now() - startTime));
-        WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion, weakSelf] () mutable {
+        WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion = WTFMove(completion), weakSelf]() mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
-                completion(@[ ]);
+                completion({ });
                 return;
             }
 
             if (!strongSelf->_page) {
-                completion(@[ ]);
+                completion({ });
                 return;
             }
 
-            strongSelf->_page->requestEvasionRectsAboveSelection([completion = WTFMove(completion)] (auto& rects) {
-                completion(createNSArray(rects).get());
-            });
+            strongSelf->_page->requestEvasionRectsAboveSelection(WTFMove(completion));
         });
     };
 

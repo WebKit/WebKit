@@ -376,7 +376,7 @@ static RetainPtr<CGImageRef> iconImage()
 static void simulateCalloutBarAppearance(TestWKWebView *webView)
 {
     __block bool done = false;
-    [webView.textInputContentView requestRectsToEvadeForSelectionCommandsWithCompletionHandler:^(NSArray<NSValue *> *) {
+    [webView.textInputContentView requestPreferredArrowDirectionForEditMenuWithCompletionHandler:^(UIEditMenuArrowDirection) {
         done = true;
     }];
     Util::run(&done);
