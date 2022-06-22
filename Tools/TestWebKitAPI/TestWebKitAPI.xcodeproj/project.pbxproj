@@ -1721,7 +1721,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 7;
+			dstSubfolderSpec = 16;
 			files = (
 				DD42949F284BE0B7004D49ED /* WebKit.framework in Product Dependencies */,
 			);
