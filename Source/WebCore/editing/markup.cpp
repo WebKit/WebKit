@@ -556,7 +556,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
             // We'll handle the style attribute separately, below.
             if (attribute.name() == styleAttr && shouldOverrideStyleAttr)
                 continue;
-            if (element.isEventHandlerAttribute(attribute) || element.isJavaScriptURLAttribute(attribute))
+            if (element.isEventHandlerAttribute(attribute) || element.attributeContainsJavascriptURL(attribute))
                 continue;
 #if ENABLE(DATA_DETECTION)
             if (replacementType == SpanReplacementType::DataDetector && DataDetection::isDataDetectorAttribute(attribute.name()))

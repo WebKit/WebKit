@@ -31,6 +31,7 @@
 #include "CSSPropertyParser.h"
 #include "Document.h"
 #include "FloatConversion.h"
+#include "HTMLParserIdioms.h"
 #include "RenderObject.h"
 #include "SVGAnimateColorElement.h"
 #include "SVGAnimateElement.h"
@@ -145,6 +146,21 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
         return set;
     }();
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
+}
+
+bool SVGAnimationElement::attributeContainsJavascriptURL(const Attribute& attribute) const
+{
+    if (attribute.name() == SVGNames::fromAttr || attribute.name() == SVGNames::toAttr)
+        return WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
+
+    if (attribute.name() == SVGNames::valuesAttr) {
+        for (auto innerValue : StringView(attribute.value()).split(';')) {
+            if (WTF::protocolIsJavaScript(innerValue.stripWhiteSpace()))
+                return true;
+        }
+        return false;
+    }
+    return Element::attributeContainsJavascriptURL(attribute);
 }
 
 void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
