@@ -261,6 +261,9 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (candidateElement.isLink() && context.elementLinkState != style->insideLink())
         return false;
 
+    if (style->containerType() != ContainerType::None)
+        return false;
+
     if (candidateElement.elementData() != element.elementData()) {
         // Attributes that are optimized as "common attribute selectors".
         if (candidateElement.attributeWithoutSynchronization(HTMLNames::readonlyAttr) != element.attributeWithoutSynchronization(HTMLNames::readonlyAttr))
@@ -293,6 +296,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (&candidateElement == m_document.fullscreenManager().currentFullscreenElement() || &element == m_document.fullscreenManager().currentFullscreenElement())
         return false;
 #endif
+
     return true;
 }
 
