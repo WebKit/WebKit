@@ -88,6 +88,7 @@ protected:
     virtual void resetAnimation();
 
     static bool isSupportedAttribute(const QualifiedName&);
+    bool attributeContainsJavascriptURL(const Attribute&) const final;
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
