@@ -70,50 +70,38 @@ static int32_t parseDecimalInt32(const CharType* characters, unsigned length)
 // https://tc39.es/proposal-temporal/#sec-temporal-durationhandlefractions
 static void handleFraction(Duration& duration, int factor, StringView fractionString, TemporalUnit fractionType)
 {
-    ASSERT(fractionString.length() && fractionString.length() <= 9 && fractionString.isAllASCII());
+    auto fractionLength = fractionString.length();
+    ASSERT(fractionLength && fractionLength <= 9 && fractionString.isAllASCII());
     ASSERT(fractionType == TemporalUnit::Hour || fractionType == TemporalUnit::Minute || fractionType == TemporalUnit::Second);
 
-    if (fractionType == TemporalUnit::Second) {
-        Vector<LChar, 9> padded(9, '0');
-        for (unsigned i = 0; i < fractionString.length(); i++)
-            padded[i] = fractionString[i];
-        duration.setMilliseconds(factor * parseDecimalInt32(padded.data(), 3));
-        duration.setMicroseconds(factor * parseDecimalInt32(padded.data() + 3, 3));
-        duration.setNanoseconds(factor * parseDecimalInt32(padded.data() + 6, 3));
-        return;
-    }
+    Vector<LChar, 9> padded(9, '0');
+    for (unsigned i = 0; i < fractionLength; i++)
+        padded[i] = fractionString[i];
 
-    double fraction = factor * parseInt(fractionString, 10) / std::pow(10, fractionString.length());
+    int64_t fraction = static_cast<int64_t>(factor) * parseDecimalInt32(padded.data(), 9);
     if (!fraction)
         return;
 
+    static constexpr int64_t divisor = 1'000'000'000LL;
     if (fractionType == TemporalUnit::Hour) {
         fraction *= 60;
-        duration.setMinutes(std::trunc(fraction));
-        fraction = std::fmod(fraction, 1);
+        duration.setMinutes(fraction / divisor);
+        fraction %= divisor;
         if (!fraction)
             return;
     }
 
-    fraction *= 60;
-    duration.setSeconds(std::trunc(fraction));
-    fraction = std::fmod(fraction, 1);
-    if (!fraction)
-        return;
+    if (fractionType != TemporalUnit::Second) {
+        fraction *= 60;
+        duration.setSeconds(fraction / divisor);
+        fraction %= divisor;
+        if (!fraction)
+            return;
+    }
 
-    fraction *= 1000;
-    duration.setMilliseconds(std::trunc(fraction));
-    fraction = std::fmod(fraction, 1);
-    if (!fraction)
-        return;
-
-    fraction *= 1000;
-    duration.setMicroseconds(std::trunc(fraction));
-    fraction = std::fmod(fraction, 1);
-    if (!fraction)
-        return;
-
-    duration.setNanoseconds(std::trunc(fraction * 1000));
+    duration.setMilliseconds(fraction / nsPerMillisecond);
+    duration.setMicroseconds(fraction % nsPerMillisecond / nsPerMicrosecond);
+    duration.setNanoseconds(fraction % nsPerMicrosecond);
 }
 
 // ParseTemporalDurationString ( isoString )

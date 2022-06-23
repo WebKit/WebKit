@@ -831,9 +831,6 @@ test/built-ins/ShadowRealm/prototype/evaluate/throws-typeerror-wrap-throwing.js:
 test/built-ins/ShadowRealm/prototype/importValue/throws-if-exportname-not-string.js:
   default: 'Test262Error: Expected a TypeError but got a Test262Error'
   strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
-test/built-ins/Temporal/Duration/compare/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: negative fractional hours (first argument) Expected SameValue(«1», «0») to be true'
-  strict mode: 'Test262Error: negative fractional hours (first argument) Expected SameValue(«1», «0») to be true'
 test/built-ins/Temporal/Duration/compare/basic.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
@@ -879,12 +876,6 @@ test/built-ins/Temporal/Duration/compare/timezone-wrong-type.js:
 test/built-ins/Temporal/Duration/compare/twenty-five-hour-day.js:
   default: 'TypeError: Right side of assignment cannot be destructured'
   strict mode: 'TypeError: Right side of assignment cannot be destructured'
-test/built-ins/Temporal/Duration/from/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: negative fractional hours nanoseconds result Expected SameValue(«-799», «-800») to be true'
-  strict mode: 'Test262Error: negative fractional hours nanoseconds result Expected SameValue(«-799», «-800») to be true'
-test/built-ins/Temporal/Duration/prototype/add/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: negative fractional hours nanoseconds result Expected SameValue(«-799», «-800») to be true'
-  strict mode: 'Test262Error: negative fractional hours nanoseconds result Expected SameValue(«-799», «-800») to be true'
 test/built-ins/Temporal/Duration/prototype/add/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
@@ -978,9 +969,6 @@ test/built-ins/Temporal/Duration/prototype/round/timezone-wrong-type.js:
 test/built-ins/Temporal/Duration/prototype/round/year-zero.js:
   default: 'Test262Error: reject minus zero as extended year Expected a RangeError but got a Error'
   strict mode: 'Test262Error: reject minus zero as extended year Expected a RangeError but got a Error'
-test/built-ins/Temporal/Duration/prototype/subtract/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: negative fractional hours nanoseconds result Expected SameValue(«799», «800») to be true'
-  strict mode: 'Test262Error: negative fractional hours nanoseconds result Expected SameValue(«799», «800») to be true'
 test/built-ins/Temporal/Duration/prototype/subtract/calendar-dateadd-called-with-plaindate-instance.js:
   default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
@@ -1065,15 +1053,9 @@ test/built-ins/Temporal/Duration/prototype/total/timezone-wrong-type.js:
 test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted-string.js:
   default: 'TypeError: Right hand side of instanceof is not an object'
   strict mode: 'TypeError: Right hand side of instanceof is not an object'
-test/built-ins/Temporal/Instant/prototype/add/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: negative fractional hours Expected SameValue(«999911555595557201», «999911555595557200») to be true'
-  strict mode: 'Test262Error: negative fractional hours Expected SameValue(«999911555595557201», «999911555595557200») to be true'
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
-test/built-ins/Temporal/Instant/prototype/subtract/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: negative fractional hours Expected SameValue(«1000088444404442799», «1000088444404442800») to be true'
-  strict mode: 'Test262Error: negative fractional hours Expected SameValue(«1000088444404442799», «1000088444404442800») to be true'
 test/built-ins/Temporal/Instant/prototype/toJSON/timezone-getoffsetnanosecondsfor-not-callable.js:
   default: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Uncallable undefined getOffsetNanosecondsFor should throw TypeError Expected a TypeError to be thrown but no exception was thrown at all'
@@ -1101,18 +1083,12 @@ test/built-ins/Temporal/PlainTime/from/argument-string-with-calendar.js:
 test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/prototype/add/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: negative fractional hours nanosecond result Expected SameValue(«201», «200») to be true'
-  strict mode: 'Test262Error: negative fractional hours nanosecond result Expected SameValue(«201», «200») to be true'
 test/built-ins/Temporal/PlainTime/prototype/equals/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
 test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
-test/built-ins/Temporal/PlainTime/prototype/subtract/argument-string-negative-fractional-units.js:
-  default: 'Test262Error: negative fractional hours nanosecond result Expected SameValue(«799», «800») to be true'
-  strict mode: 'Test262Error: negative fractional hours nanosecond result Expected SameValue(«799», «800») to be true'
 test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
