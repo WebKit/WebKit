@@ -137,11 +137,15 @@ promise_test(async (test) => {
     await new Promise((resolve, reject) => {
         finishTest = resolve;
         createConnections((localConnection) => {
-            var init = { ordered: true, maxPacketLifeTime: 10, maxRetransmitTime: 11, protocol: "whatever", negotiated: false, id: 1 };
+            var init = { ordered: true };
             localChannel = localConnection.createDataChannel('sendDataChannel', init);
-            localChannel.onopen = () => { sendMessages(localChannel) };
+            localChannel.onopen = () => {
+                console.log("sending messages");
+                sendMessages(localChannel);
+            };
         }, (remoteConnection) => {
             remoteConnection.ondatachannel = (event) => {
+                console.log("ondatachannel event handler");
                 remoteChannel = event.channel;
                 remoteChannel.onmessage = receiveMessages;
             };

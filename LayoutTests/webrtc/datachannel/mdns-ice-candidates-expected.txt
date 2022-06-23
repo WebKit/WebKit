@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: sending messages
+CONSOLE MESSAGE: ondatachannel event handler
 CONSOLE MESSAGE: receiving one
 CONSOLE MESSAGE: receiving two
 CONSOLE MESSAGE: receiving three
