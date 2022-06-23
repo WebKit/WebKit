@@ -739,11 +739,11 @@ IntersectionObserverEnabled:
   humanReadableDescription: "Enable Intersection Observer support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
       default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
 IsFirstPartyWebsiteDataRemovalDisabled:

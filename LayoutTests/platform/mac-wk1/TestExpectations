@@ -344,11 +344,6 @@ http/tests/referrer-policy-img/no-referrer-when-downgrade/ [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http-http.html [ Skip ]
 http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https.html [ Skip ]
 
-# Not supported on WK1
-http/tests/intersection-observer [ Skip ]
-imported/w3c/web-platform-tests/intersection-observer [ Skip ]
-intersection-observer [ Skip ]
-
 http/tests/lazyload [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/below-viewport-image-loading-lazy-load-event.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/disconnected-image-loading-lazy.html [ Skip ]
@@ -1837,6 +1832,9 @@ webkit.org/b/237783 imported/w3c/web-platform-tests/html/semantics/forms/input-c
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
 webkit.org/b/240081 [ Debug ]  webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
+
+# This test has been timing out on WK1 since IntersectionObserver was enabled.
+intersection-observer/observe-then-disconnect-target.html [ Skip ]
 
 # rdar://82399990 ([ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout() (229580)) Disable webgl tests for mac-wk1
 webgl [ Skip ]
