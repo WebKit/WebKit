@@ -43,7 +43,7 @@ public:
     Line(const InlineFormattingContext&);
     ~Line();
 
-    void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool collapseLeadingNonBreakingSpace);
+    void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes);
 
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
@@ -235,8 +235,6 @@ private:
     InlineBoxListWithClonedDecorationEnd m_inlineBoxListWithClonedDecorationEnd;
     InlineLayoutUnit m_clonedEndDecorationWidthForInlineBoxRuns { 0 };
     bool m_hasNonDefaultBidiLevelRun { false };
-    // Note that this is only needed for the special (and ancient and not supported by other browsers) "-webkit-nbsp-mode: space".
-    bool m_collapseLeadingNonBreakingSpace { false };
 };
 
 

@@ -122,8 +122,6 @@ private:
     std::optional<IntrinsicWidthMode> intrinsicWidthMode() const { return m_intrinsicWidthMode; }
     bool isInIntrinsicWidthMode() const { return !!intrinsicWidthMode(); }
 
-    bool isFirstLine() const { return !m_previousLine.has_value(); }
-
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
     FloatingState* floatingState() { return m_floatingState; }
@@ -132,7 +130,7 @@ private:
     const LayoutState& layoutState() const;
 
 private:
-    std::optional<PreviousLine> m_previousLine { };
+    bool m_isFirstLine { false };
     std::optional<IntrinsicWidthMode> m_intrinsicWidthMode;
     const InlineFormattingContext& m_inlineFormattingContext;
     InlineFormattingState* m_inlineFormattingState { nullptr };

@@ -49,9 +49,8 @@ Line::~Line()
 {
 }
 
-void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool collapseLeadingNonBreakingSpace)
+void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
 {
-    m_collapseLeadingNonBreakingSpace = collapseLeadingNonBreakingSpace;
     m_inlineBoxListWithClonedDecorationEnd.clear();
     m_clonedEndDecorationWidthForInlineBoxRuns = { };
     m_nonSpanningInlineLevelBoxCount = 0;
@@ -294,19 +293,8 @@ void Line::appendInlineBoxEnd(const InlineItem& inlineItem, const RenderStyle& s
 void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
     auto willCollapseCompletely = [&] {
-        if (!inlineTextItem.isWhitespace()) {
-            auto isLeadingCollapsibleNonBreakingSpace = [&] {
-                // Let's check for leading non-breaking space collapsing to match legacy line layout quirk.
-                if (!inlineTextItem.isCollapsibleNonBreakingSpace() || !m_collapseLeadingNonBreakingSpace)
-                    return false;
-                for (auto& run : makeReversedRange(m_runs)) {
-                    if (run.isBox() || run.isText())
-                        return false;
-                }
-                return true;
-            };
-            return isLeadingCollapsibleNonBreakingSpace();
-        }
+        if (!inlineTextItem.isWhitespace())
+            return false;
         if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
             return false;
         // This content is collapsible. Let's check if the last item is collapsed.
