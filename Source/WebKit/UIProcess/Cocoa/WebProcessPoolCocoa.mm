@@ -534,13 +534,14 @@ void WebProcessPool::colorPreferencesDidChangeCallback(CFNotificationCenterRef, 
         return;
     pool->sendToAllProcesses(Messages::WebProcess::ColorPreferencesDidChange());
 }
+#endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcessPool::hardwareConsoleStateChanged()
 {
     for (auto& process : m_processes)
         process->hardwareConsoleStateChanged();
 }
-
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
