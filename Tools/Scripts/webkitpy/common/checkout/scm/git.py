@@ -651,3 +651,6 @@ class Git(SCM, SVNRepository):
 
     def rev_parse(self, rev):
         return self._run_git(['rev-parse', rev]).rstrip()
+
+    def cleanup_and_optimize_local_repository(self):
+        return self._run_git(['gc', '--prune=3.days.ago'])

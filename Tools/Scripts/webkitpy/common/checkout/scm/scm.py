@@ -244,6 +244,9 @@ class SCM:
     def discard_local_commits(self):
         return
 
+    def cleanup_and_optimize_local_repository(self):
+        return
+
     def remote_merge_base(self):
         SCM._subclass_must_implement()
 
