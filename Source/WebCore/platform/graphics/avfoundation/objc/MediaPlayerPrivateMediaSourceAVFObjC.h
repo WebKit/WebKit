@@ -222,7 +222,7 @@ private:
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
-#if PLATFORM(COCOA) && !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     void willBeAskedToPaintGL() final;
 #endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
@@ -268,7 +268,14 @@ private:
 
     bool shouldBePlaying() const;
 
-    bool isVideoOutputAvailable() const;
+    enum class VideoOutputReadbackMethod : uint8_t {
+        None,
+        CopyPixelBufferFromDisplayLayer,
+        UseVideoOutput,
+    };
+    VideoOutputReadbackMethod readbackMethod() const;
+
+    void updateVideoOutput();
 
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
 
@@ -346,7 +353,7 @@ private:
     bool m_seeking;
     SeekState m_seekCompleted { SeekCompleted };
     mutable bool m_loadingProgressed;
-#if !HAVE(LOW_AV_SAMPLE_BUFFER_PRUNING_INTERVAL)
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };
 #endif
     bool m_hasAvailableVideoFrame { false };
