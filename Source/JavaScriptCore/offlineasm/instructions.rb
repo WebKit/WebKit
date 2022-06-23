@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -440,6 +440,10 @@ ARM64_INSTRUCTIONS =
      "atomicloadh",
      "atomicloadi",
      "atomicloadq",
+     "loadpairq",
+     "storepairq",
+     "loadpaird",
+     "storepaird",
     ]
 
 RISC_INSTRUCTIONS =

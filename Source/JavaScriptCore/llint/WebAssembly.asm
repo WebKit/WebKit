@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -77,17 +77,18 @@ end
 # Wasm value (even if that value is i32/f32, the odd numbered GPR holds the
 # more significant word).
 macro forEachArgumentJSR(fn)
-    if JSVALUE64
+    if ARM64 or ARM64E
+        fn(0 * 8, wa0, wa1)
+        fn(2 * 8, wa2, wa3)
+        fn(4 * 8, wa4, wa5)
+        fn(6 * 8, wa6, wa7)
+    elsif JSVALUE64
         fn(0 * 8, wa0)
         fn(1 * 8, wa1)
         fn(2 * 8, wa2)
         fn(3 * 8, wa3)
         fn(4 * 8, wa4)
         fn(5 * 8, wa5)
-        if ARM64 or ARM64E
-            fn(6 * 8, wa6)
-            fn(7 * 8, wa7)
-        end
     else
         fn(0 * 8, wa1, wa0)
         fn(1 * 8, wa3, wa2)
@@ -95,14 +96,21 @@ macro forEachArgumentJSR(fn)
 end
 
 macro forEachArgumentFPR(fn)
-    fn((NumberOfWasmArgumentJSRs + 0) * 8, wfa0)
-    fn((NumberOfWasmArgumentJSRs + 1) * 8, wfa1)
-    fn((NumberOfWasmArgumentJSRs + 2) * 8, wfa2)
-    fn((NumberOfWasmArgumentJSRs + 3) * 8, wfa3)
-    fn((NumberOfWasmArgumentJSRs + 4) * 8, wfa4)
-    fn((NumberOfWasmArgumentJSRs + 5) * 8, wfa5)
-    fn((NumberOfWasmArgumentJSRs + 6) * 8, wfa6)
-    fn((NumberOfWasmArgumentJSRs + 7) * 8, wfa7)
+    if ARM64 or ARM64E
+        fn((NumberOfWasmArgumentJSRs + 0) * 8, wfa0, wfa1)
+        fn((NumberOfWasmArgumentJSRs + 2) * 8, wfa2, wfa3)
+        fn((NumberOfWasmArgumentJSRs + 4) * 8, wfa4, wfa5)
+        fn((NumberOfWasmArgumentJSRs + 6) * 8, wfa6, wfa7)
+    else
+        fn((NumberOfWasmArgumentJSRs + 0) * 8, wfa0)
+        fn((NumberOfWasmArgumentJSRs + 1) * 8, wfa1)
+        fn((NumberOfWasmArgumentJSRs + 2) * 8, wfa2)
+        fn((NumberOfWasmArgumentJSRs + 3) * 8, wfa3)
+        fn((NumberOfWasmArgumentJSRs + 4) * 8, wfa4)
+        fn((NumberOfWasmArgumentJSRs + 5) * 8, wfa5)
+        fn((NumberOfWasmArgumentJSRs + 6) * 8, wfa6)
+        fn((NumberOfWasmArgumentJSRs + 7) * 8, wfa7)
+    end
 end
 
 # FIXME: Eventually this should be unified with the JS versions
@@ -154,7 +162,11 @@ macro checkSwitchToJITForPrologue(codeBlockRegister)
             btpz r0, .recover
             move r0, ws0
 
-if JSVALUE64
+if ARM64 or ARM64E
+            forEachArgumentJSR(macro (offset, gpr1, gpr2)
+                loadpairq -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpr2, gpr1
+            end)
+elsif JSVALUE64
             forEachArgumentJSR(macro (offset, gpr)
                 loadq -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpr
             end)
@@ -163,9 +175,15 @@ else
                 load2ia -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpLsw, gprMsw
             end)
 end
+if ARM64 or ARM64E
+            forEachArgumentFPR(macro (offset, fpr1, fpr2)
+                loadpaird -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr2, fpr1
+            end)
+else
             forEachArgumentFPR(macro (offset, fpr)
                 loadd -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr
             end)
+end
 
             restoreCalleeSavesUsedByWasm()
             restoreCallerPCAndCFR()
@@ -226,7 +244,7 @@ macro preserveCalleeSavesUsedByWasm()
     # in restoreCalleeSavesUsedByWasm() below for why.
     subp CalleeSaveSpaceStackAligned, sp
     if ARM64 or ARM64E
-        emit "stp x19, x26, [x29, #-16]"
+        storepairq wasmInstance, PB, -16[cfr]
     elsif X86_64 or RISCV64
         storep PB, -0x8[cfr]
         storep wasmInstance, -0x10[cfr]
@@ -243,7 +261,7 @@ macro restoreCalleeSavesUsedByWasm()
     # and restored when entering Wasm by the JSToWasm wrapper and changes to them are meant
     # to be observable within the same Wasm module.
     if ARM64 or ARM64E
-        emit "ldp x19, x26, [x29, #-16]"
+        loadpairq -16[cfr], wasmInstance, PB
     elsif X86_64 or RISCV64
         loadp -0x8[cfr], PB
         loadp -0x10[cfr], wasmInstance
@@ -361,7 +379,11 @@ end
 .stackHeightOK:
     move ws1, sp
 
-if JSVALUE64
+if ARM64 or ARM64E
+    forEachArgumentJSR(macro (offset, gpr1, gpr2)
+        storepairq gpr2, gpr1, -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
+    end)
+elsif JSVALUE64
     forEachArgumentJSR(macro (offset, gpr)
         storeq gpr, -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
     end)
@@ -370,9 +392,15 @@ else
         store2ia gpLsw, gprMsw, -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
     end)
 end
+if ARM64 or ARM64E
+    forEachArgumentFPR(macro (offset, fpr1, fpr2)
+        storepaird fpr2, fpr1, -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
+    end)
+else
     forEachArgumentFPR(macro (offset, fpr)
         stored fpr, -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr]
     end)
+end
 
     checkSwitchToJITForPrologue(ws0)
 
@@ -794,7 +822,11 @@ end)
 
 unprefixedWasmOp(wasm_ret, WasmRet, macro(ctx)
     checkSwitchToJITForEpilogue()
-if JSVALUE64
+if ARM64 or ARM64E
+    forEachArgumentJSR(macro (offset, gpr1, gpr2)
+        loadpairq -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpr2, gpr1
+    end)
+elsif JSVALUE64
     forEachArgumentJSR(macro (offset, gpr)
         loadq -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpr
     end)
@@ -803,9 +835,15 @@ else
         load2ia -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], gpLsw, gprMsw
     end)
 end
+if ARM64 or ARM64E
+    forEachArgumentFPR(macro (offset, fpr1, fpr2)
+        loadpaird -offset - 16 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr2, fpr1
+    end)
+else
     forEachArgumentFPR(macro (offset, fpr)
         loadd -offset - 8 - CalleeSaveSpaceAsVirtualRegisters * 8[cfr], fpr
     end)
+end
     doReturn()
 end)
 
@@ -850,7 +888,12 @@ end
             reloadMemoryRegistersFromInstance(targetWasmInstance, wa0, wa1)
 
             # Load registers from stack
-if JSVALUE64
+if ARM64 or ARM64E
+            leap [sp, ws1, 8], ws1
+            forEachArgumentJSR(macro (offset, gpr1, gpr2)
+                loadpairq CallFrameHeaderSize + 8 + offset[ws1], gpr1, gpr2
+            end)
+elsif JSVALUE64
             forEachArgumentJSR(macro (offset, gpr)
                 loadq CallFrameHeaderSize + 8 + offset[sp, ws1, 8], gpr
             end)
@@ -859,9 +902,15 @@ else
                 load2ia CallFrameHeaderSize + 8 + offset[sp, ws1, 8], gpLsw, gprMsw
             end)
 end
+if ARM64 or ARM64E
+            forEachArgumentFPR(macro (offset, fpr1, fpr2)
+                loadpaird CallFrameHeaderSize + 8 + offset[ws1], fpr1, fpr2
+            end)
+else
             forEachArgumentFPR(macro (offset, fpr)
                 loadd CallFrameHeaderSize + 8 + offset[sp, ws1, 8], fpr
             end)
+end
 
             addp CallerFrameAndPCSize, sp
 
@@ -927,7 +976,12 @@ if ARMv7
 else
             move memoryBase, PC
 end
-if JSVALUE64
+if ARM64 or ARM64E
+            leap [ws1, ws0, 8], ws1
+            forEachArgumentJSR(macro (offset, gpr1, gpr2)
+                storepairq gpr1, gpr2, CallFrameHeaderSize + 8 + offset[ws1]
+            end)
+elsif JSVALUE64
             forEachArgumentJSR(macro (offset, gpr)
                 storeq gpr, CallFrameHeaderSize + 8 + offset[ws1, ws0, 8]
             end)
@@ -936,9 +990,15 @@ else
                 store2ia gpLsw, gprMsw, CallFrameHeaderSize + 8 + offset[ws1, ws0, 8]
             end)
 end
+if ARM64 or ARM64E
+            forEachArgumentFPR(macro (offset, fpr1, fpr2)
+                storepaird fpr1, fpr2, CallFrameHeaderSize + 8 + offset[ws1]
+            end)
+else
             forEachArgumentFPR(macro (offset, fpr)
                 stored fpr, CallFrameHeaderSize + 8 + offset[ws1, ws0, 8]
             end)
+end
 
             loadi ArgumentCountIncludingThis + TagOffset[cfr], PC
 
