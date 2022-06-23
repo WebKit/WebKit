@@ -520,6 +520,9 @@ public:
 #endif
 
     Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::CaptivePortalMode, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
+#if PLATFORM(MAC)
+    void hardwareConsoleStateChanged();
+#endif
 
 private:
     void platformInitialize();

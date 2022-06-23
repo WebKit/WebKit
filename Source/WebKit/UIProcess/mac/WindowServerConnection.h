@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,17 @@ public:
 
     bool applicationWindowModificationsHaveStopped() const { return m_applicationWindowModificationsHaveStopped; }
 
+    enum class HardwareConsoleState : uint8_t { Connected, Disconnected };
+    void hardwareConsoleStateChanged(HardwareConsoleState);
+    HardwareConsoleState hardwareConsoleState() const { return m_connectionState; }
+
 private:
     WindowServerConnection();
 
     void windowServerConnectionStateChanged();
     void applicationWindowModificationsStopped(bool stopped);
 
+    HardwareConsoleState m_connectionState { HardwareConsoleState::Connected };
     bool m_applicationWindowModificationsHaveStopped;
 };
 
