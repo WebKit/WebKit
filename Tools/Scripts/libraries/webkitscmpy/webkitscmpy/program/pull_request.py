@@ -38,6 +38,8 @@ class PullRequest(Command):
     aliases = ['pr', 'pfr', 'upload']
     help = 'Push the current checkout state as a pull-request'
     BLOCKED_LABEL = 'merging-blocked'
+    MERGE_LABELS = ['merge-queue']
+    UNSAFE_MERGE_LABELS = ['unsafe-merge-queue']
 
     @classmethod
     def parser(cls, parser, loggers=None):
@@ -56,10 +58,10 @@ class PullRequest(Command):
             action=arguments.NoAction,
         )
         parser.add_argument(
-            '--squash',
-            dest='squash', default=False,
-            action='store_true',
+            '--squash', '--no-squash',
+            dest='squash', default=None,
             help='Combine all commits on the current development branch into a single commit before pushing',
+            action=arguments.NoAction,
         )
         parser.add_argument(
             '--defaults', '--no-defaults', action=arguments.NoAction, default=None,
@@ -260,7 +262,7 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def create_pull_request(cls, repository, args, branch_point):
+    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True):
         # FIXME: We can do better by inferring the remote from the branch point, if it's not specified
         source_remote = args.remote or 'origin'
         if not repository.config().get('remote.{}.url'.format(source_remote)):
@@ -278,8 +280,6 @@ class PullRequest(Command):
                 sys.stderr.write("Failed to rebase '{}' on '{},' please resolve conflicts\n".format(repository.branch, branch_point.branch))
                 return 1
             log.info("Rebased '{}' on '{}!'".format(repository.branch, branch_point.branch))
-            branch_point = Branch.branch_point(repository)
-        else:
             branch_point = Branch.branch_point(repository)
 
         if args.checks is None:
@@ -303,15 +303,19 @@ class PullRequest(Command):
             ) == 'Yes'):
                 existing_pr = None
 
-        # Remove "merging-blocked" label
+        # Remove any active labels
         if existing_pr and existing_pr._metadata and existing_pr._metadata.get('issue'):
-            log.info("Checking PR labels for '{}'...".format(cls.BLOCKED_LABEL))
+            log.info("Checking PR labels for active labels...")
             pr_issue = existing_pr._metadata['issue']
             labels = pr_issue.labels
-            if cls.BLOCKED_LABEL in labels:
-                log.info("Removing '{}' from PR {}...".format(cls.BLOCKED_LABEL, existing_pr.number))
-                labels.remove(cls.BLOCKED_LABEL)
-                pr_issue.set_labels([])
+            did_remove = False
+            for to_remove in cls.MERGE_LABELS + cls.UNSAFE_MERGE_LABELS + ([cls.BLOCKED_LABEL] if unblock else []):
+                if to_remove in labels:
+                    log.info("Removing '{}' from PR {}...".format(to_remove, existing_pr.number))
+                    labels.remove(to_remove)
+                    did_remove = True
+            if did_remove:
+                pr_issue.set_labels(labels)
 
         if isinstance(remote_repo, remote.GitHub):
             target = 'fork' if source_remote == 'origin' else '{}-fork'.format(source_remote)
@@ -429,6 +433,8 @@ class PullRequest(Command):
         if pr.url:
             print(pr.url)
 
+        if callback:
+            return callback(pr)
         return 0
 
     @classmethod
@@ -443,10 +449,11 @@ class PullRequest(Command):
         if not branch_point:
             return 1
 
+        result = cls.create_commit(args, repository, **kwargs)
+        if result:
+            return result
         if args.squash:
             result = Squash.squash_commit(args, repository, branch_point, **kwargs)
-        else:
-            result = cls.create_commit(args, repository, **kwargs)
             if result:
                 return result
 

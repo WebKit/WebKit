@@ -76,7 +76,6 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
 
     def test_create_body_multiple_linked(self):
-        self.maxDiff = None
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
                 hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
@@ -460,7 +459,7 @@ No pre-PR checks to run""")
                 "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                "Checking PR labels for 'merging-blocked'...",
+                'Checking PR labels for active labels...',
                 "Removing 'merging-blocked' from PR 1...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
@@ -504,7 +503,7 @@ No pre-PR checks to run""")
                 '    Found 2 commits...',
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                "Checking PR labels for 'merging-blocked'...",
+                'Checking PR labels for active labels...',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
@@ -553,7 +552,7 @@ No pre-PR checks to run""")
                 "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                "Checking PR labels for 'merging-blocked'...",
+                'Checking PR labels for active labels...',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
@@ -628,7 +627,6 @@ No pre-PR checks to run""")
         )
 
     def test_github_branch_bugzilla(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
                 projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
                 self.BUGZILLA.split('://')[-1],
@@ -687,7 +685,6 @@ No pre-PR checks to run""")
         )
 
     def test_github_branch_bugzilla_redacted(self):
-        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
             self.BUGZILLA.split('://')[-1],
             projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
