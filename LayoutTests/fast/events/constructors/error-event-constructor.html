@@ -82,7 +82,7 @@ shouldBe("new ErrorEvent('eventType', { colno: 4294967294 }).colno", "4294967294
 shouldBe("new ErrorEvent('eventType', { colno: 4294967295 }).colno", "4294967295");
 
 // error is passed.
-shouldBe("new ErrorEvent('eventType', { error: undefined }).error", "null");
+shouldBe("new ErrorEvent('eventType', { error: undefined }).error", "undefined");
 shouldBe("new ErrorEvent('eventType', { error: null }).error", "null");
 shouldBe("new ErrorEvent('eventType', { error: '' }).error", "''");
 shouldBe("new ErrorEvent('eventType', { error: '12345' }).error", "'12345'");
