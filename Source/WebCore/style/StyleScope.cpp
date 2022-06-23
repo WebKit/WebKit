@@ -794,7 +794,9 @@ bool Scope::isForUserAgentShadowTree() const
 bool Scope::updateQueryContainerState(QueryContainerUpdateContext& context)
 {
     ASSERT(!m_shadowRoot);
-    ASSERT(m_document.renderView());
+
+    if (!m_document.renderView())
+        return false;
 
     auto previousStates = WTFMove(m_queryContainerStates);
     m_queryContainerStates.clear();
