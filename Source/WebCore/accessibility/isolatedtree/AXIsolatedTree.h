@@ -346,7 +346,8 @@ public:
 
     void generateSubtree(AXCoreObject&);
     void updateNode(AXCoreObject&);
-    void updateChildren(AXCoreObject&);
+    enum class ResolveNodeChanges : bool { No, Yes };
+    void updateChildren(AXCoreObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
     void updateNodeProperty(AXCoreObject&, AXPropertyName);
     void updateNodeAndDependentProperties(AXCoreObject&);
 
