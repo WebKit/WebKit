@@ -26,6 +26,10 @@ PRODUCT_NAME = $(TARGET_NAME);
 RELEASE_DEFINES = RELEASE_WITHOUT_OPTIMIZATIONS;
 RELEASE_DEFINES[config=Debug] = ;
 
+// Prevent WebKit CI from reducing debug info to line tables; full type
+// information is needed to test properly.
+WK_OVERRIDE_DEBUG_INFORMATION_LEVEL = default;
+
 SUPPORTED_PLATFORMS = macosx;
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(RELEASE_DEFINES);
