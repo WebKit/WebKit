@@ -993,14 +993,20 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
             bool needsOverflowCheck = m_makesCalls || wasmFrameSize >= static_cast<int32_t>(minimumParentCheckSize) || needUnderflowCheck;
 
+            if ((needsOverflowCheck || m_usesInstanceValue) && Context::useFastTLS())
+                jit.loadWasmContextInstance(m_prologueWasmContextGPR);
+
+            // We need to setup JSWebAssemblyInstance in |this| slot first.
+            if (m_catchEntrypoints.size()) {
+                GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
+                jit.loadPtr(CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfOwner()), scratch);
+                jit.store64(scratch, CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::thisArgument * sizeof(Register)));
+            }
+
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
             if (needsOverflowCheck) {
                 GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
-
-                if (Context::useFastTLS())
-                    jit.loadWasmContextInstance(m_prologueWasmContextGPR);
-
                 jit.addPtr(CCallHelpers::TrustedImm32(-checkSize), GPRInfo::callFrameRegister, scratch);
                 MacroAssembler::JumpList overflow;
                 if (UNLIKELY(needUnderflowCheck))
@@ -1009,16 +1015,8 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
                 });
-            } else if (m_usesInstanceValue && Context::useFastTLS()) {
-                // No overflow check is needed, but the instance values still needs to be correct.
-                jit.loadWasmContextInstance(m_prologueWasmContextGPR);
             }
 
-            if (m_catchEntrypoints.size()) {
-                GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
-                jit.loadPtr(CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfOwner()), scratch);
-                jit.store64(scratch, CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::thisArgument * sizeof(Register)));
-            }
         }
     });
 
