@@ -1,0 +1,36 @@
+<style>
+.container {
+  width: 300px;
+  overflow: hidden;
+  font-size: 20px;
+  font-family: Ahem;
+}
+
+#flexBox {
+  display: flex;
+  overflow: scroll;
+  margin-inline-end: -300px;
+  padding-inline-end: 300px;
+}
+
+.item {
+  flex-shrink: 0;
+  width: 300px;
+  height: 100px;
+}
+
+.hide_scrollbar {
+  position: absolute;
+  background-color: white;
+  width: 500px;
+  height: 50px;
+  left: 0px;
+  top: 100px;
+}
+</style>
+<!-- PASS if visible -->
+<div class="container"><div id=flexBox><div class=item></div><div class=item>PASS</div></div></div>
+<div class=hide_scrollbar></div>
+<script>
+flexBox.scrollTo(300, 0);
+</script>

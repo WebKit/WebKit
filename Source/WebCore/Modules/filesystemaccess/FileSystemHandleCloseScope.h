@@ -53,8 +53,8 @@ public:
     }
 
 private:
-    FileSystemHandleCloseScope(FileSystemHandleIdentifier identifer, bool isDirectory, FileSystemStorageConnection& connection)
-        : m_identifier(identifer)
+    FileSystemHandleCloseScope(FileSystemHandleIdentifier identifier, bool isDirectory, FileSystemStorageConnection& connection)
+        : m_identifier(identifier)
         , m_isDirectory(isDirectory)
         , m_connection(Ref { connection })
     {

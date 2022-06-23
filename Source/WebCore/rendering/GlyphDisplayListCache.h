@@ -59,8 +59,8 @@ public:
     bool operator==(const GlyphDisplayListCacheEntry& other) const
     {
         return m_textRun == other.m_textRun
-            && m_font == other.m_font
             && m_scaleFactor == other.m_scaleFactor
+            && m_fontCascadeGeneration == other.m_fontCascadeGeneration
             && m_shouldSubpixelQuantizeFont == other.m_shouldSubpixelQuantizeFont;
     }
 
@@ -70,8 +70,8 @@ private:
     GlyphDisplayListCacheEntry(std::unique_ptr<DisplayList::InMemoryDisplayList>&& displayList, const TextRun& textRun, const FontCascade& font, GraphicsContext& context)
         : m_displayList(WTFMove(displayList))
         , m_textRun(textRun.isolatedCopy())
-        , m_font(font)
         , m_scaleFactor(context.scaleFactor())
+        , m_fontCascadeGeneration(font.generation())
         , m_shouldSubpixelQuantizeFont(context.shouldSubpixelQuantizeFonts())
     {
         ASSERT(m_displayList.get());
@@ -80,14 +80,14 @@ private:
     std::unique_ptr<DisplayList::InMemoryDisplayList> m_displayList;
 
     TextRun m_textRun;
-    FontCascade m_font;
     FloatSize m_scaleFactor;
+    unsigned m_fontCascadeGeneration;
     bool m_shouldSubpixelQuantizeFont;
 };
 
 inline void add(Hasher& hasher, const GlyphDisplayListCacheEntry& entry)
 {
-    add(hasher, entry.m_textRun, entry.m_font.fonts(), entry.m_scaleFactor.width(), entry.m_scaleFactor.height(), entry.m_shouldSubpixelQuantizeFont);
+    add(hasher, entry.m_textRun, entry.m_scaleFactor.width(), entry.m_scaleFactor.height(), entry.m_fontCascadeGeneration, entry.m_shouldSubpixelQuantizeFont);
 }
 
 struct GlyphDisplayListCacheEntryHash {

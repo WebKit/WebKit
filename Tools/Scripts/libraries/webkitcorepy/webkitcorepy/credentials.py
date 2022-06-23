@@ -32,9 +32,17 @@ _cache = dict()
 def credentials(url, required=True, name=None, prompt=None, key_name='password', validater=None, validate_existing_credentials=False, retry=3, save_in_keyring=None):
     global _cache
 
+    ignore_entry = False
     name = name or url.split('/')[2].replace('.', '_')
     if _cache.get(name):
-        return _cache.get(name)
+        if not validate_existing_credentials:
+            return _cache[name]
+        elif validater and validater(*_cache.get(name)):
+            return _cache[name]
+
+        # If we've failed the validation check, invalidate cache and ignore the current keychain entry
+        del _cache[name]
+        ignore_entry = True
 
     username = Environment.instance().get('{}_USERNAME'.format(name.upper()))
     key = Environment.instance().get('{}_{}'.format(name.upper(), key_name.upper()))
@@ -53,6 +61,8 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
     key_prompted = False
 
     for attempt in range(retry):
+        if not attempt and ignore_entry:
+            continue
         if attempt:
             sys.stderr.write('Ignoring keychain values and re-prompting user\n')
         if not username:

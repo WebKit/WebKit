@@ -11,12 +11,14 @@ const mergeFields = Temporal.Calendar.prototype.mergeFields;
 
 assert.sameValue(typeof mergeFields, "function");
 
-assert.throws(TypeError, () => mergeFields.call(undefined), "undefined");
-assert.throws(TypeError, () => mergeFields.call(null), "null");
-assert.throws(TypeError, () => mergeFields.call(true), "true");
-assert.throws(TypeError, () => mergeFields.call(""), "empty string");
-assert.throws(TypeError, () => mergeFields.call(Symbol()), "symbol");
-assert.throws(TypeError, () => mergeFields.call(1), "1");
-assert.throws(TypeError, () => mergeFields.call({}), "plain object");
-assert.throws(TypeError, () => mergeFields.call(Temporal.Calendar), "Temporal.Calendar");
-assert.throws(TypeError, () => mergeFields.call(Temporal.Calendar.prototype), "Temporal.Calendar.prototype");
+const args = [{}, {}];
+
+assert.throws(TypeError, () => mergeFields.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => mergeFields.apply(null, args), "null");
+assert.throws(TypeError, () => mergeFields.apply(true, args), "true");
+assert.throws(TypeError, () => mergeFields.apply("", args), "empty string");
+assert.throws(TypeError, () => mergeFields.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => mergeFields.apply(1, args), "1");
+assert.throws(TypeError, () => mergeFields.apply({}, args), "plain object");
+assert.throws(TypeError, () => mergeFields.apply(Temporal.Calendar, args), "Temporal.Calendar");
+assert.throws(TypeError, () => mergeFields.apply(Temporal.Calendar.prototype, args), "Temporal.Calendar.prototype");

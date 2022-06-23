@@ -353,7 +353,7 @@
         "com.apple.mt"
         "com.apple.preferences.sounds")
 
-    (deny mach-lookup (with telemetry)
+    (deny mach-lookup
         (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     )
 
@@ -518,7 +518,7 @@
     (global-name "com.apple.logd.events")
 )
 
-(deny mach-lookup (with telemetry)
+(deny mach-lookup (with no-report)
     (global-name "com.apple.distributed_notifications@1v3"))
 
 (deny mach-lookup (with no-report)
@@ -1061,7 +1061,6 @@
     (syscall-number
         SYS_bsdthread_register
         SYS_chdir
-        SYS_connect
         SYS_dup2
         SYS_fsgetpath
         SYS_getpid
@@ -1172,9 +1171,12 @@
         SYS_fgetxattr
         SYS_fstatat64
         SYS_fsync
+        SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
         SYS_getgid
         SYS_getxattr
+        SYS_iopolicysys
         SYS_mkdirat
+        SYS_open_dprotected_np
         SYS_openat_nocancel
         SYS_pread_nocancel
         SYS_rmdir
@@ -1195,13 +1197,11 @@
         SYS___pthread_kill
         SYS___pthread_sigmask
         SYS___semwait_signal
-        SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
-        SYS_iopolicysys
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
         SYS_necp_client_action
         SYS_necp_open
-        SYS_open_dprotected_np
+#endif
         SYS_psynch_rw_wrlock
-        SYS_socket
         SYS_umask
         SYS_work_interval_ctl))
 
@@ -1228,6 +1228,10 @@
     (allow syscall-unix (with report) (with telemetry-backtrace)
         (syscall-unix-rarely-in-use-need-backtrace))
 )
+
+(deny syscall-unix (syscall-number
+    SYS_connect
+    SYS_socket))
 
 (when (defined? 'SYS_map_with_linking_np)
     (allow syscall-unix (syscall-number SYS_map_with_linking_np)))
@@ -1450,6 +1454,9 @@
         io_service_get_matching_service_bin
         io_service_get_matching_services_bin
         io_service_open_extended
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000)
+        mach_port_get_refs
+#endif
         mach_port_set_attributes
         mach_vm_copy
         mach_vm_map_external

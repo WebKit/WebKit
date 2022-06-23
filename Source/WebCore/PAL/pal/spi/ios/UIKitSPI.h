@@ -43,6 +43,7 @@ WTF_EXTERN_C_END
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIPasteboard_Private.h>
 #import <UIKit/UIScreen_Private.h>
+#import <UIKit/UITextEffectsWindow.h>
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
@@ -171,6 +172,16 @@ typedef enum {
 + (CGFloat)borderThickness;
 + (CGFloat)maxAlpha;
 + (CGFloat)alphaThreshold;
+@end
+
+@interface UIApplicationRotationFollowingWindow : UIWindow
+@end
+
+@interface UIAutoRotatingWindow : UIApplicationRotationFollowingWindow
+@end
+
+@interface UITextEffectsWindow : UIAutoRotatingWindow
++ (UITextEffectsWindow *)sharedTextEffectsWindowForWindowScene:(UIWindowScene *)windowScene;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

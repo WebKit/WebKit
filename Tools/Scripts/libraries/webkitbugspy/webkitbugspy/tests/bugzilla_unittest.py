@@ -414,3 +414,11 @@ What version of 'WebKit' should the bug be associated with?:
                 'Exhausted login attempts\n'
                 'Failed to create bug: Login attempts exhausted\n',
             )
+
+    def test_redaction(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            self.assertEqual(bugzilla.Tracker(self.URL, redact=None).issue(1).redacted, False)
+            self.assertEqual(bugzilla.Tracker(self.URL, redact={'.*': True}).issue(1).redacted, True)
+            self.assertEqual(bugzilla.Tracker(self.URL, redact={'project:WebKit': True}).issue(1).redacted, True)
+            self.assertEqual(bugzilla.Tracker(self.URL, redact={'component:Text': True}).issue(1).redacted, True)
+            self.assertEqual(bugzilla.Tracker(self.URL, redact={'version:Other': True}).issue(1).redacted, True)

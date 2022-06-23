@@ -2265,10 +2265,21 @@ void Element::invalidateStyleForSubtreeInternal()
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
 }
 
-void Element::invalidateForQueryContainerChange()
+void Element::invalidateForQueryContainerSizeChange()
 {
     // FIXME: Ideally we would just recompute things that are actually affected by containers queries within the subtree.
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
+    setNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
+}
+
+bool Element::needsUpdateQueryContainerDependentStyle() const
+{
+    return hasNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
+}
+
+void Element::clearNeedsUpdateQueryContainerDependentStyle()
+{
+    clearNodeFlag(NodeFlag::NeedsUpdateQueryContainerDependentStyle);
 }
 
 void Element::invalidateEventListenerRegions()
@@ -2304,7 +2315,7 @@ bool Element::isEventHandlerAttribute(const Attribute& attribute) const
     return attribute.name().namespaceURI().isNull() && attribute.name().localName().startsWith("on"_s);
 }
 
-bool Element::isJavaScriptURLAttribute(const Attribute& attribute) const
+bool Element::attributeContainsJavaScriptURL(const Attribute& attribute) const
 {
     return isURLAttribute(attribute) && WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
 }
@@ -2313,7 +2324,7 @@ void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const
 {
     attributeVector.removeAllMatching([this](auto& attribute) -> bool {
         return this->isEventHandlerAttribute(attribute)
-            || this->isJavaScriptURLAttribute(attribute)
+            || this->attributeContainsJavaScriptURL(attribute)
             || this->isHTMLContentAttribute(attribute);
     });
 }

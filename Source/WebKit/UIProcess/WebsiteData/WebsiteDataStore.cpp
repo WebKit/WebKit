@@ -310,9 +310,6 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setCookieStorageFile(resolveAndCreateReadWriteDirectoryForSandboxExtension(FileSystem::parentPath(m_configuration->cookieStorageFile())));
         m_resolvedConfiguration->setCookieStorageFile(FileSystem::pathByAppendingComponent(m_resolvedConfiguration->cookieStorageFile(), FileSystem::pathFileName(m_configuration->cookieStorageFile())));
     }
-
-    if (auto directory = m_configuration->webSQLDatabaseDirectory(); !directory.isEmpty())
-        FileSystem::deleteNonEmptyDirectory(directory);
 }
 
 enum class ProcessAccessType : uint8_t { None, OnlyIfLaunched, Launch };

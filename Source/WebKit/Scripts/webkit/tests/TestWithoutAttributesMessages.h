@@ -40,6 +40,7 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/OptionSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -47,7 +48,6 @@
 
 namespace IPC {
 class DummyType;
-class MachPort;
 }
 
 namespace WebKit {
@@ -471,12 +471,12 @@ private:
 #if PLATFORM(MAC)
 class DidCreateWebProcessConnection {
 public:
-    using Arguments = std::tuple<const IPC::MachPort&, const OptionSet<WebKit::SelectionFlags>&>;
+    using Arguments = std::tuple<const MachSendRight&, const OptionSet<WebKit::SelectionFlags>&>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithoutAttributes_DidCreateWebProcessConnection; }
     static constexpr bool isSync = false;
 
-    DidCreateWebProcessConnection(const IPC::MachPort& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
+    DidCreateWebProcessConnection(const MachSendRight& connectionIdentifier, const OptionSet<WebKit::SelectionFlags>& flags)
         : m_arguments(connectionIdentifier, flags)
     {
     }

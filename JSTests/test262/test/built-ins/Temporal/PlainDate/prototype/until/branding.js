@@ -11,12 +11,14 @@ const until = Temporal.PlainDate.prototype.until;
 
 assert.sameValue(typeof until, "function");
 
-assert.throws(TypeError, () => until.call(undefined), "undefined");
-assert.throws(TypeError, () => until.call(null), "null");
-assert.throws(TypeError, () => until.call(true), "true");
-assert.throws(TypeError, () => until.call(""), "empty string");
-assert.throws(TypeError, () => until.call(Symbol()), "symbol");
-assert.throws(TypeError, () => until.call(1), "1");
-assert.throws(TypeError, () => until.call({}), "plain object");
-assert.throws(TypeError, () => until.call(Temporal.PlainDate), "Temporal.PlainDate");
-assert.throws(TypeError, () => until.call(Temporal.PlainDate.prototype), "Temporal.PlainDate.prototype");
+const args = [new Temporal.PlainDate(2022, 6, 22)];
+
+assert.throws(TypeError, () => until.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => until.apply(null, args), "null");
+assert.throws(TypeError, () => until.apply(true, args), "true");
+assert.throws(TypeError, () => until.apply("", args), "empty string");
+assert.throws(TypeError, () => until.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => until.apply(1, args), "1");
+assert.throws(TypeError, () => until.apply({}, args), "plain object");
+assert.throws(TypeError, () => until.apply(Temporal.PlainDate, args), "Temporal.PlainDate");
+assert.throws(TypeError, () => until.apply(Temporal.PlainDate.prototype, args), "Temporal.PlainDate.prototype");

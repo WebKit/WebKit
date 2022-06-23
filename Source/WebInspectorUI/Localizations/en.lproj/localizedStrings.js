@@ -799,7 +799,6 @@ localizedStrings["ICO"] = "ICO";
 localizedStrings["IP"] = "IP";
 localizedStrings["IP Address"] = "IP Address";
 localizedStrings["ITML Context"] = "ITML Context";
-localizedStrings["ITP Debug Mode"] = "ITP Debug Mode";
 localizedStrings["Identifier"] = "Identifier";
 localizedStrings["Identity"] = "Identity";
 /* Section title for font identity information. */
@@ -841,6 +840,7 @@ localizedStrings["Inset @ Box Shadow Editor"] = "Inset";
 localizedStrings["Inspector Bootstrap Script"] = "Inspector Bootstrap Script";
 localizedStrings["Inspector Style Sheet"] = "Inspector Style Sheet";
 localizedStrings["Instances"] = "Instances";
+localizedStrings["Intelligent Tracking Prevention Debug Mode"] = "Intelligent Tracking Prevention Debug Mode";
 localizedStrings["Invalid"] = "Invalid";
 localizedStrings["Inverted"] = "Inverted";
 localizedStrings["Invisible characters"] = "Invisible characters";
@@ -1179,6 +1179,8 @@ localizedStrings["Proportional Numerals @ Font Details Sidebar Property Value"] 
 /* Property value for `font-variant-alternates: proportional-width`. */
 localizedStrings["Proportional-Width Variants @ Font Details Sidebar Property Value"] = "Proportional-Width Variants";
 localizedStrings["Protocol"] = "Protocol";
+/* Label for button that shows controls for toggling CSS pseudo-classes on the selected element. */
+localizedStrings["Pseudo @ Styles details sidebar panel"] = "Pseudo";
 localizedStrings["Pseudo-Element"] = "Pseudo-Element";
 localizedStrings["Query Parameters"] = "Query Parameters";
 localizedStrings["Query String"] = "Query String";
@@ -1615,6 +1617,7 @@ localizedStrings["Timing"] = "Timing";
 localizedStrings["Titling Capitals @ Font Details Sidebar Property Value"] = "Titling Capitals";
 localizedStrings["To improve CPU utilization reduce or batch workloads when the page is not visible or during times when the page is not being interacted with."] = "To improve CPU utilization reduce or batch workloads when the page is not visible or during times when the page is not being interacted with.";
 localizedStrings["Toggle Classes"] = "Toggle Classes";
+localizedStrings["Toggle Pseudo Classes"] = "Toggle Pseudo Classes";
 localizedStrings["Toggle Visibility"] = "Toggle Visibility";
 localizedStrings["Top Functions"] = "Top Functions";
 localizedStrings["Total"] = "Total";
@@ -1669,7 +1672,6 @@ localizedStrings["Usage: %s"] = "Usage: %s";
 localizedStrings["Use Default Appearance"] = "Use Default Appearance";
 localizedStrings["Use Mock Capture Devices"] = "Use Mock Capture Devices";
 localizedStrings["Use default media styles"] = "Use default media styles";
-localizedStrings["Use fuzzy matching for completion suggestions"] = "Use fuzzy matching for completion suggestions";
 localizedStrings["User Agent"] = "User Agent";
 localizedStrings["User Agent Style Sheet"] = "User Agent Style Sheet";
 localizedStrings["User Agent:"] = "User Agent:";

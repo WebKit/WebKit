@@ -825,10 +825,11 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
 {
     auto selectContainerRenderer = [&](CQ::Axis axis) -> const RenderBox* {
         conversionData.setUsesContainerUnits();
-        if (!conversionData.element())
+        auto* element = conversionData.elementForContainerUnitResolution();
+        if (!element)
             return nullptr;
         // FIXME: Use cached query containers when available.
-        auto* container = Style::ContainerQueryEvaluator::selectContainer(axis, nullString(), *conversionData.element());
+        auto* container = Style::ContainerQueryEvaluator::selectContainer(axis, nullString(), *element);
         if (!container)
             return nullptr;
         return dynamicDowncast<RenderBox>(container->renderer());

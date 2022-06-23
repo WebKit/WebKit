@@ -221,6 +221,8 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* coreObject, AXNotific
         break;
     case AXOrientationChanged:
         break;
+    case AXPlaceholderChanged:
+        break;
     }
 }
 

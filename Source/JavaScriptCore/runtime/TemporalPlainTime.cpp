@@ -221,6 +221,8 @@ static ISO8601::Duration roundTime(ISO8601::PlainTime plainTime, double incremen
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
+
+    return ISO8601::Duration();
 }
 
 ISO8601::PlainTime TemporalPlainTime::round(JSGlobalObject* globalObject, JSValue optionsValue) const
@@ -373,9 +375,9 @@ static ISO8601::PlainTime constrainTime(ISO8601::Duration&& duration)
         constrainToRange(duration.hours(), 0, 23),
         constrainToRange(duration.minutes(), 0, 59),
         constrainToRange(duration.seconds(), 0, 59),
-        constrainToRange(duration.milliseconds(), 0, 1000),
-        constrainToRange(duration.microseconds(), 0, 1000),
-        constrainToRange(duration.nanoseconds(), 0, 1000));
+        constrainToRange(duration.milliseconds(), 0, 999),
+        constrainToRange(duration.microseconds(), 0, 999),
+        constrainToRange(duration.nanoseconds(), 0, 999));
 }
 
 static ISO8601::PlainTime regulateTime(JSGlobalObject* globalObject, ISO8601::Duration&& duration, TemporalOverflow overflow)
@@ -646,6 +648,12 @@ ISO8601::Duration TemporalPlainTime::since(JSGlobalObject* globalObject, Tempora
 
     auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, { });
+
+    // https://tc39.es/proposal-temporal/#sec-temporal-negatetemporalroundingmode
+    if (roundingMode == RoundingMode::Ceil)
+        roundingMode = RoundingMode::Floor;
+    else if (roundingMode == RoundingMode::Floor)
+        roundingMode = RoundingMode::Ceil;
 
     auto result = differenceTime(other->plainTime(), plainTime());
     result = -result;

@@ -610,23 +610,37 @@ inline OptionSet<TextEmphasisPosition> BuilderConverter::convertTextEmphasisPosi
 
 inline TextAlignMode BuilderConverter::convertTextAlign(BuilderState& builderState, const CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     ASSERT(primitiveValue.isValueID());
 
-    if (primitiveValue.valueID() != CSSValueWebkitMatchParent && primitiveValue.valueID() != CSSValueMatchParent)
-        return primitiveValue;
+    const auto& parentStyle = builderState.parentStyle();
 
-    auto* element = builderState.element();
-    if (element && element == builderState.document().documentElement())
-        return TextAlignMode::Start;
+    // User agents are expected to have a rule in their user agent stylesheet that matches th elements that have a parent
+    // node whose computed value for the 'text-align' property is its initial value, whose declaration block consists of
+    // just a single declaration that sets the 'text-align' property to the value 'center'.
+    // https://html.spec.whatwg.org/multipage/rendering.html#rendering
+    if (primitiveValue.valueID() == CSSValueInternalThCenter) {
+        if (parentStyle.textAlign() == RenderStyle::initialTextAlign())
+            return TextAlignMode::Center;
+        return parentStyle.textAlign();
+    }
 
-    auto& parentStyle = builderState.parentStyle();
-    if (parentStyle.textAlign() == TextAlignMode::Start)
-        return parentStyle.isLeftToRightDirection() ? TextAlignMode::Left : TextAlignMode::Right;
-    if (parentStyle.textAlign() == TextAlignMode::End)
-        return parentStyle.isLeftToRightDirection() ? TextAlignMode::Right : TextAlignMode::Left;
-    return parentStyle.textAlign();
+    if (primitiveValue.valueID() == CSSValueWebkitMatchParent || primitiveValue.valueID() == CSSValueMatchParent) {
+        const auto* element = builderState.element();
+
+        if (element && element == builderState.document().documentElement())
+            return TextAlignMode::Start;
+        if (parentStyle.textAlign() == TextAlignMode::Start)
+            return parentStyle.isLeftToRightDirection() ? TextAlignMode::Left : TextAlignMode::Right;
+        if (parentStyle.textAlign() == TextAlignMode::End)
+            return parentStyle.isLeftToRightDirection() ? TextAlignMode::Right : TextAlignMode::Left;
+
+        return parentStyle.textAlign();
+    }
+
+    return primitiveValue;
 }
+
 inline TextAlignLast BuilderConverter::convertTextAlignLast(BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);

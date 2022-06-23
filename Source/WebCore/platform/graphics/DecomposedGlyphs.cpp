@@ -28,8 +28,6 @@
 
 namespace WebCore {
 
-DecomposedGlyphs::~DecomposedGlyphs() = default;
-
 Ref<DecomposedGlyphs> DecomposedGlyphs::create(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned count, const FloatPoint& localAnchor, FontSmoothingMode mode, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     return adoptRef(*new DecomposedGlyphs(font, glyphs, advances, count, localAnchor, mode, renderingResourceIdentifier));
@@ -53,6 +51,12 @@ DecomposedGlyphs::DecomposedGlyphs(PositionedGlyphs&& positionedGlyphs, const Fl
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
 {
     ASSERT(m_positionedGlyphs.glyphs.size() == m_positionedGlyphs.advances.size());
+}
+
+DecomposedGlyphs::~DecomposedGlyphs()
+{
+    for (auto observer : m_observers)
+        observer->releaseDecomposedGlyphs(m_renderingResourceIdentifier);
 }
 
 } // namespace WebCore

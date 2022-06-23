@@ -222,6 +222,9 @@ private:
     bool updateLastImage();
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
+#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    void willBeAskedToPaintGL() final;
+#endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
@@ -265,7 +268,14 @@ private:
 
     bool shouldBePlaying() const;
 
-    bool isVideoOutputAvailable() const;
+    enum class VideoOutputReadbackMethod : uint8_t {
+        None,
+        CopyPixelBufferFromDisplayLayer,
+        UseVideoOutput,
+    };
+    VideoOutputReadbackMethod readbackMethod() const;
+
+    void updateVideoOutput();
 
     bool setCurrentTimeDidChangeCallback(MediaPlayer::CurrentTimeDidChangeCallback&&) final;
 
@@ -283,6 +293,8 @@ private:
 
     void checkNewVideoFrameMetadata(CMTime);
     MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
+
+    bool shouldEnsureLayer() const;
 
     friend class MediaSourcePrivateAVFObjC;
 
@@ -341,7 +353,9 @@ private:
     bool m_seeking;
     SeekState m_seekCompleted { SeekCompleted };
     mutable bool m_loadingProgressed;
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     bool m_hasBeenAskedToPaintGL { false };
+#endif
     bool m_hasAvailableVideoFrame { false };
     bool m_allRenderersHaveAvailableSamples { false };
     bool m_visible { false };

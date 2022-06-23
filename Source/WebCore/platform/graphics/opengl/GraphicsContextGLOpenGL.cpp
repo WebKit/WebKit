@@ -3058,12 +3058,12 @@ void GraphicsContextGLOpenGL::multiDrawArraysInstancedANGLE(GCGLenum, GCGLSpanTu
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
-void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLint>, GCGLenum)
+void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLsizei>, GCGLenum)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }
 
-void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLint, const GCGLsizei>, GCGLenum)
+void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei>, GCGLenum)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
 }

@@ -9,7 +9,9 @@ features: [Symbol, Temporal]
 
 const getPlainDateTimeFor = Temporal.TimeZone.prototype.getPlainDateTimeFor;
 
- const args = [new Temporal.Instant(0n)];
+assert.sameValue(typeof getPlainDateTimeFor, "function");
+
+const args = [new Temporal.Instant(0n)];
 
 assert.throws(TypeError, () => getPlainDateTimeFor.apply(undefined, args), "undefined");
 assert.throws(TypeError, () => getPlainDateTimeFor.apply(null, args), "null");

@@ -40,7 +40,6 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <WebCore/RuntimeApplicationChecks.h>
-#import <WebCore/WebMAudioUtilitiesCocoa.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
@@ -59,14 +58,13 @@
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include <WebCore/CaptionUserPreferencesMediaAF.h>
+#import <WebCore/CaptionUserPreferencesMediaAF.h>
 #endif
 
 #if PLATFORM(MAC)
-#include "TCCSoftLink.h"
+#import "WindowServerConnection.h"
+#import "TCCSoftLink.h"
 #endif
-
-#import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebKit {
 
@@ -270,30 +268,33 @@ void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHand
 }
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+void WebProcessProxy::hardwareConsoleStateChanged()
+{
+    m_isConnectedToHardwareConsole = WindowServerConnection::singleton().hardwareConsoleState() == WindowServerConnection::HardwareConsoleState::Connected;
+    for (const auto& page : m_pageMap.values())
+        page->activityStateDidChange(ActivityState::IsConnectedToHardwareConsole);
+}
+#endif
+
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
 void WebProcessProxy::sendAudioComponentRegistrations()
 {
-    using namespace PAL;
-
-    if (!PAL::isAudioToolboxCoreFrameworkAvailable() || !PAL::canLoad_AudioToolboxCore_AudioComponentFetchServerRegistrations())
-        return;
-
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [weakThis = WeakPtr { *this }] () mutable {
-        CFDataRef registrations { nullptr };
 
-        WebCore::registerOpusDecoderIfNeeded();
-        WebCore::registerVorbisDecoderIfNeeded();
-        if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
+        auto registrations = fetchAudioComponentServerRegistrations();
+        if (!registrations)
             return;
-
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = adoptCF(registrations)] () {
+        
+        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), registrations = WTFMove(registrations)] () mutable {
             if (!weakThis)
                 return;
 
-            auto registrationData = WebCore::SharedBuffer::create(registrations.get());
-            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrationData))), 0);
+            weakThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations(IPC::SharedBufferReference(WTFMove(registrations))), 0);
         });
     });
 }
+#endif
 
 bool WebProcessProxy::messageSourceIsValidWebContentProcess()
 {
@@ -338,4 +339,6 @@ SandboxExtension::Handle WebProcessProxy::fontdMachExtensionHandle(SandboxExtens
     return SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, auditToken(), machBootstrapOptions).value_or(SandboxExtension::Handle { });
 }
 
+
 }
+

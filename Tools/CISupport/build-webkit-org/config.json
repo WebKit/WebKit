@@ -137,7 +137,8 @@
                     { "name": "wpe-linux-bot-8", "platform": "wpe" },
                     { "name": "wpe-linux-bot-9", "platform": "wpe" },
                     { "name": "wpe-linux-bot-10", "platform": "wpe" },
-                    { "name": "wpe-linux-bot-11", "platform": "wpe" }
+                    { "name": "wpe-linux-bot-11", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-12", "platform": "wpe" }
                   ],
 
     "builders":   [
@@ -504,7 +505,7 @@
                       "workernames": ["gtk-linux-bot-19"]
                     },
                     {
-                      "name": "GTK-Linux-64-bit-Release-Clang", "factory": "BuildFactory",
+                      "name": "GTK-Linux-64-bit-Release-Clang-Build", "factory": "BuildFactory",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "workernames": ["gtk-linux-bot-20"]
                     },
@@ -631,12 +632,17 @@
                       "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-experimental-features"],
                       "workernames": ["wpe-linux-bot-11"]
+                    },
+                    {
+                      "name": "WPE-Linux-64-bit-Release-Clang-Build", "factory": "BuildFactory",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["wpe-linux-bot-12"]
                     }
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
-                                       "GTK-Linux-64-bit-Release-Clang",
+                                       "GTK-Linux-64-bit-Release-Clang-Build",
                                        "GTK-Linux-64-bit-Release-Debian-Stable-Build",
                                        "GTK-Linux-64-bit-Release-Ubuntu-2004-Build",
                                        "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
@@ -647,6 +653,7 @@
                                        "JSCOnly-Linux-MIPS32el-Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
                                        "WinCairo-64-bit-WKL-Release-Build", "WinCairo-64-bit-WKL-Debug-Build",
                                        "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
+                                       "WPE-Linux-64-bit-Release-Clang-Build",
                                        "WPE-Linux-64-bit-Release-Non-Unified-Build"]
                     },
 

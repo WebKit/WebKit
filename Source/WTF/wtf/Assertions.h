@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,6 +154,9 @@ extern "C" {
 enum class WTFLogChannelState : uint8_t { Off, On, OnWithAccumulation };
 #undef Always
 enum class WTFLogLevel : uint8_t { Always, Error, Warning, Info, Debug };
+namespace WTF {
+class PrintStream;
+}
 #else
 typedef uint8_t WTFLogChannelState;
 typedef uint8_t WTFLogLevel;
@@ -228,7 +231,10 @@ WTF_EXPORT_PRIVATE bool WTFWillLogWithLevel(WTFLogChannel*, WTFLogLevel);
 WTF_EXPORT_PRIVATE void WTFGetBacktrace(void** stack, int* size);
 WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefix(const char*);
 WTF_EXPORT_PRIVATE void WTFReportBacktrace(void);
-WTF_EXPORT_PRIVATE void WTFPrintBacktraceWithPrefix(void** stack, int size, const char* prefix);
+#ifdef __cplusplus
+WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefixAndPrintStream(WTF::PrintStream&, const char*);
+void WTFPrintBacktraceWithPrefixAndPrintStream(WTF::PrintStream&, void** stack, int size, const char* prefix);
+#endif
 WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
 #if !RELEASE_LOG_DISABLED
 WTF_EXPORT_PRIVATE void WTFReleaseLogStackTrace(WTFLogChannel*);

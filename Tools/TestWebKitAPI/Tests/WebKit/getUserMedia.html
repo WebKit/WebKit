@@ -170,7 +170,7 @@
                 });
             }
 
-            function checkDecodingVideo(counter) {
+            function checkDecodingVideo(message, counter) {
                 if (!counter)
                     counter = 0;
                 getStats(pc2, "inbound-rtp", "video").then((stats) => {
@@ -179,10 +179,10 @@
                         return;
                     }
                     if (counter > 100) {
-                        window.webkit.messageHandlers.gum.postMessage("FAIL checkDecodingVideo " + JSON.stringify(stats));
+                        window.webkit.messageHandlers.gum.postMessage("FAIL checkDecodingVideo for " + message + ": " + JSON.stringify(stats));
                         return;
                     }
-                    setTimeout(() => checkDecodingVideo(++counter), 50);
+                    setTimeout(() => checkDecodingVideo(message, ++counter), 50);
                 });
             }
 

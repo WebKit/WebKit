@@ -94,6 +94,7 @@ enum class SDKAlignedBehavior {
     WebSQLDisabledByDefaultInLegacyWebKit,
     WKContentViewDoesNotOverrideKeyCommands,
     WKWebsiteDataStoreInitReturningNil,
+    UIBackForwardSkipsHistoryItemsWithoutUserGesture,
 
     NumberOfBehaviors
 };

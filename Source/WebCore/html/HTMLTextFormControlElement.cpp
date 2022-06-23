@@ -218,7 +218,8 @@ void HTMLTextFormControlElement::setSelectionDirection(const String& direction)
 
 void HTMLTextFormControlElement::select(SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
 {
-    setSelectionRange(0, std::numeric_limits<unsigned>::max(), SelectionHasNoDirection, revealMode, intent);
+    if (setSelectionRange(0, std::numeric_limits<unsigned>::max(), SelectionHasNoDirection, revealMode, intent))
+        scheduleSelectEvent();
 }
 
 String HTMLTextFormControlElement::selectedText() const
@@ -285,7 +286,8 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
             newSelectionEnd = start + replacementLength;
     }
 
-    setSelectionRange(newSelectionStart, newSelectionEnd, SelectionHasNoDirection);
+    if (setSelectionRange(newSelectionStart, newSelectionEnd, SelectionHasNoDirection))
+        scheduleSelectEvent();
 
     return { };
 }

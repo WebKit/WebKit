@@ -36,9 +36,6 @@
 #include "GestureTypes.h"
 #endif
 #include "HandleMessage.h"
-#if PLATFORM(MAC)
-#include "MachPort.h"
-#endif
 #include "Plugin.h"
 #include "TestWithoutAttributesMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -53,6 +50,9 @@
 #include <WebCore/PluginData.h>
 #include <utility>
 #include <wtf/HashMap.h>
+#if PLATFORM(MAC)
+#include <wtf/MachSendRight.h>
+#endif
 #if PLATFORM(MAC)
 #include <wtf/OptionSet.h>
 #endif

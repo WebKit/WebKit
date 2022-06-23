@@ -70,6 +70,12 @@ static const void* CVPixelBufferGetBytePointerCallback(void* refcon)
 
     ++info->lockCount;
     void* address = CVPixelBufferGetBaseAddress(info->pixelBuffer.get());
+    if (!address) {
+        RELEASE_LOG_ERROR(Media, "CVPixelBufferGetBaseAddress returned null");
+        RELEASE_LOG_STACKTRACE(Media);
+        return nullptr;
+    }
+
     size_t byteLength = CVPixelBufferGetBytesPerRow(info->pixelBuffer.get()) * CVPixelBufferGetHeight(info->pixelBuffer.get());
 
     verifyImageBufferIsBigEnough(address, byteLength);

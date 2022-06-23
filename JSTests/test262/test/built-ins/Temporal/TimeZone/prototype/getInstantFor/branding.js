@@ -11,12 +11,14 @@ const getInstantFor = Temporal.TimeZone.prototype.getInstantFor;
 
 assert.sameValue(typeof getInstantFor, "function");
 
-assert.throws(TypeError, () => getInstantFor.call(undefined), "undefined");
-assert.throws(TypeError, () => getInstantFor.call(null), "null");
-assert.throws(TypeError, () => getInstantFor.call(true), "true");
-assert.throws(TypeError, () => getInstantFor.call(""), "empty string");
-assert.throws(TypeError, () => getInstantFor.call(Symbol()), "symbol");
-assert.throws(TypeError, () => getInstantFor.call(1), "1");
-assert.throws(TypeError, () => getInstantFor.call({}), "plain object");
-assert.throws(TypeError, () => getInstantFor.call(Temporal.TimeZone), "Temporal.TimeZone");
-assert.throws(TypeError, () => getInstantFor.call(Temporal.TimeZone.prototype), "Temporal.TimeZone.prototype");
+const args = [new Temporal.PlainDateTime(2022, 6, 22)];
+
+assert.throws(TypeError, () => getInstantFor.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => getInstantFor.apply(null, args), "null");
+assert.throws(TypeError, () => getInstantFor.apply(true, args), "true");
+assert.throws(TypeError, () => getInstantFor.apply("", args), "empty string");
+assert.throws(TypeError, () => getInstantFor.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => getInstantFor.apply(1, args), "1");
+assert.throws(TypeError, () => getInstantFor.apply({}, args), "plain object");
+assert.throws(TypeError, () => getInstantFor.apply(Temporal.TimeZone, args), "Temporal.TimeZone");
+assert.throws(TypeError, () => getInstantFor.apply(Temporal.TimeZone.prototype, args), "Temporal.TimeZone.prototype");

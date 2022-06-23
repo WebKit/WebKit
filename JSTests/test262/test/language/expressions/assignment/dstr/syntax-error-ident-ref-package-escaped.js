@@ -2,7 +2,7 @@
 // - src/identifier-names/package-escaped.case
 // - src/identifier-names/future-reserved-words/obj-assignment-identifier.template
 /*---
-description: package is a valid identifier name, using escape (IdentiferReference in ObjectAssignmentPattern cannot be a ReservedWord)
+description: package is a valid identifier name, using escape (IdentifierReference in ObjectAssignmentPattern cannot be a ReservedWord)
 esid: prod-AssignmentPattern
 features: [destructuring-assignment]
 flags: [generated, onlyStrict]

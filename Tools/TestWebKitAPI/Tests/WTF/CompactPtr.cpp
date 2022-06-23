@@ -28,6 +28,7 @@
 
 #include "AlignedRefLogger.h"
 #include "Utilities.h"
+#include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
@@ -192,6 +193,26 @@ TEST(WTF_CompactPtr, Assignment)
         EXPECT_EQ(&a, ptr.get());
         ptr = &c;
         EXPECT_EQ(&c, ptr.get());
+    }
+}
+
+struct alignas(16) AlignedPackingTarget {
+    unsigned m_value { 0 };
+};
+TEST(WTF_CompactPtr, HashMap)
+{
+    Vector<AlignedPackingTarget> vector;
+    HashMap<PackedPtr<AlignedPackingTarget>, unsigned> map;
+    vector.reserveCapacity(10000);
+    for (unsigned i = 0; i < 10000; ++i)
+        vector.uncheckedAppend(AlignedPackingTarget { i });
+
+    for (auto& target : vector)
+        map.add(&target, target.m_value);
+
+    for (auto& target : vector) {
+        EXPECT_TRUE(map.contains(&target));
+        EXPECT_EQ(map.get(&target), target.m_value);
     }
 }
 

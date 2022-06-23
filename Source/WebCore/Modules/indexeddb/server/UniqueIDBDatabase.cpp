@@ -446,7 +446,7 @@ void UniqueIDBDatabase::startVersionChangeTransaction()
     if (error.isNull()) {
         addOpenDatabaseConnection(*m_versionChangeDatabaseConnection);
         m_databaseInfo->setVersion(versionChangeTransactionInfo.newVersion());
-        result = IDBResultData::openDatabaseUpgradeNeeded(operation->requestData().requestIdentifier(), *m_versionChangeTransaction);
+        result = IDBResultData::openDatabaseUpgradeNeeded(operation->requestData().requestIdentifier(), *m_versionChangeTransaction, *m_versionChangeDatabaseConnection);
         operation->connection().didOpenDatabase(result);
     } else {
         m_versionChangeDatabaseConnection->abortTransactionWithoutCallback(*m_versionChangeTransaction);
@@ -512,7 +512,7 @@ void UniqueIDBDatabase::clearTransactionsOnConnection(UniqueIDBDatabaseConnectio
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> pendingTransactions;
     while (!m_pendingTransactions.isEmpty()) {
         auto transaction = m_pendingTransactions.takeFirst();
-        if (&transaction->databaseConnection() != &connection)
+        if (transaction->databaseConnection() != &connection)
             pendingTransactions.append(WTFMove(transaction));
         else
             connection.deleteTransaction(*transaction);
@@ -522,7 +522,7 @@ void UniqueIDBDatabase::clearTransactionsOnConnection(UniqueIDBDatabaseConnectio
 
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> transactionsToAbort;
     for (auto& transaction : m_inProgressTransactions.values()) {
-        if (&transaction->databaseConnection() == &connection)
+        if (transaction->databaseConnection() == &connection)
             transactionsToAbort.append(transaction);
     }
     for (auto& transaction : transactionsToAbort)
@@ -557,8 +557,7 @@ void UniqueIDBDatabase::openDBRequestCancelled(const IDBResourceIdentifier& requ
         m_currentOpenDBRequest = nullptr;
 
     if (m_versionChangeDatabaseConnection && m_versionChangeDatabaseConnection->openRequestIdentifier() == requestIdentifier) {
-        ASSERT(!m_versionChangeTransaction || m_versionChangeTransaction->databaseConnection().openRequestIdentifier() == requestIdentifier);
-        ASSERT(!m_versionChangeTransaction || &m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
+        ASSERT(!m_versionChangeTransaction || m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
 
         connectionClosedFromClient(*m_versionChangeDatabaseConnection);
     }
@@ -1135,14 +1134,14 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
     }
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
-    ASSERT(transaction.databaseConnection().database() == this);
+    ASSERT(transaction.database() == this);
 
     if (!m_backingStore)
         return callback(IDBError { InvalidStateError, "Backing store is closed"_s });
 
     auto takenTransaction = m_inProgressTransactions.take(transaction.info().identifier());
     if (!takenTransaction) {
-        if (!m_openDatabaseConnections.contains(&transaction.databaseConnection()))
+        if (transaction.databaseConnection() && !m_openDatabaseConnections.contains(transaction.databaseConnection()))
             return;
 
         callback(IDBError { UnknownError, "Attempt to commit transaction that is not running"_s });
@@ -1174,11 +1173,11 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
     }
 
     ASSERT(spaceCheckResult == SpaceCheckResult::Pass);
-    ASSERT(transaction.databaseConnection().database() == this);
+    ASSERT(transaction.database() == this);
 
     auto takenTransaction = m_inProgressTransactions.take(transaction.info().identifier());
     if (!takenTransaction) {
-        if (!m_openDatabaseConnections.contains(&transaction.databaseConnection()))
+        if (!m_openDatabaseConnections.contains(transaction.databaseConnection()))
             return;
 
         callback(IDBError { UnknownError, "Attempt to abort transaction that is not running"_s });
@@ -1195,7 +1194,7 @@ void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transacti
     auto transactionIdentifier = transaction.info().identifier();
     if (m_versionChangeTransaction && m_versionChangeTransaction->info().identifier() == transactionIdentifier) {
         ASSERT(m_versionChangeTransaction == &transaction);
-        ASSERT(!m_versionChangeDatabaseConnection || &m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
+        ASSERT(!m_versionChangeDatabaseConnection || m_versionChangeTransaction->databaseConnection() == m_versionChangeDatabaseConnection);
         ASSERT(m_versionChangeTransaction->originalDatabaseInfo());
         m_databaseInfo = makeUnique<IDBDatabaseInfo>(*m_versionChangeTransaction->originalDatabaseInfo());
     }
@@ -1428,8 +1427,10 @@ void UniqueIDBDatabase::immediateClose()
     // Error out all transactions.
     // Pending transactions must be cleared before in-progress transactions,
     // or they may get started right away after aborting in-progress transactions.
-    for (auto& transaction : m_pendingTransactions)
-        transaction->databaseConnection().deleteTransaction(*transaction);
+    for (auto& transaction : m_pendingTransactions) {
+        if (auto* databaseConnection = transaction->databaseConnection())
+            databaseConnection->deleteTransaction(*transaction);
+    }
     m_pendingTransactions.clear();
 
     for (auto& identifier : copyToVector(m_inProgressTransactions.keys()))

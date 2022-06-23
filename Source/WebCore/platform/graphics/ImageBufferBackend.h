@@ -119,9 +119,6 @@ public:
     WEBCORE_EXPORT void convertToLuminanceMask();
     virtual void transformToColorSpace(const DestinationColorSpace&) { }
 
-    virtual String toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const = 0;
-    virtual Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const = 0;
-
     virtual RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&, const ImageBufferAllocator& = ImageBufferAllocator()) const = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 

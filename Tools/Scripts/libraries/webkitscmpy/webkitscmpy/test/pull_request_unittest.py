@@ -76,7 +76,6 @@ Reviewed by Tim Contributor.
         self.assertEqual(commits[0].message, '[scoping] Bug to fix\n\nReviewed by Tim Contributor.')
 
     def test_create_body_multiple_linked(self):
-        self.maxDiff = None
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
                 hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
@@ -460,7 +459,7 @@ No pre-PR checks to run""")
                 "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                "Checking PR labels for 'merging-blocked'...",
+                'Checking PR labels for active labels...',
                 "Removing 'merging-blocked' from PR 1...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
@@ -504,7 +503,7 @@ No pre-PR checks to run""")
                 '    Found 2 commits...',
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                "Checking PR labels for 'merging-blocked'...",
+                'Checking PR labels for active labels...',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
@@ -553,7 +552,7 @@ No pre-PR checks to run""")
                 "    Found 1 commit...",
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                "Checking PR labels for 'merging-blocked'...",
+                'Checking PR labels for active labels...',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
@@ -628,20 +627,19 @@ No pre-PR checks to run""")
         )
 
     def test_github_branch_bugzilla(self):
-        self.maxDiff = None
-        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
-            self.BUGZILLA.split('://')[-1],
-            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
-            environment=Environment(
-                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
-                BUGS_EXAMPLE_COM_PASSWORD='password',
-            )), patch(
-                'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
+                projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                )), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
         ), mocks.local.Git(
             self.path, remote='https://{}'.format(remote.remote),
             remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
         ) as repo, mocks.local.Svn():
-
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
                 args=('pull-request', '-i', 'https://bugs.example.com/show_bug.cgi?id=1', '-v', '--no-history'),
@@ -679,6 +677,64 @@ No pre-PR checks to run""")
                 "Pushing 'eng/Example-issue-1' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/Example-issue-1'...",
+                'Checking issue assignee...',
+                'Checking for pull request link in associated issue...',
+                'Syncing PR labels with issue component...',
+                'Synced PR labels with issue component!',
+            ],
+        )
+
+    def test_github_branch_bugzilla_redacted(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            )), patch(
+                'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA, redact={'.*': True})],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', 'https://bugs.example.com/show_bug.cgi?id=1', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
+            )
+            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
+            self.assertEqual(gh_issue.project, 'WebKit')
+            self.assertEqual(gh_issue.component, 'Text')
+            self.assertEqual(gh_issue.version, 'Other')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created the local development branch 'eng/1'\n"
+            "Created 'PR 1 | Example issue 1'!\n"
+            "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating the local development branch 'eng/1'...",
+                '    Found 1 commit...',
+                'Creating commit...',
+                "Rebasing 'eng/1' on 'main'...",
+                "Rebased 'eng/1' on 'main!'",
+                "    Found 1 commit...",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                "Pushing 'eng/1' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
+                "Creating pull-request for 'eng/1'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
                 'Syncing PR labels with issue component...',

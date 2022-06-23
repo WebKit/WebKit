@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestController.h"
 
+#import "EditMenuInteractionSwizzler.h"
 #import "GeneratedTouchesDebugWindow.h"
 #import "HIDEventGenerator.h"
 #import "IOSLayoutTestCommunication.h"
@@ -114,6 +115,10 @@ void TestController::platformInitialize(const Options& options)
     CFNotificationCenterAddObserver(center, this, handleMenuWillHideNotification, (CFStringRef)UIMenuControllerWillHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     CFNotificationCenterAddObserver(center, this, handleMenuDidHideNotification, (CFStringRef)UIMenuControllerDidHideMenuNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
     ALLOW_DEPRECATED_DECLARATIONS_END
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+    m_editMenuInteractionSwizzler = makeUnique<EditMenuInteractionSwizzler>();
+#endif
 }
 
 void TestController::platformDestroy()
@@ -247,6 +252,10 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
             shouldRestoreFirstResponder = [webView resignFirstResponder];
 
         [webView immediatelyDismissContextMenuIfNeeded];
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+        [webView immediatelyDismissEditMenuInteractionIfNeeded];
+#endif
     }
 
     UIMenuController.sharedMenuController.menuVisible = NO;
@@ -396,5 +405,21 @@ UIPasteboardConsistencyEnforcer *TestController::pasteboardConsistencyEnforcer()
         m_pasteboardConsistencyEnforcer = adoptNS([[UIPasteboardConsistencyEnforcer alloc] initWithPasteboardName:UIPasteboardNameGeneral]);
     return m_pasteboardConsistencyEnforcer.get();
 }
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+
+void TestController::didPresentEditMenuInteraction(UIEditMenuInteraction *interaction)
+{
+    if (auto* webView = mainWebView())
+        [webView->platformView() didPresentEditMenuInteraction:interaction];
+}
+
+void TestController::didDismissEditMenuInteraction(UIEditMenuInteraction *interaction)
+{
+    if (auto* webView = mainWebView())
+        [webView->platformView() didDismissEditMenuInteraction:interaction];
+}
+
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
 
 } // namespace WTR

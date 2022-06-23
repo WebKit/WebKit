@@ -1,5 +1,5 @@
 This text should animate from blue to green over a period of 1 second.
 
 PASS Verify CSS variable value before animation
-FAIL Verify CSS variable value after animation assert_equals: --value is green after animation runs expected "green" but got "blue"
+PASS Verify CSS variable value after animation
 

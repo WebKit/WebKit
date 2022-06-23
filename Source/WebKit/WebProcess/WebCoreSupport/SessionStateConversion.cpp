@@ -114,6 +114,7 @@ BackForwardListItemState toBackForwardListItemState(const WebCore::HistoryItem& 
     state.pageState.mainFrameState = toFrameState(historyItem);
     state.pageState.shouldOpenExternalURLsPolicy = historyItem.shouldOpenExternalURLsPolicy();
     state.pageState.sessionStateObject = historyItem.stateObject();
+    state.pageState.wasCreatedByJSWithoutUserInteraction = historyItem.wasCreatedByJSWithoutUserInteraction();
     state.hasCachedPage = historyItem.isInBackForwardCache();
     return state;
 }

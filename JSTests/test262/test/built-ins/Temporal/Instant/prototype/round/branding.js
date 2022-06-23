@@ -11,12 +11,14 @@ const round = Temporal.Instant.prototype.round;
 
 assert.sameValue(typeof round, "function");
 
-assert.throws(TypeError, () => round.call(undefined), "undefined");
-assert.throws(TypeError, () => round.call(null), "null");
-assert.throws(TypeError, () => round.call(true), "true");
-assert.throws(TypeError, () => round.call(""), "empty string");
-assert.throws(TypeError, () => round.call(Symbol()), "symbol");
-assert.throws(TypeError, () => round.call(1), "1");
-assert.throws(TypeError, () => round.call({}), "plain object");
-assert.throws(TypeError, () => round.call(Temporal.Instant), "Temporal.Instant");
-assert.throws(TypeError, () => round.call(Temporal.Instant.prototype), "Temporal.Instant.prototype");
+const args = ["hour"];
+
+assert.throws(TypeError, () => round.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => round.apply(null, args), "null");
+assert.throws(TypeError, () => round.apply(true, args), "true");
+assert.throws(TypeError, () => round.apply("", args), "empty string");
+assert.throws(TypeError, () => round.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => round.apply(1, args), "1");
+assert.throws(TypeError, () => round.apply({}, args), "plain object");
+assert.throws(TypeError, () => round.apply(Temporal.Instant, args), "Temporal.Instant");
+assert.throws(TypeError, () => round.apply(Temporal.Instant.prototype, args), "Temporal.Instant.prototype");

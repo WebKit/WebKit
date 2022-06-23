@@ -11,12 +11,14 @@ const equals = Temporal.PlainDateTime.prototype.equals;
 
 assert.sameValue(typeof equals, "function");
 
-assert.throws(TypeError, () => equals.call(undefined), "undefined");
-assert.throws(TypeError, () => equals.call(null), "null");
-assert.throws(TypeError, () => equals.call(true), "true");
-assert.throws(TypeError, () => equals.call(""), "empty string");
-assert.throws(TypeError, () => equals.call(Symbol()), "symbol");
-assert.throws(TypeError, () => equals.call(1), "1");
-assert.throws(TypeError, () => equals.call({}), "plain object");
-assert.throws(TypeError, () => equals.call(Temporal.PlainDateTime), "Temporal.PlainDateTime");
-assert.throws(TypeError, () => equals.call(Temporal.PlainDateTime.prototype), "Temporal.PlainDateTime.prototype");
+const args = [new Temporal.PlainDateTime(2022, 6, 22)];
+
+assert.throws(TypeError, () => equals.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => equals.apply(null, args), "null");
+assert.throws(TypeError, () => equals.apply(true, args), "true");
+assert.throws(TypeError, () => equals.apply("", args), "empty string");
+assert.throws(TypeError, () => equals.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => equals.apply(1, args), "1");
+assert.throws(TypeError, () => equals.apply({}, args), "plain object");
+assert.throws(TypeError, () => equals.apply(Temporal.PlainDateTime, args), "Temporal.PlainDateTime");
+assert.throws(TypeError, () => equals.apply(Temporal.PlainDateTime.prototype, args), "Temporal.PlainDateTime.prototype");

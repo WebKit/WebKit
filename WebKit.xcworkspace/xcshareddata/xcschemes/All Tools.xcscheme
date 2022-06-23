@@ -76,6 +76,20 @@
                ReferencedContainer = "container:Tools/WebKitTestRunner/WebKitTestRunner.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DD1EB7BA285AB55600CD5D9C"
+               BuildableName = "lldbWebKitTester (Platform filters)"
+               BlueprintName = "lldbWebKitTester (Platform filters)"
+               ReferencedContainer = "container:Tools/lldb/lldbWebKitTester/lldbWebKitTester.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

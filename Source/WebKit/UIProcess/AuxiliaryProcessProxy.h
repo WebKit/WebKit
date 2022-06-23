@@ -177,6 +177,10 @@ protected:
     void didChangeIsResponsive() override { }
     bool mayBecomeUnresponsive() override;
 
+#if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
+    static RefPtr<WebCore::SharedBuffer> fetchAudioComponentServerRegistrations();
+#endif
+
 private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;

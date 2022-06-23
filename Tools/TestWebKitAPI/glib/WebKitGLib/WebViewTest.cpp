@@ -85,15 +85,19 @@ void WebViewTest::loadURI(const char* uri)
     g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
 }
 
-void WebViewTest::loadHtml(const char* html, const char* baseURI)
+void WebViewTest::loadHtml(const char* html, const char* baseURI, WebKitWebView* webView)
 {
     if (!baseURI)
         m_activeURI = "about:blank";
     else
         m_activeURI = baseURI;
-    webkit_web_view_load_html(m_webView, html, baseURI);
-    g_assert_true(webkit_web_view_is_loading(m_webView));
-    g_assert_cmpstr(webkit_web_view_get_uri(m_webView), ==, m_activeURI.data());
+
+    if (!webView)
+        webView = m_webView;
+
+    webkit_web_view_load_html(webView, html, baseURI);
+    g_assert_true(webkit_web_view_is_loading(webView));
+    g_assert_cmpstr(webkit_web_view_get_uri(webView), ==, m_activeURI.data());
 }
 
 void WebViewTest::loadPlainText(const char* plainText)

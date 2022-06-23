@@ -178,13 +178,38 @@ inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
     return false;
 }
 
+ALWAYS_INLINE Structure* originalStructureBeforePut(JSCell* cell)
+{
+    if (cell->type() == PureForwardingProxyType)
+        return jsCast<JSProxy*>(cell)->target()->structure();
+    return cell->structure();
+}
+
 ALWAYS_INLINE Structure* originalStructureBeforePut(JSValue value)
 {
     if (!value.isCell())
         return nullptr;
-    if (value.asCell()->type() == PureForwardingProxyType)
-        return jsCast<JSProxy*>(value)->target()->structure();
-    return value.asCell()->structure();
+    return originalStructureBeforePut(value.asCell());
+}
+
+static ALWAYS_INLINE bool canPutDirectFast(VM& vm, Structure* structure, PropertyName propertyName, bool isJSFunction)
+{
+    if (!structure->isStructureExtensible())
+        return false;
+
+    unsigned currentAttributes = 0;
+    structure->get(vm, propertyName, currentAttributes);
+    if (currentAttributes & PropertyAttribute::DontDelete)
+        return false;
+
+    if (!isJSFunction) {
+        if (structure->hasNonReifiedStaticProperties())
+            return false;
+        if (structure->classInfoForCells()->methodTable.defineOwnProperty != &JSObject::defineOwnProperty)
+            return false;
+    }
+
+    return true;
 }
 
 static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObject, JSObject* baseObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot, Structure** result = nullptr)
@@ -195,14 +220,14 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
         jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
-    if (result)
-        *result = originalStructureBeforePut(baseObject);
 
-    Structure* structure = baseObject->structure();
-    if (LIKELY(propertyName != vm.propertyNames->underscoreProto && !structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto() && (isJSFunction || structure->classInfoForCells()->methodTable.defineOwnProperty == &JSObject::defineOwnProperty))) {
-        auto error = baseObject->putDirectRespectingExtensibility(vm, propertyName, value, 0, slot);
-        if (!error.isNull())
-            typeError(globalObject, scope, slot.isStrictMode(), error);
+    Structure* structure = originalStructureBeforePut(baseObject);
+    if (result)
+        *result = structure;
+
+    if (LIKELY(canPutDirectFast(vm, structure, propertyName, isJSFunction))) {
+        bool success = baseObject->putDirect(vm, propertyName, value, 0, slot);
+        ASSERT_UNUSED(success, success);
     } else {
         slot.disableCaching();
         scope.release();
@@ -214,10 +239,16 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
 static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, JSGlobalObject* globalObject, JSObject* baseObject, PropertyName propertyName, GetterSetter* accessor, unsigned attribute)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (baseObject->inherits<JSFunction>()) {
+    bool isJSFunction = baseObject->inherits<JSFunction>();
+    if (isJSFunction) {
         jsCast<JSFunction*>(baseObject)->reifyLazyPropertyIfNeeded(vm, globalObject, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
     }
+
+    // baseObject is either JSFinalObject during object literal construction, or a userland JSFunction class
+    // constructor, both of which are guaranteed to be extensible and without non-configurable |propertyName|.
+    // Please also note that static "prototype" accessor in a `class` literal is a syntax error.
+    ASSERT(canPutDirectFast(vm, originalStructureBeforePut(baseObject), propertyName, isJSFunction));
     scope.release();
     baseObject->putDirectAccessor(globalObject, propertyName, accessor, attribute);
 }

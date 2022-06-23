@@ -515,7 +515,9 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     CFIndex length = CFDataGetLength(data.get());
 
     size_t bufferSize = length + sizeof(uint32_t);
-    auto buffer = MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc>::malloc(bufferSize);
+    auto buffer = MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc>::tryMalloc(bufferSize);
+    if (!buffer)
+        return nullptr;
 
     // Put the session state version number at the start of the buffer
     buffer.get()[0] = (sessionStateDataVersion & 0xff000000) >> 24;

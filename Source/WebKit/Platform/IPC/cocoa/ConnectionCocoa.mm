@@ -31,7 +31,6 @@
 #import "ImportanceAssertion.h"
 #import "Logging.h"
 #import "MachMessage.h"
-#import "MachPort.h"
 #import "MachUtilities.h"
 #import "ReasonSPI.h"
 #import "WKCrashReporter.h"
@@ -189,6 +188,28 @@ void Connection::platformInitialize(Identifier identifier)
     m_xpcConnection = identifier.xpcConnection;
 }
 
+static void requestNoSenderNotifications(mach_port_t port, mach_port_t notify)
+{
+    mach_port_t previousNotificationPort = MACH_PORT_NULL;
+    auto kr = mach_port_request_notification(mach_task_self(), port, MACH_NOTIFY_NO_SENDERS, 0, notify, MACH_MSG_TYPE_MAKE_SEND_ONCE, &previousNotificationPort);
+    ASSERT(kr == KERN_SUCCESS);
+    if (kr != KERN_SUCCESS) {
+        // If mach_port_request_notification fails, 'previousNotificationPort' will be uninitialized.
+        LOG_ERROR("mach_port_request_notification failed: (%x) %s", kr, mach_error_string(kr));
+    } else
+        deallocateSendRightSafely(previousNotificationPort);
+}
+
+static void requestNoSenderNotifications(mach_port_t port)
+{
+    requestNoSenderNotifications(port, port);
+}
+
+static void clearNoSenderNotifications(mach_port_t port)
+{
+    requestNoSenderNotifications(port, MACH_PORT_NULL);
+}
+
 bool Connection::open()
 {
     if (m_isServer) {
@@ -217,7 +238,10 @@ bool Connection::open()
         
         // Send the initialize message, which contains a send right for the server to use.
         auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
-        encoder.get() << MachPort(m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
+
+        mach_port_insert_right(mach_task_self(), m_receivePort, m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
+        MachSendRight right = MachSendRight::adopt(m_receivePort);
+        encoder.get() << Attachment { WTFMove(right) };
 
         initializeSendSource();
 
@@ -237,6 +261,11 @@ bool Connection::open()
 #endif
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
+    // Disconnections are normally handled by DISPATCH_MACH_SEND_DEAD on the m_sendSource, but that's not
+    // initialized until we receive the connection message from the client, so we need to request MACH_NOTIFY_NO_SENDERS
+    // on the receiving port until then.
+    if (m_isServer)
+        requestNoSenderNotifications(m_receivePort);
 
     m_connectionQueue->dispatch([strongRef = Ref { *this }, this] {
         dispatch_resume(m_receiveSource.get());
@@ -338,8 +367,8 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
             ASSERT(attachment.type() == Attachment::MachPortType);
             if (attachment.type() == Attachment::MachPortType) {
                 auto* descriptor = getDescriptorAndAdvance(messageData, sizeof(mach_msg_port_descriptor_t));
-                descriptor->port.name = attachment.port();
-                descriptor->port.disposition = attachment.disposition();
+                descriptor->port.name = attachment.leakSendRight();
+                descriptor->port.disposition = MACH_MSG_TYPE_MOVE_SEND;
                 descriptor->port.type = MACH_MSG_PORT_DESCRIPTOR;
             }
         }
@@ -459,8 +488,10 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         ASSERT(descriptor->type.type == MACH_MSG_PORT_DESCRIPTOR);
         if (descriptor->type.type != MACH_MSG_PORT_DESCRIPTOR)
             return nullptr;
+        ASSERT(descriptor->port.disposition == MACH_MSG_TYPE_PORT_SEND);
+        MachSendRight right = MachSendRight::adopt(descriptor->port.name);
 
-        attachments[numberOfAttachments - i - 1] = Attachment { descriptor->port.name, descriptor->port.disposition };
+        attachments[numberOfAttachments - i - 1] = Attachment { WTFMove(right) };
         descriptorData += sizeof(mach_msg_port_descriptor_t);
     }
 
@@ -569,27 +600,17 @@ void Connection::receiveSourceEventHandler()
             return;
         }
 
-        MachPort port;
-        if (!decoder->decode(port)) {
+        Attachment attachment;
+        if (!decoder->decode(attachment)) {
             // FIXME: Disconnect.
             return;
         }
 
-        m_sendPort = port.port();
+        m_sendPort = attachment.leakSendRight();
         
         if (m_sendPort) {
             ASSERT(MACH_PORT_VALID(m_receivePort));
-            mach_port_t previousNotificationPort = MACH_PORT_NULL;
-            auto kr = mach_port_request_notification(mach_task_self(), m_receivePort, MACH_NOTIFY_NO_SENDERS, 0, MACH_PORT_NULL, MACH_MSG_TYPE_MOVE_SEND_ONCE, &previousNotificationPort);
-            ASSERT(kr == KERN_SUCCESS);
-            if (kr != KERN_SUCCESS) {
-                // If mach_port_request_notification fails, 'previousNotificationPort' will be uninitialized.
-                LOG_ERROR("mach_port_request_notification failed: (%x) %s", kr, mach_error_string(kr));
-                previousNotificationPort = MACH_PORT_NULL;
-            }
-
-            if (previousNotificationPort != MACH_PORT_NULL)
-                deallocateSendRightSafely(previousNotificationPort);
+            clearNoSenderNotifications(m_receivePort);
 
             initializeSendSource();
             dispatch_resume(m_sendSource.get());
@@ -676,6 +697,9 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
         RELEASE_LOG_ERROR(Process, "Connection::createConnectionIdentifierPair: Could not allocate mach port, returned port was invalid");
         return std::nullopt;
     }
-    return ConnectionIdentifierPair { Connection::Identifier { listeningPort }, Attachment { listeningPort, MACH_MSG_TYPE_MAKE_SEND } };
+    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+    MachSendRight right = MachSendRight::adopt(listeningPort);
+
+    return ConnectionIdentifierPair { Connection::Identifier { listeningPort }, Attachment { WTFMove(right) } };
 }
 } // namespace IPC

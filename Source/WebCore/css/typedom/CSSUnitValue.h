@@ -56,8 +56,9 @@ public:
 private:
     CSSUnitValue(double, CSSUnitType);
 
-    std::optional<SumValue> toSumValue() const final;
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSUnitValue; }
+    std::optional<SumValue> toSumValue() const final;
+    bool equals(const CSSNumericValue&) const final;
 
     double m_value;
     const CSSUnitType m_unit;

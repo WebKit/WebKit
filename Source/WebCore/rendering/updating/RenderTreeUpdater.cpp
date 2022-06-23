@@ -173,11 +173,15 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         auto& element = downcast<Element>(node);
 
+        bool needsSVGRendererUpdate = element.needsSVGRendererUpdate();
+        if (needsSVGRendererUpdate)
+            updateSVGRenderer(element);
+
         auto* elementUpdate = m_styleUpdate->elementUpdate(element);
 
         // We hop through display: contents elements in findRenderingRoot, so
         // there may be other updates down the tree.
-        if (!elementUpdate && !element.hasDisplayContents()) {
+        if (!elementUpdate && !element.hasDisplayContents() && !needsSVGRendererUpdate) {
             storePreviousRenderer(element);
             it.traverseNextSkippingChildren();
             continue;
@@ -294,11 +298,16 @@ void RenderTreeUpdater::updateRendererStyle(RenderElement& renderer, RenderStyle
     m_builder.normalizeTreeAfterStyleChange(renderer, oldStyle);
 }
 
+void RenderTreeUpdater::updateSVGRenderer(Element& element)
+{
+    ASSERT(element.needsSVGRendererUpdate());
+    element.setNeedsSVGRendererUpdate(false);
+    if (element.renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*element.renderer());
+}
+
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& elementUpdate)
 {
-    if (elementUpdate.updateSVGRenderer && element.renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*element.renderer());
-
     if (!elementUpdate.style)
         return;
 

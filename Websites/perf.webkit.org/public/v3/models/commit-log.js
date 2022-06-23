@@ -42,7 +42,7 @@ class CommitLog extends DataModelObject {
     revision() { return this._rawData['revision']; }
     revisionIdentifier() { return this._rawData['revisionIdentifier']; }
     message() { return this._rawData['message']; }
-    url() { return this._repository.urlForRevision(this._rawData['revision']); }
+    url() { return this._repository.urlForRevision(this.revisionIdentifier() || this.revision()); }
     ownsCommits() { return this._rawData['ownsCommits']; }
     ownedCommits() { return this._ownedCommits; }
     ownerCommit() { return this._ownerCommit; }
@@ -105,7 +105,10 @@ class CommitLog extends DataModelObject {
             return revisionRange;
         })(identifierPattern.exec(previousCommit.revisionIdentifier()), identifierPattern.exec(this.revisionIdentifier()));
 
-        return {repository, label, url: repository.urlForRevisionRange(fromRevision, toRevision)};
+        const from = previousCommit.revisionIdentifier() || fromRevision;
+        const to = this.revisionIdentifier() || toRevision;
+
+        return {repository, label, url: repository.urlForRevisionRange(from, to)};
     }
 
     static fetchLatestCommitForPlatform(repository, platform)

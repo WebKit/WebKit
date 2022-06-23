@@ -192,4 +192,11 @@ void SharedWorkerThreadProxy::networkStateChanged(bool isOnLine)
         proxy->notifyNetworkStateChange(isOnLine);
 }
 
+void SharedWorkerThreadProxy::workerGlobalScopeClosed()
+{
+    callOnMainThread([identifier = thread().identifier()] {
+        SharedWorkerContextManager::singleton().stopSharedWorker(identifier);
+    });
+}
+
 } // namespace WebCore

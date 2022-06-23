@@ -133,20 +133,20 @@ public:
     // Uniforms and attributes
     using Uint32List = TypedList<Uint32Array, uint32_t>;
     using Float32List = TypedList<Float32Array, float>;
-    void uniform1ui(WebGLUniformLocation*, GCGLuint v0);
-    void uniform2ui(WebGLUniformLocation*, GCGLuint v0, GCGLuint v1);
-    void uniform3ui(WebGLUniformLocation*, GCGLuint v0, GCGLuint v1, GCGLuint v2);
-    void uniform4ui(WebGLUniformLocation*, GCGLuint v0, GCGLuint v1, GCGLuint v2, GCGLuint v3);
-    void uniform1uiv(WebGLUniformLocation*, Uint32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform2uiv(WebGLUniformLocation*, Uint32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform3uiv(WebGLUniformLocation*, Uint32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform4uiv(WebGLUniformLocation*, Uint32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniformMatrix2x3fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniformMatrix3x2fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniformMatrix2x4fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniformMatrix4x2fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniformMatrix3x4fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniformMatrix4x3fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform1ui(const WebGLUniformLocation*, GCGLuint v0);
+    void uniform2ui(const WebGLUniformLocation*, GCGLuint v0, GCGLuint v1);
+    void uniform3ui(const WebGLUniformLocation*, GCGLuint v0, GCGLuint v1, GCGLuint v2);
+    void uniform4ui(const WebGLUniformLocation*, GCGLuint v0, GCGLuint v1, GCGLuint v2, GCGLuint v3);
+    void uniform1uiv(const WebGLUniformLocation*, Uint32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform2uiv(const WebGLUniformLocation*, Uint32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform3uiv(const WebGLUniformLocation*, Uint32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform4uiv(const WebGLUniformLocation*, Uint32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix2x3fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix3x2fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix2x4fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix4x2fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix3x4fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix4x3fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& value, GCGLuint srcOffset, GCGLuint srcLength);
     void vertexAttribI4i(GCGLuint index, GCGLint x, GCGLint y, GCGLint z, GCGLint w);
     void vertexAttribI4iv(GCGLuint index, Int32List&& v);
     void vertexAttribI4ui(GCGLuint index, GCGLuint x, GCGLuint y, GCGLuint z, GCGLuint w);
@@ -157,26 +157,26 @@ public:
     using WebGLRenderingContextBase::uniform2fv;
     using WebGLRenderingContextBase::uniform3fv;
     using WebGLRenderingContextBase::uniform4fv;
-    void uniform1fv(WebGLUniformLocation*, Float32List data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform2fv(WebGLUniformLocation*, Float32List data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform3fv(WebGLUniformLocation*, Float32List data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform4fv(WebGLUniformLocation*, Float32List data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform1fv(const WebGLUniformLocation*, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform2fv(const WebGLUniformLocation*, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform3fv(const WebGLUniformLocation*, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform4fv(const WebGLUniformLocation*, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
 
     using WebGLRenderingContextBase::uniform1iv;
     using WebGLRenderingContextBase::uniform2iv;
     using WebGLRenderingContextBase::uniform3iv;
     using WebGLRenderingContextBase::uniform4iv;
-    void uniform1iv(WebGLUniformLocation*, Int32List data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform2iv(WebGLUniformLocation*, Int32List data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform3iv(WebGLUniformLocation*, Int32List data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniform4iv(WebGLUniformLocation*, Int32List data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform1iv(const WebGLUniformLocation*, Int32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform2iv(const WebGLUniformLocation*, Int32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform3iv(const WebGLUniformLocation*, Int32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniform4iv(const WebGLUniformLocation*, Int32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
 
     using WebGLRenderingContextBase::uniformMatrix2fv;
     using WebGLRenderingContextBase::uniformMatrix3fv;
     using WebGLRenderingContextBase::uniformMatrix4fv;
-    void uniformMatrix2fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniformMatrix3fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List data, GCGLuint srcOffset, GCGLuint srcLength);
-    void uniformMatrix4fv(WebGLUniformLocation*, GCGLboolean transpose, Float32List data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix2fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix3fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
+    void uniformMatrix4fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&& data, GCGLuint srcOffset, GCGLuint srcLength);
 
     // Writing to the drawing buffer
     void vertexAttribDivisor(GCGLuint index, GCGLuint divisor);

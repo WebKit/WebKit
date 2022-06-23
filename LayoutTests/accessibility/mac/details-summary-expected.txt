@@ -1,37 +1,28 @@
-Some open info
-Details about the open topic.
-
-Some open info
-Some open info
-Details about the open topic.
-
 This tests some basic attributes about the details element.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS details1.role is 'AXRole: AXGroup'
-PASS details1.subrole is 'AXSubrole: AXDetails'
-PASS details1.isExpanded is true
-PASS summary1.role is 'AXRole: AXButton'
-PASS summary1.subrole is 'AXSubrole: AXSummary'
-PASS summary1.title is 'AXTitle: Some open info'
-PASS details1.isAttributeSettable('AXExpanded') is true
+PASS: details1.role === 'AXRole: AXGroup'
+PASS: details1.subrole === 'AXSubrole: AXDetails'
+PASS: details1.isExpanded === true
+PASS: summary1.role === 'AXRole: AXButton'
+PASS: summary1.subrole === 'AXSubrole: AXSummary'
+PASS: summary1.title === 'AXTitle: Some open info'
+PASS: details1.isAttributeSettable('AXExpanded') === true
 Received AXExpandedChanged notification
-PASS details1.isExpanded is false
-PASS summary1.isExpanded is false
-PASS details1.isExpanded is false
-PASS summary1.isExpanded is false
+PASS: details1.isExpanded === false
+PASS: summary1.isExpanded === false
+PASS: details1.isExpanded === false
+PASS: summary1.isExpanded === false
 Received AXExpandedChanged notification
-PASS details1.isExpanded is true
-PASS summary1.isExpanded is true
-PASS details1.isExpanded is true
-PASS summary1.isExpanded is true
-PASS details2.subrole is 'AXSubrole: AXDetails'
-PASS details2.isExpanded is false
-PASS details3.subrole is 'AXSubrole: AXApplicationGroup'
-PASS details3.isExpanded is true
+PASS: details1.isExpanded === true
+PASS: summary1.isExpanded === true
+PASS: details1.isExpanded === true
+PASS: summary1.isExpanded === true
+PASS: details2.subrole === 'AXSubrole: AXDetails'
+PASS: details2.isExpanded === false
+PASS: details3.subrole === 'AXSubrole: AXApplicationGroup'
+PASS: details3.isExpanded === true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
+
 

@@ -32,11 +32,13 @@
 #include "RenderStyleConstants.h"
 #include "TouchAction.h"
 #include <wtf/OptionSet.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class EventRegion;
+class RenderObject;
 class RenderStyle;
 
 class EventRegionContext {
@@ -49,13 +51,22 @@ public:
     void pushClip(const IntRect&);
     void popClip();
 
-    void unite(const Region&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
+    void unite(const Region&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
     bool contains(const IntRect&) const;
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    void uniteInteractionRegions(const Region&, RenderObject&);
+    void copyInteractionRegionsToEventRegion();
+#endif
 
 private:
     EventRegion& m_eventRegion;
     Vector<AffineTransform> m_transformStack;
     Vector<IntRect> m_clipStack;
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    HashMap<ElementIdentifier, InteractionRegion> m_interactionRegionsByElement;
+#endif
 };
 
 class EventRegionContextStateSaver {
@@ -136,7 +147,6 @@ public:
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     const Vector<InteractionRegion>& interactionRegions() const { return m_interactionRegions; }
     void uniteInteractionRegions(const Vector<InteractionRegion>&);
-    void computeInteractionRegions(Page&, IntRect);
 #endif
 
 private:

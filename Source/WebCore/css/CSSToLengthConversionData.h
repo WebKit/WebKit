@@ -51,7 +51,7 @@ public:
     // This is used during style building. The 'zoom' property is taken into account.
     CSSToLengthConversionData(const RenderStyle&, const Style::BuilderContext&);
     // This constructor ignores the `zoom` property.
-    CSSToLengthConversionData(const RenderStyle&, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView*);
+    CSSToLengthConversionData(const RenderStyle&, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView*, const Element* elementForContainerUnitResolution = nullptr);
 
     CSSToLengthConversionData() = default;
 
@@ -63,7 +63,7 @@ public:
     bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
     CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
     const RenderView* renderView() const { return m_renderView; }
-    const Element* element() const { return m_element.get(); }
+    const Element* elementForContainerUnitResolution() const { return m_elementForContainerUnitResolution.get(); }
 
     FloatSize defaultViewportFactor() const;
     FloatSize smallViewportFactor() const;
@@ -101,7 +101,7 @@ private:
     const RenderStyle* m_rootStyle { nullptr };
     const RenderStyle* m_parentStyle { nullptr };
     const RenderView* m_renderView { nullptr };
-    RefPtr<const Element> m_element;
+    RefPtr<const Element> m_elementForContainerUnitResolution;
     std::optional<float> m_zoom;
     std::optional<CSSPropertyID> m_propertyToCompute;
     // FIXME: Remove this hack.

@@ -27,9 +27,9 @@ div[contenteditable] {
 <script>
 jsTestIsAsync = true;
 
-async function waitUntilMenuContainsCopyAction() {
+async function waitUntilMenuContains(action) {
     while (true) {
-        if (await UIHelper.rectForMenuAction("Copy"))
+        if (await UIHelper.rectForMenuAction(action))
             break;
         await UIHelper.delayFor(100);
     }
@@ -48,11 +48,12 @@ addEventListener("load", async () => {
     await UIHelper.waitForMenuToShow();
     testPassed("Showed menu by tapping");
 
+    await waitUntilMenuContains("Select");
     await UIHelper.chooseMenuAction("Select");
     await UIHelper.waitForSelectionToAppear();
     testPassed("Selected word using menu action");
 
-    await waitUntilMenuContainsCopyAction();
+    await waitUntilMenuContains("Copy");
     testPassed("Callout bar contains 'Copy' action");
 
     editor.remove();

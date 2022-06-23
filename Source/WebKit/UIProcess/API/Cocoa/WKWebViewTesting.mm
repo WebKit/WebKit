@@ -44,6 +44,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
+#import "WindowServerConnection.h"
 #import "WKWebViewMac.h"
 #endif
 
@@ -453,6 +454,13 @@
     gpuProcess->webProcessConnectionCountForTesting([completionHandler = makeBlockPtr(completionHandler)](uint64_t count) {
         completionHandler(count);
     });
+}
+
+- (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected
+{
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    WebKit::WindowServerConnection::singleton().hardwareConsoleStateChanged(connected ? WebKit::WindowServerConnection::HardwareConsoleState::Connected : WebKit::WindowServerConnection::HardwareConsoleState::Disconnected);
+#endif
 }
 
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler

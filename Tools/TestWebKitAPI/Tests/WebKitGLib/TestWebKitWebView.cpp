@@ -1857,6 +1857,71 @@ static void testWebViewCORSAllowlist(WebViewTest* test, gconstpointer)
     g_assert_cmpint(waitForFooChanged(), ==, 200);
 }
 
+static void testWebViewDefaultContentSecurityPolicy(WebViewTest* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult;
+
+    // Sanity check that eval works normally.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("eval('\"allowed\"')", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    GUniquePtr<char> evalValue(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(evalValue.get(), ==, "allowed");
+    webkit_javascript_result_unref(javascriptResult);
+
+    // Create a new web view with a policy that blocks eval().
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "default-content-security-policy", "script-src 'self'", nullptr));
+
+    // Ensure JavaScript still functions.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("'allowed'", &error.outPtr(), webView.get());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    GUniquePtr<char> value(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(value.get(), ==, "allowed");
+    webkit_javascript_result_unref(javascriptResult);
+
+    // Then ensure eval is blocked.
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("eval('\"allowed\"')", &error.outPtr(), webView.get());
+    g_assert_null(javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+}
+
+static void testWebViewWebExtensionMode(WebViewTest* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult;
+    static const char* html =
+        "<html>"
+        "  <head>"
+        "    <title>unset</title>"
+        "    <meta http-equiv=\"Content-Security-Policy\" content=\"script-src 'unsafe-inline';\">"
+        "    <script>document.title = 'set';</script>"
+        "  </head>"
+        "</html>";
+
+    // Sanity check that this HTML works as expected.
+    test->loadHtml(html, nullptr);
+    test->waitUntilLoadFinished();
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.title == 'set';", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    g_assert_true(WebViewTest::javascriptResultToBoolean(javascriptResult));
+    webkit_javascript_result_unref(javascriptResult);
+
+    // Create a new web view with an extension mode that blocks the unsafe-inline keyword.
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "web-extension-mode", WEBKIT_WEB_EXTENSION_MODE_MANIFESTV3,
+        nullptr));
+    test->loadHtml(html, nullptr, webView.get());
+    test->waitUntilLoadFinished(webView.get());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.title == 'unset';", &error.outPtr(), webView.get());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    g_assert_true(WebViewTest::javascriptResultToBoolean(javascriptResult));
+}
+
 #if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 #else
@@ -1930,6 +1995,8 @@ void beforeAll()
     WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-web-process", testWebViewTerminateWebProcess);
     WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-unresponsive-web-process", testWebViewTerminateUnresponsiveWebProcess);
     WebViewTest::add("WebKitWebView", "cors-allowlist", testWebViewCORSAllowlist);
+    WebViewTest::add("WebKitWebView", "default-content-security-policy", testWebViewDefaultContentSecurityPolicy);
+    WebViewTest::add("WebKitWebView", "web-extension-mode", testWebViewWebExtensionMode);
 }
 
 void afterAll()

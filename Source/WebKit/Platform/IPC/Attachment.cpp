@@ -37,16 +37,16 @@ Attachment::Attachment()
 }
 
 #if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
-Attachment::Attachment(mach_port_name_t port, mach_msg_type_name_t disposition)
-    : m_type(MachPortType)
-    , m_port(port)
-    , m_disposition(disposition)
+Attachment::Attachment(MachSendRight&& right)
+    : MachSendRight(WTFMove(right))
+    , m_type(MachPortType)
 {
 }
 
-void Attachment::release()
+Attachment::Attachment(const MachSendRight& right)
+    : MachSendRight(right)
+    , m_type(MachPortType)
 {
-    m_type = Uninitialized;
 }
 #endif
 

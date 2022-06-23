@@ -28,7 +28,6 @@
 
 #include "ArgumentCoders.h"
 #include "Logging.h"
-#include "MachPort.h"
 #include <WebCore/SharedBuffer.h>
 #include <mach/mach_error.h>
 #include <mach/mach_port.h>
@@ -128,7 +127,7 @@ void SharedMemory::IPCHandle::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<uint64_t>(handle.m_size);
     encoder << dataSize;
-    encoder << IPC::MachPort(handle.m_port, MACH_MSG_TYPE_MOVE_SEND);
+    encoder << MachSendRight::adopt(handle.m_port);
     handle.m_port = MACH_PORT_NULL;
 }
 
@@ -151,12 +150,12 @@ bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle
     if (dataLength > bufferSize)
         return false;
 
-    IPC::MachPort machPort;
-    if (!decoder.decode(machPort))
+    auto sendRight = decoder.decode<MachSendRight>();
+    if (UNLIKELY(!decoder.isValid()))
         return false;
     
     handle.m_size = bufferSize;
-    handle.m_port = machPort.port();
+    handle.m_port = sendRight->leakSendRight();
     ipcHandle.handle = WTFMove(handle);
     ipcHandle.dataSize = dataLength;
     return true;

@@ -3191,5 +3191,5 @@ void WKPageDispatchActivityStateUpdateForTesting(WKPageRef pageRef)
 
 uint64_t WKPageGetIdentifier(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->identifier().toUInt64();
+    return toImpl(pageRef)->webPageID().toUInt64();
 }

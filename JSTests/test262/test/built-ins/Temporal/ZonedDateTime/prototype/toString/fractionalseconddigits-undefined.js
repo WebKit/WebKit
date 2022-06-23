@@ -16,14 +16,11 @@ info: |
 features: [Temporal]
 ---*/
 
-const zeroSeconds = new Temporal.ZonedDateTime(0n, "UTC");
-const wholeSeconds = new Temporal.ZonedDateTime(30_000_000_000n, "UTC");
-const subSeconds = new Temporal.ZonedDateTime(30_123_400_000n, "UTC");
-
 const tests = [
-  [zeroSeconds, "1970-01-01T00:00:00+00:00[UTC]"],
-  [wholeSeconds, "1970-01-01T00:00:30+00:00[UTC]"],
-  [subSeconds, "1970-01-01T00:00:30.1234+00:00[UTC]"],
+  [new Temporal.ZonedDateTime(192_258_181_000_000_000n, "UTC"), "1976-02-04T05:03:01+00:00[UTC]"],
+  [new Temporal.ZonedDateTime(0n, "UTC"), "1970-01-01T00:00:00+00:00[UTC]"],
+  [new Temporal.ZonedDateTime(30_000_000_000n, "UTC"), "1970-01-01T00:00:30+00:00[UTC]"],
+  [new Temporal.ZonedDateTime(30_123_400_000n, "UTC"), "1970-01-01T00:00:30.1234+00:00[UTC]"],
 ];
 
 for (const [datetime, expected] of tests) {

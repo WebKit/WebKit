@@ -2245,8 +2245,6 @@ webkit.org/b/231924 inspector/css/modify-css-property.html [ Pass Failure ]
 
 webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-twice.html [ Pass Failure Crash ]
 
-webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Pass Failure ]
-
 webkit.org/b/237680 imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-service-worker-matchAll.tentative.https.html [ Pass Failure ]
 
 # Plugins
@@ -2290,8 +2288,6 @@ editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
 webkit.org/b/239791 webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
-
-webkit.org/b/240074 imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Pass Failure ]
 
 webkit.org/b/231298 accessibility/mac/selection-sync.html [ Skip ] # Timeout
 

@@ -45,16 +45,11 @@ protected:
 
     void clipToMask(GraphicsContext&, const FloatRect& destRect) override;
 
-    String toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const override;
-    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const override;
-
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 
     bool originAtBottomLeftCorner() const override;
 
     static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
-
-    virtual RetainPtr<CGImageRef> copyCGImageForEncoding(CFStringRef destinationUTI, PreserveResolution) const;
 };
 
 } // namespace WebCore

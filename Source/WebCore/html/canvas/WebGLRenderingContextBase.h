@@ -148,22 +148,15 @@ private:
     void showHighlight();
     void hideHighlight();
 
-    template <typename T>
-    void saveBlendValue(GCGLenum attachment, T& destination);
-
-    bool hasBufferBinding(GCGLenum pname);
-
-    bool hasFramebufferParameterAttachment(GCGLenum attachment);
-
     struct {
-        RefPtr<Float32Array> color;
-        unsigned equationRGB { 0 };
-        unsigned equationAlpha { 0 };
-        unsigned srcRGB { 0 };
-        unsigned srcAlpha { 0 };
-        unsigned dstRGB { 0 };
-        unsigned dstAlpha { 0 };
-        bool enabled { false };
+        GCGLfloat color[4];
+        GCGLenum equationRGB;
+        GCGLenum equationAlpha;
+        GCGLenum srcRGB;
+        GCGLenum dstRGB;
+        GCGLenum srcAlpha;
+        GCGLenum dstAlpha;
+        GCGLboolean enabled;
     } m_savedBlend;
 
     WebGLRenderingContextBase& m_context;
@@ -501,6 +494,7 @@ protected:
     friend class WebGLVertexArrayObjectOES;
 
     // Implementation helpers.
+    friend class InspectorScopedShaderProgramHighlight;
     friend class ScopedUnpackParametersResetRestore;
 
     virtual void initializeNewContext();

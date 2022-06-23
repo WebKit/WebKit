@@ -666,6 +666,16 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
     }
 #endif
 
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(copyDisplayedPixelBuffer)]) {
+        if (auto pixelBuffer = adoptCF([m_sampleBufferDisplayLayer copyDisplayedPixelBuffer])) {
+            ALWAYS_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentMediaTime());
+            m_lastPixelBuffer = WTFMove(pixelBuffer);
+            return true;
+        }
+    }
+#endif
+
     if (m_sampleBufferDisplayLayer || !m_decompressionSession)
         return false;
 
@@ -725,16 +735,22 @@ void MediaPlayerPrivateMediaSourceAVFObjC::paintCurrentFrameInContext(GraphicsCo
     context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
-RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTime()
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+void MediaPlayerPrivateMediaSourceAVFObjC::willBeAskedToPaintGL()
 {
     // We have been asked to paint into a WebGL canvas, so take that as a signal to create
     // a decompression session, even if that means the native video can't also be displayed
     // in page.
-    if (!m_hasBeenAskedToPaintGL) {
-        m_hasBeenAskedToPaintGL = true;
-        acceleratedRenderingStateChanged();
-    }
+    if (m_hasBeenAskedToPaintGL)
+        return;
 
+    m_hasBeenAskedToPaintGL = true;
+    acceleratedRenderingStateChanged();
+}
+#endif
+
+RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTime()
+{
     if (!m_isGatheringVideoFrameMetadata)
         updateLastPixelBuffer();
     if (!m_lastPixelBuffer)
@@ -758,15 +774,43 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::supportsAcceleratedRendering() const
     return true;
 }
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
+{
+#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    if (!m_hasBeenAskedToPaintGL)
+        return true;
+#endif
+    return readbackMethod() != VideoOutputReadbackMethod::None;
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
 {
-    if (!m_hasBeenAskedToPaintGL || isVideoOutputAvailable()) {
+    if (shouldEnsureLayer()) {
         destroyDecompressionSession();
         ensureLayer();
     } else {
         destroyLayer();
         ensureDecompressionSession();
     }
+    updateVideoOutput();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::updateVideoOutput()
+{
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    if (readbackMethod() == VideoOutputReadbackMethod::UseVideoOutput) {
+        if (!m_videoOutput)
+            m_videoOutput = adoptNS([PAL::allocAVSampleBufferVideoOutputInstance() init]);
+        ASSERT(m_videoOutput);
+    } else
+        m_videoOutput = nil;
+
+    if (m_videoOutput == [m_sampleBufferDisplayLayer output])
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, m_videoOutput ? "Setting up" : "Tearing down", " sample buffer video output.");
+    [m_sampleBufferDisplayLayer setOutput:m_videoOutput.get()];
+#endif // HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::notifyActiveSourceBuffersChanged()
@@ -853,15 +897,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
         return;
     }
 
-#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    ASSERT(!m_videoOutput);
-    if (isVideoOutputAvailable()) {
-        m_videoOutput = adoptNS([PAL::allocAVSampleBufferVideoOutputInstance() init]);
-        ASSERT(m_videoOutput);
-        [m_sampleBufferDisplayLayer setOutput:m_videoOutput.get()];
-    }
-#endif
-
     if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setPreventsDisplaySleepDuringVideoPlayback:)])
         m_sampleBufferDisplayLayer.get().preventsDisplaySleepDuringVideoPlayback = NO;
 
@@ -931,13 +966,35 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying() const
     return m_playing && !seeking() && allRenderersHaveAvailableSamples() && m_readyState >= MediaPlayer::ReadyState::HaveFutureData;
 }
 
-bool MediaPlayerPrivateMediaSourceAVFObjC::isVideoOutputAvailable() const
+MediaPlayerPrivateMediaSourceAVFObjC::VideoOutputReadbackMethod MediaPlayerPrivateMediaSourceAVFObjC::readbackMethod() const
 {
 #if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    return MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled() && PAL::getAVSampleBufferVideoOutputClass();
-#else
-    return false;
+    if (!MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled())
+        return VideoOutputReadbackMethod::None;
 #endif
+
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    static auto canCopyDisplayedPixelBuffer = [&] {
+        return [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(copyDisplayedPixelBuffer)];
+    }();
+
+    if (canCopyDisplayedPixelBuffer) {
+        if (m_sampleBufferDisplayLayer) {
+            if (!CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]))
+                return VideoOutputReadbackMethod::CopyPixelBufferFromDisplayLayer;
+        } else {
+            if (!m_player->playerContentBoxRect().isEmpty())
+                return VideoOutputReadbackMethod::CopyPixelBufferFromDisplayLayer;
+        }
+    }
+#endif // HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+
+#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    if (PAL::getAVSampleBufferVideoOutputClass())
+        return VideoOutputReadbackMethod::UseVideoOutput;
+#endif
+
+    return VideoOutputReadbackMethod::None;
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)

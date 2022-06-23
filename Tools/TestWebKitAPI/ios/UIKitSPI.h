@@ -214,7 +214,6 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @protocol UIWKInteractionViewProtocol
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
-- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler;
 - (void)selectWordBackward;
@@ -282,6 +281,7 @@ IGNORE_WARNINGS_END
 
 @interface UIWKTextInteractionAssistant : UITextInteractionAssistant
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
+- (void)selectionChanged;
 @end
 
 @interface UIAction ()
@@ -355,6 +355,12 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 @optional
 - (void)willInsertFinalDictationResult;
 - (void)didInsertFinalDictationResult;
+@end
+
+@protocol UIWKInteractionViewProtocol_Staging_95652872 <UIWKInteractionViewProtocol_Staging_91919121>
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+- (void)requestPreferredArrowDirectionForEditMenuWithCompletionHandler:(void (^)(UIEditMenuArrowDirection))completionHandler;
+#endif
 @end
 
 #if HAVE(UIFINDINTERACTION)

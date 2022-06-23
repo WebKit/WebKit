@@ -1,0 +1,26 @@
+<style>
+.container {
+  box-sizing: border-box;
+  width: 320px;
+  height: 188px;
+  overflow-x: scroll;
+  padding-left: 10px;
+  padding-right: 190px;
+  border: 50px solid blue;
+  background-color: cyan;
+  display: grid;
+}
+
+.container > div {
+  width: 20px;
+  height: 20px;
+  background-color: green;
+}        
+</style>
+<div class=container><div></div></div>
+<div class=container><div style="width: 21px"></div></div>
+<script>
+let scrollers = document.body.getElementsByClassName("container");
+for (let scroller of scrollers)
+  scroller.scrollTo(100, 0);
+</script>

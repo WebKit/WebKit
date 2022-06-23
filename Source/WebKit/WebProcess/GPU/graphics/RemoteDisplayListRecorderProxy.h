@@ -53,7 +53,7 @@ private:
         if (UNLIKELY(!(m_renderingBackend && m_imageBuffer)))
             return;
 
-        m_imageBuffer->setNeedsFlush(true);
+        m_imageBuffer->backingStoreWillChange();
         m_renderingBackend->sendToStream(WTFMove(message), m_destinationBufferIdentifier);
     }
 

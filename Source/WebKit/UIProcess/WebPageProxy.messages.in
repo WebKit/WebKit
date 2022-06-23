@@ -212,7 +212,7 @@ messages -> WebPageProxy {
     LogScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)
 
     # Editor notifications
-    EditorStateChanged(struct WebKit::EditorState editorState)
+    EditorStateChanged(struct WebKit::EditorState editorState) -> ()
     CompositionWasCanceled()
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
 

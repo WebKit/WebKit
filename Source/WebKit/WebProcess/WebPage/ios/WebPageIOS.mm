@@ -2422,13 +2422,20 @@ void WebPage::prepareSelectionForContextMenuWithLocationInView(IntPoint point, C
         auto range = makeRangeSelectingNode(*hitNode);
         if (range && frame->selection().setSelectedRange(range, Affinity::Upstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered)) {
             layoutIfNeeded();
-            sendEditorStateUpdate();
+            sendEditorStateUpdate([] { });
             return completionHandler(true, { });
         }
     }
 
     frame->eventHandler().selectClosestContextualWordOrLinkFromHitTestResult(result, DontAppendTrailingWhitespace);
-    completionHandler(true, { revealItemForCurrentSelection() });
+    sendEditorStateUpdate([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
+        RefPtr strongThis = weakThis.get();
+        if (!strongThis) {
+            completionHandler(true, { });
+            return;
+        }
+        completionHandler(true, { strongThis->revealItemForCurrentSelection() });
+    });
 }
 #endif
 
@@ -3285,7 +3292,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
 void WebPage::requestPositionInformation(const InteractionInformationRequest& request)
 {
-    sendEditorStateUpdate();
+    sendEditorStateUpdate([] { });
     send(Messages::WebPageProxy::DidReceivePositionInformation(positionInformation(request)));
 }
 

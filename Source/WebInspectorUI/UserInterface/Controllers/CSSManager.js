@@ -264,6 +264,29 @@ WI.CSSManager = class CSSManager extends WI.Object
         }
     }
 
+    static displayNameForForceablePseudoClass(pseudoClass)
+    {
+        switch (pseudoClass) {
+        case WI.CSSManager.ForceablePseudoClass.Active:
+            return WI.unlocalizedString(":active");
+        case WI.CSSManager.ForceablePseudoClass.Focus:
+            return WI.unlocalizedString(":focus");
+        case WI.CSSManager.ForceablePseudoClass.FocusVisible:
+            return WI.unlocalizedString(":focus-visible");
+        case WI.CSSManager.ForceablePseudoClass.FocusWithin:
+            return WI.unlocalizedString(":focus-within");
+        case WI.CSSManager.ForceablePseudoClass.Hover:
+            return WI.unlocalizedString(":hover");
+        case WI.CSSManager.ForceablePseudoClass.Target:
+            return WI.unlocalizedString(":target");
+        case WI.CSSManager.ForceablePseudoClass.Visited:
+            return WI.unlocalizedString(":visited");
+        }
+
+        console.assert(false, "Unknown pseudo class", pseudoClass);
+        return "";
+    }
+
     // Public
 
     get propertyNameCompletions() { return this._propertyNameCompletions; }
@@ -340,9 +363,30 @@ WI.CSSManager = class CSSManager extends WI.Object
         return InspectorBackend.hasCommand("Page.setForcedAppearance") && this._defaultAppearance;
     }
 
-    canForcePseudoClasses()
+    canForcePseudoClass(pseudoClass)
     {
-        return InspectorBackend.hasCommand("CSS.forcePseudoState");
+        if (!InspectorBackend.hasCommand("CSS.forcePseudoState"))
+            return false;
+
+        if (!pseudoClass)
+            return true;
+
+        switch (pseudoClass) {
+        case WI.CSSManager.ForceablePseudoClass.Active:
+        case WI.CSSManager.ForceablePseudoClass.Focus:
+        case WI.CSSManager.ForceablePseudoClass.Hover:
+        case WI.CSSManager.ForceablePseudoClass.Visited:
+            return true;
+
+        case WI.CSSManager.ForceablePseudoClass.FocusVisible:
+        case WI.CSSManager.ForceablePseudoClass.FocusWithin:
+        case WI.CSSManager.ForceablePseudoClass.Target:
+            // COMPATIBILITY (iOS 15.4): CSS.ForceablePseudoClass did not exist yet.
+            return !!InspectorBackend.Enum.CSS.ForceablePseudoClass;
+        }
+
+        console.assert(false, "Unknown pseudo class", pseudoClass);
+        return false;
     }
 
     propertyNameHasOtherVendorPrefix(name)
@@ -801,5 +845,15 @@ WI.CSSManager.LayoutContextTypeChangedMode = {
 };
 
 WI.CSSManager.PseudoElementNames = ["before", "after"];
-WI.CSSManager.ForceablePseudoClasses = ["active", "focus", "hover", "visited"];
+
+WI.CSSManager.ForceablePseudoClass = {
+    Active: "active",
+    Focus: "focus",
+    FocusVisible: "focus-visible",
+    FocusWithin: "focus-within",
+    Hover: "hover",
+    Target: "target",
+    Visited: "visited",
+};
+
 WI.CSSManager.PreferredInspectorStyleSheetSymbol = Symbol("css-manager-preferred-inspector-style-sheet");

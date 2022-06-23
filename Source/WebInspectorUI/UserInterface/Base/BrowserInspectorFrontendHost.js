@@ -60,11 +60,6 @@ if (!window.InspectorFrontendHost) {
             };
         }
 
-        get port()
-        {
-            return "unknown";
-        }
-
         get platform()
         {
             const match = navigator.platform.match(/mac|win|linux/i);
@@ -111,6 +106,7 @@ if (!window.InspectorFrontendHost) {
 
         loaded()
         {
+            WI.updateVisibilityState(true);
         }
 
         closeWindow()
@@ -228,23 +224,59 @@ if (!window.InspectorFrontendHost) {
             window.open(url, "_blank");
         }
 
-        canSave()
+        canSave(saveMode)
         {
             return false;
         }
 
-        save(url, content, base64encoded, forceSaveAs)
+        save(saveDatas, forceSaveAs)
         {
             // FIXME: Create a Blob from the content, get an object URL, open it to trigger a download.
             throw "unimplemented";
         }
 
-        append(url, content)
+        canLoad()
+        {
+            return false;
+        }
+
+        load(path)
+        {
+            throw "unimplemented";
+        }
+
+        getPath(file)
+        {
+            return null;
+        }
+
+        canPickColorFromScreen()
+        {
+            return false;
+        }
+
+        pickColorFromScreen()
+        {
+            throw "unimplemented";
+        }
+
+        revealFileExternally(path)
         {
         }
 
-        close(url)
+        getCurrentX(context)
         {
+            return 0.0;
+        }
+
+        getCurrentY(context)
+        {
+            return 0.0;
+        }
+
+        setPath(context, path2d)
+        {
+            console.log("setPath", context, path2d);
         }
 
         showContextMenu(event, items)

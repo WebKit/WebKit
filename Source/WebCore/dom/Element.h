@@ -294,7 +294,7 @@ public:
     void parserSetAttributes(const Vector<Attribute>&);
 
     bool isEventHandlerAttribute(const Attribute&) const;
-    bool isJavaScriptURLAttribute(const Attribute&) const;
+    virtual bool attributeContainsJavaScriptURL(const Attribute&) const;
 
     // Remove attributes that might introduce scripting from the vector leaving the element unchanged.
     void stripScriptingAttributes(Vector<Attribute>&) const;
@@ -639,7 +639,10 @@ public:
 
     void invalidateStyleInternal();
     void invalidateStyleForSubtreeInternal();
-    void invalidateForQueryContainerChange();
+    void invalidateForQueryContainerSizeChange();
+
+    bool needsUpdateQueryContainerDependentStyle() const;
+    void clearNeedsUpdateQueryContainerDependentStyle();
 
     void invalidateEventListenerRegions();
 

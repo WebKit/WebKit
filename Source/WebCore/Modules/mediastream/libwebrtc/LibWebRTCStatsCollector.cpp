@@ -80,12 +80,15 @@ static inline void fillReceivedRtpStreamStats(RTCStatsReport::ReceivedRtpStreamS
 {
     fillRtpStreamStats(stats, rtcStats);
 
+    // packetsReceived
     if (rtcStats.packets_lost.is_defined())
         stats.packetsLost = *rtcStats.packets_lost;
     if (rtcStats.jitter.is_defined())
         stats.jitter = *rtcStats.jitter;
+    // FIXME: Remove packets_discarded
     if (rtcStats.packets_discarded.is_defined())
         stats.packetsDiscarded = *rtcStats.packets_discarded;
+    // framesDropped
 }
 
 static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamStats& stats, const webrtc::RTCInboundRTPStreamStats& rtcStats)
@@ -114,7 +117,9 @@ static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamSta
         stats.gapLossRate = *rtcStats.gap_loss_rate;
     if (rtcStats.gap_discard_rate.is_defined())
         stats.gapDiscardRate = *rtcStats.gap_discard_rate;
-    // Add frames_dropped and full_frames_lost.
+    if (rtcStats.frames_dropped.is_defined())
+        stats.framesDropped = *rtcStats.frames_dropped;
+    // full_frames_lost.
 
     if (rtcStats.frames_decoded.is_defined())
         stats.framesDecoded = *rtcStats.frames_decoded;

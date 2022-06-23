@@ -555,9 +555,9 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     self.window.title = title;
-    pid_t gpuProcessIdentifer = _webView._gpuProcessIdentifier;
-    if (gpuProcessIdentifer)
-        self.window.subtitle = [NSString stringWithFormat:@"[WK2 wp %d gpup %d]%@%@", _webView._webProcessIdentifier, gpuProcessIdentifer, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
+    pid_t gpuProcessIdentifier = _webView._gpuProcessIdentifier;
+    if (gpuProcessIdentifier)
+        self.window.subtitle = [NSString stringWithFormat:@"[WK2 wp %d gpup %d]%@%@", _webView._webProcessIdentifier, gpuProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
     else
         self.window.subtitle = [NSString stringWithFormat:@"[WK2 %d]%@%@", _webView._webProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
 #else

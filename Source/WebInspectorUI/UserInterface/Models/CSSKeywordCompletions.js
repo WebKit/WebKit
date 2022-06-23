@@ -31,7 +31,7 @@
 
 WI.CSSKeywordCompletions = {};
 
-WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition, allowEmptyPrefix, useFuzzyMatching} = {})
+WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition, allowEmptyPrefix} = {})
 {
     allowEmptyPrefix ??= false;
 
@@ -42,16 +42,10 @@ WI.CSSKeywordCompletions.forPartialPropertyName = function(text, {caretPosition,
     if (!text.length && allowEmptyPrefix)
         return {prefix: text, completions: WI.cssManager.propertyNameCompletions.values};
 
-    let completions;
-    if (useFuzzyMatching)
-        completions = WI.cssManager.propertyNameCompletions.executeQuery(text);
-    else
-        completions = WI.cssManager.propertyNameCompletions.startsWith(text);
-
-    return {prefix: text, completions};
+    return {prefix: text, completions: WI.cssManager.propertyNameCompletions.executeQuery(text)};
 };
 
-WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider, useFuzzyMatching} = {})
+WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, {caretPosition, additionalFunctionValueCompletionsProvider} = {})
 {
     caretPosition ??= text.length;
 
@@ -130,13 +124,7 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
     else
         valueCompletions = WI.CSSKeywordCompletions.forProperty(propertyName);
 
-    let completions;
-    if (useFuzzyMatching)
-        completions = valueCompletions.executeQuery(currentTokenValue);
-    else
-        completions = valueCompletions.startsWith(currentTokenValue);
-
-    return {prefix: currentTokenValue, completions};
+    return {prefix: currentTokenValue, completions: valueCompletions.executeQuery(currentTokenValue)};
 };
 
 WI.CSSKeywordCompletions.forProperty = function(propertyName)

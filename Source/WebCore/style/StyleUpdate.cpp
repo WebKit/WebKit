@@ -89,18 +89,12 @@ RenderStyle* Update::elementStyle(const Element& element)
 void Update::addElement(Element& element, Element* parent, ElementUpdate&& elementUpdate)
 {
     ASSERT(composedTreeAncestors(element).first() == parent);
+    ASSERT(!m_elements.contains(&element));
 
     m_roots.remove(&element);
     addPossibleRoot(parent);
 
-    auto result = m_elements.add(&element, WTFMove(elementUpdate));
-
-    if (!result.isNewEntry) {
-        auto& entry = result.iterator->value;
-        ASSERT(entry.updateSVGRenderer);
-        entry = WTFMove(elementUpdate);
-        entry.updateSVGRenderer = true;
-    }
+    m_elements.add(&element, WTFMove(elementUpdate));
 }
 
 void Update::addText(Text& text, Element* parent, TextUpdate&& textUpdate)
@@ -131,9 +125,10 @@ void Update::addText(Text& text, TextUpdate&& textUpdate)
 
 void Update::addSVGRendererUpdate(SVGElement& element)
 {
-    auto elementUpdate = ElementUpdate { };
-    elementUpdate.updateSVGRenderer = true;
-    addElement(element, composedTreeAncestors(element).first(), WTFMove(elementUpdate));
+    auto parent = composedTreeAncestors(element).first();
+    m_roots.remove(&element);
+    addPossibleRoot(parent);
+    element.setNeedsSVGRendererUpdate(true);
 }
 
 void Update::addPossibleRoot(Element* element)
@@ -142,7 +137,7 @@ void Update::addPossibleRoot(Element* element)
         m_roots.add(m_document.ptr());
         return;
     }
-    if (m_elements.contains(element))
+    if (element->needsSVGRendererUpdate() || m_elements.contains(element))
         return;
     m_roots.add(element);
 }

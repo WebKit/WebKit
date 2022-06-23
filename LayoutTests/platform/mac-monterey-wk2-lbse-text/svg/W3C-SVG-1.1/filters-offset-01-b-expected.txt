@@ -2,10 +2,18 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-layer at (120,10) size 80x80
-  RenderSVGContainer {g} at (0,0) size 80x80
+layer at (-11,-11) size 211x101 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (120,21) size 142x181
 layer at (120,10) size 80x80
   RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#000000]}] [cx=160.00] [cy=50.00] [r=40.00]
+layer at (-11,-11) size 22x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGPath {path} at (120,90) size 22x22 [fill={[type=SOLID] [color=#000000]}] [data="M -1 -11 L 1 -11 L 1 -1 L 11 -1 L 11 1 L 1 1 L 1 11 L -1 11 L -1 1 L -11 1 L -11 -1 L -1 -1 L -1 -11"]
+layer at (-11,-11) size 22x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGPath {path} at (160,120) size 22x22 [fill={[type=SOLID] [color=#408000] [opacity=0.80]}] [data="M -1 -11 L 1 -11 L 1 -1 L 11 -1 L 11 1 L 1 1 L 1 11 L -1 11 L -1 1 L -11 1 L -11 -1 L -1 -1 L -1 -11"]
+layer at (-11,-11) size 22x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGPath {path} at (200,150) size 22x22 [fill={[type=SOLID] [color=#408000] [opacity=0.60]}] [data="M -1 -11 L 1 -11 L 1 -1 L 11 -1 L 11 1 L 1 1 L 1 11 L -1 11 L -1 1 L -11 1 L -11 -1 L -1 -1 L -1 -11"]
+layer at (-11,-11) size 22x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGPath {path} at (240,180) size 22x22 [fill={[type=SOLID] [color=#408000] [opacity=0.40]}] [data="M -1 -11 L 1 -11 L 1 -1 L 11 -1 L 11 1 L 1 1 L 1 11 L -1 11 L -1 1 L -11 1 L -11 -1 L -1 -1 L -1 -11"]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

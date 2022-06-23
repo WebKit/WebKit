@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2011 University of Szeged. All rights reserved.
  *
@@ -280,13 +280,19 @@ public:
 
 void WTFReportBacktraceWithPrefix(const char* prefix)
 {
+    CrashLogPrintStream out;
+    WTFReportBacktraceWithPrefixAndPrintStream(out, prefix);
+}
+
+void WTFReportBacktraceWithPrefixAndPrintStream(PrintStream& out, const char* prefix)
+{
     static constexpr int framesToShow = 31;
     static constexpr int framesToSkip = 2;
     void* samples[framesToShow + framesToSkip];
     int frames = framesToShow + framesToSkip;
 
     WTFGetBacktrace(samples, &frames);
-    WTFPrintBacktraceWithPrefix(samples + framesToSkip, frames - framesToSkip, prefix);
+    WTFPrintBacktraceWithPrefixAndPrintStream(out, samples + framesToSkip, frames - framesToSkip, prefix);
 }
 
 void WTFReportBacktrace()
@@ -300,16 +306,16 @@ void WTFReportBacktrace()
     WTFPrintBacktrace(samples + framesToSkip, frames - framesToSkip);
 }
 
-void WTFPrintBacktraceWithPrefix(void** stack, int size, const char* prefix)
+void WTFPrintBacktraceWithPrefixAndPrintStream(PrintStream& out, void** stack, int size, const char* prefix)
 {
-    CrashLogPrintStream out;
     StackTrace stackTrace(stack, size, prefix);
     out.print(stackTrace);
 }
 
 void WTFPrintBacktrace(void** stack, int size)
 {
-    WTFPrintBacktraceWithPrefix(stack, size, "");
+    CrashLogPrintStream out;
+    WTFPrintBacktraceWithPrefixAndPrintStream(out, stack, size, "");
 }
 
 #if !defined(NDEBUG) || !(OS(DARWIN) || PLATFORM(PLAYSTATION))

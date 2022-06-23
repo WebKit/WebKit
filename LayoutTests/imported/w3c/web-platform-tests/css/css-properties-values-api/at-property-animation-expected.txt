@@ -1,6 +1,6 @@
 
-FAIL @keyframes works with @property assert_equals: expected "150px" but got ""
-FAIL @keyframes picks up the latest @property in the document assert_equals: expected "rgb(150, 150, 150)" but got ""
+FAIL @keyframes works with @property assert_equals: expected "150px" but got "200px"
+FAIL @keyframes picks up the latest @property in the document assert_equals: expected "rgb(150, 150, 150)" but got "rgb(200, 200, 200)"
 FAIL Ongoing animation picks up redeclared custom property assert_equals: expected "0px" but got ""
 FAIL Ongoing animation matches new keyframes against the current registration assert_equals: expected "0px" but got ""
 FAIL Ongoing animation picks up redeclared intial value assert_equals: expected "200px" but got ""

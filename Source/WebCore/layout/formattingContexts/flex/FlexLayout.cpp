@@ -263,7 +263,6 @@ void FlexLayout::computeLogicalWidthForFlexItems(LogicalFlexItems& flexItems, co
 void FlexLayout::computeLogicalHeightForFlexItems(LogicalFlexItems& flexItems, const LineRange& lineRange, LayoutUnit availableSpace)
 {
     auto flexBoxAlignItems = flexBoxStyle().alignItems();
-    auto lineHeight = LayoutUnit { };
 
     for (size_t index = lineRange.begin(); index < lineRange.end(); ++index) {
         auto& flexItem = flexItems[index];

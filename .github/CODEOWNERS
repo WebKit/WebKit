@@ -31,12 +31,14 @@
 /metadata @JonWBedard
 
 # ================================================================================
+
 /Tools @JonWBedard
 
 /Tools/CISupport @aj062 @JonWBedard @ryanhaddad
 
 /Tools/Scripts/libraries @JonWBedard
 /Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard
+/Tools/TestWebKitAPI
 
 # ================================================================================
 
@@ -44,3 +46,40 @@
 /Source/WebCore/platform/audio/gstreamer @calvaris @philn
 /Source/WebCore/platform/graphics/gstreamer @ntrrgc @calvaris @philn
 /Source/WebCore/platform/mediastream/gstreamer @calvaris @philn
+
+# ================================================================================
+
+/Source/bmalloc @Constellation
+/Tools/TestWebKitAPI/Tests/WTF/bmalloc @Constellation
+
+# ================================================================================
+
+/Source/JavaScriptCore @WebKit/jsc-reviewers
+/JSTests @WebKit/jsc-reviewers
+/LayoutTests/js @WebKit/jsc-reviewers
+/Tools/TestWebKitAPI/Tests/JavaScriptCore @WebKit/jsc-reviewers
+
+# ================================================================================
+
+/Source/JavaScriptCore/debugger @dcrousso @patrickangle
+/Source/JavaScriptCore/inspector @dcrousso @patrickangle
+/Source/WebCore/inspector @dcrousso @patrickangle
+/Source/WebInspectorUI @dcrousso @patrickangle
+/Source/WebKit/UIProcess/Inspector @dcrousso @patrickangle
+/Source/WebKit/WebProcess/Inspector @dcrousso @patrickangle
+/Tools/Scripts/webkitpy/inspector @dcrousso @patrickangle
+/LayoutTests/http/tests/inspector @dcrousso @patrickangle
+/LayoutTests/http/tests/websocket/tests/hybi/inspector @dcrousso @patrickangle
+/LayoutTests/inspector @dcrousso @patrickangle
+
+/Source/WebCore/Modules/apple-pay @dcrousso
+/Source/WebCore/Modules/paymentrequest @dcrousso
+/LayoutTests/http/tests/paymentrequest @dcrousso
+/LayoutTests/http/tests/ssl/applepay @dcrousso
+
+/Source/WebCore/Modules/apple-pay-ams-ui @dcrousso
+/LayoutTests/http/tests/ssl/applepay-ams-ui @dcrousso
+
+/Source/WebCore/Modules/mediacontrols @dcrousso
+/Source/WebCore/Modules/modern-media-controls @dcrousso
+/LayoutTests/media/modern-media-controls @dcrousso

@@ -490,6 +490,11 @@ static void dumpUIView(TextStream& ts, UIView *view)
     return NO;
 }
 
+- (void)_simulateSelectionStart
+{
+    [_contentView _simulateSelectionStart];
+}
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

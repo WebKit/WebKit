@@ -164,6 +164,20 @@ static void valueToGValue(GCLogging::Level value, GValue* gValue)
     }
 }
 
+static bool valueFromGValue(const GValue* gValue, OSLogType& value)
+{
+    unsigned optionValue = g_value_get_uint(gValue);
+    if (optionValue > static_cast<unsigned>(OSLogType::Fault))
+        return false;
+    value = static_cast<OSLogType>(optionValue);
+    return true;
+}
+
+static void valueToGValue(OSLogType value, GValue* gValue)
+{
+    g_value_set_uint(gValue, static_cast<unsigned>(value));
+}
+
 static gboolean jscOptionsSetValue(const char* option, const GValue* value)
 {
 #define SET_OPTION_VALUE(type_, name_, defaultValue_, availability_, description_) \
@@ -567,6 +581,11 @@ static JSCOptionType jscOptionsType(const char*)
 static JSCOptionType jscOptionsType(const OptionRange&)
 {
     return JSC_OPTION_RANGE_STRING;
+}
+
+static JSCOptionType jscOptionsType(const OSLogType&)
+{
+    return JSC_OPTION_UINT;
 }
 
 /**

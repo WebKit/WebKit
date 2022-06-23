@@ -3684,7 +3684,7 @@ void CommandLine::parseArguments(int argc, char** argv)
         const char* optionsTitle = (dumpOptionsLevel == JSC::Options::DumpLevel::Overridden)
             ? "Modified JSC runtime options:"
             : "All JSC runtime options:";
-        JSC::Options::dumpAllOptions(stderr, dumpOptionsLevel, optionsTitle);
+        JSC::Options::dumpAllOptions(dumpOptionsLevel, optionsTitle);
     }
     JSC::Options::ensureOptionsAreCoherent();
     if (needToExit)

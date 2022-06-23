@@ -172,3 +172,25 @@ TEST(WebKit, ConfigurationDisableJavaScriptNestedBody)
     NSString *bodyHTML = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
     EXPECT_WK_STREQ(bodyHTML, @"<table></table>");
 }
+
+TEST(WebKit, ConfigurationDisableJavaScriptSVGAnimateElement)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_TRUE([configuration _allowsJavaScriptMarkup]);
+    [configuration _setAllowsJavaScriptMarkup:NO];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<svg><a><rect fill=\"green\" width=\"10\" height=\"10\"></rect><animate attributeName=\"href\" to=\"javascript:document.write('FAIL')\"/></a></svg>"];
+    NSString *bodyHTML = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
+    EXPECT_WK_STREQ(bodyHTML, @"<svg><a><rect fill=\"green\" width=\"10\" height=\"10\"></rect><animate attributeName=\"href\"></animate></a></svg>");
+}
+
+TEST(WebKit, ConfigurationDisableJavaScriptSVGAnimateElementComplex)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    EXPECT_TRUE([configuration _allowsJavaScriptMarkup]);
+    [configuration _setAllowsJavaScriptMarkup:NO];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<svg><a><rect fill=\"green\" width=\"10\" height=\"10\"></rect><animate attributeName=\"href\" dur=\"4s\" calcMode=\"spline\" repeatCount=\"indefinite\" values=\"javascript:document.write('FAIL'); javascript:document.write('FAIL'); javascript:document.write(location.href); javascript:document.write('FAIL'); javascript:document.write('FAIL')\" keyTimes=\"0; 0.25; 0.5; 0.75; 1\" keySplines=\"0.5 0 0.5 1; 0.5 0 0.5 1; 0.5 0 0.5 1; 0.5 0 0.5 1\"/></a></svg>"];
+    NSString *bodyHTML = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
+    EXPECT_WK_STREQ(bodyHTML, @"<svg><a><rect fill=\"green\" width=\"10\" height=\"10\"></rect><animate attributeName=\"href\" dur=\"4s\" calcMode=\"spline\" repeatCount=\"indefinite\" keyTimes=\"0; 0.25; 0.5; 0.75; 1\" keySplines=\"0.5 0 0.5 1; 0.5 0 0.5 1; 0.5 0 0.5 1; 0.5 0 0.5 1\"></animate></a></svg>");
+}

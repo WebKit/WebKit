@@ -4141,6 +4141,9 @@ static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferen
 #if ENABLE(PDFJS)
     settings.setPdfJSViewerEnabled(true);
 #endif
+#if USE(SYSTEM_PREVIEW)
+    settings.setSystemPreviewEnabled(false);
+#endif
 
     settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInCaptivePortalModeKey()));
     settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInCaptivePortalModeKey()));
@@ -4255,6 +4258,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(WEB_AUTHN) && PLATFORM(IOS)
     if (isParentProcessAWebBrowser())
         settings.setWebAuthenticationEnabled(true);
+#endif
+    
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+    PlatformMediaSessionManager::setAlternateWebMPlayerEnabled(settings.alternateWebMPlayerEnabled());
 #endif
 
 #if ENABLE(WEBM_FORMAT_READER)
@@ -4969,7 +4976,7 @@ void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<St
     if (!iconData.empty()) {
         RetainPtr<CFDataRef> dataRef = adoptCF(CFDataCreate(nullptr, iconData.data(), iconData.size()));
         RetainPtr<CGDataProviderRef> imageProviderRef = adoptCF(CGDataProviderCreateWithCFData(dataRef.get()));
-        RetainPtr<CGImageRef> imageRef = adoptCF(CGImageCreateWithJPEGDataProvider(imageProviderRef.get(), nullptr, true, kCGRenderingIntentDefault));
+        RetainPtr<CGImageRef> imageRef = adoptCF(CGImageCreateWithPNGDataProvider(imageProviderRef.get(), nullptr, true, kCGRenderingIntentDefault));
         icon = Icon::createIconForImage(WTFMove(imageRef));
     }
 
@@ -5228,6 +5235,7 @@ void WebPage::mainFrameDidLayout()
             viewportConfigurationChanged();
     }
     findController().redraw();
+    foundTextRangeController().redraw();
 #endif
 }
 
@@ -5857,7 +5865,6 @@ void WebPage::runModal()
     Ref<WebPage> protector(*this);
 #endif
     RunLoop::run();
-    ASSERT(!m_isRunningModal);
 }
 
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
@@ -6193,19 +6200,19 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
     targetFrame->selection().setSelection(VisibleSelection(selectionRange));
     targetFrame->editor().deleteSelectionWithSmartDelete(false);
     targetFrame->editor().setIgnoreSelectionChanges(false);
-    sendEditorStateUpdate();
+    sendEditorStateUpdate([] { });
 }
 
 #endif
 
 void WebPage::didApplyStyle()
 {
-    sendEditorStateUpdate();
+    sendEditorStateUpdate([] { });
 }
 
 void WebPage::didChangeContents()
 {
-    sendEditorStateUpdate();
+    sendEditorStateUpdate([] { });
 }
 
 void WebPage::didScrollSelection()
@@ -6402,26 +6409,26 @@ void WebPage::focusedElementDidChangeInputMode(WebCore::Element& element, WebCor
 
 void WebPage::didUpdateComposition()
 {
-    sendEditorStateUpdate();
+    sendEditorStateUpdate([] { });
 }
 
 void WebPage::didEndUserTriggeredSelectionChanges()
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     if (!frame->editor().ignoreSelectionChanges())
-        sendEditorStateUpdate();
+        sendEditorStateUpdate([] { });
 }
 
 void WebPage::discardedComposition()
 {
     send(Messages::WebPageProxy::CompositionWasCanceled());
-    sendEditorStateUpdate();
+    sendEditorStateUpdate([] { });
 }
 
 void WebPage::canceledComposition()
 {
     send(Messages::WebPageProxy::CompositionWasCanceled());
-    sendEditorStateUpdate();
+    sendEditorStateUpdate([] { });
 }
 
 void WebPage::navigateServiceWorkerClient(ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(bool)>&& callback)
@@ -6818,11 +6825,13 @@ void WebPage::reportUsedFeatures()
     m_loaderClient->featuresUsedInPage(*this, namedFeatures);
 }
 
-void WebPage::sendEditorStateUpdate()
+void WebPage::sendEditorStateUpdate(CompletionHandler<void()>&& completionHandler)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
-    if (frame->editor().ignoreSelectionChanges() || !frame->document() || !frame->document()->hasLivingRenderTree())
+    if (frame->editor().ignoreSelectionChanges() || !frame->document() || !frame->document()->hasLivingRenderTree()) {
+        completionHandler();
         return;
+    }
 
     m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::NotScheduled;
 
@@ -6830,7 +6839,7 @@ void WebPage::sendEditorStateUpdate()
     // If that is the case, just send what we have (i.e. don't include post-layout data) and wait until the
     // next layer tree commit to compute and send the complete EditorState over.
     auto state = editorState();
-    send(Messages::WebPageProxy::EditorStateChanged(state));
+    sendWithAsyncReply(Messages::WebPageProxy::EditorStateChanged(state), WTFMove(completionHandler));
     if (state.isMissingPostLayoutData && !shouldAvoidComputingPostLayoutDataForEditorState())
         scheduleFullEditorStateUpdate();
 }
@@ -6912,7 +6921,7 @@ void WebPage::flushPendingEditorStateUpdate()
     if (frame->editor().ignoreSelectionChanges())
         return;
 
-    sendEditorStateUpdate();
+    sendEditorStateUpdate([] { });
 }
 
 void WebPage::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)

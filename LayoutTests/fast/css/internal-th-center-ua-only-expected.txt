@@ -1,0 +1,4 @@
+
+PASS "text-align" property does not support value "-internal-th-center".
+PASS "text-align" property cannot be set to "-internal-th-center" by the author stylesheet.
+

@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST)
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -376,6 +377,32 @@ TEST(iOSMouseSupport, MouseDidMoveOverElement)
 
     EXPECT_TRUE(mouseDidMoveOverElement);
     EXPECT_NOT_NULL(hitTestResult);
+}
+
+static bool selectionUpdated = false;
+static void handleUpdatedSelection(id, SEL)
+{
+    selectionUpdated = true;
+}
+
+TEST(iOSMouseSupport, SelectionUpdatesBeforeContextMenuAppears)
+{
+    InstanceMethodSwizzler swizzler { UIWKTextInteractionAssistant.class, @selector(selectionChanged), reinterpret_cast<IMP>(handleUpdatedSelection) };
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView objectByEvaluatingJavaScript:@"document.body.setAttribute('contenteditable','');"];
+
+    auto contentView = [webView wkContentView];
+    [webView _simulateSelectionStart];
+    __block bool done = false;
+    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointZero completionHandler:^(BOOL, RVItem *) {
+        EXPECT_TRUE(selectionUpdated);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)

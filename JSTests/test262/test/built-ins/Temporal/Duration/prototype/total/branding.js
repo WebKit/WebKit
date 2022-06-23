@@ -11,12 +11,14 @@ const total = Temporal.Duration.prototype.total;
 
 assert.sameValue(typeof total, "function");
 
-assert.throws(TypeError, () => total.call(undefined), "undefined");
-assert.throws(TypeError, () => total.call(null), "null");
-assert.throws(TypeError, () => total.call(true), "true");
-assert.throws(TypeError, () => total.call(""), "empty string");
-assert.throws(TypeError, () => total.call(Symbol()), "symbol");
-assert.throws(TypeError, () => total.call(1), "1");
-assert.throws(TypeError, () => total.call({}), "plain object");
-assert.throws(TypeError, () => total.call(Temporal.Duration), "Temporal.Duration");
-assert.throws(TypeError, () => total.call(Temporal.Duration.prototype), "Temporal.Duration.prototype");
+const args = ["hour"];
+
+assert.throws(TypeError, () => total.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => total.apply(null, args), "null");
+assert.throws(TypeError, () => total.apply(true, args), "true");
+assert.throws(TypeError, () => total.apply("", args), "empty string");
+assert.throws(TypeError, () => total.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => total.apply(1, args), "1");
+assert.throws(TypeError, () => total.apply({}, args), "plain object");
+assert.throws(TypeError, () => total.apply(Temporal.Duration, args), "Temporal.Duration");
+assert.throws(TypeError, () => total.apply(Temporal.Duration.prototype, args), "Temporal.Duration.prototype");

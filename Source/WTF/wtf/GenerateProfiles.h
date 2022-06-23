@@ -59,18 +59,19 @@ ALWAYS_INLINE void registerProfileGenerationCallback(const char* name)
             "`.");
         WTFLogAlways("<WEBKIT_LLVM_PROFILE> To sanity-check the output: `for f in ./profiles/*; do echo $f; xcrun -sdk macosx.internal llvm-profdata show $f; done;`.");
 
-        {
-            // Maybe we could use %t instead here, but this folder is permitted through the sandbox because of ANGLE.
-            FileSystem::PlatformFileHandle fileHandle;
-            auto filePath = FileSystem::openTemporaryFile(makeString(name, "-", getpid()), fileHandle, ".profraw"_s);
-            profileFileBase.get() = String::fromUTF8(filePath.utf8().data());
-            FileSystem::closeFile(fileHandle);
-        }
-
         WTFLogAlways("<WEBKIT_LLVM_PROFILE><%s><%d>: We will dump the resulting profile to %s.", name, pid, profileFileBase->utf8().data());
 
         int token;
         notify_register_dispatch("com.apple.WebKit.profiledata", &token, dispatch_get_main_queue(), ^(int) {
+            
+            {
+                // Maybe we could use %t instead here, but this folder is permitted through the sandbox because of ANGLE.
+                FileSystem::PlatformFileHandle fileHandle;
+                auto filePath = FileSystem::openTemporaryFile(makeString(name, "-", getpid()), fileHandle, ".profraw"_s);
+                profileFileBase.get() = String::fromUTF8(filePath.utf8().data());
+                FileSystem::closeFile(fileHandle);
+            }
+            
             profileFileName.get() = makeString(profileFileBase.get(), ".", profileCount++, ".profraw");
             __llvm_profile_set_filename(profileFileName->utf8().data()); // Must stay alive while it is used by llvm.
 

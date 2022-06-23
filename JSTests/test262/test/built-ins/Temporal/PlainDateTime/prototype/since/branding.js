@@ -11,12 +11,14 @@ const since = Temporal.PlainDateTime.prototype.since;
 
 assert.sameValue(typeof since, "function");
 
-assert.throws(TypeError, () => since.call(undefined), "undefined");
-assert.throws(TypeError, () => since.call(null), "null");
-assert.throws(TypeError, () => since.call(true), "true");
-assert.throws(TypeError, () => since.call(""), "empty string");
-assert.throws(TypeError, () => since.call(Symbol()), "symbol");
-assert.throws(TypeError, () => since.call(1), "1");
-assert.throws(TypeError, () => since.call({}), "plain object");
-assert.throws(TypeError, () => since.call(Temporal.PlainDateTime), "Temporal.PlainDateTime");
-assert.throws(TypeError, () => since.call(Temporal.PlainDateTime.prototype), "Temporal.PlainDateTime.prototype");
+const args = [new Temporal.PlainDateTime(2022, 6, 22)];
+
+assert.throws(TypeError, () => since.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => since.apply(null, args), "null");
+assert.throws(TypeError, () => since.apply(true, args), "true");
+assert.throws(TypeError, () => since.apply("", args), "empty string");
+assert.throws(TypeError, () => since.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => since.apply(1, args), "1");
+assert.throws(TypeError, () => since.apply({}, args), "plain object");
+assert.throws(TypeError, () => since.apply(Temporal.PlainDateTime, args), "Temporal.PlainDateTime");
+assert.throws(TypeError, () => since.apply(Temporal.PlainDateTime.prototype, args), "Temporal.PlainDateTime.prototype");

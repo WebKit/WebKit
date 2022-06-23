@@ -1481,4 +1481,20 @@ bool Quirks::shouldDisableWebSharePolicy() const
     return *m_shouldDisableWebSharePolicy;
 }
 
+#if PLATFORM(IOS)
+bool Quirks::allowLayeredFullscreenVideos() const
+{
+    if (!needsQuirks())
+        return false;
+    
+    if (!m_allowLayeredFullscreenVideos) {
+        auto domain = RegistrableDomain(m_document->topDocument().url());
+        
+        m_allowLayeredFullscreenVideos = domain == "espn.com"_s;
+    }
+    
+    return *m_allowLayeredFullscreenVideos;
+}
+#endif
+
 }

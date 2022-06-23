@@ -2,7 +2,7 @@
 // - src/identifier-names/default-escaped-ext.case
 // - src/identifier-names/default/arrow-fn-assignment-identifier.template
 /*---
-description: default is a valid identifier name, using extended escape (IdentiferReference in ObjectAssignmentPattern (Arrow Function) cannot be a ReservedWord)
+description: default is a valid identifier name, using extended escape (IdentifierReference in ObjectAssignmentPattern (Arrow Function) cannot be a ReservedWord)
 esid: prod-AssignmentPattern
 features: [arrow-function, destructuring-assignment]
 flags: [generated]

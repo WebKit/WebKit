@@ -1817,7 +1817,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
                 ArityCheckMode arityCheck = ArityCheckNotRequired;
                 if (auto* codeBlock = callCase.codeBlock()) {
                     ASSERT(!variant.executable()->isHostFunction());
-                    if ((callFrame->argumentCountIncludingThis() < static_cast<size_t>(callCase.codeBlock()->numParameters()) || callLinkInfo.isVarargs()))
+                    if ((callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.isVarargs()))
                         arityCheck = MustCheckArity;
 
                 }

@@ -32,25 +32,64 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "PlatformImageBuffer.h"
+#include <wtf/text/Base64.h>
+
+#if USE(CG)
+#include "ImageBufferUtilitiesCG.h"
+#endif
+#if USE(CAIRO)
+#include "ImageBufferUtilitiesCairo.h"
+#endif
 
 namespace WebCore {
 
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
+static RefPtr<ImageBuffer> copyImageBuffer(Ref<ImageBuffer> source, PreserveResolution preserveResolution)
+{
+    if (source->resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
+        if (source->hasOneRef())
+            return source;
+    }
+    auto copySize = source->logicalSize();
+    auto copyScale = preserveResolution == PreserveResolution::Yes ? source->resolutionScale() : 1.f;
+    auto copyBuffer = source->context().createImageBuffer(copySize, copyScale, source->colorSpace());
+    if (!copyBuffer)
+        return nullptr;
+    if (source->hasOneRef())
+        ImageBuffer::drawConsuming(WTFMove(source), copyBuffer->context(), FloatRect { { }, copySize }, FloatRect { 0, 0, -1, -1 }, CompositeOperator::Copy);
+    else
+        copyBuffer->context().drawImageBuffer(source, FloatPoint { }, CompositeOperator::Copy);
+    return copyBuffer;
+}
+
+static RefPtr<NativeImage> copyNativeImageImpl(Ref<ImageBuffer> source, BackingStoreCopy copyBehavior, PreserveResolution preserveResolution)
+{
+    if (source->resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes) {
+        if (source->hasOneRef())
+            return ImageBuffer::sinkIntoNativeImage(WTFMove(source));
+        return source->copyNativeImage(copyBehavior);
+    }
+    auto copyBuffer = copyImageBuffer(WTFMove(source), preserveResolution);
+    if (!copyBuffer)
+        return nullptr;
+    return ImageBuffer::sinkIntoNativeImage(WTFMove(copyBuffer));
+}
+
 RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options, const CreationContext& creationContext)
 {
     RefPtr<ImageBuffer> imageBuffer;
-    
+
     // Give UseDisplayList a higher precedence since it is a debug option.
     if (options.contains(ImageBufferOptions::UseDisplayList)) {
         if (options.contains(ImageBufferOptions::Accelerated))
             imageBuffer = DisplayListAcceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-        
+
         if (!imageBuffer)
             imageBuffer = DisplayListUnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
-    
+
     if (creationContext.hostWindow && !imageBuffer) {
         auto renderingMode = options.contains(ImageBufferOptions::Accelerated) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
         imageBuffer = creationContext.hostWindow->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
@@ -61,7 +100,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
 
     if (options.contains(ImageBufferOptions::Accelerated))
         imageBuffer = AcceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-    
+
     if (!imageBuffer)
         imageBuffer = UnacceleratedImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
 
@@ -131,16 +170,7 @@ RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)
 
 RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, PreserveResolution preserveResolution) const
 {
-    RefPtr<NativeImage> image;
-    if (resolutionScale() == 1 || preserveResolution == PreserveResolution::Yes)
-        image = copyNativeImage(copyBehavior);
-    else {
-        auto copyBuffer = context().createImageBuffer(logicalSize(), 1.f, colorSpace());
-        if (!copyBuffer)
-            return nullptr;
-        copyBuffer->context().drawImageBuffer(const_cast<ImageBuffer&>(*this), FloatPoint { }, CompositeOperator::Copy);
-        image = ImageBuffer::sinkIntoNativeImage(WTFMove(copyBuffer));
-    }
+    auto image = copyNativeImageImpl(const_cast<ImageBuffer&>(*this), copyBehavior, preserveResolution);
     if (!image)
         return nullptr;
     return BitmapImage::create(image.releaseNonNull());
@@ -169,6 +199,43 @@ RefPtr<Image> ImageBuffer::sinkIntoImage(RefPtr<ImageBuffer> source, PreserveRes
 void ImageBuffer::drawConsuming(RefPtr<ImageBuffer> imageBuffer, GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     imageBuffer->drawConsuming(context, destRect, srcRect, options);
+}
+
+String ImageBuffer::toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution) const
+{
+    return toDataURL(Ref { const_cast<ImageBuffer&>(*this) }, mimeType, quality, preserveResolution);
+}
+
+Vector<uint8_t> ImageBuffer::toData(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution) const
+{
+    return toData(Ref { const_cast<ImageBuffer&>(*this) }, mimeType, quality, preserveResolution);
+}
+
+String ImageBuffer::toDataURL(Ref<ImageBuffer> source, const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution)
+{
+    auto encodedData = toData(WTFMove(source), mimeType, quality, preserveResolution);
+    if (encodedData.isEmpty())
+        return "data:,"_s;
+    return makeString("data:", mimeType, ";base64,", base64Encoded(encodedData));
+}
+
+Vector<uint8_t> ImageBuffer::toData(Ref<ImageBuffer> source, const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution)
+{
+    RefPtr<NativeImage> image;
+    if (!platformMIMETypeIsJPEG(mimeType))
+        image = copyNativeImageImpl(WTFMove(source), DontCopyBackingStore, preserveResolution);
+    else {
+        // Composite this ImageBuffer on top of opaque black, because JPEG does not have an alpha channel.
+        auto copyBuffer = copyImageBuffer(WTFMove(source), preserveResolution);
+        if (!copyBuffer)
+            return { };
+        // We composite the copy on top of black by drawing black under the copy.
+        copyBuffer->context().fillRect({ { }, copyBuffer->logicalSize() }, Color::black, CompositeOperator::DestinationOver);
+        image = sinkIntoNativeImage(WTFMove(copyBuffer));
+    }
+    if (!image)
+        return { };
+    return data(image->platformImage().get(), mimeType, quality);
 }
 
 } // namespace WebCore

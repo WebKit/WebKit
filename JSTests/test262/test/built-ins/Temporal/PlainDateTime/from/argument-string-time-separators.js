@@ -8,22 +8,18 @@ features: [Temporal]
 includes: [temporalHelpers.js]
 ---*/
 
-const expected = [1976, 11, "M11", 18, 15, 23, 0, 0, 0, 0];
+const tests = [
+  ["1976-11-18T15:23", "uppercase T"],
+  ["1976-11-18t15:23", "lowercase T"],
+  ["1976-11-18 15:23", "space between date and time"],
+];
 
-TemporalHelpers.assertPlainDateTime(
-  Temporal.PlainDateTime.from("1976-11-18T15:23"),
-  ...expected,
-  "variant time separators (uppercase T)"
-);
+tests.forEach(([arg, description]) => {
+  const result = Temporal.PlainDateTime.from(arg);
 
-TemporalHelpers.assertPlainDateTime(
-  Temporal.PlainDateTime.from("1976-11-18t15:23"),
-  ...expected,
-  "variant time separators (lowercase T)"
-);
-
-TemporalHelpers.assertPlainDateTime(
-  Temporal.PlainDateTime.from("1976-11-18 15:23"),
-  ...expected,
-  "variant time separators (space between date and time)"
-);
+  TemporalHelpers.assertPlainDateTime(
+    result,
+    1976, 11, "M11", 18, 15, 23, 0, 0, 0, 0,
+    `variant time separators (${description})`
+  );
+});

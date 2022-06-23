@@ -111,7 +111,6 @@ const TestFeatures& TestOptions::defaults()
             { "ContactPickerAPIEnabled", false },
             { "CoreMathMLEnabled", false },
             { "GenericCueAPIEnabled", false },
-            { "IntersectionObserverEnabled", false },
             { "IsLoggedInAPIEnabled", false },
             { "LazyIframeLoadingEnabled", false },
             { "LazyImageLoadingEnabled", false },

@@ -77,10 +77,10 @@ GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         m_gpuProcessConnection->addClient(*this);
 
         static constexpr auto connectionBufferSize = 1 << 21;
-        auto [streamConnection, dedicatedConnectionClientIdentifer] = IPC::StreamClientConnection::createWithDedicatedConnection(*this, connectionBufferSize);
+        auto [streamConnection, dedicatedConnectionClientIdentifier] = IPC::StreamClientConnection::createWithDedicatedConnection(*this, connectionBufferSize);
         m_streamConnection = WTFMove(streamConnection);
         m_streamConnection->open();
-        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, dedicatedConnectionClientIdentifer, m_streamConnection->streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters, dedicatedConnectionClientIdentifier, m_streamConnection->streamBuffer()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     }
     return *m_gpuProcessConnection;
 }
@@ -207,20 +207,6 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
         return;
     m_getPixelBufferSharedMemory = nullptr;
     sendToStream(Messages::RemoteRenderingBackend::DestroyGetPixelBufferSharedMemory());
-}
-
-String RemoteRenderingBackendProxy::getDataURLForImageBuffer(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution, RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    String urlString;
-    sendSyncToStream(Messages::RemoteRenderingBackend::GetDataURLForImageBuffer(mimeType, quality, preserveResolution, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataURLForImageBuffer::Reply(urlString));
-    return urlString;
-}
-
-Vector<uint8_t> RemoteRenderingBackendProxy::getDataForImageBuffer(const String& mimeType, std::optional<double> quality, RenderingResourceIdentifier renderingResourceIdentifier)
-{
-    Vector<uint8_t> data;
-    sendSyncToStream(Messages::RemoteRenderingBackend::GetDataForImageBuffer(mimeType, quality, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataForImageBuffer::Reply(data));
-    return data;
 }
 
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
@@ -396,6 +382,8 @@ void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatile
 
 void RemoteRenderingBackendProxy::finalizeRenderingUpdate()
 {
+    if (!m_gpuProcessConnection)
+        return;
     sendToStream(Messages::RemoteRenderingBackend::FinalizeRenderingUpdate(m_renderingUpdateID));
     m_remoteResourceCacheProxy.finalizeRenderingUpdate();
     m_renderingUpdateID.increment();

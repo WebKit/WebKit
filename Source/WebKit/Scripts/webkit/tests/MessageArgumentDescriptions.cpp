@@ -417,7 +417,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
 #if PLATFORM(MAC)
     case MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection:
         return Vector<ArgumentDescription> {
-            { "connectionIdentifier", "IPC::MachPort", nullptr, false },
+            { "connectionIdentifier", "MachSendRight", nullptr, false },
             { "flags", "OptionSet<WebKit::SelectionFlags>", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_InterpretKeyEvent:
@@ -526,7 +526,7 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
 #if PLATFORM(MAC)
     case MessageName::TestWithoutAttributes_DidCreateWebProcessConnection:
         return Vector<ArgumentDescription> {
-            { "connectionIdentifier", "IPC::MachPort", nullptr, false },
+            { "connectionIdentifier", "MachSendRight", nullptr, false },
             { "flags", "OptionSet<WebKit::SelectionFlags>", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_InterpretKeyEvent:

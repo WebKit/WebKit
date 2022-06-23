@@ -37,7 +37,7 @@ public:
     void platformDestroy();
 
     virtual void loadURI(const char* uri);
-    virtual void loadHtml(const char* html, const char* baseURI);
+    virtual void loadHtml(const char* html, const char* baseURI, WebKitWebView* = nullptr);
     virtual void loadPlainText(const char* plainText);
     virtual void loadRequest(WebKitURIRequest*);
     virtual void loadBytes(GBytes*, const char* mimeType, const char* encoding, const char* baseURI);

@@ -3666,7 +3666,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
 void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation)
 {
-    ASSERT(property != CSSPropertyInvalid);
+    ASSERT(property != CSSPropertyInvalid && property != CSSPropertyCustom);
 
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
     if (wrapper) {
@@ -3684,6 +3684,15 @@ void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* clie
         wrapper->logBlend(from, to, destination, progress);
 #endif
     }
+}
+
+void CSSPropertyAnimation::blendCustomProperty(const AtomString& customProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress)
+{
+    const auto& source = progress < 0.5 ? from : to;
+    if (auto nonInheritedValue = source.nonInheritedCustomProperties().get(customProperty))
+        destination.setNonInheritedCustomPropertyValue(customProperty, CSSCustomPropertyValue::create(*nonInheritedValue));
+    else if (auto inheritedValue = source.inheritedCustomProperties().get(customProperty))
+        destination.setInheritedCustomPropertyValue(customProperty, CSSCustomPropertyValue::create(*inheritedValue));
 }
 
 bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID property)

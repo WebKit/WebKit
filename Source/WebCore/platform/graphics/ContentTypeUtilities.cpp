@@ -26,10 +26,10 @@
 #include "config.h"
 #include "ContentTypeUtilities.h"
 
-namespace WebCore {
-
 #include "FourCC.h"
 #include <wtf/Algorithms.h>
+
+namespace WebCore {
 
 bool contentTypeMeetsContainerAndCodecTypeRequirements(const ContentType& type, const std::optional<Vector<String>>& allowedMediaContainerTypes, const std::optional<Vector<String>>& allowedMediaCodecTypes)
 {

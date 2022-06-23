@@ -366,6 +366,12 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 #endif // __has_include(<AVFoundation/AVSampleBufferDisplayLayer.h>)
 
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+@interface AVSampleBufferDisplayLayer (Staging_94324932)
+- (nullable CVPixelBufferRef)copyDisplayedPixelBuffer;
+@end
+#endif
+
 #if __has_include(<AVFoundation/AVSampleBufferAudioRenderer.h>)
 #import <AVFoundation/AVSampleBufferAudioRenderer.h>
 NS_ASSUME_NONNULL_BEGIN

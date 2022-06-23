@@ -24,20 +24,19 @@ const tests = [
   [42n, "bigint"],
 
   // Step 4.
+  //   RejectObjectWithCalendarOrTimeZone step 2.
   [Temporal.PlainDate.from("2019-05-17"), "PlainDate"],
   [Temporal.PlainDateTime.from("2019-05-17T12:34"), "PlainDateTime"],
   [Temporal.PlainMonthDay.from("2019-05-17"), "PlainMonthDay"],
   [Temporal.PlainTime.from("12:34"), "PlainTime"],
   [Temporal.PlainYearMonth.from("2019-05-17"), "PlainYearMonth"],
   [Temporal.ZonedDateTime.from("2019-05-17T12:34Z[UTC]"), "ZonedDateTime"],
-
-  // Step 5-6.
+  //   RejectObjectWithCalendarOrTimeZone step 3-4.
   [{ year: 2021, calendar: "iso8601" }, "calendar"],
-
-  // Step 7-8.
+  //   RejectObjectWithCalendarOrTimeZone step 5-6.
   [{ year: 2021, timeZone: "UTC" }, "timeZone"],
 
-  // Step 11.
+  // Step 7.
   [{}, "empty object"],
   [{ months: 12 }, "only plural property"],
 

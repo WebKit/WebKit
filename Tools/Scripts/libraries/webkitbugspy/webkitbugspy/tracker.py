@@ -25,7 +25,7 @@ import re
 
 from .user import User
 
-from webkitcorepy import decorators
+from webkitcorepy import decorators, string_utils
 
 
 class Tracker(object):
@@ -57,9 +57,14 @@ class Tracker(object):
             )[data['type']](
                 url=data.get('url'),
                 res=[re.compile(r) for r in data.get('res', [])],
+                redact=data.get('redact'),
             )
         if data.get('type') == 'radar':
-            return radar.Tracker(project=data.get('project', None), projects=data.get('projects', []))
+            return radar.Tracker(
+                project=data.get('project', None),
+                projects=data.get('projects', []),
+                redact=data.get('redact'),
+            )
         raise TypeError("'{}' is not a recognized tracker type".format(data.get('type')))
 
 
@@ -76,8 +81,18 @@ class Tracker(object):
             return cls._trackers[0]
         return None
 
-    def __init__(self, users=None):
+    def __init__(self, users=None, redact=None):
         self.users = users or User.Mapping()
+        if redact is None:
+            self._redact = {re.compile('.*'): False}
+        elif isinstance(redact, dict):
+            self._redact = {}
+            for key, value in redact.items():
+                if not isinstance(key, string_utils.basestring):
+                    raise ValueError("'{}' is not a string, only strings allowed in redaction mapping".format(key))
+                self._redact[re.compile(key)] = bool(value)
+        else:
+            raise ValueError("Expected redaction mapping to be of type dict, got '{}'".format(type(redact)))
 
     @decorators.hybridmethod
     def from_string(context, string):

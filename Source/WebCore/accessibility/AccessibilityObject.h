@@ -497,6 +497,7 @@ public:
     void decrement() override { }
 
     virtual void updateRole() { }
+    bool childrenInitialized() const { return m_childrenInitialized; }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     virtual void addChildren() { }
     enum class DescendIfIgnored : uint8_t { No, Yes };
@@ -827,7 +828,6 @@ private:
 #endif
     
 protected: // FIXME: Make the data members private.
-    bool childrenInitialized() const { return m_childrenInitialized; }
     AccessibilityChildrenVector m_children;
     mutable bool m_childrenInitialized { false };
     AccessibilityRole m_role { AccessibilityRole::Unknown };

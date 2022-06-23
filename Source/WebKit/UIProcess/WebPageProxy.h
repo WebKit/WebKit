@@ -808,6 +808,8 @@ public:
     void activateMediaStreamCaptureInPage();
     bool isMediaStreamCaptureMuted() const { return m_mutedState.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted); }
     void setMediaStreamCaptureMuted(bool);
+    void isConnectedToHardwareConsoleDidChange();
+    bool isAllowedToChangeMuteState() const;
 
     void requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&&);
 
@@ -1733,7 +1735,7 @@ public:
 #if PLATFORM(COCOA)
     void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles);
 #endif
-    void editorStateChanged(const EditorState&);
+    void editorStateChanged(const EditorState&, CompletionHandler<void()>&&);
     bool updateEditorState(const EditorState& newEditorState);
     void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();
@@ -3055,6 +3057,8 @@ private:
     bool m_mayStartMediaWhenInWindow { true };
     bool m_mediaPlaybackIsSuspended { false };
     bool m_mediaCaptureEnabled { true };
+    bool m_isProcessingIsConnectedToHardwareConsoleDidChangeNotification { false };
+    bool m_captureWasMutedWhenHardwareConsoleDisconnected { false };
 
     bool m_waitingForDidUpdateActivityState { false };
 

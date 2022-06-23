@@ -27,13 +27,6 @@ const validItems = [
   { year: 2000, month: 5, day: 2 },
   "2000-05-02",
 ];
-const invalidOverflow = [
-  "",
-  "other string",
-  "balance",
-  "CONSTRAIN",
-  "constra\u0131n",
-];
 
 const badOverflows = ["", "CONSTRAIN", "balance", "other string", "constra\u0131n", "reject\0"];
 for (const item of validItems) {

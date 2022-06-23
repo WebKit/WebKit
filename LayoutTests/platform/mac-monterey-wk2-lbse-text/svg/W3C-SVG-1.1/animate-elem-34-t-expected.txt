@@ -2,6 +2,8 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
+layer at (500,100) size 200x200 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGContainer {g} at (-728,-12) size 351x49
 layer at (5,200) size 405x32
   RenderSVGText {text} at (5,200) size 406x32 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 406x32

@@ -48,8 +48,11 @@ static void initialize()
     loadLibraryOrExit("PosixWebKit");
     setenv_np("WebInspectorServerPort", "868", 1);
 
-    loadLibraryOrExit(PNG_LOAD_AT);
     loadLibraryOrExit(ICU_LOAD_AT);
+    loadLibraryOrExit(PNG_LOAD_AT);
+#if defined(WebP_LOAD_AT)
+    loadLibraryOrExit(WebP_LOAD_AT);
+#endif
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);

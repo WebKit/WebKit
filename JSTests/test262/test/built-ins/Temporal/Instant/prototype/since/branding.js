@@ -11,12 +11,14 @@ const since = Temporal.Instant.prototype.since;
 
 assert.sameValue(typeof since, "function");
 
-assert.throws(TypeError, () => since.call(undefined), "undefined");
-assert.throws(TypeError, () => since.call(null), "null");
-assert.throws(TypeError, () => since.call(true), "true");
-assert.throws(TypeError, () => since.call(""), "empty string");
-assert.throws(TypeError, () => since.call(Symbol()), "symbol");
-assert.throws(TypeError, () => since.call(1), "1");
-assert.throws(TypeError, () => since.call({}), "plain object");
-assert.throws(TypeError, () => since.call(Temporal.Instant), "Temporal.Instant");
-assert.throws(TypeError, () => since.call(Temporal.Instant.prototype), "Temporal.Instant.prototype");
+const args = [new Temporal.Instant(123456n)];
+
+assert.throws(TypeError, () => since.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => since.apply(null, args), "null");
+assert.throws(TypeError, () => since.apply(true, args), "true");
+assert.throws(TypeError, () => since.apply("", args), "empty string");
+assert.throws(TypeError, () => since.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => since.apply(1, args), "1");
+assert.throws(TypeError, () => since.apply({}, args), "plain object");
+assert.throws(TypeError, () => since.apply(Temporal.Instant, args), "Temporal.Instant");
+assert.throws(TypeError, () => since.apply(Temporal.Instant.prototype, args), "Temporal.Instant.prototype");

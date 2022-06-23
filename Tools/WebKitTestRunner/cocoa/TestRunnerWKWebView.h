@@ -25,6 +25,9 @@
 
 #import <WebKit/WebKit.h>
 
+@class UIEditMenuInteraction;
+@class UITextEffectsWindow;
+
 @interface WKWebView(SpellChecking)
 - (IBAction)toggleContinuousSpellChecking:(id)sender;
 @end
@@ -46,6 +49,7 @@
 @property (nonatomic, copy) void (^rotationDidEndCallback)(void);
 @property (nonatomic, copy) void (^windowTapRecognizedCallback)(void);
 @property (nonatomic, copy) NSString *accessibilitySpeakSelectionContent;
+@property (nonatomic, readonly) UITextEffectsWindow *textEffectsWindow;
 
 - (void)setAllowedMenuActions:(NSArray<NSString *> *)actions;
 
@@ -85,5 +89,11 @@
 - (void)resetInteractionCallbacks;
 - (void)_didLoadAppInitiatedRequest:(void (^)(BOOL result))completionHandler;
 - (void)_didLoadNonAppInitiatedRequest:(void (^)(BOOL result))completionHandler;
+
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+- (void)immediatelyDismissEditMenuInteractionIfNeeded;
+- (void)didPresentEditMenuInteraction:(UIEditMenuInteraction *)interaction;
+- (void)didDismissEditMenuInteraction:(UIEditMenuInteraction *)interaction;
+#endif
 
 @end

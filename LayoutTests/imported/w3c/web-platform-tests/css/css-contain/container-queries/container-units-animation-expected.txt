@@ -1,14 +1,14 @@
 
 PASS Animation using cqw unit
-FAIL Animation using cqw unit responds to changing container size assert_equals: expected "90px" but got "60px"
+PASS Animation using cqw unit responds to changing container size
 PASS Animation using cqh unit
-FAIL Animation using cqh unit responds to changing container size assert_equals: expected "90px" but got "60px"
+PASS Animation using cqh unit responds to changing container size
 PASS Animation using cqi unit
-FAIL Animation using cqi unit responds to changing container size assert_equals: expected "90px" but got "60px"
+PASS Animation using cqi unit responds to changing container size
 PASS Animation using cqb unit
-FAIL Animation using cqb unit responds to changing container size assert_equals: expected "90px" but got "60px"
+PASS Animation using cqb unit responds to changing container size
 PASS Animation using cqmin unit
-FAIL Animation using cqmin unit responds to changing container size assert_equals: expected "90px" but got "60px"
+PASS Animation using cqmin unit responds to changing container size
 PASS Animation using cqmax unit
-FAIL Animation using cqmax unit responds to changing container size assert_equals: expected "90px" but got "60px"
+PASS Animation using cqmax unit responds to changing container size
 

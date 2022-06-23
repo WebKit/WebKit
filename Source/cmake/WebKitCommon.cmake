@@ -180,7 +180,7 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
 
     # TODO Enforce version requirement for perl
     find_package(Perl 5.10.0 REQUIRED)
-    find_package(PerlModules COMPONENTS JSON::PP REQUIRED)
+    find_package(PerlModules COMPONENTS English FindBin JSON::PP REQUIRED)
 
     # This module looks preferably for version 3 of Python. If not found, version 2 is searched.
     find_package(Python COMPONENTS Interpreter REQUIRED)

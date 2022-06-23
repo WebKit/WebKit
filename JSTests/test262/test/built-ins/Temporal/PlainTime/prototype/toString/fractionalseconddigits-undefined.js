@@ -16,14 +16,11 @@ info: |
 features: [Temporal]
 ---*/
 
-const zeroSeconds = new Temporal.PlainTime(15, 23);
-const wholeSeconds = new Temporal.PlainTime(15, 23, 30);
-const subSeconds = new Temporal.PlainTime(15, 23, 30, 123, 400);
-
 const tests = [
-  [zeroSeconds, "15:23:00"],
-  [wholeSeconds, "15:23:30"],
-  [subSeconds, "15:23:30.1234"],
+  [new Temporal.PlainTime(5, 3, 1), "05:03:01"],
+  [new Temporal.PlainTime(15, 23), "15:23:00"],
+  [new Temporal.PlainTime(15, 23, 30), "15:23:30"],
+  [new Temporal.PlainTime(15, 23, 30, 123, 400), "15:23:30.1234"],
 ];
 
 for (const [time, expected] of tests) {

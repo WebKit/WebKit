@@ -49,8 +49,18 @@ void MemoryPressureHandler::platformReleaseMemory(Critical critical)
     }
 }
 
-static dispatch_source_t memoryPressureEventSource = nullptr;
-static dispatch_source_t timerEventSource = nullptr;
+static OSObjectPtr<dispatch_source_t>& memoryPressureEventSource()
+{
+    static NeverDestroyed<OSObjectPtr<dispatch_source_t>> source;
+    return source.get();
+}
+
+static OSObjectPtr<dispatch_source_t>& timerEventSource()
+{
+    static NeverDestroyed<OSObjectPtr<dispatch_source_t>> source;
+    return source.get();
+}
+
 static int notifyTokens[3];
 
 // Disable memory event reception for a minimum of s_minimumHoldOffTime
@@ -66,15 +76,15 @@ static constexpr unsigned s_holdOffMultiplier = 20;
 
 void MemoryPressureHandler::install()
 {
-    if (m_installed || timerEventSource)
+    if (m_installed || timerEventSource())
         return;
 
     dispatch_async(m_dispatchQueue.get(), ^{
         auto memoryStatusFlags = DISPATCH_MEMORYPRESSURE_NORMAL | DISPATCH_MEMORYPRESSURE_WARN | DISPATCH_MEMORYPRESSURE_CRITICAL | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_WARN | DISPATCH_MEMORYPRESSURE_PROC_LIMIT_CRITICAL;
-        memoryPressureEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, m_dispatchQueue.get());
+        memoryPressureEventSource() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, memoryStatusFlags, m_dispatchQueue.get()));
 
-        dispatch_source_set_event_handler(memoryPressureEventSource, ^{
-            auto status = dispatch_source_get_data(memoryPressureEventSource);
+        dispatch_source_set_event_handler(memoryPressureEventSource().get(), ^{
+            auto status = dispatch_source_get_data(memoryPressureEventSource().get());
             switch (status) {
             // VM pressure events.
             case DISPATCH_MEMORYPRESSURE_NORMAL:
@@ -101,7 +111,7 @@ void MemoryPressureHandler::install()
             if (m_shouldLogMemoryMemoryPressureEvents)
                 RELEASE_LOG(MemoryPressure, "Received memory pressure event %lu vm pressure %d", status, isUnderMemoryPressure());
         });
-        dispatch_resume(memoryPressureEventSource);
+        dispatch_resume(memoryPressureEventSource().get());
     });
 
     // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
@@ -140,14 +150,14 @@ void MemoryPressureHandler::uninstall()
         return;
 
     dispatch_async(m_dispatchQueue.get(), ^{
-        if (memoryPressureEventSource) {
-            dispatch_source_cancel(memoryPressureEventSource);
-            memoryPressureEventSource = nullptr;
+        if (memoryPressureEventSource()) {
+            dispatch_source_cancel(memoryPressureEventSource().get());
+            memoryPressureEventSource() = nullptr;
         }
 
-        if (timerEventSource) {
-            dispatch_source_cancel(timerEventSource);
-            timerEventSource = nullptr;
+        if (timerEventSource()) {
+            dispatch_source_cancel(timerEventSource().get());
+            timerEventSource() = nullptr;
         }
     });
 
@@ -160,20 +170,20 @@ void MemoryPressureHandler::uninstall()
 void MemoryPressureHandler::holdOff(Seconds seconds)
 {
     dispatch_async(m_dispatchQueue.get(), ^{
-        timerEventSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_dispatchQueue.get());
-        if (timerEventSource) {
-            dispatch_set_context(timerEventSource, this);
+        timerEventSource() = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_dispatchQueue.get()));
+        if (timerEventSource()) {
+            dispatch_set_context(timerEventSource().get(), this);
             // FIXME: The final argument `s_minimumHoldOffTime.seconds()` seems wrong.
             // https://bugs.webkit.org/show_bug.cgi?id=183277
-            dispatch_source_set_timer(timerEventSource, dispatch_time(DISPATCH_TIME_NOW, seconds.seconds() * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, s_minimumHoldOffTime.seconds());
-            dispatch_source_set_event_handler(timerEventSource, ^{
-                if (timerEventSource) {
-                    dispatch_source_cancel(timerEventSource);
-                    timerEventSource = nullptr;
+            dispatch_source_set_timer(timerEventSource().get(), dispatch_time(DISPATCH_TIME_NOW, seconds.seconds() * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, s_minimumHoldOffTime.seconds());
+            dispatch_source_set_event_handler(timerEventSource().get(), ^{
+                if (timerEventSource().get()) {
+                    dispatch_source_cancel(timerEventSource().get());
+                    timerEventSource() = nullptr;
                 }
                 MemoryPressureHandler::singleton().install();
             });
-            dispatch_resume(timerEventSource);
+            dispatch_resume(timerEventSource().get());
         }
     });
 }

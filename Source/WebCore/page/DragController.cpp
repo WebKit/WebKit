@@ -787,13 +787,17 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
     if (auto attachment = enclosingAttachmentElement(*startElement)) {
         auto& selection = sourceFrame->selection().selection();
         bool isSingleAttachmentSelection = selection.start() == Position(attachment.get(), Position::PositionIsBeforeAnchor) && selection.end() == Position(attachment.get(), Position::PositionIsAfterAnchor);
+        auto* renderer = attachment->renderer();
+        if (!renderer || renderer->style().userDrag() == UserDrag::None)
+            return nullptr;
+
         auto selectedRange = selection.firstRange();
         if (isSingleAttachmentSelection || !selectedRange || !contains<ComposedTree>(*selectedRange, *attachment)) {
             state.type = DragSourceAction::Attachment;
             return attachment.get();
         }
     }
-#endif
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
     auto selectionDragElement = state.type.contains(DragSourceAction::Selection) && m_dragSourceAction.contains(DragSourceAction::Selection) ? startElement : nullptr;
     if (ImageOverlay::isOverlayText(startElement))

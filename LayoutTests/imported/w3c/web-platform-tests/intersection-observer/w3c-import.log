@@ -33,6 +33,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/inline-client-rect.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/inline-with-block-child-client-rect.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/intersection-ratio-ib-split.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/intersection-ratio-with-fractional-bounds-2.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/intersection-ratio-with-fractional-bounds.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/isIntersecting-change-events.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/isIntersecting-threshold.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/multiple-targets.html

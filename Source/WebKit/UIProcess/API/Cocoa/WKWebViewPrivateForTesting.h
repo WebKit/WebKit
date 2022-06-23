@@ -121,6 +121,8 @@ struct WKAppPrivacyReportTestingData {
 
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
+- (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {

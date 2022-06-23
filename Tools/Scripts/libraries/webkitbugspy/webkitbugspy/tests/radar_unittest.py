@@ -337,3 +337,30 @@ What version of 'WebKit Text' should the bug be associated with?:
         with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES):
             issue = radar.Tracker().issue(1)
             self.assertEqual(issue.labels, [])
+
+    def test_redaction(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            self.assertEqual(radar.Tracker(
+                project='WebKit',
+                redact=None,
+            ).issue(1).redacted, False)
+
+            self.assertEqual(radar.Tracker(
+                project='WebKit',
+                redact={'.*': True},
+            ).issue(1).redacted, True)
+
+            self.assertEqual(radar.Tracker(
+                project='WebKit',
+                redact={'project:WebKit': True},
+            ).issue(1).redacted, True)
+
+            self.assertEqual(radar.Tracker(
+                project='WebKit',
+                redact={'component:Text': True},
+            ).issue(1).redacted, True)
+
+            self.assertEqual(radar.Tracker(
+                project='WebKit',
+                redact={'version:Other': True},
+            ).issue(1).redacted, True)

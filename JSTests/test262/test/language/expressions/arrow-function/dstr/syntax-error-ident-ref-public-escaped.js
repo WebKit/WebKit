@@ -2,7 +2,7 @@
 // - src/identifier-names/public-escaped.case
 // - src/identifier-names/future-reserved-words/arrow-fn-assignment-identifier.template
 /*---
-description: public is a valid identifier name, using escape (IdentiferReference in ObjectAssignmentPattern (Arrow Function) cannot be a ReservedWord)
+description: public is a valid identifier name, using escape (IdentifierReference in ObjectAssignmentPattern (Arrow Function) cannot be a ReservedWord)
 esid: prod-AssignmentPattern
 features: [arrow-function, destructuring-assignment]
 flags: [generated, onlyStrict]

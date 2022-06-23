@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script>
+            if (window.internals)
+                internals.settings.setInvisibleAutoplayNotPermitted(true);
+        </script>
+    </head>
+    <body>
+        <video id="localVideo1" controls autoplay></video>
+        <video id="localVideo2" controls autoplay></video>
+
+        <script>
+async function waitForPlay(video)
+{
+     if (!video.paused)
+          return;
+     return new Promise(resolve => { video.onplay = resolve; });
+}
+
+async function waitForPause(video)
+{
+     if (video.paused)
+          return;
+     return new Promise(resolve => { video.onpause = resolve; });
+}
+
+promise_test(async () => {
+     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+     localVideo1.srcObject = stream;
+     localVideo2.srcObject = stream;
+
+     await Promise.all([waitForPlay(localVideo1), waitForPlay(localVideo2)]);
+
+     localVideo1.style.display = "none";
+     localVideo2.style.display = "none";
+
+     await Promise.all([waitForPause(localVideo1), waitForPause(localVideo2)]);
+
+     if (!window.internals)
+         return;
+     internals.withUserGesture(() => {
+         localVideo2.srcObject = stream;
+     });
+
+     localVideo1.style.removeProperty("display");
+     localVideo2.style.removeProperty("display");
+
+     await Promise.all([waitForPlay(localVideo1), waitForPlay(localVideo2)]);
+}, "Removing behavior restrictions should not disallow invisible uninterruption");
+        </script>
+   </body>
+</html>

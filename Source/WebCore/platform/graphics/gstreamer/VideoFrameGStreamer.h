@@ -33,6 +33,12 @@ class PixelBuffer;
 
 class VideoFrameGStreamer final : public VideoFrame {
 public:
+
+    enum class CanvasContentType {
+        WebGL,
+        Canvas2D
+    };
+
     static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt)
     {
         return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), presentationSize, presentationTime, videoRotation, videoMirrored, WTFMove(metadata)));
@@ -43,7 +49,7 @@ public:
         return adoptRef(*new VideoFrameGStreamer(sample, presentationTime, videoRotation));
     }
 
-    static Ref<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
+    static Ref<VideoFrameGStreamer> createFromPixelBuffer(Ref<PixelBuffer>&&, CanvasContentType canvasContentType, Rotation videoRotation, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
 
     GstSample* sample() const { return m_sample.get(); }
     RefPtr<JSC::Uint8ClampedArray> computeRGBAImageData() const;

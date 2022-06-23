@@ -43,7 +43,6 @@ namespace WebCore {
     macro(textureColorSpaceMatrix) \
     macro(opacity) \
     macro(color) \
-    macro(expandedQuadEdgesInScreenSpace) \
     macro(yuvToRgb) \
     macro(filterAmount) \
     macro(gaussianKernel) \
@@ -83,7 +82,6 @@ class TextureMapperShaderProgram : public RefCounted<TextureMapperShaderProgram>
 public:
     enum Option {
         TextureRGB       = 1L << 0,
-        Rect             = 1L << 1,
         SolidColor       = 1L << 2,
         Opacity          = 1L << 3,
         Antialiasing     = 1L << 5,
@@ -148,7 +146,6 @@ template<> struct EnumTraits<WebCore::TextureMapperShaderProgram::Option> {
     using values = EnumValues<
         WebCore::TextureMapperShaderProgram::Option,
         WebCore::TextureMapperShaderProgram::TextureRGB,
-        WebCore::TextureMapperShaderProgram::Rect,
         WebCore::TextureMapperShaderProgram::SolidColor,
         WebCore::TextureMapperShaderProgram::Opacity,
         WebCore::TextureMapperShaderProgram::Antialiasing,

@@ -139,6 +139,11 @@ inline bool JSFunction::canAssumeNameAndLengthAreOriginal(VM&)
     return true;
 }
 
+inline bool JSFunction::mayHaveNonReifiedPrototype()
+{
+    return !isHostOrBuiltinFunction() && jsExecutable()->hasPrototypeProperty();
+}
+
 inline bool JSFunction::canUseAllocationProfile()
 {
     if (isHostOrBuiltinFunction()) {

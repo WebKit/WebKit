@@ -40,6 +40,7 @@ protected:
 
 private:
     GRefPtr<GstElement> m_videoConvert;
+    GRefPtr<GstElement> m_videoFlip;
 };
 
 } // namespace WebCore

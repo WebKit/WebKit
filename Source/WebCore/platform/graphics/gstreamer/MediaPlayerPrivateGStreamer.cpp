@@ -3741,8 +3741,11 @@ void MediaPlayerPrivateGStreamer::updateTextureMapperFlags()
     case ImageOrientation::OriginLeftBottom:
         m_textureMapperFlags = TextureMapperGL::ShouldRotateTexture270;
         break;
+    case ImageOrientation::OriginBottomLeft:
+        m_textureMapperFlags = TextureMapperGL::ShouldFlipTexture;
+        break;
     default:
-        // FIXME: Handle OriginTopRight, OriginBottomLeft, OriginLeftTop and OriginRightBottom?
+        // FIXME: Handle OriginTopRight, OriginLeftTop and OriginRightBottom.
         m_textureMapperFlags = 0;
         break;
     }

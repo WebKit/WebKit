@@ -1606,19 +1606,11 @@ webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesuppo
 webkit.org/b/235681 [ BigSur Release ]  imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
 webkit.org/b/235681 [ BigSur Release ]  imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass Failure ]
 
-# webkit.org/b/234410 Multiple semantics web-platform-tests have become flaky after r286944
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.tentative.html [ DumpJSConsoleLogInStdErr Pass Failure ]
-imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Pass Failure ]
-http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Pass Failure ]
-
 # rdar://86037417 WindowServer returned not alive with context:,unresponsive work processor(s)
 [ Monterey+ ] http/tests/model/model-document.html [ Skip ]
 [ Monterey+ ] http/tests/model/model-document-interactive.html [ Skip ]
 [ Monterey+ ] accessibility/model-element-attributes.html [ Skip ]
 [ Monterey+ ] model-element/model-element-interactive.html [ Skip ]
-
-webkit.org/b/237095 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Pass Failure ]
 
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
 
@@ -1629,8 +1621,6 @@ webkit.org/b/238880 [ Monterey+ Release ] imported/w3c/web-platform-tests/css/cs
 webkit.org/b/239095 http/wpt/cache-storage/cache-storage-networkprocess-crash.html [ Pass Crash ]
 
 webkit.org/b/239308 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
-
-webkit.org/b/239257 fast/forms/datetimelocal/datetimelocal-editable-components/datetimelocal-choose-value-from-picker.html [ Pass Failure ]
 
 webkit.org/b/239304 http/tests/cache-storage/cache-origins.https.html [ Pass Failure ]
 
@@ -1719,3 +1709,14 @@ webkit.org/b/241191 [ Monterey Debug ] webgl/1.0.3/conformance/attribs/gl-vertex
 webkit.org/b/241265 [ Debug ] imported/w3c/web-platform-tests/html/rendering/replaced-elements/svg-embedded-sizing/svg-in-object-percentage.html [ Pass Crash ]
 
 webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-iframe.html [ Pass Failure ]
+
+# NOTIFICATION_EVENT is Ventura+
+[ Ventura+ ] http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/shownotification-allowed.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
+[ Ventura+ ] http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.serviceworker.html [ Pass ]
+[ Ventura+ ] imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/getnotifications-stop.html [ Pass ]
+[ Ventura+ ] http/tests/workers/service/getnotifications.html [ Pass ]

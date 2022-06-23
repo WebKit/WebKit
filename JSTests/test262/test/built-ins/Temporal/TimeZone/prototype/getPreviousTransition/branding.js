@@ -11,12 +11,14 @@ const getPreviousTransition = Temporal.TimeZone.prototype.getPreviousTransition;
 
 assert.sameValue(typeof getPreviousTransition, "function");
 
-assert.throws(TypeError, () => getPreviousTransition.call(undefined), "undefined");
-assert.throws(TypeError, () => getPreviousTransition.call(null), "null");
-assert.throws(TypeError, () => getPreviousTransition.call(true), "true");
-assert.throws(TypeError, () => getPreviousTransition.call(""), "empty string");
-assert.throws(TypeError, () => getPreviousTransition.call(Symbol()), "symbol");
-assert.throws(TypeError, () => getPreviousTransition.call(1), "1");
-assert.throws(TypeError, () => getPreviousTransition.call({}), "plain object");
-assert.throws(TypeError, () => getPreviousTransition.call(Temporal.TimeZone), "Temporal.TimeZone");
-assert.throws(TypeError, () => getPreviousTransition.call(Temporal.TimeZone.prototype), "Temporal.TimeZone.prototype");
+const args = [new Temporal.Instant(0n)];
+
+assert.throws(TypeError, () => getPreviousTransition.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => getPreviousTransition.apply(null, args), "null");
+assert.throws(TypeError, () => getPreviousTransition.apply(true, args), "true");
+assert.throws(TypeError, () => getPreviousTransition.apply("", args), "empty string");
+assert.throws(TypeError, () => getPreviousTransition.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => getPreviousTransition.apply(1, args), "1");
+assert.throws(TypeError, () => getPreviousTransition.apply({}, args), "plain object");
+assert.throws(TypeError, () => getPreviousTransition.apply(Temporal.TimeZone, args), "Temporal.TimeZone");
+assert.throws(TypeError, () => getPreviousTransition.apply(Temporal.TimeZone.prototype, args), "Temporal.TimeZone.prototype");

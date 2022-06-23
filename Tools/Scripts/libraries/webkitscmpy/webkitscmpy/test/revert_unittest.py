@@ -198,7 +198,7 @@ index 05e8751..0bf3c85 100644
                 '    Found 1 commit...',
                 'Running pre-PR checks...',
                 'No pre-PR checks to run',
-                "Checking PR labels for 'merging-blocked'...",
+                'Checking PR labels for active labels...',
                 "Pushing 'eng/pr-branch' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'..."

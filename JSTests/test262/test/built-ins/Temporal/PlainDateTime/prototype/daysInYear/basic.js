@@ -7,6 +7,7 @@ description: Checking days in year for a "normal" case (non-undefined, non-bound
 features: [Temporal]
 ---*/
 
-const calendar = Temporal.Calendar.from("iso8601");
-const datetime = new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30, 123, 456, 789, calendar);
-assert.sameValue(datetime.daysInYear, 366, "check days in year information");
+assert.sameValue((new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30, 123, 456, 789)).daysInYear,
+  366, "leap year");
+assert.sameValue((new Temporal.PlainDateTime(1977, 11, 18, 15, 23, 30, 123, 456, 789)).daysInYear,
+  365, "non-leap year");
