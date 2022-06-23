@@ -831,6 +831,12 @@ public:
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
 
+    bool isWatchingStructureCacheClearedWatchpoint(JSGlobalObject* globalObject)
+    {
+        InlineWatchpointSet& set = globalObject->vm().m_structureCacheClearedWatchpoint;
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+    }
+
     Profiler::Compilation* compilation() { return m_plan.compilation(); }
 
     DesiredIdentifiers& identifiers() { return m_plan.identifiers(); }

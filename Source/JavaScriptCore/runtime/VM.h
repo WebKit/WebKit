@@ -670,6 +670,7 @@ public:
     void clearSourceProviderCaches();
 
     StructureCache structureCache;
+    InlineWatchpointSet m_structureCacheClearedWatchpoint;
 
     typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache>> SourceProviderCacheMap;
     SourceProviderCacheMap sourceProviderCacheMap;
