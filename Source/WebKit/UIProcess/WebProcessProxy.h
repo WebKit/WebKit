@@ -438,6 +438,12 @@ public:
     SandboxExtension::Handle fontdMachExtensionHandle(SandboxExtension::MachBootstrapOptions) const;
 #endif
 
+    bool isConnectedToHardwareConsole() const { return m_isConnectedToHardwareConsole; }
+
+#if PLATFORM(MAC)
+    void hardwareConsoleStateChanged();
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, CaptivePortalMode);
 
@@ -675,6 +681,7 @@ private:
     std::unique_ptr<SpeechRecognitionRemoteRealtimeMediaSourceManager> m_speechRecognitionRemoteRealtimeMediaSourceManager;
 #endif
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
+    bool m_isConnectedToHardwareConsole { true };
 };
 
 } // namespace WebKit

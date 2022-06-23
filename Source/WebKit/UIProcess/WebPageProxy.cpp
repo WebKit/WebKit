@@ -2253,6 +2253,9 @@ void WebPageProxy::dispatchActivityStateChange()
             m_process->pageIsBecomingInvisible(m_webPageID);
     }
 
+    if (m_potentiallyChangedActivityStateFlags & ActivityState::IsConnectedToHardwareConsole)
+        isConnectedToHardwareConsoleDidChange();
+
     bool isNowInWindow = (changed & ActivityState::IsInWindow) && isInWindow();
     // We always want to wait for the Web process to reply if we've been in-window before and are coming back in-window.
     if (m_viewWasEverInWindow && isNowInWindow) {
@@ -2636,6 +2639,26 @@ void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
     else
         state.remove(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
     setMuted(state);
+}
+
+void WebPageProxy::isConnectedToHardwareConsoleDidChange()
+{
+    SetForScope<bool> isProcessing(m_isProcessingIsConnectedToHardwareConsoleDidChangeNotification, true);
+    if (m_process->isConnectedToHardwareConsole()) {
+        if (!m_captureWasMutedWhenHardwareConsoleDisconnected)
+            setMediaStreamCaptureMuted(false);
+
+        m_captureWasMutedWhenHardwareConsoleDisconnected = false;
+        return;
+    }
+
+    m_captureWasMutedWhenHardwareConsoleDisconnected = m_mutedState.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+    setMediaStreamCaptureMuted(true);
+}
+
+bool WebPageProxy::isAllowedToChangeMuteState() const
+{
+    return m_isProcessingIsConnectedToHardwareConsoleDidChangeNotification || m_process->isConnectedToHardwareConsole();
 }
 
 void WebPageProxy::activateMediaStreamCaptureInPage()
@@ -6461,6 +6484,9 @@ void WebPageProxy::setMediaVolume(float volume)
 
 void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, CompletionHandler<void()>&& completionHandler)
 {
+    if (!isAllowedToChangeMuteState())
+        state.add(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+
     m_mutedState = state;
 
     if (!hasRunningProcess())

@@ -58,11 +58,12 @@
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-#include <WebCore/CaptionUserPreferencesMediaAF.h>
+#import <WebCore/CaptionUserPreferencesMediaAF.h>
 #endif
 
 #if PLATFORM(MAC)
-#include "TCCSoftLink.h"
+#import "WindowServerConnection.h"
+#import "TCCSoftLink.h"
 #endif
 
 namespace WebKit {
@@ -265,6 +266,13 @@ void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHand
     auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibility(), auditToken, nullptr);
     completionHandler(authenticated);
 }
+
+void WebProcessProxy::hardwareConsoleStateChanged()
+{
+    m_isConnectedToHardwareConsole = WindowServerConnection::singleton().hardwareConsoleState() == WindowServerConnection::HardwareConsoleState::Connected;
+    for (const auto& page : m_pageMap.values())
+        page->activityStateDidChange(ActivityState::IsConnectedToHardwareConsole);
+}
 #endif
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
@@ -329,4 +337,6 @@ SandboxExtension::Handle WebProcessProxy::fontdMachExtensionHandle(SandboxExtens
     return SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, auditToken(), machBootstrapOptions).value_or(SandboxExtension::Handle { });
 }
 
+
 }
+
