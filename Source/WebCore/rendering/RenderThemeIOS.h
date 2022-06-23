@@ -162,6 +162,7 @@ private:
     Color platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
     Color platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const override;
     Color platformFocusRingColor(OptionSet<StyleColorOptions>) const final;
+    float platformFocusRingWidth() const final { return 3; }
 
     Color platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const final;
 
