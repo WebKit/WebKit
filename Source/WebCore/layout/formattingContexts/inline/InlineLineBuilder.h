@@ -50,14 +50,6 @@ public:
         size_t start { 0 };
         size_t end { 0 };
     };
-    struct PreviousLine {
-        InlineItemRange range;
-        struct OverflowContent {
-            size_t partialContentLength { 0 };
-            std::optional<InlineLayoutUnit> width { };
-        };
-        std::optional<OverflowContent> overflowContent { };
-    };
     using FloatList = Vector<const Box*>;
     struct LineContent {
         InlineItemRange inlineItemRange;
@@ -76,14 +68,14 @@ public:
         Vector<int32_t> visualOrderList;
         const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const InlineItemRange&, const InlineRect& lineLogicalRect, const std::optional<PreviousLine>&);
+    LineContent layoutInlineContent(const InlineItemRange&, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth, const InlineRect& initialLineLogicalRect, bool isFirstLine);
 
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
         InlineLayoutUnit logicalWidth { 0 };
         const FloatList& floats;
     };
-    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
+    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, bool isFirstLine);
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
@@ -107,7 +99,7 @@ private:
     size_t rebuildLine(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
-    void initialize(const UsedConstraints&, size_t leadingInlineTextItemIndex, const std::optional<PreviousLine>&);
+    void initialize(const UsedConstraints&, bool isFirstLine, size_t leadingInlineTextItemIndex, size_t partialLeadingContentLength, std::optional<InlineLayoutUnit> overflowingLogicalWidth);
     struct CommittedContent {
         size_t inlineItemCount { 0 };
         size_t partialTrailingContentLength { 0 };

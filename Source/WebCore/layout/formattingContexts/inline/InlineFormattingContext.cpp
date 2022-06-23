@@ -203,24 +203,35 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     auto& formattingState = this->formattingState();
     formattingState.boxes().reserveInitialCapacity(formattingState.inlineItems().size());
     InlineLayoutUnit lineLogicalTop = constraints.logicalTop();
-    auto previousLine = std::optional<LineBuilder::PreviousLine> { };
+    struct PreviousLine {
+        LineBuilder::InlineItemRange range;
+        size_t overflowContentLength { 0 };
+        std::optional<InlineLayoutUnit> overflowLogicalWidth;
+    };
+    std::optional<PreviousLine> previousLine;
     auto& floatingState = formattingState.floatingState();
     auto floatingContext = FloatingContext { *this, floatingState };
+    auto isFirstLine = formattingState.lines().isEmpty();
 
     auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal(), inlineItems };
     while (!needsLayoutRange.isEmpty()) {
+        // Turn previous line's overflow content length into the next line's leading content partial length.
+        // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
+        auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : 0;
+        auto leadingLogicalWidth = previousLine ? previousLine->overflowLogicalWidth : std::nullopt;
         auto initialLineHeight = [&]() -> InlineLayoutUnit {
             if (layoutState().inStandardsMode())
                 return root().style().computedLineHeight();
             return formattingQuirks().initialLineHeight();
         }();
         auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, initialLineHeight };
-        auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, initialLineConstraints, previousLine);
+        auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, leadingLogicalWidth, initialLineConstraints, isFirstLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent);
 
         auto lineContentRange = lineContent.inlineItemRange;
         if (!lineContentRange.isEmpty()) {
             ASSERT(needsLayoutRange.start < lineContentRange.end);
+            isFirstLine = false;
             lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect.bottom(), floatingContext);
             if (lineContent.isLastLineWithInlineContent) {
                 // The final content height of this inline formatting context should include the cleared floats as well.
@@ -231,7 +242,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
             if (lastInlineItemNeedsPartialLayout) {
                 auto lineLayoutHasAdvanced = !previousLine
                     || lineContentRange.end > previousLine->range.end
-                    || (previousLine->overflowContent && previousLine->overflowContent->partialContentLength > lineContent.partialTrailingContentLength);
+                    || (previousLine->overflowContentLength && previousLine->overflowContentLength > lineContent.partialTrailingContentLength);
                 if (!lineLayoutHasAdvanced) {
                     ASSERT_NOT_REACHED();
                     // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
@@ -240,12 +251,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
                 }
             }
             needsLayoutRange.start = lastInlineItemNeedsPartialLayout ? lineContentRange.end - 1 : lineContentRange.end;
-            auto overflowContent = std::optional<LineBuilder::PreviousLine::OverflowContent> { };
-            if (lineContent.partialTrailingContentLength)
-                overflowContent = { lineContent.partialTrailingContentLength, lineContent.overflowLogicalWidth };
-            else if (lineContent.overflowLogicalWidth)
-                overflowContent = { { }, *lineContent.overflowLogicalWidth };
-            previousLine = LineBuilder::PreviousLine { lineContentRange, overflowContent };
+            previousLine = PreviousLine { lineContentRange, lineContent.partialTrailingContentLength, lineContent.overflowLogicalWidth };
             continue;
         }
         // Floats prevented us placing any content on the line.
@@ -434,12 +440,12 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
     auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
     auto maximumLineWidth = InlineLayoutUnit { };
     auto maximumFloatWidth = LayoutUnit { };
-    auto previousLine = std::optional<LineBuilder::PreviousLine> { };
+    auto isFirstLine = true;
     while (!layoutRange.isEmpty()) {
-        auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, previousLine);
+        auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, isFirstLine);
         layoutRange.start = intrinsicContent.inlineItemRange.end;
         maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.logicalWidth);
-        previousLine = LineBuilder::PreviousLine { };
+        isFirstLine = false;
         // FIXME: Add support for clear.
         for (auto* floatBox : intrinsicContent.floats)
             maximumFloatWidth += geometryForBox(*floatBox).marginBoxWidth();
