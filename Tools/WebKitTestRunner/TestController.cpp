@@ -1116,6 +1116,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setBlockAllPlugins(false);
     setPluginSupportedMode({ });
 
+    m_shouldLogDownloadSize = false;
     m_shouldLogDownloadCallbacks = false;
     m_shouldLogHistoryClientCallbacks = false;
     m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
