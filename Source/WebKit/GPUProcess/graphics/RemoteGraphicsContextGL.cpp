@@ -348,7 +348,7 @@ void RemoteGraphicsContextGL::multiDrawElementsANGLE(uint32_t mode, IPC::ArrayRe
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
     const Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 0>(countsAndOffsets);
     // Currently offsets are copied in the m_context.
-    const GCGLint* offsets = reinterpret_cast<const GCGLint*>(countsAndOffsets.data<1>());
+    const GCGLsizei* offsets = reinterpret_cast<const GCGLsizei*>(countsAndOffsets.data<1>());
     m_context->multiDrawElementsANGLE(mode, GCGLSpanTuple { counts.data(), offsets, counts.size() }, type);
 }
 
@@ -358,7 +358,7 @@ void RemoteGraphicsContextGL::multiDrawElementsInstancedANGLE(uint32_t mode, IPC
     // Copy the arrays. The contents are to be verified. The data might be in memory region shared by the caller.
     const Vector<GCGLsizei> counts = vectorCopyCast<GCGLsizei, 0>(countsOffsetsAndInstanceCounts);
     // Currently offsets are copied in the m_context.
-    const GCGLint* offsets = reinterpret_cast<const GCGLint*>(countsOffsetsAndInstanceCounts.data<1>());
+    const GCGLsizei* offsets = reinterpret_cast<const GCGLsizei*>(countsOffsetsAndInstanceCounts.data<1>());
     const Vector<GCGLsizei> instanceCounts = vectorCopyCast<GCGLsizei, 2>(countsOffsetsAndInstanceCounts);
     m_context->multiDrawElementsInstancedANGLE(mode, GCGLSpanTuple { counts.data(), offsets, instanceCounts.data(), counts.size() }, type);
 }

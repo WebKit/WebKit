@@ -1379,8 +1379,8 @@ public:
     // GL_ANGLE_multi_draw
     virtual void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) = 0;
     virtual void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) = 0;
-    virtual void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLint> countsAndOffsets, GCGLenum type) = 0;
-    virtual void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLint, const GCGLsizei> countsOffsetsAndInstanceCounts, GCGLenum type) = 0;
+    virtual void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type) = 0;
+    virtual void multiDrawElementsInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei, const GCGLsizei> countsOffsetsAndInstanceCounts, GCGLenum type) = 0;
 
     virtual bool supportsExtension(const String&) = 0;
 
