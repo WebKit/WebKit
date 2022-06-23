@@ -695,8 +695,8 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool)
             // As per https://github.com/w3c/csswg-drafts/issues/3653 padding should contribute to the scrollable overflow area.
             if (!paddingEnd())
                 return;
-            // FIXME: Expand it to non-grid cases when applicable.
-            if (!is<RenderGrid>(*this))
+            // FIXME: Expand it to non-grid/flex cases when applicable.
+            if (!is<RenderGrid>(*this) && !is<RenderFlexibleBox>(*this))
                 return;
 
             auto layoutOverflowRect = this->layoutOverflowRect();
