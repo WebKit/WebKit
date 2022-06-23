@@ -208,14 +208,23 @@ LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 void LocalSampleBufferDisplayLayer::layerStatusDidChange()
 {
     ASSERT(isMainThread());
-    if (m_client && m_sampleBufferDisplayLayer.get().status == AVQueuedSampleBufferRenderingStatusFailed)
-        m_client->sampleBufferDisplayLayerStatusDidFail();
+    if (m_client && m_sampleBufferDisplayLayer.get().status == AVQueuedSampleBufferRenderingStatusFailed) {
+        RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::layerStatusDidChange going to failed status (%{public}s) ", m_logIdentifier.utf8().data());
+        if (!m_didFail) {
+            m_didFail = true;
+            m_client->sampleBufferDisplayLayerStatusDidFail();
+        }
+    }
 }
 
 void LocalSampleBufferDisplayLayer::layerErrorDidChange()
 {
     ASSERT(isMainThread());
-    // FIXME: Log error.
+    RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::layerErrorDidChange (%{public}s) ", m_logIdentifier.utf8().data());
+    if (!m_client || m_didFail)
+        return;
+    m_didFail = true;
+    m_client->sampleBufferDisplayLayerStatusDidFail();
 }
 
 PlatformLayer* LocalSampleBufferDisplayLayer::displayLayer()
