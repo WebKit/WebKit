@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+
+promise_test(async (test) => {
+    const worker1 = new SharedWorker('connect-event-ordering-sharedworker.js');
+    const worker2 = new SharedWorker('connect-event-ordering-sharedworker.js');
+
+    let result = '';
+    await Promise.all([
+        new Promise(resolve => { worker1.port.onmessage = () => {
+            result += 'worker1';
+            resolve();
+        }}),
+        new Promise(resolve => { worker2.port.onmessage = () => {
+            result += 'worker2';
+            resolve();
+        }})
+    ]);
+    assert_equals(result, 'worker1worker2');
+}, "connect event should fire following SharedWorker creation order");
+</script>
+</body>
+</html>
