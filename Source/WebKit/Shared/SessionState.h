@@ -136,6 +136,7 @@ struct PageState {
     FrameState mainFrameState;
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     RefPtr<WebCore::SerializedScriptValue> sessionStateObject;
+    bool wasCreatedByJSWithoutUserInteraction { false };
 };
 
 struct BackForwardListItemState {

@@ -859,6 +859,9 @@ void FrameLoader::HistoryController::pushState(RefPtr<SerializedScriptValue>&& s
     ASSERT(page);
 
     bool shouldRestoreScrollPosition = m_currentItem->shouldRestoreScrollPosition();
+
+    if (!UserGestureIndicator::processingUserGesture(m_frame.document()))
+        m_currentItem->setWasCreatedByJSWithoutUserInteraction(true);
     
     // Get a HistoryItem tree for the current frame tree.
     Ref<HistoryItem> topItem = m_frame.mainFrame().loader().history().createItemTree(m_frame, false);
