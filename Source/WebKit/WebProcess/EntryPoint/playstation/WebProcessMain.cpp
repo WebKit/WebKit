@@ -47,8 +47,11 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    loadLibraryOrExit(PNG_LOAD_AT);
     loadLibraryOrExit(ICU_LOAD_AT);
+    loadLibraryOrExit(PNG_LOAD_AT);
+#if defined(WebP_LOAD_AT)
+    loadLibraryOrExit(WebP_LOAD_AT);
+#endif
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);
