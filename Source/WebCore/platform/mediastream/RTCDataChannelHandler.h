@@ -118,6 +118,8 @@ public:
     virtual bool sendStringData(const CString&) = 0;
     virtual bool sendRawData(const uint8_t*, size_t) = 0;
     virtual void close() = 0;
+
+    virtual std::optional<unsigned short> id() const { return { }; }
 };
 
 } // namespace WebCore

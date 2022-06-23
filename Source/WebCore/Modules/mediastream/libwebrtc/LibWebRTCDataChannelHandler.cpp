@@ -127,6 +127,12 @@ void LibWebRTCDataChannelHandler::close()
     m_channel->Close();
 }
 
+std::optional<unsigned short> LibWebRTCDataChannelHandler::id() const
+{
+    auto id = m_channel->id();
+    return id != -1 ? std::make_optional(id) : std::nullopt;
+}
+
 void LibWebRTCDataChannelHandler::OnStateChange()
 {
     checkState();
