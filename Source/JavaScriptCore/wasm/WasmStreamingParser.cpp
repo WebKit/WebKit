@@ -161,7 +161,7 @@ auto StreamingParser::parseSectionPayload(Vector<uint8_t>&& data) -> State
 {
     SectionParser parser(data.data(), data.size(), m_offset, m_info.get());
     switch (m_section) {
-#define WASM_SECTION_PARSE(NAME, ID, DESCRIPTION) \
+#define WASM_SECTION_PARSE(NAME, ID, ORDERING, DESCRIPTION) \
     case Section::NAME: { \
         WASM_STREAMING_PARSER_FAIL_IF_HELPER_FAILS(parser.parse ## NAME()); \
         break; \
@@ -393,9 +393,18 @@ auto StreamingParser::finalize() -> State
             m_state = fail("Number of functions parsed (", m_functionCount, ") does not match the number of declared functions (", m_info->functions.size(), ")");
             break;
         }
+
+        if (m_info->numberOfDataSegments) {
+            if (UNLIKELY(m_info->data.size() != m_info->numberOfDataSegments.value())) {
+                m_state = fail("Data section's count ", m_info->data.size(), " is different from Data Count section's count ", m_info->numberOfDataSegments.value());
+                break;
+            }
+        }
+
         if (m_remaining.isEmpty()) {
             if (UNLIKELY(Options::useEagerWebAssemblyModuleHashing()))
                 m_info->nameSection->setHash(m_hasher.computeHexDigest());
+
             m_state = State::Finished;
             m_client.didFinishParsing();
         } else
