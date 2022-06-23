@@ -4498,36 +4498,34 @@ class SetBuildSummary(buildstep.BuildStep):
 class PushCommitToWebKitRepo(shell.ShellCommand):
     name = 'push-commit-to-webkit-repo'
     descriptionDone = ['Pushed commit to WebKit repository']
-    command = ['git', 'svn', 'dcommit', '--rmdir']
-    commit_success_regexp = r'^Committed r(?P<svn_revision>\d+)$'
     haltOnFailure = False
     MAX_RETRY = 2
+    HASH_RE = re.compile(r'\s+[0-9a-f]+\.\.+(?P<hash>[0-9a-f]+)\s+')
 
     def __init__(self, **kwargs):
-        shell.ShellCommand.__init__(self, timeout=5 * 60, logEnviron=False, **kwargs)
+        super(PushCommitToWebKitRepo, self).__init__(logEnviron=False, timeout=300, **kwargs)
 
-    def start(self):
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        head_ref = self.getProperty('github.base.ref', 'main')
+        self.command = ['git', 'push', 'origin', f'HEAD:{head_ref}']  # FIXME: Support secret remotes
+
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        self.workerEnvironment['GIT_USER'] = username
+        self.workerEnvironment['GIT_PASSWORD'] = access_token
+
         self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
-        return shell.ShellCommand.start(self)
+        return super(PushCommitToWebKitRepo, self).start()
 
     def evaluateCommand(self, cmd):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
         if rc == SUCCESS:
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
-            svn_revision = self.svn_revision_from_commit_text(log_text)
-            if svn_revision:
-                self.setProperty('svn_revision', svn_revision)
+            landed_hash = self.hash_from_commit_text(log_text)
+            if landed_hash:
+                self.setProperty('landed_hash', landed_hash)
 
-            steps_to_add = []
-            if self.getProperty('github.number', ''):
-                steps_to_add += [
-                    Canonicalize(rebase_enabled=False),
-                    PushPullRequestBranch(),
-                    UpdatePullRequest(),
-                    GitSvnFetch(),
-                ]
-            steps_to_add += [
+            steps_to_add = [
                 DetermineLandedIdentifier(),
                 LeaveComment(),
                 RemoveFlagsOnPatch(), RemoveLabelsFromPullRequest(),
@@ -4541,32 +4539,28 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                 self.setProperty('retry_count', retry_count + 1)
                 if self.getProperty('github.number', ''):
                     self.build.addStepsAfterCurrentStep([
-                        ResetGitSvn(),
                         CleanGitRepo(),
                         CheckOutSource(),
-                        GitSvnFetch(),
                         ShowIdentifier(),
                         UpdateWorkingDirectory(),
                         CheckOutPullRequest(),
                         AddReviewerToCommitMessage(),
-                        AddAuthorToCommitMessage(),
                         ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True),
                         Canonicalize(),
                         PushCommitToWebKitRepo(),
                     ])
                 else:
                     self.build.addStepsAfterCurrentStep([
-                        ResetGitSvn(),
                         CleanGitRepo(),
                         CheckOutSource(),
-                        GitSvnFetch(),
                         ShowIdentifier(),
                         UpdateWorkingDirectory(),
                         CommitPatch(),
                         AddReviewerToCommitMessage(),
-                        AddAuthorToCommitMessage(),
                         ValidateChange(addURLs=False, verifycqplus=True),
                         Canonicalize(),
+                        PushPullRequestBranch(),
+                        UpdatePullRequest(),
                         PushCommitToWebKitRepo(),
                     ])
                 return rc
@@ -4589,9 +4583,11 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
 
-    def svn_revision_from_commit_text(self, commit_text):
-        match = re.search(self.commit_success_regexp, commit_text, re.MULTILINE)
-        return match.group('svn_revision')
+    def hash_from_commit_text(self, commit_text):
+        match = self.HASH_RE.search(commit_text)
+        if match:
+            return match.group('hash')
+        return None
 
 
 class DetermineLandedIdentifier(shell.ShellCommand):
@@ -4628,44 +4624,44 @@ class DetermineLandedIdentifier(shell.ShellCommand):
                 self.identifier = match.group('identifier')
                 break
 
-        svn_revision = self.getProperty('svn_revision')
+        landed_hash = self.getProperty('landed_hash')
         if not self.identifier:
             time.sleep(60)  # It takes time for commits.webkit.org to digest commits
-            self.identifier = self.identifier_for_revision(svn_revision)
+            self.identifier = self.identifier_for_hash(landed_hash)
             if '@' not in self.identifier:
                 rc = FAILURE
 
-        self.setProperty('comment_text', self.comment_text_for_bug(svn_revision, self.identifier))
-        commit_summary = f'Committed {self.identifier or svn_revision}'
+        self.setProperty('comment_text', self.comment_text_for_bug(landed_hash, self.identifier))
+        commit_summary = f'Committed {self.identifier or landed_hash}'
         self.descriptionDone = commit_summary
         self.setProperty('build_summary', commit_summary)
         self.addURL(self.identifier, self.url_for_identifier(self.identifier))
 
         return rc
 
-    def url_for_revision_details(self, revision):
-        return '{}r{}/json'.format(COMMITS_INFO_URL, revision)
+    def url_for_hash_details(self, hash):
+        return '{}{}/json'.format(COMMITS_INFO_URL, hash)
 
     def url_for_identifier(self, identifier):
         return '{}{}'.format(COMMITS_INFO_URL, identifier)
 
-    def identifier_for_revision(self, revision):
+    def identifier_for_hash(self, hash):
         try:
-            response = requests.get(self.url_for_revision_details(revision), timeout=60)
+            response = requests.get(self.url_for_hash_details(hash), timeout=60)
             if response and response.status_code == 200:
-                return response.json().get('identifier', 'r{}'.format(revision)).replace('@trunk', '@main')
+                return response.json().get('identifier', '{}'.format(hash)).replace('@trunk', '@main')
             else:
                 print('Non-200 status code received from {}: {}'.format(COMMITS_INFO_URL, response.status_code))
                 print(response.text)
         except Exception as e:
             print(e)
-        return 'r{}'.format(revision)
+        return hash
 
-    def comment_text_for_bug(self, svn_revision=None, identifier=None):
+    def comment_text_for_bug(self, hash=None, identifier=None):
         identifier_str = identifier if identifier and '@' in identifier else '?'
-        comment = '{} r{} ({}): <{}>'.format(
+        comment = '{} {} ({}): <{}>'.format(
             'Test gardening commit' if self.getProperty('is_test_gardening') else 'Committed',
-            svn_revision, identifier_str, self.url_for_identifier(identifier),
+            identifier_str, hash, self.url_for_identifier(identifier),
         )
 
         patch_id = self.getProperty('patch_id', '')
@@ -4810,89 +4806,6 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         return not self.doStepIf(step)
 
 
-class DetermineAuthor(shell.ShellCommand, ShellMixin):
-    name = 'determine-author'
-    haltOnFailure = True
-    AUTHOR_RE = re.compile(r'Author:\s+(.+ <.+>)')
-
-    def __init__(self, **kwargs):
-        super(DetermineAuthor, self).__init__(logEnviron=False, timeout=60, **kwargs)
-
-    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        self.command = self.shell_command("git log -1 | grep '^Author:'")
-
-        self.log_observer = BufferLogObserverClass(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-
-        return super(DetermineAuthor, self).start()
-
-    def getResultSummary(self):
-        name = self.getProperty('author')
-        if not name or self.results == FAILURE:
-            return {'step': 'Failed to find author'}
-        elif self.results == SUCCESS:
-            return {'step': f"Author is {name}"}
-        return super(DetermineAuthor, self).getResultSummary()
-
-    def evaluateCommand(self, cmd):
-        rc = super(DetermineAuthor, self).evaluateCommand(cmd)
-        if rc != SUCCESS:
-            return rc
-
-        log_text = self.log_observer.getStdout()
-        lines = log_text.splitlines()
-        if len(lines) != 1:
-            return FAILURE
-        match = self.AUTHOR_RE.match(lines[0])
-        if match:
-            self.setProperty('author', match.group(1))
-            return SUCCESS
-        return FAILURE
-
-class AddAuthorToCommitMessage(shell.ShellCommand, AddReviewerMixin):
-    name = 'add-author-to-commit-message'
-    haltOnFailure = True
-
-    def __init__(self, **kwargs):
-        super(AddAuthorToCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
-
-    def start(self):
-        base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
-        head_ref = self.getProperty('github.head.ref', 'HEAD')
-
-        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
-        timestamp = f'{int(time.time())} {gmtoffset}'
-
-        author = self.getProperty('author')
-        patch_by = f"Patch by {author} on {date.today().strftime('%Y-%m-%d')}"
-
-        self.command = [
-            'git', 'filter-branch', '-f',
-            '--env-filter', f"GIT_AUTHOR_DATE='{timestamp}';GIT_COMMITTER_DATE='{timestamp}'",
-            '--msg-filter', f'sed "1,/^$/ s/^$/\\n{patch_by}/g"',
-            f'{head_ref}...{base_ref}',
-        ]
-
-        for key, value in self.gitCommitEnvironment().items():
-            self.workerEnvironment[key] = value
-
-        return super(AddAuthorToCommitMessage, self).start()
-
-    def getResultSummary(self):
-        if self.results == FAILURE:
-            return {'step': 'Failed to add author to commit message'}
-        elif self.results == SUCCESS:
-            author = self.getProperty('author')
-            return {'step': f"Added {author} as author"}
-        return super(AddAuthorToCommitMessage, self).getResultSummary()
-
-    def doStepIf(self, step):
-        return self.getProperty('author')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
-
-
 class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
     name = 'validate-commit-message'
     haltOnFailure = False
@@ -5023,6 +4936,7 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
     description = ['canonicalize-commit']
     descriptionDone = ['Canonicalize Commit']
     haltOnFailure = True
+    env = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
 
     def __init__(self, rebase_enabled=True, **kwargs):
         super(Canonicalize, self).__init__(logEnviron=False, timeout=300, **kwargs)
@@ -5034,13 +4948,21 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
         base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
         head_ref = self.getProperty('github.head.ref', None)
 
-        commands = []
+        commands = [self.shell_command('rm .git/identifiers.json || {}'.format(self.shell_exit_0()))]
         if self.rebase_enabled:
-            commands = [['git', 'pull', 'origin', base_ref, '--rebase']]
+            commands += [['git', 'pull', 'origin', base_ref, '--rebase']]
             if head_ref:
                 commands += [['git', 'branch', '-f', base_ref, head_ref]]
             commands += [['git', 'checkout', base_ref]]
         commands.append(['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1' if self.rebase_enabled else '3'])
+
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        date = f'{int(time.time())} {gmtoffset}'
+        commands.append([
+            'git', 'filter-branch', '-f',
+            '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'",
+            f'HEAD...HEAD~1',
+        ])
 
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
@@ -5181,37 +5103,3 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
-
-
-class GitSvnFetch(shell.ShellCommand):
-    name = 'git-svn-fetch'
-    haltOnFailure = False
-    flunkOnFailure = False
-    command = ['git', 'svn', 'fetch']
-
-    def __init__(self, **kwargs):
-        super(GitSvnFetch, self).__init__(logEnviron=False, timeout=600, **kwargs)
-
-    def getResultSummary(self):
-        if self.results == SUCCESS:
-            return {'step': 'Paired recent SVN commits with GitHub record'}
-        if self.results == FAILURE:
-            return {'step': 'Recent SVN commits did not match GitHub record'}
-        return super(GitSvnFetch, self).getResultSummary()
-
-
-class ResetGitSvn(shell.ShellCommand):
-    name = 'reset-git-svn'
-    haltOnFailure = False
-    flunkOnFailure = False
-    command = ['rm', '-rf', '.git/svn']
-
-    def __init__(self, **kwargs):
-        super(ResetGitSvn, self).__init__(logEnviron=False, timeout=300, **kwargs)
-
-    def getResultSummary(self):
-        if self.results == SUCCESS:
-            return {'step': 'Removed git-svn references'}
-        if self.results == FAILURE:
-            return {'step': 'Failed to remove git-svn references'}
-        return super(GitSvnFetch, self).getResultSummary()
