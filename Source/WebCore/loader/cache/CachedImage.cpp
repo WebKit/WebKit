@@ -99,12 +99,9 @@ CachedImage::~CachedImage()
 void CachedImage::load(CachedResourceLoader& loader)
 {
     m_skippingRevalidationDocument = loader.document();
-    if (loader.shouldPerformImageLoad(url())) {
+    if (loader.shouldPerformImageLoad(url()))
         CachedResource::load(loader);
-        CachedResourceClientWalker<CachedImageClient> walker(*this);
-        while (auto* client = walker.next())
-            client->didStartLoading();
-    } else
+    else
         setLoading(false);
 }
 
