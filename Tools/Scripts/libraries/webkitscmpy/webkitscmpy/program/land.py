@@ -29,6 +29,7 @@ from .canonicalize import Canonicalize
 from .command import Command
 from .branch import Branch
 from .pull_request import PullRequest
+from .squash import Squash
 from argparse import Namespace
 from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, string_utils, Terminal
