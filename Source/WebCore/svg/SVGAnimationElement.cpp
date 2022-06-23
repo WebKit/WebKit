@@ -155,7 +155,7 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
 
     if (attribute.name() == SVGNames::valuesAttr) {
         for (auto innerValue : StringView(attribute.value()).split(';')) {
-            if (WTF::protocolIsJavaScript(innerValue.stripWhiteSpace()))
+            if (WTF::protocolIsJavaScript(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIISpace<UChar>)))
                 return true;
         }
         return false;
