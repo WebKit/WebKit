@@ -493,8 +493,16 @@ class Contributors(object):
             github_username = value.get('github')
             if name and emails:
                 bugzilla_email = emails[0].lower()  # We're requiring that the first email is the primary bugzilla email
-                cls.contributors[bugzilla_email] = {'name': name, 'status': value.get('status')}
-                cls.contributors[name] = {'status': value.get('status')}
+                cls.contributors[bugzilla_email] = {
+                    'name': name,
+                    'status': value.get('status'),
+                    'email': bugzilla_email,
+                }
+                cls.contributors[name] = {
+                    'name': name,
+                    'status': value.get('status'),
+                    'email': bugzilla_email,
+                }
             if github_username and name and emails:
                 cls.contributors[github_username.lower()] = dict(
                     name=name,
@@ -4931,7 +4939,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
         return super(ValidateCommitMessage, self).getResultSummary()
 
 
-class Canonicalize(steps.ShellSequence, ShellMixin):
+class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
     name = 'canonicalize-commit'
     description = ['canonicalize-commit']
     descriptionDone = ['Canonicalize Commit']
@@ -4941,9 +4949,14 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
     def __init__(self, rebase_enabled=True, **kwargs):
         super(Canonicalize, self).__init__(logEnviron=False, timeout=300, **kwargs)
         self.rebase_enabled = rebase_enabled
+        self.contributors = {}
 
     def run(self):
         self.commands = []
+        self.contributors, errors = Contributors.load(use_network=True)
+        for error in errors:
+            print(error)
+            self._addToLog('stdio', error)
 
         base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
         head_ref = self.getProperty('github.head.ref', None)
@@ -4956,16 +4969,29 @@ class Canonicalize(steps.ShellSequence, ShellMixin):
             commands += [['git', 'checkout', base_ref]]
         commands.append(['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1' if self.rebase_enabled else '3'])
 
+        
+
+        if self.getProperty('github.number', ''):
+            committer = (self.getProperty('owners', []) or [''])[0]
+        else:
+            committer = self.getProperty('patch_committer', '').lower()
+
+        contributor = self.contributors.get(committer.lower()) if committer else {}
+        committer_name = contributor.get('name', committer or 'WebKit Commit Queue')
+        committer_email = contributor.get('email', committer or FROM_EMAIL)
+
         gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
         date = f'{int(time.time())} {gmtoffset}'
         commands.append([
             'git', 'filter-branch', '-f',
-            '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'",
+            '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='{committer_name}';GIT_COMMITTER_EMAIL='{committer_email}'",
             f'HEAD...HEAD~1',
         ])
 
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
+
+        
 
         return super(Canonicalize, self).run()
 
