@@ -519,7 +519,7 @@ public:
     bool processesShouldSuspend() const { return m_processesShouldSuspend; }
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void hardwareConsoleStateChanged();
 #endif
 

@@ -52,10 +52,12 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
 static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
     static NeverDestroyed cache = HashSet<String, ASCIICaseInsensitiveHash>();
+#if ENABLE(MEDIA_SOURCE)
     if (cache->isEmpty()) {
         auto types = SourceBufferParserWebM::supportedMIMETypes();
         cache->add(types.begin(), types.end());
     }
+#endif
     return cache;
 }
 
@@ -68,7 +70,12 @@ MediaPlayer::SupportsType MediaPlayerPrivateWebM::supportsType(const MediaEngine
 {
     if (parameters.isMediaSource || parameters.isMediaStream)
         return MediaPlayer::SupportsType::IsNotSupported;
+
+#if ENABLE(MEDIA_SOURCE)
     return SourceBufferParserWebM::isContentTypeSupported(parameters.type);
+#else
+    return MediaPlayer::SupportsType::IsNotSupported;
+#endif
 }
 
 void MediaPlayerPrivateWebM::load(const String&)

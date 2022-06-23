@@ -440,7 +440,7 @@ public:
 
     bool isConnectedToHardwareConsole() const { return m_isConnectedToHardwareConsole; }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void hardwareConsoleStateChanged();
 #endif
 

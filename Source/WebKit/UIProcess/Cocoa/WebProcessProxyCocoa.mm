@@ -266,7 +266,9 @@ void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHand
     auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibility(), auditToken, nullptr);
     completionHandler(authenticated);
 }
+#endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcessProxy::hardwareConsoleStateChanged()
 {
     m_isConnectedToHardwareConsole = WindowServerConnection::singleton().hardwareConsoleState() == WindowServerConnection::HardwareConsoleState::Connected;
