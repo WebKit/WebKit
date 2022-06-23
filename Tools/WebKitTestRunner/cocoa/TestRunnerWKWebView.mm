@@ -68,7 +68,6 @@ struct CustomMenuActionInfo {
     RetainPtr<NSNumber> m_stableStateOverride;
     BOOL _isInteractingWithFormControl;
     BOOL _scrollingUpdatesDisabled;
-    std::optional<CustomMenuActionInfo> _customMenuActionInfo;
     RetainPtr<NSArray<NSString *>> _allowedMenuActions;
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UITapGestureRecognizer> _windowTapGestureRecognizer;
@@ -277,94 +276,10 @@ IGNORE_WARNINGS_END
 #endif
 }
 
-- (BOOL)becomeFirstResponder
-{
-    BOOL wasFirstResponder = self.isFirstResponder;
-    BOOL becameFirstResponder = [super becomeFirstResponder];
-    if (!wasFirstResponder && becameFirstResponder)
-        [self _addCustomItemToMenuControllerIfNecessary];
-    return becameFirstResponder;
-}
-
-- (void)_addCustomItemToMenuControllerIfNecessary
-{
-    if (!_customMenuActionInfo)
-        return;
-
-    auto item = adoptNS([[UIMenuItem alloc] initWithTitle:_customMenuActionInfo->name.get() action:@selector(performCustomAction:)]);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [item setDontDismiss:!_customMenuActionInfo->dismissesAutomatically];
-    UIMenuController *controller = UIMenuController.sharedMenuController;
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    controller.menuItems = @[ item.get() ];
-    [controller update];
-}
-
-- (void)installCustomMenuAction:(NSString *)name dismissesAutomatically:(BOOL)dismissesAutomatically callback:(dispatch_block_t)callback
-{
-    _customMenuActionInfo = {{ name, dismissesAutomatically, callback }};
-    [self _addCustomItemToMenuControllerIfNecessary];
-}
-
 - (void)setAllowedMenuActions:(NSArray<NSString *> *)actions
 {
     _allowedMenuActions = actions;
 }
-
-- (void)resetCustomMenuAction
-{
-    _customMenuActionInfo.reset();
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    UIMenuController.sharedMenuController.menuItems = @[ ];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-}
-
-- (void)performCustomAction:(id)sender
-{
-    if (!_customMenuActionInfo)
-        return;
-
-    if (!_customMenuActionInfo->callback) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    _customMenuActionInfo->callback();
-}
-
-- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
-{
-    BOOL isCustomAction = action == @selector(performCustomAction:);
-    BOOL canPerformActionByDefault = [super canPerformAction:action withSender:sender];
-    if (isCustomAction)
-        canPerformActionByDefault = _customMenuActionInfo.has_value();
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (canPerformActionByDefault && _allowedMenuActions && sender == UIMenuController.sharedMenuController) {
-    ALLOW_DEPRECATED_DECLARATIONS_END
-        BOOL isAllowed = NO;
-        if (isCustomAction) {
-            for (NSString *allowedAction in _allowedMenuActions.get()) {
-                if ([[_customMenuActionInfo->name lowercaseString] isEqualToString:allowedAction.lowercaseString]) {
-                    isAllowed = YES;
-                    break;
-                }
-            }
-        } else {
-            for (NSString *allowedAction in _allowedMenuActions.get()) {
-                NSString *lowercaseSelectorName = [[allowedAction lowercaseString] stringByAppendingString:@":"];
-                if ([NSStringFromSelector(action).lowercaseString isEqualToString:lowercaseSelectorName]) {
-                    isAllowed = YES;
-                    break;
-                }
-            }
-        }
-        if (!isAllowed)
-            return NO;
-    }
-    return canPerformActionByDefault;
-}
-
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
 {

@@ -343,7 +343,6 @@ public:
 #endif
 
     void setAllowedMenuActions(const Vector<String>&);
-    void installCustomMenuAction(const String& name, bool dismissesAutomatically);
 
     uint64_t serverTrustEvaluationCallbackCallsCount() const { return m_serverTrustEvaluationCallbackCallsCount; }
 

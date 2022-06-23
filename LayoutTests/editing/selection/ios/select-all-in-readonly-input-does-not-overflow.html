@@ -35,6 +35,7 @@ addEventListener("load", async () => {
 
     await UIHelper.activateElement(button);
     await UIHelper.activateElement(input);
+    await UIHelper.becomeFirstResponder();
     selectionRects = await UIHelper.waitForSelectionToAppear();
 
     shouldBe("selectionRects.length", "1");

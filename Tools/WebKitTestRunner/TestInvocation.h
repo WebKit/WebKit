@@ -102,7 +102,6 @@ public:
     bool canOpenWindows() const { return m_canOpenWindows; }
 
     void dumpPrivateClickMeasurement();
-    void performCustomMenuAction();
 
     void willCreateNewPage();
 

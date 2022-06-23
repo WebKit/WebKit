@@ -281,7 +281,6 @@ interface TestRunner {
 
     // Contextual menu actions
     undefined setAllowedMenuActions(object actions);
-    undefined installCustomMenuAction(DOMString name, boolean dismissesAutomatically, object callback);
 
     // Gamepad
     undefined setMockGamepadDetails(unsigned long index, DOMString id, DOMString mapping, unsigned long axisCount, unsigned long buttonCount);
