@@ -87,8 +87,6 @@ public:
     // be laid out again.
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
-    bool shouldApplyMinBlockSizeAutoForChild(const RenderBox&) const;
-
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
