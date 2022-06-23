@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ArgumentCoders.h"
+#include "WebPreferences.h"
 
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
@@ -37,6 +38,49 @@
 namespace WebKit {
 
 GPUProcessPreferences::GPUProcessPreferences() = default;
+
+GPUProcessPreferences::GPUProcessPreferences(const WebPreferences& webPreferences)
+{
+    copyEnabledWebPreferences(webPreferences);
+}
+
+void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webPreferences)
+{
+#if ENABLE(OPUS)
+    if (webPreferences.opusDecoderEnabled())
+        opusDecoderEnabled = true;
+#endif
+
+#if ENABLE(VORBIS)
+    if (webPreferences.vorbisDecoderEnabled())
+        vorbisDecoderEnabled = true;
+#endif
+
+#if ENABLE(WEBM_FORMAT_READER)
+    if (webPreferences.webMFormatReaderEnabled())
+        webMFormatReaderEnabled = true;
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+    if (webPreferences.webMParserEnabled())
+        webMParserEnabled = true;
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+    if (webPreferences.mediaSourceInlinePaintingEnabled())
+        mediaSourceInlinePaintingEnabled = true;
+#endif
+
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    if (webPreferences.sampleBufferContentKeySessionSupportEnabled())
+        sampleBufferContentKeySessionSupportEnabled = true;
+#endif
+        
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+    if (webPreferences.alternateWebMPlayerEnabled())
+        alternateWebMPlayerEnabled = true;
+#endif
+}
 
 void GPUProcessPreferences::encode(IPC::Encoder& encoder) const
 {
@@ -62,6 +106,10 @@ void GPUProcessPreferences::encode(IPC::Encoder& encoder) const
     
 #if HAVE(AVCONTENTKEYSPECIFIER)
     encoder << sampleBufferContentKeySessionSupportEnabled;
+#endif
+    
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+    encoder << alternateWebMPlayerEnabled;
 #endif
 }
 
@@ -96,6 +144,12 @@ bool GPUProcessPreferences::decode(IPC::Decoder& decoder, GPUProcessPreferences&
     if (!decoder.decode(result.sampleBufferContentKeySessionSupportEnabled))
         return false;
 #endif
+    
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+    if (!decoder.decode(result.alternateWebMPlayerEnabled))
+        return false;
+#endif
+    
     return true;
 }
 

@@ -36,8 +36,12 @@ class Encoder;
 
 namespace WebKit {
 
+class WebPreferences;
+
 struct GPUProcessPreferences {
     GPUProcessPreferences();
+    GPUProcessPreferences(const WebPreferences&);
+    void copyEnabledWebPreferences(const WebPreferences&);
     
 #if ENABLE(OPUS)
     std::optional<bool> opusDecoderEnabled;
@@ -61,6 +65,10 @@ struct GPUProcessPreferences {
     
 #if HAVE(AVCONTENTKEYSPECIFIER)
     std::optional<bool> sampleBufferContentKeySessionSupportEnabled;
+#endif
+    
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+    std::optional<bool> alternateWebMPlayerEnabled;
 #endif
 
     void encode(IPC::Encoder&) const;

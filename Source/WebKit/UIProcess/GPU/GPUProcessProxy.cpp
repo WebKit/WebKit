@@ -634,39 +634,10 @@ void GPUProcessProxy::updatePreferences(WebProcessProxy& webProcess)
     // In practice, all web pages' preferences should agree on these feature flag values.
     GPUProcessPreferences gpuPreferences;
     for (auto page : webProcess.pages()) {
-        auto& preferences = page->preferences();
-        if (!preferences.useGPUProcessForMediaEnabled())
+        auto& webPreferences = page->preferences();
+        if (!webPreferences.useGPUProcessForMediaEnabled())
             continue;
-
-#if ENABLE(OPUS)
-        if (preferences.opusDecoderEnabled())
-            gpuPreferences.opusDecoderEnabled = true;
-#endif
-
-#if ENABLE(VORBIS)
-        if (preferences.vorbisDecoderEnabled())
-            gpuPreferences.vorbisDecoderEnabled = true;
-#endif
-
-#if ENABLE(WEBM_FORMAT_READER)
-        if (preferences.webMFormatReaderEnabled())
-            gpuPreferences.webMFormatReaderEnabled = true;
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-        if (preferences.webMParserEnabled())
-            gpuPreferences.webMParserEnabled = true;
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-        if (preferences.mediaSourceInlinePaintingEnabled())
-            gpuPreferences.mediaSourceInlinePaintingEnabled = true;
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-        if (preferences.sampleBufferContentKeySessionSupportEnabled())
-            gpuPreferences.sampleBufferContentKeySessionSupportEnabled = true;
-#endif
+        gpuPreferences.copyEnabledWebPreferences(webPreferences);
     }
     
     send(Messages::GPUProcess::UpdateGPUProcessPreferences(gpuPreferences), 0);

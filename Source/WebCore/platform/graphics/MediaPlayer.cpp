@@ -39,6 +39,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformMediaResourceLoader.h"
+#include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
 #include "PlatformTextTrack.h"
 #include "PlatformTimeRanges.h"
@@ -80,6 +81,10 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 #include "MediaPlayerPrivateMediaStreamAVFObjC.h"
+#endif
+
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+#include "MediaPlayerPrivateWebM.h"
 #endif
 
 #endif // PLATFORM(COCOA)
@@ -266,6 +271,15 @@ static void buildMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
     if (DeprecatedGlobalSettings::isAVFoundationEnabled()) {
         auto& registerRemoteEngine = registerRemotePlayerCallback();
 
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+        if (PlatformMediaSessionManager::alternateWebMPlayerEnabled()) {
+            if (registerRemoteEngine)
+                registerRemoteEngine(addMediaEngine, MediaPlayerEnums::MediaEngineIdentifier::CocoaWebM);
+            else
+                MediaPlayerPrivateWebM::registerMediaEngine(addMediaEngine);
+        }
+#endif
+        
 #if PLATFORM(COCOA)
         if (registerRemoteEngine)
             registerRemoteEngine(addMediaEngine, MediaPlayerEnums::MediaEngineIdentifier::AVFoundation);
