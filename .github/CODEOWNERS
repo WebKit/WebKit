@@ -38,6 +38,7 @@
 
 /Tools/Scripts/libraries @JonWBedard
 /Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard
+/Tools/TestWebKitAPI
 
 # ================================================================================
 
@@ -49,12 +50,14 @@
 # ================================================================================
 
 /Source/bmalloc @Constellation
+/Tools/TestWebKitAPI/Tests/WTF/bmalloc @Constellation
 
 # ================================================================================
 
 /Source/JavaScriptCore @WebKit/jsc-reviewers
 /JSTests @WebKit/jsc-reviewers
 /LayoutTests/js @WebKit/jsc-reviewers
+/Tools/TestWebKitAPI/Tests/JavaScriptCore @WebKit/jsc-reviewers
 
 # ================================================================================
 
