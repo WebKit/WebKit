@@ -636,26 +636,26 @@ static RenderLayer* layerNextSiblingRespectingTopLayer(const RenderElement& rend
     return findNextLayer(*renderer.parent(), parentLayer, &renderer);
 }
 
-static void addLayers(const RenderElement& addedRenderer, RenderElement& currentRenderer, RenderLayer* parentLayer)
+static void addLayers(const RenderElement& insertedRenderer, RenderElement& currentRenderer, RenderLayer& parentLayer)
 {
     if (currentRenderer.hasLayer()) {
-        if (isInTopLayerOrBackdrop(currentRenderer.style(), currentRenderer.element()))
-            parentLayer = addedRenderer.view().layer();
-        RenderLayer* beforeChild = layerNextSiblingRespectingTopLayer(addedRenderer, *parentLayer);
-        parentLayer->addChild(*downcast<RenderLayerModelObject>(currentRenderer).layer(), beforeChild);
+        auto* layerToUse = &parentLayer;
+        if (isInTopLayerOrBackdrop(currentRenderer.style(), currentRenderer.element())) {
+            // The special handling of a toplayer/backdrop content may result in trying to insert the associated
+            // layer twice as we connect subtrees.
+            if (auto* parentLayer = downcast<RenderLayerModelObject>(currentRenderer).layer()->parent()) {
+                ASSERT(parentLayer == currentRenderer.view().layer());
+                return;
+            }
+            layerToUse = insertedRenderer.view().layer();
+        }
+        auto* beforeChild = layerNextSiblingRespectingTopLayer(insertedRenderer, *layerToUse);
+        layerToUse->addChild(*downcast<RenderLayerModelObject>(currentRenderer).layer(), beforeChild);
         return;
     }
 
     for (auto& child : childrenOfType<RenderElement>(currentRenderer))
-        addLayers(addedRenderer, child, parentLayer);
-}
-
-void RenderElement::addLayers(RenderLayer* parentLayer)
-{
-    if (!parentLayer)
-        return;
-
-    WebCore::addLayers(*this, *this, parentLayer);
+        addLayers(insertedRenderer, child, parentLayer);
 }
 
 void RenderElement::removeLayers()
@@ -937,8 +937,8 @@ void RenderElement::insertedIntoTree(IsInternalMove isInternalMove)
     // and don't have a layer attached to ourselves.
     RenderLayer* parentLayer = nullptr;
     if (firstChild() || hasLayer()) {
-        auto* parentLayer = layerParent();
-        addLayers(parentLayer);
+        if (auto* parentLayer = layerParent())
+            addLayers(*this, *this, *parentLayer);
     }
 
     // If |this| is visible but this object was not, tell the layer it has some visible content
