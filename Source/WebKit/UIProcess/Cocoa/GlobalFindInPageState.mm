@@ -39,9 +39,7 @@ namespace WebKit {
 
 static NSPasteboard *findPasteboard()
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [NSPasteboard pasteboardWithName:NSFindPboard];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    return [NSPasteboard pasteboardWithName:NSPasteboardNameFind];
 }
 
 #else

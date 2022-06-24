@@ -89,10 +89,8 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
 {
     auto range = selectedRange();
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
-    client()->setInsertionPasteboard(NSGeneralPboard);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    client()->setInsertionPasteboard(NSPasteboardNameGeneral);
 
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = webContentFromPasteboard(*pasteboard, *range, options.contains(PasteOption::AllowPlainText), chosePlainText);

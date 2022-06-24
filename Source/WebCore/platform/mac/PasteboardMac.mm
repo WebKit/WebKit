@@ -101,9 +101,7 @@ Pasteboard::Pasteboard(std::unique_ptr<PasteboardContext>&& context, const Strin
 
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste(std::unique_ptr<PasteboardContext>&& context)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return makeUnique<Pasteboard>(WTFMove(context), NSGeneralPboard);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    return makeUnique<Pasteboard>(WTFMove(context), NSPasteboardNameGeneral);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -114,9 +112,7 @@ String Pasteboard::nameOfDragPasteboard()
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(std::unique_ptr<PasteboardContext>&& context)
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return makeUnique<Pasteboard>(WTFMove(context), NSDragPboard);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    return makeUnique<Pasteboard>(WTFMove(context), NSPasteboardNameDrag);
 }
 
 std::unique_ptr<Pasteboard> Pasteboard::create(const DragData& dragData)
