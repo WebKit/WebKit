@@ -26,6 +26,9 @@ DerivedData
 /.vs/
 /.vscode/
 
+# Ignore auto-generated files by JetBrains IDEs (PyCharm).
+*.idea/
+
 # Ignore common tool auto-generated files.
 .gdbinit
 .gdb_history
