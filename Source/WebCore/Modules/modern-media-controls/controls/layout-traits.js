@@ -107,6 +107,11 @@ class LayoutTraits
     {
         return 1;
     }
+
+    scrubberSliderClass()
+    {
+        return Slider;
+    }
 }
 
 LayoutTraits.Mode = {
