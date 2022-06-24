@@ -716,10 +716,12 @@ void WebProcessPool::registerNotificationObservers()
     addCFNotificationObserver(mediaAccessibilityPreferencesChangedCallback, kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
-    m_powerLogObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kPLTaskingStartNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
-        if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
-            gpuProcess->enablePowerLogging();
-    }];
+    if (kPLTaskingStartNotification) {
+        m_powerLogObserver = [[NSNotificationCenter defaultCenter] addObserverForName:kPLTaskingStartNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) {
+            if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
+                gpuProcess->enablePowerLogging();
+        }];
+    }
 #endif // HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
 }
 
@@ -772,7 +774,8 @@ void WebProcessPool::unregisterNotificationObservers()
     removeCFNotificationObserver(kMAXCaptionAppearanceSettingsChangedNotification);
 #endif
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_powerLogObserver.get()];
+    if (m_powerLogObserver)
+        [[NSNotificationCenter defaultCenter] removeObserver:m_powerLogObserver.get()];
 #endif
     m_weakObserver = nil;
 }
