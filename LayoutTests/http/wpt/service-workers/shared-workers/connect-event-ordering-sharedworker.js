@@ -1,3 +1,6 @@
+let ports = [];
 onconnect = (e) => {
-    e.ports[0].postMessage("got it");
+    const port = e.ports[0];
+    ports.push(port);
+    port.postMessage("worker" + ports.length);
 }
