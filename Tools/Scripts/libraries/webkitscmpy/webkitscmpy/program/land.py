@@ -98,7 +98,7 @@ class Land(Command):
 
             labels = pr_issue.labels
             if PullRequest.BLOCKED_LABEL in labels and merge_type == 'unsafe':
-                log.info("Removing '{}' from PR {}...".format(cls.BLOCKED_LABEL, existing_pr.number))
+                log.info("Removing '{}' from PR {}...".format(PullRequest.BLOCKED_LABEL, pr.number))
                 labels.remove(PullRequest.BLOCKED_LABEL)
             log.info("Adding '{}' to '{}'".format(merge_label, pr))
             labels.append(merge_label)
@@ -114,6 +114,7 @@ class Land(Command):
             repository, args, branch_point,
             callback=callback,
             unblock=True if merge_type == 'unsafe' else False,
+            update_issue=False,  # If we're immediately landing, no reason to track the code change as a WIP
         )
 
     @classmethod

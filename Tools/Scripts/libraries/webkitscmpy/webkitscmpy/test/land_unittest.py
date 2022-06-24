@@ -357,6 +357,7 @@ class TestLand(testing.PathTestCase):
 
 class TestLandGitHub(testing.PathTestCase):
     basepath = 'mock/repository'
+    BUGZILLA = 'https://bugs.example.com'
 
     def setUp(self):
         super(TestLandGitHub, self).setUp()
@@ -515,6 +516,57 @@ class TestLandGitHub(testing.PathTestCase):
                 "Syncing 'main' to remote 'fork'",
                 "Creating 'eng/example-1' as a reference branch",
                 "Updating pull-request for 'eng/example'...",
+                "Adding 'merge-queue' to 'PR 1 | To Be Committed'",
+            ],
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Updated 'PR 1 | To Be Committed'!\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n"
+            "Added 'merge-queue' to 'PR 1 | To Be Committed', change is in the queue to be landed\n",
+        )
+
+    def test_merge_queue_linked_bug(self):
+        self.maxDiff = None
+        with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
+            approved=True, labels={'merge-queue': dict(color='3AE653', description="Send PR to merge-queue")},
+        ) as remote, mocks.local.Svn(), repository(
+            self.path, has_oops=True,
+            issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA),
+            remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]), bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            environment=Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        )):
+            self.assertEqual(0, program.main(
+                args=('land', '-v'),
+                path=self.path,
+            ))
+            self.assertEqual(len(Tracker.instance().issue(1).comments), 2)
+
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                '    Found 1 commit...',
+                'Using committed changes...',
+                'Detected merging automation, using that instead of local git tooling',
+                "Rebasing 'eng/example' on 'main'...",
+                "Rebased 'eng/example' on 'main!'",
+                '    Found 1 commit...',
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking PR labels for active labels...',
+                "Pushing 'eng/example' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
+                "Creating 'eng/example-1' as a reference branch",
+                "Updating pull-request for 'eng/example'...",
+                'Syncing PR labels with issue component...',
+                'No label syncing required',
                 "Adding 'merge-queue' to 'PR 1 | To Be Committed'",
             ],
         )

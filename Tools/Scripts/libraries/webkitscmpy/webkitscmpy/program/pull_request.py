@@ -262,7 +262,7 @@ class PullRequest(Command):
         return 0
 
     @classmethod
-    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True):
+    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=True):
         # FIXME: We can do better by inferring the remote from the branch point, if it's not specified
         source_remote = args.remote or 'origin'
         if not repository.config().get('remote.{}.url'.format(source_remote)):
@@ -401,7 +401,7 @@ class PullRequest(Command):
             if cls.is_revert_commit(commits[0]):
                 cls.add_comment_to_reverted_commit_bug_tracker(repository, args, pr, commits[0])
 
-        if issue:
+        if issue and update_issue:
             log.info('Checking issue assignee...')
             if issue.assignee != issue.tracker.me():
                 issue.assign(issue.tracker.me())
