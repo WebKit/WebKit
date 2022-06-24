@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "MessageReceiverMap.h"
 #include "MessageSender.h"
+#include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/UserActivity.h>
