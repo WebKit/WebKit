@@ -150,6 +150,11 @@ void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, std:
 
 void NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+    if (m_networkSession.sessionID().isEphemeral()) {
+        completionHandler(std::optional<WebCore::PushSubscriptionData> { });
+        return;
+    }
+
     if (!m_connection) {
         completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
         return;
@@ -160,6 +165,11 @@ void NetworkNotificationManager::getPushSubscription(URL&& scopeURL, CompletionH
 
 void NetworkNotificationManager::getPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
 {
+    if (m_networkSession.sessionID().isEphemeral()) {
+        completionHandler(static_cast<uint8_t>(PushPermissionState::Denied));
+        return;
+    }
+
     if (!m_connection) {
         completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
         return;

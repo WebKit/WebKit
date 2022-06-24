@@ -10,6 +10,13 @@ self.addEventListener('message', async (event) => {
         } catch (e) {
             event.source.postMessage("error: " + e);
         }
+    } else if (op == 'getSubscription') {
+        try {
+            let subscription = await self.registration.pushManager.getSubscription();
+            event.source.postMessage(!!subscription);
+        } catch (e) {
+            event.source.postMessage("error: " + e);
+        }
     } else if (op == 'subscribe') {
         let subscription = null;
         let result = null;

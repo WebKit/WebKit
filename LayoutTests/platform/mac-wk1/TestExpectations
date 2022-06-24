@@ -1618,12 +1618,7 @@ fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scr
 [ BigSur+ arm64 ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 # Push subscription tests don't work without service worker support.
-http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Skip ]
-http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Skip ]
-http/tests/push-api/subscribe-default-permissions.html [ Skip ]
-http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Failure ]
-http/tests/push-api/subscribe-deny-permissions.html [ Skip ]
-http/tests/push-api/subscribe-grant-permissions.html [ Skip ]
+http/tests/push-api [ Skip ]
 
 webkit.org/b/236126 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointerevent.html [ Pass Failure ]
 

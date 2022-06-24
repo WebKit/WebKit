@@ -1868,12 +1868,7 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the
 imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure ]
 
 # Push subscription tests fail without platform-specific PushCrypto implementations.
-http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Failure ]
-http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Failure ]
-http/tests/push-api/subscribe-default-permissions.html [ Failure ]
-http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Failure ]
-http/tests/push-api/subscribe-deny-permissions.html [ Failure ]
-http/tests/push-api/subscribe-grant-permissions.html [ Failure ]
+http/tests/push-api [ Skip ]
 
 # Ftp code is disabled in gtk port
 http/tests/misc/ftp-eplf-directory.py [ Skip ]

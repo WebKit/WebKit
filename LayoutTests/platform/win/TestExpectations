@@ -5038,12 +5038,7 @@ http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-
 streams/readable-stream-lock-after-worker-terminates-crash.html [ Timeout Pass ]
 
 # Push subscription tests fail without platform-specific PushCrypto implementations.
-http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Failure ]
-http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Failure ]
-http/tests/push-api/subscribe-default-permissions.html [ Failure ]
-http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Failure ]
-http/tests/push-api/subscribe-deny-permissions.html [ Failure ]
-http/tests/push-api/subscribe-grant-permissions.html [ Failure ]
+http/tests/push-api [ Skip ]
 
 webkit.org/b/240617 webanimations/offset-anchor-animation-yields-compositing.html [ Pass Failure ]
 webkit.org/b/240617 webanimations/offset-distance-animation-yields-compositing.html [ Pass Failure ]
