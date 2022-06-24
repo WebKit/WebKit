@@ -168,6 +168,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
     [[UIScreen mainScreen] _setScale:2.0];
+    [[HIDEventGenerator sharedHIDEventGenerator] resetActiveModifiers];
 
     // Ensures that only the UCB is on-screen when showing the keyboard, if the hardware keyboard is attached.
     TIPreferencesController *textInputPreferences = [getTIPreferencesControllerClass() sharedPreferencesController];

@@ -102,6 +102,7 @@ function runTest()
 function setUp()
 {
     let square = document.getElementById("square");
+    square.addEventListener("touchstart", event => event.preventDefault());
     square.addEventListener("pointerdown", handlePointerDown, true);
     square.addEventListener("pointerup", handlePointerUp, true);
 
