@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBrowsingContextHandlePrivate.h"
-#import "WebPageProxyIdentifier.h"
-#import <WebCore/PageIdentifier.h>
-#import <wtf/NakedRef.h>
+#import <WebKit/WKBrowsingContextHandle.h>
 
-namespace WebKit {
-class WebPage;
-class WebPageProxy;
-}
-
-@interface WKBrowsingContextHandle ()
-
-@property (nonatomic, readonly, getter=_pageProxyID) WebKit::WebPageProxyIdentifier pageProxyID;
+@interface WKBrowsingContextHandle (WKPrivate)
 @property (nonatomic, readonly, getter=_webPageID) uint64_t webPageID;
-
-- (id)_initWithPageProxy:(NakedRef<WebKit::WebPageProxy>)page;
-- (id)_initWithPage:(NakedRef<WebKit::WebPage>)page;
-- (id)_initWithPageProxyID:(WebKit::WebPageProxyIdentifier)pageProxyID andWebPageID:(WebCore::PageIdentifier)webPageID;
 @end

@@ -3188,8 +3188,3 @@ void WKPageDispatchActivityStateUpdateForTesting(WKPageRef pageRef)
     CRASH_IF_SUSPENDED;
     toImpl(pageRef)->dispatchActivityStateUpdateForTesting();
 }
-
-uint64_t WKPageGetIdentifier(WKPageRef pageRef)
-{
-    return toImpl(pageRef)->webPageID().toUInt64();
-}
