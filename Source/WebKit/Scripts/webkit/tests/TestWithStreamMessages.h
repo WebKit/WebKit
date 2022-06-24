@@ -49,6 +49,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendString; }
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
+    static constexpr bool isStreamBatched = false;
 
     explicit SendString(const String& url)
         : m_arguments(url)
@@ -72,6 +73,7 @@ public:
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
+    static constexpr bool isStreamBatched = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void(int64_t&&)>&&);
     static void cancelReply(CompletionHandler<void(int64_t&&)>&&);
@@ -102,6 +104,7 @@ public:
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendMachSendRight; }
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = false;
+    static constexpr bool isStreamBatched = false;
 
     explicit SendMachSendRight(const MachSendRight& a1)
         : m_arguments(a1)
@@ -127,6 +130,7 @@ public:
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = false;
+    static constexpr bool isStreamBatched = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void(MachSendRight&&)>&&);
     static void cancelReply(CompletionHandler<void(MachSendRight&&)>&&);
@@ -154,6 +158,7 @@ public:
     static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = false;
     static constexpr bool isReplyStreamEncodable = false;
+    static constexpr bool isStreamBatched = false;
 
     static void callReply(IPC::Decoder&, CompletionHandler<void(MachSendRight&&)>&&);
     static void cancelReply(CompletionHandler<void(MachSendRight&&)>&&);

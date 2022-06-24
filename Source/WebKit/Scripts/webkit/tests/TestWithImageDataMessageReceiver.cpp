@@ -25,13 +25,13 @@
 #include "config.h"
 #include "TestWithImageData.h"
 
-#include "ArgumentCoders.h"
-#include "Decoder.h"
-#include "HandleMessage.h"
-#include "TestWithImageDataMessages.h"
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/ImageData.h>
-#include <wtf/RefCounted.h>
+#include "ArgumentCoders.h" // NOLINT
+#include "Decoder.h" // NOLINT
+#include "HandleMessage.h" // NOLINT
+#include "TestWithImageDataMessages.h" // NOLINT
+#include "WebCoreArgumentCoders.h" // NOLINT
+#include <WebCore/ImageData.h> // NOLINT
+#include <wtf/RefCounted.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"

@@ -25,10 +25,10 @@
 #include "config.h"
 #include "TestWithStreamBuffer.h"
 
-#include "Decoder.h"
-#include "HandleMessage.h"
-#include "StreamConnectionBuffer.h"
-#include "TestWithStreamBufferMessages.h"
+#include "Decoder.h" // NOLINT
+#include "HandleMessage.h" // NOLINT
+#include "StreamConnectionBuffer.h" // NOLINT
+#include "TestWithStreamBufferMessages.h" // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"

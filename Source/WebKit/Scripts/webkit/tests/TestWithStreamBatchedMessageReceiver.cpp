@@ -23,17 +23,13 @@
  */
 
 #include "config.h"
-#include "TestWithIfMessage.h"
+#include "TestWithStreamBatched.h"
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
 #include "ArgumentCoders.h" // NOLINT
-#endif
 #include "Decoder.h" // NOLINT
 #include "HandleMessage.h" // NOLINT
-#include "TestWithIfMessageMessages.h" // NOLINT
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#include "TestWithStreamBatchedMessages.h" // NOLINT
 #include <wtf/text/WTFString.h> // NOLINT
-#endif
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"
@@ -41,24 +37,17 @@
 
 namespace WebKit {
 
-void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
-#if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
-#endif
-#if PLATFORM(GTK)
-    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
-#endif
-    UNUSED_PARAM(connection);
+    if (decoder.messageName() == Messages::TestWithStreamBatched::SendString::name())
+        return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection.connection(), decoder, this, &TestWithStreamBatched::sendString);
     UNUSED_PARAM(decoder);
+    UNUSED_PARAM(connection);
 #if ENABLE(IPC_TESTING_API)
-    if (connection.ignoreInvalidMessageForTesting())
+    if (connection.connection().ignoreInvalidMessageForTesting())
         return;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
 }
 
 } // namespace WebKit
@@ -67,18 +56,10 @@ void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 
 namespace IPC {
 
-#if PLATFORM(COCOA)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamBatched_SendString>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
-    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithStreamBatched::SendString::Arguments>(globalObject, decoder);
 }
-#endif
-#if PLATFORM(GTK)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
-}
-#endif
 
 }
 

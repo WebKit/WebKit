@@ -7,6 +7,7 @@ TESTS = \
     TestWithSemaphore \
     TestWithImageData \
     TestWithStream \
+    TestWithStreamBatched \
     TestWithStreamBuffer \
     TestWithCVPixelBuffer \
 #

@@ -26,16 +26,16 @@
 #include "TestWithCVPixelBuffer.h"
 
 #if USE(AVFOUNDATION)
-#include "ArgumentCodersCF.h"
+#include "ArgumentCodersCF.h" // NOLINT
 #endif
-#include "Decoder.h"
-#include "HandleMessage.h"
-#include "TestWithCVPixelBufferMessages.h"
+#include "Decoder.h" // NOLINT
+#include "HandleMessage.h" // NOLINT
+#include "TestWithCVPixelBufferMessages.h" // NOLINT
 #if USE(AVFOUNDATION)
-#include <WebCore/CVUtilities.h>
+#include <WebCore/CVUtilities.h> // NOLINT
 #endif
 #if USE(AVFOUNDATION)
-#include <wtf/RetainPtr.h>
+#include <wtf/RetainPtr.h> // NOLINT
 #endif
 
 #if ENABLE(IPC_TESTING_API)

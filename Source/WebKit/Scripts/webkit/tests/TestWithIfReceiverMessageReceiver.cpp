@@ -23,17 +23,14 @@
  */
 
 #include "config.h"
-#include "TestWithIfMessage.h"
+#if ENABLE(APPLE_PAY)
+#include "TestWithIfReceiver.h"
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
-#include "ArgumentCoders.h" // NOLINT
-#endif
-#include "Decoder.h" // NOLINT
-#include "HandleMessage.h" // NOLINT
-#include "TestWithIfMessageMessages.h" // NOLINT
-#if PLATFORM(COCOA) || PLATFORM(GTK)
-#include <wtf/text/WTFString.h> // NOLINT
-#endif
+#include "Decoder.h"
+#include "HandleMessage.h"
+#include "TestWithIfReceiverMessages.h"
+#include "WebCoreArgumentCoders.h"
+#include <WebCore/ApplePayPaymentAuthorizationResult.h>
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"
@@ -41,17 +38,10 @@
 
 namespace WebKit {
 
-void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+void TestWithIfReceiver::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    Ref protectedThis { *this };
-#if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
-#endif
-#if PLATFORM(GTK)
-    if (decoder.messageName() == Messages::TestWithIfMessage::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithIfMessage::LoadURL>(connection, decoder, this, &TestWithIfMessage::loadURL);
-#endif
+    if (decoder.messageName() == Messages::TestWithIfReceiver::CompletePaymentSession::name())
+        return IPC::handleMessage<Messages::TestWithIfReceiver::CompletePaymentSession>(connection, decoder, this, &TestWithIfReceiver::completePaymentSession);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
@@ -67,20 +57,14 @@ void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 
 namespace IPC {
 
-#if PLATFORM(COCOA)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfReceiver_CompletePaymentSession>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
-    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
+    return jsValueForDecodedArguments<Messages::TestWithIfReceiver::CompletePaymentSession::Arguments>(globalObject, decoder);
 }
-#endif
-#if PLATFORM(GTK)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
-}
-#endif
 
 }
 
 #endif
 
+
+#endif // ENABLE(APPLE_PAY)

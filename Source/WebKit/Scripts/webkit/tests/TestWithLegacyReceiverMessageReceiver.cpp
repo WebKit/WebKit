@@ -26,38 +26,38 @@
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
 #include "TestWithLegacyReceiver.h"
 
-#include "ArgumentCoders.h"
-#include "Connection.h"
-#include "Decoder.h"
+#include "ArgumentCoders.h" // NOLINT
+#include "Connection.h" // NOLINT
+#include "Decoder.h" // NOLINT
 #if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
-#include "DummyType.h"
+#include "DummyType.h" // NOLINT
 #endif
 #if PLATFORM(MAC)
-#include "GestureTypes.h"
+#include "GestureTypes.h" // NOLINT
 #endif
-#include "HandleMessage.h"
-#include "Plugin.h"
-#include "TestWithLegacyReceiverMessages.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebPreferencesStore.h"
+#include "HandleMessage.h" // NOLINT
+#include "Plugin.h" // NOLINT
+#include "TestWithLegacyReceiverMessages.h" // NOLINT
+#include "WebCoreArgumentCoders.h" // NOLINT
+#include "WebPreferencesStore.h" // NOLINT
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-#include "WebTouchEvent.h"
+#include "WebTouchEvent.h" // NOLINT
 #endif
-#include <WebCore/GraphicsLayer.h>
+#include <WebCore/GraphicsLayer.h> // NOLINT
 #if PLATFORM(MAC)
-#include <WebCore/KeyboardEvent.h>
+#include <WebCore/KeyboardEvent.h> // NOLINT
 #endif
-#include <WebCore/PluginData.h>
-#include <utility>
-#include <wtf/HashMap.h>
+#include <WebCore/PluginData.h> // NOLINT
+#include <utility> // NOLINT
+#include <wtf/HashMap.h> // NOLINT
 #if PLATFORM(MAC)
-#include <wtf/MachSendRight.h>
+#include <wtf/MachSendRight.h> // NOLINT
 #endif
 #if PLATFORM(MAC)
-#include <wtf/OptionSet.h>
+#include <wtf/OptionSet.h> // NOLINT
 #endif
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Vector.h> // NOLINT
+#include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"

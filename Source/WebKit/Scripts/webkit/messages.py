@@ -59,6 +59,7 @@ LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
 NOT_STREAM_ENCODABLE_ATTRIBUTE = 'NotStreamEncodable'
 NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE = 'NotStreamEncodableReply'
+STREAM_BATCHED_ATTRIBUTE = 'StreamBatched'
 
 def receiver_enumerator_order_key(receiver_name):
     if receiver_name == 'IPC':
@@ -193,6 +194,10 @@ def message_to_struct_declaration(receiver, message):
         result.append('    static constexpr bool isStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_ATTRIBUTE)])
         if message.reply_parameters is not None:
             result.append('    static constexpr bool isReplyStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE)])
+            if message.has_attribute(STREAM_BATCHED_ATTRIBUTE):
+                sys.stderr.write("Error: %s::%s has a reply but is marked as batched. Messages with replies are intended to be sent without latency.\n" % (receiver.name, message.name))
+                sys.exit(1)
+        result.append('    static constexpr bool isStreamBatched = %s;\n' % ('false', 'true')[message.has_attribute(STREAM_BATCHED_ATTRIBUTE)])
 
     result.append('\n')
     if message.reply_parameters != None:
@@ -1047,13 +1052,14 @@ def collect_header_conditions_for_receiver(receiver, header_conditions):
 
 def generate_header_includes_from_conditions(header_conditions):
     result = []
+    # FIXME(https://bugs.webkit.org/show_bug.cgi?id=241854): NOLINT due to order not as WebKit expects.
     for header in sorted(header_conditions):
         if header_conditions[header] and not None in header_conditions[header]:
             result.append('#if %s\n' % ' || '.join(sorted(set(header_conditions[header]))))
-            result += ['#include %s\n' % header]
+            result += ['#include %s // NOLINT\n' % header]
             result.append('#endif\n')
         else:
-            result += ['#include %s\n' % header]
+            result += ['#include %s // NOLINT\n' % header]
     return result
 
 

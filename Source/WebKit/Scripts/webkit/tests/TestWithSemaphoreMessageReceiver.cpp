@@ -25,10 +25,10 @@
 #include "config.h"
 #include "TestWithSemaphore.h"
 
-#include "Decoder.h"
-#include "HandleMessage.h"
-#include "IPCSemaphore.h"
-#include "TestWithSemaphoreMessages.h"
+#include "Decoder.h" // NOLINT
+#include "HandleMessage.h" // NOLINT
+#include "IPCSemaphore.h" // NOLINT
+#include "TestWithSemaphoreMessages.h" // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"

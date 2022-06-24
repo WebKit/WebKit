@@ -25,16 +25,16 @@
 #include "config.h"
 #include "TestWithSuperclass.h"
 
-#include "ArgumentCoders.h"
-#include "Decoder.h"
-#include "HandleMessage.h"
-#include "TestClassName.h"
+#include "ArgumentCoders.h" // NOLINT
+#include "Decoder.h" // NOLINT
+#include "HandleMessage.h" // NOLINT
+#include "TestClassName.h" // NOLINT
 #if ENABLE(TEST_FEATURE)
-#include "TestTwoStateEnum.h"
+#include "TestTwoStateEnum.h" // NOLINT
 #endif
-#include "TestWithSuperclassMessages.h"
-#include <optional>
-#include <wtf/text/WTFString.h>
+#include "TestWithSuperclassMessages.h" // NOLINT
+#include <optional> // NOLINT
+#include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"
