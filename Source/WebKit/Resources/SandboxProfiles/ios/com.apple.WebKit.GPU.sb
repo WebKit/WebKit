@@ -396,6 +396,11 @@
 (allow mach-lookup (with telemetry)
     (global-name "com.apple.tccd"))
 
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.mobilegestalt.xpc")))
+
 ;; <rdar://problem/12413942>
 (allow file-read*
        (well-known-system-group-container-literal "/systemgroup.com.apple.mobilegestaltcache/Library/Caches/com.apple.MobileGestalt.plist"))
