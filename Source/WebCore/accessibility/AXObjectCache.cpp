@@ -956,10 +956,14 @@ Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& ax
 {
     ASSERT(isMainThread());
 
-    return axIDs.map([this] (const auto& axID) -> RefPtr<AXCoreObject> {
-        ASSERT(axID.isValid());
-        return objectForID(axID);
-    });
+    Vector<RefPtr<AXCoreObject>> result;
+    result.reserveInitialCapacity(axIDs.size());
+    for (auto& axID : axIDs) {
+        if (auto* object = objectForID(axID))
+            result.uncheckedAppend(object);
+    }
+    result.shrinkToFit();
+    return result;
 }
 
 AXID AXObjectCache::getAXID(AccessibilityObject* obj)
