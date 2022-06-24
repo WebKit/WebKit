@@ -54,7 +54,7 @@ public:
 
     using Base::Base;
 
-    BBQPlan(Context*, Ref<ModuleInformation>, uint32_t functionIndex, CalleeGroup*, CompletionTask&&);
+    BBQPlan(Context*, Ref<ModuleInformation>, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, CalleeGroup*, CompletionTask&&);
 
     bool hasWork() const final
     {
@@ -92,6 +92,7 @@ private:
 
     RefPtr<CalleeGroup> m_calleeGroup { nullptr };
     uint32_t m_functionIndex;
+    std::optional<bool> m_hasExceptionHandlers;
 };
 
 

@@ -323,7 +323,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, TierUpCount*, const TypeDefinition&, unsigned& osrEntryScratchBufferSize);
+    AirIRGenerator(const ModuleInformation&, B3::Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, MemoryMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount*, const TypeDefinition&, unsigned& osrEntryScratchBufferSize);
 
     void finalizeEntrypoints();
 
@@ -875,6 +875,7 @@ private:
     GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
     GPRReg m_prologueWasmContextGPR { InvalidGPRReg };
     bool m_makesCalls { false };
+    std::optional<bool> m_hasExceptionHandlers;
 
     HashMap<BlockSignature, B3::Type> m_tupleMap;
     // This is only filled if we are dumping IR.
@@ -949,7 +950,7 @@ void AirIRGenerator::restoreWasmContextInstance(BasicBlock* block, TypedTmp inst
     emitPatchpoint(block, patchpoint, Tmp(), instance);
 }
 
-AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, TierUpCount* tierUp, const TypeDefinition& signature, unsigned& osrEntryScratchBufferSize)
+AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp, const TypeDefinition& signature, unsigned& osrEntryScratchBufferSize)
     : m_info(info)
     , m_mode(mode)
     , m_functionIndex(functionIndex)
@@ -957,6 +958,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     , m_proc(procedure)
     , m_code(m_proc.code())
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
+    , m_hasExceptionHandlers(hasExceptionHandlers)
     , m_numImportFunctions(info.importFunctionCount())
     , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
 {
@@ -1013,12 +1015,13 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             const int32_t checkSize = m_makesCalls ? (wasmFrameSize + extraFrameSize).value() : wasmFrameSize.value();
             bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
             bool needsOverflowCheck = m_makesCalls || wasmFrameSize >= static_cast<int32_t>(minimumParentCheckSize) || needUnderflowCheck;
+            bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
 
-            if ((needsOverflowCheck || m_usesInstanceValue) && Context::useFastTLS())
+            if ((needsOverflowCheck || m_usesInstanceValue || mayHaveExceptionHandlers) && Context::useFastTLS())
                 jit.loadWasmContextInstance(m_prologueWasmContextGPR);
 
             // We need to setup JSWebAssemblyInstance in |this| slot first.
-            if (m_catchEntrypoints.size()) {
+            if (mayHaveExceptionHandlers) {
                 GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
                 jit.loadPtr(CCallHelpers::Address(m_prologueWasmContextGPR, Instance::offsetOfOwner()), scratch);
                 jit.store64(scratch, CCallHelpers::Address(GPRInfo::callFrameRegister, CallFrameSlot::thisArgument * sizeof(Register)));
@@ -1027,6 +1030,9 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
             if (needsOverflowCheck) {
+                if (mayHaveExceptionHandlers)
+                    jit.store32(CCallHelpers::TrustedImm32(PatchpointExceptionHandle::s_invalidCallSiteIndex), CCallHelpers::tagFor(CallFrameSlot::argumentCountIncludingThis));
+
                 GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
                 jit.addPtr(CCallHelpers::TrustedImm32(-checkSize), GPRInfo::callFrameRegister, scratch);
                 MacroAssembler::JumpList overflow;
@@ -3969,7 +3975,7 @@ auto AirIRGenerator::origin() -> B3::Origin
     return B3::Origin();
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
 
@@ -3992,7 +3998,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
     
     procedure.setOptLevel(Options::webAssemblyBBQAirOptimizationLevel());
 
-    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, tierUp, signature, result->osrEntryScratchBufferSize);
+    AirIRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, mode, functionIndex, hasExceptionHandlers, tierUp, signature, result->osrEntryScratchBufferSize);
     FunctionParser<AirIRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 
@@ -5566,7 +5572,7 @@ PatchpointExceptionHandle AirIRGenerator::preparePatchpointForExceptions(B3::Pat
 {
     ++m_callSiteIndex;
     if (!m_tryCatchDepth)
-        return { };
+        return { m_hasExceptionHandlers };
 
     unsigned numLiveValues = 0;
     forEachLiveValue([&] (Tmp tmp) {
@@ -5576,7 +5582,7 @@ PatchpointExceptionHandle AirIRGenerator::preparePatchpointForExceptions(B3::Pat
 
     patch->effects.exitsSideways = true;
 
-    return PatchpointExceptionHandle { m_callSiteIndex, numLiveValues };
+    return { m_hasExceptionHandlers, m_callSiteIndex, numLiveValues };
 }
 
 } } // namespace JSC::Wasm

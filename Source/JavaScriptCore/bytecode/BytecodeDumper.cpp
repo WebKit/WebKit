@@ -371,6 +371,7 @@ void BytecodeDumper::dumpBlock(FunctionCodeBlockGenerator* block, const ModuleIn
     }
 
     dumper.dumpConstants();
+    dumper.dumpExceptionHandlers();
 
     out.printf("\n");
 }
@@ -386,6 +387,19 @@ void BytecodeDumper::dumpConstants()
             this->m_out.print("   const", i, " : ", type.kind, " = ", formatConstant(type, constant), "\n");
             ++i;
         }
+    }
+}
+
+void BytecodeDumper::dumpExceptionHandlers()
+{
+    if (unsigned count = this->block()->numberOfExceptionHandlers()) {
+        this->m_out.printf("\nException Handlers:\n");
+        unsigned i = 0;
+        do {
+            const auto& handler = this->block()->exceptionHandler(i);
+            this->m_out.printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] tryDepth: [%4d] exceptionIndexOrDelegateTarget: [%4d] } %s\n", i + 1, handler.m_start, handler.m_end, handler.m_target, handler.m_tryDepth, handler.m_exceptionIndexOrDelegateTarget, handler.typeName().characters8());
+            ++i;
+        } while (i < count);
     }
 }
 

@@ -152,6 +152,7 @@ public:
 
 private:
     void dumpConstants();
+    void dumpExceptionHandlers();
     CString constantName(VirtualRegister index) const;
     CString formatConstant(Type, uint64_t) const;
 

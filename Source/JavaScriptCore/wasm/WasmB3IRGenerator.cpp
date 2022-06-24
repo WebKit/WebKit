@@ -303,7 +303,7 @@ public:
             return fail(__VA_ARGS__);             \
     } while (0)
 
-    B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, unsigned loopIndexForOSREntry, TierUpCount*);
+    B3IRGenerator(const ModuleInformation&, Procedure&, InternalFunction*, Vector<UnlinkedWasmToWasmCall>&, unsigned& osrEntryScratchBufferSize, MemoryMode, CompilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount*);
 
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
@@ -560,10 +560,10 @@ private:
     GPRReg m_boundsCheckingSizeGPR { InvalidGPRReg };
     GPRReg m_wasmContextInstanceGPR { InvalidGPRReg };
     bool m_makesCalls { false };
+    std::optional<bool> m_hasExceptionHandlers;
 
     Value* m_instanceValue { nullptr }; // Always use the accessor below to ensure the instance value is materialized when used.
     bool m_usesInstanceValue { false };
-    bool m_hasCatch { false };
     Value* instanceValue()
     {
         m_usesInstanceValue = true;
@@ -621,7 +621,7 @@ void B3IRGenerator::restoreWasmContextInstance(Procedure& proc, BasicBlock* bloc
     });
 }
 
-B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
+B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure, InternalFunction* compilation, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, unsigned& osrEntryScratchBufferSize, MemoryMode mode, CompilationMode compilationMode, unsigned functionIndex, std::optional<bool> hasExceptionHandlers, unsigned loopIndexForOSREntry, TierUpCount* tierUp)
     : m_info(info)
     , m_mode(mode)
     , m_compilationMode(compilationMode)
@@ -632,6 +632,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
     , m_unlinkedWasmToWasmCalls(unlinkedWasmToWasmCalls)
     , m_osrEntryScratchBufferSize(osrEntryScratchBufferSize)
     , m_constantInsertionValues(m_proc)
+    , m_hasExceptionHandlers(hasExceptionHandlers)
     , m_numImportFunctions(info.importFunctionCount())
 {
     m_topLevelBlock = m_proc.addBlock();
@@ -867,17 +868,24 @@ void B3IRGenerator::insertEntrySwitch()
 
 void B3IRGenerator::insertConstants()
 {
+    bool mayHaveExceptionHandlers = !m_hasExceptionHandlers || m_hasExceptionHandlers.value();
+
+    Value* invalidCallSiteIndex = nullptr;
+    if (mayHaveExceptionHandlers)
+        invalidCallSiteIndex = constant(B3::Int32, PatchpointExceptionHandle::s_invalidCallSiteIndex, Origin());
     m_constantInsertionValues.execute(m_proc.at(0));
 
-    if (!m_hasCatch)
+    if (!mayHaveExceptionHandlers)
         return;
 
     Value* jsInstance = m_proc.add<MemoryValue>(Load, pointerType(), Origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfOwner()));
-    Value* store = m_proc.add<B3::MemoryValue>(B3::Store, Origin(), jsInstance, framePointer(), safeCast<int32_t>(CallFrameSlot::thisArgument * sizeof(Register)));
+    Value* storeThis = m_proc.add<B3::MemoryValue>(B3::Store, Origin(), jsInstance, framePointer(), safeCast<int32_t>(CallFrameSlot::thisArgument * sizeof(Register)));
+    Value* storeCallSiteIndex = m_proc.add<B3::MemoryValue>(B3::Store, Origin(), invalidCallSiteIndex, framePointer(), safeCast<int32_t>(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + TagOffset));
 
     BasicBlock* block = m_rootBlocks[0];
     m_constantInsertionValues.insertValue(0, jsInstance);
-    m_constantInsertionValues.insertValue(0, store);
+    m_constantInsertionValues.insertValue(0, storeThis);
+    m_constantInsertionValues.insertValue(0, storeCallSiteIndex);
     m_constantInsertionValues.execute(block);
 }
 
@@ -2570,7 +2578,7 @@ PatchpointExceptionHandle B3IRGenerator::preparePatchpointForExceptions(BasicBlo
 {
     ++m_callSiteIndex;
     if (!m_tryCatchDepth)
-        return { };
+        return { m_hasExceptionHandlers };
 
     Vector<Value*> liveValues;
     Origin origin = this->origin();
@@ -2590,7 +2598,7 @@ PatchpointExceptionHandle B3IRGenerator::preparePatchpointForExceptions(BasicBlo
     patch->effects.exitsSideways = true;
     patch->appendVectorWithRep(liveValues, ValueRep::LateColdAny);
 
-    return PatchpointExceptionHandle { m_callSiteIndex, static_cast<unsigned>(liveValues.size()) };
+    return { m_hasExceptionHandlers, m_callSiteIndex, static_cast<unsigned>(liveValues.size()) };
 }
 
 auto B3IRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
@@ -2620,7 +2628,6 @@ auto B3IRGenerator::addCatchAllToUnreachable(ControlType& data) -> PartialResult
 
 Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned exceptionIndex)
 {
-    m_hasCatch = true;
     m_currentBlock = m_proc.addBlock();
     m_rootBlocks.append(m_currentBlock);
     m_stackSize = data.stackSize();
@@ -2878,7 +2885,7 @@ B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin,
 
     m_proc.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), wasmCallInfo.headerAndArgumentStackSizeInBytes));
 
-    Box<PatchpointExceptionHandle> exceptionHandle = Box<PatchpointExceptionHandle>::create();
+    Box<PatchpointExceptionHandle> exceptionHandle = Box<PatchpointExceptionHandle>::create(m_hasExceptionHandlers);
 
     B3::Type returnType = toB3ResultType(&signature);
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(returnType, origin);
@@ -3202,7 +3209,7 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
     return dumpAllowlist->shouldDumpWasmFunction(functionIndex);
 }
 
-Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
+Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext& compilationContext, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
 {
     auto result = makeUnique<InternalFunction>();
 
@@ -3239,7 +3246,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(Compilatio
 
     procedure.code().setForceIRCRegisterAllocation();
 
-    B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, result->osrEntryScratchBufferSize, mode, compilationMode, functionIndex, loopIndexForOSREntry, tierUp);
+    B3IRGenerator irGenerator(info, procedure, result.get(), unlinkedWasmToWasmCalls, result->osrEntryScratchBufferSize, mode, compilationMode, functionIndex, hasExceptionHandlers, loopIndexForOSREntry, tierUp);
     FunctionParser<B3IRGenerator> parser(irGenerator, function.data.data(), function.data.size(), signature, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parse());
 

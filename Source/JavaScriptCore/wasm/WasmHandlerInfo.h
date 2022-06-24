@@ -29,6 +29,7 @@
 
 #include "CodeLocation.h"
 #include <wtf/Forward.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 namespace Wasm {
@@ -64,6 +65,22 @@ struct UnlinkedHandlerInfo : public HandlerInfoBase {
         m_target = target;
         m_tryDepth = tryDepth;
         m_exceptionIndexOrDelegateTarget = exceptionIndexOrDelegateTarget;
+    }
+
+    ASCIILiteral typeName() const
+    {
+        switch (m_type) {
+        case HandlerType::Catch:
+            return "catch"_s;
+        case HandlerType::CatchAll:
+            return "catchall"_s;
+        case HandlerType::Delegate:
+            return "delegate"_s;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        return { };
     }
 };
 
