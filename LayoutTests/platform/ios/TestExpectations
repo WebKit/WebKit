@@ -2048,6 +2048,8 @@ editing/pasteboard/paste-sanitize-crash-1.html [ Failure ]
 editing/pasteboard/paste-sanitize-crash-2.html [ Failure ]
 editing/pasteboard/paste-text-events.html [ Failure ]
 
+# setPageZoomFactor() is wrong/flaky on iOS
+webkit.org/b/241951 intersection-observer/root-margin-percentage-units-with-zoom.html [ Skip ]
 
 # Local pasteboard is not implemented on iOS, so pasteboard tests used to be all disabled.
 

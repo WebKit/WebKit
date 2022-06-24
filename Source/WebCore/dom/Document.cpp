@@ -8009,14 +8009,21 @@ void Document::removeIntersectionObserver(IntersectionObserver& observer)
 
 static void expandRootBoundsWithRootMargin(FloatRect& localRootBounds, const LengthBox& rootMargin, float zoomFactor)
 {
-    FloatBoxExtent rootMarginFloatBox(
-        floatValueForLength(rootMargin.top(), localRootBounds.height()) * zoomFactor,
-        floatValueForLength(rootMargin.right(), localRootBounds.width()) * zoomFactor,
-        floatValueForLength(rootMargin.bottom(), localRootBounds.height()) * zoomFactor,
-        floatValueForLength(rootMargin.left(), localRootBounds.width()) * zoomFactor
-    );
+    auto zoomAdjustedLength = [](const Length& length, float maximumValue, float zoomFactor) {
+        if (length.isPercent())
+            return floatValueForLength(length, maximumValue);
+    
+        return floatValueForLength(length, maximumValue) * zoomFactor;
+    };
 
-    localRootBounds.expand(rootMarginFloatBox);
+    auto rootMarginEdges = FloatBoxExtent {
+        zoomAdjustedLength(rootMargin.top(), localRootBounds.height(), zoomFactor),
+        zoomAdjustedLength(rootMargin.right(), localRootBounds.width(), zoomFactor),
+        zoomAdjustedLength(rootMargin.bottom(), localRootBounds.height(), zoomFactor),
+        zoomAdjustedLength(rootMargin.left(), localRootBounds.width(), zoomFactor)
+    };
+
+    localRootBounds.expand(rootMarginEdges);
 }
 
 static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const RenderElement* renderer)
