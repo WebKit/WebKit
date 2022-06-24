@@ -70,9 +70,9 @@ class Tracker(GenericTracker):
             self, url, users=None, res=None,
             component_color=DEFAULT_COMPONENT_COLOR,
             version_color=DEFAULT_VERSION_COLOR,
-            session=None
+            session=None, redact=None,
     ):
-        super(Tracker, self).__init__(users=users)
+        super(Tracker, self).__init__(users=users, redact=redact)
 
         self.session = session or requests.Session()
         self.component_color = component_color

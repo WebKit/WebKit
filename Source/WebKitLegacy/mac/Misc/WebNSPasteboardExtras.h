@@ -58,7 +58,7 @@ extern NSString *WebURLNamePboardType;
 // Writes the URL to the pasteboard with the passed types.
 - (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title types:(NSArray *)types;
 
-// Sets the text on the NSFindPboard. Returns the new changeCount for the NSFindPboard.
+// Sets the text on the find pasteboard (NSPasteboardNameFind). Returns the new changeCount for the find pasteboard.
 + (int)_web_setFindPasteboardString:(NSString *)string withOwner:(id)owner;
 
 // Writes a file wrapper to the pasteboard as an RTFD attachment.

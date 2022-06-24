@@ -1,16 +1,23 @@
-// Copyright (C) 2020 Igalia, S.L. All rights reserved.
+// Copyright (C) 2022 Igalia, S.L. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
 esid: sec-temporal.instant.prototype.tojson
-description: Basic tests for toJSON()
-features: [Temporal]
+description: Basic behavior for toJSON
+features: [BigInt, Temporal]
 ---*/
 
-const instantBeforeEpoch = Temporal.Instant.from("1963-02-13T10:36:29.123456789+01:00");
-assert.sameValue(instantBeforeEpoch.toJSON(), "1963-02-13T09:36:29.123456789Z");
+const tests = [
+  [new Temporal.Instant(192_258_181_000_000_000n), "1976-02-04T05:03:01Z"],
+  [new Temporal.Instant(0n), "1970-01-01T00:00:00Z"],
+  [new Temporal.Instant(30_000_000_000n), "1970-01-01T00:00:30Z"],
+  [new Temporal.Instant(30_123_400_000n), "1970-01-01T00:00:30.1234Z"],
+];
 
-const instantAfterEpoch = Temporal.Instant.from("1976-11-18T15:23:30.123456789+01:00");
-assert.sameValue(instantAfterEpoch.toJSON(), "1976-11-18T14:23:30.123456789Z");
-assert.sameValue(instantAfterEpoch.toJSON("+01:00"), "1976-11-18T14:23:30.123456789Z",
-  "after epoch with ignored argument");
+const options = new Proxy({}, {
+  get() { throw new Test262Error("should not get properties off argument") }
+});
+for (const [instant, expected] of tests) {
+  assert.sameValue(instant.toJSON(), expected, "toJSON without argument");
+  assert.sameValue(instant.toJSON(options), expected, "toJSON with argument");
+}

@@ -111,7 +111,8 @@ public:
         Unknown,
         SimpleContainer,
         DirectlyCompositedImage,
-        Painted
+        UnscaledBitmapOnly,
+        Painted,
     };
 
     PaintedContentsInfo(RenderLayerBacking& inBacking)
@@ -154,6 +155,11 @@ public:
     bool isDirectlyCompositedImage()
     {
         return contentsTypeDetermination() == ContentsTypeDetermination::DirectlyCompositedImage;
+    }
+
+    bool isUnscaledBitmapOnly()
+    {
+        return contentsTypeDetermination() == ContentsTypeDetermination::UnscaledBitmapOnly;
     }
 
     RenderLayerBacking& m_backing;
@@ -209,6 +215,8 @@ PaintedContentsInfo::ContentsTypeDetermination PaintedContentsInfo::contentsType
         m_contentsType = ContentsTypeDetermination::SimpleContainer;
     else if (m_backing.isDirectlyCompositedImage())
         m_contentsType = ContentsTypeDetermination::DirectlyCompositedImage;
+    else if (m_backing.isUnscaledBitmapOnly())
+        m_contentsType = ContentsTypeDetermination::UnscaledBitmapOnly;
     else
         m_contentsType = ContentsTypeDetermination::Painted;
 
@@ -1067,6 +1075,12 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     // Requires layout.
     if (contentsInfo.isDirectlyCompositedImage())
         updateImageContents(contentsInfo);
+
+    bool unscaledBitmap = contentsInfo.isUnscaledBitmapOnly();
+    if (unscaledBitmap == m_graphicsLayer->appliesDeviceScale()) {
+        m_graphicsLayer->setAppliesDeviceScale(!unscaledBitmap);
+        layerConfigChanged = true;
+    }
 
     if (is<RenderEmbeddedObject>(renderer()) && downcast<RenderEmbeddedObject>(renderer()).allowsAcceleratedCompositing()) {
         auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer()).widget());
@@ -2912,12 +2926,54 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
     return false;
 }
 
+bool RenderLayerBacking::isUnscaledBitmapOnly() const
+{
+    if (!is<RenderImage>(renderer()) && !is<RenderHTMLCanvas>(renderer()))
+        return false;
+
+    if (m_owningLayer.hasVisibleBoxDecorationsOrBackground())
+        return false;
+
+    auto contents = contentsBox();
+    if (contents.location() != LayoutPoint(0, 0))
+        return false;
+
+    if (is<RenderImage>(renderer())) {
+        auto& imageRenderer = downcast<RenderImage>(renderer());
+        if (auto* cachedImage = imageRenderer.cachedImage()) {
+            if (!cachedImage->hasImage())
+                return false;
+
+            auto* image = cachedImage->imageForRenderer(&imageRenderer);
+            if (!is<BitmapImage>(image))
+                return false;
+
+            if (downcast<BitmapImage>(*image).orientationForCurrentFrame() != ImageOrientation::None)
+                return false;
+
+            return contents.size() == image->size();
+        }
+        return false;
+    }
+
+    auto& canvasRenderer = downcast<RenderHTMLCanvas>(renderer());
+    if (snappedIntRect(contents).size() == canvasRenderer.canvasElement().size())
+        return true;
+    return false;
+}
+
 void RenderLayerBacking::contentChanged(ContentChangeType changeType)
 {
     PaintedContentsInfo contentsInfo(*this);
-    if ((changeType == ImageChanged) && contentsInfo.isDirectlyCompositedImage()) {
-        updateImageContents(contentsInfo);
-        return;
+    if (changeType == ImageChanged) {
+        if (contentsInfo.isDirectlyCompositedImage()) {
+            updateImageContents(contentsInfo);
+            return;
+        }
+        if (contentsInfo.isUnscaledBitmapOnly()) {
+            compositor().scheduleCompositingLayerUpdate();
+            return;
+        }
     }
 
     if (changeType == VideoChanged) {

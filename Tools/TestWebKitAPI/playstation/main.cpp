@@ -41,6 +41,9 @@ int main(int argc, char** argv)
     loadLibraryOrExit(ICU_LOAD_AT);
 #if defined(BUILDING_TestWebCore) || defined(BUILDING_TestWebKit)
     loadLibraryOrExit(PNG_LOAD_AT);
+#if defined(WebP_LOAD_AT)
+    loadLibraryOrExit(WebP_LOAD_AT);
+#endif
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);

@@ -45,8 +45,8 @@ require "risc"
 #  x5  => t5, a5, wa5
 #  x6  => t6, a6, wa6
 #  x7  => t7, a7, wa7
-#  x8  => ws0
-#  x9  => ws1
+#  x9  => ws0
+# x10  => ws1
 # x13  =>                  (scratch)
 # x16  =>                  (scratch)
 # x17  =>                  (scratch)
@@ -227,8 +227,21 @@ end
 
 class Address
     def arm64Operand(kind)
-        raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 4095
-        "[#{base.arm64Operand(:quad)}, \##{offset.value}]"
+        case kind
+        when :quad, :ptr, :double
+            if $currentSettings["ADDRESS64"]
+                raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 32760
+            else
+                raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 16380
+            end
+        when :word, :int, :float
+            raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 16380
+        else
+            raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -255 or offset.value > 4095
+        end
+        offset.value.zero? \
+            ? "[#{base.arm64Operand(:quad)}]"
+            : "[#{base.arm64Operand(:quad)}, \##{offset.value}]"
     end
 
     def arm64SimpleAddressOperand(kind)
@@ -236,24 +249,42 @@ class Address
         "[#{base.arm64Operand(:quad)}]"
     end
     
+    def arm64PairAddressOperand(kind)
+        raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value < -512 or offset.value > 504
+        "[#{base.arm64Operand(:quad)}, \##{offset.value}]"
+    end
+
     def arm64EmitLea(destination, kind)
-        $asm.puts "add #{destination.arm64Operand(kind)}, #{base.arm64Operand(kind)}, \##{offset.value}"
+        offset.value.zero? \
+            ? ($asm.puts "mov #{destination.arm64Operand(kind)}, #{base.arm64Operand(kind)}")
+            : ($asm.puts "add #{destination.arm64Operand(kind)}, #{base.arm64Operand(kind)}, \##{offset.value}")
     end
 end
 
 class BaseIndex
     def arm64Operand(kind)
         raise "Invalid offset #{offset.value} at #{codeOriginString}" if offset.value != 0
-        "[#{base.arm64Operand(:quad)}, #{index.arm64Operand(:quad)}, lsl \##{scaleShift}]"
+        scaleShift.zero? \
+            ? "[#{base.arm64Operand(:quad)}, #{index.arm64Operand(:quad)}]"
+            : "[#{base.arm64Operand(:quad)}, #{index.arm64Operand(:quad)}, lsl \##{scaleShift}]"
     end
 
     def arm64EmitLea(destination, kind)
-        $asm.puts "add #{destination.arm64Operand(kind)}, #{base.arm64Operand(kind)}, #{index.arm64Operand(kind)}, lsl \##{scaleShift}"
+        scaleShift.zero? \
+            ? ($asm.puts "add #{destination.arm64Operand(kind)}, #{base.arm64Operand(kind)}, #{index.arm64Operand(kind)}")
+            : ($asm.puts "add #{destination.arm64Operand(kind)}, #{base.arm64Operand(kind)}, #{index.arm64Operand(kind)}, lsl \##{scaleShift}")
+    end
+
+    def arm64PairAddressOperand(kind)
+        raise "Unconverted base index address #{address.value} at #{codeOriginString}"
     end
 end
 
 class AbsoluteAddress
     def arm64Operand(kind)
+        raise "Unconverted absolute address #{address.value} at #{codeOriginString}"
+    end
+    def arm64PairAddressOperand(kind)
         raise "Unconverted absolute address #{address.value} at #{codeOriginString}"
     end
 end
@@ -264,29 +295,69 @@ end
 # Actual lowering code follows.
 #
 
+def isMalformedArm64LoadStoreAddress(opcode, operand)
+    malformed = false
+    if operand.is_a? Address
+        case opcode
+        when "loadp", "storep", "loadq", "storeq"
+            if $currentSettings["ADDRESS64"]
+                malformed ||= (not (-255..32760).include? operand.offset.value)
+                malformed ||= (not (operand.offset.value % 8).zero?)
+            else
+                malformed ||= (not (-255..16380).include? operand.offset.value)
+            end
+        when "loadd", "stored"
+            malformed ||= (not (-255..32760).include? operand.offset.value)
+            malformed ||= (not (operand.offset.value % 8).zero?)
+        when "loadi", "loadis", "storei"
+            malformed ||= (not (-255..16380).include? operand.offset.value)
+        else
+            # This is just a conservative estimate of the max offset.
+            malformed ||= (not (-255..4095).include? operand.offset.value)
+        end
+    end
+    malformed
+end
+
+def isMalformedArm64LoadStorePairAddress(opcode, operand)
+    malformed = false
+    if operand.is_a? Address
+        malformed ||= (not (-512..504).include? operand.offset.value)
+        malformed ||= (not (operand.offset.value % 8).zero?)
+    end
+    malformed
+end
+
 def arm64LowerMalformedLoadStoreAddresses(list)
     newList = []
-
-    def isAddressMalformed(opcode, operand)
-        malformed = false
-        if operand.is_a? Address
-            malformed ||= (not (-255..4095).include? operand.offset.value)
-            if opcode =~ /q$/ and $currentSettings["ADDRESS64"]
-                malformed ||= operand.offset.value % 8
-            end
-        end
-        malformed
-    end
 
     list.each {
         | node |
         if node.is_a? Instruction
-            if node.opcode =~ /^store/ and isAddressMalformed(node.opcode, node.operands[1])
+            if node.opcode =~ /^storepair/
+                if isMalformedArm64LoadStorePairAddress(node.opcode, node.operands[2])
+                    address = node.operands[2]
+                    tmp = Tmp.new(codeOrigin, :gpr)
+                    newList << Instruction.new(node.codeOrigin, "move", [address.offset, tmp])
+                    newList << Instruction.new(node.codeOrigin, node.opcode, [node.operands[0], node.operands[1], BaseIndex.new(node.codeOrigin, address.base, tmp, Immediate.new(codeOrigin, 1), Immediate.new(codeOrigin, 0))], node.annotation)
+                else
+                    newList << node
+                end
+            elsif node.opcode =~ /^loadpair/
+                if isMalformedArm64LoadStorePairAddress(node.opcode, node.operands[0])
+                    address = node.operands[0]
+                    tmp = Tmp.new(codeOrigin, :gpr)
+                    newList << Instruction.new(node.codeOrigin, "move", [address.offset, tmp])
+                    newList << Instruction.new(node.codeOrigin, node.opcode, [BaseIndex.new(node.codeOrigin, address.base, tmp, Immediate.new(codeOrigin, 1), Immediate.new(codeOrigin, 0)), node.operands[1], node.operands[2]], node.annotation)
+                else
+                    newList << node
+                end
+            elsif node.opcode =~ /^store/ and isMalformedArm64LoadStoreAddress(node.opcode, node.operands[1])
                 address = node.operands[1]
                 tmp = Tmp.new(codeOrigin, :gpr)
                 newList << Instruction.new(node.codeOrigin, "move", [address.offset, tmp])
                 newList << Instruction.new(node.codeOrigin, node.opcode, [node.operands[0], BaseIndex.new(node.codeOrigin, address.base, tmp, Immediate.new(codeOrigin, 1), Immediate.new(codeOrigin, 0))], node.annotation)
-            elsif node.opcode =~ /^load/ and isAddressMalformed(node.opcode, node.operands[0])
+            elsif node.opcode =~ /^load/ and isMalformedArm64LoadStoreAddress(node.opcode, node.operands[0])
                 address = node.operands[0]
                 tmp = Tmp.new(codeOrigin, :gpr)
                 newList << Instruction.new(node.codeOrigin, "move", [address.offset, tmp])
@@ -376,6 +447,7 @@ class Sequence
         result = arm64LowerLabelReferences(result)
         result = riscLowerMalformedAddresses(result) {
             | node, address |
+            isLoadStorePairOp = false
             case node.opcode
             when "loadb", "loadbsi", "loadbsq", "storeb", /^bb/, /^btb/, /^cb/, /^tb/, "loadlinkacqb", "storecondrelb", /^atomic[a-z]+b$/
                 size = 1
@@ -391,6 +463,9 @@ class Sequence
                 "divd", "subd", "muld", "sqrtd", /^bp/, /^bq/, /^btp/, /^btq/, /^cp/, /^cq/, /^tp/, /^tq/, /^bd/,
                 "jmp", "call", "leap", "leaq", "loadlinkacqq", "storecondrelq", /^atomic[a-z]+q$/
                 size = $currentSettings["ADDRESS64"] ? 8 : 4
+            when "loadpairq", "storepairq", "loadpaird", "storepaird"
+                size = 16
+                isLoadStorePairOp = true
             else
                 raise "Bad instruction #{node.opcode} for heap access at #{node.codeOriginString}: #{node.dump}"
             end
@@ -399,7 +474,11 @@ class Sequence
                 address.offset.value == 0 and
                     (node.opcode =~ /^lea/ or address.scale == 1 or address.scale == size)
             elsif address.is_a? Address
-                (-255..4095).include? address.offset.value
+                if isLoadStorePairOp
+                    not isMalformedArm64LoadStorePairAddress(node.opcode, address)
+                else
+                    not isMalformedArm64LoadStoreAddress(node.opcode, address)
+                end
             else
                 false
             end
@@ -443,10 +522,11 @@ class Sequence
         result = riscLowerMalformedAddresses(result) {
             | node, address |
             case node.opcode
-            when /^load/
-                true
-            when /^store/
-                not (address.is_a? Address and address.offset.value < 0)
+            when /^loadpair/, /^storepair/
+#                not (address.is_a? Address and not (-512..504).include? address.offset.value)
+                not address.is_a? Address or not isMalformedArm64LoadStorePairAddress(node.opcode, address)
+            when /^load/, /^store/
+                not address.is_a? Address or not isMalformedArm64LoadStoreAddress(node.opcode, address)
             when /^lea/
                 true
             when /^atomic/
@@ -655,21 +735,40 @@ def emitARM64Compare(operands, kind, compareCode)
 end
 
 def emitARM64MoveImmediate(value, target)
-    first = true
-    isNegative = value < 0
+    numberOfFilledHalfWords = 0
+    numberOfZeroHalfWords = 0
     [48, 32, 16, 0].each {
         | shift |
         currentValue = (value >> shift) & 0xffff
-        next if currentValue == (isNegative ? 0xffff : 0) and (shift != 0 or !first)
+        if currentValue == 0xffff
+            numberOfFilledHalfWords += 1
+        end
+        if currentValue == 0
+            numberOfZeroHalfWords += 1
+        end
+    }
+    fillOtherHalfWordsWithOnes = (numberOfFilledHalfWords > numberOfZeroHalfWords)
+
+    first = true
+    [48, 32, 16, 0].each {
+        | shift |
+        currentValue = (value >> shift) & 0xffff
+        next if currentValue == (fillOtherHalfWordsWithOnes ? 0xffff : 0) and (shift != 0 or !first)
         if first
-            if isNegative
-                $asm.puts "movn #{target.arm64Operand(:quad)}, \##{(~currentValue) & 0xffff}, lsl \##{shift}"
+            if fillOtherHalfWordsWithOnes
+                shift.zero? \
+                    ? ($asm.puts "movn #{target.arm64Operand(:quad)}, \##{(~currentValue) & 0xffff}")
+                    : ($asm.puts "movn #{target.arm64Operand(:quad)}, \##{(~currentValue) & 0xffff}, lsl \##{shift}")
             else
-                $asm.puts "movz #{target.arm64Operand(:quad)}, \##{currentValue}, lsl \##{shift}"
+                shift.zero? \
+                    ? ($asm.puts "movz #{target.arm64Operand(:quad)}, \##{currentValue}")
+                    : ($asm.puts "movz #{target.arm64Operand(:quad)}, \##{currentValue}, lsl \##{shift}")
             end
             first = false
         else
-            $asm.puts "movk #{target.arm64Operand(:quad)}, \##{currentValue}, lsl \##{shift}"
+            shift.zero? \
+                ? ($asm.puts "movk #{target.arm64Operand(:quad)}, \##{currentValue}")
+                : ($asm.puts "movk #{target.arm64Operand(:quad)}, \##{currentValue}, lsl \##{shift}")
         end
     }
 end
@@ -1402,6 +1501,14 @@ class Instruction
             $asm.puts "ldar #{operands[1].arm64Operand(:word)}, #{operands[0].arm64SimpleAddressOperand(:word)}"
         when "atomicloadq"
             $asm.puts "ldar #{operands[1].arm64Operand(:quad)}, #{operands[0].arm64SimpleAddressOperand(:quad)}"
+        when "loadpairq"
+            $asm.puts "ldp #{operands[1].arm64Operand(:quad)}, #{operands[2].arm64Operand(:quad)}, #{operands[0].arm64PairAddressOperand(:quad)}"
+        when "storepairq"
+            $asm.puts "stp #{operands[0].arm64Operand(:quad)}, #{operands[1].arm64Operand(:quad)}, #{operands[2].arm64PairAddressOperand(:quad)}"
+        when "loadpaird"
+            $asm.puts "ldp #{operands[1].arm64Operand(:double)}, #{operands[2].arm64Operand(:double)}, #{operands[0].arm64PairAddressOperand(:double)}"
+        when "storepaird"
+            $asm.puts "stp #{operands[0].arm64Operand(:double)}, #{operands[1].arm64Operand(:double)}, #{operands[2].arm64PairAddressOperand(:double)}"
         else
             lowerDefault
         end

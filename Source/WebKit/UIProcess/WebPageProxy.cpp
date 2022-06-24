@@ -1826,7 +1826,8 @@ void WebPageProxy::recordNavigationSnapshot(WebBackForwardListItem& item)
 
 RefPtr<API::Navigation> WebPageProxy::goForward()
 {
-    WebBackForwardListItem* forwardItem = m_backForwardList->forwardItem();
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "goForward:");
+    auto* forwardItem = m_backForwardList->goForwardItemSkippingItemsWithoutUserGesture();
     if (!forwardItem)
         return nullptr;
 
@@ -1835,7 +1836,8 @@ RefPtr<API::Navigation> WebPageProxy::goForward()
 
 RefPtr<API::Navigation> WebPageProxy::goBack()
 {
-    WebBackForwardListItem* backItem = m_backForwardList->backItem();
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "goBack:");
+    auto* backItem = m_backForwardList->goBackItemSkippingItemsWithoutUserGesture();
     if (!backItem)
         return nullptr;
 
@@ -2124,6 +2126,8 @@ void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
 {
     if (m_suppressVisibilityUpdates == flag)
         return;
+
+    WEBPAGEPROXY_RELEASE_LOG(ViewState, "setSuppressVisibilityUpdates: %d", flag);
     m_suppressVisibilityUpdates = flag;
 
     if (!m_suppressVisibilityUpdates) {
@@ -2182,8 +2186,10 @@ void WebPageProxy::activityStateDidChange(OptionSet<ActivityState::Flag> mayHave
         });
     }
 
-    if (m_suppressVisibilityUpdates && dispatchMode != ActivityStateChangeDispatchMode::Immediate)
+    if (m_suppressVisibilityUpdates && dispatchMode != ActivityStateChangeDispatchMode::Immediate) {
+        WEBPAGEPROXY_RELEASE_LOG(ViewState, "activityStateDidChange: Returning early due to m_suppressVisibilityUpdates");
         return;
+    }
 
 #if PLATFORM(COCOA)
     bool isNewlyInWindow = !isInWindow() && (mayHaveChanged & ActivityState::IsInWindow) && pageClient().isViewInWindow();
@@ -2252,6 +2258,9 @@ void WebPageProxy::dispatchActivityStateChange()
         else
             m_process->pageIsBecomingInvisible(m_webPageID);
     }
+
+    if (m_potentiallyChangedActivityStateFlags & ActivityState::IsConnectedToHardwareConsole)
+        isConnectedToHardwareConsoleDidChange();
 
     bool isNowInWindow = (changed & ActivityState::IsInWindow) && isInWindow();
     // We always want to wait for the Web process to reply if we've been in-window before and are coming back in-window.
@@ -2636,6 +2645,26 @@ void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
     else
         state.remove(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
     setMuted(state);
+}
+
+void WebPageProxy::isConnectedToHardwareConsoleDidChange()
+{
+    SetForScope<bool> isProcessing(m_isProcessingIsConnectedToHardwareConsoleDidChangeNotification, true);
+    if (m_process->isConnectedToHardwareConsole()) {
+        if (!m_captureWasMutedWhenHardwareConsoleDisconnected)
+            setMediaStreamCaptureMuted(false);
+
+        m_captureWasMutedWhenHardwareConsoleDisconnected = false;
+        return;
+    }
+
+    m_captureWasMutedWhenHardwareConsoleDisconnected = m_mutedState.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+    setMediaStreamCaptureMuted(true);
+}
+
+bool WebPageProxy::isAllowedToChangeMuteState() const
+{
+    return m_isProcessingIsConnectedToHardwareConsoleDidChangeNotification || m_process->isConnectedToHardwareConsole();
 }
 
 void WebPageProxy::activateMediaStreamCaptureInPage()
@@ -6461,6 +6490,9 @@ void WebPageProxy::setMediaVolume(float volume)
 
 void WebPageProxy::setMuted(WebCore::MediaProducerMutedStateFlags state, CompletionHandler<void()>&& completionHandler)
 {
+    if (!isAllowedToChangeMuteState())
+        state.add(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+
     m_mutedState = state;
 
     if (!hasRunningProcess())

@@ -47,5 +47,5 @@ dictionary ErrorEventInit : EventInit {
     USVString filename = "";
     unsigned long lineno = 0;
     unsigned long colno = 0;
-    any error = null;
+    any error;
 };

@@ -527,6 +527,7 @@ void RTCPeerConnection::gatherDecoderImplementationName(Function<void(String&&)>
     m_backend->gatherDecoderImplementationName(WTFMove(callback));
 }
 
+// https://w3c.github.io/webrtc-pc/#dom-peerconnection-createdatachannel
 ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(String&& label, RTCDataChannelInit&& options)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -534,15 +535,24 @@ ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(String&& l
     if (isClosed())
         return Exception { InvalidStateError };
 
-    if (options.negotiated && !options.negotiated.value() && (label.length() > 65535 || options.protocol.length() > 65535))
-        return Exception { TypeError };
+    if (label.utf8().length() > 65535)
+        return Exception { TypeError, "label is too long"_s };
+
+    if (options.protocol.utf8().length() > 65535)
+        return Exception { TypeError, "protocol is too long"_s };
+
+    if (!options.negotiated || !options.negotiated.value())
+        options.id = { };
+    else if (!options.id)
+        return Exception { TypeError, "negotiated is true but id is null or undefined"_s };
 
     if (options.maxPacketLifeTime && options.maxRetransmits)
-        return Exception { TypeError };
+        return Exception { TypeError, "Cannot set both maxPacketLifeTime and maxRetransmits"_s };
 
-    if (options.id && options.id.value() > 65534)
-        return Exception { TypeError };
-    
+    if (options.id && *options.id > 65534)
+        return Exception { TypeError, "id is too big"_s };
+
+    // FIXME: Provide better error reporting.
     auto channelHandler = m_backend->createDataChannelHandler(label, options);
     if (!channelHandler)
         return Exception { NotSupportedError };

@@ -4347,6 +4347,9 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, OptionSet
         textStream << indent << "(in window " << tiledBacking()->isInWindow() << ")\n";
     }
 
+    if (options & LayerTreeAsTextOptions::IncludeDeviceScale)
+        textStream << indent << "(device scale " << deviceScaleFactor() << ")\n";
+
     if ((options & LayerTreeAsTextOptions::IncludeDeepColor) && m_layer->wantsDeepColorBackingStore())
         textStream << indent << "(deep color 1)\n";
 

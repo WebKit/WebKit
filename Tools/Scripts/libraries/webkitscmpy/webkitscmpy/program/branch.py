@@ -107,11 +107,11 @@ class Branch(Command):
 
         if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact:
             issue = Tracker.instance().issue(int(args.issue))
-            if issue and issue.title:
+            if issue and issue.title and not issue.redacted:
                 args.issue = cls.to_branch_name(issue.title)
         else:
             issue = Tracker.from_string(args.issue)
-            if issue and issue.title and not redact:
+            if issue and issue.title and not redact and not issue.redacted:
                 args.issue = cls.to_branch_name(issue.title)
             elif issue:
                 args.issue = str(issue.id)
@@ -128,7 +128,7 @@ class Branch(Command):
                     sys.stderr.write('Failed to create new issue\n')
                     return 1
                 print("Created '{}'".format(issue))
-                if issue and issue.title and not redact:
+                if issue and issue.title and not redact and not issue.redacted:
                     args.issue = cls.to_branch_name(issue.title)
                 elif issue:
                     args.issue = str(issue.id)

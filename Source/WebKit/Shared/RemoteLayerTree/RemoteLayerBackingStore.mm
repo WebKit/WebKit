@@ -425,22 +425,7 @@ void RemoteLayerBackingStore::paintContents()
 
     if (m_includeDisplayList == IncludeDisplayList::Yes) {
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-        auto& displayListContext = m_frontBuffer.displayListImageBuffer->context();
-
-        // FIXME: Remove this when <rdar://problem/80487697> is fixed.
-        static std::optional<bool> needsMissingFlipWorkaround;
-        GraphicsContextStateSaver workaroundStateSaver(displayListContext, false);
-        if (!needsMissingFlipWorkaround) {
-            id defaultValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitNeedsWorkaroundFor80487697"];
-            needsMissingFlipWorkaround = defaultValue ? [defaultValue boolValue] : true;
-        }
-        if (needsMissingFlipWorkaround.value()) {
-            workaroundStateSaver.save();
-            displayListContext.scale(FloatSize(1, -1));
-            displayListContext.translate(0, -m_size.height());
-        }
-
-        BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
+        BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), m_frontBuffer.displayListImageBuffer->context());
 #else
         GraphicsContext& context = m_frontBuffer.imageBuffer->context();
 #endif

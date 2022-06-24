@@ -7,15 +7,16 @@ description: never value for calendarName option
 features: [Temporal]
 ---*/
 
-const calendar = {
+const customCalendar = {
   toString() { return "custom"; }
 };
-const date1 = new Temporal.PlainDate(2000, 5, 2);
-const date2 = new Temporal.PlainDate(2000, 5, 2, calendar);
-
+const customISOCalendar = {
+  toString() { return "iso8601"; }
+};
 [
-  [date1, "2000-05-02"],
-  [date2, "2000-05-02"],
+  [new Temporal.PlainDate(2000, 5, 2), "2000-05-02"],
+  [new Temporal.PlainDate(2000, 5, 2, customCalendar), "2000-05-02"],
+  [new Temporal.PlainDate(2000, 5, 2, customISOCalendar), "2000-05-02"],
 ].forEach(([date, expected]) => {
   const result = date.toString({ calendarName: "never" });
   assert.sameValue(result, expected, "expected " + expected);

@@ -50,6 +50,7 @@ let tests = [];
 function handleTouchDown(event)
 {
     logTouchEvent(event);
+    event.preventDefault();
 }
 
 function handleTouchUp(event)

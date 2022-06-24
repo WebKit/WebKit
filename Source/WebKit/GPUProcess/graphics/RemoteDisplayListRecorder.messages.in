@@ -23,21 +23,21 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteDisplayListRecorder NotRefCounted Stream {
-    Save()
-    Restore()
-    Translate(float x, float y)
-    Rotate(float angle)
-    Scale(WebCore::FloatSize scale)
-    SetCTM(WebCore::AffineTransform ctm)
-    ConcatenateCTM(WebCore::AffineTransform ctm)
-    SetInlineFillColor(WebCore::DisplayList::SetInlineFillColor item)
-    SetInlineStrokeColor(WebCore::DisplayList::SetInlineStrokeColor item)
-    SetStrokeThickness(float thickness)
-    SetState(WebCore::DisplayList::SetState item)
-    SetLineCap(enum:uint8_t WebCore::LineCap lineCap)
-    SetLineDash(WebCore::DisplayList::SetLineDash item)
-    SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin)
-    SetMiterLimit(float limit)
+    Save() StreamBatched
+    Restore() StreamBatched
+    Translate(float x, float y) StreamBatched
+    Rotate(float angle) StreamBatched
+    Scale(WebCore::FloatSize scale) StreamBatched
+    SetCTM(WebCore::AffineTransform ctm) StreamBatched
+    ConcatenateCTM(WebCore::AffineTransform ctm) StreamBatched
+    SetInlineFillColor(WebCore::DisplayList::SetInlineFillColor item) StreamBatched
+    SetInlineStrokeColor(WebCore::DisplayList::SetInlineStrokeColor item) StreamBatched
+    SetStrokeThickness(float thickness) StreamBatched
+    SetState(WebCore::DisplayList::SetState item) StreamBatched
+    SetLineCap(enum:uint8_t WebCore::LineCap lineCap) StreamBatched
+    SetLineDash(WebCore::DisplayList::SetLineDash item) StreamBatched
+    SetLineJoin(enum:uint8_t WebCore::LineJoin lineJoin) StreamBatched
+    SetMiterLimit(float limit) StreamBatched
     ClearShadow()
     Clip(WebCore::FloatRect rect)
     ClipOut(WebCore::FloatRect rect)
@@ -80,13 +80,13 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     PaintFrameForMedia(WebCore::MediaPlayerIdentifier identifier, WebCore::FloatRect destination)
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)
-    StrokeLine(struct WebCore::LineData data)
-    StrokeArc(struct WebCore::ArcData data)
-    StrokeQuadCurve(struct WebCore::QuadCurveData data)
-    StrokeBezierCurve(struct WebCore::BezierCurveData data)
+    StrokeLine(struct WebCore::LineData data) StreamBatched
+    StrokeArc(struct WebCore::ArcData data) StreamBatched
+    StrokeQuadCurve(struct WebCore::QuadCurveData data) StreamBatched
+    StrokeBezierCurve(struct WebCore::BezierCurveData data) StreamBatched
 #endif
-    StrokePath(WebCore::Path path)
-    StrokeEllipse(WebCore::FloatRect rect)
+    StrokePath(WebCore::Path path) StreamBatched
+    StrokeEllipse(WebCore::FloatRect rect) StreamBatched
     ClearRect(WebCore::FloatRect rect)
 #if USE(CG)
     ApplyStrokePattern()

@@ -383,3 +383,11 @@ What version of 'WebKit' should the bug be associated with?:
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
             issue = github.Tracker(self.URL).issue(1)
             self.assertEqual(issue.labels, ['Other', 'Text'])
+
+    def test_redaction(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            self.assertEqual(github.Tracker(self.URL, redact=None).issue(1).redacted, False)
+            self.assertEqual(github.Tracker(self.URL, redact={'.*': True}).issue(1).redacted, True)
+            self.assertEqual(github.Tracker(self.URL, redact={'project:WebKit': True}).issue(1).redacted, True)
+            self.assertEqual(github.Tracker(self.URL, redact={'component:Text': True}).issue(1).redacted, True)
+            self.assertEqual(github.Tracker(self.URL, redact={'version:Other': True}).issue(1).redacted, True)

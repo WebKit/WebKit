@@ -618,11 +618,12 @@ int codePointCompare(const StringImpl*, const StringImpl*);
 bool isSpaceOrNewline(UChar32);
 bool isNotSpaceOrNewline(UChar32);
 
-// StringHashd is the default hash for StringImpl* and RefPtr<StringImpl>
+// StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<StringImpl*>;
 template<> struct DefaultHash<RefPtr<StringImpl>>;
 template<> struct DefaultHash<PackedPtr<StringImpl>>;
+template<> struct DefaultHash<CompactPtr<StringImpl>>;
 
 #define MAKE_STATIC_STRING_IMPL(characters) ([] { \
         static StaticStringImpl impl(characters); \

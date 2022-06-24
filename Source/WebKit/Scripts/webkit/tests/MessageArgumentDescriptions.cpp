@@ -28,19 +28,20 @@
 #if ENABLE(IPC_TESTING_API) || !LOG_DISABLED
 
 #include "JSIPCBinding.h"
-#include "TestWithSuperclassMessages.h"
+#include "TestWithSuperclassMessages.h" // NOLINT
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
-#include "TestWithLegacyReceiverMessages.h"
+#include "TestWithLegacyReceiverMessages.h" // NOLINT
 #endif
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
-#include "TestWithoutAttributesMessages.h"
+#include "TestWithoutAttributesMessages.h" // NOLINT
 #endif
-#include "TestWithIfMessageMessages.h"
-#include "TestWithSemaphoreMessages.h"
-#include "TestWithImageDataMessages.h"
-#include "TestWithStreamMessages.h"
-#include "TestWithStreamBufferMessages.h"
-#include "TestWithCVPixelBufferMessages.h"
+#include "TestWithIfMessageMessages.h" // NOLINT
+#include "TestWithSemaphoreMessages.h" // NOLINT
+#include "TestWithImageDataMessages.h" // NOLINT
+#include "TestWithStreamMessages.h" // NOLINT
+#include "TestWithStreamBatchedMessages.h" // NOLINT
+#include "TestWithStreamBufferMessages.h" // NOLINT
+#include "TestWithCVPixelBufferMessages.h" // NOLINT
 
 namespace IPC {
 
@@ -213,6 +214,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
     case MessageName::TestWithStream_SendAndReceiveMachSendRight:
         return jsValueForDecodedMessage<MessageName::TestWithStream_SendAndReceiveMachSendRight>(globalObject, decoder);
 #endif
+    case MessageName::TestWithStreamBatched_SendString:
+        return jsValueForDecodedMessage<MessageName::TestWithStreamBatched_SendString>(globalObject, decoder);
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return jsValueForDecodedMessage<MessageName::TestWithStreamBuffer_SendStreamBuffer>(globalObject, decoder);
 #if USE(AVFOUNDATION)
@@ -592,6 +595,10 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
             { "a1", "MachSendRight", nullptr, false },
         };
 #endif
+    case MessageName::TestWithStreamBatched_SendString:
+        return Vector<ArgumentDescription> {
+            { "url", "String", nullptr, false },
+        };
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return Vector<ArgumentDescription> {
             { "stream", "IPC::StreamConnectionBuffer", nullptr, false },

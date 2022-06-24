@@ -37,7 +37,7 @@ var MultiplyStage = Utilities.createSubclass(Stage,
         ["opacity", 0, 1],
         ["display", "none", "block"]
     ],
-    totalRows: 45,
+    totalRows: 55,
 
     initialize: function(benchmark, options)
     {

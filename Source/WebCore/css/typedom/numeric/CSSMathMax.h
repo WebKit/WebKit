@@ -46,6 +46,7 @@ private:
     CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathMax; }
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
     std::optional<SumValue> toSumValue() const final;
+    bool equals(const CSSNumericValue& other) const final { return equalsImpl<CSSMathMax>(other); }
 
     CSSMathMax(Vector<Ref<CSSNumericValue>>&&, CSSNumericType&&);
     Ref<CSSNumericArray> m_values;

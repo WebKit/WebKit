@@ -119,7 +119,6 @@ public:
     // can contain a mixture of boxes and other object types, these functions need to be in the base class.
     RenderLayer* layerParent() const;
     RenderLayer* layerNextSibling(RenderLayer& parentLayer) const;
-    void addLayers(RenderLayer* parentLayer);
     void removeLayers();
     void moveLayers(RenderLayer& newParent);
 

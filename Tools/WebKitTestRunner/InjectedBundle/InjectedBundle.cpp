@@ -470,11 +470,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "PerformCustomMenuAction")) {
-        m_testRunner->performCustomMenuAction();
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetAppBoundDomains")) {
         m_testRunner->didSetAppBoundDomainsCallback();
         return;

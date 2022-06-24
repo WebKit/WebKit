@@ -10,10 +10,10 @@
 var registration;
 var iframe;
 promise_test(async (test) => {
-    registration = await navigator.serviceWorker.getRegistration("resources");
+    registration = await navigator.serviceWorker.getRegistration("resources/");
     if (registration)
         await registration.unregister();
-    registration = await navigator.serviceWorker.register("resources/update-worker.py", { scope : "resources" });
+    registration = await navigator.serviceWorker.register("resources/update-worker.py", { scope : "resources/" });
     activeWorker = registration.active;
     if (activeWorker)
         return;

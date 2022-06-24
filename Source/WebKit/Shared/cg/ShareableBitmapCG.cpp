@@ -69,14 +69,14 @@ static CGBitmapInfo bitmapInfo(const ShareableBitmap::Configuration& configurati
 {
     CGBitmapInfo info = 0;
     if (wantsExtendedRange(configuration)) {
-        info |= kCGBitmapFloatComponents | kCGBitmapByteOrder16Host;
+        info |= kCGBitmapFloatComponents | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host);
 
         if (configuration.isOpaque)
             info |= kCGImageAlphaNoneSkipLast;
         else
             info |= kCGImageAlphaPremultipliedLast;
     } else {
-        info |= kCGBitmapByteOrder32Host;
+        info |= static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
 
         if (configuration.isOpaque)
             info |= kCGImageAlphaNoneSkipFirst;

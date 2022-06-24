@@ -124,6 +124,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Interface to WebChromeClient
+    bool canEnterVideoFullscreen() const;
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool supportsVideoFullscreenStandby() const;
     void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby);
@@ -166,6 +167,8 @@ protected:
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
     void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible);
     void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, Messages::VideoFullscreenManager::RequestRouteSharingPolicyAndContextUIDAsyncReply&&);
+    
+    void setCurrentlyInFullscreen(VideoFullscreenInterfaceContext&, bool);
 
     WebPage* m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
@@ -174,6 +177,7 @@ protected:
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
     WeakPtr<WebCore::HTMLVideoElement> m_videoElementInPictureInPicture;
+    bool m_currentlyInFullscreen { false };
 };
 
 } // namespace WebKit

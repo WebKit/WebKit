@@ -1,0 +1,15 @@
+Test to ensure that modifications to canvas are not visible from already captured patterns.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS c[0] is 255
+PASS c[1] is 0
+PASS c[2] is 0
+PASS c[0] is 0
+PASS c[1] is 255
+PASS c[2] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

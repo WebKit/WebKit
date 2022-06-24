@@ -1383,6 +1383,7 @@
       "emails" : [
          "cathiechen@igalia.com"
       ],
+      "github" : "cathiechen",
       "name" : "Cathie Chen",
       "nicks" : [
          "cathiechen"
@@ -1694,7 +1695,8 @@
       "name" : "Dan Glastonbury",
       "nicks" : [
          "djg"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

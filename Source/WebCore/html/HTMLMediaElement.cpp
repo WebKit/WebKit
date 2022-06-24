@@ -6386,20 +6386,21 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     }
 #endif
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, mode] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, mode, logIdentifier = LOGIDENTIFIER] {
         if (isContextStopped())
             return;
 
         if (document().hidden()) {
-            ALWAYS_LOG(LOGIDENTIFIER, " returning because document is hidden");
+            ALWAYS_LOG(logIdentifier, " returning because document is hidden");
             m_changingVideoFullscreenMode = false;
             return;
         }
 
         if (is<HTMLVideoElement>(*this)) {
             HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
-            if (document().page()->chrome().client().supportsVideoFullscreen(mode)) {
-                ALWAYS_LOG(LOGIDENTIFIER, "Entering fullscreen mode ", mode, ", m_videoFullscreenStandby = ", m_videoFullscreenStandby);
+            auto& client = document().page()->chrome().client();
+            if (client.supportsVideoFullscreen(mode) && client.canEnterVideoFullscreen()) {
+                ALWAYS_LOG(logIdentifier, "Entering fullscreen mode ", mode, ", m_videoFullscreenStandby = ", m_videoFullscreenStandby);
 
                 m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
                 if (mode == VideoFullscreenModeStandard)
@@ -6409,7 +6410,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
                 setFullscreenMode(mode);
                 configureMediaControls();
 
-                document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);
+                client.enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);
                 if (m_videoFullscreenStandby)
                     return;
 

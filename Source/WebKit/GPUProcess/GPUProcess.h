@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "AuxiliaryProcess.h"
+#include "GPUProcessPreferences.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxyIdentifier.h"
@@ -138,9 +139,12 @@ private:
 
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&);
+    void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Attachment&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
+    
+    bool updatePreference(std::optional<bool>& oldPreference, std::optional<bool>& newPreference);
 
 #if ENABLE(MEDIA_STREAM)
     void setMockCaptureDevicesEnabled(bool);
@@ -168,30 +172,6 @@ private:
     RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;
 #endif
 
-#if ENABLE(MEDIA_SOURCE)
-    void setWebMParserEnabled(bool);
-#endif
-
-#if ENABLE(WEBM_FORMAT_READER)
-    void setWebMFormatReaderEnabled(bool);
-#endif
-
-#if ENABLE(OPUS)
-    void setOpusDecoderEnabled(bool);
-#endif
-
-#if ENABLE(VORBIS)
-    void setVorbisDecoderEnabled(bool);
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    void setMediaSourceInlinePaintingEnabled(bool);
-#endif
-
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    void setSampleBufferContentKeySessionSupportEnabled(bool);
-#endif
-
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
     void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
@@ -208,6 +188,8 @@ private:
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
     MonotonicTime m_creationTime { MonotonicTime::now() };
+    
+    GPUProcessPreferences m_preferences;
 
 #if ENABLE(MEDIA_STREAM)
     struct MediaCaptureAccess {
@@ -246,24 +228,6 @@ private:
     bool m_enableVP8Decoder { false };
     bool m_enableVP9Decoder { false };
     bool m_enableVP9SWDecoder { false };
-#endif
-#if ENABLE(MEDIA_SOURCE)
-    bool m_webMParserEnabled { false };
-#endif
-#if ENABLE(WEBM_FORMAT_READER)
-    bool m_webMFormatReaderEnabled { false };
-#endif
-#if ENABLE(OPUS)
-    bool m_opusEnabled { false };
-#endif
-#if ENABLE(VORBIS)
-    bool m_vorbisEnabled { false };
-#endif
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    bool m_mediaSourceInlinePaintingEnabled { false };
-#endif
-#if HAVE(AVCONTENTKEYSPECIFIER)
-    bool m_sampleBufferContentKeySessionSupportEnabled { false };
 #endif
 
 };

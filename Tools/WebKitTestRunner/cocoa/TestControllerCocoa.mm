@@ -525,20 +525,6 @@ void TestController::setAllowsAnySSLCertificate(bool allows)
     [globalWebsiteDataStoreDelegateClient() setAllowAnySSLCertificate: allows];
 }
 
-void TestController::installCustomMenuAction(const String& name, bool dismissesAutomatically)
-{
-#if PLATFORM(IOS_FAMILY)
-    auto* invocation = m_currentInvocation.get();
-    [m_mainWebView->platformView() installCustomMenuAction:name dismissesAutomatically:dismissesAutomatically callback:[invocation] {
-        if (TestController::singleton().isCurrentInvocation(invocation))
-            invocation->performCustomMenuAction();
-    }];
-#else
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(dismissesAutomatically);
-#endif
-}
-
 void TestController::setAllowedMenuActions(const Vector<String>& actions)
 {
 #if PLATFORM(IOS_FAMILY)

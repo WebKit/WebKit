@@ -64,7 +64,7 @@ PASS new ErrorEvent('eventType', { colno: 0 }).colno is 0
 PASS new ErrorEvent('eventType', { colno: 1 }).colno is 1
 PASS new ErrorEvent('eventType', { colno: 4294967294 }).colno is 4294967294
 PASS new ErrorEvent('eventType', { colno: 4294967295 }).colno is 4294967295
-PASS new ErrorEvent('eventType', { error: undefined }).error is null
+PASS new ErrorEvent('eventType', { error: undefined }).error is undefined
 PASS new ErrorEvent('eventType', { error: null }).error is null
 PASS new ErrorEvent('eventType', { error: '' }).error is ''
 PASS new ErrorEvent('eventType', { error: '12345' }).error is '12345'

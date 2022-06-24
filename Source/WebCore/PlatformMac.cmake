@@ -666,6 +666,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.h
     platform/graphics/cocoa/IOSurface.h
     platform/graphics/cocoa/MediaPlaybackTargetContext.h
+    platform/graphics/cocoa/MediaPlayerPrivateWebM.h
     platform/graphics/cocoa/SourceBufferParser.h
     platform/graphics/cocoa/SourceBufferParserWebM.h
     platform/graphics/cocoa/VP9UtilitiesCocoa.h

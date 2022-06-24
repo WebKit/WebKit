@@ -744,7 +744,7 @@ class Git(Scm):
         try:
             log = None
             log = subprocess.Popen(
-                [self.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix', '{}...{}'.format(end.hash, begin.hash), '--'],
+                [self.executable(), 'log', '--format=fuller', '--no-decorate', '--date=unix', '{}..{}'.format(begin.hash, end.hash), '--'],
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

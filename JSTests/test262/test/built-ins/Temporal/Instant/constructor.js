@@ -9,4 +9,4 @@ info: |
 features: [Temporal]
 ---*/
 
-assert.throws(TypeError, () => Temporal.Instant());
+assert.throws(TypeError, () => Temporal.Instant(0n));

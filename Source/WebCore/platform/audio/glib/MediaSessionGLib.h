@@ -51,6 +51,7 @@ public:
 private:
     void emitPropertiesChanged(GVariant*);
     std::optional<NowPlayingInfo> nowPlayingInfo();
+    void ensureMprisSessionRegistered();
 
     MediaSessionIdentifier m_identifier;
     MediaSessionManagerGLib& m_manager;

@@ -489,8 +489,8 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
         }
 
         case GIFImageStart: {
-            if (*currentComponent == ';') { // terminator.
-                GETN(0, GIFDone);
+            if (*currentComponent == ',') { // image separator.
+                GETN(9, GIFImageHeader);
                 break;
             }
 
@@ -503,11 +503,10 @@ bool GIFImageReader::parse(size_t dataPosition, size_t len, bool parseSizeOnly)
             // (extension), or ';' (trailer), there is extraneous data
             // between blocks. The GIF87a spec tells us to keep reading
             // until we find an image separator, but GIF89a says such
-            // a file is corrupt. We follow GIF89a and bail out.
-            if (*currentComponent != ',')
-                return false;
-
-            GETN(9, GIFImageHeader);
+            // a file is corrupt. We follow major browsers' implementation
+            // and proceed as if the file were correctly terminated, so the
+            // GIF will display.
+            GETN(0, GIFDone);
             break;
         }
 

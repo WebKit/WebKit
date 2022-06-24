@@ -1141,7 +1141,6 @@ public:
     virtual AXCoreObject* parentObjectIfExists() const = 0;
 
     virtual void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) = 0;
-    virtual bool isDescendantOfBarrenParent() const = 0;
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;
 
     virtual bool hasDocumentRoleAncestor() const = 0;

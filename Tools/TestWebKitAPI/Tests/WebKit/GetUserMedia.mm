@@ -1126,6 +1126,63 @@ TEST(WebKit2, CapturePermissionWithSystemBlocking)
 }
 #endif
 
+#if PLATFORM(MAC)
+TEST(WebKit2, ConnectedToHardwareConsole)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView _setMediaCaptureReportingDelayForTesting:0];
+
+    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:@"microphoneCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+    [webView addObserver:observer.get() forKeyPath:@"cameraCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+
+    cameraCaptureStateChange = false;
+    [webView loadTestPageNamed:@"getUserMedia"];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
+
+    cameraCaptureStateChange = false;
+    [webView _setConnectedToHardwareConsoleForTesting:NO];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+
+    // It should not be possible to unmute while detached.
+    cameraCaptureStateChange = false;
+    [webView setCameraCaptureState:WKMediaCaptureStateActive completionHandler:nil];
+    int retryCount = 1000;
+    while (--retryCount && cameraCaptureState == WKMediaCaptureStateMuted)
+        TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_TRUE(!!retryCount);
+    EXPECT_TRUE(cameraCaptureState == WKMediaCaptureStateMuted);
+
+    // Capture should be unmuted if it was active when the disconnect happened.
+    cameraCaptureStateChange = false;
+    [webView _setConnectedToHardwareConsoleForTesting:YES];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
+
+    cameraCaptureStateChange = false;
+    [webView setCameraCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+
+    // Reconnecting should not unmute if capture if it was already muted when the disconnect happened.
+    [webView _setConnectedToHardwareConsoleForTesting:NO];
+    retryCount = 1000;
+    while (--retryCount)
+        TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_TRUE(cameraCaptureState == WKMediaCaptureStateMuted);
+
+    [webView _setConnectedToHardwareConsoleForTesting:YES];
+    retryCount = 1000;
+    while (--retryCount)
+        TestWebKitAPI::Util::spinRunLoop(10);
+    EXPECT_TRUE(cameraCaptureState == WKMediaCaptureStateMuted);
+}
+
+#endif
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)

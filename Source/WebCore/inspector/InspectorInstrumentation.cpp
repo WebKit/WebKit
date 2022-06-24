@@ -590,10 +590,10 @@ void InspectorInstrumentation::flexibleBoxRendererWrappedToNextLineImpl(Instrume
         domAgent->flexibleBoxRendererWrappedToNextLine(renderer, lineStartItemIndex);
 }
 
-void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
+void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
-        networkAgent->willSendRequest(identifier, loader, request, redirectResponse, cachedResource);
+        networkAgent->willSendRequest(identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
 }
 
 void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)

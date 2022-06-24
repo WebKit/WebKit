@@ -4259,6 +4259,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     if (isParentProcessAWebBrowser())
         settings.setWebAuthenticationEnabled(true);
 #endif
+    
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+    PlatformMediaSessionManager::setAlternateWebMPlayerEnabled(settings.alternateWebMPlayerEnabled());
+#endif
 
 #if ENABLE(WEBM_FORMAT_READER)
     PlatformMediaSessionManager::setWebMFormatReaderEnabled(RuntimeEnabledFeatures::sharedFeatures().webMFormatReaderEnabled());
@@ -5861,7 +5865,6 @@ void WebPage::runModal()
     Ref<WebPage> protector(*this);
 #endif
     RunLoop::run();
-    ASSERT(!m_isRunningModal);
 }
 
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)

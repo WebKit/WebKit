@@ -59,6 +59,9 @@ public:
     WebBackForwardListItem* forwardItem() const;
     WebBackForwardListItem* itemAtIndex(int) const;
 
+    WebBackForwardListItem* goBackItemSkippingItemsWithoutUserGesture() const;
+    WebBackForwardListItem* goForwardItemSkippingItemsWithoutUserGesture() const;
+
     const BackForwardListItemVector& entries() const { return m_entries; }
 
     unsigned backListCount() const;

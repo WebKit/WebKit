@@ -13,7 +13,8 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url?query=true", {
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
-    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html"
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
 })
 
 -- Running test case: WI.Resource.prototype.generateFetchCode.SpecialURL
@@ -27,7 +28,8 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url'with$special%7B1..2
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
-    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html"
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
 })
 
 -- Running test case: WI.Resource.prototype.generateFetchCode.SpecialHeaders
@@ -44,7 +46,8 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
-    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html"
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
 })
 
 -- Running test case: WI.Resource.prototype.generateFetchCode.URLUTF8
@@ -58,7 +61,8 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url?utf8=%F0%9F%91%8D",
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
-    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html"
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
 })
 
 -- Running test case: WI.Resource.prototype.generateFetchCode.POSTRequestURLEncodedData
@@ -74,7 +78,8 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
     "method": "POST",
     "mode": "cors",
     "redirect": "follow",
-    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html"
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
 })
 
 -- Running test case: WI.Resource.prototype.generateFetchCode.POSTRequestURLUTF8
@@ -90,7 +95,8 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url?utf8=%F0%9F%91%8D",
     "method": "POST",
     "mode": "cors",
     "redirect": "follow",
-    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html"
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
 })
 
 -- Running test case: WI.Resource.prototype.generateFetchCode.PUTRequestWithJSON
@@ -106,6 +112,68 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
     "method": "PUT",
     "mode": "cors",
     "redirect": "follow",
-    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html"
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
+})
+
+-- Running test case: WI.Resource.prototype.generateFetchCode.ReferrerPolicy.EmptyString
+fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
+    "cache": "default",
+    "credentials": "omit",
+    "headers": {
+        "Accept": "*/*",
+        "User-Agent": <filtered>
+    },
+    "method": "GET",
+    "mode": "cors",
+    "redirect": "follow",
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
+})
+
+-- Running test case: WI.Resource.prototype.generateFetchCode.ReferrerPolicy.NoReferrer
+fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
+    "cache": "default",
+    "credentials": "omit",
+    "headers": {
+        "Accept": "*/*",
+        "User-Agent": <filtered>
+    },
+    "method": "GET",
+    "mode": "cors",
+    "redirect": "follow",
+    "referrerPolicy": "no-referrer"
+})
+
+-- Running test case: WI.Resource.prototype.generateFetchCode.Integrity.Invalid
+fetch("http://127.0.0.1:8000/inspector/network/resources/data.txt?integrity=invalid", {
+    "cache": "default",
+    "credentials": "omit",
+    "headers": {
+        "Accept": "*/*",
+        "User-Agent": <filtered>
+    },
+    "integrity": "INVALID",
+    "method": "GET",
+    "mode": "cors",
+    "redirect": "follow",
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
+})
+
+-- Running test case: WI.Resource.prototype.generateFetchCode.Integrity.Valid
+fetch("http://127.0.0.1:8000/inspector/network/resources/data.txt?integrity=valid", {
+    "cache": "default",
+    "credentials": "omit",
+    "headers": {
+        "Accept": "*/*",
+        "User-Agent": <filtered>
+    },
+    "integrity": "sha256-qQCuhmp5o0z/of299BZBz6a+CBJGM2TPN53xY1PHXS8=",
+    "method": "GET",
+    "mode": "cors",
+    "redirect": "follow",
+    "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
+    "referrerPolicy": "strict-origin-when-cross-origin"
 })
 

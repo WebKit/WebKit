@@ -65,6 +65,7 @@ using VectorMalloc = FastMalloc;
 
 template<typename> struct DefaultRefDerefTraits;
 
+template<typename> class CompactPtr;
 template<typename> class CompletionHandler;
 template<typename> class FixedVector;
 template<typename> class Function;

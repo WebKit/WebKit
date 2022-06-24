@@ -47,6 +47,7 @@ _test_receiver_names = [
     'TestWithSemaphore',
     'TestWithImageData',
     'TestWithStream',
+    'TestWithStreamBatched',
     'TestWithStreamBuffer',
     'TestWithCVPixelBuffer',
 ]

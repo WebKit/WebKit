@@ -61,7 +61,7 @@ public:
     std::optional<unsigned short> maxRetransmits() const { return m_options.maxRetransmits; }
     String protocol() const { return m_options.protocol; }
     bool negotiated() const { return *m_options.negotiated; };
-    std::optional<unsigned short> id() const { return m_options.id; };
+    std::optional<unsigned short> id() const;
     RTCPriorityType priority() const { return m_options.priority; };
     const RTCDataChannelInit& options() const { return m_options; }
 

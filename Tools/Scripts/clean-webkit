@@ -59,6 +59,7 @@ def main(args):
     scm = SCMDetector(fs, host.executive).detect_scm_system(fs.getcwd())
 
     scm.discard_working_directory_changes()
+    scm.cleanup_and_optimize_local_repository()
 
     if args.keep_jhbuild_directory:
         # Clean everything inside WebKitBuild, except the JHBuild directories.

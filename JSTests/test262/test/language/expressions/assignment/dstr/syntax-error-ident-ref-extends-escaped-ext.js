@@ -2,7 +2,7 @@
 // - src/identifier-names/extends-escaped-ext.case
 // - src/identifier-names/default/obj-assignment-identifier.template
 /*---
-description: extends is a valid identifier name, using extended escape (IdentiferReference in ObjectAssignmentPattern cannot be a ReservedWord)
+description: extends is a valid identifier name, using extended escape (IdentifierReference in ObjectAssignmentPattern cannot be a ReservedWord)
 esid: prod-AssignmentPattern
 features: [destructuring-assignment]
 flags: [generated]

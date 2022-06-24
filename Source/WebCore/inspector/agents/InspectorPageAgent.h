@@ -80,7 +80,7 @@ public:
     static Vector<CachedResource*> cachedResourcesForFrame(Frame*);
     static void resourceContent(Inspector::Protocol::ErrorString&, Frame*, const URL&, String* result, bool* base64Encoded);
     static String sourceMapURLForResource(CachedResource*);
-    static CachedResource* cachedResource(Frame*, const URL&);
+    static CachedResource* cachedResource(const Frame*, const URL&);
     static Inspector::Protocol::Page::ResourceType resourceTypeJSON(ResourceType);
     static ResourceType inspectorResourceType(CachedResource::Type);
     static ResourceType inspectorResourceType(const CachedResource&);

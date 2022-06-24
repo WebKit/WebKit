@@ -1,11 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
+<div id="content">
 <details open id="details1">
   <summary id="summary1">Some open info</summary>
   <p>Details about the open topic.</p>
@@ -20,12 +21,10 @@
   <summary>Some open info</summary>
   <p>Details about the open topic.</p>
 </details>
-
-<p id="description"></p>
-<div id="console"></div>
+</div>
 
 <script>
-    description("This tests some basic attributes about the details element.");
+    var output = "This tests some basic attributes about the details element.\n";
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
@@ -33,18 +32,18 @@
         var body = accessibilityController.rootElement.childAtIndex(0);
         body.addNotificationListener(function(notification) {
             if (notification == "AXExpandedChanged")
-                debug("Received " + notification + " notification ");
+                output += `Received ${notification} notification\n`;
         });
 
         var details1 = accessibilityController.accessibleElementById("details1");
         var summary1 = accessibilityController.accessibleElementById("summary1");
-        shouldBe("details1.role", "'AXRole: AXGroup'");
-        shouldBe("details1.subrole", "'AXSubrole: AXDetails'");
-        shouldBeTrue("details1.isExpanded");
-        shouldBe("summary1.role", "'AXRole: AXButton'");
-        shouldBe("summary1.subrole", "'AXSubrole: AXSummary'");
-        shouldBe("summary1.title", "'AXTitle: Some open info'");
-        shouldBeTrue("details1.isAttributeSettable('AXExpanded')");
+        output += expect("details1.role", "'AXRole: AXGroup'");
+        output += expect("details1.subrole", "'AXSubrole: AXDetails'");
+        output += expect("details1.isExpanded", "true");
+        output += expect("summary1.role", "'AXRole: AXButton'");
+        output += expect("summary1.subrole", "'AXSubrole: AXSummary'");
+        output += expect("summary1.title", "'AXTitle: Some open info'");
+        output += expect("details1.isAttributeSettable('AXExpanded')", "true");
 
         // Toggle the expanded state.
         details1.setBoolAttributeValue("AXExpanded", false);
@@ -54,56 +53,57 @@
         // See HTMLDetailsElement::toggleOpen().
         setTimeout(async function() {
             await waitFor(() => {
-        details1 = accessibilityController.accessibleElementById("details1");
-                return !details1.isExpanded;
+                details1 = accessibilityController.accessibleElementById("details1");
+                return details1 && !details1.isExpanded;
             });
-        summary1 = accessibilityController.accessibleElementById("summary1");
-        shouldBeFalse("details1.isExpanded");
-        shouldBeFalse("summary1.isExpanded");
+            summary1 = accessibilityController.accessibleElementById("summary1");
+            output += expect("details1.isExpanded", "false");
+            output += expect("summary1.isExpanded", "false");
 
-        // Give it the same value to make sure we don't expand.
-        details1.setBoolAttributeValue("AXExpanded", false);
+            // Give it the same value to make sure we don't expand.
+            details1.setBoolAttributeValue("AXExpanded", false);
             await waitFor(() => {
-        details1 = accessibilityController.accessibleElementById("details1");
-                return !details1.isExpanded;
+                details1 = accessibilityController.accessibleElementById("details1");
+                return details1 && !details1.isExpanded;
             });
-        summary1 = accessibilityController.accessibleElementById("summary1");
-        shouldBeFalse("details1.isExpanded");
-        shouldBeFalse("summary1.isExpanded");
+            summary1 = accessibilityController.accessibleElementById("summary1");
+            output += expect("details1.isExpanded", "false");
+            output += expect("summary1.isExpanded", "false");
 
-        // Set to expand again.
-        details1.setBoolAttributeValue("AXExpanded", true);
+            // Set to expand again.
+            details1.setBoolAttributeValue("AXExpanded", true);
             await waitFor(() => {
-        details1 = accessibilityController.accessibleElementById("details1");
-                return details1.isExpanded;
+                details1 = accessibilityController.accessibleElementById("details1");
+                return details1 && details1.isExpanded;
             });
-        summary1 = accessibilityController.accessibleElementById("summary1");
-        shouldBeTrue("details1.isExpanded");
-        shouldBeTrue("summary1.isExpanded");
+            summary1 = accessibilityController.accessibleElementById("summary1");
+            output += expect("details1.isExpanded", "true");
+            output += expect("summary1.isExpanded", "true");
 
-        // And duplicate the true state to make sure it doesn't toggle off.
-        details1.setBoolAttributeValue("AXExpanded", true);
+            // And duplicate the true state to make sure it doesn't toggle off.
+            details1.setBoolAttributeValue("AXExpanded", true);
             await waitFor(() => {
-        details1 = accessibilityController.accessibleElementById("details1");
-                return details1.isExpanded;
+                details1 = accessibilityController.accessibleElementById("details1");
+                return details1 && details1.isExpanded;
             });
-        summary1 = accessibilityController.accessibleElementById("summary1");
-        shouldBeTrue("details1.isExpanded");
-        shouldBeTrue("summary1.isExpanded");
+            summary1 = accessibilityController.accessibleElementById("summary1");
+            output += expect("details1.isExpanded", "true");
+            output += expect("summary1.isExpanded", "true");
 
             details2 = accessibilityController.accessibleElementById("details2");
-        shouldBe("details2.subrole", "'AXSubrole: AXDetails'");
-        shouldBeFalse("details2.isExpanded");
+            output += expect("details2.subrole", "'AXSubrole: AXDetails'");
+            output += expect("details2.isExpanded", "false");
 
-        // Expanded status should be correct when detail has group role
+            // Expanded status should be correct when detail has group role
             details3 = accessibilityController.accessibleElementById("details3");
-        shouldBe("details3.subrole", "'AXSubrole: AXApplicationGroup'");
-        shouldBeTrue("details3.isExpanded");
+            output += expect("details3.subrole", "'AXSubrole: AXApplicationGroup'");
+            output += expect("details3.isExpanded", "true");
 
+            debug(output);
+            document.getElementById("content").style.visibility = "hidden";
             finishJSTest();
         }, 0);
     }
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

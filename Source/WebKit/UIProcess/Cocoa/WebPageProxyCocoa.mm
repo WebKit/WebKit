@@ -38,7 +38,6 @@
 #import "ModalContainerControlClassifier.h"
 #import "PageClient.h"
 #import "PlaybackSessionManagerProxy.h"
-#import "QuarantineSPI.h"
 #import "QuickLookThumbnailLoader.h"
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingWarning.h"
@@ -66,6 +65,7 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/ValidationBubble.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <pal/spi/mac/QuarantineSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cf/TypeCastsCF.h>

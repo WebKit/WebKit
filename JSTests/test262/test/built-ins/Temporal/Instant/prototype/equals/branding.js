@@ -11,12 +11,14 @@ const equals = Temporal.Instant.prototype.equals;
 
 assert.sameValue(typeof equals, "function");
 
-assert.throws(TypeError, () => equals.call(undefined), "undefined");
-assert.throws(TypeError, () => equals.call(null), "null");
-assert.throws(TypeError, () => equals.call(true), "true");
-assert.throws(TypeError, () => equals.call(""), "empty string");
-assert.throws(TypeError, () => equals.call(Symbol()), "symbol");
-assert.throws(TypeError, () => equals.call(1), "1");
-assert.throws(TypeError, () => equals.call({}), "plain object");
-assert.throws(TypeError, () => equals.call(Temporal.Instant), "Temporal.Instant");
-assert.throws(TypeError, () => equals.call(Temporal.Instant.prototype), "Temporal.Instant.prototype");
+const args = [new Temporal.Instant(123456n)];
+
+assert.throws(TypeError, () => equals.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => equals.apply(null, args), "null");
+assert.throws(TypeError, () => equals.apply(true, args), "true");
+assert.throws(TypeError, () => equals.apply("", args), "empty string");
+assert.throws(TypeError, () => equals.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => equals.apply(1, args), "1");
+assert.throws(TypeError, () => equals.apply({}, args), "plain object");
+assert.throws(TypeError, () => equals.apply(Temporal.Instant, args), "Temporal.Instant");
+assert.throws(TypeError, () => equals.apply(Temporal.Instant.prototype, args), "Temporal.Instant.prototype");

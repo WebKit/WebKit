@@ -184,10 +184,10 @@ void LoadTrackingTest::loadURI(const char* uri)
     WebViewTest::loadURI(uri);
 }
 
-void LoadTrackingTest::loadHtml(const char* html, const char* baseURI)
+void LoadTrackingTest::loadHtml(const char* html, const char* baseURI, WebKitWebView* webView)
 {
     reset();
-    WebViewTest::loadHtml(html, baseURI);
+    WebViewTest::loadHtml(html, baseURI, webView);
 }
 
 void LoadTrackingTest::loadPlainText(const char* plainText)

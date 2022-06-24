@@ -27,6 +27,9 @@
 
 #include <cstdint>
 #include <utility>
+#include <wtf/Forward.h>
+#include <wtf/GetPtr.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/StdLibExtras.h>
 
@@ -47,7 +50,6 @@ namespace WTF {
 template <typename T>
 class CompactPtr {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
 #if HAVE(36BIT_ADDRESS)
     // The CompactPtr algorithm relies on being able to shift
@@ -56,8 +58,10 @@ public:
     // loss is if the if the address is always 16 bytes aligned i.e.
     // the lower 4 bits is always 0.
     using StorageType = uint32_t;
+    static constexpr bool is32Bit = true;
 #else
     using StorageType = uintptr_t;
+    static constexpr bool is32Bit = false;
 #endif
     static constexpr bool isCompactedType = true;
 
@@ -81,6 +85,8 @@ public:
         static_assert(std::is_convertible_v<X*, T*>);
         std::exchange(o.m_ptr, 0);
     }
+
+    ALWAYS_INLINE constexpr CompactPtr(HashTableDeletedValueType) : m_ptr(hashDeletedStorageValue) { }
 
     ALWAYS_INLINE ~CompactPtr() = default;
 
@@ -173,6 +179,7 @@ public:
     {
         uintptr_t intPtr = bitwise_cast<uintptr_t>(ptr);
 #if HAVE(36BIT_ADDRESS)
+        static_assert(alignof(T) >= (1ULL << bitsShift));
         ASSERT(!(intPtr & alignmentMask));
         StorageType encoded = static_cast<StorageType>(intPtr >> bitsShift);
         ASSERT(decode(encoded) == ptr);
@@ -185,11 +192,14 @@ public:
     static ALWAYS_INLINE T* decode(StorageType ptr)
     {
 #if HAVE(36BIT_ADDRESS)
+        static_assert(alignof(T) >= (1ULL << bitsShift));
         return bitwise_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
 #else
         return bitwise_cast<T*>(ptr);
 #endif
     }
+
+    bool isHashTableDeletedValue() const { return m_ptr == hashDeletedStorageValue; }
 
 private:
     template <typename X>
@@ -197,6 +207,7 @@ private:
 
     static constexpr uint32_t bitsShift = 4;
     static constexpr uintptr_t alignmentMask = (1ull << bitsShift) - 1;
+    static constexpr StorageType hashDeletedStorageValue = 1; // 0x16 (encoded as 1) is within the first unmapped page for nullptr. Thus, it never appears.
 
     StorageType m_ptr { 0 };
 };
@@ -219,6 +230,8 @@ struct CompactPtrTraits {
 
     using StorageType = CompactPtr<T>;
 
+    static constexpr bool is32Bit = StorageType::is32Bit;
+
     template <typename U>
     static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return ptr.exchange(newValue); }
 
@@ -227,9 +240,11 @@ struct CompactPtrTraits {
 
     static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr.get(); }
 
-    static StorageType hashTableDeletedValue() { return bitwise_cast<StorageType>(static_cast<StorageType>(-1)); }
-    static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr == hashTableDeletedValue(); }
+    static StorageType hashTableDeletedValue() { return StorageType { HashTableDeletedValue }; }
+    static ALWAYS_INLINE bool isHashTableDeletedValue(const StorageType& ptr) { return ptr.isHashTableDeletedValue(); }
 };
+
+template<typename P> struct DefaultHash<CompactPtr<P>> : PtrHash<CompactPtr<P>> { };
 
 } // namespace WTF
 

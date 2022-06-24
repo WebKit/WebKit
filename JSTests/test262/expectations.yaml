@@ -603,6 +603,12 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
+test/built-ins/AsyncGeneratorPrototype/return/return-suspendedStart-broken-promise.js:
+  default: 'Error: broken promise'
+  strict mode: 'Error: broken promise'
+test/built-ins/AsyncGeneratorPrototype/return/return-suspendedYield-broken-promise-try-catch.js:
+  default: 'Test262:AsyncTestFailure:Error: broken promise'
+  strict mode: 'Test262:AsyncTestFailure:Error: broken promise'
 test/built-ins/Date/UTC/fp-evaluation-order.js:
   default: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
   strict mode: 'Test262Error: order of operations / precision in MakeTime Expected SameValue(«NaN», «29312») to be true'
@@ -822,6 +828,9 @@ test/built-ins/RegExp/quantifier-integer-limit.js:
 test/built-ins/ShadowRealm/prototype/evaluate/throws-typeerror-wrap-throwing.js:
   default: 'Test262Error: TypeError on wrapping a callable proxy with throwing getOwnPropertyDescriptor trap Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: TypeError on wrapping a callable proxy with throwing getOwnPropertyDescriptor trap Expected a TypeError to be thrown but no exception was thrown at all'
+test/built-ins/ShadowRealm/prototype/importValue/throws-if-exportname-not-string.js:
+  default: 'Test262Error: Expected a TypeError but got a Test262Error'
+  strict mode: 'Test262Error: Expected a TypeError but got a Test262Error'
 test/built-ins/Temporal/Duration/compare/basic.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
@@ -942,6 +951,12 @@ test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-timezone
 test/built-ins/Temporal/Duration/prototype/round/relativeto-wrong-type.js:
   default: 'Test262Error: undefined does not convert to a valid ISO string Expected a RangeError but got a Error'
   strict mode: 'Test262Error: undefined does not convert to a valid ISO string Expected a RangeError but got a Error'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-convert.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, tz)')"
+test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-slots.js:
+  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.prototype')"
 test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone)')"
@@ -1203,6 +1218,9 @@ test/intl402/NumberFormat/prototype/formatRangeToParts/prop-desc.js:
 test/intl402/NumberFormat/prototype/formatRangeToParts/x-greater-than-y-throws.js:
   default: 'Test262Error: Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: Expected a RangeError but got a TypeError'
+test/intl402/NumberFormat/test-option-roundingPriority-mixed-options.js:
+  default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"minimumSignificantDigits":2,"minimumFractionDigits":2,"roundingPriority":"morePrecision","userGrouping":false} is ١٫٠٠; expected ١٫٠.'
+  strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"minimumSignificantDigits":2,"minimumFractionDigits":2,"roundingPriority":"morePrecision","userGrouping":false} is ١٫٠٠; expected ١٫٠.'
 test/intl402/PluralRules/prototype/selectRange/default-en-us.js:
   default: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
   strict mode: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"

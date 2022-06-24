@@ -29,6 +29,7 @@ from .canonicalize import Canonicalize
 from .command import Command
 from .branch import Branch
 from .pull_request import PullRequest
+from .squash import Squash
 from argparse import Namespace
 from webkitbugspy import Tracker
 from webkitcorepy import arguments, run, string_utils, Terminal
@@ -57,6 +58,7 @@ class Land(Command):
 
     @classmethod
     def parser(cls, parser, loggers=None):
+        PullRequest.parser(parser, loggers=loggers)
         parser.add_argument(
             '--no-force-review', '--force-review', '--no-review',
             dest='review', default=True,
@@ -70,8 +72,49 @@ class Land(Command):
             action=arguments.NoAction,
         )
         parser.add_argument(
-            '--defaults', '--no-defaults', action=arguments.NoAction, default=None,
-            help='Do not prompt the user for defaults, always use (or do not use) them',
+            '--safe', '--unsafe',
+            dest='safe', default=None,
+            help='Land change via safe (or unsafe) merge queue, if available.',
+            action=arguments.NoAction,
+        )
+
+    @classmethod
+    def merge_queue(cls, args, repository, branch_point, merge_labels=None):
+        log.info('Detected merging automation, using that instead of local git tooling')
+        merge_type = {
+            True: 'safe',
+            False: 'unsafe',
+        }.get(args.safe, sorted(merge_labels.keys())[0])
+        merge_label = merge_labels.get(merge_type)
+        if not merge_label:
+            sys.stderr.write("No {} merge-queue available for this repository\n".format(merge_type))
+            return 1
+
+        def callback(pr):
+            pr_issue = pr._metadata.get('issue')
+            if not pr_issue:
+                sys.stderr.write("Cannot set any labels on '{}' because the service doesn't support labels\n".format(pr))
+                return 1
+
+            labels = pr_issue.labels
+            if PullRequest.BLOCKED_LABEL in labels and merge_type == 'unsafe':
+                log.info("Removing '{}' from PR {}...".format(PullRequest.BLOCKED_LABEL, pr.number))
+                labels.remove(PullRequest.BLOCKED_LABEL)
+            log.info("Adding '{}' to '{}'".format(merge_label, pr))
+            labels.append(merge_label)
+            if pr_issue.set_labels(labels):
+                print("Added '{}' to '{}', change is in the queue to be landed".format(merge_label, pr))
+                return 0
+            sys.stderr.write("Failed to add '{}' to '{}', change is not landing\n".format(merge_label, pr))
+            if pr.url:
+                sys.stderr.write("See if you can add the label manually on '{}'".format(pr.url))
+            return 1
+
+        return PullRequest.create_pull_request(
+            repository, args, branch_point,
+            callback=callback,
+            unblock=True if merge_type == 'unsafe' else False,
+            update_issue=False,  # If we're immediately landing, no reason to track the code change as a WIP
         )
 
     @classmethod
@@ -92,18 +135,55 @@ class Land(Command):
             sys.stderr.write("Cannot 'land' on a canonical SVN repository that is not configured as git-svn\n")
             return 1
 
+        if not PullRequest.check_pull_request_args(repository, args):
+            return 1
+
+        modified_files = [] if args.will_add is False else repository.modified()
+        if args.will_add:
+            modified_files = list(set(modified_files).union(set(repository.modified(staged=False))))
+        if not Branch.editable(repository.branch, repository=repository) and not modified_files:
+            sys.stderr.write("Can only 'land' editable branches\n")
+            return 1
+
+        branch_point = PullRequest.pull_request_branch_point(repository, args, **kwargs)
+        if not branch_point:
+            return 1
         source_branch = repository.branch
         if not Branch.editable(source_branch, repository=repository):
             sys.stderr.write("Can only 'land' editable branches\n")
             return 1
-        branch_point = Branch.branch_point(repository)
+
+        result = PullRequest.create_commit(args, repository, **kwargs)
+        if result:
+            return result
+
         commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=source_branch)))
         if not commits:
             sys.stderr.write('Failed to find commits to land\n')
             return 1
 
-        pull_request = None
+        if args.squash or (args.squash is None and len(commits) > 1):
+            result = Squash.squash_commit(args, repository, branch_point, **kwargs)
+            if result:
+                return result
+            commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=source_branch)))
+
         rmt = repository.remote()
+        if rmt and isinstance(rmt, remote.GitHub):
+            merge_labels = dict()
+            for name in rmt.tracker.labels.keys():
+                if name in PullRequest.MERGE_LABELS:
+                    merge_labels['safe'] = name
+                if name in PullRequest.UNSAFE_MERGE_LABELS:
+                    merge_labels['unsafe'] = name
+            if merge_labels:
+                return cls.merge_queue(args, repository, branch_point, merge_labels=merge_labels)
+
+        if args.safe is not None:
+            sys.stderr.write("No merge-queue available for this repository\n")
+            return 1
+
+        pull_request = None
         if rmt and rmt.pull_requests:
             candidates = list(rmt.pull_requests.find(opened=True, head=source_branch))
             if len(candidates) == 1:
@@ -148,7 +228,7 @@ class Land(Command):
         elif not pull_request:
             sys.stderr.write("Failed to find pull-request associated with '{}'\n".format(source_branch))
 
-        if not args.oops and any([cls.OOPS_RE.search(commit.message) for commit in commits]):
+        if not args.oops and any([cls.OOPS_RE.search(commit.message) for commit in commits if commit.message]):
             sys.stderr.write("Found '(OOPS!)' message in commit messages, please resolve before committing\n")
             return 1
 

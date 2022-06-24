@@ -912,7 +912,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 
 String SQLiteIDBBackingStore::encodeDatabaseName(const String& databaseName)
 {
-    ASSERT(!databaseName.isEmpty());
+    ASSERT(!databaseName.isNull());
     if (databaseName.isEmpty())
         return "%00"_s;
 

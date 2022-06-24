@@ -89,7 +89,6 @@ public:
 protected:
     explicit ImageLoader(Element&);
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) override;
-    void didStartLoading() override;
 
 private:
     void resetLazyImageLoading(Document&);
@@ -132,7 +131,6 @@ private:
     bool m_imageComplete : 1;
     bool m_loadManually : 1;
     bool m_elementIsProtected : 1;
-    bool m_inUpdateFromElement : 1;
     LazyImageLoadState m_lazyImageLoadState { LazyImageLoadState::None };
 };
 

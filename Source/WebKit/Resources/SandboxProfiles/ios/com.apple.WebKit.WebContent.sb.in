@@ -1454,6 +1454,9 @@
         io_service_get_matching_service_bin
         io_service_get_matching_services_bin
         io_service_open_extended
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 160000)
+        mach_port_get_refs
+#endif
         mach_port_set_attributes
         mach_vm_copy
         mach_vm_map_external

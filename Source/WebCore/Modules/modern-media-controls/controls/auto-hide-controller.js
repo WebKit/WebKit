@@ -91,7 +91,10 @@ class AutoHideController
 
         switch (event.type) {
         case "pointermove":
-            this._mediaControls.faded = false;
+            // If the pointer is a mouse (supports hover), immediately show the controls.
+            if (event.pointerType === "mouse")
+                this._mediaControls.faded = false;
+
             if (this._mediaControls.isPointInControls(new DOMPoint(event.clientX, event.clientY))) {
                 this._pointerIdentifiersPreventingAutoHideForHover.add(event.pointerId);
                 this._cancelAutoHideTimer();
@@ -118,7 +121,11 @@ class AutoHideController
             // if we recognize a tap, if it should fade the controls out.
             this._nextTapCanFadeControls = !this._mediaControls.faded;
             this._pointerIdentifiersPreventingAutoHide.add(event.pointerId);
-            this._mediaControls.faded = false;
+
+            // If the pointer is a mouse (supports hover), immediately show the controls.
+            if (event.pointerType === "mouse")
+                this._mediaControls.faded = false;
+
             this._cancelAutoHideTimer();
             return;
 

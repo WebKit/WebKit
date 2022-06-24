@@ -105,7 +105,7 @@ TemporalHelpers.assertPlainYearMonth(
 assert.sameValue(calendar.dateFromFieldsCalls.length, 1, "dateFromFields was called");
 assert.deepEqual(
   calendar.dateFromFieldsCalls[0][0],
-  { year: 2022, month: 2, monthCode: "M02", day: 1 },
+  { year: 2022, monthCode: "M02", day: 1 },
   "first day of month 2 passed to dateFromFields when adding positive duration"
 );
 assert.sameValue(calendar.dateFromFieldsCalls[0][1], undefined, "undefined options passed");
@@ -120,7 +120,7 @@ TemporalHelpers.assertPlainYearMonth(
 assert.sameValue(calendar.dateFromFieldsCalls.length, 1, "dateFromFields was called");
 assert.deepEqual(
   calendar.dateFromFieldsCalls[0][0],
-  { year: 2022, month: 2, monthCode: "M02", day: 1 },
+  { year: 2022, monthCode: "M02", day: 1 },
   "first day of month 2 passed to dateFromFields when adding positive duration"
 );
 assert.sameValue(calendar.dateFromFieldsCalls[0][1], undefined, "undefined options passed");
@@ -135,7 +135,7 @@ TemporalHelpers.assertPlainYearMonth(
 assert.sameValue(calendar.dateFromFieldsCalls.length, 1, "dateFromFields was called");
 assert.deepEqual(
   calendar.dateFromFieldsCalls[0][0],
-  { year: 2022, month: 2, monthCode: "M02", day: 36 },
+  { year: 2022, monthCode: "M02", day: 36 },
   "last day of month 2 passed to dateFromFields when adding negative duration"
 );
 assert.sameValue(calendar.dateFromFieldsCalls[0][1], undefined, "undefined options passed");
@@ -150,7 +150,7 @@ TemporalHelpers.assertPlainYearMonth(
 assert.sameValue(calendar.dateFromFieldsCalls.length, 1, "dateFromFields was called");
 assert.deepEqual(
   calendar.dateFromFieldsCalls[0][0],
-  { year: 2022, month: 2, monthCode: "M02", day: 36 },
+  { year: 2022, monthCode: "M02", day: 36 },
   "last day of month 2 passed to dateFromFields when adding negative duration"
 );
 assert.sameValue(calendar.dateFromFieldsCalls[0][1], undefined, "undefined options passed");

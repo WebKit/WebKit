@@ -194,7 +194,7 @@ public:
     static void flexibleBoxRendererBeganLayout(const RenderObject&);
     static void flexibleBoxRendererWrappedToNextLine(const RenderObject&, size_t lineStartItemIndex);
 
-    static void willSendRequest(Frame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
+    static void willSendRequest(Frame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
     static void didLoadResourceFromMemoryCache(Page&, DocumentLoader*, CachedResource*);
     static void didReceiveResourceResponse(Frame&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void didReceiveThreadableLoaderResponse(DocumentThreadableLoader&, ResourceLoaderIdentifier);
@@ -416,7 +416,7 @@ private:
     static void flexibleBoxRendererBeganLayoutImpl(InstrumentingAgents&, const RenderObject&);
     static void flexibleBoxRendererWrappedToNextLineImpl(InstrumentingAgents&, const RenderObject&, size_t lineStartItemIndex);
 
-    static void willSendRequestImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*);
+    static void willSendRequestImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
     static void willSendRequestOfTypeImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, LoadType);
     static void markResourceAsCachedImpl(InstrumentingAgents&, ResourceLoaderIdentifier);
     static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*);
@@ -1060,17 +1060,17 @@ inline void InspectorInstrumentation::flexibleBoxRendererWrappedToNextLine(const
         flexibleBoxRendererWrappedToNextLineImpl(*agents, renderer, lineStartItemIndex);
 }
 
-inline void InspectorInstrumentation::willSendRequest(Frame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
+inline void InspectorInstrumentation::willSendRequest(Frame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
-        willSendRequestImpl(*agents, identifier, loader, request, redirectResponse, cachedResource);
+        willSendRequestImpl(*agents, identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
 }
 
 inline void InspectorInstrumentation::willSendRequest(WorkerOrWorkletGlobalScope& globalScope, ResourceLoaderIdentifier identifier, ResourceRequest& request)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    willSendRequestImpl(instrumentingAgents(globalScope), identifier, nullptr, request, ResourceResponse { }, nullptr);
+    willSendRequestImpl(instrumentingAgents(globalScope), identifier, nullptr, request, ResourceResponse { }, nullptr, nullptr);
 }
 
 inline void InspectorInstrumentation::willSendRequestOfType(Frame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, LoadType loadType)

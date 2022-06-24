@@ -944,6 +944,15 @@ void WebChromeClient::triggerRenderingUpdate()
 
 #if ENABLE(VIDEO)
 
+bool WebChromeClient::canEnterVideoFullscreen() const
+{
+#if !PLATFORM(IOS_FAMILY) || HAVE(AVKIT)
+    return true;
+#else
+    return false;
+#endif
+}
+
 bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode)
 {
 #if !PLATFORM(IOS_FAMILY) || HAVE(AVKIT)

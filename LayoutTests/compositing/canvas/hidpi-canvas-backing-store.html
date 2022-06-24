@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+function doTest() {
+  var canvasElement = document.getElementById("canvas");
+  let dpr = window.devicePixelRatio || 1;
+
+  canvas.width *= dpr;
+  canvas.height *= dpr;
+
+  canvas.style.transform = "scale(" + 1/dpr + ", " + 1/dpr + ")";
+
+  let ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  ctx.fillStyle = 'green';
+  ctx.fillRect(0, 0, 500, 500);
+
+  if (window.testRunner) {
+    document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_DEVICE_SCALE);
+    testRunner.notifyDone();
+  }
+}
+
+window.addEventListener('load', doTest, false);
+</script>
+</head>
+
+<body>
+<p> Tests whether a compositing layer containing only canvas uses a standard DPI backing store.</p>
+<div style="opacity:0.5">
+<canvas id="canvas" width="500" height="500" style="transform-origin:top left"></canvas>
+</div>
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+
+</html>

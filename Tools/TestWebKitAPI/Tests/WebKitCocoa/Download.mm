@@ -60,6 +60,10 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
+#if PLATFORM(MAC)
+#include <pal/spi/mac/QuarantineSPI.h>
+#endif
+
 static unsigned redirectCount = 0;
 static bool hasReceivedResponse;
 static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
@@ -1259,7 +1263,7 @@ static void checkFileContents(NSURL *file, const String& expectedContents)
 
 static NSURL *tempFileThatDoesNotExist()
 {
-    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"DownloadTest"] isDirectory:YES];
+    NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"DownloadTëst"] isDirectory:YES];
     [[NSFileManager defaultManager] createDirectoryAtURL:tempDir withIntermediateDirectories:YES attributes:nil error:nil];
     NSURL *file = [tempDir URLByAppendingPathComponent:@"example.txt"];
     [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
@@ -1448,6 +1452,28 @@ static void checkCallbackRecord(TestDownloadDelegate *delegate, Vector<DownloadC
         EXPECT_EQ(actualCallbacks[i], expectedCallbacks[i]);
 }
 
+#if PLATFORM(MAC)
+static void expectHardQuarantine(NSURL *url, bool expected)
+{
+    auto file = std::unique_ptr<_qtn_file, QuarantineFileDeleter>(qtn_file_alloc());
+    if (!file) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto error = qtn_file_init_with_path(file.get(), url.fileSystemRepresentation);
+    if (error) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    uint32_t flags = qtn_file_get_flags(file.get());
+    EXPECT_EQ(!!(flags & QTN_FLAG_HARD), expected);
+}
+#else
+static void expectHardQuarantine(NSURL *, bool) { }
+#endif
+
 TEST(WKDownload, FinishSuccessfully)
 {
     auto server = simpleDownloadTestServer();
@@ -1469,6 +1495,7 @@ TEST(WKDownload, FinishSuccessfully)
     [delegate waitForDownloadDidFinish];
 
     checkFileContents(expectedDownloadFile, longString<5000>('a'));
+    expectHardQuarantine(expectedDownloadFile, false);
 
     checkCallbackRecord(delegate.get(), {
         DownloadCallback::NavigationAction,
@@ -1570,6 +1597,7 @@ TEST(WKDownload, CancelAndResume)
 
     [webView loadRequest:server.request()];
     waitForFirst5k(retainedDownload);
+    expectHardQuarantine(expectedDownloadFile, true);
 
     __block RetainPtr<NSData> retainedResumeData;
     [retainedDownload cancel:^(NSData *resumeData) {
@@ -1579,6 +1607,7 @@ TEST(WKDownload, CancelAndResume)
     while (!retainedResumeData)
         Util::spinRunLoop();
     resumeAndFinishDownload(retainedResumeData.get(), expectedDownloadFile);
+    expectHardQuarantine(expectedDownloadFile, false);
     checkCallbackRecord(delegate.get(), {
         DownloadCallback::NavigationAction,
         DownloadCallback::NavigationResponse,

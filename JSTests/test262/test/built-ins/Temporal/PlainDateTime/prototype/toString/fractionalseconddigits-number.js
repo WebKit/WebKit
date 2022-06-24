@@ -7,10 +7,13 @@ description: Number for fractionalSecondDigits option
 features: [Temporal]
 ---*/
 
+const fewSeconds = new Temporal.PlainDateTime(1976, 2, 4, 5, 3, 1);
 const zeroSeconds = new Temporal.PlainDateTime(1976, 11, 18, 15, 23);
 const wholeSeconds = new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30);
 const subSeconds = new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30, 123, 400);
 
+assert.sameValue(fewSeconds.toString({ fractionalSecondDigits: 0 }), "1976-02-04T05:03:01",
+  "pads parts with 0");
 assert.sameValue(subSeconds.toString({ fractionalSecondDigits: 0 }), "1976-11-18T15:23:30",
   "truncates 4 decimal places to 0");
 assert.sameValue(zeroSeconds.toString({ fractionalSecondDigits: 2 }), "1976-11-18T15:23:00.00",

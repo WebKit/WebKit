@@ -23,32 +23,29 @@ function grabFrameData(x, y, w, h)
     return canvas.getContext('2d').getImageData(x, y, w, h).data;
 }
 
-function testImage()
+function testImage(testName)
 {
     const data = grabFrameData(10, 325, 250, 1);
 
     var index = 20;
-    assert_true(data[index] < 100);
-    assert_true(data[index + 1] < 100);
-    assert_true(data[index + 2] < 100);
+    assert_true(data[index] < 100, testName + ' 1');
+    assert_true(data[index + 1] < 100, testName + ' 2');
+    assert_true(data[index + 2] < 100, testName + ' 3');
 
     index = 80;
-    assert_true(data[index] > 200);
-    assert_true(data[index + 1] > 200);
-    assert_true(data[index + 2] > 200);
+    assert_true(data[index] > 200, testName + ' 4');
+    assert_true(data[index + 1] > 200, testName + ' 5');
+    assert_true(data[index + 2] > 200, testName + ' 6');
 
     index += 80;
-    assert_true(data[index] > 200);
-    assert_true(data[index + 1] > 200);
-    assert_true(data[index + 2] < 100);
+    assert_true(data[index] > 200, testName + ' 7');
+    assert_true(data[index + 1] > 200, testName + ' 8');
+    assert_true(data[index + 2] < 100, testName + ' 9');
 }
 
 var pc1, pc2;
 
 promise_test(async (t) => {
-    if (window.testRunner)
-        testRunner.setUserMediaPermission(true);
-
     const localStream = await navigator.mediaDevices.getUserMedia({video: true});
     const stream = await new Promise((resolve, reject) => {
         createConnections((firstConnection) => {
@@ -64,7 +61,8 @@ promise_test(async (t) => {
     video.srcObject = stream;
     await video.play();
 
-    testImage();
+    testImage('test1');
+    video.srcObject = null;
 
     let promise = new Promise((resolve) => {
         pc2.getReceivers()[0].track.onmute = resolve;
@@ -92,7 +90,7 @@ promise_test(async (t) => {
     }, "The MediaStream should remain the same");
     await video.play();
 
-    testImage();
+    testImage('test2');
 }, "Going from sendrecv to inactive and back to sendrecv");
         </script>
     </body>

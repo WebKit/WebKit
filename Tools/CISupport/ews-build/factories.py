@@ -24,17 +24,17 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (AddAuthorToCommitMessage, AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
+from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
-                   DetermineAuthor, DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests, GitSvnFetch,
-                   InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
+                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
+                   InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
-                   SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
+                   SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory, UpdatePullRequest,
                    ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
-                   InstallBuiltProduct, VerifyGitHubIntegrity, ValidateSquashed)
+                   InstallBuiltProduct, ValidateSquashed)
 
 
 class Factory(factory.BuildFactory):
@@ -294,17 +294,13 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
-        self.addStep(GitSvnFetch())  # FIXME: Remove when migrating to pure git
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
-        self.addStep(VerifyGitHubIntegrity())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(CommitPatch())
 
         self.addStep(ValidateSquashed())
         self.addStep(AddReviewerToCommitMessage())
-        self.addStep(DetermineAuthor())
-        self.addStep(AddAuthorToCommitMessage())
         self.addStep(ValidateCommitMessage())
 
         self.addStep(KillOldProcesses())
@@ -329,16 +325,12 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
-        self.addStep(GitSvnFetch())  # FIXME: Remove when migrating to pure git
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
-        self.addStep(VerifyGitHubIntegrity())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateSquashed())
         self.addStep(AddReviewerToCommitMessage())
-        self.addStep(DetermineAuthor())
-        self.addStep(AddAuthorToCommitMessage())
         self.addStep(ValidateCommitMessage())
 
 
@@ -352,6 +344,8 @@ class MergeQueueFactory(MergeQueueFactoryBase):
 
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
         self.addStep(Canonicalize())
+        self.addStep(PushPullRequestBranch())
+        self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())
         self.addStep(SetBuildSummary())
 
@@ -362,5 +356,7 @@ class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
 
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
         self.addStep(Canonicalize())
+        self.addStep(PushPullRequestBranch())
+        self.addStep(UpdatePullRequest())
         self.addStep(PushCommitToWebKitRepo())
         self.addStep(SetBuildSummary())

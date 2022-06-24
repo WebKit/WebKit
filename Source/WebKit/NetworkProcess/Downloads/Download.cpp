@@ -55,7 +55,6 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, Netw
     , m_client(downloadManager.client())
     , m_download(&download)
     , m_sessionID(session.sessionID())
-    , m_suggestedName(suggestedName)
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
     ASSERT(m_downloadID);
@@ -70,7 +69,6 @@ Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSUR
     , m_client(downloadManager.client())
     , m_downloadTask(download)
     , m_sessionID(session.sessionID())
-    , m_suggestedName(suggestedName)
     , m_testSpeedMultiplier(session.testSpeedMultiplier())
 {
     ASSERT(m_downloadID);

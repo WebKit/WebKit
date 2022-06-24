@@ -57,7 +57,7 @@ public:
         String filename;
         unsigned lineno { 0 };
         unsigned colno { 0 };
-        JSC::JSValue error;
+        JSC::JSValue error { JSC::jsUndefined() };
     };
 
     static Ref<ErrorEvent> create(const AtomString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)

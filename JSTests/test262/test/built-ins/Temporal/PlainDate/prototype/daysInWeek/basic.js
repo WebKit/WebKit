@@ -7,5 +7,11 @@ description: Basic tests for daysInWeek().
 features: [Temporal]
 ---*/
 
-const plainDate = new Temporal.PlainDate(1976, 11, 18);
-assert.sameValue(plainDate.daysInWeek, 7);
+const tests = [
+  new Temporal.PlainDate(1976, 1, 1),
+  new Temporal.PlainDate(1976, 11, 18),
+  new Temporal.PlainDate(1976, 12, 31),
+];
+for (const plainDate of tests) {
+  assert.sameValue(plainDate.daysInWeek, 7, `Seven days in the week of ${plainDate}`);
+}

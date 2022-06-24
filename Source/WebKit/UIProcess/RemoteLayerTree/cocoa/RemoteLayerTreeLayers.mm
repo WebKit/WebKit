@@ -59,6 +59,7 @@
 
     self.contents = contents;
     [self setValue:(id)data forKeyPath:WKCGDisplayListContentsKey];    
+    [self setNeedsDisplay];
 }
 
 - (void)drawInContext:(CGContextRef)context

@@ -58,17 +58,20 @@ function testRightDataChannelInit(init, title)
         assert_equals(channel.maxRetransmits, init.maxRetransmits, "maxRetransmits");
         assert_equals(channel.protocol, init.protocol, "protocol");
         assert_equals(channel.negotiated, init.negotiated, "negotiated");
-        assert_equals(channel.id, init.id, "id");
+        if (channel.negotiated)
+            assert_equals(channel.id, init.id, "id");
      }, "Right data channel init: " + title);
 }
 
 testWrongDataChannelInit({negotiated: false, protocol: longString}, "long protocol");
-testWrongDataChannelInit({id: 65535}, "long id");
+testWrongDataChannelInit({negotiated: true, id: 65535}, "long id");
 testWrongDataChannelInit({maxPacketLifeTime: 1, maxRetransmits: 1}, "maxPacketLifeTime and maxRetransmits");
 
+testRightDataChannelInit({id: 65535}, "long id, but negotiated is false");
 testRightDataChannelInit({ordered: true, maxRetransmit: 11, protocol: "whatever", negotiated: false, id: 1 }, "ordered init");
 testRightDataChannelInit({ordered: false, maxPacketLifeTime: 10, protocol: "whatever", negotiated: false, id: 2 }, "unordered init");
-testRightDataChannelInit({protocol: "whatever", negotiated: false, id: 123 }, "default ordered init with id");
+testRightDataChannelInit({protocol: "whatever", negotiated: false, id: 123 }, "default ordered init with id, not negotiated");
+testRightDataChannelInit({protocol: "whatever", negotiated: true, id: 123 }, "default ordered init with id, negotiated");
 testRightDataChannelInit(undefined, "no init");
 testRightDataChannelInit(null, "null");
     </script>

@@ -2230,3 +2230,11 @@ http/tests/workers/service/shownotification-allowed-document.html [ Skip ]
 http/tests/workers/service/shownotification-allowed.html [ Skip ]
 http/tests/workers/service/shownotification-denied.html [ Skip ]
 http/tests/workers/service/shownotification-invalid-data.html [ Skip ]
+
+# Tests that fail due to antialiasing differences between scaling layers vs scaling during painting
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-element-swap-width-height.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-element.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ ImageOnlyFailure ]

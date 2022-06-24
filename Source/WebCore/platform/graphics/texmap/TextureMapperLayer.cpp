@@ -343,7 +343,7 @@ void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, c
     else if (m_contentsLayer || m_state.solidColor.isVisible())
         localBoundingRect = m_state.contentsRect;
 
-    if (m_currentFilters.hasOutsets() && !m_state.backdropLayer) {
+    if (m_currentFilters.hasOutsets() && !m_state.backdropLayer && !m_state.masksToBounds && !m_state.maskLayer) {
         auto outsets = m_currentFilters.outsets();
         localBoundingRect.move(-outsets.left(), -outsets.top());
         localBoundingRect.expand(outsets.left() + outsets.right(), outsets.top() + outsets.bottom());
@@ -485,14 +485,16 @@ void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
         rootLayer().paintSelfAndChildren(options);
     } else
         paintSelfAndChildren(options);
-    if (options.replicaLayer == this) {
-        if (m_state.replicaLayer->m_state.maskLayer)
-            m_state.replicaLayer->m_state.maskLayer->applyMask(options);
-    }
-    if (m_state.maskLayer)
-        m_state.maskLayer->applyMask(options);
-    options.surface = options.surface->applyFilters(options.textureMapper, m_currentFilters);
+
+    bool hasMask = !!m_state.maskLayer;
+    bool hasReplicaMask = options.replicaLayer == this && m_state.replicaLayer->m_state.maskLayer;
+    bool defersLastFilter = !hasMask && !hasReplicaMask;
+    options.surface = options.surface->applyFilters(options.textureMapper, m_currentFilters, defersLastFilter);
     options.textureMapper.bindSurface(options.surface.get());
+    if (hasMask)
+        m_state.maskLayer->applyMask(options);
+    if (hasReplicaMask)
+        m_state.replicaLayer->m_state.maskLayer->applyMask(options);
 }
 
 static void commitSurface(TextureMapperPaintOptions& options, BitmapTexture& surface, const IntRect& rect, float opacity)

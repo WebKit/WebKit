@@ -4498,9 +4498,7 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
     // The call below could release the view.
     auto protector = m_view.get();
     auto clientDragLocation = item.dragLocationInWindowCoordinates;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameDrag];
 
     if (auto& info = item.promisedAttachmentInfo) {
         auto attachment = m_page->attachmentForIdentifier(info.attachmentIdentifier);

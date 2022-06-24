@@ -453,9 +453,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    _pdfPlugin->writeItemsToPasteboard(NSGeneralPboard, items, types);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    _pdfPlugin->writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
 }
 
 - (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point
@@ -2340,10 +2338,8 @@ bool PDFPlugin::handleEditingCommand(StringView commandName)
         [m_pdfLayerController selectAll];
     else if (commandName == "takeFindStringFromSelection"_s) {
         NSString *string = [m_pdfLayerController currentSelection].string;
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (string.length)
-            writeItemsToPasteboard(NSFindPboard, @[ [string dataUsingEncoding:NSUTF8StringEncoding] ], @[ NSPasteboardTypeString ]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
+            writeItemsToPasteboard(NSPasteboardNameFind, @[ [string dataUsingEncoding:NSUTF8StringEncoding] ], @[ NSPasteboardTypeString ]);
     }
 
     return true;

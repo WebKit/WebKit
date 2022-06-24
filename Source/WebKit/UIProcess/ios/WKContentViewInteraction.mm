@@ -1071,6 +1071,9 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _touchActionGestureRecognizer = adoptNS([[WKTouchActionGestureRecognizer alloc] initWithTouchActionDelegate:self]);
     [self addGestureRecognizer:_touchActionGestureRecognizer.get()];
 
+    // FIXME: This should be called when we get notified that loading has completed.
+    [self setUpTextSelectionAssistant];
+
 #if HAVE(LINK_PREVIEW)
     [self _registerPreview];
 #endif
@@ -1085,9 +1088,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [center addObserver:self selector:@selector(_keyboardDidRequestDismissal:) name:UIKeyboardPrivateDidRequestDismissalNotification object:nil];
 
     _showingTextStyleOptions = NO;
-
-    // FIXME: This should be called when we get notified that loading has completed.
-    [self setUpTextSelectionAssistant];
     
     _actionSheetAssistant = adoptNS([[WKActionSheetAssistant alloc] initWithView:self]);
     [_actionSheetAssistant setDelegate:self];
@@ -2626,7 +2626,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    if (gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer && otherGestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
+    if (gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer && otherGestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships])
         return YES;
 #endif
 
@@ -2639,7 +2639,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
 
 #if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
-    if (gestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships] && otherGestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
+    if (gestureRecognizer == [self.contextMenuInteraction gestureRecognizerForFailureRelationships] && otherGestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
         return YES;
 #endif
 
@@ -4624,53 +4624,64 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     });
 }
 
-- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completionHandler
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+
+- (void)requestPreferredArrowDirectionForEditMenuWithCompletionHandler:(void(^)(UIEditMenuArrowDirection))completion
 {
-    if (!completionHandler) {
-        [NSException raise:NSInvalidArgumentException format:@"Expected a nonnull completion handler in %s.", __PRETTY_FUNCTION__];
-        return;
-    }
+    [self _requestEvasionRectsAboveSelectionIfNeeded:[completion = makeBlockPtr(completion)](const Vector<WebCore::FloatRect>& rects) {
+        completion(rects.isEmpty() ? UIEditMenuArrowDirectionAutomatic : UIEditMenuArrowDirectionUp);
+    }];
+}
 
+#endif
+
+- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completion
+{
+    [self _requestEvasionRectsAboveSelectionIfNeeded:[completion = makeBlockPtr(completion)](const Vector<WebCore::FloatRect>& rects) {
+        completion(createNSArray(rects).get());
+    }];
+}
+
+- (void)_requestEvasionRectsAboveSelectionIfNeeded:(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&)completion
+{
     if ([self _shouldSuppressSelectionCommands]) {
-        completionHandler(@[ ]);
+        completion({ });
         return;
     }
 
-    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = makeBlockPtr(completionHandler)] {
+    auto requestRectsToEvadeIfNeeded = [startTime = ApproximateTime::now(), weakSelf = WeakObjCPtr<WKContentView>(self), completion = WTFMove(completion)]() mutable {
         auto strongSelf = weakSelf.get();
         if (!strongSelf) {
-            completion(@[ ]);
+            completion({ });
             return;
         }
 
         if ([strongSelf webView]._editable) {
-            completion(@[ ]);
+            completion({ });
             return;
         }
 
         auto focusedElementType = strongSelf->_focusedElementInformation.elementType;
         if (focusedElementType != WebKit::InputType::ContentEditable && focusedElementType != WebKit::InputType::TextArea) {
-            completion(@[ ]);
+            completion({ });
             return;
         }
 
         // Give the page some time to present custom editing UI before attempting to detect and evade it.
         auto delayBeforeShowingCalloutBar = std::max(0_s, 0.25_s - (ApproximateTime::now() - startTime));
-        WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion, weakSelf] () mutable {
+        WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion = WTFMove(completion), weakSelf]() mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
-                completion(@[ ]);
+                completion({ });
                 return;
             }
 
             if (!strongSelf->_page) {
-                completion(@[ ]);
+                completion({ });
                 return;
             }
 
-            strongSelf->_page->requestEvasionRectsAboveSelection([completion = WTFMove(completion)] (auto& rects) {
-                completion(createNSArray(rects).get());
-            });
+            strongSelf->_page->requestEvasionRectsAboveSelection(WTFMove(completion));
         });
     };
 
@@ -8453,7 +8464,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
     auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
 #if USE(UICONTEXTMENU) && HAVE(LINK_PREVIEW)
-        if (gesture == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
+        if (gesture == [self.contextMenuInteraction gestureRecognizerForFailureRelationships])
             return YES;
 #endif
 
@@ -10993,7 +11004,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
                 return;
 
             strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
-            [strongSelf presentContextMenu:strongSelf->_contextMenuInteraction.get() atLocation:location];
+            [strongSelf presentContextMenu:[strongSelf contextMenuInteraction] atLocation:location];
         });
 
         auto visualSearchAnalysisStartTime = MonotonicTime::now();
@@ -11494,6 +11505,24 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
 @implementation WKContentView (WKInteractionPreview)
 
+#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
+- (UIContextMenuInteraction *)textInteractionAssistantContextMenuInteraction
+{
+    return [_textInteractionAssistant respondsToSelector:@selector(contextMenuInteraction)] ? _textInteractionAssistant.get().contextMenuInteraction : nil;
+}
+#endif // HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
+
+#if USE(UICONTEXTMENU)
+- (UIContextMenuInteraction *)contextMenuInteraction
+{
+#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
+    return _contextMenuInteraction.get() ?: self.textInteractionAssistantContextMenuInteraction;
+#else
+    return _contextMenuInteraction.get();
+#endif
+}
+#endif // USE(UICONTEXTMENU)
+
 - (void)_registerPreview
 {
     if (!self.webView.allowsLinkPreview)
@@ -11501,15 +11530,22 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
 #if USE(UICONTEXTMENU)
     if (self._shouldUseContextMenus) {
-        _contextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
         _contextMenuHasRequestedLegacyData = NO;
-        [self addInteraction:_contextMenuInteraction.get()];
+#if HAVE(TEXT_INTERACTION_WITH_CONTEXT_MENU_INTERACTION)
+        if (self.textInteractionAssistantContextMenuInteraction)
+            _textInteractionAssistant.get().externalContextMenuInteractionDelegate = self;
+        else
+#endif
+        {
+            _contextMenuInteraction = adoptNS([[UIContextMenuInteraction alloc] initWithDelegate:self]);
+            [self addInteraction:_contextMenuInteraction.get()];
+        }
 
         if (id<_UIClickInteractionDriving> driver = self.webView.configuration._clickInteractionDriverForTesting)
-            [_contextMenuInteraction presentationInteraction].overrideDrivers = @[driver];
+            [self.contextMenuInteraction presentationInteraction].overrideDrivers = @[driver];
         return;
     }
-#endif
+#endif // USE(UICONTEXTMENU)
 
     _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
     [_previewItemController setDelegate:self];

@@ -1,0 +1,50 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ResizeObserverEnabled=true ] -->
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<div id="testDiv">test</div>
+<script>
+  description("Tests that an observation is received after disconnecting a visible target");
+  jsTestIsAsync = true;
+
+  let receivedInitialObservation = false;
+  onload = () => {
+    let resizeObserver = new ResizeObserver((_observations) => {
+      gc();
+      observations = _observations;
+
+      shouldBe("observations.length", "1");
+      shouldBeEqualToString("observations[0].target.tagName", "DIV");
+      shouldBe("observations[0].target.foo", "1");
+
+      if (!receivedInitialObservation) {
+          receivedInitialObservation = true;
+          shouldBeTrue("observations[0].contentRect.width > 0.0");
+          shouldBeTrue("observations[0].contentRect.height > 0.0");
+          requestAnimationFrame(() => {
+              debug("* Removing target from document");
+              document.getElementById("testDiv").remove();
+              gc();
+              setTimeout(gc, 0);
+              timeoutHandle = setTimeout(() => {
+                  testFailed("Didn't get observation after removing target from document");
+                  finishJSTest();
+              }, 3000);
+          });
+      } else {
+          clearTimeout(timeoutHandle);
+          shouldBe("observations[0].contentRect.width", "0.0");
+          shouldBe("observations[0].contentRect.height", "0.0");
+          setTimeout(finishJSTest, 100);
+      }
+    });
+    let div = document.getElementById("testDiv");
+    div.foo = 1;
+    resizeObserver.observe(div);
+    div = null;
+    gc();
+    setTimeout(gc, 0);
+  };
+</script>
+</body>
+</html>

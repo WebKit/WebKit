@@ -35,6 +35,11 @@
 namespace WebKit {
 using namespace WebCore;
 
+ImageBufferShareableAllocator::ImageBufferShareableAllocator(const ProcessIdentity& resourceOwner)
+    : m_resourceOwner(resourceOwner)
+{
+}
+
 RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode) const
 {
     RefPtr<ImageBuffer> imageBuffer = ConcreteImageBuffer<ImageBufferShareableBitmapBackend>::create(size, 1, colorSpace, PixelFormat::BGRA8, RenderingPurpose::Unspecified, { });
@@ -56,7 +61,7 @@ RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const Float
     if (!bitmap->createHandle(handle))
         return nullptr;
 
-    transferMemoryOwnership(WTFMove(handle.handle()), bitmap->sizeInBytes());
+    transferMemoryOwnership(WTFMove(handle.handle()));
     return imageBuffer;
 }
 
@@ -70,13 +75,13 @@ RefPtr<PixelBuffer> ImageBufferShareableAllocator::createPixelBuffer(const Pixel
     if (!pixelBuffer->data().createHandle(handle, SharedMemory::Protection::ReadOnly))
         return nullptr;
 
-    transferMemoryOwnership(WTFMove(handle), pixelBuffer->sizeInBytes());
+    transferMemoryOwnership(WTFMove(handle));
     return pixelBuffer;
 }
 
-void ImageBufferShareableAllocator::transferMemoryOwnership(SharedMemory::Handle&&, size_t) const
+void ImageBufferShareableAllocator::transferMemoryOwnership(SharedMemory::Handle&& handle) const
 {
-    // FIXME: Transfer the ownership of the SharedMemory::Handle to WebProcess.
+    handle.setOwnershipOfMemory(m_resourceOwner, MemoryLedger::Graphics);
 }
 
 } // namespace WebKit

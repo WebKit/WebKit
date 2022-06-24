@@ -2,7 +2,7 @@
 // - src/identifier-names/try-escaped.case
 // - src/identifier-names/default/obj-assignment-identifier.template
 /*---
-description: try is a valid identifier name, using escape (IdentiferReference in ObjectAssignmentPattern cannot be a ReservedWord)
+description: try is a valid identifier name, using escape (IdentifierReference in ObjectAssignmentPattern cannot be a ReservedWord)
 esid: prod-AssignmentPattern
 features: [destructuring-assignment]
 flags: [generated]

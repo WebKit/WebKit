@@ -84,6 +84,8 @@ const char* description(MessageName name)
         return "TestWithSemaphore_ReceiveSemaphore";
     case MessageName::TestWithSemaphore_SendSemaphore:
         return "TestWithSemaphore_SendSemaphore";
+    case MessageName::TestWithStreamBatched_SendString:
+        return "TestWithStreamBatched_SendString";
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return "TestWithStreamBuffer_SendStreamBuffer";
     case MessageName::TestWithStream_ReceiveMachSendRight:
@@ -248,6 +250,8 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
     case MessageName::TestWithSemaphore_SendSemaphore:
         return ReceiverName::TestWithSemaphore;
+    case MessageName::TestWithStreamBatched_SendString:
+        return ReceiverName::TestWithStreamBatched;
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return ReceiverName::TestWithStreamBuffer;
     case MessageName::TestWithStream_ReceiveMachSendRight:
@@ -406,6 +410,8 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithSemaphore_ReceiveSemaphore)
         return true;
     if (messageName == IPC::MessageName::TestWithSemaphore_SendSemaphore)
+        return true;
+    if (messageName == IPC::MessageName::TestWithStreamBatched_SendString)
         return true;
     if (messageName == IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer)
         return true;

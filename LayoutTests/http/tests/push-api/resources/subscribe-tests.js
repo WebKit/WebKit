@@ -23,6 +23,36 @@ async function testDocumentPermissionState(registration, expected)
         log(`FAIL: document permissionState should be ${expected}, but was ${state}`);
 }
 
+async function testDocumentGetSubscription(registration, expected)
+{
+    let result = false;
+    try {
+        let subscription = await registration.pushManager.getSubscription();
+        result = !!subscription;
+    } catch (e) {
+        log(`FAIL: document getSubscription failed with ${e}`);
+        return;
+    }
+
+    if (result == expected)
+        log(`PASS: document getSubscription was ${expected}`);
+    else
+        log(`FAIL: document getSubscription should be ${expected}, but was ${result}`);
+}
+
+async function testServiceWorkerGetSubscription(registration, expected)
+{
+    let promise = new Promise(resolve => navigator.serviceWorker.onmessage = resolve);
+    registration.active.postMessage(['getSubscription']);
+    let event = await promise;
+    let result = event.data;
+
+    if (result == expected)
+        log(`PASS: service worker getSubscription was ${expected}`);
+    else
+        log(`FAIL: service worker getSubscription should be ${expected}, but was ${result}`);
+}
+
 async function testServiceWorkerSubscribe(registration, domExceptionName)
 {
     let expected = domExceptionName ? `error: ${domExceptionName}` : "successful";

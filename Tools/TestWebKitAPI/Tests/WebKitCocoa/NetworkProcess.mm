@@ -137,26 +137,40 @@ TEST(NetworkProcess, CrashWhenNotAssociatedWithDataStore)
 TEST(NetworkProcess, TerminateWhenUnused)
 {
     RetainPtr<WKProcessPool> retainedPool;
+    pid_t networkProcessIdentifier = 0;
+
     @autoreleasepool {
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+        auto nonPersistentStore = [WKWebsiteDataStore nonPersistentDataStore];
+        configuration.get().websiteDataStore = nonPersistentStore;
         retainedPool = configuration.get().processPool;
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0) configuration:configuration.get()]);
         [webView synchronouslyLoadTestPageNamed:@"simple"];
         EXPECT_TRUE([WKWebsiteDataStore _defaultNetworkProcessExists]);
+
+        networkProcessIdentifier = [nonPersistentStore _networkProcessIdentifier];
+        EXPECT_NE(networkProcessIdentifier, 0);
     }
-    while ([WKWebsiteDataStore _defaultNetworkProcessExists])
+
+    while (!kill(networkProcessIdentifier, 0))
         TestWebKitAPI::Util::spinRunLoop();
-    
+    EXPECT_TRUE(errno == ESRCH);
+    EXPECT_FALSE([WKWebsiteDataStore _defaultNetworkProcessExists]);
+
     retainedPool = nil;
-    
     @autoreleasepool {
         auto webView = adoptNS([WKWebView new]);
         [webView synchronouslyLoadTestPageNamed:@"simple"];
         EXPECT_TRUE([WKWebsiteDataStore _defaultNetworkProcessExists]);
+
+        networkProcessIdentifier = [webView.get().configuration.websiteDataStore _networkProcessIdentifier];
+        EXPECT_NE(networkProcessIdentifier, 0);
     }
-    while ([WKWebsiteDataStore _defaultNetworkProcessExists])
+
+    while (!kill(networkProcessIdentifier, 0))
         TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_TRUE(errno == ESRCH);
+    EXPECT_FALSE([WKWebsiteDataStore _defaultNetworkProcessExists]);
 }
 
 TEST(NetworkProcess, DoNotLaunchOnDataStoreDestruction)

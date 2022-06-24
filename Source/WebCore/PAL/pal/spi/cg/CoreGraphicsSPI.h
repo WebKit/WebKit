@@ -206,6 +206,11 @@ static const CGSNotificationType kCGSConnectionWindowModificationsStarted = (CGS
 static const CGSNotificationType kCGSConnectionWindowModificationsStopped = (CGSNotificationType)(kCGSFirstConnectionNotification + 7);
 static const CGSNotificationType kCGSessionConsoleConnect = kCGSFirstSessionNotification;
 static const CGSNotificationType kCGSessionConsoleDisconnect = (CGSNotificationType)(kCGSessionConsoleConnect + 1);
+static const CGSNotificationType kCGSessionRemoteConnect = (CGSNotificationType)(kCGSessionConsoleDisconnect + 1);
+static const CGSNotificationType kCGSessionRemoteDisconnect = (CGSNotificationType)(kCGSessionRemoteConnect + 1);
+static const CGSNotificationType kCGSessionLoggedOn = (CGSNotificationType)(kCGSessionRemoteDisconnect + 1);
+static const CGSNotificationType kCGSessionLoggedOff = (CGSNotificationType)(kCGSessionLoggedOn + 1);
+static const CGSNotificationType kCGSessionConsoleWillDisconnect = (CGSNotificationType)(kCGSessionLoggedOff + 1);
 
 #endif // PLATFORM(MAC)
 

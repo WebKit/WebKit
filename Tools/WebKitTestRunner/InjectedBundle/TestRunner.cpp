@@ -1164,15 +1164,6 @@ void TestRunner::setAllowedMenuActions(JSValueRef actions)
     postPageMessage("SetAllowedMenuActions", messageBody);
 }
 
-void TestRunner::installCustomMenuAction(JSStringRef name, bool dismissesAutomatically, JSValueRef callback)
-{
-    cacheTestRunnerCallback(CustomMenuActionCallbackID, callback);
-    postPageMessage("InstallCustomMenuAction", createWKDictionary({
-        { "name", toWK(name) },
-        { "dismissesAutomatically", adoptWK(WKBooleanCreate(dismissesAutomatically)).get() },
-    }));
-}
-
 void TestRunner::installDidBeginSwipeCallback(JSValueRef callback)
 {
     cacheTestRunnerCallback(DidBeginSwipeCallbackID, callback);
@@ -2003,11 +1994,6 @@ void TestRunner::didGetApplicationManifest()
 void TestRunner::installFakeHelvetica(JSStringRef configuration)
 {
     WTR::installFakeHelvetica(toWK(configuration).get());
-}
-
-void TestRunner::performCustomMenuAction()
-{
-    callTestRunnerCallback(CustomMenuActionCallbackID);
 }
 
 size_t TestRunner::userScriptInjectedCount() const

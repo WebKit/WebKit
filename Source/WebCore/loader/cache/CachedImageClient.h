@@ -49,7 +49,6 @@ public:
     virtual VisibleInViewportState imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect) { imageChanged(&image, changeRect); return VisibleInViewportState::No; }
     virtual VisibleInViewportState imageVisibleInViewport(const Document&) const { return VisibleInViewportState::No; }
 
-    virtual void didStartLoading() { }
     virtual void didRemoveCachedImageClient(CachedImage&) { }
 
     virtual void scheduleRenderingUpdateForImage(CachedImage&) { }

@@ -26,7 +26,7 @@
 
 WI.Resource = class Resource extends WI.SourceCode
 {
-    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, initiatorCallFrames, initiatorSourceCodeLocation, initiatorNode} = {})
+    constructor(url, {mimeType, type, loaderIdentifier, targetId, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, requestSentWalltime, referrerPolicy, integrity, initiatorCallFrames, initiatorSourceCodeLocation, initiatorNode} = {})
     {
         console.assert(url);
 
@@ -82,6 +82,8 @@ WI.Resource = class Resource extends WI.SourceCode
         this._isProxyConnection = false;
         this._target = targetId ? WI.targetManager.targetForIdentifier(targetId) : WI.mainTarget;
         this._redirects = [];
+        this._referrerPolicy = referrerPolicy ?? null;
+        this._integrity = integrity ?? null;
 
         // Exact sizes if loaded over the network or cache.
         this._requestHeadersTransferSize = NaN;
@@ -357,6 +359,8 @@ WI.Resource = class Resource extends WI.SourceCode
     get responseBodyTransferSize() { return this._responseBodyTransferSize; }
     get cachedResponseBodySize() { return this._cachedResponseBodySize; }
     get redirects() { return this._redirects; }
+    get referrerPolicy() { return this._referrerPolicy; }
+    get integrity() { return this._integrity; }
 
     get loadedSecurely()
     {
@@ -698,6 +702,8 @@ WI.Resource = class Resource extends WI.SourceCode
         this._requestCookies = null;
         this._requestMethod = request.method || null;
         this._redirects.push(new WI.Redirect(oldURL, oldMethod, oldHeaders, response.status, response.statusText, response.headers, elapsedTime));
+        this._referrerPolicy = request.referrerPolicy ?? null;
+        this._integrity = request.integrity ?? null;
 
         if (oldURL !== request.url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
@@ -1188,7 +1194,8 @@ WI.Resource = class Resource extends WI.SourceCode
         if (!isEmptyObject(headers))
             options.headers = headers;
 
-        // FIXME: <https://webkit.org/b/241217> Web Inspector: include `integrity` in "Copy as fetch"
+        if (this._integrity)
+            options.integrity = this._integrity;
 
         if (this.requestMethod)
             options.method = this.requestMethod;
@@ -1200,7 +1207,8 @@ WI.Resource = class Resource extends WI.SourceCode
         if (referrer)
             options.referrer = referrer;
 
-        // FIXME: <https://webkit.org/b/241218> Web Inspector: include `referrerPolicy` in "Copy as fetch"
+        if (this._referrerPolicy)
+            options.referrerPolicy = this._referrerPolicy;
 
         return `fetch(${JSON.stringify(this.url)}, ${JSON.stringify(options, null, WI.indentString())})`;
     }

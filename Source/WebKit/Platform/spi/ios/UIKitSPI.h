@@ -801,8 +801,12 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 @interface UITextSelectionView : UIView
 @end
 
+@class UIContextMenuInteraction;
+@protocol UIContextMenuInteractionDelegate;
 @interface UITextInteractionAssistant (SPI)
 @property (nonatomic, readonly) UITextSelectionView *selectionView;
+@property (nonatomic, strong, readonly) UIContextMenuInteraction *contextMenuInteraction;
+@property (nonatomic, weak, readwrite) id<UIContextMenuInteractionDelegate> externalContextMenuInteractionDelegate;
 @end
 
 @interface UIWKTextInteractionAssistant : UITextInteractionAssistant <UIResponderStandardEditActions>

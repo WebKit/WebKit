@@ -31,6 +31,7 @@
 #include "CSSPropertyParser.h"
 #include "Document.h"
 #include "FloatConversion.h"
+#include "HTMLParserIdioms.h"
 #include "RenderObject.h"
 #include "SVGAnimateColorElement.h"
 #include "SVGAnimateElement.h"
@@ -147,6 +148,21 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
+bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attribute) const
+{
+    if (attribute.name() == SVGNames::fromAttr || attribute.name() == SVGNames::toAttr)
+        return WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
+
+    if (attribute.name() == SVGNames::valuesAttr) {
+        for (auto innerValue : StringView(attribute.value()).split(';')) {
+            if (WTF::protocolIsJavaScript(innerValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>)))
+                return true;
+        }
+        return false;
+    }
+    return Element::attributeContainsJavaScriptURL(attribute);
+}
+
 void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     if (name == SVGNames::valuesAttr) {
@@ -155,7 +171,7 @@ void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomSt
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         m_values.clear();
         value.string().split(';', [this](StringView innerValue) {
-            m_values.append(innerValue.stripWhiteSpace().toString());
+            m_values.append(innerValue.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString());
         });
 
         updateAnimationMode();

@@ -71,9 +71,15 @@ function test()
         {name: "POSTRequestURLEncodedData", expression: `createPOSTRequestWithURLEncodedData()`},
         {name: "POSTRequestURLUTF8", expression: `createPOSTRequestWithUTF8()`},
         {name: "PUTRequestWithJSON", expression: `createPUTRequestWithJSON()`},
+
+        {name: "ReferrerPolicy.EmptyString", expression: `fetch("resources/url", {referrerPolicy: ""})`},
+        {name: "ReferrerPolicy.NoReferrer", expression: `fetch("resources/url", {referrerPolicy: "no-referrer"})`},
+
+        {name: "Integrity.Invalid", expression: `fetch("resources/data.txt?integrity=invalid", {integrity: "INVALID"})`},
+        {name: "Integrity.Valid", expression: `fetch("resources/data.txt?integrity=valid", {integrity: "sha256-qQCuhmp5o0z/of299BZBz6a+CBJGM2TPN53xY1PHXS8="})`},
     ].forEach(({name, expression}) => {
         suite.addTestCase({
-            name: suite.name + "." + name,
+            name: "WI.Resource.prototype.generateFetchCode." + name,
             async test() {
                 let [resourceWasAddedEvent] = await Promise.all([
                     WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),

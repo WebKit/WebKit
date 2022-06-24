@@ -57,46 +57,64 @@ class Info(Command):
             return 1
 
         try:
-            commit = repository.find(reference, include_log=args.include_log)
-        except (local.Scm.Exception, ValueError) as exception:
+            if '..' in reference:
+                if '...' in reference:
+                    sys.stderr.write("'find' sub-command only supports '..' notation\n")
+                    return 1
+                references = reference.split('..')
+                if len(references) > 2:
+                    sys.stderr.write('Can only include two references in a range\n')
+                    return 1
+                commits = [commit for commit in repository.commits(begin=dict(argument=references[0]), end=dict(argument=references[1]))]
+            else:
+                commits = [repository.find(reference, include_log=args.include_log)]
+
+        except (local.Scm.Exception, TypeError, ValueError) as exception:
             # ValueErrors and Scm exceptions usually contain enough information to be displayed
             # to the user as an error
             sys.stderr.write(str(exception) + '\n')
             return 1
 
-        if args.verbose > 0 and not commit.message:
-            sys.stderr.write("Failed to find the  commit message for '{}'\n".format(commit))
-            return 1
+        for commit in commits:
+            if args.verbose > 0 and not commit.message:
+                sys.stderr.write("Failed to find the  commit message for '{}'\n".format(commit))
+                return 1
 
         if args.json:
-            print(json.dumps(commit, cls=Commit.Encoder, indent=4))
+            print(json.dumps(commits if len(commits) > 1 else commits[0], cls=Commit.Encoder, indent=4))
             return 0
 
         if args.verbose < 0:
-            print('{identifier} | {hash}{revision}{title}'.format(
-                identifier=commit,
-                hash=commit.hash[:Commit.HASH_LABEL_SIZE] if commit.hash else '',
-                revision='{}r{}'.format(', ' if commit.hash else '', commit.revision) if commit.revision else '',
-                title=' | {}'.format(commit.message.splitlines()[0]) if commit.message else ''
-            ))
+            for commit in commits:
+                print('{identifier} | {hash}{revision}{title}'.format(
+                    identifier=commit,
+                    hash=commit.hash[:Commit.HASH_LABEL_SIZE] if commit.hash else '',
+                    revision='{}r{}'.format(', ' if commit.hash else '', commit.revision) if commit.revision else '',
+                    title=' | {}'.format(commit.message.splitlines()[0]) if commit.message else ''
+                ))
             return 0
 
-        if commit.message:
-            print(u'Title: {}'.format(commit.message.splitlines()[0]))
-        try:
-            print(u'Author: {}'.format(commit.author))
-        except (UnicodeEncodeError, UnicodeDecodeError):
-            print('Error: Unable to  print commit author name, please file a bug if seeing this locally.')
-        print(datetime.fromtimestamp(commit.timestamp).strftime('Date: %a %b %d %H:%M:%S %Y'))
-        if args.verbose > 0 or commit.revision:
-            print('Revision: {}'.format(commit.revision or 'N/A'))
-        if args.verbose > 0 or commit.hash:
-            print('Hash: {}'.format(commit.hash[:Commit.HASH_LABEL_SIZE] if commit.hash else 'N/A'))
-        print(u'Identifier: {}'.format(commit))
+        previous = False
+        for commit in commits:
+            if previous:
+                print('-' * 20)
+            previous = True
+            if commit.message:
+                print(u'Title: {}'.format(commit.message.splitlines()[0]))
+            try:
+                print(u'Author: {}'.format(commit.author))
+            except (UnicodeEncodeError, UnicodeDecodeError):
+                print('Error: Unable to  print commit author name, please file a bug if seeing this locally.')
+            print(datetime.fromtimestamp(commit.timestamp).strftime('Date: %a %b %d %H:%M:%S %Y'))
+            if args.verbose > 0 or commit.revision:
+                print('Revision: {}'.format(commit.revision or 'N/A'))
+            if args.verbose > 0 or commit.hash:
+                print('Hash: {}'.format(commit.hash[:Commit.HASH_LABEL_SIZE] if commit.hash else 'N/A'))
+            print(u'Identifier: {}'.format(commit))
 
-        if args.verbose > 0:
-            for line in commit.message.splitlines():
-                print(u'    {}'.format(line))
+            if args.verbose > 0:
+                for line in commit.message.splitlines():
+                    print(u'    {}'.format(line))
 
         return 0
 
@@ -104,6 +122,7 @@ class Info(Command):
 class Find(Command):
     name = 'find'
     help = 'Given an identifier, revision or hash, normalize and print the commit'
+    aliases = ['list']
 
     @classmethod
     def parser(cls, parser, loggers=None):

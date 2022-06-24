@@ -77,8 +77,11 @@ void KeyframeList::insert(KeyframeValue&& keyframe)
     if (!inserted)
         m_keyframes.append(WTFMove(keyframe));
 
-    for (auto& property : m_keyframes[i].properties())
+    auto& insertedKeyframe = m_keyframes[i];
+    for (auto& property : insertedKeyframe.properties())
         m_properties.add(property);
+    for (auto& customProperty : insertedKeyframe.customProperties())
+        m_customProperties.add(customProperty);
 }
 
 bool KeyframeList::hasImplicitKeyframes() const
@@ -92,6 +95,8 @@ void KeyframeList::copyKeyframes(KeyframeList& other)
         KeyframeValue keyframeValue(keyframe.key(), RenderStyle::clonePtr(*keyframe.style()));
         for (auto propertyId : keyframe.properties())
             keyframeValue.addProperty(propertyId);
+        for (auto& customProperty : keyframe.customProperties())
+            keyframeValue.addCustomProperty(customProperty);
         keyframeValue.setTimingFunction(keyframe.timingFunction());
         keyframeValue.setCompositeOperation(keyframe.compositeOperation());
         insert(WTFMove(keyframeValue));
@@ -210,6 +215,9 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
 
 bool KeyframeList::containsAnimatableProperty() const
 {
+    if (!m_customProperties.isEmpty())
+        return true;
+
     for (auto cssPropertyId : m_properties) {
         if (CSSPropertyAnimation::isPropertyAnimatable(cssPropertyId))
             return true;

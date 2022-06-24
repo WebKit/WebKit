@@ -79,6 +79,7 @@
 		33EA188427BC268600A1DD52 /* StructureAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188327BC268600A1DD52 /* StructureAccess.h */; };
 		33EA188627BC26DF00A1DD52 /* TypeConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* TypeConversion.h */; };
 		33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* LiteralExpressions.h */; };
+		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
 
@@ -327,6 +328,7 @@
 		33EA188327BC268600A1DD52 /* StructureAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StructureAccess.h; sourceTree = "<group>"; };
 		33EA188527BC26DF00A1DD52 /* TypeConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversion.h; sourceTree = "<group>"; };
 		33EA188727BC361E00A1DD52 /* LiteralExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiteralExpressions.h; sourceTree = "<group>"; };
+		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -634,6 +636,7 @@
 				338BB2D327B6B66C00E066AB /* Lexer.h */,
 				339B7B1A27D800090072BF9A /* Parser.cpp */,
 				339B7B1727D7FFA40072BF9A /* Parser.h */,
+				66DC575428627E0B0014CABD /* ParserPrivate.h */,
 				338BB2D127B6B63F00E066AB /* SourceSpan.h */,
 				338BB2CF27B6B61B00E066AB /* Token.cpp */,
 				338BB2CD27B6B60200E066AB /* Token.h */,
@@ -749,6 +752,7 @@
 				33EA188227BC25D000A1DD52 /* IdentifierExpression.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,
 				33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */,
+				66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */,
 				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ReturnStatement.h in Headers */,
 				33EA187027BC1E8A00A1DD52 /* ShaderModule.h in Headers */,

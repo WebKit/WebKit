@@ -38,6 +38,10 @@
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -469,6 +473,41 @@ void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListIt
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     backForwardListItem.setSnapshot(nullptr);
 #endif
+}
+
+enum class NavigationDirection { Backward, Forward };
+static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(const WebBackForwardList& backForwardList, NavigationDirection direction)
+{
+    auto delta = direction == NavigationDirection::Backward ? -1 : 1;
+    int itemIndex = delta;
+    auto* item = backForwardList.itemAtIndex(itemIndex);
+    if (!item)
+        return nullptr;
+
+#if PLATFORM(COCOA)
+    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UIBackForwardSkipsHistoryItemsWithoutUserGesture))
+        return item;
+#endif
+
+    auto* originalItem = item;
+    while (item->wasCreatedByJSWithoutUserInteraction()) {
+        itemIndex += delta;
+        item = backForwardList.itemAtIndex(itemIndex);
+        if (!item)
+            return originalItem;
+        RELEASE_LOG(Loading, "UI Navigation is skipping a WebBackForwardListItem because it was added by JavaScript without user interaction");
+    }
+    return item;
+}
+
+WebBackForwardListItem* WebBackForwardList::goBackItemSkippingItemsWithoutUserGesture() const
+{
+    return itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(*this, NavigationDirection::Backward);
+}
+
+WebBackForwardListItem* WebBackForwardList::goForwardItemSkippingItemsWithoutUserGesture() const
+{
+    return itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(*this, NavigationDirection::Forward);
 }
 
 #if !LOG_DISABLED

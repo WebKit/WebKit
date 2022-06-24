@@ -2583,7 +2583,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLDebugRendererInfo, m_webglDebugRendererInfo, "WEBGL_debug_renderer_info"_s, true);
     ENABLE_IF_REQUESTED(WebGLDebugShaders, m_webglDebugShaders, "WEBGL_debug_shaders"_s, WebGLDebugShaders::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context"_s, true);
-    ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw"_s, true);
+    ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw"_s, WebGLMultiDraw::supported(*m_context));
     return nullptr;
 }
 

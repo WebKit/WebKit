@@ -188,6 +188,28 @@ void Connection::platformInitialize(Identifier identifier)
     m_xpcConnection = identifier.xpcConnection;
 }
 
+static void requestNoSenderNotifications(mach_port_t port, mach_port_t notify)
+{
+    mach_port_t previousNotificationPort = MACH_PORT_NULL;
+    auto kr = mach_port_request_notification(mach_task_self(), port, MACH_NOTIFY_NO_SENDERS, 0, notify, MACH_MSG_TYPE_MAKE_SEND_ONCE, &previousNotificationPort);
+    ASSERT(kr == KERN_SUCCESS);
+    if (kr != KERN_SUCCESS) {
+        // If mach_port_request_notification fails, 'previousNotificationPort' will be uninitialized.
+        LOG_ERROR("mach_port_request_notification failed: (%x) %s", kr, mach_error_string(kr));
+    } else
+        deallocateSendRightSafely(previousNotificationPort);
+}
+
+static void requestNoSenderNotifications(mach_port_t port)
+{
+    requestNoSenderNotifications(port, port);
+}
+
+static void clearNoSenderNotifications(mach_port_t port)
+{
+    requestNoSenderNotifications(port, MACH_PORT_NULL);
+}
+
 bool Connection::open()
 {
     if (m_isServer) {
@@ -239,6 +261,11 @@ bool Connection::open()
 #endif
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
+    // Disconnections are normally handled by DISPATCH_MACH_SEND_DEAD on the m_sendSource, but that's not
+    // initialized until we receive the connection message from the client, so we need to request MACH_NOTIFY_NO_SENDERS
+    // on the receiving port until then.
+    if (m_isServer)
+        requestNoSenderNotifications(m_receivePort);
 
     m_connectionQueue->dispatch([strongRef = Ref { *this }, this] {
         dispatch_resume(m_receiveSource.get());
@@ -583,17 +610,7 @@ void Connection::receiveSourceEventHandler()
         
         if (m_sendPort) {
             ASSERT(MACH_PORT_VALID(m_receivePort));
-            mach_port_t previousNotificationPort = MACH_PORT_NULL;
-            auto kr = mach_port_request_notification(mach_task_self(), m_receivePort, MACH_NOTIFY_NO_SENDERS, 0, MACH_PORT_NULL, MACH_MSG_TYPE_MOVE_SEND_ONCE, &previousNotificationPort);
-            ASSERT(kr == KERN_SUCCESS);
-            if (kr != KERN_SUCCESS) {
-                // If mach_port_request_notification fails, 'previousNotificationPort' will be uninitialized.
-                LOG_ERROR("mach_port_request_notification failed: (%x) %s", kr, mach_error_string(kr));
-                previousNotificationPort = MACH_PORT_NULL;
-            }
-
-            if (previousNotificationPort != MACH_PORT_NULL)
-                deallocateSendRightSafely(previousNotificationPort);
+            clearNoSenderNotifications(m_receivePort);
 
             initializeSendSource();
             dispatch_resume(m_sendSource.get());

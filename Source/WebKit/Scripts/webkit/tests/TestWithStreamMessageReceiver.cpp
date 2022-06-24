@@ -25,14 +25,14 @@
 #include "config.h"
 #include "TestWithStream.h"
 
-#include "ArgumentCoders.h"
-#include "Decoder.h"
-#include "HandleMessage.h"
-#include "TestWithStreamMessages.h"
+#include "ArgumentCoders.h" // NOLINT
+#include "Decoder.h" // NOLINT
+#include "HandleMessage.h" // NOLINT
+#include "TestWithStreamMessages.h" // NOLINT
 #if PLATFORM(COCOA)
-#include <wtf/MachSendRight.h>
+#include <wtf/MachSendRight.h> // NOLINT
 #endif
-#include <wtf/text/WTFString.h>
+#include <wtf/text/WTFString.h> // NOLINT
 
 #if ENABLE(IPC_TESTING_API)
 #include "JSIPCBinding.h"

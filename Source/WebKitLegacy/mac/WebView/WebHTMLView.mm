@@ -5045,9 +5045,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSDictionary *)_fontAttributesFromFontPasteboard
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSFontPboard];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameFont];
     if (fontPasteboard == nil)
         return nil;
     NSData *data = [fontPasteboard dataForType:WebCore::legacyFontPasteboardType()];
@@ -5252,9 +5250,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // Put RTF with font attributes on the pasteboard.
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSFontPboard];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSPasteboardNameFont];
     [fontPasteboard declareTypes:@[WebCore::legacyFontPasteboardType()] owner:nil];
     [fontPasteboard setData:[self _selectionStartFontAttributesAsRTF] forType:WebCore::legacyFontPasteboardType()];
 }

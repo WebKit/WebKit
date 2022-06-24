@@ -252,7 +252,7 @@ var TemporalHelpers = {
    * calendar object (so that it doesn't have to call the calendar getter itself
    * if it wants to make any assertions about the calendar.)
    */
-  checkPlainDateTimeConversionFastPath(func) {
+  checkPlainDateTimeConversionFastPath(func, message = "checkPlainDateTimeConversionFastPath") {
     const actual = [];
     const expected = [];
 
@@ -285,7 +285,7 @@ var TemporalHelpers = {
     });
 
     func(datetime, calendar);
-    assert.compareArray(actual, expected, "property getters not called");
+    assert.compareArray(actual, expected, `${message}: property getters not called`);
   },
 
   /*

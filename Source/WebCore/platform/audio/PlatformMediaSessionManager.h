@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,8 @@ public:
     WEBCORE_EXPORT static bool vorbisDecoderEnabled();
     WEBCORE_EXPORT static void setOpusDecoderEnabled(bool);
     WEBCORE_EXPORT static bool opusDecoderEnabled();
+    WEBCORE_EXPORT static void setAlternateWebMPlayerEnabled(bool);
+    WEBCORE_EXPORT static bool alternateWebMPlayerEnabled();
 
 #if ENABLE(VP9)
     WEBCORE_EXPORT static void setShouldEnableVP9Decoder(bool);
@@ -230,6 +232,9 @@ private:
 #endif
 #if ENABLE(OPUS)
     static bool m_opusDecoderEnabled;
+#endif
+#if ENABLE(ALTERNATE_WEBM_PLAYER)
+    static bool m_alternateWebMPlayerEnabled;
 #endif
 
 #if ENABLE(VP9)

@@ -70,6 +70,7 @@ private:
     bool sendStringData(const CString&) final;
     bool sendRawData(const uint8_t*, size_t) final;
     void close() final;
+    std::optional<unsigned short> id() const final;
 
     // webrtc::DataChannelObserver API
     void OnStateChange();

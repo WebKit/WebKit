@@ -636,14 +636,6 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "InstallCustomMenuAction")) {
-        auto messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
-        auto name = stringValue(messageBodyDictionary, "name");
-        auto dismissesAutomatically = booleanValue(messageBodyDictionary, "dismissesAutomatically");
-        TestController::singleton().installCustomMenuAction(toWTFString(name), dismissesAutomatically);
-        return;
-    }
-
     if (WKStringIsEqualToUTF8CString(messageName, "SetAllowedMenuActions")) {
         auto messageBodyArray = static_cast<WKArrayRef>(messageBody);
         auto size = WKArrayGetSize(messageBodyArray);
@@ -1660,11 +1652,6 @@ void TestInvocation::dumpResourceLoadStatistics()
 void TestInvocation::dumpPrivateClickMeasurement()
 {
     m_shouldDumpPrivateClickMeasurement = true;
-}
-
-void TestInvocation::performCustomMenuAction()
-{
-    postPageMessage("PerformCustomMenuAction");
 }
 
 void TestInvocation::initializeWaitToDumpWatchdogTimerIfNeeded()

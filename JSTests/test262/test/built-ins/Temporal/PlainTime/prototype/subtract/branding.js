@@ -11,12 +11,14 @@ const subtract = Temporal.PlainTime.prototype.subtract;
 
 assert.sameValue(typeof subtract, "function");
 
-assert.throws(TypeError, () => subtract.call(undefined), "undefined");
-assert.throws(TypeError, () => subtract.call(null), "null");
-assert.throws(TypeError, () => subtract.call(true), "true");
-assert.throws(TypeError, () => subtract.call(""), "empty string");
-assert.throws(TypeError, () => subtract.call(Symbol()), "symbol");
-assert.throws(TypeError, () => subtract.call(1), "1");
-assert.throws(TypeError, () => subtract.call({}), "plain object");
-assert.throws(TypeError, () => subtract.call(Temporal.PlainTime), "Temporal.PlainTime");
-assert.throws(TypeError, () => subtract.call(Temporal.PlainTime.prototype), "Temporal.PlainTime.prototype");
+const args = [new Temporal.Duration(0, 0, 0, 0, 5)];
+
+assert.throws(TypeError, () => subtract.apply(undefined, args), "undefined");
+assert.throws(TypeError, () => subtract.apply(null, args), "null");
+assert.throws(TypeError, () => subtract.apply(true, args), "true");
+assert.throws(TypeError, () => subtract.apply("", args), "empty string");
+assert.throws(TypeError, () => subtract.apply(Symbol(), args), "symbol");
+assert.throws(TypeError, () => subtract.apply(1, args), "1");
+assert.throws(TypeError, () => subtract.apply({}, args), "plain object");
+assert.throws(TypeError, () => subtract.apply(Temporal.PlainTime, args), "Temporal.PlainTime");
+assert.throws(TypeError, () => subtract.apply(Temporal.PlainTime.prototype, args), "Temporal.PlainTime.prototype");

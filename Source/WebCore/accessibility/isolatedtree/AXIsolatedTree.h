@@ -346,11 +346,10 @@ public:
 
     void generateSubtree(AXCoreObject&);
     void updateNode(AXCoreObject&);
-    void updateChildren(AXCoreObject&);
+    enum class ResolveNodeChanges : bool { No, Yes };
+    void updateChildren(AXCoreObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
     void updateNodeProperty(AXCoreObject&, AXPropertyName);
-    void updateRelatedProperties(AXCoreObject&);
-    void updateTableProperties(AXCoreObject&);
-    void updateTreeItemProperties(AXCoreObject&);
+    void updateNodeAndDependentProperties(AXCoreObject&);
 
     double loadingProgress() { return m_loadingProgress; }
     void updateLoadingProgress(double);
@@ -385,7 +384,7 @@ private:
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_cacheLock);
 
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
-    std::optional<NodeChange> nodeChangeForObject(AXCoreObject&, AttachWrapper = AttachWrapper::OnMainThread);
+    std::optional<NodeChange> nodeChangeForObject(Ref<AXCoreObject>, AttachWrapper = AttachWrapper::OnMainThread);
     void collectNodeChangesForSubtree(AXCoreObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);

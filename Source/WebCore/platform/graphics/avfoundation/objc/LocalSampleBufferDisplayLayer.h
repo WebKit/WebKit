@@ -109,7 +109,7 @@ private:
     PendingSampleQueue m_pendingVideoFrameQueue;
     
     bool m_paused { false };
-
+    bool m_didFail { false };
 #if !RELEASE_LOG_DISABLED
     String m_logIdentifier;
     FrameRateMonitor m_frameRateMonitor;

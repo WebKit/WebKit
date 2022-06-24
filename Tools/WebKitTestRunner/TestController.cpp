@@ -1116,6 +1116,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setBlockAllPlugins(false);
     setPluginSupportedMode({ });
 
+    m_shouldLogDownloadSize = false;
     m_shouldLogDownloadCallbacks = false;
     m_shouldLogHistoryClientCallbacks = false;
     m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
@@ -3748,10 +3749,6 @@ void TestController::cleanUpKeychain(const String&, const String&)
 bool TestController::keyExistsInKeychain(const String&, const String&)
 {
     return false;
-}
-
-void TestController::installCustomMenuAction(const String&, bool)
-{
 }
 
 void TestController::setAllowedMenuActions(const Vector<String>&)

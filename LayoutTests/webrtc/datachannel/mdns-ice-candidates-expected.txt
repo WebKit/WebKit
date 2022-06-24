@@ -1,3 +1,9 @@
+CONSOLE MESSAGE: sending messages
+CONSOLE MESSAGE: ondatachannel event handler
+CONSOLE MESSAGE: receiving one
+CONSOLE MESSAGE: receiving two
+CONSOLE MESSAGE: receiving three
+CONSOLE MESSAGE: receiving four
 
 PASS Getting some MDNS candidates
 PASS Basic data channel exchange from offerer to receiver

@@ -202,7 +202,7 @@ static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
     }
 }
 
-RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters)
+RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper, const FilterOperations& filters, bool defersLastFilter)
 {
     if (filters.isEmpty())
         return this;
@@ -222,17 +222,14 @@ RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper
         int numPasses = getPassesRequiredForFilter(filter->type());
         for (int j = 0; j < numPasses; ++j) {
             bool last = (i == filters.size() - 1) && (j == numPasses - 1);
-            if (!last) {
-                if (!intermediateSurface)
-                    intermediateSurface = texmapGL.acquireTextureFromPool(contentSize(), BitmapTexture::SupportsAlpha);
-                texmapGL.bindSurface(intermediateSurface.get());
-            }
-
-            if (last) {
+            if (defersLastFilter && last) {
                 toBitmapTextureGL(resultSurface.get())->m_filterInfo = BitmapTextureGL::FilterInfo(filter.copyRef(), j, spareSurface.copyRef());
                 break;
             }
 
+            if (!intermediateSurface)
+                intermediateSurface = texmapGL.acquireTextureFromPool(contentSize(), BitmapTexture::SupportsAlpha);
+            texmapGL.bindSurface(intermediateSurface.get());
             texmapGL.drawFiltered(*resultSurface.get(), spareSurface.get(), *filter, j);
             if (!j && filter->type() == FilterOperation::DROP_SHADOW) {
                 spareSurface = resultSurface;

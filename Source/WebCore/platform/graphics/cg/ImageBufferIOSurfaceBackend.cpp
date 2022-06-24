@@ -125,6 +125,7 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 {
+    ensureNativeImagesHaveCopiedBackingStore();
     IOSurface::moveToPool(WTFMove(m_surface), m_ioSurfacePool.get());
 }
 
@@ -161,10 +162,12 @@ void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage() const
     // current state of the IOSurface.
     // See https://webkit.org/b/157966 and https://webkit.org/b/228682 for more context.
     context().fillRect({ });
+    m_mayHaveOutstandingBackingStoreReferences = false;
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const
 {
+    m_mayHaveOutstandingBackingStoreReferences = true;
     return NativeImage::create(m_surface->createImage());
 }
 
@@ -248,6 +251,8 @@ void ImageBufferIOSurfaceBackend::setVolatilityState(VolatilityState volatilityS
 
 void ImageBufferIOSurfaceBackend::ensureNativeImagesHaveCopiedBackingStore()
 {
+    if (!m_mayHaveOutstandingBackingStoreReferences)
+        return;
     invalidateCachedNativeImage();
     flushContext();
 }

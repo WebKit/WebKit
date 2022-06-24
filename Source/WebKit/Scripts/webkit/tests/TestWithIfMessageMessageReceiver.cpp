@@ -26,13 +26,13 @@
 #include "TestWithIfMessage.h"
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-#include "ArgumentCoders.h"
+#include "ArgumentCoders.h" // NOLINT
 #endif
-#include "Decoder.h"
-#include "HandleMessage.h"
-#include "TestWithIfMessageMessages.h"
+#include "Decoder.h" // NOLINT
+#include "HandleMessage.h" // NOLINT
+#include "TestWithIfMessageMessages.h" // NOLINT
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-#include <wtf/text/WTFString.h>
+#include <wtf/text/WTFString.h> // NOLINT
 #endif
 
 #if ENABLE(IPC_TESTING_API)

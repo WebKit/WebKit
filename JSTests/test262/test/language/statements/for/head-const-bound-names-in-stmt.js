@@ -17,6 +17,6 @@ es6id: 13.7.4
 
 $DONOTEVALUATE();
 
-for (const x; false; ) {
+for (const x = 0; false; ) {
   var x;
 }

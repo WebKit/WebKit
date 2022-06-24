@@ -197,7 +197,7 @@ String InspectorPageAgent::sourceMapURLForResource(CachedResource* cachedResourc
     return String();
 }
 
-CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const URL& url)
+CachedResource* InspectorPageAgent::cachedResource(const Frame* frame, const URL& url)
 {
     if (url.isNull())
         return nullptr;

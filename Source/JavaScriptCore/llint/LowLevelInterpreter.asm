@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -851,8 +851,8 @@ macro preserveCalleeSavesUsedByLLInt()
         storep PB, -4[cfr]
         storep metadataTable, -8[cfr]
     elsif ARM64 or ARM64E
-        emit "stp x27, x28, [x29, #-16]"
-        emit "stp x25, x26, [x29, #-32]"
+        storepairq csr8, csr9, -16[cfr]
+        storepairq csr6, csr7, -32[cfr]
     elsif X86
     elsif X86_WIN
     elsif X86_64
@@ -880,8 +880,8 @@ macro restoreCalleeSavesUsedByLLInt()
         loadp -4[cfr], PB
         loadp -8[cfr], metadataTable
     elsif ARM64 or ARM64E
-        emit "ldp x25, x26, [x29, #-32]"
-        emit "ldp x27, x28, [x29, #-16]"
+        loadpairq -32[cfr], csr6, csr7
+        loadpairq -16[cfr], csr8, csr9
     elsif X86
     elsif X86_WIN
     elsif X86_64
@@ -907,24 +907,15 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
         vmEntryRecord(entryFrame, entryFrame)
         leap VMEntryRecord::calleeSaveRegistersBuffer[entryFrame], entryFrame
         if ARM64 or ARM64E
-            storeq csr0, [entryFrame]
-            storeq csr1, 8[entryFrame]
-            storeq csr2, 16[entryFrame]
-            storeq csr3, 24[entryFrame]
-            storeq csr4, 32[entryFrame]
-            storeq csr5, 40[entryFrame]
-            storeq csr6, 48[entryFrame]
-            storeq csr7, 56[entryFrame]
-            storeq csr8, 64[entryFrame]
-            storeq csr9, 72[entryFrame]
-            stored csfr0, 80[entryFrame]
-            stored csfr1, 88[entryFrame]
-            stored csfr2, 96[entryFrame]
-            stored csfr3, 104[entryFrame]
-            stored csfr4, 112[entryFrame]
-            stored csfr5, 120[entryFrame]
-            stored csfr6, 128[entryFrame]
-            stored csfr7, 136[entryFrame]
+            storepairq csr0, csr1, [entryFrame]
+            storepairq csr2, csr3, 16[entryFrame]
+            storepairq csr4, csr5, 32[entryFrame]
+            storepairq csr6, csr7, 48[entryFrame]
+            storepairq csr8, csr9, 64[entryFrame]
+            storepaird csfr0, csfr1, 80[entryFrame]
+            storepaird csfr2, csfr3, 96[entryFrame]
+            storepaird csfr4, csfr5, 112[entryFrame]
+            storepaird csfr6, csfr7, 128[entryFrame]
         elsif X86_64
             storeq csr0, [entryFrame]
             storeq csr1, 8[entryFrame]
@@ -993,24 +984,15 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
         vmEntryRecord(temp, temp)
         leap VMEntryRecord::calleeSaveRegistersBuffer[temp], temp
         if ARM64 or ARM64E
-            loadq [temp], csr0
-            loadq 8[temp], csr1
-            loadq 16[temp], csr2
-            loadq 24[temp], csr3
-            loadq 32[temp], csr4
-            loadq 40[temp], csr5
-            loadq 48[temp], csr6
-            loadq 56[temp], csr7
-            loadq 64[temp], csr8
-            loadq 72[temp], csr9
-            loadd 80[temp], csfr0
-            loadd 88[temp], csfr1
-            loadd 96[temp], csfr2
-            loadd 104[temp], csfr3
-            loadd 112[temp], csfr4
-            loadd 120[temp], csfr5
-            loadd 128[temp], csfr6
-            loadd 136[temp], csfr7
+            loadpairq [temp], csr0, csr1
+            loadpairq 16[temp], csr2, csr3
+            loadpairq 32[temp], csr4, csr5
+            loadpairq 48[temp], csr6, csr7
+            loadpairq 64[temp], csr8, csr9
+            loadpaird 80[temp], csfr0, csfr1
+            loadpaird 96[temp], csfr2, csfr3
+            loadpaird 112[temp], csfr4, csfr5
+            loadpaird 128[temp], csfr6, csfr7
         elsif X86_64
             loadq [temp], csr0
             loadq 8[temp], csr1
