@@ -32,7 +32,6 @@
 #include <WebCore/WorkerFetchResult.h>
 #include <WebCore/WorkerInitializationData.h>
 #include <WebCore/WorkerOptions.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -82,16 +81,6 @@ public:
 
     void launch(WebSharedWorkerServerToContextConnection&);
 
-    struct SharedWorkerObjectState {
-        bool isSuspended { false };
-        WebCore::TransferredMessagePort port;
-    };
-
-    struct Object {
-        WebCore::SharedWorkerObjectIdentifier identifier;
-        SharedWorkerObjectState state;
-    };
-
 private:
     WebSharedWorker(WebSharedWorker&&) = delete;
     WebSharedWorker& operator=(WebSharedWorker&&) = delete;
@@ -101,11 +90,16 @@ private:
     void suspendIfNeeded();
     void resumeIfNeeded();
 
+    struct SharedWorkerObjectState {
+        bool isSuspended { false };
+        WebCore::TransferredMessagePort port;
+    };
+
     WebSharedWorkerServer& m_server;
     WebCore::SharedWorkerIdentifier m_identifier;
     WebCore::SharedWorkerKey m_key;
     WebCore::WorkerOptions m_workerOptions;
-    ListHashSet<Object> m_sharedWorkerObjects;
+    HashMap<WebCore::SharedWorkerObjectIdentifier, SharedWorkerObjectState> m_sharedWorkerObjects;
     WebCore::WorkerFetchResult m_fetchResult;
     WebCore::WorkerInitializationData m_initializationData;
     bool m_isRunning { false };
@@ -113,16 +107,3 @@ private:
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-struct WebSharedWorkerObjectHash {
-    static unsigned hash(const WebKit::WebSharedWorker::Object& object) { return DefaultHash<WebCore::SharedWorkerObjectIdentifier>::hash(object.identifier); }
-    static bool equal(const WebKit::WebSharedWorker::Object& a, const WebKit::WebSharedWorker::Object& b) { return a.identifier == b.identifier; }
-    static constexpr bool safeToCompareToEmptyOrDeleted = true;
-};
-
-template<> struct HashTraits<WebKit::WebSharedWorker::Object> : SimpleClassHashTraits<WebSharedWorkerObjectHash> { };
-template<> struct DefaultHash<WebKit::WebSharedWorker::Object> : WebSharedWorkerObjectHash { };
-
-} // namespace WTF

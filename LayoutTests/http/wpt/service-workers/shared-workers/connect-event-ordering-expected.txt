@@ -1,3 +1,0 @@
-
-PASS connect event should fire following SharedWorker creation order
-
