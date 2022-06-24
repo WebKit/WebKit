@@ -683,6 +683,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             requestData: request.postData,
             requestSentTimestamp: elapsedTime,
             requestSentWalltime: walltime,
+            referrerPolicy: request.referrerPolicy,
             initiatorCallFrames: this._initiatorCallFramesFromPayload(initiator),
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
             initiatorNode: this._initiatorNodeFromPayload(initiator),

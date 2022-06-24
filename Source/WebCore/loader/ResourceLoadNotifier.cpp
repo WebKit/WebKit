@@ -66,7 +66,7 @@ void ResourceLoadNotifier::willSendRequest(ResourceLoader* loader, ResourceReque
 {
     m_frame.loader().applyUserAgentIfNeeded(clientRequest);
 
-    dispatchWillSendRequest(loader->documentLoader(), loader->identifier(), clientRequest, redirectResponse, loader->cachedResource());
+    dispatchWillSendRequest(loader->documentLoader(), loader->identifier(), clientRequest, redirectResponse, loader->cachedResource(), loader);
 }
 
 void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const ResourceResponse& r)
@@ -120,7 +120,7 @@ void ResourceLoadNotifier::assignIdentifierToInitialRequest(ResourceLoaderIdenti
     m_frame.loader().client().assignIdentifierToInitialRequest(identifier, loader, request);
 }
 
-void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
+void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, ResourceLoaderIdentifier identifier, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
 #if USE(QUICK_LOOK)
     // Always allow QuickLook-generated URLs based on the protocol scheme.
@@ -142,7 +142,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, Resou
     if (!request.isNull() && oldRequestURL != request.url().string() && m_frame.loader().documentLoader())
         m_frame.loader().documentLoader()->didTellClientAboutLoad(request.url().string());
 
-    InspectorInstrumentation::willSendRequest(&m_frame, identifier, loader, request, redirectResponse, cachedResource);
+    InspectorInstrumentation::willSendRequest(&m_frame, identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
 }
 
 void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, ResourceLoaderIdentifier identifier, const ResourceResponse& r, ResourceLoader* resourceLoader)

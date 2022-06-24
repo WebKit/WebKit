@@ -299,17 +299,49 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
     return metrics;
 }
 
-static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request)
+static Protocol::Network::ReferrerPolicy toProtocol(ReferrerPolicy referrerPolicy)
+{
+    switch (referrerPolicy) {
+    case ReferrerPolicy::EmptyString:
+        return Protocol::Network::ReferrerPolicy::EmptyString;
+    case ReferrerPolicy::NoReferrer:
+        return Protocol::Network::ReferrerPolicy::NoReferrer;
+    case ReferrerPolicy::NoReferrerWhenDowngrade:
+        return Protocol::Network::ReferrerPolicy::NoReferrerWhenDowngrade;
+    case ReferrerPolicy::SameOrigin:
+        return Protocol::Network::ReferrerPolicy::SameOrigin;
+    case ReferrerPolicy::Origin:
+        return Protocol::Network::ReferrerPolicy::Origin;
+    case ReferrerPolicy::StrictOrigin:
+        return Protocol::Network::ReferrerPolicy::StrictOrigin;
+    case ReferrerPolicy::OriginWhenCrossOrigin:
+        return Protocol::Network::ReferrerPolicy::OriginWhenCrossOrigin;
+    case ReferrerPolicy::StrictOriginWhenCrossOrigin:
+        return Protocol::Network::ReferrerPolicy::StrictOriginWhenCrossOrigin;
+    case ReferrerPolicy::UnsafeUrl:
+        return Protocol::Network::ReferrerPolicy::UnsafeUrl;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Protocol::Network::ReferrerPolicy::EmptyString;
+}
+
+static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request, ResourceLoader* resourceLoader)
 {
     auto requestObject = Protocol::Network::Request::create()
         .setUrl(request.url().string())
         .setMethod(request.httpMethod())
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
         .release();
+
     if (request.httpBody() && !request.httpBody()->isEmpty()) {
         auto bytes = request.httpBody()->flatten();
         requestObject->setPostData(String::fromUTF8WithLatin1Fallback(bytes.data(), bytes.size()));
     }
+
+    if (resourceLoader)
+        requestObject->setReferrerPolicy(toProtocol(resourceLoader->options().referrerPolicy));
+
     return requestObject;
 }
 
@@ -418,7 +450,7 @@ double InspectorNetworkAgent::timestamp()
     return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
-void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType type)
+void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, InspectorPageAgent::ResourceType type, ResourceLoader* resourceLoader)
 {
     if (request.hiddenFromInspector()) {
         m_hiddenRequestIdentifiers.add(identifier);
@@ -464,7 +496,7 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     std::optional<Protocol::Page::ResourceType> typePayload;
     if (type != InspectorPageAgent::OtherResource)
         typePayload = protocolResourceType;
-    m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request), sendTimestamp, walltime.secondsSinceEpoch().seconds(), WTFMove(initiatorObject), buildObjectForResourceResponse(redirectResponse, nullptr), WTFMove(typePayload), targetId);
+    m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request, resourceLoader), sendTimestamp, walltime.secondsSinceEpoch().seconds(), WTFMove(initiatorObject), buildObjectForResourceResponse(redirectResponse, nullptr), WTFMove(typePayload), targetId);
 }
 
 static InspectorPageAgent::ResourceType resourceTypeForCachedResource(const CachedResource* resource)
@@ -488,16 +520,16 @@ static InspectorPageAgent::ResourceType resourceTypeForLoadType(InspectorInstrum
     return InspectorPageAgent::OtherResource;
 }
 
-void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
+void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
     if (!cachedResource && loader)
         cachedResource = InspectorPageAgent::cachedResource(loader->frame(), request.url());
-    willSendRequest(identifier, loader, request, redirectResponse, resourceTypeForCachedResource(cachedResource));
+    willSendRequest(identifier, loader, request, redirectResponse, resourceTypeForCachedResource(cachedResource), resourceLoader);
 }
 
 void InspectorNetworkAgent::willSendRequestOfType(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, InspectorInstrumentation::LoadType loadType)
 {
-    willSendRequest(identifier, loader, request, ResourceResponse(), resourceTypeForLoadType(loadType));
+    willSendRequest(identifier, loader, request, ResourceResponse(), resourceTypeForLoadType(loadType), nullptr);
 }
 
 void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
@@ -1141,7 +1173,7 @@ void InspectorNetworkAgent::interceptRequest(ResourceLoader& loader, Function<vo
         return;
     }
     m_pendingInterceptRequests.set(requestId, makeUnique<PendingInterceptRequest>(&loader, WTFMove(handler)));
-    m_frontendDispatcher->requestIntercepted(requestId, buildObjectForResourceRequest(loader.request()));
+    m_frontendDispatcher->requestIntercepted(requestId, buildObjectForResourceRequest(loader.request(), &loader));
 }
 
 void InspectorNetworkAgent::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
