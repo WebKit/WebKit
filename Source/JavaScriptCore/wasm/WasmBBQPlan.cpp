@@ -49,10 +49,11 @@ namespace WasmBBQPlanInternal {
 static constexpr bool verbose = false;
 }
 
-BBQPlan::BBQPlan(Context* context, Ref<ModuleInformation> moduleInformation, uint32_t functionIndex, CalleeGroup* calleeGroup, CompletionTask&& completionTask)
+BBQPlan::BBQPlan(Context* context, Ref<ModuleInformation> moduleInformation, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, CalleeGroup* calleeGroup, CompletionTask&& completionTask)
     : EntryPlan(context, WTFMove(moduleInformation), CompilerMode::FullCompile, WTFMove(completionTask))
     , m_calleeGroup(calleeGroup)
     , m_functionIndex(functionIndex)
+    , m_hasExceptionHandlers(hasExceptionHandlers)
 {
     ASSERT(Options::useBBQJIT());
     setMode(m_calleeGroup->mode());
@@ -223,9 +224,9 @@ std::unique_ptr<InternalFunction> BBQPlan::compileFunction(uint32_t functionInde
         forceUsingB3 = true;
 
     if (forceUsingB3)
-        parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, UINT32_MAX, tierUp);
+        parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, CompilationMode::BBQMode, functionIndex, m_hasExceptionHandlers, UINT32_MAX, tierUp);
     else
-        parseAndCompileResult = parseAndCompileAir(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, tierUp);
+        parseAndCompileResult = parseAndCompileAir(context, function, signature, unlinkedWasmToWasmCalls, m_moduleInformation.get(), m_mode, functionIndex, m_hasExceptionHandlers, tierUp);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };

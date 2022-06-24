@@ -140,6 +140,7 @@ private:
     using JSC::BytecodeDumper<FunctionCodeBlockGenerator>::BytecodeDumper;
 
     void dumpConstants();
+    void dumpExceptionHandlers();
     CString constantName(VirtualRegister index) const final;
     CString formatConstant(Type, uint64_t) const;
 };

@@ -46,10 +46,11 @@ namespace WasmOMGPlanInternal {
 static constexpr bool verbose = false;
 }
 
-OMGPlan::OMGPlan(Context* context, Ref<Module>&& module, uint32_t functionIndex, MemoryMode mode, CompletionTask&& task)
+OMGPlan::OMGPlan(Context* context, Ref<Module>&& module, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, MemoryMode mode, CompletionTask&& task)
     : Base(context, const_cast<ModuleInformation&>(module->moduleInformation()), WTFMove(task))
     , m_module(WTFMove(module))
     , m_calleeGroup(*m_module->calleeGroupFor(mode))
+    , m_hasExceptionHandlers(hasExceptionHandlers)
     , m_functionIndex(functionIndex)
 {
     ASSERT(Options::useOMGJIT());
@@ -73,7 +74,7 @@ void OMGPlan::work(CompilationEffort)
 
     Vector<UnlinkedWasmToWasmCall> unlinkedCalls;
     CompilationContext context;
-    auto parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, UINT32_MAX);
+    auto parseAndCompileResult = parseAndCompileB3(context, function, signature, unlinkedCalls, m_moduleInformation.get(), m_mode, CompilationMode::OMGMode, m_functionIndex, m_hasExceptionHandlers, UINT32_MAX);
 
     if (UNLIKELY(!parseAndCompileResult)) {
         Locker locker { m_lock };

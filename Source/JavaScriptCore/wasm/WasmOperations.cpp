@@ -71,7 +71,7 @@ static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement,
     return true;
 }
 
-static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replacement, Instance* instance, Wasm::CalleeGroup& calleeGroup, uint32_t functionIndex)
+static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replacement, Instance* instance, Wasm::CalleeGroup& calleeGroup, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers)
 {
     if (replacement) {
         tierUp.optimizeSoon(functionIndex);
@@ -97,7 +97,7 @@ static void triggerOMGReplacementCompile(TierUpCount& tierUp, OMGCallee* replace
     if (compile) {
         dataLogLnIf(Options::verboseOSR(), "triggerOMGReplacement for ", functionIndex);
         // We need to compile the code.
-        Ref<Plan> plan = adoptRef(*new OMGPlan(instance->context(), Ref<Wasm::Module>(instance->module()), functionIndex, calleeGroup.mode(), Plan::dontFinalize()));
+        Ref<Plan> plan = adoptRef(*new OMGPlan(instance->context(), Ref<Wasm::Module>(instance->module()), functionIndex, hasExceptionHandlers, calleeGroup.mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();
@@ -258,7 +258,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
 
     if (!Options::useWebAssemblyOSR()) {
         if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))
-            triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex);
+            triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
 
         // We already have an OMG replacement.
         if (callee.replacement()) {
@@ -323,7 +323,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
         return returnWithoutOSREntry();
 
     if (!triggeredSlowPathToStartCompilation) {
-        triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex);
+        triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
 
         if (!callee.replacement())
             return returnWithoutOSREntry();
@@ -397,7 +397,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe::Context&
 
     if (startOSREntryCompilation) {
         dataLogLnIf(Options::verboseOSR(), "triggerOMGOSR for ", functionIndex);
-        Ref<Plan> plan = adoptRef(*new OSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::BBQCallee>(callee), functionIndex, loopIndex, calleeGroup.mode(), Plan::dontFinalize()));
+        Ref<Plan> plan = adoptRef(*new OSREntryPlan(instance->context(), Ref<Wasm::Module>(instance->module()), Ref<Wasm::BBQCallee>(callee), functionIndex, callee.hasExceptionHandlers(), loopIndex, calleeGroup.mode(), Plan::dontFinalize()));
         ensureWorklist().enqueue(plan.copyRef());
         if (UNLIKELY(!Options::useConcurrentJIT()))
             plan->waitForCompletion();
@@ -436,7 +436,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTriggerTierUpNow, void, (Instance* instanc
     dataLogLnIf(Options::verboseOSR(), "Consider OMGPlan for [", functionIndex, "] with executeCounter = ", tierUp, " ", RawPointer(callee.replacement()));
 
     if (shouldTriggerOMGCompile(tierUp, callee.replacement(), functionIndex))
-        triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex);
+        triggerOMGReplacementCompile(tierUp, callee.replacement(), instance, calleeGroup, functionIndex, callee.hasExceptionHandlers());
 
     // We already have an OMG replacement.
     if (callee.replacement()) {
