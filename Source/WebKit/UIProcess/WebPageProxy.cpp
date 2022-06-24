@@ -1824,35 +1824,10 @@ void WebPageProxy::recordNavigationSnapshot(WebBackForwardListItem& item)
 #endif
 }
 
-enum class NavigationDirection { Backward, Forward };
-static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(const WebBackForwardList& backForwardList, NavigationDirection direction)
-{
-    auto delta = direction == NavigationDirection::Backward ? -1 : 1;
-    int itemIndex = delta;
-    auto* item = backForwardList.itemAtIndex(itemIndex);
-    if (!item)
-        return nullptr;
-
-#if PLATFORM(COCOA)
-    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UIBackForwardSkipsHistoryItemsWithoutUserGesture))
-        return item;
-#endif
-
-    auto* originalItem = item;
-    while (item->wasCreatedByJSWithoutUserInteraction()) {
-        itemIndex += delta;
-        item = backForwardList.itemAtIndex(itemIndex);
-        if (!item)
-            return originalItem;
-        RELEASE_LOG(Loading, "UI Navigation is skipping a WebBackForwardListItem because it was added by JavaScript without user interaction");
-    }
-    return item;
-}
-
 RefPtr<API::Navigation> WebPageProxy::goForward()
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "goForward:");
-    auto* forwardItem = itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(m_backForwardList, NavigationDirection::Forward);
+    auto* forwardItem = m_backForwardList->goForwardItemSkippingItemsWithoutUserGesture();
     if (!forwardItem)
         return nullptr;
 
@@ -1862,7 +1837,7 @@ RefPtr<API::Navigation> WebPageProxy::goForward()
 RefPtr<API::Navigation> WebPageProxy::goBack()
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "goBack:");
-    auto* backItem = itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(m_backForwardList, NavigationDirection::Backward);
+    auto* backItem = m_backForwardList->goBackItemSkippingItemsWithoutUserGesture();
     if (!backItem)
         return nullptr;
 

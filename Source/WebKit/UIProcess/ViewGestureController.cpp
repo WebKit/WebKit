@@ -521,7 +521,7 @@ void ViewGestureController::startSwipeGesture(PlatformScrollEvent event, SwipeDi
 
     m_webPageProxy.recordAutomaticNavigationSnapshot();
 
-    RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Back) ? m_webPageProxy.backForwardList().backItem() : m_webPageProxy.backForwardList().forwardItem();
+    RefPtr<WebBackForwardListItem> targetItem = (direction == SwipeDirection::Back) ? m_webPageProxy.backForwardList().goBackItemSkippingItemsWithoutUserGesture() : m_webPageProxy.backForwardList().goForwardItemSkippingItemsWithoutUserGesture();
     if (!targetItem)
         return;
 

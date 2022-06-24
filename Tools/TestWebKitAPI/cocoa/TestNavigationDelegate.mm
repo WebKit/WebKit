@@ -135,6 +135,7 @@
 - (void)waitForDidFinishNavigationOrSameDocumentNavigation
 {
     EXPECT_FALSE(self.didFinishNavigation);
+    EXPECT_FALSE(self.didSameDocumentNavigation);
 
     __block bool finished = false;
     self.didFinishNavigation = ^(WKWebView *, WKNavigation *) {
@@ -147,6 +148,7 @@
     TestWebKitAPI::Util::run(&finished);
 
     self.didFinishNavigation = nil;
+    self.didSameDocumentNavigation = nil;
 }
 
 - (void)waitForWebContentProcessDidTerminate
