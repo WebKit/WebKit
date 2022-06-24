@@ -110,7 +110,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     // When speak is called we should not have an existing speech utterance outstanding.
     ASSERT(!m_utterance);
     ASSERT(utterance);
-    if (!utterance)
+    if (!utterance || !PAL::isAVFoundationFrameworkAvailable())
         return;
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -275,6 +275,9 @@ PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
 
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
+    if (!PAL::isAVFoundationFrameworkAvailable())
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     for (AVSpeechSynthesisVoice *voice in [PAL::getAVSpeechSynthesisVoiceClass() speechVoices]) {
         NSString *language = [voice language];
