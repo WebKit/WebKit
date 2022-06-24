@@ -855,6 +855,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if HAVE(LINK_PREVIEW)
 #if USE(UICONTEXTMENU)
 @interface WKContentView (WKInteractionPreview) <UIContextMenuInteractionDelegate, UIPreviewItemDelegate>
+@property (nonatomic, readonly) UIContextMenuInteraction *contextMenuInteraction;
 #else
 @interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
 #endif
