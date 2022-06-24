@@ -42,13 +42,13 @@ struct WhitespaceContent {
     size_t length { 0 };
     bool isWordSeparator { true };
 };
-static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(StringView textContent, size_t startPosition, bool preserveNewline, bool preserveTab, bool treatNonBreakingSpaceAsRegularSpace, bool stopAtWordSeparatorBoundary)
+static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(StringView textContent, size_t startPosition, bool preserveNewline, bool preserveTab, bool stopAtWordSeparatorBoundary)
 {
     auto hasWordSeparatorCharacter = false;
     auto isWordSeparatorCharacter = false;
     auto isWhitespaceCharacter = [&](auto character) {
         // white space processing in CSS affects only the document white space characters: spaces (U+0020), tabs (U+0009), and segment breaks.
-        auto isTreatedAsSpaceCharacter = character == space || (character == newlineCharacter && !preserveNewline) || (character == tabCharacter && !preserveTab) || (character == noBreakSpace && treatNonBreakingSpaceAsRegularSpace);
+        auto isTreatedAsSpaceCharacter = character == space || (character == newlineCharacter && !preserveNewline) || (character == tabCharacter && !preserveTab);
         isWordSeparatorCharacter = isTreatedAsSpaceCharacter;
         hasWordSeparatorCharacter = hasWordSeparatorCharacter || isWordSeparatorCharacter;
         return isTreatedAsSpaceCharacter || character == tabCharacter;
@@ -489,7 +489,6 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
-    auto shouldTreatNonBreakingSpaceAsRegularSpace = style.nbspMode() == NBSPMode::Space;
     auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
     unsigned currentPosition = 0;
 
@@ -507,7 +506,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
 
         auto handleWhitespace = [&] {
             auto stopAtWordSeparatorBoundary = shouldPreserveSpacesAndTabs && style.fontCascade().wordSpacing();
-            auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, shouldTreatNonBreakingSpaceAsRegularSpace, stopAtWordSeparatorBoundary);
+            auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, shouldPreserveSpacesAndTabs, stopAtWordSeparatorBoundary);
             if (!whitespaceContent)
                 return false;
 
@@ -524,6 +523,26 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             return true;
         };
         if (handleWhitespace())
+            continue;
+
+        auto handleNonBreakingSpace = [&] {
+            if (style.nbspMode() != NBSPMode::Space) {
+                // Let's just defer to regular non-whitespace inline items when non breaking space needs no special handling.
+                return false;
+            }
+            auto startPosition = currentPosition;
+            auto endPosition = startPosition;
+            for (; endPosition < contentLength; ++endPosition) {
+                if (text[endPosition] != noBreakSpace)
+                    break;
+            }
+            if (startPosition == endPosition)
+                return false;
+            inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, endPosition - startPosition, UBIDI_DEFAULT_LTR, { }, { }));
+            currentPosition = endPosition;
+            return true;
+        };
+        if (handleNonBreakingSpace())
             continue;
 
         auto handleNonWhitespace = [&] {
