@@ -243,8 +243,6 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
     SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles);
 #endif
 
-    populateMobileGestaltCache(WTFMove(parameters.mobileGestaltExtensionHandle));
-
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
     auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
     CGImageSourceSetAllowableTypes(emptyArray.get());

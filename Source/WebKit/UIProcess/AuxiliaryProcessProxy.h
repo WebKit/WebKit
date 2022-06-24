@@ -30,7 +30,6 @@
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 #include "ResponsivenessTimer.h"
-#include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
@@ -144,8 +143,6 @@ public:
 
     void ref() final { ThreadSafeRefCounted::ref(); }
     void deref() final { ThreadSafeRefCounted::deref(); }
-
-    std::optional<SandboxExtension::Handle> createMobileGestaltSandboxExtensionIfNeeded() const;
 
 protected:
     // ProcessLauncher::Client

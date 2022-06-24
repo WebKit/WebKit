@@ -41,10 +41,6 @@
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-#import <pal/spi/ios/MobileGestaltSPI.h>
-#endif
-
 namespace WebKit {
 
 AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
@@ -420,20 +416,6 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
     parameters.webKitLoggingChannels = WebKit::logLevelString();
 #endif
     return parameters;
-}
-
-std::optional<SandboxExtension::Handle> AuxiliaryProcessProxy::createMobileGestaltSandboxExtensionIfNeeded() const
-{
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-    if (_MGCacheValid())
-        return std::nullopt;
-    
-    RELEASE_LOG_FAULT(Sandbox, "MobileGestalt cache is invalid! Creating a sandbox extension to repopulate cache in memory.");
-
-    return SandboxExtension::createHandleForMachLookup("com.apple.mobilegestalt.xpc"_s, std::nullopt);
-#else
-    return std::nullopt;
-#endif
 }
 
 } // namespace WebKit

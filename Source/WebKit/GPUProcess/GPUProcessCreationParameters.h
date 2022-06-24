@@ -59,7 +59,6 @@ struct GPUProcessCreationParameters {
     Vector<SandboxExtension::Handle> dynamicIOKitExtensionHandles;
     Vector<SandboxExtension::Handle> dynamicMachExtensionHandles;
 #endif
-    std::optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
 
     String applicationVisibleName;
 

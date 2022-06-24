@@ -224,12 +224,6 @@ void AuxiliaryProcess::applyProcessCreationParameters(const AuxiliaryProcessCrea
 #endif
 }
 
-#if !PLATFORM(IOS_FAMILY) || PLATFORM(MACCATALYST)
-void AuxiliaryProcess::populateMobileGestaltCache(std::optional<SandboxExtension::Handle>&&)
-{
-}
-#endif
-
 #if !PLATFORM(COCOA)
 void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
 {
