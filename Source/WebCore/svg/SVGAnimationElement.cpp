@@ -148,7 +148,7 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 
-bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attribute) const
+bool SVGAnimationElement::attributeContainsJavascriptURL(const Attribute& attribute) const
 {
     if (attribute.name() == SVGNames::fromAttr || attribute.name() == SVGNames::toAttr)
         return WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
@@ -160,7 +160,7 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
         }
         return false;
     }
-    return Element::attributeContainsJavaScriptURL(attribute);
+    return Element::attributeContainsJavascriptURL(attribute);
 }
 
 void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
