@@ -353,10 +353,25 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
         m_unresolvedPendingAppends.set(axObject.objectID(), AttachWrapper::OnAXThread);
         return;
     }
+
     // Otherwise, resolve the change immediately and queue it up.
     // In both cases, we can't attach the wrapper immediately on the main thread, since the wrapper could be in use
     // on the AX thread (because this function updates an existing node).
     if (auto change = nodeChangeForObject(axObject, AttachWrapper::OnAXThread)) {
+        Locker locker { m_changeLogLock };
+        queueChange(WTFMove(*change));
+        return;
+    }
+
+    // Not able to update axObject. This may be because it is a descendant of a barren object such as a button. In that case, try to update its parent.
+    if (!downcast<AccessibilityObject>(axObject).isDescendantOfBarrenParent())
+        return;
+
+    auto* axParent = axObject.parentObjectUnignored();
+    if (!axParent)
+        return;
+
+    if (auto change = nodeChangeForObject(*axParent, AttachWrapper::OnAXThread)) {
         Locker locker { m_changeLogLock };
         queueChange(WTFMove(*change));
     }

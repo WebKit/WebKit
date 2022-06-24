@@ -3973,7 +3973,7 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AXCoreObject* child
     } else {
         result.isAXHidden = child->isAXHidden();
         result.isPresentationalChildOfAriaRole = child->isPresentationalChildOfAriaRole();
-        result.isDescendantOfBarrenParent = child->isDescendantOfBarrenParent();
+        result.isDescendantOfBarrenParent = downcast<AccessibilityObject>(child)->isDescendantOfBarrenParent();
     }
 
     child->setIsIgnoredFromParentData(result);

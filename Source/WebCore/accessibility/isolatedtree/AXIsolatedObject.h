@@ -552,7 +552,6 @@ private:
     bool isModalNode() const override;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
     AXCoreObject* parentObjectIfExists() const override;
-    bool isDescendantOfBarrenParent() const override;
     bool isDescendantOfRole(AccessibilityRole) const override;
     AXCoreObject* observableObject() const override;
     AXCoreObject* correspondingLabelForControlElement() const override;

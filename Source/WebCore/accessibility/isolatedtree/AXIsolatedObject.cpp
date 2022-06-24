@@ -1904,12 +1904,6 @@ AXCoreObject* AXIsolatedObject::parentObjectIfExists() const
     return nullptr;
 }
 
-bool AXIsolatedObject::isDescendantOfBarrenParent() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isDescendantOfRole(AccessibilityRole) const
 {
     ASSERT_NOT_REACHED();

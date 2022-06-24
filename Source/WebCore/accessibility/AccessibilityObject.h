@@ -362,7 +362,7 @@ public:
     AccessibilityObject* parentObjectIfExists() const override { return nullptr; }
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
     void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) override;
-    bool isDescendantOfBarrenParent() const override { return false; }
+    virtual bool isDescendantOfBarrenParent() const { return false; }
 
     bool isDescendantOfRole(AccessibilityRole) const override;
 

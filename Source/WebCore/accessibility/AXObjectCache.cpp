@@ -983,18 +983,14 @@ AXID AXObjectCache::getAXID(AccessibilityObject* obj)
     return objID;
 }
 
-void AXObjectCache::textChanged(Node* node)
+void AXObjectCache::handleTextChanged(AccessibilityObject* object)
 {
-    textChanged(getOrCreate(node));
-}
-
-void AXObjectCache::textChanged(AccessibilityObject* object)
-{
-    AXTRACE("AXObjectCache::textChanged"_s);
+    AXTRACE("AXObjectCache::handleTextChanged"_s);
     AXLOG(object);
 
     if (!object)
         return;
+
     Ref<AccessibilityObject> protectedObject(*object);
 
     // If this element supports ARIA live regions, or is part of a region with an ARIA editable role,
@@ -1917,9 +1913,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     if (attrName == roleAttr) {
         if (auto* axObject = get(element))
             axObject->updateRole();
-    }
-    else if (attrName == altAttr || attrName == titleAttr)
-        textChanged(element);
+    } else if (attrName == altAttr || attrName == titleAttr)
+        handleTextChanged(getOrCreate(element));
     else if (attrName == disabledAttr)
         postNotification(element, AXObjectCache::AXDisabledStateChanged);
     else if (attrName == forAttr && is<HTMLLabelElement>(*element))
@@ -1953,7 +1948,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
     else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
         postNotification(element, AXObjectCache::AXValueChanged);
     else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr)
-        textChanged(element);
+        handleTextChanged(getOrCreate(element));
     else if (attrName == aria_checkedAttr)
         checkedStateChanged(element);
     else if (attrName == aria_describedbyAttr)
@@ -3383,7 +3378,7 @@ void AXObjectCache::performDeferredCacheUpdate()
     processDeferredChildrenChangedList();
 
     for (auto* node : m_deferredTextChangedList)
-        textChanged(node);
+        handleTextChanged(getOrCreate(node));
     m_deferredTextChangedList.clear();
 
     m_deferredRecomputeIsIgnoredList.forEach([this] (auto& element) {
@@ -3642,7 +3637,7 @@ void AXObjectCache::deferTextChangedIfNeeded(Node* node)
         m_deferredTextChangedList.add(node);
         return;
     }
-    textChanged(node);
+    handleTextChanged(getOrCreate(node));
 }
 
 void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element& selectElement)
@@ -3722,7 +3717,7 @@ AXTreeData AXObjectCache::treeData()
 
     stream << "\nAXObjectTree:\n";
     if (auto* root = get(document().view())) {
-        constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role };
+        constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role, AXStreamOptions::OuterHTML };
         streamSubtree(stream, root, options);
     } else
         stream << "No root!";

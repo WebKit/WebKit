@@ -422,7 +422,6 @@ protected:
 #endif
 
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
-    void textChanged(AccessibilityObject*);
     void labelChanged(Element*);
 
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
@@ -484,8 +483,6 @@ private:
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
     void selectedStateChanged(Node*);
-    // Called by a node when text or a text equivalent (e.g. alt) attribute is changed.
-    void textChanged(Node*);
 
     void handleActiveDescendantChanged(Element&);
 
@@ -493,6 +490,7 @@ private:
     enum class UpdateModal : bool { No, Yes };
     void handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode, UpdateModal = UpdateModal::Yes);
     void handleMenuListValueChanged(Element&);
+    void handleTextChanged(AccessibilityObject*);
 
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;
@@ -666,8 +664,7 @@ inline void AXObjectCache::postTextReplacementNotificationForTextControl(HTMLTex
 inline void AXObjectCache::postTextStateChangeNotification(Node*, AXTextEditType, const String&, const VisiblePosition&) { }
 inline void AXObjectCache::postTextStateChangeNotification(Node*, const AXTextStateChangeIntent&, const VisibleSelection&) { }
 inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
-inline void AXObjectCache::textChanged(AccessibilityObject*) { }
-inline void AXObjectCache::textChanged(Node*) { }
+inline void AXObjectCache::handleTextChanged(AccessibilityObject*) { }
 inline void AXObjectCache::updateCacheAfterNodeIsAttached(Node*) { }
 inline void AXObjectCache::updateLoadingProgress(double) { }
 inline SimpleRange AXObjectCache::rangeForNodeContents(Node& node) { return makeRangeSelectingNodeContents(node); }
