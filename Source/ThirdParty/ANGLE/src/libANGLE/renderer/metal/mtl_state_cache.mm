@@ -24,6 +24,9 @@
 
 #define ANGLE_PROP_EQ(LHS, RHS, PROP) ((LHS).PROP == (RHS).PROP)
 
+#define ANGLE_MTL_HANDLE_ERROR(context, message, error) \
+    context->handleError(error, message, __FILE__, ANGLE_FUNCTION, __LINE__)
+
 namespace rx
 {
 namespace mtl
