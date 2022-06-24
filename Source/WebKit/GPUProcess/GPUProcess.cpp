@@ -287,7 +287,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 
 void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences)
 {
-#if ENABLE(MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
     if (updatePreference(m_preferences.webMParserEnabled, preferences.webMParserEnabled))
         WebCore::RuntimeEnabledFeatures::sharedFeatures().setWebMParserEnabled(*m_preferences.webMParserEnabled);
 #endif
