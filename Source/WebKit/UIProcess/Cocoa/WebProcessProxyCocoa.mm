@@ -273,7 +273,7 @@ void WebProcessProxy::hardwareConsoleStateChanged()
 {
     m_isConnectedToHardwareConsole = WindowServerConnection::singleton().hardwareConsoleState() == WindowServerConnection::HardwareConsoleState::Connected;
     for (const auto& page : m_pageMap.values())
-        page->activityStateDidChange(ActivityState::IsConnectedToHardwareConsole);
+        page->activityStateDidChange(WebCore::ActivityState::IsConnectedToHardwareConsole);
 }
 #endif
 
