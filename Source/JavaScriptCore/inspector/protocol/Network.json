@@ -78,7 +78,8 @@
                 { "name": "method", "type": "string", "description": "HTTP request method." },
                 { "name": "headers", "$ref": "Headers", "description": "HTTP request headers." },
                 { "name": "postData", "type": "string", "optional": true, "description": "HTTP POST request data." },
-                { "name": "referrerPolicy", "$ref": "ReferrerPolicy", "optional": true, "description": "The level of included referrer information." }
+                { "name": "referrerPolicy", "$ref": "ReferrerPolicy", "optional": true, "description": "The level of included referrer information." },
+                { "name": "integrity", "type": "string", "optional": true, "description": "The base64 cryptographic hash of the resource." }
             ]
         },
         {

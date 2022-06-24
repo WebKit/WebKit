@@ -339,8 +339,12 @@ static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const Resou
         requestObject->setPostData(String::fromUTF8WithLatin1Fallback(bytes.data(), bytes.size()));
     }
 
-    if (resourceLoader)
+    if (resourceLoader) {
         requestObject->setReferrerPolicy(toProtocol(resourceLoader->options().referrerPolicy));
+
+        if (auto integrity = resourceLoader->options().integrity; !integrity.isEmpty())
+            requestObject->setIntegrity(integrity);
+    }
 
     return requestObject;
 }
