@@ -44,8 +44,11 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
-#import "WindowServerConnection.h"
 #import "WKWebViewMac.h"
+#endif
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#import "WindowServerConnection.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
