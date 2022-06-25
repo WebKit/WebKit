@@ -1692,16 +1692,19 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t target;
         WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
 
-        ControlEntry controlEntry = m_controlStack.takeLast();
-        WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(controlEntry.controlData), "delegate isn't associated to a try");
+        if (m_unreachableBlocks == 1) {
+            ControlEntry controlEntry = m_controlStack.takeLast();
+            WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(controlEntry.controlData), "delegate isn't associated to a try");
 
-        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
-        WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(data) && !ControlType::isTopLevel(data), "delegate target isn't a try block");
+            ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+            WASM_VALIDATOR_FAIL_IF(!ControlType::isTry(data) && !ControlType::isTopLevel(data), "delegate target isn't a try block");
 
-        WASM_TRY_ADD_TO_CONTEXT(addDelegateToUnreachable(data, controlEntry.controlData));
-        Stack emptyStack;
-        WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(controlEntry, emptyStack));
-        m_expressionStack.swap(controlEntry.enclosedExpressionStack);
+            WASM_TRY_ADD_TO_CONTEXT(addDelegateToUnreachable(data, controlEntry.controlData));
+            Stack emptyStack;
+            WASM_TRY_ADD_TO_CONTEXT(addEndToUnreachable(controlEntry, emptyStack));
+            m_expressionStack.swap(controlEntry.enclosedExpressionStack);
+        }
+        m_unreachableBlocks--;
         return { };
     }
 
