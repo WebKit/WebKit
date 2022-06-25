@@ -572,21 +572,20 @@ void EventHandler::selectClosestContextualWordOrLinkFromHitTestResult(const HitT
     if (!m_frame.selection().selection().isContentEditable() && !is<Text>(result.targetNode()))
         return;
 
+    if (!m_frame.settings().textInteractionEnabled())
+        return;
+
     RefPtr urlElement = result.URLElement();
     if (!urlElement || !isDraggableLink(*urlElement)) {
-        if (RefPtr targetNode = result.targetNode()) {
-            if (isEditableNode(*targetNode)) {
-                if (mouseDownMayStartSelect())
-                    return selectClosestWordFromHitTestResult(result, appendTrailingWhitespace);
-                return;
-            }
+        if (RefPtr targetNode = result.targetNode(); targetNode && isEditableNode(*targetNode)) {
+            selectClosestWordFromHitTestResult(result, appendTrailingWhitespace);
+            return;
         }
 
         return selectClosestContextualWordFromHitTestResult(result, appendTrailingWhitespace);
     }
 
-    RefPtr targetNode = result.targetNode();
-    if (targetNode && targetNode->renderer() && mouseDownMayStartSelect()) {
+    if (RefPtr targetNode = result.targetNode(); targetNode && targetNode->renderer()) {
         VisibleSelection newSelection;
         VisiblePosition pos(targetNode->renderer()->positionForPoint(result.localPoint(), nullptr));
         if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(*urlElement))
