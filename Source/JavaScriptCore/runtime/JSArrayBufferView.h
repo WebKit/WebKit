@@ -196,7 +196,7 @@ public:
     inline std::optional<size_t> byteOffsetConcurrently();
 
     size_t length() const { return m_length; }
-    size_t byteLength() const;
+    JS_EXPORT_PRIVATE size_t byteLength() const;
 
     DECLARE_EXPORT_INFO;
     

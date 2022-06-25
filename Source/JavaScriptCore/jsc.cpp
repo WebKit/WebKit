@@ -91,6 +91,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/Scope.h>
+#include <wtf/Span.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -304,6 +305,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionRunString);
 static JSC_DECLARE_HOST_FUNCTION(functionLoad);
 static JSC_DECLARE_HOST_FUNCTION(functionLoadString);
 static JSC_DECLARE_HOST_FUNCTION(functionReadFile);
+static JSC_DECLARE_HOST_FUNCTION(functionWriteFile);
 static JSC_DECLARE_HOST_FUNCTION(functionCheckSyntax);
 static JSC_DECLARE_HOST_FUNCTION(functionOpenFile);
 static JSC_DECLARE_HOST_FUNCTION(functionReadline);
@@ -553,6 +555,8 @@ private:
         addFunction(vm, "loadString"_s, functionLoadString, 1);
         addFunction(vm, "readFile"_s, functionReadFile, 2);
         addFunction(vm, "read"_s, functionReadFile, 2);
+        addFunction(vm, "writeFile"_s, functionWriteFile, 2);
+        addFunction(vm, "write"_s, functionWriteFile, 2);
         addFunction(vm, "checkSyntax"_s, functionCheckSyntax, 1);
         addFunction(vm, "sleepSeconds"_s, functionSleepSeconds, 1);
         addFunction(vm, "jscStack"_s, functionJSCStack, 1);
@@ -1719,6 +1723,53 @@ JSC_DEFINE_HOST_FUNCTION(functionReadFile, (JSGlobalObject* globalObject, CallFr
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     return JSValue::encode(result);
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String fileName = callFrame->argument(0).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    std::variant<String, Span<const uint8_t>> data;
+    JSValue dataValue = callFrame->argument(1);
+
+    if (dataValue.isString()) {
+        data = asString(dataValue)->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    } else if (dataValue.inherits<JSArrayBuffer>()) {
+        auto* arrayBuffer = jsCast<JSArrayBuffer*>(dataValue);
+        if (arrayBuffer->impl()->isDetached())
+            data = emptyString();
+        else
+            data = Span { static_cast<const uint8_t*>(arrayBuffer->impl()->data()), arrayBuffer->impl()->byteLength() };
+    } else if (dataValue.inherits<JSArrayBufferView>()) {
+        auto* view = jsCast<JSArrayBufferView*>(dataValue);
+        if (view->isDetached())
+            data = emptyString();
+        else
+            data = Span { static_cast<const uint8_t*>(view->vector()), view->byteLength() };
+    } else {
+        data = dataValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    auto handle = FileSystem::openFile(fileName, FileSystem::FileOpenMode::Write);
+    if (!FileSystem::isHandleValid(handle))
+        return throwVMError(globalObject, scope, "Could not open file."_s);
+
+    int size = std::visit(WTF::makeVisitor([&](const String& string) {
+        CString utf8 = string.utf8();
+        return FileSystem::writeToFile(handle, utf8.data(), utf8.length());
+    }, [&] (const Span<const uint8_t>& data) {
+        return FileSystem::writeToFile(handle, data.data(), data.size());
+    }), data);
+
+    FileSystem::closeFile(handle);
+
+    return JSValue::encode(jsNumber(size));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionCheckSyntax, (JSGlobalObject* globalObject, CallFrame* callFrame))
