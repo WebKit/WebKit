@@ -1,28 +1,28 @@
 
-FAIL CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (-0.3) should be [59px 75px] assert_equals: expected "59px 75px " but got "20px 10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (0) should be [50px 60px] assert_equals: expected "50px 60px " but got "20px 10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.3) should be [41px 45px] assert_equals: expected "41px 45px " but got "20px 10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.6) should be [32px 30px] assert_equals: expected "32px 30px " but got "20px 10px "
+PASS CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (-0.3) should be [59px 75px]
+PASS CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (0) should be [50px 60px]
+PASS CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.3) should be [41px 45px]
+PASS CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.6) should be [32px 30px]
 PASS CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (1) should be [20px 10px]
-FAIL CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (1.5) should be [5px 0px] assert_equals: expected "5px 0px " but got "20px 10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (-0.3) should be [59px 75px] assert_equals: expected "59px 75px " but got "20px 10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (0) should be [50px 60px] assert_equals: expected "50px 60px " but got "20px 10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.3) should be [41px 45px] assert_equals: expected "41px 45px " but got "20px 10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.6) should be [32px 30px] assert_equals: expected "32px 30px " but got "20px 10px "
+PASS CSS Transitions: property <contain-intrinsic-size> from neutral to [20px 10px] at (1.5) should be [5px 0px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (-0.3) should be [59px 75px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (0) should be [50px 60px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.3) should be [41px 45px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.6) should be [32px 30px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (1) should be [20px 10px]
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (1.5) should be [5px 0px] assert_equals: expected "5px 0px " but got "20px 10px "
-FAIL CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (-0.3) should be [59px 75px] assert_equals: expected "59px 75px " but got "50px 60px "
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from neutral to [20px 10px] at (1.5) should be [5px 0px]
+PASS CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (-0.3) should be [59px 75px]
 PASS CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0) should be [50px 60px]
-FAIL CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.3) should be [41px 45px] assert_equals: expected "41px 45px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.6) should be [32px 30px] assert_equals: expected "32px 30px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (1) should be [20px 10px] assert_equals: expected "20px 10px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (1.5) should be [5px 0px] assert_equals: expected "5px 0px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (-0.3) should be [59px 75px] assert_equals: expected "59px 75px " but got "50px 60px "
+PASS CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.3) should be [41px 45px]
+PASS CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.6) should be [32px 30px]
+PASS CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (1) should be [20px 10px]
+PASS CSS Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (1.5) should be [5px 0px]
+PASS Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (-0.3) should be [59px 75px]
 PASS Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0) should be [50px 60px]
-FAIL Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.3) should be [41px 45px] assert_equals: expected "41px 45px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.6) should be [32px 30px] assert_equals: expected "32px 30px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (1) should be [20px 10px] assert_equals: expected "20px 10px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (1.5) should be [5px 0px] assert_equals: expected "5px 0px " but got "50px 60px "
+PASS Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.3) should be [41px 45px]
+PASS Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (0.6) should be [32px 30px]
+PASS Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (1) should be [20px 10px]
+PASS Web Animations: property <contain-intrinsic-size> from neutral to [20px 10px] at (1.5) should be [5px 0px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [initial] to [20px 20px] at (-0.3) should be [20px 20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0) should be [20px 20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.3) should be [20px 20px]
@@ -37,20 +37,20 @@ PASS CSS Transitions with transition: all: property <contain-intrinsic-size> fro
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.6) should be [20px 20px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1) should be [20px 20px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1.5) should be [20px 20px]
-FAIL CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (-0.3) should be [initial] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0) should be [initial] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.3) should be [initial] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.5) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.6) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1.5) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (-0.3) should be [initial] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0) should be [initial] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.3) should be [initial] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.5) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.6) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1.5) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
+PASS CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (-0.3) should be [initial]
+PASS CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0) should be [initial]
+PASS CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.3) should be [initial]
+PASS CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.5) should be [20px 20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.6) should be [20px 20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1) should be [20px 20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1.5) should be [20px 20px]
+PASS Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (-0.3) should be [initial]
+PASS Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0) should be [initial]
+PASS Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.3) should be [initial]
+PASS Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.5) should be [20px 20px]
+PASS Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (0.6) should be [20px 20px]
+PASS Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1) should be [20px 20px]
+PASS Web Animations: property <contain-intrinsic-size> from [initial] to [20px 20px] at (1.5) should be [20px 20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [inherit] to [20px] at (-0.3) should be [20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [inherit] to [20px] at (0) should be [20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [inherit] to [20px] at (0.3) should be [20px]
@@ -65,20 +65,20 @@ PASS CSS Transitions with transition: all: property <contain-intrinsic-size> fro
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [inherit] to [20px] at (0.6) should be [20px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [inherit] to [20px] at (1) should be [20px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [inherit] to [20px] at (1.5) should be [20px]
-FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (-0.3) should be [inherit] assert_equals: expected "none " but got "50px 60px "
+FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (-0.3) should be [inherit] assert_equals: expected "none " but got "59px 72px "
 FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0) should be [inherit] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.3) should be [inherit] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (1) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (-0.3) should be [inherit] assert_equals: expected "none " but got "50px 60px "
+FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.3) should be [inherit] assert_equals: expected "none " but got "41px 48px "
+FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "35px 40px "
+FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "32px 36px "
+PASS CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (1) should be [20px]
+FAIL CSS Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "5px 0px "
+FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (-0.3) should be [inherit] assert_equals: expected "none " but got "59px 72px "
 FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0) should be [inherit] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.3) should be [inherit] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (1) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "50px 60px "
+FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.3) should be [inherit] assert_equals: expected "none " but got "41px 48px "
+FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "35px 40px "
+FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "32px 36px "
+PASS Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (1) should be [20px]
+FAIL Web Animations: property <contain-intrinsic-size> from [inherit] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "5px 0px "
 PASS CSS Transitions: property <contain-intrinsic-size> from [unset] to [20px] at (-0.3) should be [20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [unset] to [20px] at (0) should be [20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [unset] to [20px] at (0.3) should be [20px]
@@ -93,20 +93,20 @@ PASS CSS Transitions with transition: all: property <contain-intrinsic-size> fro
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [unset] to [20px] at (0.6) should be [20px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [unset] to [20px] at (1) should be [20px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [unset] to [20px] at (1.5) should be [20px]
-FAIL CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (-0.3) should be [unset] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0) should be [unset] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.3) should be [unset] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (-0.3) should be [unset] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0) should be [unset] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.3) should be [unset] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.5) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.6) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1) should be [20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1.5) should be [20px] assert_equals: expected "20px " but got "50px 60px "
+PASS CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (-0.3) should be [unset]
+PASS CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0) should be [unset]
+PASS CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.3) should be [unset]
+PASS CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.5) should be [20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.6) should be [20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1) should be [20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1.5) should be [20px]
+PASS Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (-0.3) should be [unset]
+PASS Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0) should be [unset]
+PASS Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.3) should be [unset]
+PASS Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.5) should be [20px]
+PASS Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.6) should be [20px]
+PASS Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1) should be [20px]
+PASS Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1.5) should be [20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [20px 20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [20px 20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [20px 20px]
@@ -121,20 +121,20 @@ PASS CSS Transitions with transition: all: property <contain-intrinsic-size> fro
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px]
-FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.5) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.5) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px] assert_equals: expected "20px " but got "50px 60px "
+PASS CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [none]
+PASS CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [none]
+PASS CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [none]
+PASS CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.5) should be [20px 20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px]
+PASS Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [none]
+PASS Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [none]
+PASS Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [none]
+PASS Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.5) should be [20px 20px]
+PASS Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px]
+PASS Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px]
+PASS Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [none]
 PASS CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [none]
 PASS CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [none]
@@ -149,44 +149,44 @@ PASS CSS Transitions with transition: all: property <contain-intrinsic-size> fro
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none]
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [10px 15px] assert_equals: expected "10px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [10px 15px] assert_equals: expected "10px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [10px 15px] assert_equals: expected "10px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.5) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [10px 15px] assert_equals: expected "10px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [10px 15px] assert_equals: expected "10px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [10px 15px] assert_equals: expected "10px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.5) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none] assert_equals: expected "none " but got "50px 60px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px] assert_equals: expected "auto 0px 0px " but got "auto 10px 10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px] assert_equals: expected "auto 0px 0px " but got "auto 10px 10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px] assert_equals: expected "auto 3px 3px " but got "auto 10px 10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px] assert_equals: expected "auto 6px 6px " but got "auto 10px 10px "
+PASS CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [10px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [10px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [10px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.5) should be [none]
+PASS CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none]
+PASS CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none]
+PASS CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none]
+PASS Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [10px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [10px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [10px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.5) should be [none]
+PASS Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none]
+PASS Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none]
+PASS Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none]
+PASS CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px]
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px] assert_equals: expected "auto 15px 15px " but got "auto 10px 10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px] assert_equals: expected "auto 0px 0px " but got "auto 10px 10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px] assert_equals: expected "auto 0px 0px " but got "auto 10px 10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px] assert_equals: expected "auto 3px 3px " but got "auto 10px 10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px] assert_equals: expected "auto 6px 6px " but got "auto 10px 10px "
+PASS CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px]
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px] assert_equals: expected "auto 15px 15px " but got "auto 10px 10px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px] assert_equals: expected "auto 0px 0px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px] assert_equals: expected "auto 0px 0px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px] assert_equals: expected "auto 3px 3px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px] assert_equals: expected "auto 6px 6px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px] assert_equals: expected "auto 10px 10px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px] assert_equals: expected "auto 15px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px] assert_equals: expected "auto 0px 0px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px] assert_equals: expected "auto 0px 0px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px] assert_equals: expected "auto 3px 3px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px] assert_equals: expected "auto 6px 6px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px] assert_equals: expected "auto 10px 10px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px] assert_equals: expected "auto 15px 15px " but got "50px 60px "
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [20px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [20px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [20px 15px]
@@ -201,20 +201,20 @@ PASS CSS Transitions with transition: all: property <contain-intrinsic-size> fro
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px]
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [auto 10px 15px] assert_equals: expected "auto 10px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [auto 10px 15px] assert_equals: expected "auto 10px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [auto 10px 15px] assert_equals: expected "auto 10px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [auto 10px 15px] assert_equals: expected "auto 10px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [auto 10px 15px] assert_equals: expected "auto 10px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [auto 10px 15px] assert_equals: expected "auto 10px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [auto 10px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [auto 10px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [auto 10px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.5) should be [20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [auto 10px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [auto 10px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [auto 10px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.5) should be [20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [20px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [20px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [20px 15px]
@@ -229,20 +229,20 @@ PASS CSS Transitions with transition: all: property <contain-intrinsic-size> fro
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px]
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_equals: expected "20px 15px " but got "50px 60px "
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [none 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [none 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [none 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.5) should be [20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [none 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [none 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [none 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.5) should be [20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [auto 20px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [auto 20px 15px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [auto 20px 15px]
@@ -257,66 +257,66 @@ PASS CSS Transitions with transition: all: property <contain-intrinsic-size> fro
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px]
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.5) should be [auto 20px 15px] assert_equals: expected "auto 20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px] assert_equals: expected "auto 20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px] assert_equals: expected "auto 20px 15px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px] assert_equals: expected "auto 20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [none 15px] assert_equals: expected "none 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.5) should be [auto 20px 15px] assert_equals: expected "auto 20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px] assert_equals: expected "auto 20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px] assert_equals: expected "auto 20px 15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px] assert_equals: expected "auto 20px 15px " but got "50px 60px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px] assert_equals: expected "0px " but got "10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px] assert_equals: expected "0px " but got "10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px] assert_equals: expected "3px " but got "10px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.6) should be [6px 6px] assert_equals: expected "6px " but got "10px "
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [none 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [none 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [none 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.5) should be [auto 20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [none 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [none 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [none 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.5) should be [auto 20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.6) should be [6px 6px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1) should be [10px 10px]
-FAIL CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1.5) should be [15px 15px] assert_equals: expected "15px " but got "10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px] assert_equals: expected "0px " but got "10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px] assert_equals: expected "0px " but got "10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px] assert_equals: expected "3px " but got "10px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.6) should be [6px 6px] assert_equals: expected "6px " but got "10px "
+PASS CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1.5) should be [15px 15px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.6) should be [6px 6px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1) should be [10px 10px]
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1.5) should be [15px 15px] assert_equals: expected "15px " but got "10px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px] assert_equals: expected "0px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px] assert_equals: expected "0px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px] assert_equals: expected "3px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.6) should be [6px 6px] assert_equals: expected "6px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1) should be [10px 10px] assert_equals: expected "10px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1.5) should be [15px 15px] assert_equals: expected "15px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px] assert_equals: expected "0px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px] assert_equals: expected "0px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px] assert_equals: expected "3px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.6) should be [6px 6px] assert_equals: expected "6px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1) should be [10px 10px] assert_equals: expected "10px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1.5) should be [15px 15px] assert_equals: expected "15px " but got "50px 60px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (-0.3) should be [17px 37px] assert_equals: expected "17px 37px " but got "30px 50px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0) should be [20px 40px] assert_equals: expected "20px 40px " but got "30px 50px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.3) should be [23px 43px] assert_equals: expected "23px 43px " but got "30px 50px "
-FAIL CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.6) should be [26px 46px] assert_equals: expected "26px 46px " but got "30px 50px "
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1.5) should be [15px 15px]
+PASS CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px]
+PASS CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px]
+PASS CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px]
+PASS CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.6) should be [6px 6px]
+PASS CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1) should be [10px 10px]
+PASS CSS Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1.5) should be [15px 15px]
+PASS Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px]
+PASS Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px]
+PASS Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px]
+PASS Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.6) should be [6px 6px]
+PASS Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1) should be [10px 10px]
+PASS Web Animations: property <contain-intrinsic-size> from [0px 0px] to [10px] at (1.5) should be [15px 15px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (-0.3) should be [17px 37px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0) should be [20px 40px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.3) should be [23px 43px]
+PASS CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.6) should be [26px 46px]
 PASS CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1) should be [30px 50px]
-FAIL CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1.5) should be [35px 55px] assert_equals: expected "35px 55px " but got "30px 50px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (-0.3) should be [17px 37px] assert_equals: expected "17px 37px " but got "30px 50px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0) should be [20px 40px] assert_equals: expected "20px 40px " but got "30px 50px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.3) should be [23px 43px] assert_equals: expected "23px 43px " but got "30px 50px "
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.6) should be [26px 46px] assert_equals: expected "26px 46px " but got "30px 50px "
+PASS CSS Transitions: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1.5) should be [35px 55px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (-0.3) should be [17px 37px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0) should be [20px 40px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.3) should be [23px 43px]
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.6) should be [26px 46px]
 PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1) should be [30px 50px]
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1.5) should be [35px 55px] assert_equals: expected "35px 55px " but got "30px 50px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (-0.3) should be [17px 37px] assert_equals: expected "17px 37px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0) should be [20px 40px] assert_equals: expected "20px 40px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.3) should be [23px 43px] assert_equals: expected "23px 43px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.6) should be [26px 46px] assert_equals: expected "26px 46px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1) should be [30px 50px] assert_equals: expected "30px 50px " but got "50px 60px "
-FAIL CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1.5) should be [35px 55px] assert_equals: expected "35px 55px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (-0.3) should be [17px 37px] assert_equals: expected "17px 37px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0) should be [20px 40px] assert_equals: expected "20px 40px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.3) should be [23px 43px] assert_equals: expected "23px 43px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.6) should be [26px 46px] assert_equals: expected "26px 46px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1) should be [30px 50px] assert_equals: expected "30px 50px " but got "50px 60px "
-FAIL Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1.5) should be [35px 55px] assert_equals: expected "35px 55px " but got "50px 60px "
+PASS CSS Transitions with transition: all: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1.5) should be [35px 55px]
+PASS CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (-0.3) should be [17px 37px]
+PASS CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0) should be [20px 40px]
+PASS CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.3) should be [23px 43px]
+PASS CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.6) should be [26px 46px]
+PASS CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1) should be [30px 50px]
+PASS CSS Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1.5) should be [35px 55px]
+PASS Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (-0.3) should be [17px 37px]
+PASS Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0) should be [20px 40px]
+PASS Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.3) should be [23px 43px]
+PASS Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (0.6) should be [26px 46px]
+PASS Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1) should be [30px 50px]
+PASS Web Animations: property <contain-intrinsic-size> from [20px 40px] to [30px 50px] at (1.5) should be [35px 55px]
 

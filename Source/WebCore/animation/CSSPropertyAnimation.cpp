@@ -1079,6 +1079,81 @@ private:
     void (RenderStyle::*m_setter)(T&&);
 };
 
+class OptionalLengthPropertyWrapper : public PropertyWrapperGetter<std::optional<Length>> {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    enum class Flags {
+        IsLengthPercentage = 1 << 0,
+        NegativeLengthsAreInvalid = 1 << 1,
+    };
+    OptionalLengthPropertyWrapper(CSSPropertyID property, std::optional<Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<Length>), OptionSet<Flags> flags = {})
+        : PropertyWrapperGetter<std::optional<Length>>(property, getter)
+        , m_setter(setter)
+        , m_flags(flags)
+    {
+    }
+
+protected:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const
+    {
+        if (!this->value(from).has_value() || !this->value(to).has_value())
+            return false;
+
+        bool isLengthPercentage = m_flags.contains(Flags::IsLengthPercentage);
+        return canInterpolateLengths(this->value(from).value(), this->value(to).value(), isLengthPercentage);
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const
+    {
+        //if (!this->value(from).has_value() || !this->value(to).has_value())
+        //    return;
+        if (context.isDiscrete) {
+            (destination.*m_setter)(context.progress < 0.5 ? this->value(from) : this->value(to));
+            return;
+        }
+
+        auto valueRange = m_flags.contains(Flags::NegativeLengthsAreInvalid) ? ValueRange::NonNegative : ValueRange::All;
+        (destination.*m_setter)(blendFunc(this->value(from).value(), this->value(to).value(), context, valueRange));
+    }
+
+private:
+    void (RenderStyle::*m_setter)(std::optional<Length>);
+    OptionSet<Flags> m_flags;
+};
+
+
+class ContainIntrinsiclLengthPropertyWrapper final : public OptionalLengthPropertyWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ContainIntrinsiclLengthPropertyWrapper(CSSPropertyID property, std::optional<Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<Length>), ContainIntrinsicSizeType (RenderStyle::*typeGetter)() const, void (RenderStyle::*typeSetter)(ContainIntrinsicSizeType))
+        : OptionalLengthPropertyWrapper(property, getter, setter, { Flags::NegativeLengthsAreInvalid })
+        , m_containIntrinsicSizeTypeGetter(typeGetter)
+        , m_containIntrinsicSizeTypeSetter(typeSetter)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation operation) const final
+    {
+        if ((from.*m_containIntrinsicSizeTypeGetter)() != (to.*m_containIntrinsicSizeTypeGetter)())
+            return false;
+        return OptionalLengthPropertyWrapper::canInterpolate(from, to, operation);
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const
+    {
+
+        auto type = context.progress < 0.5 ? (from.*m_containIntrinsicSizeTypeGetter)() : (to.*m_containIntrinsicSizeTypeGetter)();
+        (destination.*m_containIntrinsicSizeTypeSetter)(type);
+
+        OptionalLengthPropertyWrapper::blend(destination, from, to, context);
+    }
+
+    ContainIntrinsicSizeType (RenderStyle::*m_containIntrinsicSizeTypeGetter)() const;
+    void (RenderStyle::*m_containIntrinsicSizeTypeSetter)(ContainIntrinsicSizeType);
+};
+
 class LengthBoxPropertyWrapper : public PropertyWrapperGetter<const LengthBox&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -3224,6 +3299,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new TabSizePropertyWrapper,
 
+        new ContainIntrinsiclLengthPropertyWrapper(CSSPropertyContainIntrinsicWidth, &RenderStyle::containIntrinsicWidth, &RenderStyle::setContainIntrinsicWidth, &RenderStyle::containIntrinsicWidthType, &RenderStyle::setContainIntrinsicWidthType),
+        new ContainIntrinsiclLengthPropertyWrapper(CSSPropertyContainIntrinsicHeight, &RenderStyle::containIntrinsicHeight, &RenderStyle::setContainIntrinsicHeight, &RenderStyle::containIntrinsicHeightType, &RenderStyle::setContainIntrinsicHeightType),
+
         // FIXME: The following properties are currently not animatable but should be:
         // background-blend-mode, clip-rule, color-interpolation,
         // color-interpolation-filters, counter-increment, counter-reset, dominant-baseline,
@@ -3392,7 +3470,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyPerspectiveOrigin,
         CSSPropertyOffset,
         CSSPropertyTextEmphasis,
-        CSSPropertyFontVariant
+        CSSPropertyFontVariant,
+        CSSPropertyContainIntrinsicSize
     };
     const unsigned animatableShorthandPropertiesCount = WTF_ARRAY_LENGTH(animatableShorthandProperties);
 
@@ -3488,11 +3567,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyColumnSpan:
         case CSSPropertyColumns:
         case CSSPropertyContain:
-        case CSSPropertyContainIntrinsicSize:
-        case CSSPropertyContainIntrinsicWidth:
-        case CSSPropertyContainIntrinsicHeight:
-        case CSSPropertyContainIntrinsicBlockSize:
-        case CSSPropertyContainIntrinsicInlineSize:
         case CSSPropertyContainer:
         case CSSPropertyContainerName:
         case CSSPropertyContainerType:
