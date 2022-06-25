@@ -1087,7 +1087,7 @@ public:
         IsLengthPercentage = 1 << 0,
         NegativeLengthsAreInvalid = 1 << 1,
     };
-    OptionalLengthPropertyWrapper(CSSPropertyID property, std::optional<Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<Length>), OptionSet<Flags> flags = {})
+    OptionalLengthPropertyWrapper(CSSPropertyID property, std::optional<Length> (RenderStyle::*getter)() const, void (RenderStyle::*setter)(std::optional<Length>), OptionSet<Flags> flags = { })
         : PropertyWrapperGetter<std::optional<Length>>(property, getter)
         , m_setter(setter)
         , m_flags(flags)
@@ -1106,8 +1106,6 @@ protected:
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const
     {
-        //if (!this->value(from).has_value() || !this->value(to).has_value())
-        //    return;
         if (context.isDiscrete) {
             (destination.*m_setter)(context.progress < 0.5 ? this->value(from) : this->value(to));
             return;
