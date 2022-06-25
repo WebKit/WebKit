@@ -205,6 +205,7 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle trustdExtensionHandle;
 #endif
     bool enableDecodingHEIC { false };
+    bool enableDecodingAVIF { false };
 #endif
 
 #if PLATFORM(IOS_FAMILY)

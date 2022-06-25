@@ -93,7 +93,7 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #if USE(CG) || ENABLE(APNG)
     "image/apng",
 #endif
-#if USE(AVIF)
+#if HAVE(AVIF) || USE(AVIF)
     "image/avif",
 #endif
     "image/bmp",
@@ -133,7 +133,7 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #if PLATFORM(IOS_FAMILY)
     "image/vnd.switfview-jpeg",
 #endif
-#if (USE(CG) && HAVE(WEBP)) || (!USE(CG) && USE(WEBP))
+#if HAVE(WEBP) || USE(WEBP)
     "image/webp",
 #endif
 #if PLATFORM(IOS_FAMILY)

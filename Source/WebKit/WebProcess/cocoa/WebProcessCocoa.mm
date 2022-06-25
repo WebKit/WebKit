@@ -270,9 +270,21 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     SandboxExtension::consumePermanently(parameters.trustdExtensionHandle);
 #endif // PLATFORM(MAC)
 #if USE(APPLE_INTERNAL_SDK)
+    OptionSet<VideoDecoderBehavior> videoDecoderBehavior;
+    
     if (parameters.enableDecodingHEIC) {
         ImageDecoderCG::enableDecodingHEIC();
-        setVideoDecoderBehaviors({ VideoDecoderBehavior::AvoidIOSurface, VideoDecoderBehavior::AvoidHardware, VideoDecoderBehavior::EnableHEIC });
+        videoDecoderBehavior.add(VideoDecoderBehavior::EnableHEIC);
+    }
+
+    if (parameters.enableDecodingAVIF) {
+        ImageDecoderCG::enableDecodingAVIF();
+        videoDecoderBehavior.add(VideoDecoderBehavior::EnableAVIF);
+    }
+
+    if (videoDecoderBehavior) {
+        videoDecoderBehavior.add({ VideoDecoderBehavior::AvoidIOSurface, VideoDecoderBehavior::AvoidHardware });
+        setVideoDecoderBehaviors(videoDecoderBehavior);
     }
 #endif
 #endif // HAVE(VIDEO_RESTRICTED_DECODING)
