@@ -248,11 +248,15 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
     ASCredentialRequestStyleAutoFill,
 };
 
-@class ASCGlobalFrameIdentifier;
+@class ASGlobalFrameIdentifier;
 
-@interface ASCGlobalFrameIdentifier : NSObject <NSSecureCoding>
-@property (nonatomic, copy) NSNumber *webPageID;
-@property (nonatomic, copy) NSNumber *webFrameID;
+@interface ASGlobalFrameIdentifier : NSObject <NSCopying, NSSecureCoding>
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithPageID:(NSNumber *)webPageID frameID:(NSNumber *)webFrameID;
+@property (nonatomic, readonly) NSNumber *webPageID;
+@property (nonatomic, readonly) NSNumber *webFrameID;
 @end
 
 @interface ASCCredentialRequestContext : NSObject <NSSecureCoding>
@@ -273,7 +277,7 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 
 @property (nonatomic) ASCredentialRequestStyle requestStyle;
 
-@property (nonatomic, nullable, copy) ASCGlobalFrameIdentifier *globalFrameID;
+@property (nonatomic, nullable, copy) ASGlobalFrameIdentifier *globalFrameID;
 @end
 
 @protocol ASCCredentialProtocol <NSObject, NSSecureCoding>

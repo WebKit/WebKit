@@ -181,10 +181,8 @@ static inline RetainPtr<ASCWebAuthenticationExtensionsClientInputs> toASCExtensi
 static inline void setGlobalFrameIDForContext(RetainPtr<ASCCredentialRequestContext> requestContext, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID)
 {
     if (globalFrameID && [requestContext respondsToSelector:@selector(setGlobalFrameID:)]) {
-        auto ascGlobalFrameID = adoptNS([allocASCGlobalFrameIdentifierInstance() init]);
-        ascGlobalFrameID.get().webFrameID = [NSNumber numberWithUnsignedLong:globalFrameID->frameID.toUInt64()];
-        ascGlobalFrameID.get().webPageID = [NSNumber numberWithUnsignedLong:globalFrameID->pageID.toUInt64()];
-        requestContext.get().globalFrameID = ascGlobalFrameID.get();
+        auto asGlobalFrameID = adoptNS([allocASGlobalFrameIdentifierInstance() initWithPageID:[NSNumber numberWithUnsignedLong:globalFrameID->frameID.toUInt64()] frameID:[NSNumber numberWithUnsignedLong:globalFrameID->pageID.toUInt64()]]);
+        requestContext.get().globalFrameID = asGlobalFrameID.get();
     }
 }
 

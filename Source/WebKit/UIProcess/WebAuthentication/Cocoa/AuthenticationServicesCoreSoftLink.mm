@@ -40,7 +40,6 @@ SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAuthorizationP
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAuthorizationPresenter);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAuthorizationRemotePresenter);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCCredentialRequestContext);
-SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, AuthenticationServicesCore, ASCGlobalFrameIdentifier);
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, AuthenticationServicesCore, ASCWebAuthenticationExtensionsClientInputs);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCPlatformPublicKeyCredentialAssertion);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCPlatformPublicKeyCredentialLoginChoice);
@@ -51,6 +50,7 @@ SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCPublicKeyCrede
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCSecurityKeyPublicKeyCredentialAssertion);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCSecurityKeyPublicKeyCredentialLoginChoice);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCSecurityKeyPublicKeyCredentialRegistration);
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, AuthenticationServicesCore, ASGlobalFrameIdentifier);
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
 SOFT_LINK_CONSTANT_FOR_SOURCE(WebKit, AuthenticationServicesCore, ASCPINValidationResultKey, NSString*);
